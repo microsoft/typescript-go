@@ -110,6 +110,43 @@ func TestContentMapperInProject(t *testing.T) {
 		assert.Assert(t, strings.Contains(boxFile.Text(), "export const extra = 1;"), "reparsed app.box missing the edit: %q", boxFile.Text())
 	})
 
+	t.Run("watch change to a content-mapped file updates the program", func(t *testing.T) {
+		t.Parallel()
+		session, utils := newSession(true)
+		defer session.Close()
+
+		ctx := context.Background()
+		mainURI := lsproto.DocumentUri("file:///home/project/main.ts")
+		session.DidOpenFile(ctx, mainURI, 1, files["/home/project/main.ts"].(string), lsproto.LanguageKindTypeScript)
+		languageService, err := session.GetLanguageService(ctx, mainURI)
+		assert.NilError(t, err)
+		original := languageService.GetProgram().GetSourceFile("/home/project/app.box")
+		assert.Assert(t, original != nil, "expected app.box to be loaded")
+
+		// Wait until the configured extension set has been published; watch filtering uses the set captured
+		// when the snapshot change is created.
+		session.WaitForBackgroundTasks()
+		updatedContent := "export const version = #{target};\nexport const watched = true;\n"
+		assert.NilError(t, utils.FS().WriteFile("/home/project/app.box", updatedContent))
+		session.DidChangeWatchedFiles(ctx, []*lsproto.FileEvent{{
+			Uri:  "file:///home/project/app.box",
+			Type: lsproto.FileChangeTypeChanged,
+		}})
+
+		languageService, err = session.GetLanguageService(ctx, mainURI)
+		assert.NilError(t, err)
+		updatedSnapshot := session.Snapshot()
+		configuredProject := updatedSnapshot.GetDefaultProject(mainURI)
+		assert.Assert(t, configuredProject != nil, "expected configured project")
+		assert.Equal(t, configuredProject.ProgramUpdateKind, project.ProgramUpdateKindCloned)
+		assert.Equal(t, configuredProject.ProgramLastUpdate, updatedSnapshot.ID())
+		updated := languageService.GetProgram().GetSourceFile("/home/project/app.box")
+		assert.Assert(t, updated != nil, "expected app.box to remain loaded")
+		assert.Assert(t, updated != original, "expected the watched content-mapped file to be reparsed")
+		assert.Assert(t, strings.Contains(updated.Text(), "export const version = 7;"), "updated app.box was not transformed: %q", updated.Text())
+		assert.Assert(t, strings.Contains(updated.Text(), "export const watched = true;"), "updated app.box missing watched change: %q", updated.Text())
+	})
+
 	t.Run("unchanged content-mapped file is reused from the cache across a full rebuild", func(t *testing.T) {
 		t.Parallel()
 		session, utils := newSession(true)

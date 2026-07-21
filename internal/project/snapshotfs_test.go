@@ -1463,7 +1463,7 @@ func TestExpandAndFilterWatchEvents(t *testing.T) {
 		change := FileChangeSummary{}
 		change.Deleted.Add("file:///project/node_modules")
 
-		expanded := builder.expandAndFilterWatchEvents(change)
+		expanded := builder.expandAndFilterWatchEvents(change, nil)
 		assert.Assert(t, expanded.Deleted.Has("file:///project/node_modules"),
 			"bare node_modules directory deletion should be preserved")
 	})
@@ -1477,7 +1477,7 @@ func TestExpandAndFilterWatchEvents(t *testing.T) {
 		change := FileChangeSummary{}
 		change.Deleted.Add("file:///project/node_modules/@scope/pkg")
 
-		expanded := builder.expandAndFilterWatchEvents(change)
+		expanded := builder.expandAndFilterWatchEvents(change, nil)
 		assert.Assert(t, expanded.Deleted.Has("file:///project/node_modules/@scope/pkg"),
 			"package directory deletion inside node_modules should be preserved")
 	})
@@ -1491,7 +1491,7 @@ func TestExpandAndFilterWatchEvents(t *testing.T) {
 		change := FileChangeSummary{}
 		change.Deleted.Add("file:///project/build")
 
-		expanded := builder.expandAndFilterWatchEvents(change)
+		expanded := builder.expandAndFilterWatchEvents(change, nil)
 		assert.Equal(t, expanded.Deleted.Len(), 0,
 			"untracked non-node_modules directory deletion should be dropped")
 	})
@@ -1519,7 +1519,7 @@ func TestExpandAndFilterWatchEvents(t *testing.T) {
 		change := FileChangeSummary{}
 		change.Deleted.Add("file:///src")
 
-		expanded := builder.expandAndFilterWatchEvents(change)
+		expanded := builder.expandAndFilterWatchEvents(change, nil)
 		assert.Assert(t, expanded.Deleted.Has("file:///src/foo.ts"),
 			"tracked directory deletion should expand to contained file deletions")
 		assert.Assert(t, !expanded.Deleted.Has("file:///src"),

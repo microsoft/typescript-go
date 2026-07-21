@@ -392,7 +392,7 @@ func TestRefCountingCaches(t *testing.T) {
 				ResourceRequest: ResourceRequest{
 					Documents: []lsproto.DocumentUri{uri},
 				},
-			}, baseSnapshot.fs.overlays, session)
+			}, baseSnapshot.fs.overlays, nil, session)
 
 			project := clone.GetDefaultProject(uri)
 			assert.Assert(t, project != nil)

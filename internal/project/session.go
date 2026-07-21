@@ -1273,7 +1273,7 @@ func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, baseSna
 			AutoImports: uri,
 		},
 	}
-	newSnapshot := baseSnapshot.Clone(ctx, change, baseSnapshot.fs.overlays, s)
+	newSnapshot := baseSnapshot.Clone(ctx, change, baseSnapshot.fs.overlays, s.registeredContentMapperExtensions(), s)
 
 	project := newSnapshot.GetDefaultProject(uri)
 	if project == nil {
@@ -1341,7 +1341,7 @@ func (s *Session) updateSnapshotRef(ctx context.Context, overlays map[tspath.Pat
 func (s *Session) updateSnapshot(ctx context.Context, overlays map[tspath.Path]*Overlay, change SnapshotChange, callerRef bool) *Snapshot {
 	s.snapshotMu.Lock()
 	oldSnapshot := s.snapshot
-	newSnapshot := oldSnapshot.Clone(ctx, change, overlays, s)
+	newSnapshot := oldSnapshot.Clone(ctx, change, overlays, s.registeredContentMapperExtensions(), s)
 	s.snapshot = newSnapshot
 	if callerRef {
 		newSnapshot.ref()
@@ -1381,6 +1381,13 @@ func (s *Session) updateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 	})
 
 	return newSnapshot
+}
+
+func (s *Session) registeredContentMapperExtensions() []string {
+	if extensions := s.contentMapperExtensions.Load(); extensions != nil {
+		return *extensions
+	}
+	return nil
 }
 
 // WaitForBackgroundTasks waits for all background tasks to complete.
@@ -2014,7 +2021,7 @@ func (s *Session) warmAutoImportCache(ctx context.Context, change SnapshotChange
 				AutoImports: changedFile,
 			},
 		}
-		clonedSnapshot := newSnapshot.Clone(warmCtx, warmChange, newSnapshot.fs.overlays, s)
+		clonedSnapshot := newSnapshot.Clone(warmCtx, warmChange, newSnapshot.fs.overlays, s.registeredContentMapperExtensions(), s)
 
 		// If cancelled during clone, discard the incomplete result.
 		if warmCtx.Err() != nil {
