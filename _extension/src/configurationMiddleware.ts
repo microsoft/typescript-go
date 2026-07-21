@@ -316,9 +316,6 @@ export function sendNotificationMiddleware(
         for (const section of configSections) {
             settings[section] = merged;
         }
-        if (params?.settings?.editor !== undefined) {
-            settings.editor = params.settings.editor;
-        }
         return next(type, { settings });
     }
     return next(type, params);
