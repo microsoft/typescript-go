@@ -1,0 +1,92 @@
+//// [tests/cases/compiler/neverReturnInSwitchDefault.ts] ////
+
+=== neverReturnInSwitchDefault.ts ===
+// Exhaustiveness helper that returns never
+export function assertUnreachable(x: never): never {
+>assertUnreachable : Symbol(assertUnreachable, Decl(neverReturnInSwitchDefault.ts, 0, 0))
+>x : Symbol(x, Decl(neverReturnInSwitchDefault.ts, 1, 34))
+
+    throw new Error('unreachable: ' + x);
+>Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
+>x : Symbol(x, Decl(neverReturnInSwitchDefault.ts, 1, 34))
+}
+
+// Test 1: Simple case - call never-returning function in default
+export function pick(key: 'a' | 'b' | 'c') {
+>pick : Symbol(pick, Decl(neverReturnInSwitchDefault.ts, 3, 1))
+>key : Symbol(key, Decl(neverReturnInSwitchDefault.ts, 6, 21))
+
+    switch (key) {
+>key : Symbol(key, Decl(neverReturnInSwitchDefault.ts, 6, 21))
+
+        case 'a':
+            return 1;
+        case 'b':
+            return 2;
+        case 'c':
+            return 3;
+        default:
+            assertUnreachable(key);
+>assertUnreachable : Symbol(assertUnreachable, Decl(neverReturnInSwitchDefault.ts, 0, 0))
+>key : Symbol(key, Decl(neverReturnInSwitchDefault.ts, 6, 21))
+    }
+}
+
+// Test 2: With explicit return type annotation
+export function pick2(key: 'a' | 'b' | 'c'): number {
+>pick2 : Symbol(pick2, Decl(neverReturnInSwitchDefault.ts, 17, 1))
+>key : Symbol(key, Decl(neverReturnInSwitchDefault.ts, 20, 22))
+
+    switch (key) {
+>key : Symbol(key, Decl(neverReturnInSwitchDefault.ts, 20, 22))
+
+        case 'a':
+            return 1;
+        case 'b':
+            return 2;
+        case 'c':
+            return 3;
+        default:
+            assertUnreachable(key);
+>assertUnreachable : Symbol(assertUnreachable, Decl(neverReturnInSwitchDefault.ts, 0, 0))
+>key : Symbol(key, Decl(neverReturnInSwitchDefault.ts, 20, 22))
+    }
+}
+
+// Test 3: Using a method that returns never (dotted name call)
+class Assertions {
+>Assertions : Symbol(Assertions, Decl(neverReturnInSwitchDefault.ts, 31, 1))
+
+    fail(x: never): never {
+>fail : Symbol(Assertions.fail, Decl(neverReturnInSwitchDefault.ts, 34, 18))
+>x : Symbol(x, Decl(neverReturnInSwitchDefault.ts, 35, 9))
+
+        throw new Error('unreachable');
+>Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
+    }
+}
+
+export function pick3(key: 'a' | 'b' | 'c', assertions: Assertions) {
+>pick3 : Symbol(pick3, Decl(neverReturnInSwitchDefault.ts, 38, 1))
+>key : Symbol(key, Decl(neverReturnInSwitchDefault.ts, 40, 22))
+>assertions : Symbol(assertions, Decl(neverReturnInSwitchDefault.ts, 40, 43))
+>Assertions : Symbol(Assertions, Decl(neverReturnInSwitchDefault.ts, 31, 1))
+
+    switch (key) {
+>key : Symbol(key, Decl(neverReturnInSwitchDefault.ts, 40, 22))
+
+        case 'a':
+            return 1;
+        case 'b':
+            return 2;
+        case 'c':
+            return 3;
+        default:
+            assertions.fail(key);
+>assertions.fail : Symbol(Assertions.fail, Decl(neverReturnInSwitchDefault.ts, 34, 18))
+>assertions : Symbol(assertions, Decl(neverReturnInSwitchDefault.ts, 40, 43))
+>fail : Symbol(Assertions.fail, Decl(neverReturnInSwitchDefault.ts, 34, 18))
+>key : Symbol(key, Decl(neverReturnInSwitchDefault.ts, 40, 22))
+    }
+}
+

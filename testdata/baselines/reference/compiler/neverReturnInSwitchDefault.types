@@ -1,0 +1,135 @@
+//// [tests/cases/compiler/neverReturnInSwitchDefault.ts] ////
+
+=== neverReturnInSwitchDefault.ts ===
+// Exhaustiveness helper that returns never
+export function assertUnreachable(x: never): never {
+>assertUnreachable : (x: never) => never
+>x : never
+
+    throw new Error('unreachable: ' + x);
+>new Error('unreachable: ' + x) : Error
+>Error : ErrorConstructor
+>'unreachable: ' + x : string
+>'unreachable: ' : "unreachable: "
+>x : never
+}
+
+// Test 1: Simple case - call never-returning function in default
+export function pick(key: 'a' | 'b' | 'c') {
+>pick : (key: 'a' | 'b' | 'c') => 1 | 2 | 3
+>key : "a" | "b" | "c"
+
+    switch (key) {
+>key : "a" | "b" | "c"
+
+        case 'a':
+>'a' : "a"
+
+            return 1;
+>1 : 1
+
+        case 'b':
+>'b' : "b"
+
+            return 2;
+>2 : 2
+
+        case 'c':
+>'c' : "c"
+
+            return 3;
+>3 : 3
+
+        default:
+            assertUnreachable(key);
+>assertUnreachable(key) : never
+>assertUnreachable : (x: never) => never
+>key : never
+    }
+}
+
+// Test 2: With explicit return type annotation
+export function pick2(key: 'a' | 'b' | 'c'): number {
+>pick2 : (key: 'a' | 'b' | 'c') => number
+>key : "a" | "b" | "c"
+
+    switch (key) {
+>key : "a" | "b" | "c"
+
+        case 'a':
+>'a' : "a"
+
+            return 1;
+>1 : 1
+
+        case 'b':
+>'b' : "b"
+
+            return 2;
+>2 : 2
+
+        case 'c':
+>'c' : "c"
+
+            return 3;
+>3 : 3
+
+        default:
+            assertUnreachable(key);
+>assertUnreachable(key) : never
+>assertUnreachable : (x: never) => never
+>key : never
+    }
+}
+
+// Test 3: Using a method that returns never (dotted name call)
+class Assertions {
+>Assertions : Assertions
+
+    fail(x: never): never {
+>fail : (x: never) => never
+>x : never
+
+        throw new Error('unreachable');
+>new Error('unreachable') : Error
+>Error : ErrorConstructor
+>'unreachable' : "unreachable"
+    }
+}
+
+export function pick3(key: 'a' | 'b' | 'c', assertions: Assertions) {
+>pick3 : (key: 'a' | 'b' | 'c', assertions: Assertions) => 1 | 2 | 3
+>key : "a" | "b" | "c"
+>assertions : Assertions
+
+    switch (key) {
+>key : "a" | "b" | "c"
+
+        case 'a':
+>'a' : "a"
+
+            return 1;
+>1 : 1
+
+        case 'b':
+>'b' : "b"
+
+            return 2;
+>2 : 2
+
+        case 'c':
+>'c' : "c"
+
+            return 3;
+>3 : 3
+
+        default:
+            assertions.fail(key);
+>assertions.fail(key) : never
+>assertions.fail : (x: never) => never
+>assertions : Assertions
+>fail : (x: never) => never
+>key : never
+    }
+}
+
