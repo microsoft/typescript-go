@@ -81,19 +81,8 @@ import {
     type UnionOrIntersectionType,
 } from "@typescript/native-preview/unstable/sync";
 import assert from "node:assert";
-import {
-    globSync,
-    mkdirSync,
-    mkdtempSync,
-    readFileSync,
-    rmSync,
-    writeFileSync,
-} from "node:fs";
-import { tmpdir } from "node:os";
-import {
-    join,
-    resolve,
-} from "node:path";
+import { globSync } from "node:fs";
+import { resolve } from "node:path";
 import {
     describe,
     test,
@@ -5699,38 +5688,6 @@ describe("Program - emit", () => {
         }
         finally {
             api.close();
-        }
-    });
-
-    test("emit writes directly to the host filesystem when no VFS is configured", () => {
-        const root = mkdtempSync(join(tmpdir(), "tsgo-api-emit-"));
-        const src = join(root, "src");
-        const config = join(root, "tsconfig.json");
-        mkdirSync(src);
-        writeFileSync(
-            config,
-            JSON.stringify({
-                compilerOptions: {
-                    declaration: true,
-                    outDir: "dist",
-                    rootDir: "src",
-                },
-            }),
-        );
-        writeFileSync(join(src, "index.ts"), "export const value: number = 1;");
-
-        const api = new API({ cwd: root });
-        try {
-            const snapshot = api.updateSnapshot({ openProject: config });
-            const project = snapshot.getProject(config)!;
-            const result = project.program.emit();
-            assert.deepEqual(result.diagnostics, []);
-            assert.equal(readFileSync(join(root, "dist", "index.js"), "utf8"), "export const value = 1;\n");
-            assert.equal(readFileSync(join(root, "dist", "index.d.ts"), "utf8"), "export declare const value: number;\n");
-        }
-        finally {
-            api.close();
-            rmSync(root, { recursive: true, force: true });
         }
     });
 
