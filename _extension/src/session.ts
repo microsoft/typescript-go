@@ -76,6 +76,10 @@ export class SessionManager implements vscode.Disposable {
         return result.pipe;
     }
 
+    async discoverContentMappers(uris: readonly vscode.Uri[], extensions: readonly string[]): Promise<readonly string[]> {
+        return this.currentSession?.client.discoverContentMappers(uris, extensions) ?? [];
+    }
+
     async dispose(): Promise<void> {
         await this.currentSession?.dispose();
         await Promise.all(this.disposables.map(d => d.dispose()));

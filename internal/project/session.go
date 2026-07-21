@@ -3,6 +3,7 @@ package project
 import (
 	"context"
 	"fmt"
+	"maps"
 	"math"
 	"runtime"
 	gometrics "runtime/metrics"
@@ -1080,6 +1081,79 @@ func (s *Session) GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUr
 	return allProjects, nil
 }
 
+// DiscoverContentMapperExtensions loads configured projects for the supplied foreign documents without
+// creating inferred projects, publishes any newly discovered content-mapper registrations, and returns
+// the requested extensions provided by those configs.
+func (s *Session) DiscoverContentMapperExtensions(ctx context.Context, documentURIs []lsproto.DocumentUri, candidateExtensions []string) []string {
+	caseSensitive := s.Snapshot().UseCaseSensitiveFileNames()
+	canonicalize := func(value string) string { return tspath.GetCanonicalFileName(value, caseSensitive) }
+
+	candidateKeys := collections.NewSetWithSizeHint[string](len(candidateExtensions))
+	candidates := make(map[string]string, len(candidateExtensions))
+	for _, extension := range candidateExtensions {
+		if len(extension) <= 1 || extension[0] != '.' || tspath.GetAnyExtensionFromPath("file"+extension, nil, false) != extension {
+			continue
+		}
+		key := canonicalize(extension)
+		if candidateKeys.AddIfAbsent(key) {
+			candidates[key] = extension
+		}
+	}
+	if candidateKeys.Len() == 0 {
+		return nil
+	}
+
+	documents := make([]lsproto.DocumentUri, 0, len(documentURIs))
+	seenDocuments := collections.NewSetWithSizeHint[string](len(documentURIs))
+	candidateExtensionsCanonical := slices.Collect(maps.Keys(candidateKeys.Keys()))
+	for _, uri := range documentURIs {
+		fileName := uri.FileName()
+		if fileName == "" {
+			continue
+		}
+		if tspath.GetAnyExtensionFromPath(canonicalize(fileName), candidateExtensionsCanonical, false) == "" {
+			continue
+		}
+		key := canonicalize(string(uri))
+		if !seenDocuments.AddIfAbsent(key) {
+			continue
+		}
+		documents = append(documents, uri)
+	}
+	if len(documents) == 0 {
+		return nil
+	}
+
+	snapshot := s.getSnapshot(ctx, ResourceRequest{ConfiguredProjectDocuments: documents}, false /*callerRef*/)
+	if err := s.updateContentMapperRegistrations(ctx, snapshot); err != nil {
+		return nil
+	}
+
+	var discovered collections.Set[string]
+	for _, uri := range documents {
+		project := snapshot.GetDefaultProject(uri)
+		if project == nil || project.Kind != KindConfigured {
+			continue
+		}
+		commandLine := snapshot.ConfigFileRegistry.GetConfig(project.configFilePath)
+		if commandLine == nil {
+			continue
+		}
+		for _, extension := range commandLine.ContentMapperExtensions() {
+			discovered.Add(canonicalize(extension))
+		}
+	}
+	matched := make([]string, 0, candidateKeys.Len())
+	for key := range candidateKeys.Keys() {
+		if discovered.Has(key) {
+			extension := candidates[key]
+			matched = append(matched, extension)
+		}
+	}
+	slices.Sort(matched)
+	return matched
+}
+
 func (s *Session) GetLanguageServicesForDocuments(ctx context.Context, uris []lsproto.DocumentUri) []*ls.LanguageService {
 	snapshot := s.getSnapshot(
 		ctx,
@@ -1300,7 +1374,7 @@ func (s *Session) updateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 				s.logger.Log(err)
 			}
 		}
-		s.updateContentMapperRegistrations(ctx, newSnapshot)
+		_ = s.updateContentMapperRegistrations(ctx, newSnapshot)
 		s.publishProgramDiagnostics(oldSnapshot, newSnapshot)
 		s.sendProjectInfoTelemetryForNewProjects(oldSnapshot, newSnapshot)
 		s.warmAutoImportCache(ctx, change, oldSnapshot, newSnapshot)
@@ -1400,7 +1474,7 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 // configs in the new snapshot and, when the set changes, asks the client to synchronize text documents
 // with those extensions. This is how a foreign file (e.g. a `.vue`) begins flowing to the server once a
 // config that maps it is discovered.
-func (s *Session) updateContentMapperRegistrations(ctx context.Context, snapshot *Snapshot) {
+func (s *Session) updateContentMapperRegistrations(ctx context.Context, snapshot *Snapshot) error {
 	var seen collections.Set[string]
 	var extensions []string
 	for _, entry := range snapshot.ConfigFileRegistry.configs {
@@ -1420,7 +1494,7 @@ func (s *Session) updateContentMapperRegistrations(ctx context.Context, snapshot
 	// Background tasks may finish out of order; never let an older snapshot's task overwrite the
 	// registration derived from a newer one.
 	if snapshot.ID() <= s.registeredContentMapperSnapshotID {
-		return
+		return nil
 	}
 	var current []string
 	if published := s.contentMapperExtensions.Load(); published != nil {
@@ -1428,7 +1502,7 @@ func (s *Session) updateContentMapperRegistrations(ctx context.Context, snapshot
 	}
 	if slices.Equal(extensions, current) {
 		s.registeredContentMapperSnapshotID = snapshot.ID()
-		return
+		return nil
 	}
 	// RegisterContentMapperExtensions replaces the prior registration wholesale (unregistering extensions
 	// that are no longer mapped and registering the current set), so an empty set removes the registration
@@ -1438,10 +1512,11 @@ func (s *Session) updateContentMapperRegistrations(ctx context.Context, snapshot
 		if s.options.LoggingEnabled {
 			s.logger.Log(err)
 		}
-		return
+		return err
 	}
 	s.contentMapperExtensions.Store(&extensions)
 	s.registeredContentMapperSnapshotID = snapshot.ID()
+	return nil
 }
 
 func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) error {

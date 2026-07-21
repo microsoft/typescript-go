@@ -1001,6 +1001,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 
 	registerRequestHandler(handlers, lsproto.CustomInitializeAPISessionInfo, (*Server).handleInitializeAPISession)
 	registerRequestHandler(handlers, lsproto.CustomProjectInfoInfo, (*Server).handleProjectInfo)
+	registerRequestHandler(handlers, lsproto.CustomDiscoverContentMappersInfo, (*Server).handleDiscoverContentMappers)
 	return handlers
 })
 
@@ -2085,4 +2086,13 @@ func (s *Server) handleProjectInfo(ctx context.Context, params *lsproto.ProjectI
 	return &lsproto.ProjectInfoResult{
 		ConfigFilePath: configFilePath,
 	}, nil
+}
+
+func (s *Server) handleDiscoverContentMappers(ctx context.Context, params *lsproto.DiscoverContentMappersParams, _ *lsproto.RequestMessage) (lsproto.CustomDiscoverContentMappersResponse, error) {
+	textDocuments := make([]lsproto.DocumentUri, len(params.TextDocuments))
+	for i, document := range params.TextDocuments {
+		textDocuments[i] = document.Uri
+	}
+	extensions := s.session.DiscoverContentMapperExtensions(ctx, textDocuments, params.Extensions)
+	return &lsproto.DiscoverContentMappersResult{Extensions: extensions}, nil
 }

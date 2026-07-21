@@ -140,6 +140,66 @@ func TestContentMapperInProject(t *testing.T) {
 	})
 }
 
+func TestDiscoverContentMapperExtensions(t *testing.T) {
+	t.Parallel()
+	files := map[string]any{
+		"/home/project/tsconfig.json": `{
+			"compilerOptions": { "target": "es2020", "module": "esnext", "moduleResolution": "bundler", "strict": true },
+			"contentMappers": [ { "package": "mapper", "extensions": [".vue"] } ]
+		}`,
+		"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.ComponentMapper),
+		"/home/project/ProfileCard.vue":                  `<template><h1>Profile</h1></template>`,
+		"/home/other/tsconfig.json": `{
+			"compilerOptions": { "target": "es2020", "module": "esnext", "moduleResolution": "bundler" },
+			"contentMappers": [ { "package": "mapper", "extensions": [".svelte"] } ]
+		}`,
+		"/home/other/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.ComponentMapper),
+		"/home/other/Widget.svelte":                    `<template><h1>Widget</h1></template>`,
+	}
+	init, utils := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
+		CurrentDirectory:               "/home/project",
+		DefaultLibraryPath:             bundled.LibPath(),
+		TypingsLocation:                projecttestutil.TestTypingsLocation,
+		PositionEncoding:               lsproto.PositionEncodingKindUTF8,
+		DangerouslyLoadExternalPlugins: true,
+	}, nil)
+	init.Spawner = contentmappertest.NewSpawner()
+	session := project.NewSession(init)
+	defer session.Close()
+
+	ctx := context.Background()
+	assert.DeepEqual(t, session.DiscoverContentMapperExtensions(ctx, []lsproto.DocumentUri{
+		"file:///home/other/Widget.svelte",
+	}, []string{".svelte"}), []string{".svelte"})
+
+	matched := session.DiscoverContentMapperExtensions(ctx, []lsproto.DocumentUri{
+		"file:///home/project/ProfileCard.vue",
+		"file:///home/project/ignored.svelte",
+	}, []string{".vue", ".svelte", ".vue", "vue", "../bad"})
+	assert.DeepEqual(t, matched, []string{".vue"})
+
+	calls := utils.Client().RegisterContentMapperExtensionsCalls()
+	assert.Assert(t, len(calls) > 0, "expected content mapper extensions to be registered")
+	assert.DeepEqual(t, calls[len(calls)-1].Extensions, []string{".svelte", ".vue"})
+
+	snapshot := session.Snapshot()
+	assert.Assert(t, snapshot.GetDefaultProject("file:///home/project/ProfileCard.vue") != nil, "expected the configured project to be discovered")
+	assert.Assert(t, snapshot.GetDefaultProject("file:///home/project/ignored.svelte") == nil, "unmatched extensions should not load a project")
+
+	untrustedInit, untrustedUtils := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
+		CurrentDirectory:               "/home/project",
+		DefaultLibraryPath:             bundled.LibPath(),
+		TypingsLocation:                projecttestutil.TestTypingsLocation,
+		PositionEncoding:               lsproto.PositionEncodingKindUTF8,
+		DangerouslyLoadExternalPlugins: false,
+	}, nil)
+	untrustedInit.Spawner = contentmappertest.NewSpawner()
+	untrusted := project.NewSession(untrustedInit)
+	defer untrusted.Close()
+	assert.Equal(t, len(untrusted.DiscoverContentMapperExtensions(ctx, []lsproto.DocumentUri{"file:///home/project/ProfileCard.vue"}, []string{".vue"})), 0)
+	assert.Equal(t, len(untrustedUtils.Client().RegisterContentMapperExtensionsCalls()), 0)
+}
+
 func TestContentMapperSynthesizedDocumentSymbols(t *testing.T) {
 	t.Parallel()
 	if !bundled.Embedded {

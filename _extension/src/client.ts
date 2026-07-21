@@ -512,6 +512,23 @@ export class Client implements vscode.Disposable {
             textDocument: { uri },
         }, token);
     }
+
+    async discoverContentMappers(uris: readonly vscode.Uri[], extensions: readonly string[]): Promise<readonly string[]> {
+        if (!this.client || !this.isInitialized || !vscode.workspace.isTrusted) {
+            return [];
+        }
+        try {
+            const result = await this.client.sendRequest<{ extensions: string[]; }>("custom/discoverContentMappers", {
+                textDocuments: uris.map(uri => ({ uri: uri.toString() })),
+                extensions: [...extensions],
+            });
+            return result.extensions;
+        }
+        catch (error) {
+            this.outputChannel.warn(`Content mapper discovery failed: ${String(error)}`);
+            return [];
+        }
+    }
 }
 
 // Returns true when running on a VS Code Insiders build.

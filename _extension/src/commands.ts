@@ -26,6 +26,36 @@ export function registerEnablementCommands(context: vscode.ExtensionContext, tel
     }));
 }
 
+export const discoverContentMappersCommandName = "typescript.native-preview.discoverContentMappers";
+
+export interface DiscoverContentMappersCommandArgs {
+    readonly uris: readonly vscode.Uri[];
+    readonly extensions: readonly string[];
+}
+
+export function registerDiscoverContentMappersCommand(
+    context: vscode.ExtensionContext,
+    discover: (uris: readonly vscode.Uri[], extensions: readonly string[]) => Promise<readonly string[]>,
+): void {
+    context.subscriptions.push(vscode.commands.registerCommand(discoverContentMappersCommandName, async (args: unknown): Promise<readonly string[]> => {
+        if (!isDiscoverContentMappersCommandArgs(args)) {
+            return [];
+        }
+        return discover(args.uris, args.extensions);
+    }));
+}
+
+function isDiscoverContentMappersCommandArgs(value: unknown): value is DiscoverContentMappersCommandArgs {
+    if (typeof value !== "object" || value === null) {
+        return false;
+    }
+    const args = value as Partial<DiscoverContentMappersCommandArgs>;
+    return Array.isArray(args.uris)
+        && args.uris.every(uri => uri instanceof vscode.Uri)
+        && Array.isArray(args.extensions)
+        && args.extensions.every(extension => typeof extension === "string");
+}
+
 /**
  * Updates the TypeScript 7 setting and reloads extension host.
  * Handles both `js/ts.experimental.useTsgo` and `typescript.experimental.useTsgo`.
