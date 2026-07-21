@@ -53,6 +53,7 @@ import type { FileSystem } from "@typescript/native-preview/unstable/fs";
 import {
     API,
     type BigIntLiteralType,
+    CheckFlags,
     type ConditionalType,
     DiagnosticCategory,
     type FreshableType,
@@ -66,6 +67,7 @@ import {
     ModifierFlags,
     ModuleKind,
     ObjectFlags,
+    type Signature,
     SignatureKind,
     type StringMappingType,
     SymbolFlags,
@@ -100,6 +102,25 @@ describe("API", () => {
             const config = api.parseConfigFile("/tsconfig.json");
             assert.deepEqual(config.fileNames, ["/src/index.ts", "/src/foo.ts"]);
             assert.deepEqual(config.options, { configFilePath: "/tsconfig.json" });
+            assert.equal(config.projectReferences, undefined);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("parseConfigFile includes projectReferences", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ references: [{ path: "./harness" }, { path: "./server" }] }),
+        });
+        try {
+            const config = api.parseConfigFile("/tsconfig.json");
+            assert.deepEqual(config.fileNames, []);
+            assert.deepEqual(config.options, { configFilePath: "/tsconfig.json" });
+            assert.deepEqual(config.projectReferences, [
+                { circular: false, originalPath: "./harness", path: "/harness" },
+                { circular: false, originalPath: "./server", path: "/server" },
+            ]);
         }
         finally {
             api.close();
@@ -1320,11 +1341,87 @@ export class Cache {
             const callSigs = project.checker.getSignaturesOfType(type, SignatureKind.Call);
             assert.ok(callSigs.length > 0);
             const sig = callSigs[0];
+            const typeCallSigs = type.getCallSignatures();
+            assert.deepEqual(typeCallSigs, callSigs);
+            assert.ok((sig.getReturnType()).flags & TypeFlags.Number);
+            assert.ok((sig.getTypeParameterAtPosition(0)).flags & TypeFlags.Number);
             assert.ok(sig.id);
             assert.ok(sig.parameters.length >= 2);
             assert.ok(sig.hasRestParameter);
             assert.ok(!sig.isConstruct);
             assert.ok(!sig.isAbstract);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("getApparentProperties includes CallableFunction members", () => {
+        const api = spawnAPI(checkerFiles);
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const src = checkerFiles["/src/main.ts"];
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", src.indexOf("add("));
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            const propertyNames = (type.getApparentProperties()).map(property => property.name);
+            assert.ok(propertyNames.includes("apply"));
+            assert.ok(propertyNames.includes("call"));
+            assert.ok(propertyNames.includes("bind"));
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("checker and object methods share cached results", () => {
+        const api = new API({
+            cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
+            fs: createVirtualFileSystem(checkerFiles),
+            collectTiming: true,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const src = checkerFiles["/src/main.ts"];
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", src.indexOf("add("));
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            let signature: Signature | undefined;
+
+            function assertOneRequest(callback: () => void) {
+                api.resetTimingInfo();
+                callback();
+                assert.equal((api.getTimingInfo()).totals.requestCount, 1);
+            }
+
+            assertOneRequest(() => {
+                const properties = type.getProperties();
+                assert.strictEqual(project.checker.getPropertiesOfType(type), properties);
+            });
+            assertOneRequest(() => {
+                const signatures = type.getCallSignatures();
+                assert.strictEqual(project.checker.getSignaturesOfType(type, SignatureKind.Call), signatures);
+                signature = signatures[0];
+            });
+            assertOneRequest(() => {
+                const nonNullable = project.checker.getNonNullableType(type);
+                assert.strictEqual(type.getNonNullableType(), nonNullable);
+            });
+            assertOneRequest(() => {
+                const apparentType = type.getApparentType();
+                assert.strictEqual(project.checker.getApparentType(type), apparentType);
+            });
+            assertOneRequest(() => {
+                const indexInfos = type.getIndexInfos();
+                assert.strictEqual(project.checker.getIndexInfosOfType(type), indexInfos);
+            });
+            assertOneRequest(() => {
+                assert.ok(signature);
+                const returnType = project.checker.getReturnTypeOfSignature(signature);
+                assert.strictEqual(signature.getReturnType(), returnType);
+            });
         }
         finally {
             api.close();
@@ -1618,6 +1715,21 @@ export const value = 1;
             api.close();
         }
     });
+
+    test("checkFlags is typed as CheckFlags", () => {
+        const api = spawnAPI(symbolFiles);
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const symbol = project.checker.getSymbolAtPosition("/src/mod.ts", symbolFiles["/src/mod.ts"].indexOf("Animal"));
+            assert.ok(symbol);
+            const checkFlags: CheckFlags = symbol.checkFlags;
+            assert.equal(checkFlags & CheckFlags.Readonly, 0);
+        }
+        finally {
+            api.close();
+        }
+    });
 });
 
 describe("Type - getSymbol", () => {
@@ -1691,6 +1803,11 @@ export const tuple: readonly [number, string?, ...boolean[]] = [1];
             const target = ref.getTarget();
             assert.ok(target);
             assert.ok(target.flags & TypeFlags.Object);
+            const properties = type.getProperties();
+            assert.ok(properties.some(property => property.name === "length"));
+            assert.equal((type.getProperty("length"))?.name, "length");
+            assert.ok((type.getApparentProperties()).length >= properties.length);
+            assert.strictEqual(type.getNonNullableType(), type);
         }
         finally {
             api.close();
@@ -3306,6 +3423,69 @@ describe("Checker - getConstraintOfTypeParameter", () => {
             const constraint = project.checker.getConstraintOfTypeParameter(typeParams[0]);
             assert.ok(constraint);
             assert.ok(constraint.flags & TypeFlags.String, `Expected string constraint, got flags ${constraint.flags}`);
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
+describe("Checker - TypeParameter getters", () => {
+    test("getConstraint() and getDefault() return the constraint and default types", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": `export function f<T extends string = "hello">(x: T): T { return x; }`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const src = `export function f<T extends string = "hello">(x: T): T { return x; }`;
+            const pos = src.indexOf("f<");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const sigs = project.checker.getSignaturesOfType(type, SignatureKind.Call);
+            assert.ok(sigs.length > 0);
+            const typeParams = sigs[0].getTypeParameters();
+            assert.ok(typeParams.length > 0, "Should have type parameters");
+            const typeParam = typeParams[0] as TypeParameter;
+
+            const constraint = typeParam.getConstraint();
+            assert.ok(constraint);
+            assert.ok(constraint.flags & TypeFlags.String, `Expected string constraint, got flags ${constraint.flags}`);
+
+            const defaultType = typeParam.getDefault();
+            assert.ok(defaultType);
+            assert.ok(defaultType.flags & TypeFlags.StringLiteral, `Expected string literal default, got flags ${defaultType.flags}`);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("getConstraint() and getDefault() return undefined when there is none", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": `export function f<T>(x: T): T { return x; }`,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            const src = `export function f<T>(x: T): T { return x; }`;
+            const pos = src.indexOf("f<");
+            const symbol = project.checker.getSymbolAtPosition("/src/main.ts", pos);
+            assert.ok(symbol);
+            const type = project.checker.getTypeOfSymbol(symbol);
+            assert.ok(type);
+            const sigs = project.checker.getSignaturesOfType(type, SignatureKind.Call);
+            assert.ok(sigs.length > 0);
+            const typeParams = sigs[0].getTypeParameters();
+            assert.ok(typeParams.length > 0, "Should have type parameters");
+            const typeParam = typeParams[0] as TypeParameter;
+
+            assert.equal(typeParam.getConstraint(), undefined);
+            assert.equal(typeParam.getDefault(), undefined);
         }
         finally {
             api.close();

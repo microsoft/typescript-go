@@ -1,3 +1,4 @@
+import type { CheckFlags } from "#enums/checkFlags";
 import type { CompletionItemKind } from "#enums/completionItemKind";
 import type { ModuleKind } from "#enums/moduleKind";
 import type {
@@ -80,9 +81,19 @@ export interface InitializeResponse {
     currentDirectory: string;
 }
 
+export interface ProjectReference {
+    /** A normalized path on disk */
+    path: string;
+    /** The path as the user originally wrote it */
+    originalPath?: string;
+    /** True if it is intended that this reference form a circularity */
+    circular?: boolean;
+}
+
 export interface ConfigResponse {
     options: Record<string, unknown>;
     fileNames: string[];
+    projectReferences?: ProjectReference[];
 }
 
 export interface LSPUpdateSnapshotParams {
@@ -227,7 +238,7 @@ export interface SymbolResponse {
     project: Path;
     name: __String;
     flags: number;
-    checkFlags: number;
+    checkFlags: CheckFlags;
     declarations?: string[];
     valueDeclaration?: string;
     parent?: number;
