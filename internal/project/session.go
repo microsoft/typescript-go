@@ -103,15 +103,11 @@ type Session struct {
 	contentMapperHost contentmapper.Host
 	fs                *overlayFS
 
-	// contentMapperExtensions is the sorted set of foreign file extensions currently registered with the
-	// client for text document synchronization. It is published as an atomic pointer so isContentMapperFile
-	// can classify files lock-free on the hot didChange path, without blocking behind the registration
-	// round-trip that updateContentMapperRegistrations runs while holding contentMapperRegistrationMu.
 	// registeredContentMapperSnapshotID is the ID of the newest snapshot whose registration has been
 	// applied. Registration runs from background tasks that may finish out of order, so
 	// contentMapperRegistrationMu serializes updates and the snapshot ID keeps a stale task from
 	// overwriting a newer snapshot's registration.
-	contentMapperExtensions           atomic.Pointer[[]string]
+	registeredContentMapperExtensions []string
 	registeredContentMapperSnapshotID uint64
 	contentMapperRegistrationMu       sync.Mutex
 
@@ -390,12 +386,11 @@ func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, ve
 }
 
 // isContentMapperFile reports whether uri is a foreign file handled by a configured content mapper, based
-// on the extensions currently registered with the client for text document synchronization. It reads the
-// published extension set lock-free so it never blocks on the didChange hot path.
+// on the extensions currently registered with the client for text document synchronization.
 func (s *Session) isContentMapperFile(uri lsproto.DocumentUri) bool {
-	extensions := s.contentMapperExtensions.Load()
-	return extensions != nil && len(*extensions) > 0 &&
-		tspath.FileExtensionIsOneOf(uri.FileName(), *extensions)
+	contentMappers := s.Snapshot().contentMappers()
+	return contentMappers != nil && len(contentMappers.extensions) > 0 &&
+		tspath.FileExtensionIsOneOf(uri.FileName(), contentMappers.extensions)
 }
 
 func (s *Session) DidSaveFile(ctx context.Context, uri lsproto.DocumentUri) {
@@ -1273,7 +1268,7 @@ func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, baseSna
 			AutoImports: uri,
 		},
 	}
-	newSnapshot := baseSnapshot.Clone(ctx, change, baseSnapshot.fs.overlays, s.registeredContentMapperExtensions(), s)
+	newSnapshot := baseSnapshot.Clone(ctx, change, baseSnapshot.fs.overlays, s)
 
 	project := newSnapshot.GetDefaultProject(uri)
 	if project == nil {
@@ -1341,7 +1336,7 @@ func (s *Session) updateSnapshotRef(ctx context.Context, overlays map[tspath.Pat
 func (s *Session) updateSnapshot(ctx context.Context, overlays map[tspath.Path]*Overlay, change SnapshotChange, callerRef bool) *Snapshot {
 	s.snapshotMu.Lock()
 	oldSnapshot := s.snapshot
-	newSnapshot := oldSnapshot.Clone(ctx, change, overlays, s.registeredContentMapperExtensions(), s)
+	newSnapshot := oldSnapshot.Clone(ctx, change, overlays, s)
 	s.snapshot = newSnapshot
 	if callerRef {
 		newSnapshot.ref()
@@ -1381,13 +1376,6 @@ func (s *Session) updateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 	})
 
 	return newSnapshot
-}
-
-func (s *Session) registeredContentMapperExtensions() []string {
-	if extensions := s.contentMapperExtensions.Load(); extensions != nil {
-		return *extensions
-	}
-	return nil
 }
 
 // WaitForBackgroundTasks waits for all background tasks to complete.
@@ -1482,19 +1470,8 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 // with those extensions. This is how a foreign file (e.g. a `.vue`) begins flowing to the server once a
 // config that maps it is discovered.
 func (s *Session) updateContentMapperRegistrations(ctx context.Context, snapshot *Snapshot) error {
-	var seen collections.Set[string]
-	var extensions []string
-	for _, entry := range snapshot.ConfigFileRegistry.configs {
-		if entry.commandLine == nil {
-			continue
-		}
-		for _, ext := range entry.commandLine.ContentMapperExtensions() {
-			if seen.AddIfAbsent(ext) {
-				extensions = append(extensions, ext)
-			}
-		}
-	}
-	slices.Sort(extensions)
+	contentMappers := snapshot.contentMappers()
+	extensions := contentMappers.extensions
 
 	s.contentMapperRegistrationMu.Lock()
 	defer s.contentMapperRegistrationMu.Unlock()
@@ -1503,11 +1480,7 @@ func (s *Session) updateContentMapperRegistrations(ctx context.Context, snapshot
 	if snapshot.ID() <= s.registeredContentMapperSnapshotID {
 		return nil
 	}
-	var current []string
-	if published := s.contentMapperExtensions.Load(); published != nil {
-		current = *published
-	}
-	if slices.Equal(extensions, current) {
+	if slices.Equal(extensions, s.registeredContentMapperExtensions) {
 		s.registeredContentMapperSnapshotID = snapshot.ID()
 		return nil
 	}
@@ -1521,7 +1494,7 @@ func (s *Session) updateContentMapperRegistrations(ctx context.Context, snapshot
 		}
 		return err
 	}
-	s.contentMapperExtensions.Store(&extensions)
+	s.registeredContentMapperExtensions = extensions
 	s.registeredContentMapperSnapshotID = snapshot.ID()
 	return nil
 }
@@ -2021,7 +1994,7 @@ func (s *Session) warmAutoImportCache(ctx context.Context, change SnapshotChange
 				AutoImports: changedFile,
 			},
 		}
-		clonedSnapshot := newSnapshot.Clone(warmCtx, warmChange, newSnapshot.fs.overlays, s.registeredContentMapperExtensions(), s)
+		clonedSnapshot := newSnapshot.Clone(warmCtx, warmChange, newSnapshot.fs.overlays, s)
 
 		// If cancelled during clone, discard the incomplete result.
 		if warmCtx.Err() != nil {

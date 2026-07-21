@@ -33,6 +33,7 @@ type ProjectCollectionBuilder struct {
 	parseCache          *ParseCache
 	extendedConfigCache *ExtendedConfigCache
 	contentMapperHost   contentmapper.Host
+	contentMappers      *snapshotContentMappers
 	toPath              func(fileName string) tspath.Path
 
 	ctx                                context.Context
@@ -68,6 +69,7 @@ func newProjectCollectionBuilder(
 	parseCache *ParseCache,
 	extendedConfigCache *ExtendedConfigCache,
 	contentMapperHost contentmapper.Host,
+	contentMappers *snapshotContentMappers,
 	client Client,
 ) *ProjectCollectionBuilder {
 	return &ProjectCollectionBuilder{
@@ -79,6 +81,7 @@ func newProjectCollectionBuilder(
 		parseCache:                         parseCache,
 		extendedConfigCache:                extendedConfigCache,
 		contentMapperHost:                  contentMapperHost,
+		contentMappers:                     contentMappers,
 		base:                               oldProjectCollection,
 		configFileRegistryBuilder:          newConfigFileRegistryBuilder(lsproto.GetClientCapabilities(ctx).Workspace.DidChangeWatchedFiles.RelativePatternSupport, fs, oldConfigFileRegistry, extendedConfigCache, newSnapshotID, sessionOptions, customConfigFileName, nil),
 		newSnapshotID:                      newSnapshotID,
@@ -1057,20 +1060,25 @@ func (b *ProjectCollectionBuilder) updateInferredProjectRoots(rootFileNames []st
 	}
 
 	slices.Sort(rootFileNames)
+	var contentMappers []*contentmapper.Mapper
+	if b.contentMappers != nil {
+		contentMappers = b.contentMappers.mappers
+	}
 	if b.inferredProject.Value() == nil {
-		b.inferredProject.Set(NewInferredProject(b.sessionOptions.CurrentDirectory, b.compilerOptionsForInferredProjects, rootFileNames, b, logger))
+		b.inferredProject.Set(NewInferredProject(b.sessionOptions.CurrentDirectory, b.compilerOptionsForInferredProjects, rootFileNames, contentMappers, b, logger))
 	} else {
 		newCompilerOptions := b.inferredProject.Value().CommandLine.CompilerOptions()
 		if b.compilerOptionsForInferredProjects != nil {
 			newCompilerOptions = b.compilerOptionsForInferredProjects
 		}
-		newCommandLine := tsoptions.NewParsedCommandLine(newCompilerOptions, rootFileNames, tspath.ComparePathsOptions{
+		newCommandLine := newInferredProjectCommandLine(newCompilerOptions, rootFileNames, contentMappers, tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: b.fs.fs.UseCaseSensitiveFileNames(),
 			CurrentDirectory:          b.sessionOptions.CurrentDirectory,
 		})
 		changed := b.inferredProject.ChangeIf(
 			func(p *Project) bool {
-				return !maps.Equal(p.CommandLine.FileNamesByPath(), newCommandLine.FileNamesByPath())
+				return !maps.Equal(p.CommandLine.FileNamesByPath(), newCommandLine.FileNamesByPath()) ||
+					!slices.Equal(p.CommandLine.ContentMappers(), newCommandLine.ContentMappers())
 			},
 			func(p *Project) {
 				if logger != nil {

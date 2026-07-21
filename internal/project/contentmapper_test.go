@@ -177,6 +177,98 @@ func TestContentMapperInProject(t *testing.T) {
 	})
 }
 
+func TestContentMapperOpenFileExcludedByConfigChange(t *testing.T) {
+	t.Parallel()
+	files := map[string]any{
+		"/home/project/tsconfig.json": `{
+			"compilerOptions": { "target": "es2020", "module": "esnext", "moduleResolution": "bundler", "strict": true },
+			"include": ["src"],
+			"contentMappers": [ { "package": "mapper", "extensions": [".box"] } ]
+		}`,
+		"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.TransformingMapper),
+		"/home/project/src/app.box":                      "export const version = #{target};\n",
+		"/home/project/src/main.ts":                      "export const main = true;\n",
+	}
+	init, utils := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
+		CurrentDirectory:               "/home/project",
+		DefaultLibraryPath:             bundled.LibPath(),
+		TypingsLocation:                projecttestutil.TestTypingsLocation,
+		PositionEncoding:               lsproto.PositionEncodingKindUTF8,
+		DangerouslyLoadExternalPlugins: true,
+	}, nil)
+	init.Spawner = contentmappertest.NewSpawner()
+	session := project.NewSession(init)
+	defer session.Close()
+
+	ctx := context.Background()
+	boxURI := lsproto.DocumentUri("file:///home/project/src/app.box")
+	session.DidOpenFile(ctx, boxURI, 1, files["/home/project/src/app.box"].(string), lsproto.LanguageKind("box"))
+	languageService, err := session.GetLanguageService(ctx, boxURI)
+	assert.NilError(t, err)
+	assert.Assert(t, languageService.GetProgram().GetSourceFile("/home/project/src/app.box") != nil)
+
+	assert.NilError(t, utils.FS().WriteFile("/home/project/tsconfig.json", `{
+		"compilerOptions": { "target": "es2020", "module": "esnext", "moduleResolution": "bundler", "strict": true },
+		"include": ["src/**/*.ts"],
+		"contentMappers": [ { "package": "mapper", "extensions": [".box"] } ]
+	}`))
+	session.DidChangeWatchedFiles(ctx, []*lsproto.FileEvent{{
+		Uri:  "file:///home/project/tsconfig.json",
+		Type: lsproto.FileChangeTypeChanged,
+	}})
+
+	languageService, err = session.GetLanguageService(ctx, boxURI)
+	assert.NilError(t, err)
+	defaultProject := session.Snapshot().GetDefaultProject(boxURI)
+	assert.Assert(t, defaultProject != nil, "expected a default project for the open app.box")
+	assert.Equal(t, defaultProject.Kind, project.KindInferred)
+	boxFile := languageService.GetProgram().GetSourceFile("/home/project/src/app.box")
+	assert.Assert(t, boxFile != nil, "expected the open app.box in the inferred project")
+	assert.Assert(t, boxFile.ContentMapper() != "", "expected app.box to retain its content mapper")
+	assert.Assert(t, !strings.Contains(boxFile.Text(), "#{target}"), "expected app.box to be transformed: %q", boxFile.Text())
+}
+
+func TestContentMapperInferredProjectUsesSessionMappers(t *testing.T) {
+	t.Parallel()
+	files := map[string]any{
+		"/home/configured/tsconfig.json": `{
+			"compilerOptions": { "target": "es2020", "module": "esnext", "moduleResolution": "bundler" },
+			"contentMappers": [ { "package": "mapper", "extensions": [".box"] } ]
+		}`,
+		"/home/configured/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.TransformingMapper),
+		"/home/configured/main.ts":                          "export const main = true;\n",
+		"/home/loose/app.box":                               "export const version = #{target};\n",
+	}
+	init, _ := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
+		CurrentDirectory:               "/home",
+		DefaultLibraryPath:             bundled.LibPath(),
+		TypingsLocation:                projecttestutil.TestTypingsLocation,
+		PositionEncoding:               lsproto.PositionEncodingKindUTF8,
+		DangerouslyLoadExternalPlugins: true,
+	}, nil)
+	init.Spawner = contentmappertest.NewSpawner()
+	session := project.NewSession(init)
+	defer session.Close()
+
+	ctx := context.Background()
+	configuredURI := lsproto.DocumentUri("file:///home/configured/main.ts")
+	session.DidOpenFile(ctx, configuredURI, 1, files["/home/configured/main.ts"].(string), lsproto.LanguageKindTypeScript)
+	_, err := session.GetLanguageService(ctx, configuredURI)
+	assert.NilError(t, err)
+
+	boxURI := lsproto.DocumentUri("file:///home/loose/app.box")
+	session.DidOpenFile(ctx, boxURI, 1, files["/home/loose/app.box"].(string), lsproto.LanguageKind("box"))
+	languageService, err := session.GetLanguageService(ctx, boxURI)
+	assert.NilError(t, err)
+	defaultProject := session.Snapshot().GetDefaultProject(boxURI)
+	assert.Assert(t, defaultProject != nil, "expected a default project for the loose app.box")
+	assert.Equal(t, defaultProject.Kind, project.KindInferred)
+	boxFile := languageService.GetProgram().GetSourceFile("/home/loose/app.box")
+	assert.Assert(t, boxFile != nil, "expected loose app.box in the inferred project")
+	assert.Assert(t, boxFile.ContentMapper() != "", "expected loose app.box to use the session mapper union")
+	assert.Assert(t, !strings.Contains(boxFile.Text(), "#{target}"), "expected loose app.box to be transformed: %q", boxFile.Text())
+}
+
 func TestDiscoverContentMapperExtensions(t *testing.T) {
 	t.Parallel()
 	files := map[string]any{

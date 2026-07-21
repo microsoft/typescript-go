@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -102,6 +103,7 @@ func NewInferredProject(
 	currentDirectory string,
 	compilerOptions *core.CompilerOptions,
 	rootFileNames []string,
+	contentMappers []*contentmapper.Mapper,
 	builder *ProjectCollectionBuilder,
 	logger *logging.LogTree,
 ) *Project {
@@ -121,15 +123,27 @@ func NewInferredProject(
 			ResolveJsonModule:          core.TSTrue,
 		}
 	}
-	p.CommandLine = tsoptions.NewParsedCommandLine(
+	p.CommandLine = newInferredProjectCommandLine(
 		compilerOptions,
 		rootFileNames,
+		contentMappers,
 		tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: builder.fs.fs.UseCaseSensitiveFileNames(),
 			CurrentDirectory:          currentDirectory,
 		},
 	)
 	return p
+}
+
+func newInferredProjectCommandLine(
+	compilerOptions *core.CompilerOptions,
+	rootFileNames []string,
+	contentMappers []*contentmapper.Mapper,
+	comparePathsOptions tspath.ComparePathsOptions,
+) *tsoptions.ParsedCommandLine {
+	commandLine := tsoptions.NewParsedCommandLine(compilerOptions, rootFileNames, comparePathsOptions)
+	commandLine.ParsedConfig.ContentMappers = contentMappers
+	return commandLine
 }
 
 func NewProject(

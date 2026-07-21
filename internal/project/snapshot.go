@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"maps"
 	"slices"
+	"sync"
 	"sync/atomic"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
@@ -42,9 +44,16 @@ type Snapshot struct {
 	autoImportsWatch                   *WatchedFiles[map[tspath.Path]string]
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	userPreferences                    lsutil.UserPreferences
+	contentMappersOnce                 sync.Once
+	contentMappersValue                *snapshotContentMappers
 
 	builderLogs *logging.LogTree
 	apiError    error
+}
+
+type snapshotContentMappers struct {
+	extensions []string
+	mappers    []*contentmapper.Mapper
 }
 
 // NewSnapshot initializes a snapshot with refCount 1.
@@ -122,6 +131,34 @@ func (s *Snapshot) Converters() *lsconv.Converters {
 
 func (s *Snapshot) AutoImportRegistry() *autoimport.Registry {
 	return s.AutoImports
+}
+
+func (s *Snapshot) contentMappers() *snapshotContentMappers {
+	s.contentMappersOnce.Do(func() {
+		var seenExtensions collections.Set[string]
+		var seenMappers collections.Set[*contentmapper.Mapper]
+		var extensions []string
+		var mappers []*contentmapper.Mapper
+		for _, path := range slices.Sorted(maps.Keys(s.ConfigFileRegistry.configs)) {
+			entry := s.ConfigFileRegistry.configs[path]
+			if entry.commandLine == nil {
+				continue
+			}
+			for _, mapper := range entry.commandLine.ContentMappers() {
+				if seenMappers.AddIfAbsent(mapper) {
+					mappers = append(mappers, mapper)
+				}
+				for _, extension := range mapper.Extensions {
+					if seenExtensions.AddIfAbsent(extension) {
+						extensions = append(extensions, extension)
+					}
+				}
+			}
+		}
+		slices.Sort(extensions)
+		s.contentMappersValue = &snapshotContentMappers{extensions: extensions, mappers: mappers}
+	})
+	return s.contentMappersValue
 }
 
 func (s *Snapshot) ID() uint64 {
@@ -236,7 +273,6 @@ func (s *Snapshot) Clone(
 	ctx context.Context,
 	change SnapshotChange,
 	overlays map[tspath.Path]*Overlay,
-	contentMapperExtensions []string,
 	session *Session,
 ) *Snapshot {
 	var logger *logging.LogTree
@@ -292,6 +328,7 @@ func (s *Snapshot) Clone(
 	}
 
 	start := time.Now()
+	contentMappers := s.contentMappers()
 	fs := newSnapshotFSBuilder(session.fs.fs, s.fs.overlays, overlays, s.fs.diskFiles, s.fs.diskDirectories, s.fs.nodeModulesRealpathAliases, session.options.PositionEncoding, s.toPath)
 	if change.fileChanges.HasExcessiveWatchEvents() {
 		invalidateStart := time.Now()
@@ -310,6 +347,10 @@ func (s *Snapshot) Clone(
 			logger.Logf("npm install detected, invalidated node_modules cache in %v", time.Since(invalidateStart))
 		}
 	} else {
+		var contentMapperExtensions []string
+		if contentMappers != nil {
+			contentMapperExtensions = contentMappers.extensions
+		}
 		change.fileChanges = fs.expandAndFilterWatchEvents(change.fileChanges, contentMapperExtensions)
 		change.fileChanges = s.fs.expandRealpathAliases(change.fileChanges)
 		fs.markDirtyFiles(change.fileChanges)
@@ -342,6 +383,7 @@ func (s *Snapshot) Clone(
 		session.parseCache,
 		session.extendedConfigCache,
 		session.contentMapperHost,
+		contentMappers,
 		session.client,
 	)
 
