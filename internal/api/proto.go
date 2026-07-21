@@ -519,8 +519,9 @@ type ProfileResult struct {
 }
 
 type ConfigFileResponse struct {
-	FileNames []string              `json:"fileNames"`
-	Options   *core.CompilerOptions `json:"options"`
+	FileNames         []string                 `json:"fileNames"`
+	Options           *core.CompilerOptions    `json:"options"`
+	ProjectReferences []*core.ProjectReference `json:"projectReferences,omitempty"`
 }
 
 type GetDefaultProjectForFileParams struct {
