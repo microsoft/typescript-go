@@ -203,9 +203,9 @@ function f(...args) {
 f("something"); // Still allowed
 ```
 
-#### `skipLibCheck` no longer suppresses merged-interface conflict errors when user code participates in the merge.
+#### `skipLibCheck` behavior with merged-interface conflict errors
 
-When an interface has merged declarations across files, Corsa now consistently reports inheritance/compatibility errors if any merged declaration is in user code, even when another merged declaration is in a `.d.ts` file covered by `skipLibCheck`.
+When an interface has merged declarations across files, Corsa consistently reports inheritance/compatibility errors if any merged declaration is in user code, even when another merged declaration is in a `.d.ts` file covered by `skipLibCheck`.
 
 This matches TS7 behavior and avoids nondeterministic diagnostics that previously depended on declaration-check ordering.
 
