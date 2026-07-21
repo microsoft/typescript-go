@@ -5699,13 +5699,16 @@ describe("Program - emit", () => {
         const src = join(root, "src");
         const config = join(root, "tsconfig.json");
         mkdirSync(src);
-        writeFileSync(config, JSON.stringify({
-            compilerOptions: {
-                declaration: true,
-                outDir: "dist",
-                rootDir: "src",
-            },
-        }));
+        writeFileSync(
+            config,
+            JSON.stringify({
+                compilerOptions: {
+                    declaration: true,
+                    outDir: "dist",
+                    rootDir: "src",
+                },
+            }),
+        );
         writeFileSync(join(src, "index.ts"), "export const value: number = 1;");
 
         const api = new API({ cwd: root });
