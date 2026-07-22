@@ -45,6 +45,12 @@ fourslash/inlayHints/inlayHintsInteractiveFunctionParameterTypes1.baseline.diff
 
 ## regex checking ##
 
+## preserved escaped lone surrogate code units instead of U+FFFD ##
+conformance/unicodeExtendedEscapesInStrings10(target=es6).types.diff
+conformance/unicodeExtendedEscapesInStrings11(target=es6).types.diff
+conformance/unicodeExtendedEscapesInTemplates10(target=es6).types.diff
+conformance/unicodeExtendedEscapesInTemplates11(target=es6).types.diff
+
 ## find all references ##
 fourslash/findAllReferences/isDefinitionAcrossGlobalProjects.baseline.jsonc.diff
 fourslash/findAllReferences/findAllRefsNonexistentPropertyNoCrash1.baseline.jsonc.diff
@@ -214,7 +220,6 @@ conformance/tsxReactEmit8(jsx=react-jsxdev).js.diff
 
 ## deprecated features ##
 compiler/allowJsClassThisTypeCrash.symbols.diff
-compiler/amdLikeInputDeclarationEmit.errors.txt.diff
 compiler/amdLikeInputDeclarationEmit.js.diff
 compiler/amdLikeInputDeclarationEmit.symbols.diff
 compiler/amdLikeInputDeclarationEmit.types.diff
@@ -279,10 +284,6 @@ compiler/conditionalTypeContextualTypeSimplificationsSuceeds.types.diff
 compiler/declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.js.diff
 compiler/declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.types.diff
 compiler/defaultPropsEmptyCurlyBecomesAnyForJs.symbols.diff
-compiler/deleteExpressionMustBeOptional_exactOptionalPropertyTypes(exactoptionalpropertytypes=false).symbols.diff
-compiler/deleteExpressionMustBeOptional_exactOptionalPropertyTypes(exactoptionalpropertytypes=true).symbols.diff
-compiler/deleteExpressionMustBeOptional(strict=false).symbols.diff
-compiler/deleteExpressionMustBeOptional(strict=true).symbols.diff
 compiler/duplicateStringNamedProperty1.errors.txt.diff
 compiler/expandoFunctionBlockShadowing.symbols.diff
 compiler/expandoFunctionBlockShadowing.types.diff
@@ -341,9 +342,6 @@ compiler/inferTypePredicates.errors.txt.diff
 compiler/inheritedConstructorWithRestParams2.errors.txt.diff
 compiler/intTypeCheck.errors.txt.diff
 compiler/invariantGenericErrorElaboration.errors.txt.diff
-compiler/checkingObjectWithThisInNamePositionNoCrash.errors.txt.diff
-compiler/checkingObjectWithThisInNamePositionNoCrash.js.diff
-compiler/checkingObjectWithThisInNamePositionNoCrash.types.diff
 
 ## different error order ##
 compiler/arrayIterationLibES5TargetDifferent(nolib=true,target=es2015).errors.txt.diff
@@ -354,7 +352,6 @@ compiler/assignmentToInstantiationExpression.js.diff
 compiler/javascriptThisAssignmentInStaticBlock.js.diff
 compiler/asyncArrowInClassES5(target=es2015).js.diff
 compiler/augmentedTypesVar.js.diff
-compiler/constructorWithIncompleteTypeAnnotation.js.diff
 compiler/declarationEmitClassAccessorsJs1.js.diff
 compiler/declarationEmitClassSetAccessorParamNameInJs.js.diff
 compiler/declarationEmitClassSetAccessorParamNameInJs2.js.diff
@@ -384,7 +381,6 @@ compiler/declarationEmitExpandoWithGenericConstraint.types.diff
 compiler/declarationEmitFunctionKeywordProp.js.diff
 compiler/declarationEmitFunctionKeywordProp.symbols.diff
 compiler/declarationEmitFunctionKeywordProp.types.diff
-compiler/declarationEmitLateBoundAssignments.js.diff
 compiler/declarationEmitLateBoundAssignments.symbols.diff
 compiler/declarationEmitLateBoundAssignments.types.diff
 compiler/declarationEmitLateBoundAssignments2.js.diff
@@ -394,6 +390,7 @@ compiler/declarationEmitLateBoundJSAssignments.js.diff
 compiler/declarationEmitLateBoundJSAssignments.symbols.diff
 compiler/declarationEmitLateBoundJSAssignments.types.diff
 compiler/declarationEmitMethodDeclaration.js.diff
+compiler/noImplicitThisBigThis.js.diff
 
 ## type/symbol differences of no consequence ##
 compiler/exportDefaultWithJSDoc1.types.diff
@@ -424,6 +421,11 @@ compiler/declarationEmitHigherOrderRetainedGenerics.types.diff
 compiler/declarationEmitMappedTypeDistributivityPreservesConstraints.js.diff
 compiler/declarationEmitMappedTypeDistributivityPreservesConstraints.types.diff
 compiler/declarationEmitMappedTypePreservesTypeParameterConstraint.types.diff
+compiler/anonClassDeclarationEmitIsAnon.types.diff
+compiler/baseConstraintOfDecorator.types.diff
+compiler/baseExpressionTypeParameters.types.diff
+compiler/declarationEmitGenericTypeParamerSerialization3.types.diff
+compiler/declarationEmitLocalClassDeclarationMixin.types.diff
 
 ## better error spans/suggestions ##
 compiler/awaitInNonAsyncFunction.errors.txt.diff
@@ -433,7 +435,6 @@ compiler/classWithDuplicateIdentifier.errors.txt.diff
 compiler/classWithDuplicateIdentifier.symbols.diff
 compiler/classWithDuplicateIdentifier.types.diff
 compiler/commonMissingSemicolons.errors.txt.diff
-compiler/constructorWithIncompleteTypeAnnotation.errors.txt.diff
 compiler/duplicateClassElements.errors.txt.diff
 compiler/duplicateClassElements.symbols.diff
 compiler/duplicateClassElements.types.diff
@@ -625,6 +626,10 @@ conformance/ES5For-of36(target=es2015).errors.txt.diff
 conformance/ES5For-of37(target=es2015).errors.txt.diff
 conformance/forAwaitPerIterationBindingDownlevel(target=es2015).errors.txt.diff
 conformance/restParameterInDownlevelGenerator(target=es2015).errors.txt.diff
+compiler/deprecatedCompilerOptions1.errors.txt.diff
+compiler/deprecatedCompilerOptions3.errors.txt.diff
+compiler/deprecatedCompilerOptions4.errors.txt.diff
+compiler/deprecatedCompilerOptions5.errors.txt.diff
 
 ## Corsa reports errors both sides of an import circularity
 compiler/recursiveExportAssignmentAndFindAliasedType1.errors.txt.diff
@@ -779,15 +784,11 @@ conformance/nodeModulesTripleSlashReferenceModeOverrideModeError(module=nodenext
 conformance/arithmeticOperatorWithInvalidOperands.errors.txt.diff
 conformance/jsdocPrivateName2.errors.txt.diff
 conformance/jsdocImplements_missingType.errors.txt.diff
-conformance/symbolProperty24.errors.txt.diff
 
 ## Type arguments are dropped from anonymous mixin class types in error messages — e.g. `mixB<typeof A>.(Anonymous class)` becomes `mixB.(Anonymous class)`
 compiler/mixinPrivateAndProtected.errors.txt.diff
 conformance/mixinAccessors3.errors.txt.diff
 conformance/typeArgumentInferenceWithClassExpression2.errors.txt.diff
-
-## Different parse error recovery in heavily malformed code produces additional errors and different inferred types
-compiler/reachabilityChecksNoCrash1.errors.txt.diff
 
 ## One error instead of 3 emitted for `<T>(arg) => expr` in JSX-syntax files
 conformance/nodeModulesForbidenSyntax(module=node16).errors.txt.diff
@@ -872,9 +873,6 @@ conformance/numericNamedPropertyDuplicates.errors.txt.diff
 conformance/numericStringNamedPropertyEquivalence.errors.txt.diff
 conformance/objectTypeWithDuplicateNumericProperty.errors.txt.diff
 
-## Removes spurious TS2304/TS2693 errors when TS7061 already covers the issue
-conformance/mappedTypeProperties.errors.txt.diff
-
 ## Correct TS2322 errors assigning class prototype to unrelated function type
 conformance/typesWithPrivateConstructor.errors.txt.diff
 conformance/typesWithProtectedConstructor.errors.txt.diff
@@ -921,6 +919,13 @@ conformance/nodeModulesAllowJsTopLevelAwait(module=node18).js.diff
 conformance/nodeModulesAllowJsTopLevelAwait(module=node20).js.diff
 conformance/nodeModulesAllowJsTopLevelAwait(module=nodenext).js.diff
 
+## JS declaration emit adds `export import` modifier for require-style import assignments
+## https://github.com/microsoft/typescript-go/issues/3542
+conformance/nodeModulesAllowJsImportAssignment(module=node16).js.diff
+conformance/nodeModulesAllowJsImportAssignment(module=node18).js.diff
+conformance/nodeModulesAllowJsImportAssignment(module=node20).js.diff
+conformance/nodeModulesAllowJsImportAssignment(module=nodenext).js.diff
+
 ## JS declaration emit now preserves side-effect imports, declaration order changes inconsequentially
 conformance/nodeModulesAllowJsExportAssignment(module=node16).js.diff
 conformance/nodeModulesAllowJsExportAssignment(module=node18).js.diff
@@ -963,12 +968,9 @@ compiler/nodeNextPackageSelfNameWithOutDirDeclDirNestedDirs.js.diff
 conformance/exportDefaultNamespace.js.diff
 conformance/jsDeclarationsClassStatic2.js.diff
 conformance/jsDeclarationsComputedNames(target=es2015).js.diff
-conformance/jsDeclarationsExportAssignedClassInstance1(target=es2015).js.diff
-conformance/jsDeclarationsExportAssignedClassInstance2(target=es2015).js.diff
 conformance/jsDeclarationsJson(target=es2015).js.diff
 conformance/jsDeclarationsPrivateFields01.js.diff
 conformance/jsDeclarationsReexportAliases(target=es2015).js.diff
-conformance/jsDeclarationsTypeReassignmentFromDeclaration.js.diff
 conformance/typedefOnStatements.js.diff
 conformance/typeTagNoErasure.js.diff
 conformance/recursiveTypeReferences2.js.diff
@@ -1061,10 +1063,6 @@ conformance/jsDeclarationsFunctionKeywordProp(target=es2015).js.diff
 conformance/jsDeclarationsFunctionKeywordPropExhaustive(target=es2015).js.diff
 conformance/nullPropertyName.js.diff
 conformance/typeFromPropertyAssignment29.js.diff
-
-## Expando function namespace removed entirely (Documented in CHANGES.md in section "Expando declarations")
-## Expando namespace with nested property assignments is completely removed from declaration emit
-compiler/expandoFunctionNestedAssigments.js.diff
 
 ## Namespace converted to type alias in declaration emit (Documented in CHANGES.md in section "JSDoc Tags and Types")
 ## `namespace Dotted { type Name = number }` → `type Dotted = number`
@@ -1206,10 +1204,6 @@ conformance/defaultExportsCannotMerge04(target=es2015).js.diff
 ## Declaration emit changes how numeric-string-keyed properties are represented
 compiler/declarationEmitPropertyNumericStringKey.js.diff
 
-## `typeof` references resolved to concrete types in declaration emit (concrete types are equivalent to what `typeof` resolves to)
-## `typeof a` rest parameters and symbol references resolved to tuple/symbol types instead of typeof
-compiler/declarationEmitTypeofRest.js.diff
-
 ## Namespace-qualified names simplified to unqualified where context allows (unqualified names are correct when already in scope; simplification reduces noise)
 ## `me.Things<me.Props>` → `Things<Props>` when namespace context makes qualification unnecessary
 compiler/defaultDeclarationEmitShadowedNamedCorrectly.js.diff
@@ -1251,7 +1245,6 @@ conformance/jsDeclarationsClassStaticMethodAugmentation(target=es2015).js.diff
 conformance/jsDeclarationsCrossfileMerge(target=es2015).js.diff
 conformance/jsDeclarationsDefaultsErr(target=es2015).js.diff
 conformance/jsDeclarationsFunctions.js.diff
-conformance/jsDeclarationsFunctionWithDefaultAssignedMember.js.diff
 conformance/jsDeclarationsFunctionJSDoc(target=es2015).js.diff
 conformance/jsDeclarationsClassAccessor.js.diff
 conformance/jsDeclarationsExportAssignedClassInstance3(target=es2015).js.diff
@@ -1360,7 +1353,6 @@ conformance/moduleExportsElementAccessAssignment.js.diff
 
 # CJS `module.exports = {}` now emits `export = _default` with inlined object type instead of named exports
 ## https://github.com/microsoft/typescript-go/issues/3543
-compiler/jsDeclarationEmitExportAssignedArray.js.diff
 compiler/jsDeclarationEmitExportAssignedFunctionWithExtraTypedefsMembers.js.diff
 conformance/jsDeclarationsCommonjsRelativePath.js.diff
 conformance/jsDeclarationsDocCommentsOnConsts(target=es2015).js.diff
@@ -1394,6 +1386,15 @@ conformance/nodeModulesDeclarationEmitWithPackageExports(module=node18).js.diff
 conformance/nodeModulesDeclarationEmitWithPackageExports(module=node20).js.diff
 conformance/nodeModulesDeclarationEmitWithPackageExports(module=nodenext).js.diff
 
+# CJS class expressions emit named class declarations instead of anonymous constructor types
+## https://github.com/microsoft/typescript-go/issues/3544
+conformance/commonJSImportExportedClassExpression.js.diff
+conformance/jsDeclarationsExportAssignedClassExpression(target=es2015).js.diff
+conformance/jsDeclarationsExportAssignedClassExpressionAnonymous(target=es2015).js.diff
+conformance/jsDeclarationsExportAssignedClassExpressionAnonymousWithSub(target=es2015).js.diff
+conformance/jsDeclarationsExportAssignedClassExpressionShadowing(target=es2015).js.diff
+conformance/jsDeclarationsExportAssignedVisibility(target=es2015).js.diff
+
 # @callback/@overload variadic intepreted differently than strada
 ## https://github.com/microsoft/typescript-go/issues/3556
 conformance/callbackTagNestedParameter.js.diff
@@ -1402,3 +1403,53 @@ conformance/callbackTagVariadicType.js.diff
 # definiteAssignment shorthand in object literal loses optional modifier
 ## https://github.com/microsoft/typescript-go/issues/3563
 conformance/definiteAssignmentAssertionsWithObjectShortHand.js.diff
+
+# Const arrow functions are now emitted as such, not function declarations
+conformance/checkJsdocSatisfiesTag15.js.diff
+
+# JS declarations respect EOPT
+conformance/jsDeclarationsOptionalTypeLiteralProps1.js.diff
+conformance/jsDeclarationsOptionalTypeLiteralProps2.js.diff
+
+# Expando object emitted as object instead of namespace
+conformance/typeFromPropertyAssignment39.js.diff
+
+# Better `typeof` usage for function expressions
+## https://github.com/microsoft/typescript-go/pull/4507
+compiler/declarationEmitPartialNodeReuseTypeOf.js.diff
+compiler/declarationEmitPartialNodeReuseTypeReferences.js.diff
+compiler/declarationEmitPartialReuseComputedProperty.js.diff
+compiler/declarationEmitScopeConsistency.js.diff
+compiler/declFileTypeofFunction.types.diff
+compiler/functionExpressionReturningItself.types.diff
+compiler/recursiveLetConst.types.diff
+conformance/functionImplementations.types.diff
+conformance/noInferRedeclaration.js.diff
+
+# Better isolatedDeclarations error issued on cast initializer before required parameter
+compiler/isolatedDeclarationsAddUndefined.errors.txt.diff
+
+# Fixed bogus circularity error caused by reporting missing `this.` member in a return expression
+compiler/checkingObjectWithThisInNamePositionNoCrash.errors.txt.diff
+compiler/accessorInferredReturnTypeErrorInReturnStatement.errors.txt.diff
+conformance/thisInObjectLiterals.errors.txt.diff
+
+# Better circularity handling in computed name checking
+compiler/blockScopedBindingUsedBeforeDef.errors.txt.diff
+
+# Minor differences in related spans or error locations for circular mapped types
+compiler/incorrectRecursiveMappedTypeConstraint.errors.txt.diff
+compiler/typeParameterWithInvalidConstraintType.errors.txt.diff
+conformance/recursiveMappedTypes.errors.txt.diff
+
+# Slight difference in checking parse errors
+compiler/reachabilityChecksNoCrash1.errors.txt.diff
+
+# Reduction in follow-on errors after erroneous use of `in` in computed name
+conformance/mappedTypeProperties.errors.txt.diff
+
+# Vastly different parsing
+conformance/jsdocDisallowedInTypescript.errors.txt.diff
+
+# Differing/better spans/related info for some errors
+compiler/constructorWithIncompleteTypeAnnotation.errors.txt.diff

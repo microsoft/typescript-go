@@ -777,18 +777,22 @@ func IsPrologueDirective(node *Node) bool {
 		node.Expression().Kind == KindStringLiteral
 }
 
-type OuterExpressionKinds int16
+type OuterExpressionKinds uint16
 
 const (
-	OEKParentheses                  OuterExpressionKinds = 1 << 0
-	OEKTypeAssertions               OuterExpressionKinds = 1 << 1
-	OEKNonNullAssertions            OuterExpressionKinds = 1 << 2
-	OEKPartiallyEmittedExpressions  OuterExpressionKinds = 1 << 3
-	OEKExpressionsWithTypeArguments OuterExpressionKinds = 1 << 4
-	OEKSatisfies                    OuterExpressionKinds = 1 << 5
-	OEKExcludeJSDocTypeAssertion                         = 1 << 6
-	OEKAssertions                                        = OEKTypeAssertions | OEKNonNullAssertions | OEKSatisfies
-	OEKAll                                               = OEKParentheses | OEKAssertions | OEKPartiallyEmittedExpressions | OEKExpressionsWithTypeArguments
+	OEKParentheses                                       OuterExpressionKinds = 1 << 0
+	OEKTypeAssertions                                    OuterExpressionKinds = 1 << 1
+	OEKNonNullAssertions                                 OuterExpressionKinds = 1 << 2
+	OEKPartiallyEmittedExpressions                       OuterExpressionKinds = 1 << 3
+	OEKExpressionsWithTypeArguments                      OuterExpressionKinds = 1 << 4
+	OEKSatisfies                                         OuterExpressionKinds = 1 << 5
+	OEKExcludeJSDocTypeAssertion                         OuterExpressionKinds = 1 << 6
+	OEKAssignments                                       OuterExpressionKinds = 1 << 7
+	OEKComma                                             OuterExpressionKinds = 1 << 8
+	OEKAssertions                                                             = OEKTypeAssertions | OEKNonNullAssertions | OEKSatisfies
+	OEKAll                                                                    = OEKParentheses | OEKAssertions | OEKPartiallyEmittedExpressions | OEKExpressionsWithTypeArguments
+	OEKAllExceptAssertionsOrExpressionsWithTypeArguments                      = OEKAll &^ OEKAssertions &^ OEKExpressionsWithTypeArguments
+	OEKExpressionTypePassthrough                                              = OEKParentheses | OEKAssignments | OEKComma
 )
 
 // Determines whether node is an "outer expression" of the provided kinds
@@ -806,6 +810,13 @@ func IsOuterExpression(node *Expression, kinds OuterExpressionKinds) bool {
 		return kinds&OEKNonNullAssertions != 0
 	case KindPartiallyEmittedExpression:
 		return kinds&OEKPartiallyEmittedExpressions != 0
+	case KindBinaryExpression:
+		switch node.AsBinaryExpression().OperatorToken.Kind {
+		case KindEqualsToken:
+			return kinds&OEKAssignments != 0
+		case KindCommaToken:
+			return kinds&OEKComma != 0
+		}
 	}
 	return false
 }
@@ -813,7 +824,11 @@ func IsOuterExpression(node *Expression, kinds OuterExpressionKinds) bool {
 // Descends into an expression, skipping past "outer expressions" of the provided kinds
 func SkipOuterExpressions(node *Expression, kinds OuterExpressionKinds) *Expression {
 	for IsOuterExpression(node, kinds) {
-		node = node.Expression()
+		if IsBinaryExpression(node) {
+			node = node.AsBinaryExpression().Right
+		} else {
+			node = node.Expression()
+		}
 	}
 	return node
 }
@@ -909,6 +924,25 @@ func FindAncestor(node *Node, callback func(*Node) bool) *Node {
 		node = node.Parent
 	}
 	return nil
+}
+
+func FindManyAncestors(node *Node, callbacks ...func(*Node) bool) []*Node {
+	ancestors := make([]*Node, len(callbacks))
+	found := 0
+	for node != nil {
+		for i, callback := range callbacks {
+			if ancestors[i] == nil && callback(node) {
+				ancestors[i] = node
+				found++
+				if found == len(callbacks) {
+					return ancestors
+				}
+				break
+			}
+		}
+		node = node.Parent
+	}
+	return ancestors
 }
 
 // Walks up the parents of a node to find the ancestor that matches the kind
@@ -4028,6 +4062,7 @@ func GetHostSignatureFromJSDoc(node *Node) *Node {
 
 // Finds the declaration that owns the JSDoc for a function-like node.
 // Keep these hosts aligned with JSDoc parameter reparsing so unmatched @param diagnostics use the same attachment rules.
+// Keep in sync with getNextJSDocCommentLocation in the API's src/ast/jsdoc.ts
 func GetNextJSDocCommentLocation(node *Node) *Node {
 	if parent := node.Parent; parent != nil {
 		switch parent.Kind {

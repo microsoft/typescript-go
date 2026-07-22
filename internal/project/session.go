@@ -63,6 +63,7 @@ type SessionOptions struct {
 	PushDiagnosticsEnabled bool
 	DebounceDelay          time.Duration
 	Locale                 locale.Locale
+	CheckerPoolOptions     CheckerPoolOptions
 }
 
 type SessionInit struct {
@@ -189,12 +190,16 @@ func NewSession(init *SessionInit) *Session {
 	}
 	extendedConfigCache := NewExtendedConfigCache()
 
+	sessionLogger := init.Logger
+	if sessionLogger == nil {
+		sessionLogger = logging.NewNopLogger()
+	}
 	session := &Session{
 		backgroundCtx:       init.BackgroundCtx,
 		options:             init.Options,
 		toPath:              toPath,
 		client:              init.Client,
-		logger:              init.Logger,
+		logger:              sessionLogger,
 		npmExecutor:         init.NpmExecutor,
 		fs:                  overlayFS,
 		parseCache:          parseCache,
@@ -1025,7 +1030,12 @@ func (s *Session) GetLanguageServicesForDocuments(ctx context.Context, uris []ls
 	projects := snapshot.ProjectCollection.Projects()
 	services := make([]*ls.LanguageService, 0, len(projects))
 	for _, project := range projects {
-		services = append(services, ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot, activeFile))
+		program := project.GetProgram()
+		if program == nil {
+			continue
+		}
+
+		services = append(services, ls.NewLanguageService(project.configFilePath, program, snapshot, activeFile))
 	}
 	return services
 }
@@ -1117,6 +1127,31 @@ func (s *Session) WithLanguageServiceAndSnapshot(
 // The cloned snapshot will be adopted as the session's current snapshot in the background
 // if other changes haven't been adopted in the meantime.
 func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, baseSnapshot *Snapshot, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
+	newSnapshot := s.cloneWithAutoImports(ctx, baseSnapshot, uri, false /*callerRef*/)
+	project := newSnapshot.GetDefaultProject(uri)
+	if project == nil {
+		// Clone's initial ref (1) is released since we won't use this snapshot.
+		newSnapshot.Deref(s)
+		return nil, fmt.Errorf("no project found for URI %s", uri)
+	}
+
+	s.adoptSnapshotChangeInBackground(baseSnapshot, newSnapshot)
+
+	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), newSnapshot, uri.FileName()), nil
+}
+
+// GetSnapshotWithAutoImports clones the given snapshot with auto-import
+// preparation for the given URI, without flushing pending file changes.
+// The returned snapshot is ref'd for the caller, which must call Deref when done.
+// The cloned snapshot will also be adopted as the session's current snapshot in
+// the background if other changes haven't been adopted in the meantime.
+func (s *Session) GetSnapshotWithAutoImports(ctx context.Context, baseSnapshot *Snapshot, uri lsproto.DocumentUri) *Snapshot {
+	newSnapshot := s.cloneWithAutoImports(ctx, baseSnapshot, uri, true /*callerRef*/)
+	s.adoptSnapshotChangeInBackground(baseSnapshot, newSnapshot)
+	return newSnapshot
+}
+
+func (s *Session) cloneWithAutoImports(ctx context.Context, baseSnapshot *Snapshot, uri lsproto.DocumentUri, callerRef bool) *Snapshot {
 	change := SnapshotChange{
 		reason: UpdateReasonRequestedLanguageServiceWithAutoImports,
 		ResourceRequest: ResourceRequest{
@@ -1125,22 +1160,19 @@ func (s *Session) GetLanguageServiceWithAutoImports(ctx context.Context, baseSna
 		},
 	}
 	newSnapshot := baseSnapshot.Clone(ctx, change, baseSnapshot.fs.overlays, s)
-
-	project := newSnapshot.GetDefaultProject(uri)
-	if project == nil {
-		// Clone's initial ref (1) is released since we won't use this snapshot.
-		newSnapshot.Deref(s)
-		return nil, fmt.Errorf("no project found for URI %s", uri)
+	if callerRef {
+		newSnapshot.ref()
 	}
+	return newSnapshot
+}
 
+func (s *Session) adoptSnapshotChangeInBackground(baseSnapshot, newSnapshot *Snapshot) {
 	// The clone's initial ref (1) is transferred to adoptSnapshotChange,
 	// which will either promote it as the session's current snapshot or
 	// release it if the session has moved on.
 	s.backgroundQueue.Enqueue(s.backgroundCtx, func(ctx context.Context) {
 		s.adoptSnapshotChange(baseSnapshot, newSnapshot)
 	})
-
-	return ls.NewLanguageService(project.configFilePath, project.GetProgram(), newSnapshot, uri.FileName()), nil
 }
 
 // adoptSnapshotChange promotes a cloned snapshot as the session's current
@@ -1218,7 +1250,6 @@ func (s *Session) updateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 			s.logger.Logf("Adopted snapshot %d (parent %d) as current session snapshot (replacing %d)", newSnapshot.id, newSnapshot.parentId, oldSnapshot.id)
 			s.logger.Log(newSnapshot.builderLogs.String())
 			s.logProjectChanges(oldSnapshot, newSnapshot)
-			s.logRuntimeMetrics()
 			s.logger.Log("")
 		}
 		if s.options.WatchEnabled {
@@ -1478,37 +1509,6 @@ func (s *Session) logProjectChanges(oldSnapshot *Snapshot, newSnapshot *Snapshot
 	}
 }
 
-var runtimeMetricsSamples = sync.OnceValue(func() []gometrics.Sample {
-	descs := gometrics.All()
-	var samples []gometrics.Sample
-	for _, desc := range descs {
-		name := desc.Name
-		if strings.HasPrefix(name, "/memory/") || strings.HasPrefix(name, "/gc/") {
-			samples = append(samples, gometrics.Sample{Name: name})
-		}
-	}
-	return samples
-})
-
-func (s *Session) logRuntimeMetrics() {
-	samples := slices.Clone(runtimeMetricsSamples())
-	gometrics.Read(samples)
-
-	var builder strings.Builder
-	builder.WriteString("\n======== Runtime Metrics ========")
-	for _, sample := range samples {
-		switch sample.Value.Kind() {
-		case gometrics.KindUint64:
-			fmt.Fprintf(&builder, "\n%s = %d", sample.Name, sample.Value.Uint64())
-		case gometrics.KindFloat64:
-			fmt.Fprintf(&builder, "\n%s = %f", sample.Name, sample.Value.Float64())
-		case gometrics.KindFloat64Histogram:
-			// Skip histograms for log readability
-		}
-	}
-	s.logger.Log(builder.String())
-}
-
 func (s *Session) logCacheStats(snapshot *Snapshot) {
 	var parseCacheSize int
 	var extendedConfigCount int
@@ -1592,7 +1592,9 @@ func (s *Session) refreshCodeLensIfNeeded(oldPrefs lsutil.UserPreferences, newPr
 }
 
 func (s *Session) refreshDiagnosticsIfNeeded(oldPrefs lsutil.UserPreferences, newPrefs lsutil.UserPreferences) {
-	if oldPrefs.CustomConfigFileName != newPrefs.CustomConfigFileName {
+	if oldPrefs.CustomConfigFileName != newPrefs.CustomConfigFileName ||
+		oldPrefs.ReportStyleChecksAsWarnings != newPrefs.ReportStyleChecksAsWarnings ||
+		oldPrefs.EnableValidation != newPrefs.EnableValidation {
 		s.ScheduleDiagnosticsRefresh()
 	}
 }
@@ -1607,6 +1609,17 @@ func (s *Session) refreshATAIfNeeded(oldPrefs lsutil.UserPreferences, newPrefs l
 
 func (s *Session) publishProgramDiagnostics(oldSnapshot *Snapshot, newSnapshot *Snapshot) {
 	if !s.options.PushDiagnosticsEnabled {
+		return
+	}
+	if newSnapshot.UserPreferences().EnableValidation.IsFalse() {
+		if oldSnapshot.UserPreferences().EnableValidation.IsFalse() {
+			return
+		}
+		for configFilePath, oldProject := range oldSnapshot.ProjectCollection.ProjectsByPath().Entries() {
+			if oldProject.Kind == KindConfigured && oldSnapshot.ProjectCollection.GetOpenConfiguredProjects().Has(configFilePath) {
+				s.publishProjectDiagnostics(s.backgroundCtx, string(configFilePath), nil, oldSnapshot.converters)
+			}
+		}
 		return
 	}
 
@@ -1667,6 +1680,9 @@ func shouldPublishProgramDiagnostics(p *Project, snapshotID uint64) bool {
 }
 
 func (s *Session) publishProjectDiagnostics(ctx context.Context, configFilePath string, diagnostics []*ast.Diagnostic, converters *lsconv.Converters) {
+	if s.Config().EnableValidation.IsFalse() {
+		diagnostics = nil
+	}
 	lspDiagnostics := make([]*lsproto.Diagnostic, 0, len(diagnostics))
 	for _, diag := range diagnostics {
 		lspDiagnostics = append(lspDiagnostics, lsconv.DiagnosticToLSPPush(ctx, converters, diag))
@@ -1684,7 +1700,7 @@ func (s *Session) publishProjectDiagnostics(ctx context.Context, configFilePath 
 // global diagnostics from checker pools, re-publishing tsconfig diagnostics if changed.
 // Multiple calls are coalesced into a single background task.
 func (s *Session) EnqueuePublishGlobalDiagnostics() {
-	if !s.options.PushDiagnosticsEnabled {
+	if !s.options.PushDiagnosticsEnabled || s.Config().EnableValidation.IsFalse() {
 		return
 	}
 	if s.globalDiagPublishPending.CompareAndSwap(false, true) {

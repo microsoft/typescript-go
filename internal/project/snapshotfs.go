@@ -1,6 +1,7 @@
 package project
 
 import (
+	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -140,6 +141,7 @@ type snapshotFSBuilder struct {
 	diskDirectories            *dirty.Map[tspath.Path, dirty.CloneableMap[tspath.Path, string]]
 	nodeModulesRealpathAliases *dirty.SyncMap[tspath.Path, *realpathAliasSet]
 	toPath                     func(string) tspath.Path
+	accessibleEntries          collections.SyncMap[tspath.Path, *vfs.Entries]
 }
 
 func newSnapshotFSBuilder(
@@ -320,13 +322,23 @@ func (s *snapshotFSBuilder) GetFileByPath(fileName string, path tspath.Path) Fil
 
 func (s *snapshotFSBuilder) GetAccessibleEntries(path string) vfs.Entries {
 	entries := s.fs.GetAccessibleEntries(path)
-	overlayDirectories, ok := s.overlayDirectories[s.toPath(path)]
+	p := s.toPath(path)
+	overlayDirectories, ok := s.overlayDirectories[p]
 	if !ok {
 		return entries
 	}
 
-	readDirectoryIntoEntries(overlayDirectories, s.isOpenFile, &entries)
-	return entries
+	if merged, ok := s.accessibleEntries.Load(p); ok {
+		return *merged
+	}
+	merged := &vfs.Entries{
+		Files:       slices.Clip(entries.Files),
+		Directories: slices.Clip(entries.Directories),
+		Symlinks:    entries.Symlinks,
+	}
+	readDirectoryIntoEntries(overlayDirectories, s.isOpenFile, merged)
+	merged, _ = s.accessibleEntries.LoadOrStore(p, merged)
+	return *merged
 }
 
 func (s *snapshotFSBuilder) getDiskFile(fileName string, path tspath.Path, forceReload bool) FileHandle {
@@ -465,14 +477,33 @@ func (s *snapshotFSBuilder) invalidateNodeModulesCache() {
 	})
 }
 
-func (s *snapshotFSBuilder) markDirtyFiles(change FileChangeSummary) {
-	for uri := range change.Changed.Keys() {
-		path := s.toPath(uri.FileName())
-		if entry, ok := s.diskFiles.Load(path); ok {
-			entry.Change(func(file *diskFile) {
-				file.needsReload = true
+func (s *snapshotFSBuilder) markDirtyFiles(change FileChangeSummary) FileChangeSummary {
+	if change.Changed.Len() > 0 {
+		var filteredChanged collections.SyncSet[lsproto.DocumentUri]
+		wg := core.NewWorkGroup(false)
+		for uri := range change.Changed.Keys() {
+			path := s.toPath(uri.FileName())
+			if _, ok := s.overlays[path]; ok {
+				filteredChanged.Add(uri)
+				continue
+			}
+			entry, ok := s.diskFiles.Load(path)
+			if !ok {
+				filteredChanged.Add(uri)
+				continue
+			}
+			wg.Queue(func() {
+				if s.reloadEntryIfContentChanged(entry) {
+					filteredChanged.Add(uri)
+				}
 			})
 		}
+		wg.RunAndWait()
+		newChanged := collections.NewSetWithSizeHint[lsproto.DocumentUri](filteredChanged.Size())
+		for uri := range filteredChanged.Keys() {
+			newChanged.Add(uri)
+		}
+		change.Changed = *newChanged
 	}
 	for uri := range change.Deleted.Keys() {
 		path := s.toPath(uri.FileName())
@@ -480,6 +511,41 @@ func (s *snapshotFSBuilder) markDirtyFiles(change FileChangeSummary) {
 			entry.Delete()
 		}
 	}
+	return change
+}
+
+func (s *snapshotFSBuilder) reloadEntryIfContentChanged(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) (changed bool) {
+	file := entry.Value()
+	if file == nil {
+		return true
+	}
+	content, ok := s.fs.ReadFile(file.fileName)
+	changed = true
+	entry.Locked(func(e dirty.Value[*diskFile]) {
+		cur := e.Value()
+		if cur == nil {
+			return
+		}
+		if !ok {
+			e.Delete()
+			return
+		}
+		if content == cur.content {
+			changed = false
+			if !cur.MatchesDiskText() {
+				e.Change(func(file *diskFile) {
+					file.needsReload = false
+				})
+			}
+			return
+		}
+		e.Change(func(file *diskFile) {
+			file.content = content
+			file.hash = xxh3.HashString128(content)
+			file.needsReload = false
+		})
+	})
+	return changed
 }
 
 // expandRealpathAliases adds synthetic URIs to the Changed and Deleted sets for
@@ -554,7 +620,10 @@ func (s *snapshotFSBuilder) expandAndFilterWatchEvents(change FileChangeSummary)
 			path := s.toPath(uri.FileName())
 			if _, ok := s.diskDirectories.Get(path); ok {
 				s.collectFilesRecursive(path, &filteredDeleted)
-			} else if s.isRelevantFileName(uri) {
+			} else if s.isRelevantFileName(uri) || isNodeModulesPath(path) {
+				// node_modules deletions must always be preserved for auto-import registry change handlers.
+				// They won't be in diskDirectories since the registry doesn't use the snapshotFSBuilder for
+				// its file system, since we don't want to retain files read there.
 				filteredDeleted.Add(uri)
 			}
 		}
@@ -576,6 +645,14 @@ func (s *snapshotFSBuilder) expandAndFilterWatchEvents(change FileChangeSummary)
 	// are directories if they fall within a config's wildcard directories.
 
 	return change
+}
+
+// isNodeModulesPath reports whether path is a node_modules directory itself or
+// lives inside one. Used to preserve node_modules watch deletions, whose package
+// files are read transiently and therefore never tracked in diskDirectories.
+func isNodeModulesPath(path tspath.Path) bool {
+	s := string(path)
+	return strings.HasSuffix(s, "/node_modules") || strings.Contains(s, "/node_modules/")
 }
 
 // collectFilesRecursive recursively collects all cached file URIs under the

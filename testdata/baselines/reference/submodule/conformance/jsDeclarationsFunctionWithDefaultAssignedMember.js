@@ -16,12 +16,9 @@ module.exports = foo;
 
 
 //// [index.d.ts]
+export = foo;
 declare function foo(): void;
 declare namespace foo {
-    var foo: typeof import(".");
+    export { foo };
+    export { foo as default };
 }
-declare namespace foo {
-    var _a: typeof import(".");
-    export { _a as default };
-}
-export = foo;

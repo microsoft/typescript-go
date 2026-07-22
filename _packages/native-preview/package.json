@@ -21,9 +21,6 @@
         "type": "git",
         "url": "https://github.com/microsoft/typescript-go.git"
     },
-    "publishConfig": {
-        "access": "public"
-    },
     "type": "module",
     "preferUnplugged": true,
     "engines": {
@@ -36,10 +33,11 @@
         "vendor"
     ],
     "bin": {
-        "tsgo": "./bin/tsgo.js"
+        "tsgo": "./bin/tsgo"
     },
     "exports": {
         "./package.json": "./package.json",
+        ".": "./lib/version.cjs",
         "./unstable/sync": {
             "@typescript/source": "./src/api/sync/api.ts",
             "default": "./dist/api/sync/api.js"
@@ -113,8 +111,8 @@
         "test": "npm run test:only"
     },
     "devDependencies": {
-        "@types/node": "^25.9.1",
+        "@types/node": "^25.9.4",
         "tinybench": "^6.0.2",
-        "vscode-jsonrpc": "^9.0.0-next.11"
+        "vscode-jsonrpc": "^9.0.0"
     }
 }

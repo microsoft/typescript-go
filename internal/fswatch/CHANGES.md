@@ -9,11 +9,12 @@ simplifications, new features, and bugfixes.
 
 ### Method naming
 
-| C++ / JS               | Go                                 |
-| ---------------------- | ---------------------------------- |
-| `subscribe(dir, fn)`   | `WatchDirectory(dir, fn, opts...)` |
-| —                      | `WatchFile(path, fn)`              |
-| `unsubscribe(dir, fn)` | `w.Close()`                        |
+| C++ / JS               | Go                                          |
+| ---------------------- | ------------------------------------------- |
+| `subscribe(dir, fn)`   | `WatchDirectory(dir, fn, opts...)`          |
+| —                      | `WatchDirectories([]WatchDirectoryRequest)` |
+| —                      | `WatchFile(path, fn)`                       |
+| `unsubscribe(dir, fn)` | `w.Close()`                                 |
 
 ### Recursion default
 
@@ -21,6 +22,16 @@ C++ `subscribe` is always recursive. Go's `WatchDirectory` is **non-recursive by
 default**, watching only direct children. Pass `WithRecursive()` to watch the
 entire tree. This matches TypeScript's `watchDirectory(path, cb, recursive?)`
 where recursive is opt-in.
+
+### Symlinked watch roots
+
+When `WatchDirectory` is called with a symlink or reparse point to a directory,
+Go follows the link for the OS subscription but reports events under the
+caller-provided path. This matches TypeScript/Node's behavior for watch roots
+while keeping the logical paths stable for callers.
+
+Userspace recursive traversal still does not follow symlinked descendant
+directories.
 
 ### Event kinds
 
@@ -44,6 +55,13 @@ Go adds functional options not present in the C++ API:
 `WatchFile(path, fn)` watches a single file by watching its parent directory
 non-recursively and filtering events to the target path. Multiple file watches
 in the same directory share one OS watch. Not available in the C++ API.
+
+### Batch directory watching
+
+`WatchDirectories` registers multiple directory watches in one call. It has the
+same logical behavior as repeated `WatchDirectory` calls, but lets backends batch
+the underlying OS subscription work. On macOS this avoids rebuilding the shared
+FSEvents stream once per logical watch during large watch reconciliations.
 
 ### Error delivery
 
@@ -117,6 +135,20 @@ can't starve event delivery on any of the others. In practice most callers will
 only ever use one backend (`Default()`), so this mainly matters for processes
 that mix backends, but the cost of the split is essentially nothing.
 
+### Shared FSEvents streams
+
+Upstream opens one macOS FSEventStream per subscription. Go's FSEvents backend
+shares streams across all logical directory watches in a backend instance. The
+fast path attempts one stream containing every active physical watch root; if
+that stream cannot be started, the backend retries with bounded path chunks.
+Events from shared streams are routed back to matching logical watches by path,
+so non-recursive and per-subscriber ignore semantics are preserved while using
+far fewer system-wide FSEvents stream slots. When many sibling watches are
+consolidated under one recursive parent watch, each callback still keeps its own
+logical root, physical root, event-ID cutoff, and termination state, so
+late-added watches don't receive older queued events and symlinked watch roots
+continue reporting caller-visible paths.
+
 ## New backends
 
 **fanotify** (Linux, kernel ≥ 5.13) is the default on Linux when available. It
@@ -136,12 +168,12 @@ configuration. The Go port is pure Go on all platforms:
   arm64), following the pattern from Go's `crypto/x509/internal/macos`. The
   FSEvents C callback runs on a libdispatch (GCD) thread, not a Go goroutine. An
   assembly shim, staying entirely in C calling convention, retains the CFArray
-  of paths, allocates a per-callback payload on the C heap, copies the flags
-  array into it, and writes the payload pointer to the stream's event pipe,
-  waking a dedicated Go event-loop goroutine that classifies the events and
-  frees the payload. The shim then returns immediately, so the dispatch thread
-  never enters Go ABI and does not wait for Go-side event classification. Each
-  FSEventStream has its own serial GCD dispatch queue and event pipe, so
+  of paths, allocates a per-callback payload on the C heap, copies the flags and
+  event ID arrays into it, and writes the payload pointer to the stream's event
+  pipe, waking a dedicated Go event-loop goroutine that classifies the events
+  and frees the payload. The shim then returns immediately, so the dispatch
+  thread never enters Go ABI and does not wait for Go-side event classification.
+  Each FSEventStream has its own serial GCD dispatch queue and event pipe, so
   callbacks for different streams run concurrently without contention: a stuck
   callback for one stream cannot back up callbacks for any other stream behind
   it. Teardown invalidates the stream and uses a `dispatch_sync_f` barrier on

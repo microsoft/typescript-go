@@ -18,9 +18,14 @@ func NewDefaultUserPreferences() UserPreferences {
 
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
+		EnableAutoClosingTags:                 core.TSTrue,
+		EnableJSDocCompletions:                core.TSTrue,
+		GenerateReturnInDocTemplate:           core.TSTrue,
 
 		AllowRenameOfImportPath:            core.TSTrue,
 		ProvideRefactorNotApplicableReason: core.TSTrue,
+		EnableFormatting:                   core.TSTrue,
+		EnableValidation:                   core.TSTrue,
 		DisplayPartsForJSDoc:               core.TSTrue,
 		DisableLineTextInReferences:        core.TSTrue,
 		ReportStyleChecksAsWarnings:        core.TSTrue,
@@ -71,6 +76,9 @@ type UserPreferences struct {
 	// in addition to `const objectLiteral: T = { foo }`.
 	IncludeCompletionsWithObjectLiteralMethodSnippets core.Tristate               `raw:"includeCompletionsWithObjectLiteralMethodSnippets" config:"suggest.objectLiteralMethodSnippets.enabled"` // !!!
 	JsxAttributeCompletionStyle                       JsxAttributeCompletionStyle `raw:"jsxAttributeCompletionStyle" config:"preferences.jsxAttributeCompletionStyle"`
+	EnableAutoClosingTags                             core.Tristate               `raw:"autoClosingTags" config:"autoClosingTags.enabled" fallbackConfig:"autoClosingTags"`
+	EnableJSDocCompletions                            core.Tristate               `raw:"completeJSDocs" config:"suggest.jsdoc.enabled" fallbackConfig:"suggest.completeJSDocs"`
+	GenerateReturnInDocTemplate                       core.Tristate               `raw:"generateReturnInDocTemplate" config:"suggest.jsdoc.generateReturns"`
 
 	// ------- AutoImports --------
 
@@ -84,19 +92,21 @@ type UserPreferences struct {
 
 	// ------- OrganizeImports -------
 
+	// Indicates which deterministic preset should be used to sort imports.
+	// "auto" detects the existing ordinal case sensitivity where possible.
+	OrganizeImportsSort OrganizeImportsSort `raw:"organizeImportsSort" config:"preferences.organizeImports.sort"` // !!!
 	// Indicates whether imports should be organized in a case-insensitive manner.
 	//
 	// Default: TSUnknown ("auto" in strada), will perform detection
 	OrganizeImportsIgnoreCase core.Tristate `raw:"organizeImportsIgnoreCase" config:"preferences.organizeImports.caseSensitivity"` // !!!
 	// Indicates whether imports should be organized via an "ordinal" (binary) comparison using the numeric value of their
-	// code points, or via "unicode" collation (via the Unicode Collation Algorithm (https://unicode.org/reports/tr10/#Scope))
-	//
-	// using rules associated with the locale specified in organizeImportsCollationLocale.
+	// code points, or via "unicode" natural sorting. This implementation is locale-agnostic and approximates the practical
+	// import-sorting behavior rather than the full Unicode Collation Algorithm.
 	//
 	// Default: Ordinal
 	OrganizeImportsCollation OrganizeImportsCollation `raw:"organizeImportsCollation" config:"preferences.organizeImports.unicodeCollation"` // !!!
-	// Indicates the locale to use for "unicode" collation. If not specified, the locale `"en"` is used as an invariant
-	// for the sake of consistent sorting. Use `"auto"` to use the detected UI locale.
+	// Indicates the locale to use for "unicode" collation in legacy clients. This is accepted for compatibility, but
+	// currently ignored because organize-import sorting is deterministic and locale-agnostic.
 	//
 	// This preference is ignored if organizeImportsCollation is not `unicode`.
 	//
@@ -109,16 +119,13 @@ type UserPreferences struct {
 	//
 	// Default: `false`
 	OrganizeImportsNumericCollation core.Tristate `raw:"organizeImportsNumericCollation" config:"preferences.organizeImports.numericCollation"` // !!!
-	// Indicates whether accents and other diacritic marks are considered unequal for the purpose of collation. When
-	// `true`, characters with accents and other diacritics will be collated in the order defined by the locale specified
-	// in organizeImportsCollationLocale.
+	// Indicates whether accents and other diacritic marks are considered unequal for the purpose of sorting.
 	//
 	// This preference is ignored if organizeImportsCollation is not `unicode`.
 	//
 	// Default: `true`
 	OrganizeImportsAccentCollation core.Tristate `raw:"organizeImportsAccentCollation" config:"preferences.organizeImports.accentCollation"` // !!!
-	// Indicates whether upper case or lower case should sort first. When `false`, the default order for the locale
-	// specified in organizeImportsCollationLocale is used.
+	// Indicates whether upper case or lower case should sort first.
 	//
 	// This permission is ignored if:
 	//	- organizeImportsCollation is not `unicode`
@@ -163,10 +170,12 @@ type UserPreferences struct {
 
 	// ------- Misc -------
 
+	EnableFormatting            core.Tristate `raw:"formatEnabled" config:"format.enabled" fallbackConfig:"format.enable"`
+	EnableValidation            core.Tristate `raw:"validateEnabled" config:"validate.enabled" fallbackConfig:"validate.enable"`
 	DisableSuggestions          core.Tristate `raw:"disableSuggestions"`          // !!!
 	DisableLineTextInReferences core.Tristate `raw:"disableLineTextInReferences"` // !!!
 	DisplayPartsForJSDoc        core.Tristate `raw:"displayPartsForJSDoc"`        // !!!
-	ReportStyleChecksAsWarnings core.Tristate `raw:"reportStyleChecksAsWarnings"` // !!! If this changes, we need to ask the client to recompute diagnostics
+	ReportStyleChecksAsWarnings core.Tristate `raw:"reportStyleChecksAsWarnings" config:"reportStyleChecksAsWarnings"`
 
 	// ------- ATA -------
 
@@ -180,7 +189,7 @@ type UserPreferences struct {
 	// ------- Project Configuration -------
 
 	// CustomConfigFileName specifies a custom config file name to use before defaulting to tsconfig.json/jsconfig.json.
-	CustomConfigFileName string `raw:"customConfigFileName" config:"native-preview.customConfigFileName"`
+	CustomConfigFileName string `raw:"customConfigFileName" config:"customConfigFileName"`
 }
 
 // IsATADisabled returns whether Automatic Type Acquisition is disabled based on user preferences.
@@ -238,6 +247,16 @@ const (
 	IncludeInlayParameterNameHintsNone     IncludeInlayParameterNameHints = ""
 	IncludeInlayParameterNameHintsAll      IncludeInlayParameterNameHints = "all"
 	IncludeInlayParameterNameHintsLiterals IncludeInlayParameterNameHints = "literals"
+)
+
+type OrganizeImportsSort int
+
+const (
+	OrganizeImportsSortAuto OrganizeImportsSort = iota
+	OrganizeImportsSortOrdinal
+	OrganizeImportsSortOrdinalIgnoreCase
+	OrganizeImportsSortNatural
+	OrganizeImportsSortNaturalIgnoreCase
 )
 
 type OrganizeImportsCollation bool
@@ -318,6 +337,21 @@ var typeParsers = map[reflect.Type]func(any) any{
 		}
 		return IncludeInlayParameterNameHintsNone
 	},
+	reflect.TypeFor[OrganizeImportsSort](): func(val any) any {
+		if s, ok := val.(string); ok {
+			switch strings.ToLower(s) {
+			case "ordinal":
+				return OrganizeImportsSortOrdinal
+			case "ordinalignorecase":
+				return OrganizeImportsSortOrdinalIgnoreCase
+			case "natural":
+				return OrganizeImportsSortNatural
+			case "naturalignorecase":
+				return OrganizeImportsSortNaturalIgnoreCase
+			}
+		}
+		return OrganizeImportsSortAuto
+	},
 	reflect.TypeFor[OrganizeImportsCollation](): func(val any) any {
 		if s, ok := val.(string); ok && strings.ToLower(s) == "unicode" {
 			return OrganizeImportsCollationUnicode
@@ -389,6 +423,20 @@ var typeSerializers = map[reflect.Type]func(any) any{
 			return nil
 		}
 	},
+	reflect.TypeFor[OrganizeImportsSort](): func(val any) any {
+		switch val.(OrganizeImportsSort) {
+		case OrganizeImportsSortOrdinal:
+			return "ordinal"
+		case OrganizeImportsSortOrdinalIgnoreCase:
+			return "ordinalIgnoreCase"
+		case OrganizeImportsSortNatural:
+			return "natural"
+		case OrganizeImportsSortNaturalIgnoreCase:
+			return "naturalIgnoreCase"
+		default:
+			return "auto"
+		}
+	},
 	reflect.TypeFor[OrganizeImportsCollation](): func(val any) any {
 		if val.(OrganizeImportsCollation) == OrganizeImportsCollationUnicode {
 			return "unicode"
@@ -417,6 +465,48 @@ var typeSerializers = map[reflect.Type]func(any) any{
 			return "auto"
 		}
 	},
+	// These enums distinguish an unset zero value (e.g. "") from their effective
+	// default (e.g. "auto"): the parser promotes unset/unknown input to the
+	// non-zero default. Plain string serialization would therefore write "" for
+	// an unset field and the parser would read it back as the non-zero default,
+	// breaking round-tripping. Mirror the core.Tristate serializer above and omit
+	// the unset value (return nil) so it decodes back to the zero value. (Enums
+	// whose default already is their zero value, like the OrganizeImports* ones,
+	// round-trip without this.)
+	//
+	// TODO: These three are the only parsers whose fallback is a non-zero value;
+	// every other parser returns its zero value as the fallback. They should be
+	// made consistent: change the parser fallback to return the zero value and
+	// remove this serializer (relying on the default string serialization, which
+	// already omits ""). The consumer must then treat the zero value as the
+	// effective default. The two module-specifier enums are safe to convert (all
+	// read sites already treat the "" zero identically to the promoted default).
+	reflect.TypeFor[JsxAttributeCompletionStyle](): func(val any) any {
+		// TODO: make consistent with other enums (see note above). Unlike the
+		// module-specifier enums, the consumer in completions.go distinguishes
+		// JsxAttributeCompletionStyleUnknown from ...Auto, so converting this one
+		// requires updating that consumer to treat the zero value as "auto".
+		if v := val.(JsxAttributeCompletionStyle); v != JsxAttributeCompletionStyleUnknown {
+			return string(v)
+		}
+		return nil
+	},
+	reflect.TypeFor[modulespecifiers.ImportModuleSpecifierPreference](): func(val any) any {
+		// TODO: make consistent with other enums (see note above): have the parser
+		// return the zero value (None) as its fallback and drop this serializer.
+		if v := val.(modulespecifiers.ImportModuleSpecifierPreference); v != "" {
+			return string(v)
+		}
+		return nil
+	},
+	reflect.TypeFor[modulespecifiers.ImportModuleSpecifierEndingPreference](): func(val any) any {
+		// TODO: make consistent with other enums (see note above): have the parser
+		// return the zero value (None) as its fallback and drop this serializer.
+		if v := val.(modulespecifiers.ImportModuleSpecifierEndingPreference); v != "" {
+			return string(v)
+		}
+		return nil
+	},
 }
 
 // configPathParsers provides field-specific config value parsers that override the default
@@ -444,11 +534,17 @@ var configPathParsers = map[string]func(any) any{
 }
 
 type fieldInfo struct {
-	rawName      string // raw name for unstable section lookup (e.g., "quotePreference")
-	configPath   string // dotted path for config (e.g., "preferences.quoteStyle")
-	fieldPath    []int  // index path to field in struct
-	rawInvert    bool   // whether to invert boolean values for raw name
-	configInvert bool   // whether to invert boolean values for config path
+	rawName             string // raw name for unstable section lookup (e.g., "quotePreference")
+	configPath          string // dotted path for config (e.g., "preferences.quoteStyle")
+	fallbackConfigPaths []configPathInfo
+	fieldPath           []int // index path to field in struct
+	rawInvert           bool  // whether to invert boolean values for raw name
+	configInvert        bool  // whether to invert boolean values for config path
+}
+
+type configPathInfo struct {
+	path   string
+	invert bool
 }
 
 var fieldInfoCache = sync.OnceValue(func() []fieldInfo {
@@ -475,6 +571,7 @@ func collectFieldInfos(t reflect.Type, indexPath []int) []fieldInfo {
 
 		rawTag := field.Tag.Get("raw")
 		configTag := field.Tag.Get("config")
+		fallbackConfigTag := field.Tag.Get("fallbackConfig")
 
 		if rawTag == "" && configTag == "" {
 			// Embedded struct without tags - recurse into it
@@ -502,18 +599,30 @@ func collectFieldInfos(t reflect.Type, indexPath []int) []fieldInfo {
 
 		// Parse config tag: "path.to.setting" or "path.to.setting,invert"
 		if configTag != "" {
-			parts := strings.Split(configTag, ",")
-			info.configPath = parts[0]
-			for _, part := range parts[1:] {
-				if part == "invert" {
-					info.configInvert = true
-				}
+			configPath := parseConfigPathTag(configTag)
+			info.configPath = configPath.path
+			info.configInvert = configPath.invert
+		}
+		if fallbackConfigTag != "" {
+			for tag := range strings.SplitSeq(fallbackConfigTag, ";") {
+				info.fallbackConfigPaths = append(info.fallbackConfigPaths, parseConfigPathTag(tag))
 			}
 		}
 
 		infos = append(infos, info)
 	}
 	return infos
+}
+
+func parseConfigPathTag(tag string) configPathInfo {
+	parts := strings.Split(tag, ",")
+	info := configPathInfo{path: parts[0]}
+	for _, part := range parts[1:] {
+		if part == "invert" {
+			info.invert = true
+		}
+	}
+	return info
 }
 
 func getNestedValue(config map[string]any, path string) (any, bool) {
@@ -546,27 +655,34 @@ func setNestedValue(config map[string]any, path string, value any) {
 	current[parts[len(parts)-1]] = value
 }
 
+func setRawFieldsFromConfig(v reflect.Value, infos []fieldInfo, settings map[string]any) {
+	index := unstableNameIndex()
+	for name, value := range settings {
+		if idx, found := index[name]; found {
+			info := infos[idx]
+			field := getFieldByPath(v, info.fieldPath)
+			if info.rawInvert {
+				if b, ok := value.(bool); ok {
+					value = !b
+				}
+			}
+			setFieldFromValue(field, value)
+		}
+	}
+}
+
 func (p UserPreferences) withConfig(config map[string]any) UserPreferences {
 	v := reflect.ValueOf(&p).Elem()
 	infos := fieldInfoCache()
+
+	// Raw UserPreferences can be provided directly, notably via LSP initializationOptions.
+	setRawFieldsFromConfig(v, infos, config)
 
 	// Process "unstable" section first - allows any field to be set by raw name.
 	// This mirrors VS Code's behavior: { ...config.get('unstable'), ...stableOptions }
 	// where stable options are spread after and take precedence.
 	if unstable, ok := config["unstable"].(map[string]any); ok {
-		index := unstableNameIndex()
-		for name, value := range unstable {
-			if idx, found := index[name]; found {
-				info := infos[idx]
-				field := getFieldByPath(v, info.fieldPath)
-				if info.rawInvert {
-					if b, ok := value.(bool); ok {
-						value = !b
-					}
-				}
-				setFieldFromValue(field, value)
-			}
-		}
+		setRawFieldsFromConfig(v, infos, unstable)
 	}
 
 	// Process path-based config (VS Code style nested paths).
@@ -575,18 +691,28 @@ func (p UserPreferences) withConfig(config map[string]any) UserPreferences {
 		if info.configPath == "" {
 			continue
 		}
-		val, ok := getNestedValue(config, info.configPath)
+		configPath := configPathInfo{path: info.configPath, invert: info.configInvert}
+		val, ok := getNestedValue(config, configPath.path)
+		if !ok {
+			for _, fallbackConfigPath := range info.fallbackConfigPaths {
+				val, ok = getNestedValue(config, fallbackConfigPath.path)
+				if ok {
+					configPath = fallbackConfigPath
+					break
+				}
+			}
+		}
 		if !ok {
 			continue
 		}
 
 		field := getFieldByPath(v, info.fieldPath)
-		if info.configInvert {
+		if configPath.invert {
 			if b, ok := val.(bool); ok {
 				val = !b
 			}
 		}
-		if parser, ok := configPathParsers[info.configPath]; ok {
+		if parser, ok := configPathParsers[configPath.path]; ok {
 			field.Set(reflect.ValueOf(parser(val)))
 			continue
 		}
@@ -618,7 +744,7 @@ func setFieldFromValue(field reflect.Value, val any) {
 		return
 	}
 
-	// Check custom parsers first (for types like Tristate, OrganizeImportsCollation, etc.)
+	// Check custom parsers first (for types like Tristate, enums, etc.)
 	if parser, ok := typeParsers[field.Type()]; ok {
 		field.Set(reflect.ValueOf(parser(val)))
 		return
@@ -687,7 +813,7 @@ func (p *UserPreferences) MarshalJSONTo(enc *json.Encoder) error {
 }
 
 func serializeField(field reflect.Value) any {
-	// Check custom serializers first (for types like Tristate, OrganizeImportsCollation, etc.)
+	// Check custom serializers first (for types like Tristate, enums, etc.)
 	if serializer, ok := typeSerializers[field.Type()]; ok {
 		return serializer(field.Interface())
 	}
@@ -696,9 +822,21 @@ func serializeField(field reflect.Value) any {
 	case reflect.Bool:
 		return field.Bool()
 	case reflect.Int:
-		return int(field.Int())
+		// Zero means "unset" for these preference fields. Omit it so a partial
+		// config does not clobber defaults with zeros when round-tripped through
+		// withConfig.
+		i := field.Int()
+		if i == 0 {
+			return nil
+		}
+		return int(i)
 	case reflect.String:
-		return field.String()
+		// Zero ("") means "unset"; omit it for the same reason as int above.
+		s := field.String()
+		if s == "" {
+			return nil
+		}
+		return s
 	case reflect.Slice:
 		if field.IsNil() {
 			return nil
@@ -724,28 +862,6 @@ func (p *UserPreferences) UnmarshalJSONFrom(dec *json.Decoder) error {
 }
 
 // --- Helper methods ---
-
-// WithOverrides returns a copy of p with non-zero fields from overrides applied on top.
-// This is safe because all preference fields use types where zero = "not set":
-// Tristate (TSUnknown=0), int (0), string (""), slice (nil).
-func (p UserPreferences) WithOverrides(overrides UserPreferences) UserPreferences {
-	mergeNonZeroFields(reflect.ValueOf(&p).Elem(), reflect.ValueOf(&overrides).Elem())
-	return p
-}
-
-func mergeNonZeroFields(dst, src reflect.Value) {
-	for i := range dst.NumField() {
-		srcField := src.Field(i)
-		dstField := dst.Field(i)
-		if srcField.Kind() == reflect.Struct {
-			mergeNonZeroFields(dstField, srcField)
-			continue
-		}
-		if !srcField.IsZero() {
-			dstField.Set(srcField)
-		}
-	}
-}
 
 func (p UserPreferences) ModuleSpecifierPreferences() modulespecifiers.UserPreferences {
 	return modulespecifiers.UserPreferences{
@@ -776,11 +892,8 @@ func ParseUserPreferences(items map[string]any) UserPreferences {
 	// Apply javascript, then typescript, then js/ts (highest precedence).
 	for _, section := range []string{"javascript", "typescript", "js/ts"} {
 		if item, ok := items[section]; ok && item != nil {
-			switch settings := item.(type) {
-			case map[string]any:
+			if settings, ok := item.(map[string]any); ok {
 				prefs = prefs.withConfig(settings)
-			case UserPreferences:
-				prefs = prefs.WithOverrides(settings)
 			}
 		}
 	}

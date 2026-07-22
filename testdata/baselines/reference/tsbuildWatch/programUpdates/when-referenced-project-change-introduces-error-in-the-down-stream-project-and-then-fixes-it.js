@@ -139,6 +139,12 @@ export function createSomeObject() {
   "size": 1338
 }
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /user/username/projects/sample1
+  /user/username/projects/sample1/App (recursive)
+  /user/username/projects/sample1/Library (recursive)
 Library/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -263,6 +269,12 @@ export function createSomeObject() {
   "size": 1341
 }
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /user/username/projects/sample1
+  /user/username/projects/sample1/App (recursive)
+  /user/username/projects/sample1/Library (recursive)
 Library/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /user/username/projects/sample1/Library/library.ts
@@ -376,6 +388,12 @@ export function createSomeObject() {
   "size": 1338
 }
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /user/username/projects/sample1
+  /user/username/projects/sample1/App (recursive)
+  /user/username/projects/sample1/Library (recursive)
 Library/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /user/username/projects/sample1/Library/library.ts

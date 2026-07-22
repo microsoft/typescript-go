@@ -171,6 +171,119 @@ func TestSnapshot(t *testing.T) {
 		_, err := session.GetCurrentLanguageServiceWithAutoImports(ctx, otherIndexURI)
 		assert.NilError(t, err)
 	})
+
+	t.Run("fallback rebuild with recomputed parse options is safe for later clone", func(t *testing.T) {
+		t.Parallel()
+
+		testFiles := map[string]any{
+			"/project/node_modules/pkg/index.ts": `export const pkg = 0;`,
+			"/project/src/other.ts":              `export const other = 1;`,
+		}
+		session := setup(testFiles)
+		pkgURI := lsproto.DocumentUri("file:///project/node_modules/pkg/index.ts")
+		otherURI := lsproto.DocumentUri("file:///project/src/other.ts")
+
+		session.DidOpenFile(context.Background(), pkgURI, 1, testFiles["/project/node_modules/pkg/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		session.DidOpenFile(context.Background(), otherURI, 1, testFiles["/project/src/other.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), pkgURI)
+		assert.NilError(t, err)
+
+		err = session.fs.fs.WriteFile("/project/node_modules/pkg/package.json", `{ "type": "module" }`)
+		assert.NilError(t, err)
+		session.DidChangeFile(context.Background(), pkgURI, 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+			{
+				WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{
+					Text: `import "./missing"; export const pkg = 1;`,
+				},
+			},
+		})
+		_, err = session.GetLanguageService(context.Background(), pkgURI)
+		assert.NilError(t, err)
+
+		session.DidChangeFile(context.Background(), otherURI, 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+			{
+				WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{
+					Text: `export const other = 2;`,
+				},
+			},
+		})
+		_, err = session.GetLanguageService(context.Background(), otherURI)
+		assert.NilError(t, err)
+	})
+
+	t.Run("auto-import snapshot is adopted when session snapshot is unchanged", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/home/projects/TS/p1/tsconfig.json": "{}",
+			"/home/projects/TS/p1/index.ts":      "const value = foo;",
+			"/home/projects/TS/p1/foo.ts":        "export const foo = 1;",
+		}
+		session := setup(files)
+		t.Cleanup(session.Close)
+		ctx := context.Background()
+		uri := lsproto.DocumentUri("file:///home/projects/TS/p1/index.ts")
+
+		session.DidOpenFile(ctx, uri, 1, files["/home/projects/TS/p1/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(ctx, uri)
+		assert.NilError(t, err)
+
+		baseSnapshot := session.Snapshot()
+		preparedSnapshot := session.GetSnapshotWithAutoImports(ctx, baseSnapshot, uri)
+		defer preparedSnapshot.Deref(session)
+
+		session.WaitForBackgroundTasks()
+		assert.Equal(t, session.Snapshot(), preparedSnapshot)
+	})
+
+	t.Run("no-op watch change does not rebuild program", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/home/projects/TS/p1/tsconfig.json": "{}",
+			"/home/projects/TS/p1/index.ts":      "import { a } from './a'; console.log(a);",
+			"/home/projects/TS/p1/a.ts":          "export const a = 1;",
+		}
+		session := setup(files)
+		t.Cleanup(session.Close)
+		ctx := context.Background()
+		uri := lsproto.DocumentUri("file:///home/projects/TS/p1/index.ts")
+		configPath := tspath.Path("/home/projects/ts/p1/tsconfig.json")
+
+		session.DidOpenFile(ctx, uri, 1, files["/home/projects/TS/p1/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(ctx, uri)
+		assert.NilError(t, err)
+
+		programBefore := session.Snapshot().ProjectCollection.ConfiguredProject(configPath).Program
+
+		// Send a watch change event for a project file whose content on disk is unchanged.
+		// This should not invalidate the program or trigger a recheck.
+		session.pendingFileChangesMu.Lock()
+		session.pendingFileChanges = append(session.pendingFileChanges, FileChange{
+			Kind: FileChangeKindWatchChange,
+			URI:  "file:///home/projects/TS/p1/a.ts",
+		})
+		session.pendingFileChangesMu.Unlock()
+		_, err = session.GetLanguageService(ctx, uri)
+		assert.NilError(t, err)
+
+		programAfter := session.Snapshot().ProjectCollection.ConfiguredProject(configPath).Program
+		assert.Equal(t, programBefore, programAfter, "no-op watch change should not rebuild the program")
+
+		// A watch change that reflects an actual content change on disk must still
+		// rebuild the program.
+		err = session.fs.fs.WriteFile("/home/projects/TS/p1/a.ts", "export const a = 2;")
+		assert.NilError(t, err)
+		session.pendingFileChangesMu.Lock()
+		session.pendingFileChanges = append(session.pendingFileChanges, FileChange{
+			Kind: FileChangeKindWatchChange,
+			URI:  "file:///home/projects/TS/p1/a.ts",
+		})
+		session.pendingFileChangesMu.Unlock()
+		_, err = session.GetLanguageService(ctx, uri)
+		assert.NilError(t, err)
+
+		programChanged := session.Snapshot().ProjectCollection.ConfiguredProject(configPath).Program
+		assert.Assert(t, programBefore != programChanged, "real watch change should rebuild the program")
+	})
 }
 
 func BenchmarkSnapshotCloneRefCost(b *testing.B) {

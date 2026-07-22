@@ -736,12 +736,13 @@ func (c *Checker) narrowTypeByDiscriminant(t *Type, access *ast.Node, narrowType
 }
 
 func (c *Checker) isMatchingConstructorReference(f *FlowState, expr *ast.Node) bool {
-	if ast.IsAccessExpression(expr) {
-		if accessedName, ok := c.getAccessedPropertyName(expr); ok && accessedName == "constructor" && c.isMatchingReference(f.reference, expr.Expression()) {
-			return true
-		}
+	var name *ast.Node
+	if ast.IsPropertyAccessExpression(expr) {
+		name = expr.AsPropertyAccessExpression().Name()
+	} else if ast.IsElementAccessExpression(expr) && ast.IsStringLiteralLike(expr.AsElementAccessExpression().ArgumentExpression) {
+		name = expr.AsElementAccessExpression().ArgumentExpression
 	}
-	return false
+	return name != nil && name.Text() == "constructor" && c.isMatchingReference(f.reference, expr.Expression())
 }
 
 func (c *Checker) narrowTypeByConstructor(t *Type, operator ast.Kind, identifier *ast.Node, assumeTrue bool) *Type {
@@ -1570,7 +1571,7 @@ func (c *Checker) reportFlowControlError(node *ast.Node) {
 	block := ast.FindAncestor(node, ast.IsFunctionOrModuleBlock)
 	sourceFile := ast.GetSourceFileOfNode(node)
 	span := scanner.GetRangeOfTokenAtPosition(sourceFile, block.StatementList().Pos())
-	c.diagnostics.Add(ast.NewDiagnostic(sourceFile, span, diagnostics.The_containing_function_or_module_body_is_too_large_for_control_flow_analysis))
+	c.addDiagnostic(ast.NewDiagnostic(sourceFile, span, diagnostics.The_containing_function_or_module_body_is_too_large_for_control_flow_analysis))
 }
 
 func (c *Checker) isMatchingReference(source *ast.Node, target *ast.Node) bool {
