@@ -2188,48 +2188,6 @@ function getPublishedTypeScriptVersion() {
 
 const getPackageLock = memoize(() => JSON.parse(fs.readFileSync(path.join(__dirname, "package-lock.json"), "utf8")));
 
-/** @type {Map<string, Promise<string>>} */
-const npmRegistryByScope = new Map();
-
-/**
- * @param {string} npmPackageName
- */
-function pickConfiguredNpmRegistry(npmPackageName) {
-    const scope = npmPackageName.startsWith("@") ? npmPackageName.split("/", 1)[0] : "";
-    let promise = npmRegistryByScope.get(scope);
-    if (!promise) {
-        promise = pickConfiguredNpmRegistryWorker(scope);
-        npmRegistryByScope.set(scope, promise);
-    }
-    return promise;
-}
-
-/**
- * @param {string} scope
- */
-async function pickConfiguredNpmRegistryWorker(scope) {
-    if (scope) {
-        const { stdout } = await $pipe({ env: releasePackageEnv })`npm config get ${`${scope}:registry`}`;
-        const registry = stdout.trim();
-        if (registry && registry !== "undefined" && registry !== "null") {
-            return registry;
-        }
-    }
-
-    const { stdout } = await $pipe({ env: releasePackageEnv })`npm config get registry`;
-    return stdout.trim();
-}
-
-/**
- * @param {string} registry
- * @param {string} lockfileResolved
- */
-function replaceRegistryPrefix(registry, lockfileResolved) {
-    const registryUrl = new URL(registry.endsWith("/") ? registry : `${registry}/`);
-    const lockfileUrl = new URL(lockfileResolved);
-    return new URL(lockfileUrl.pathname.replace(/^\/+/, ""), registryUrl).toString();
-}
-
 /**
  * @param {string} npmPackageName
  */
@@ -2273,8 +2231,7 @@ async function getPublishedPlatformPackageLibDirWorker(npmPackageName) {
         throw new Error(`package-lock.json entry for ${npmPackageName}@${version} does not contain a tarball URL.`);
     }
 
-    const registry = await pickConfiguredNpmRegistry(npmPackageName);
-    console.log(`Fetching ${npmPackageName}@${version} with npm. Configured registry URL: ${replaceRegistryPrefix(registry, lockEntry.resolved)}`);
+    console.log(`Fetching ${npmPackageName}@${version} with npm.`);
     const { stdout } = await $pipe({ cwd: tarballDestination, env: releasePackageEnv })`npm pack --json ${npmPackageName}@${version}`;
     const [packed] = JSON.parse(stdout);
     if (!packed.filename || typeof packed.filename !== "string") {
