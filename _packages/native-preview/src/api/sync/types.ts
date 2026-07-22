@@ -407,7 +407,7 @@ export interface EmitResult {
     readonly emittedFiles: readonly string[];
 }
 
-export interface EmitToStringResult {
+export interface EmitOutput {
     readonly emitSkipped: boolean;
     readonly diagnostics: readonly Diagnostic[];
     readonly outputFiles: readonly EmitOutputFile[];

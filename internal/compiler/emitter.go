@@ -38,6 +38,7 @@ type emitter struct {
 	paths              *outputpaths.OutputPaths
 	sourceFile         *ast.SourceFile
 	emitResult         EmitResult
+	forceEmit          bool
 	writeFile          func(fileName string, text string, data *WriteFileData) error
 	tr                 *tracing.Tracing
 }
@@ -176,7 +177,7 @@ func (e *emitter) emitJSFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 		return
 	}
 
-	if options.NoEmit == core.TSTrue || e.host.IsEmitBlocked(jsFilePath) {
+	if !e.forceEmit && (options.NoEmit == core.TSTrue || e.host.IsEmitBlocked(jsFilePath)) {
 		e.emitResult.EmitSkipped = true
 		return
 	}
@@ -229,12 +230,12 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 		e.emitterDiagnostics.Add(elem)
 	}
 
-	if e.emitOnly != EmitOnlyForcedDts && (options.NoEmit == core.TSTrue || e.host.IsEmitBlocked(declarationFilePath)) {
+	if !e.forceEmit && e.emitOnly != EmitOnlyForcedDts && (options.NoEmit == core.TSTrue || e.host.IsEmitBlocked(declarationFilePath)) {
 		e.emitResult.EmitSkipped = true
 		return
 	}
 
-	declBlocked := len(diags) > 0 && e.emitOnly != EmitOnlyForcedDts
+	declBlocked := len(diags) > 0 && !e.forceEmit && e.emitOnly != EmitOnlyForcedDts
 	if declBlocked {
 		e.emitResult.EmitSkipped = true
 		return
@@ -448,12 +449,12 @@ type SourceFileMayBeEmittedHost interface {
 	SourceFiles() []*ast.SourceFile
 }
 
-func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host SourceFileMayBeEmittedHost, forceDtsEmit bool) bool {
+func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host SourceFileMayBeEmittedHost, forceDtsEmit bool, forceJsEmit bool) bool {
 	// TODO: move this to outputpaths?
 
 	options := host.Options()
 	// Js files are emitted only if option is enabled
-	if options.NoEmitForJsFiles.IsTrue() && ast.IsSourceFileJS(sourceFile) {
+	if !forceJsEmit && options.NoEmitForJsFiles.IsTrue() && ast.IsSourceFileJS(sourceFile) {
 		return false
 	}
 
@@ -468,7 +469,7 @@ func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host SourceFileMayBeEmit
 	}
 
 	// forcing dts emit => file needs to be emitted
-	if forceDtsEmit {
+	if forceDtsEmit || forceJsEmit {
 		return true
 	}
 
@@ -503,12 +504,12 @@ func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host SourceFileMayBeEmit
 	return true
 }
 
-func getSourceFilesToEmit(host SourceFileMayBeEmittedHost, targetSourceFiles []*ast.SourceFile, forceDtsEmit bool) []*ast.SourceFile {
+func getSourceFilesToEmit(host SourceFileMayBeEmittedHost, targetSourceFiles []*ast.SourceFile, forceDtsEmit bool, forceJsEmit bool) []*ast.SourceFile {
 	if targetSourceFiles == nil {
 		targetSourceFiles = host.SourceFiles()
 	}
 	return core.Filter(targetSourceFiles, func(sourceFile *ast.SourceFile) bool {
-		return sourceFileMayBeEmitted(sourceFile, host, forceDtsEmit)
+		return sourceFileMayBeEmitted(sourceFile, host, forceDtsEmit, forceJsEmit)
 	})
 }
 
@@ -518,7 +519,7 @@ func isSourceFileNotJson(file *ast.SourceFile) bool {
 
 func getDeclarationDiagnostics(host EmitHost, file *ast.SourceFile) []*ast.Diagnostic {
 	// TODO: use p.getSourceFilesToEmit cache
-	fullFiles := core.Filter(getSourceFilesToEmit(host, core.SingleElementSlice(file), false), isSourceFileNotJson)
+	fullFiles := core.Filter(getSourceFilesToEmit(host, core.SingleElementSlice(file), false, false), isSourceFileNotJson)
 	if !core.Some(fullFiles, func(f *ast.SourceFile) bool { return f == file }) {
 		return []*ast.Diagnostic{}
 	}

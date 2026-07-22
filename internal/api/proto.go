@@ -183,9 +183,11 @@ const (
 	MethodGetConfigFileParsingDiagnostics Method = "getConfigFileParsingDiagnostics"
 
 	// Emitter methods
-	MethodPrintNode    Method = "printNode"
-	MethodEmit         Method = "emit"
-	MethodEmitToString Method = "emitToString"
+	MethodPrintNode          Method = "printNode"
+	MethodEmit               Method = "emit"
+	MethodEmitToString       Method = "emitToString"
+	MethodGetJavaScriptEmit  Method = "getJavaScriptEmit"
+	MethodGetDeclarationEmit Method = "getDeclarationEmit"
 
 	// Intrinsic type getters
 	MethodGetAnyType       Method = "getAnyType"
@@ -479,6 +481,8 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodPrintNode:                         unmarshallerFor[PrintNodeParams],
 	MethodEmit:                              unmarshallerFor[EmitParams],
 	MethodEmitToString:                      unmarshallerFor[EmitParams],
+	MethodGetJavaScriptEmit:                 unmarshallerFor[SelectedFilesEmitParams],
+	MethodGetDeclarationEmit:                unmarshallerFor[SelectedFilesEmitParams],
 	MethodGetAnyType:                        unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetStringType:                     unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetNumberType:                     unmarshallerFor[GetIntrinsicTypeParams],
@@ -1093,10 +1097,15 @@ type PrintNodeParams struct {
 }
 
 type EmitParams struct {
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	EmitOnly *uint32    `json:"emitOnly,omitempty"`
+}
+
+type SelectedFilesEmitParams struct {
 	Snapshot SnapshotID           `json:"snapshot"`
 	Project  ProjectID            `json:"project"`
-	Files    []DocumentIdentifier `json:"files,omitempty"`
-	EmitOnly *uint32              `json:"emitOnly,omitempty"`
+	Files    []DocumentIdentifier `json:"files"`
 }
 
 type EmitResponse struct {
@@ -1111,7 +1120,7 @@ type EmitOutputFile struct {
 	SourceFileName *string `json:"sourceFileName,omitempty"`
 }
 
-type EmitToStringResponse struct {
+type EmitOutputResponse struct {
 	EmitSkipped bool                  `json:"emitSkipped"`
 	Diagnostics []*DiagnosticResponse `json:"diagnostics"`
 	OutputFiles []*EmitOutputFile     `json:"outputFiles"`

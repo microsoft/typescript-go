@@ -94,9 +94,9 @@ import type {
     CompletionOptions,
     ConditionalType,
     Diagnostic,
+    EmitOutput,
     EmitOutputFile,
     EmitResult,
-    EmitToStringResult,
     FreshableType,
     GetImportEditsForSymbolsOptions,
     IdentifierTypePredicate,
@@ -128,7 +128,7 @@ import type {
 
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 export { CheckFlags, CompletionItemKind, DiagnosticCategory, ElementFlags, EmitOnly, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
-export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutputFile, EmitResult, EmitToStringResult, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ProjectReference, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutput, EmitOutputFile, EmitResult, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ProjectReference, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 
 export class API<FromLSP extends boolean = false> {
     private client: Client;
@@ -966,11 +966,10 @@ export class Program {
      * When the API has a virtual filesystem with a `writeFile` callback, output
      * is written there. Otherwise, the server writes directly to the host filesystem.
      */
-    async emit(files?: DocumentIdentifier | readonly DocumentIdentifier[], emitOnly?: EmitOnly): Promise<EmitResult> {
+    async emit(emitOnly?: EmitOnly): Promise<EmitResult> {
         return this.client.apiRequest<EmitResult>("emit", {
             snapshot: this.snapshotId,
             project: this.project.id,
-            files: normalizeEmitFiles(files),
             emitOnly,
         });
     }
@@ -978,24 +977,35 @@ export class Program {
     /**
      * Emits files and returns their contents without writing to the filesystem.
      */
-    async emitToString(files?: DocumentIdentifier | readonly DocumentIdentifier[], emitOnly?: EmitOnly): Promise<EmitToStringResult> {
-        return this.client.apiRequest<EmitToStringResult>("emitToString", {
+    async emitToString(emitOnly?: EmitOnly): Promise<EmitOutput> {
+        return this.client.apiRequest<EmitOutput>("emitToString", {
             snapshot: this.snapshotId,
             project: this.project.id,
-            files: normalizeEmitFiles(files),
             emitOnly,
         });
     }
-}
 
-function normalizeEmitFiles(files: DocumentIdentifier | readonly DocumentIdentifier[] | undefined): readonly DocumentIdentifier[] | undefined {
-    return files === undefined ? undefined
-        : isDocumentIdentifierArray(files) ? files
-        : [files];
-}
+    /**
+     * Gets JavaScript output for selected files regardless of project `noEmit`, `emitDeclarationOnly`, and `noEmitOnError` settings.
+     */
+    async getJavaScriptEmit(files: readonly DocumentIdentifier[]): Promise<EmitOutput> {
+        return this.client.apiRequest<EmitOutput>("getJavaScriptEmit", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            files,
+        });
+    }
 
-function isDocumentIdentifierArray(files: DocumentIdentifier | readonly DocumentIdentifier[]): files is readonly DocumentIdentifier[] {
-    return Array.isArray(files);
+    /**
+     * Gets declaration output for selected files regardless of project `noEmit`, `declaration`, `emitDeclarationOnly`, and `noEmitOnError` settings.
+     */
+    async getDeclarationEmit(files: readonly DocumentIdentifier[]): Promise<EmitOutput> {
+        return this.client.apiRequest<EmitOutput>("getDeclarationEmit", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            files,
+        });
+    }
 }
 
 export class Checker {

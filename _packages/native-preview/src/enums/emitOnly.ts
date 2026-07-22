@@ -4,5 +4,4 @@ export var EmitOnly: any;
     EmitOnly[EmitOnly["All"] = 0] = "All";
     EmitOnly[EmitOnly["OnlyJs"] = 1] = "OnlyJs";
     EmitOnly[EmitOnly["OnlyDts"] = 2] = "OnlyDts";
-    EmitOnly[EmitOnly["OnlyForcedDts"] = 3] = "OnlyForcedDts";
 })(EmitOnly || (EmitOnly = {}));

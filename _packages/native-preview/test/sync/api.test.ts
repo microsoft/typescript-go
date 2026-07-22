@@ -4655,23 +4655,35 @@ export const obj = { m: 1, s: "hi", b: true };
     });
 });
 
-describe("Program - emitToString", () => {
-    test("emitToString single file produces JS output", () => {
-        const { api, fs } = spawnAPIWithFS({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { target: "es2020" } }),
-            "/src/a.ts": `export const a: number = 1;`,
-        });
+describe("Program - selected file emit", () => {
+    const files = {
+        "/tsconfig.json": JSON.stringify({
+            compilerOptions: {
+                declarationMap: true,
+                emitDeclarationOnly: true,
+                noEmit: true,
+                noEmitOnError: true,
+                sourceMap: true,
+            },
+        }),
+        "/src/a.ts": `export const a: string = 1;`,
+        "/src/b.ts": `export const b = 2;`,
+    };
+
+    test("getJavaScriptEmit forces JavaScript and source maps", () => {
+        const { api, fs } = spawnAPIWithFS({ ...files });
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
             const project = snapshot.getProject("/tsconfig.json")!;
-            const result = project.program.emitToString("/src/a.ts");
+            const result = project.program.getJavaScriptEmit(["/src/a.ts", "/src/b.ts"]);
             assert.equal(result.emitSkipped, false);
-            assert.ok(result.outputFiles.length > 0);
-            const jsFile = result.outputFiles.find(f => f.fileName.endsWith(".js"));
-            assert.ok(jsFile, "should produce a .js file");
-            assert.ok(jsFile.text.includes("export const a = 1"), "JS output should contain the declaration");
-            assert.equal(jsFile.sourceFileName, "/src/a.ts");
-            assert.deepEqual(result.diagnostics, []);
+            assert.deepEqual(result.outputFiles.map(f => f.fileName), [
+                "/src/a.js",
+                "/src/a.js.map",
+                "/src/b.js",
+                "/src/b.js.map",
+            ]);
+            assert.ok(result.outputFiles.every(f => f.sourceFileName === "/src/a.ts" || f.sourceFileName === "/src/b.ts"));
             assert.equal(fs.readFile?.("/src/a.js"), undefined);
         }
         finally {
@@ -4679,88 +4691,33 @@ describe("Program - emitToString", () => {
         }
     });
 
-    test("emit multiple files produces output for each", () => {
-        const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { target: "es2020" } }),
-            "/src/a.ts": `export const a: number = 1;`,
-            "/src/b.ts": `export const b: string = "hello";`,
-        });
+    test("getDeclarationEmit forces declarations and declaration maps", () => {
+        const { api, fs } = spawnAPIWithFS({ ...files });
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
             const project = snapshot.getProject("/tsconfig.json")!;
-            const result = project.program.emitToString(["/src/a.ts", "/src/b.ts"]);
+            const result = project.program.getDeclarationEmit(["/src/a.ts", "/src/b.ts"]);
             assert.equal(result.emitSkipped, false);
-            const jsFiles = result.outputFiles.filter(f => f.fileName.endsWith(".js"));
-            assert.equal(jsFiles.length, 2);
-            assert.deepEqual(jsFiles.map(f => f.fileName), ["/src/a.js", "/src/b.js"]);
-            assert.ok(jsFiles.some(f => f.sourceFileName === "/src/a.ts"));
-            assert.ok(jsFiles.some(f => f.sourceFileName === "/src/b.ts"));
+            assert.deepEqual(result.outputFiles.map(f => f.fileName), [
+                "/src/a.d.ts",
+                "/src/a.d.ts.map",
+                "/src/b.d.ts",
+                "/src/b.d.ts.map",
+            ]);
+            assert.equal(fs.readFile?.("/src/a.d.ts"), undefined);
         }
         finally {
             api.close();
         }
     });
 
-    test("emit with no file emits all files", () => {
-        const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { target: "es2020" } }),
-            "/src/a.ts": `export const a = 1;`,
-            "/src/b.ts": `export const b = 2;`,
-        });
+    test("selected file emit accepts empty arrays", () => {
+        const api = spawnAPI({ ...files });
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
             const project = snapshot.getProject("/tsconfig.json")!;
-            const result = project.program.emitToString();
-            assert.equal(result.emitSkipped, false);
-            const jsFiles = result.outputFiles.filter(f => f.fileName.endsWith(".js"));
-            assert.ok(jsFiles.length >= 2, "should emit at least 2 JS files");
-        }
-        finally {
-            api.close();
-        }
-    });
-
-    test("emit with empty array returns empty", () => {
-        const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { target: "es2020" } }),
-            "/src/a.ts": `export const a = 1;`,
-        });
-        try {
-            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
-            const result = project.program.emitToString([]);
-            assert.equal(result.emitSkipped, false);
-            assert.deepEqual(result.outputFiles, []);
-        }
-        finally {
-            api.close();
-        }
-    });
-
-    test("emit single file respects emitOnly", () => {
-        const api = spawnAPI({
-            "/tsconfig.json": JSON.stringify({ compilerOptions: { target: "es2020", declaration: true } }),
-            "/src/a.ts": `export const a: number = 1;`,
-        });
-        try {
-            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
-
-            const all = project.program.emitToString("/src/a.ts");
-            assert.equal(all.emitSkipped, false);
-            assert.ok(all.outputFiles.some(f => f.fileName.endsWith(".js")));
-            assert.ok(all.outputFiles.some(f => f.fileName.endsWith(".d.ts")));
-            assert.ok(all.outputFiles.every(f => f.sourceFileName === "/src/a.ts"));
-
-            const jsOnly = project.program.emitToString("/src/a.ts", EmitOnly.OnlyJs);
-            assert.equal(jsOnly.emitSkipped, false);
-            assert.ok(jsOnly.outputFiles.some(f => f.fileName.endsWith(".js")));
-            assert.ok(!jsOnly.outputFiles.some(f => f.fileName.endsWith(".d.ts")));
-
-            const dtsOnly = project.program.emitToString("/src/a.ts", EmitOnly.OnlyDts);
-            assert.equal(dtsOnly.emitSkipped, false);
-            assert.ok(dtsOnly.outputFiles.some(f => f.fileName.endsWith(".d.ts")));
-            assert.ok(!dtsOnly.outputFiles.some(f => f.fileName.endsWith(".js")));
+            assert.deepEqual((project.program.getJavaScriptEmit([])).outputFiles, []);
+            assert.deepEqual((project.program.getDeclarationEmit([])).outputFiles, []);
         }
         finally {
             api.close();
@@ -5571,7 +5528,7 @@ describe("Program - emit", () => {
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
             const project = snapshot.getProject("/tsconfig.json")!;
-            const result = project.program.emit(undefined, EmitOnly.OnlyDts);
+            const result = project.program.emit(EmitOnly.OnlyDts);
             assert.deepEqual(result, {
                 diagnostics: [],
                 emitSkipped: false,
@@ -5606,7 +5563,7 @@ describe("Program - emit", () => {
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
             const project = snapshot.getProject("/tsconfig.json")!;
-            const result = project.program.emit(undefined, EmitOnly.OnlyJs);
+            const result = project.program.emit(EmitOnly.OnlyJs);
             assert.deepEqual(result, {
                 diagnostics: [],
                 emitSkipped: false,
@@ -5630,61 +5587,17 @@ describe("Program - emit", () => {
         }
     });
 
-    test("emit only for one source file", () => {
-        const fs = createVirtualFileSystem({ ...files });
-
-        const api = new API({
-            cwd: fileURLToPath(new URL("../../../../", import.meta.url).toString()),
-            fs: fs,
-        });
-
-        try {
-            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
-            const project = snapshot.getProject("/tsconfig.json")!;
-            const result = project.program.emit("/src/index.ts");
-            assert.deepEqual(result, {
-                diagnostics: [],
-                emitSkipped: false,
-                emittedFiles: [
-                    "/dist/src/index.js",
-                    "/dist/src/index.d.ts",
-                ],
-            });
-
-            const js = fs.readFile?.("/dist/src/index.js");
-            const dts = fs.readFile?.("/dist/src/index.d.ts");
-            const js2 = fs.readFile?.("/dist/src/testing.js");
-            const dts2 = fs.readFile?.("/dist/src/testing.d.ts");
-            assert.strictEqual(js, `export const x = 1;\n`);
-            assert.strictEqual(dts, `export declare const x: number;\n`);
-            assert.strictEqual(js2, undefined);
-            assert.strictEqual(dts2, undefined);
-        }
-        finally {
-            api.close();
-        }
-    });
-
-    test("emit selected files and an empty selection", () => {
+    test("emitToString emits the whole program and respects emitOnly", () => {
         const { api, fs } = spawnAPIWithFS({ ...files });
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
             const project = snapshot.getProject("/tsconfig.json")!;
-
-            const selected = project.program.emit(["/src/testing.ts"]);
-            assert.deepEqual(selected.emittedFiles, [
-                "/dist/src/testing.js",
+            const result = project.program.emitToString(EmitOnly.OnlyDts);
+            assert.deepEqual(result.outputFiles.map(f => f.fileName), [
+                "/dist/src/index.d.ts",
                 "/dist/src/testing.d.ts",
             ]);
             assert.equal(fs.readFile?.("/dist/src/index.js"), undefined);
-            assert.equal(fs.readFile?.("/dist/src/testing.js"), `export const y = 'typescript';\n`);
-
-            const empty = project.program.emit([]);
-            assert.deepEqual(empty, {
-                diagnostics: [],
-                emitSkipped: false,
-                emittedFiles: [],
-            });
         }
         finally {
             api.close();
@@ -5705,17 +5618,42 @@ describe("Program - emit", () => {
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
             const project = snapshot.getProject("/tsconfig.json")!;
-            const result = project.program.emit(["/src/bad.ts", "/src/good.ts"]);
+            const result = project.program.emit();
             assert.equal(result.emitSkipped, true);
             assert.ok(result.diagnostics.some(d => d.code === 1109));
             assert.deepEqual(result.emittedFiles, []);
             assert.equal(fs.readFile?.("/dist/src/bad.js"), undefined);
             assert.equal(fs.readFile?.("/dist/src/good.js"), undefined);
 
-            const stringResult = project.program.emitToString(["/src/bad.ts", "/src/good.ts"]);
+            const stringResult = project.program.emitToString();
             assert.equal(stringResult.emitSkipped, true);
             assert.ok(stringResult.diagnostics.some(d => d.code === 1109));
             assert.deepEqual(stringResult.outputFiles, []);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("emit and emitToString respect noEmit", () => {
+        const { api, fs } = spawnAPIWithFS({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { noEmit: true } }),
+            "/src/index.ts": "export const value = 1;",
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            assert.deepEqual(project.program.emit(), {
+                diagnostics: [],
+                emitSkipped: true,
+                emittedFiles: [],
+            });
+            assert.deepEqual(project.program.emitToString(), {
+                diagnostics: [],
+                emitSkipped: true,
+                outputFiles: [],
+            });
+            assert.equal(fs.readFile?.("/src/index.js"), undefined);
         }
         finally {
             api.close();
@@ -5730,7 +5668,7 @@ describe("Program - emit", () => {
 
             let error: unknown;
             try {
-                project.program.emit("/src/missing.ts");
+                project.program.getJavaScriptEmit(["/src/missing.ts"]);
             }
             catch (e) {
                 error = e;
@@ -5739,7 +5677,7 @@ describe("Program - emit", () => {
 
             error = undefined;
             try {
-                project.program.emitToString(undefined, 999 as EmitOnly);
+                project.program.emitToString(3 as EmitOnly);
             }
             catch (e) {
                 error = e;

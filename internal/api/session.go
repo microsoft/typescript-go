@@ -711,6 +711,10 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleEmit(ctx, parsed.(*EmitParams))
 	case string(MethodEmitToString):
 		return s.handleEmitToString(ctx, parsed.(*EmitParams))
+	case string(MethodGetJavaScriptEmit):
+		return s.handleSelectedFilesEmit(ctx, parsed.(*SelectedFilesEmitParams), compiler.EmitOnlyJs)
+	case string(MethodGetDeclarationEmit):
+		return s.handleSelectedFilesEmit(ctx, parsed.(*SelectedFilesEmitParams), compiler.EmitOnlyDts)
 	case string(MethodIsContextSensitive):
 		return s.handleIsContextSensitive(ctx, parsed.(*GetContextualTypeParams))
 	case string(MethodGetReturnTypeOfSignature):
@@ -2322,12 +2326,38 @@ func (s *Session) handleEmit(ctx context.Context, params *EmitParams) (*EmitResp
 	}, nil
 }
 
-func (s *Session) handleEmitToString(ctx context.Context, params *EmitParams) (*EmitToStringResponse, error) {
+func (s *Session) handleEmitToString(ctx context.Context, params *EmitParams) (*EmitOutputResponse, error) {
 	program, options, err := s.getEmitOptions(params)
 	if err != nil {
 		return nil, err
 	}
+	return emitToOutput(ctx, program, options)
+}
 
+func (s *Session) handleSelectedFilesEmit(ctx context.Context, params *SelectedFilesEmitParams, emitOnly compiler.EmitOnly) (*EmitOutputResponse, error) {
+	program, err := s.getEmitProgram(params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	if params.Files == nil {
+		return nil, fmt.Errorf("%w: files is required", ErrClientError)
+	}
+	targetSourceFiles := make([]*ast.SourceFile, 0, len(params.Files))
+	for _, file := range params.Files {
+		sourceFile, err := s.resolveOptionalSourceFile(program, &file)
+		if err != nil {
+			return nil, err
+		}
+		targetSourceFiles = append(targetSourceFiles, sourceFile)
+	}
+	return emitToOutput(ctx, program, compiler.EmitOptions{
+		TargetSourceFiles: targetSourceFiles,
+		EmitOnly:          emitOnly,
+		ForceEmit:         true,
+	})
+}
+
+func emitToOutput(ctx context.Context, program *compiler.Program, options compiler.EmitOptions) (*EmitOutputResponse, error) {
 	var mu sync.Mutex
 	outputFiles := make([]*EmitOutputFile, 0)
 	options.WriteFile = func(fileName string, text string, data *compiler.WriteFileData) error {
@@ -2349,7 +2379,7 @@ func (s *Session) handleEmitToString(ctx context.Context, params *EmitParams) (*
 	slices.SortFunc(outputFiles, func(a, b *EmitOutputFile) int {
 		return strings.Compare(a.FileName, b.FileName)
 	})
-	return &EmitToStringResponse{
+	return &EmitOutputResponse{
 		EmitSkipped: result.EmitSkipped,
 		Diagnostics: nonNilDiagnostics(result.Diagnostics),
 		OutputFiles: outputFiles,
@@ -2357,44 +2387,32 @@ func (s *Session) handleEmitToString(ctx context.Context, params *EmitParams) (*
 }
 
 func (s *Session) getEmitOptions(params *EmitParams) (*compiler.Program, compiler.EmitOptions, error) {
-	sd, err := s.getSnapshotData(params.Snapshot)
+	program, err := s.getEmitProgram(params.Snapshot, params.Project)
 	if err != nil {
 		return nil, compiler.EmitOptions{}, err
 	}
-
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, compiler.EmitOptions{}, err
-	}
-
 	emitOnly, err := getEmitOnly(params.EmitOnly)
 	if err != nil {
 		return nil, compiler.EmitOptions{}, err
 	}
-
-	var targetSourceFiles []*ast.SourceFile
-	if params.Files != nil {
-		targetSourceFiles = make([]*ast.SourceFile, 0, len(params.Files))
-		for _, file := range params.Files {
-			sourceFile, err := s.resolveOptionalSourceFile(program, &file)
-			if err != nil {
-				return nil, compiler.EmitOptions{}, err
-			}
-			targetSourceFiles = append(targetSourceFiles, sourceFile)
-		}
-	}
-
 	return program, compiler.EmitOptions{
-		EmitOnly:          emitOnly,
-		TargetSourceFiles: targetSourceFiles,
+		EmitOnly: emitOnly,
 	}, nil
+}
+
+func (s *Session) getEmitProgram(snapshot SnapshotID, projectID ProjectID) (*compiler.Program, error) {
+	sd, err := s.getSnapshotData(snapshot)
+	if err != nil {
+		return nil, err
+	}
+	return sd.getProgram(projectID)
 }
 
 func getEmitOnly(value *uint32) (compiler.EmitOnly, error) {
 	if value == nil {
 		return compiler.EmitAll, nil
 	}
-	if *value > uint32(compiler.EmitOnlyForcedDts) {
+	if *value > uint32(compiler.EmitOnlyDts) {
 		return compiler.EmitAll, fmt.Errorf("%w: invalid emitOnly value: %d", ErrClientError, *value)
 	}
 	emitOnly := compiler.EmitOnly(*value)

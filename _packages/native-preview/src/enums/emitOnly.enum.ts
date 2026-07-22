@@ -4,5 +4,4 @@ export enum EmitOnly {
     All = 0,
     OnlyJs = 1,
     OnlyDts = 2,
-    OnlyForcedDts = 3,
 }
