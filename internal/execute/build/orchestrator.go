@@ -71,7 +71,8 @@ type Orchestrator struct {
 	// contentMapperHost transforms content-mapped files; it is created once per build session (when
 	// enabled) and shared across all projects so mapper processes are consolidated. It closes itself when
 	// ctx is cancelled (see contentmapper.New).
-	contentMapperHost contentmapper.Host
+	contentMapperHost     contentmapper.Host
+	releaseContentMappers func()
 
 	// order generation result
 	tasks  *collections.SyncMap[tspath.Path, *BuildTask]
@@ -231,6 +232,24 @@ func (o *Orchestrator) GenerateGraph(oldTasks *collections.SyncMap[tspath.Path, 
 	for _, project := range projects {
 		o.setupBuildTask(project, nil, false, &completed, &analyzing, circularityStack)
 	}
+	o.replaceContentMapperLease()
+}
+
+func (o *Orchestrator) replaceContentMapperLease() {
+	if o.contentMapperHost == nil || !o.opts.Command.CompilerOptions.Watch.IsTrue() {
+		return
+	}
+	var mappers []*contentmapper.Mapper
+	for _, config := range o.order {
+		if task := o.getTask(o.toPath(config)); task.resolved != nil {
+			mappers = append(mappers, task.resolved.ContentMappers()...)
+		}
+	}
+	release := o.contentMapperHost.Acquire(mappers)
+	if o.releaseContentMappers != nil {
+		o.releaseContentMappers()
+	}
+	o.releaseContentMappers = release
 }
 
 func (o *Orchestrator) Start(ctx context.Context) tsc.CommandLineResult {

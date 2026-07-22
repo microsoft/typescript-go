@@ -71,7 +71,8 @@ type Watcher struct {
 	ctx context.Context
 	// contentMapperHost transforms content-mapped files; it is created once per watch session (when
 	// enabled) and reused across cycles. It closes itself when ctx is cancelled (see contentmapper.New).
-	contentMapperHost contentmapper.Host
+	contentMapperHost     contentmapper.Host
+	releaseContentMappers func()
 
 	program             *incremental.Program
 	extendedConfigCache *tsc.ExtendedConfigCache
@@ -122,6 +123,7 @@ func createWatcher(
 func (w *Watcher) start(ctx context.Context) {
 	w.ctx = ctx
 	w.contentMapperHost = tsc.NewContentMapperHost(ctx, w.sys, w.config.CompilerOptions())
+	w.replaceContentMapperLease(w.config.ContentMappers())
 	w.wm.Lock()
 	w.extendedConfigCache = &tsc.ExtendedConfigCache{}
 	host := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing), nil)
@@ -149,6 +151,17 @@ func (w *Watcher) start(ctx context.Context) {
 		// The content mapper host closes itself when ctx is cancelled (see contentmapper.New).
 		w.wm.RunLoop(ctx, w.DoCycle)
 	}
+}
+
+func (w *Watcher) replaceContentMapperLease(mappers []*contentmapper.Mapper) {
+	if w.contentMapperHost == nil {
+		return
+	}
+	release := w.contentMapperHost.Acquire(mappers)
+	if w.releaseContentMappers != nil {
+		w.releaseContentMappers()
+	}
+	w.releaseContentMappers = release
 }
 
 func (w *Watcher) computeDesiredWatches(seenFilePaths []string) map[string]bool {
@@ -429,6 +442,7 @@ func (w *Watcher) recheckTsConfig() bool {
 	if !reflect.DeepEqual(w.config.ParsedConfig, configParseResult.ParsedConfig) {
 		w.configModified = true
 	}
+	w.replaceContentMapperLease(configParseResult.ContentMappers())
 	w.config = configParseResult
 	return false
 }
