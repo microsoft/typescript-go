@@ -13,7 +13,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
-	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
@@ -85,7 +84,7 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 		for _, kind := range *params.Context.Only {
 			matchingKinds := getOrganizeImportsActionsForKind(kind)
 			for _, matchingKind := range matchingKinds {
-				organizeAction := l.createOrganizeImportsAction(ctx, program, file, matchingKind, params.TextDocument.Uri)
+				organizeAction := l.createOrganizeImportsAction(ctx, program, file, matchingKind)
 				actions = append(actions, *organizeAction)
 			}
 
@@ -343,53 +342,23 @@ func (l *LanguageService) createOrganizeImportsAction(
 	program *compiler.Program,
 	file *ast.SourceFile,
 	kind lsproto.CodeActionKind,
-	uri lsproto.DocumentUri,
 ) *lsproto.CommandOrCodeAction {
 	title := getOrganizeImportsActionTitle(ctx, kind)
-	action := &lsproto.CodeAction{
-		Title: title,
-		Kind:  &kind,
-	}
-	if lsproto.SupportsCodeActionResolve(lsproto.GetClientCapabilities(ctx)) {
-		action.Data = &lsproto.CodeActionData{
-			Uri: uri,
-		}
-	} else {
-		action.Edit = l.organizeImportsWorkspaceEdit(ctx, program, file, kind, nil)
-	}
-	return &lsproto.CommandOrCodeAction{
-		CodeAction: action,
-	}
-}
-
-func (l *LanguageService) ResolveCodeAction(ctx context.Context, action *lsproto.CodeAction) (*lsproto.CodeAction, error) {
-	if action.Data == nil || action.Data.Uri == "" || action.Kind == nil || !isOrganizeImportsKind(*action.Kind) {
-		return action, nil
-	}
-
-	program, file := l.getProgramAndFile(action.Data.Uri)
-	action.Edit = l.organizeImportsWorkspaceEdit(ctx, program, file, *action.Kind, action.Data.FormattingOptions)
-	return action, nil
-}
-
-func (l *LanguageService) organizeImportsWorkspaceEdit(
-	ctx context.Context,
-	program *compiler.Program,
-	file *ast.SourceFile,
-	kind lsproto.CodeActionKind,
-	formattingOptions *lsproto.FormattingOptions,
-) *lsproto.WorkspaceEdit {
-	formatOptions := l.FormatOptions()
-	if formattingOptions != nil {
-		formatOptions = lsutil.FromLSFormatOptions(formatOptions, formattingOptions)
-	}
 	changes := l.OrganizeImports(
 		ctx,
 		file,
 		program,
 		kind,
-		formatOptions,
 	)
+	if len(changes) == 0 {
+		return &lsproto.CommandOrCodeAction{
+			CodeAction: &lsproto.CodeAction{
+				Title: title,
+				Kind:  &kind,
+				Edit:  &lsproto.WorkspaceEdit{Changes: &map[lsproto.DocumentUri][]*lsproto.TextEdit{}},
+			},
+		}
+	}
 
 	lspChanges := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
 	for fileName, edits := range changes {
@@ -397,13 +366,13 @@ func (l *LanguageService) organizeImportsWorkspaceEdit(
 		lspChanges[fileURI] = edits
 	}
 
-	return &lsproto.WorkspaceEdit{Changes: &lspChanges}
-}
-
-func isOrganizeImportsKind(kind lsproto.CodeActionKind) bool {
-	return kind == lsproto.CodeActionKindSourceOrganizeImports ||
-		kind == lsproto.CodeActionKindSourceRemoveUnusedImports ||
-		kind == lsproto.CodeActionKindSourceSortImports
+	return &lsproto.CommandOrCodeAction{
+		CodeAction: &lsproto.CodeAction{
+			Title: title,
+			Kind:  &kind,
+			Edit:  &lsproto.WorkspaceEdit{Changes: &lspChanges},
+		},
+	}
 }
 
 // containsErrorCode checks if the error code is in the list

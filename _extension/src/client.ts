@@ -18,7 +18,6 @@ import {
     TransportKind,
 } from "vscode-languageclient/node";
 
-import { codeActionResolveMiddleware } from "./codeActionResolveMiddleware";
 import { codeLensShowLocationsCommandName } from "./commands";
 import {
     configurationMiddleware,
@@ -97,7 +96,6 @@ export class Client implements vscode.Disposable {
                         return next(event);
                     },
                 },
-                ...codeActionResolveMiddleware,
                 sendNotification: sendNotificationMiddleware,
                 provideHover: () => undefined,
             },

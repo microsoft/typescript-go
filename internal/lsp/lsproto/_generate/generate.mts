@@ -173,22 +173,6 @@ const customStructures: Structure[] = [
         ],
     },
     {
-        name: "CodeActionData",
-        properties: [
-            {
-                name: "uri",
-                type: { kind: "base", name: "DocumentUri" },
-                omitzeroValue: true,
-            },
-            {
-                name: "formattingOptions",
-                type: { kind: "reference", name: "FormattingOptions" },
-                optional: true,
-            },
-        ],
-        documentation: "CodeActionData is preserved on a CodeAction between CodeActionRequest and CodeActionResolveRequest.",
-    },
-    {
         name: "ExperimentalServerCapabilities",
         properties: [
             {

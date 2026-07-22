@@ -9343,18 +9343,8 @@ type TypeHierarchyItemData struct{}
 // InlayHintData is a placeholder for custom data preserved on a InlayHint.
 type InlayHintData struct{}
 
-// CodeActionData is preserved on a CodeAction between CodeActionRequest and CodeActionResolveRequest.
-type CodeActionData struct {
-	Uri DocumentUri `json:"uri,omitzero"`
-
-	FormattingOptions *FormattingOptions `json:"formattingOptions,omitzero"`
-}
-
-var _ json.UnmarshalerFrom = (*CodeActionData)(nil)
-
-func (s *CodeActionData) UnmarshalJSONFrom(dec *json.Decoder) error {
-	return unmarshalStruct(s, dec)
-}
+// CodeActionData is a placeholder for custom data preserved on a CodeAction.
+type CodeActionData struct{}
 
 // WorkspaceSymbolData is a placeholder for custom data preserved on a WorkspaceSymbol.
 type WorkspaceSymbolData struct{}

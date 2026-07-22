@@ -798,7 +798,6 @@ var handlers = sync.OnceValue(func() handlerMap {
 
 	registerRequestHandler(handlers, lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
 	registerRequestHandler(handlers, lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
-	registerRequestHandler(handlers, lsproto.CodeActionResolveInfo, (*Server).handleCodeActionResolve)
 	registerRequestHandler(handlers, lsproto.CodeLensResolveInfo, (*Server).handleCodeLensResolve)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSemanticTokensFullInfo, (*Server).handleSemanticTokensFull)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSemanticTokensRangeInfo, (*Server).handleSemanticTokensRange)
@@ -1063,19 +1062,6 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 		s.startWatchdog(int(*params.ProcessId.Integer))
 	}
 
-	codeActionOptions := &lsproto.CodeActionOptions{
-		CodeActionKinds: &[]lsproto.CodeActionKind{
-			lsproto.CodeActionKindQuickFix,
-			lsproto.CodeActionKindSourceOrganizeImports,
-			lsproto.CodeActionKindSourceRemoveUnusedImports,
-			lsproto.CodeActionKindSourceSortImports,
-			lsproto.CodeActionKindSourceFixAll,
-		},
-	}
-	if lsproto.SupportsCodeActionResolve(&s.clientCapabilities) {
-		codeActionOptions.ResolveProvider = new(true)
-	}
-
 	response := &lsproto.InitializeResult{
 		ServerInfo: &lsproto.ServerInfo{
 			Name:    "typescript-go",
@@ -1164,7 +1150,15 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 				ResolveProvider: new(true),
 			},
 			CodeActionProvider: &lsproto.BooleanOrCodeActionOptions{
-				CodeActionOptions: codeActionOptions,
+				CodeActionOptions: &lsproto.CodeActionOptions{
+					CodeActionKinds: &[]lsproto.CodeActionKind{
+						lsproto.CodeActionKindQuickFix,
+						lsproto.CodeActionKindSourceOrganizeImports,
+						lsproto.CodeActionKindSourceRemoveUnusedImports,
+						lsproto.CodeActionKindSourceSortImports,
+						lsproto.CodeActionKindSourceFixAll,
+					},
+				},
 			},
 			CallHierarchyProvider: &lsproto.BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions{
 				Boolean: new(true),
@@ -1657,19 +1651,6 @@ func (s *Server) handleSelectionRange(ctx context.Context, ls *ls.LanguageServic
 
 func (s *Server) handleCodeAction(ctx context.Context, ls *ls.LanguageService, params *lsproto.CodeActionParams) (lsproto.CodeActionResponse, error) {
 	return ls.ProvideCodeActions(ctx, params)
-}
-
-func (s *Server) handleCodeActionResolve(ctx context.Context, codeAction *lsproto.CodeAction, reqMsg *lsproto.RequestMessage) (lsproto.CodeActionResolveResponse, error) {
-	if codeAction.Data == nil || codeAction.Data.Uri == "" {
-		return codeAction, nil
-	}
-
-	languageService, err := s.session.GetLanguageService(ctx, codeAction.Data.Uri)
-	if err != nil {
-		return nil, err
-	}
-	defer s.recover(reqMsg)
-	return languageService.ResolveCodeAction(ctx, codeAction)
 }
 
 func (s *Server) handleInlayHint(
