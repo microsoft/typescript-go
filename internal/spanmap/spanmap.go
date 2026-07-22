@@ -160,6 +160,14 @@ func New(segments []Segment) *SpanMap {
 	return &SpanMap{segments: sorted}
 }
 
+// Segments returns the map's segments ordered by generated start.
+func (m *SpanMap) Segments() []Segment {
+	if m == nil {
+		return nil
+	}
+	return slices.Clone(m.segments)
+}
+
 // MapSpan maps a generated range to an original range, along with the fidelity of the result. A generated
 // range that lies entirely in a gap between segments (or in an empty map) is synthesized: it maps to the
 // insertion point in the original with FidelityNone. A nil SpanMap maps identically.

@@ -6,6 +6,7 @@ import (
 	"io"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/ipc"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -34,6 +35,9 @@ type StdioServerOptions struct {
 	// left unchanged; the client folds this data into its own timing snapshot
 	// on demand via getServerTiming / resetServerTiming requests.
 	CollectTiming bool
+	// DangerouslyLoadExternalPlugins allows configured content mappers to execute.
+	DangerouslyLoadExternalPlugins bool
+	ContentMapperSpawner           contentmapper.Spawner
 }
 
 // StdioServer runs an API session over STDIO using MessagePack protocol.
@@ -84,11 +88,13 @@ func (s *StdioServer) Run(ctx context.Context) error {
 		Logger:        nil, // TODO: Add logging support
 		FS:            fs,
 		Options: &project.SessionOptions{
-			CurrentDirectory:   s.options.Cwd,
-			DefaultLibraryPath: s.options.DefaultLibraryPath,
-			PositionEncoding:   lsproto.PositionEncodingKindUTF8,
-			LoggingEnabled:     false,
+			CurrentDirectory:               s.options.Cwd,
+			DefaultLibraryPath:             s.options.DefaultLibraryPath,
+			PositionEncoding:               lsproto.PositionEncodingKindUTF8,
+			LoggingEnabled:                 false,
+			DangerouslyLoadExternalPlugins: s.options.DangerouslyLoadExternalPlugins,
 		},
+		Spawner: s.options.ContentMapperSpawner,
 	})
 
 	session := NewSession(projectSession, &SessionOptions{

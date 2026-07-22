@@ -9,6 +9,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/zeebo/xxh3"
 )
 
@@ -62,7 +63,7 @@ const (
 )
 
 const (
-	ProtocolVersion uint8 = 5
+	ProtocolVersion uint8 = 6
 )
 
 // Source File Binary Format
@@ -148,6 +149,8 @@ const (
 // | 36-40       | uint32 | Byte offset of `moduleAugmentations` node index array         |
 // | 40-44       | uint32 | Byte offset of `ambientModuleNames` string array              |
 // | 44-48       | uint32 | Node index of `externalModuleIndicator` (0 = nil)             |
+// | 48-52       | uint32 | Index of `originalText` in the string offsets section         |
+// | 52-56       | uint32 | Byte offset of `spanMap` in structured data                    |
 //
 // Structured data (variable)
 // --------------------------
@@ -160,6 +163,10 @@ const (
 // Node index arrays (imports, moduleAugmentations) are msgpack arrays of uint values, where each
 // value is a node index into the nodes section. String arrays (ambientModuleNames) are msgpack
 // arrays of string values.
+//
+// Span maps are msgpack arrays of tuples in UTF-16 coordinates:
+//
+//	[generatedStart: uint, generatedLength: uint, originalStart: uint, originalLength: uint, kind: uint]
 //
 // An offset of 0xFFFFFFFF indicates no data (empty array).
 //
@@ -645,14 +652,19 @@ const noStructuredData = 0xFFFFFFFF
 func recordExtendedData_SourceFile(node *ast.Node, strs *stringTable, positionMap *ast.PositionMap, extendedData *[]byte, structuredData *[]byte) {
 	sf := node.AsSourceFile()
 	textIndex := strs.add(sf.Text(), sf.Kind, sf.Pos(), sf.End())
+	originalTextIndex := textIndex
+	if sf.OriginalText() != sf.Text() {
+		originalTextIndex = strs.add(sf.OriginalText(), 0, 0, 0)
+	}
 	fileNameIndex := strs.add(sf.FileName(), 0, 0, 0)
 	pathIndex := strs.add(string(sf.Path()), 0, 0, 0)
 	referencedFilesOffset := encodeFileReferences(sf.ReferencedFiles, positionMap, structuredData)
 	typeRefDirectivesOffset := encodeFileReferences(sf.TypeReferenceDirectives, positionMap, structuredData)
 	libRefDirectivesOffset := encodeFileReferences(sf.LibReferenceDirectives, positionMap, structuredData)
+	spanMapOffset := encodeSpanMap(sf.SpanMap(), positionMap, ast.ComputePositionMap(sf.OriginalText()), structuredData)
 	// imports, moduleAugmentations, ambientModuleNames offsets are placeholders;
 	// they will be patched after the tree walk when node indices are known.
-	*extendedData = appendUint32s(*extendedData, textIndex, fileNameIndex, pathIndex, uint32(sf.LanguageVariant), uint32(sf.ScriptKind), referencedFilesOffset, typeRefDirectivesOffset, libRefDirectivesOffset, noStructuredData, noStructuredData, noStructuredData, 0)
+	*extendedData = appendUint32s(*extendedData, textIndex, fileNameIndex, pathIndex, uint32(sf.LanguageVariant), uint32(sf.ScriptKind), referencedFilesOffset, typeRefDirectivesOffset, libRefDirectivesOffset, noStructuredData, noStructuredData, noStructuredData, 0, originalTextIndex, spanMapOffset)
 }
 
 func recordExtendedData_TemplateHead(node *ast.Node, strs *stringTable, positionMap *ast.PositionMap, extendedData *[]byte, structuredData *[]byte) {
@@ -749,6 +761,28 @@ func encodeStringArray(strs []string, buf *[]byte) uint32 {
 	*buf = msgpackWriteArrayHeader(*buf, len(strs))
 	for _, s := range strs {
 		*buf = msgpackWriteString(*buf, s)
+	}
+	return offset
+}
+
+func encodeSpanMap(m *spanmap.SpanMap, generatedPositions *ast.PositionMap, originalPositions *ast.PositionMap, buf *[]byte) uint32 {
+	if m == nil {
+		return noStructuredData
+	}
+	segments := m.Segments()
+	offset := uint32(len(*buf))
+	*buf = msgpackWriteArrayHeader(*buf, len(segments))
+	for _, segment := range segments {
+		*buf = msgpackWriteArrayHeader(*buf, 5)
+		generatedStart := generatedPositions.UTF8ToUTF16(int(segment.GenStart))
+		generatedEnd := generatedPositions.UTF8ToUTF16(int(segment.GenEnd))
+		originalStart := originalPositions.UTF8ToUTF16(int(segment.OrigStart))
+		originalEnd := originalPositions.UTF8ToUTF16(int(segment.OrigEnd))
+		*buf = msgpackWriteUint(*buf, uint32(generatedStart))
+		*buf = msgpackWriteUint(*buf, uint32(generatedEnd-generatedStart))
+		*buf = msgpackWriteUint(*buf, uint32(originalStart))
+		*buf = msgpackWriteUint(*buf, uint32(originalEnd-originalStart))
+		*buf = msgpackWriteUint(*buf, uint32(segment.Kind))
 	}
 	return offset
 }

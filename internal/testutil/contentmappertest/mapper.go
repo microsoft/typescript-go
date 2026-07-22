@@ -75,7 +75,8 @@ func (Handler) HandleRequest(ctx context.Context, method string, params json.Val
 	switch method {
 	case contentmapper.MethodInitialize:
 		return contentmapper.InitializeResult{
-			ProtocolVersion: contentmapper.ProtocolVersion,
+			ProtocolVersion:  contentmapper.ProtocolVersion,
+			PositionEncoding: contentmapper.PositionEncodingUTF8,
 		}, nil
 	case contentmapper.MethodTransform:
 		var p contentmapper.TransformParams
@@ -208,7 +209,7 @@ type verbatimHandler struct{ noNotifications }
 func (verbatimHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
 	case contentmapper.MethodInitialize:
-		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion}, nil
+		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8}, nil
 	case contentmapper.MethodTransform:
 		var p contentmapper.TransformParams
 		if err := json.Unmarshal(params, &p); err != nil {
@@ -235,7 +236,7 @@ type failingHandler struct{ noNotifications }
 func (failingHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
 	case contentmapper.MethodInitialize:
-		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion}, nil
+		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8}, nil
 	case contentmapper.MethodTransform:
 		return nil, errors.New("content mapper failed to transform the file")
 	default:
@@ -254,7 +255,7 @@ type synthesizingHandler struct{ noNotifications }
 func (synthesizingHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
 	case contentmapper.MethodInitialize:
-		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion}, nil
+		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8}, nil
 	case contentmapper.MethodTransform:
 		mappings, err := spanmap.New(nil).Marshal()
 		if err != nil {
@@ -275,7 +276,7 @@ type componentHandler struct{ noNotifications }
 func (componentHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
 	case contentmapper.MethodInitialize:
-		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion}, nil
+		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8}, nil
 	case contentmapper.MethodTransform:
 		var p contentmapper.TransformParams
 		if err := json.Unmarshal(params, &p); err != nil {

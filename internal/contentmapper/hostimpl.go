@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"sync"
+	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -27,12 +28,24 @@ const (
 // InitializeParams is the parameter object for the initialize request.
 type InitializeParams struct {
 	ProtocolVersion int `json:"protocolVersion"`
+	// PositionEncodings lists the coordinate spaces the host accepts.
+	PositionEncodings []PositionEncoding `json:"positionEncodings"`
 }
 
 // InitializeResult is the mapper's response to the initialize request.
 type InitializeResult struct {
 	ProtocolVersion int `json:"protocolVersion"`
+	// PositionEncoding selects the coordinate space for all mappings and diagnostics.
+	PositionEncoding PositionEncoding `json:"positionEncoding"`
 }
+
+// PositionEncoding is the coordinate space a mapper uses for mappings and diagnostics.
+type PositionEncoding string
+
+const (
+	PositionEncodingUTF8  PositionEncoding = "utf-8"
+	PositionEncodingUTF16 PositionEncoding = "utf-16"
+)
 
 // TransformParams is the parameter object for the transform request.
 type TransformParams struct {
@@ -50,23 +63,24 @@ type TransformResult struct {
 	Text        string          `json:"text"`
 	ScriptKind  core.ScriptKind `json:"scriptKind,omitempty"`
 	Diagnostics []Diagnostic    `json:"diagnostics,omitempty"`
-	// Mappings is the span map's tuple-array JSON (see spanmap.Marshal). Absent or empty means the output
-	// is fully synthesized (no part corresponds to the original).
+	// Mappings is the span map's tuple-array JSON (see spanmap.Marshal), expressed in the selected
+	// position encoding. Absent or empty means the output is fully synthesized.
 	Mappings json.Value `json:"mappings,omitempty"`
 }
 
 // Diagnostic is an error reported by a mapper.
 type Diagnostic struct {
 	MessageText string `json:"messageText"`
-	Start       int    `json:"start"`
-	Length      int    `json:"length"`
-	Code        int32  `json:"code,omitempty"`
-	Source      string `json:"source,omitempty"`
+	// Start and Length locate the diagnostic in the original content using the selected position encoding.
+	Start  int    `json:"start"`
+	Length int    `json:"length"`
+	Code   int32  `json:"code,omitempty"`
+	Source string `json:"source,omitempty"`
 }
 
 // dialFunc establishes a running connection to a mapper. In production it spawns the mapper's process;
 // tests substitute an in-memory connection. It returns the connection and a closer that tears it down.
-type dialFunc func(ctx context.Context, mapper *Mapper) (ipc.Conn, io.Closer, error)
+type dialFunc func(ctx context.Context, mapper *Mapper) (ipc.Conn, io.Closer, PositionEncoding, error)
 
 // host manages one child process per mapper identity. It is the production implementation of Host.
 type host struct {
@@ -84,7 +98,8 @@ type mapperConn struct {
 	closer io.Closer
 	// err, when non-nil, records that this mapper failed to start; it is cached so we do not repeatedly
 	// try (and fail) to spawn a broken mapper.
-	err error
+	err              error
+	positionEncoding PositionEncoding
 	// refs is the number of active Acquire calls retaining this identity.
 	refs int
 }
@@ -110,21 +125,22 @@ func (f SpawnerFunc) Spawn(command []string, dir string) (io.ReadWriteCloser, er
 // on SIGINT, or a build/watch session ending) tears every mapper process down, so owners of a session
 // context need not close the host explicitly. Close does the same synchronously.
 func NewHost(ctx context.Context, spawner Spawner) Host {
-	return newWithDial(ctx, func(ctx context.Context, mapper *Mapper) (ipc.Conn, io.Closer, error) {
+	return newWithDial(ctx, func(ctx context.Context, mapper *Mapper) (ipc.Conn, io.Closer, PositionEncoding, error) {
 		if len(mapper.Exec) == 0 {
-			return nil, nil, fmt.Errorf("content mapper %q declares no command to run", mapper.Package)
+			return nil, nil, "", fmt.Errorf("content mapper %q declares no command to run", mapper.Package)
 		}
 		rwc, err := spawner.Spawn(mapper.Exec, mapper.PackageDirectory)
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, "", err
 		}
 		conn := ipc.NewAsyncConn(rwc, rejectHandler{})
 		go func() { _ = conn.Run(ctx) }()
-		if err := handshake(ctx, conn); err != nil {
+		positionEncoding, err := handshake(ctx, conn)
+		if err != nil {
 			_ = rwc.Close()
-			return nil, nil, fmt.Errorf("content mapper %q failed to initialize: %w", mapper.Package, err)
+			return nil, nil, "", fmt.Errorf("content mapper %q failed to initialize: %w", mapper.Package, err)
 		}
-		return conn, rwc, nil
+		return conn, rwc, positionEncoding, nil
 	})
 }
 
@@ -163,7 +179,7 @@ func (h *host) Acquire(mappers []*Mapper) func() {
 // mapper receives the subset of the project's compiler options it declared in initialize (an empty
 // object if it declared none) and the project's tsconfig file name.
 func (h *host) Transform(mapper *Mapper, request Request) (Result, error) {
-	conn, err := h.connFor(mapper)
+	conn, positionEncoding, err := h.connFor(mapper)
 	if err != nil {
 		return Result{}, err
 	}
@@ -180,7 +196,7 @@ func (h *host) Transform(mapper *Mapper, request Request) (Result, error) {
 	if err != nil {
 		return Result{}, err
 	}
-	return decodeTransformResult(raw)
+	return decodeTransformResult(raw, request.Content, positionEncoding)
 }
 
 // Close shuts down every mapper process. It is safe to call more than once and is invoked automatically
@@ -208,11 +224,11 @@ func (h *host) Close() error {
 
 // connFor returns the connection for a mapper's identity, spawning its process on first use. Mappers
 // sharing an identity share a single process.
-func (h *host) connFor(mapper *Mapper) (ipc.Conn, error) {
+func (h *host) connFor(mapper *Mapper) (ipc.Conn, PositionEncoding, error) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 	if h.conns == nil {
-		return nil, errors.New("content mapper host is closed")
+		return nil, "", errors.New("content mapper host is closed")
 	}
 	identity := mapper.Identity()
 	entry := h.conns[identity]
@@ -221,13 +237,14 @@ func (h *host) connFor(mapper *Mapper) (ipc.Conn, error) {
 		h.conns[identity] = entry
 	}
 	if entry.conn != nil || entry.err != nil {
-		return entry.conn, entry.err
+		return entry.conn, entry.positionEncoding, entry.err
 	}
-	conn, closer, err := h.dial(h.ctx, mapper)
+	conn, closer, positionEncoding, err := h.dial(h.ctx, mapper)
 	entry.conn = conn
 	entry.closer = closer
 	entry.err = err
-	return conn, err
+	entry.positionEncoding = positionEncoding
+	return conn, positionEncoding, err
 }
 
 func (h *host) release(identities []string) {
@@ -254,22 +271,28 @@ func (h *host) release(identities []string) {
 	}
 }
 
-func handshake(ctx context.Context, conn ipc.Conn) error {
-	raw, err := conn.Call(ctx, MethodInitialize, InitializeParams{ProtocolVersion: ProtocolVersion})
+func handshake(ctx context.Context, conn ipc.Conn) (PositionEncoding, error) {
+	raw, err := conn.Call(ctx, MethodInitialize, InitializeParams{
+		ProtocolVersion:   ProtocolVersion,
+		PositionEncodings: []PositionEncoding{PositionEncodingUTF8, PositionEncodingUTF16},
+	})
 	if err != nil {
-		return err
+		return "", err
 	}
 	var res InitializeResult
 	if err := json.Unmarshal(raw, &res); err != nil {
-		return err
+		return "", err
 	}
 	if res.ProtocolVersion != ProtocolVersion {
-		return fmt.Errorf("unsupported protocol version %d (expected %d)", res.ProtocolVersion, ProtocolVersion)
+		return "", fmt.Errorf("unsupported protocol version %d (expected %d)", res.ProtocolVersion, ProtocolVersion)
 	}
-	return nil
+	if res.PositionEncoding != PositionEncodingUTF8 && res.PositionEncoding != PositionEncodingUTF16 {
+		return "", fmt.Errorf("unsupported position encoding %q", res.PositionEncoding)
+	}
+	return res.PositionEncoding, nil
 }
 
-func decodeTransformResult(raw json.Value) (Result, error) {
+func decodeTransformResult(raw json.Value, originalText string, positionEncoding PositionEncoding) (Result, error) {
 	var res TransformResult
 	if err := json.Unmarshal(raw, &res); err != nil {
 		return Result{}, err
@@ -284,6 +307,14 @@ func decodeTransformResult(raw json.Value) (Result, error) {
 		Text:       res.Text,
 		ScriptKind: scriptKind,
 	}
+	generatedPositions, err := newPositionNormalizer(res.Text, positionEncoding)
+	if err != nil {
+		return Result{}, err
+	}
+	originalPositions, err := newPositionNormalizer(originalText, positionEncoding)
+	if err != nil {
+		return Result{}, err
+	}
 	// A successful transform always carries a span map. Absent or empty mappings describe fully
 	// synthesized output (no segment corresponds to the original), so decode to an empty map rather than
 	// nil, which would mean "not content-mapped".
@@ -292,14 +323,28 @@ func decodeTransformResult(raw json.Value) (Result, error) {
 		if err != nil {
 			return Result{}, err
 		}
-		result.Mappings = mappings
+		result.Mappings, err = normalizeMappings(mappings, generatedPositions, originalPositions)
+		if err != nil {
+			return Result{}, err
+		}
 	} else {
 		result.Mappings = spanmap.New(nil)
 	}
 	for _, d := range res.Diagnostics {
+		if d.Start < 0 || d.Length < 0 || d.Start > int(^uint(0)>>1)-d.Length {
+			return Result{}, fmt.Errorf("invalid content mapper diagnostic range [%d, %d)", d.Start, d.Start+d.Length)
+		}
+		start, err := originalPositions.normalize(d.Start)
+		if err != nil {
+			return Result{}, fmt.Errorf("invalid content mapper diagnostic start: %w", err)
+		}
+		end, err := originalPositions.normalize(d.Start + d.Length)
+		if err != nil {
+			return Result{}, fmt.Errorf("invalid content mapper diagnostic end: %w", err)
+		}
 		result.Diagnostics = append(result.Diagnostics, ast.NewExternalDiagnostic(
 			nil,
-			core.NewTextRange(d.Start, d.Start+d.Length),
+			core.NewTextRange(start, end),
 			d.Source,
 			diagnostics.CategoryError,
 			d.Code,
@@ -307,6 +352,77 @@ func decodeTransformResult(raw json.Value) (Result, error) {
 		))
 	}
 	return result, nil
+}
+
+func normalizeMappings(mappings *spanmap.SpanMap, generatedPositions *positionNormalizer, originalPositions *positionNormalizer) (*spanmap.SpanMap, error) {
+	segments := mappings.Segments()
+	for i := range segments {
+		segment := &segments[i]
+		var err error
+		segment.GenStart, err = generatedPositions.normalizeTextPos(segment.GenStart)
+		if err != nil {
+			return nil, fmt.Errorf("invalid content mapper mapping %d generated start: %w", i, err)
+		}
+		segment.GenEnd, err = generatedPositions.normalizeTextPos(segment.GenEnd)
+		if err != nil {
+			return nil, fmt.Errorf("invalid content mapper mapping %d generated end: %w", i, err)
+		}
+		segment.OrigStart, err = originalPositions.normalizeTextPos(segment.OrigStart)
+		if err != nil {
+			return nil, fmt.Errorf("invalid content mapper mapping %d original start: %w", i, err)
+		}
+		segment.OrigEnd, err = originalPositions.normalizeTextPos(segment.OrigEnd)
+		if err != nil {
+			return nil, fmt.Errorf("invalid content mapper mapping %d original end: %w", i, err)
+		}
+	}
+	return spanmap.New(segments), nil
+}
+
+type positionNormalizer struct {
+	text        string
+	encoding    PositionEncoding
+	positionMap *ast.PositionMap
+	length      int
+}
+
+func newPositionNormalizer(text string, encoding PositionEncoding) (*positionNormalizer, error) {
+	normalizer := &positionNormalizer{text: text, encoding: encoding}
+	switch encoding {
+	case PositionEncodingUTF8:
+		normalizer.length = len(text)
+	case PositionEncodingUTF16:
+		normalizer.positionMap = ast.ComputePositionMap(text)
+		normalizer.length = normalizer.positionMap.UTF8ToUTF16(len(text))
+	default:
+		return nil, fmt.Errorf("unsupported position encoding %q", encoding)
+	}
+	return normalizer, nil
+}
+
+func (n *positionNormalizer) normalizeTextPos(position core.TextPos) (core.TextPos, error) {
+	normalized, err := n.normalize(int(position))
+	return core.TextPos(normalized), err
+}
+
+func (n *positionNormalizer) normalize(position int) (int, error) {
+	if position < 0 {
+		return 0, fmt.Errorf("position %d is negative", position)
+	}
+	if position > n.length {
+		return 0, fmt.Errorf("position %d exceeds %s length %d", position, n.encoding, n.length)
+	}
+	var bytePosition int
+	switch n.encoding {
+	case PositionEncodingUTF8:
+		bytePosition = position
+	case PositionEncodingUTF16:
+		bytePosition = n.positionMap.UTF16ToUTF8(position)
+	}
+	if bytePosition < len(n.text) && !utf8.RuneStart(n.text[bytePosition]) {
+		return 0, fmt.Errorf("position %d splits a Unicode code point", position)
+	}
+	return bytePosition, nil
 }
 
 // rejectHandler rejects any request initiated by the mapper. The content mapper protocol is currently

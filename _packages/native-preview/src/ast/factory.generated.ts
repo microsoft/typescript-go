@@ -526,6 +526,9 @@ export class NodeObject {
     get operatorToken(): any {
         return this._data?.operatorToken;
     }
+    get originalText(): any {
+        return this._data?.originalText;
+    }
     get parameterName(): any {
         return this._data?.parameterName;
     }
@@ -570,6 +573,9 @@ export class NodeObject {
     }
     get scriptKind(): any {
         return this._data?.scriptKind;
+    }
+    get spanMap(): any {
+        return this._data?.spanMap;
     }
     get statement(): any {
         return this._data?.statement;
@@ -3789,6 +3795,8 @@ export function createSourceFile(statements: readonly Statement[], endOfFileToke
         statements: createNodeArray(statements),
         endOfFileToken,
         text,
+        originalText: text,
+        spanMap: undefined,
         fileName,
         path,
     }) as unknown as SourceFile;
