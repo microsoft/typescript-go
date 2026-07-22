@@ -19,7 +19,7 @@ func TestOrganizeImports_removeUnused_preservesMultiline(t *testing.T) {
 } from "module";
 
 export { a, b, c };`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil, content)
 	defer done()
 	f.VerifyOrganizeImports(
 		t,
@@ -45,7 +45,7 @@ func TestOrganizeImports_removeUnused_preservesMultilineWithRemoval(t *testing.T
 } from "module";
 
 export { a, c };`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil, content)
 	defer done()
 	f.VerifyOrganizeImports(
 		t,
@@ -70,7 +70,7 @@ func TestOrganizeImports_removeUnusedUsesLanguageServiceFormatOptions(t *testing
 } from "module";
 
 export { a, c };`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f, done := fourslash.NewFourslash(t, nil, content)
 	defer done()
 	preferences := lsutil.ParseUserPreferences(map[string]any{
 		"editor": map[string]any{
@@ -83,5 +83,25 @@ export { a, c };`
 		"import {\n\ta,\n\tc\n} from \"module\";\n\nexport { a, c };",
 		lsproto.CodeActionKindSourceRemoveUnusedImports,
 		&preferences,
+	)
+}
+
+func TestOrganizeImports_removeUnusedUsesCodeActionFormatOptions(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `import {
+    a,
+    b,
+    c,
+} from "module";
+
+export { a, c };`
+	f, done := fourslash.NewFourslash(t, nil, content)
+	defer done()
+	f.VerifyOrganizeImportsWithFormattingOptions(
+		t,
+		"import {\n\ta,\n\tc\n} from \"module\";\n\nexport { a, c };",
+		lsproto.CodeActionKindSourceRemoveUnusedImports,
+		&lsproto.FormattingOptions{TabSize: 2, InsertSpaces: false},
 	)
 }
