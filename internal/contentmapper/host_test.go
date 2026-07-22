@@ -207,7 +207,7 @@ func TestRunnerPositionEncodings(t *testing.T) {
 			assert.Equal(t, result.Text, "éx")
 			problem := result.Mappings.Validate(result.Text, "éx")
 			assert.Assert(t, problem == nil, "%v", problem)
-			mapped, fidelity := result.Mappings.MapPosition(2)
+			mapped, fidelity := result.Mappings.GeneratedToOriginalPosition(2)
 			assert.Equal(t, int(mapped), 2)
 			assert.Equal(t, fidelity, spanmap.FidelityExact)
 			assert.Equal(t, result.Diagnostics[0].Pos(), 2)

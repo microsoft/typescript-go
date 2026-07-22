@@ -60,8 +60,8 @@ func TestContentMapperWatchLifecycle(t *testing.T) {
 		name string
 		args []string
 	}{
-		{name: "watch", args: []string{"--watch", "--dangerouslyLoadExternalPlugins"}},
-		{name: "build watch", args: []string{"--build", "--watch", "--dangerouslyLoadExternalPlugins"}},
+		{name: "watch", args: []string{"--watch", "--loadExternalPlugins"}},
+		{name: "build watch", args: []string{"--build", "--watch", "--loadExternalPlugins"}},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
@@ -128,7 +128,7 @@ func TestContentMapperBuildWatchSharedLifecycle(t *testing.T) {
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
-	result := execute.CommandLine(ctx, sys, []string{"--build", "--watch", "--dangerouslyLoadExternalPlugins"}, testSys)
+	result := execute.CommandLine(ctx, sys, []string{"--build", "--watch", "--loadExternalPlugins"}, testSys)
 	assert.Assert(t, result.Watcher != nil)
 	assert.Equal(t, spawner.spawns.Load(), int32(1))
 	assert.Equal(t, spawner.closes.Load(), int32(0))

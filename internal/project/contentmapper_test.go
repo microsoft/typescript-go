@@ -60,12 +60,12 @@ func TestContentMapperInProject(t *testing.T) {
 
 	newSession := func(trusted bool) (*project.Session, *projecttestutil.SessionUtils) {
 		init, utils := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
-			CurrentDirectory:               "/home/project",
-			DefaultLibraryPath:             bundled.LibPath(),
-			TypingsLocation:                projecttestutil.TestTypingsLocation,
-			PositionEncoding:               lsproto.PositionEncodingKindUTF8,
-			LoggingEnabled:                 true,
-			DangerouslyLoadExternalPlugins: trusted,
+			CurrentDirectory:    "/home/project",
+			DefaultLibraryPath:  bundled.LibPath(),
+			TypingsLocation:     projecttestutil.TestTypingsLocation,
+			PositionEncoding:    lsproto.PositionEncodingKindUTF8,
+			LoggingEnabled:      true,
+			LoadExternalPlugins: trusted,
 		}, nil)
 		init.Spawner = contentmappertest.NewSpawner()
 		return project.NewSession(init), utils
@@ -221,11 +221,11 @@ func TestContentMapperOpenFileExcludedByConfigChange(t *testing.T) {
 		"/home/project/src/main.ts":                      "export const main = true;\n",
 	}
 	init, utils := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
-		CurrentDirectory:               "/home/project",
-		DefaultLibraryPath:             bundled.LibPath(),
-		TypingsLocation:                projecttestutil.TestTypingsLocation,
-		PositionEncoding:               lsproto.PositionEncodingKindUTF8,
-		DangerouslyLoadExternalPlugins: true,
+		CurrentDirectory:    "/home/project",
+		DefaultLibraryPath:  bundled.LibPath(),
+		TypingsLocation:     projecttestutil.TestTypingsLocation,
+		PositionEncoding:    lsproto.PositionEncodingKindUTF8,
+		LoadExternalPlugins: true,
 	}, nil)
 	init.Spawner = contentmappertest.NewSpawner()
 	session := project.NewSession(init)
@@ -270,11 +270,11 @@ func TestContentMapperRemovalWithOpenFile(t *testing.T) {
 		"/home/project/app.box":                          "export const version = #{target};\n",
 	}
 	init, utils := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
-		CurrentDirectory:               "/home/project",
-		DefaultLibraryPath:             bundled.LibPath(),
-		TypingsLocation:                projecttestutil.TestTypingsLocation,
-		PositionEncoding:               lsproto.PositionEncodingKindUTF8,
-		DangerouslyLoadExternalPlugins: true,
+		CurrentDirectory:    "/home/project",
+		DefaultLibraryPath:  bundled.LibPath(),
+		TypingsLocation:     projecttestutil.TestTypingsLocation,
+		PositionEncoding:    lsproto.PositionEncodingKindUTF8,
+		LoadExternalPlugins: true,
 	}, nil)
 	spawner := &recordingContentMapperSpawner{inner: contentmappertest.NewSpawner()}
 	init.Spawner = spawner
@@ -346,11 +346,11 @@ func TestContentMapperProcessSharedAcrossProjects(t *testing.T) {
 		"/home/b/app.panel":                        "export const b = 1;\n",
 	}
 	init, utils := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
-		CurrentDirectory:               "/home",
-		DefaultLibraryPath:             bundled.LibPath(),
-		TypingsLocation:                projecttestutil.TestTypingsLocation,
-		PositionEncoding:               lsproto.PositionEncodingKindUTF8,
-		DangerouslyLoadExternalPlugins: true,
+		CurrentDirectory:    "/home",
+		DefaultLibraryPath:  bundled.LibPath(),
+		TypingsLocation:     projecttestutil.TestTypingsLocation,
+		PositionEncoding:    lsproto.PositionEncodingKindUTF8,
+		LoadExternalPlugins: true,
 	}, nil)
 	spawner := &recordingContentMapperSpawner{inner: contentmappertest.NewSpawner()}
 	init.Spawner = spawner
@@ -393,11 +393,11 @@ func TestContentMapperInferredProjectUsesSessionMappers(t *testing.T) {
 		"/home/loose/app.box":                               "export const version = #{target};\n",
 	}
 	init, _ := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
-		CurrentDirectory:               "/home",
-		DefaultLibraryPath:             bundled.LibPath(),
-		TypingsLocation:                projecttestutil.TestTypingsLocation,
-		PositionEncoding:               lsproto.PositionEncodingKindUTF8,
-		DangerouslyLoadExternalPlugins: true,
+		CurrentDirectory:    "/home",
+		DefaultLibraryPath:  bundled.LibPath(),
+		TypingsLocation:     projecttestutil.TestTypingsLocation,
+		PositionEncoding:    lsproto.PositionEncodingKindUTF8,
+		LoadExternalPlugins: true,
 	}, nil)
 	init.Spawner = contentmappertest.NewSpawner()
 	session := project.NewSession(init)
@@ -439,11 +439,11 @@ func TestDiscoverContentMapperExtensions(t *testing.T) {
 		"/home/other/Widget.svelte":                    `<template><h1>Widget</h1></template>`,
 	}
 	init, utils := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
-		CurrentDirectory:               "/home/project",
-		DefaultLibraryPath:             bundled.LibPath(),
-		TypingsLocation:                projecttestutil.TestTypingsLocation,
-		PositionEncoding:               lsproto.PositionEncodingKindUTF8,
-		DangerouslyLoadExternalPlugins: true,
+		CurrentDirectory:    "/home/project",
+		DefaultLibraryPath:  bundled.LibPath(),
+		TypingsLocation:     projecttestutil.TestTypingsLocation,
+		PositionEncoding:    lsproto.PositionEncodingKindUTF8,
+		LoadExternalPlugins: true,
 	}, nil)
 	init.Spawner = contentmappertest.NewSpawner()
 	session := project.NewSession(init)
@@ -469,11 +469,11 @@ func TestDiscoverContentMapperExtensions(t *testing.T) {
 	assert.Assert(t, snapshot.GetDefaultProject("file:///home/project/ignored.svelte") == nil, "unmatched extensions should not load a project")
 
 	untrustedInit, untrustedUtils := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
-		CurrentDirectory:               "/home/project",
-		DefaultLibraryPath:             bundled.LibPath(),
-		TypingsLocation:                projecttestutil.TestTypingsLocation,
-		PositionEncoding:               lsproto.PositionEncodingKindUTF8,
-		DangerouslyLoadExternalPlugins: false,
+		CurrentDirectory:    "/home/project",
+		DefaultLibraryPath:  bundled.LibPath(),
+		TypingsLocation:     projecttestutil.TestTypingsLocation,
+		PositionEncoding:    lsproto.PositionEncodingKindUTF8,
+		LoadExternalPlugins: false,
 	}, nil)
 	untrustedInit.Spawner = contentmappertest.NewSpawner()
 	untrusted := project.NewSession(untrustedInit)
@@ -498,11 +498,11 @@ func TestContentMapperSynthesizedDocumentSymbols(t *testing.T) {
 	}
 
 	init, _ := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
-		CurrentDirectory:               "/home/project",
-		DefaultLibraryPath:             bundled.LibPath(),
-		TypingsLocation:                projecttestutil.TestTypingsLocation,
-		PositionEncoding:               lsproto.PositionEncodingKindUTF8,
-		DangerouslyLoadExternalPlugins: true,
+		CurrentDirectory:    "/home/project",
+		DefaultLibraryPath:  bundled.LibPath(),
+		TypingsLocation:     projecttestutil.TestTypingsLocation,
+		PositionEncoding:    lsproto.PositionEncodingKindUTF8,
+		LoadExternalPlugins: true,
 	}, nil)
 	init.Spawner = contentmappertest.NewSpawner()
 	session := project.NewSession(init)
@@ -530,11 +530,11 @@ func TestContentMapperCompletions(t *testing.T) {
 
 	newSession := func(t *testing.T, files map[string]any) *project.Session {
 		init, _ := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
-			CurrentDirectory:               "/home/project",
-			DefaultLibraryPath:             bundled.LibPath(),
-			TypingsLocation:                projecttestutil.TestTypingsLocation,
-			PositionEncoding:               lsproto.PositionEncodingKindUTF8,
-			DangerouslyLoadExternalPlugins: true,
+			CurrentDirectory:    "/home/project",
+			DefaultLibraryPath:  bundled.LibPath(),
+			TypingsLocation:     projecttestutil.TestTypingsLocation,
+			PositionEncoding:    lsproto.PositionEncodingKindUTF8,
+			LoadExternalPlugins: true,
 		}, nil)
 		init.Spawner = contentmappertest.NewSpawner()
 		session := project.NewSession(init)

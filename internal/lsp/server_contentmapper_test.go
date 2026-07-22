@@ -79,7 +79,7 @@ export const title = "Profile";
 	initMsg, _, ok := lsptestutil.SendRequest(t, client, lsproto.InitializeInfo, &lsproto.InitializeParams{
 		Capabilities: caps,
 		InitializationOptions: &lsproto.InitializationOptionsOrNull{InitializationOptions: &lsproto.InitializationOptions{
-			DangerouslyLoadExternalPlugins: new(true),
+			LoadExternalPlugins: new(true),
 		}},
 	})
 	assert.Assert(t, ok && initMsg.AsResponse().Error == nil, "initialize failed")

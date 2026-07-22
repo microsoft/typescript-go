@@ -251,7 +251,7 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		minValue:                1,
 	},
 	{
-		Name:                    "dangerouslyLoadExternalPlugins",
+		Name:                    "loadExternalPlugins",
 		Kind:                    CommandLineOptionTypeBoolean,
 		Category:                diagnostics.Command_line_Options,
 		IsCommandLineOnly:       true,

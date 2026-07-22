@@ -18,7 +18,7 @@ export interface ClientSpawnOptions {
     /** Virtual filesystem callbacks */
     fs?: FileSystem;
     /** Allow trusted projects to execute configured external content mapper processes. */
-    dangerouslyLoadExternalPlugins?: boolean;
+    loadExternalPlugins?: boolean;
     /**
      * When true, collect timing information for each request. The client
      * measures round-trip latency and bytes sent/received, and the server
@@ -43,7 +43,7 @@ export function getAPIProcessArgs(options: ClientSpawnOptions, async: boolean): 
     const args = ["--api"];
     if (async) args.push("--async");
     args.push("--cwd", options.cwd ?? process.cwd());
-    if (options.dangerouslyLoadExternalPlugins) args.push("--dangerouslyLoadExternalPlugins");
+    if (options.loadExternalPlugins) args.push("--loadExternalPlugins");
     if (options.collectTiming) args.push("--timing");
     return args;
 }

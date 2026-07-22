@@ -1022,7 +1022,7 @@ func TestContentMappers(t *testing.T) {
 			"/src/Component.vue":                    "<template></template>",
 			"/node_modules/vue-mapper/package.json": `{ "name": "vue-mapper", "version": "1.2.3", "tsContentMapper": { "exec": ["node", "./mapper.js"] } }`,
 		},
-		existingOptions: &core.CompilerOptions{DangerouslyLoadExternalPlugins: core.TSTrue},
+		existingOptions: &core.CompilerOptions{LoadExternalPlugins: core.TSTrue},
 	}
 	for name, getParsed := range map[string]func(testConfig, tsoptions.ParseConfigHost, string) *tsoptions.ParsedCommandLine{
 		"json api":           getParsedWithJsonApi,
@@ -1066,9 +1066,9 @@ func TestContentMappersRequireFlag(t *testing.T) {
 		configFileName: "tsconfig.json",
 		basePath:       "/",
 		allFileList:    map[string]string{"/app.ts": "export {}"},
-		// existingOptions omitted: --dangerouslyLoadExternalPlugins is not set.
+		// existingOptions omitted: --loadExternalPlugins is not set.
 	}
-	expectedCode := diagnostics.Content_mappers_require_the_dangerouslyLoadExternalPlugins_command_line_flag_to_be_enabled.Code()
+	expectedCode := diagnostics.Content_mappers_require_the_loadExternalPlugins_command_line_flag_to_be_enabled.Code()
 	for name, getParsed := range map[string]func(testConfig, tsoptions.ParseConfigHost, string) *tsoptions.ParsedCommandLine{
 		"json api":           getParsedWithJsonApi,
 		"jsonSourceFile api": getParsedWithJsonSourceFileApi,
@@ -1135,7 +1135,7 @@ func TestContentMappersValidation(t *testing.T) {
 				configFileName:  "tsconfig.json",
 				basePath:        "/",
 				allFileList:     map[string]string{"/app.ts": "export {}"},
-				existingOptions: &core.CompilerOptions{DangerouslyLoadExternalPlugins: core.TSTrue},
+				existingOptions: &core.CompilerOptions{LoadExternalPlugins: core.TSTrue},
 			}
 			for apiName, getParsed := range map[string]func(testConfig, tsoptions.ParseConfigHost, string) *tsoptions.ParsedCommandLine{
 				"json api":           getParsedWithJsonApi,

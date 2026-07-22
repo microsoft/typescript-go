@@ -922,11 +922,11 @@ import "profile-package/ordinary";`,
 		"/home/project/main.ts": `profileTitle;`,
 	}
 	init, _ := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
-		CurrentDirectory:               "/home/project",
-		DefaultLibraryPath:             bundled.LibPath(),
-		TypingsLocation:                projecttestutil.TestTypingsLocation,
-		PositionEncoding:               lsproto.PositionEncodingKindUTF8,
-		DangerouslyLoadExternalPlugins: true,
+		CurrentDirectory:    "/home/project",
+		DefaultLibraryPath:  bundled.LibPath(),
+		TypingsLocation:     projecttestutil.TestTypingsLocation,
+		PositionEncoding:    lsproto.PositionEncodingKindUTF8,
+		LoadExternalPlugins: true,
 	}, nil)
 	init.Spawner = contentmappertest.NewSpawner()
 	session := project.NewSession(init)

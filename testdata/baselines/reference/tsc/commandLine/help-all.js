@@ -20,9 +20,6 @@ Build one or more projects and their dependencies, if out of date
 [94m--checkers[39m
 Set the number of checkers per project.
 
-[94m--dangerouslyLoadExternalPlugins[39m
-Allow loading external content mapper plugins that execute code during compilation.
-
 [94m--help, -h[39m
 Print this message.
 
@@ -37,6 +34,9 @@ Initializes a TypeScript project and creates a tsconfig.json file.
 
 [94m--listFilesOnly[39m
 Print names of files that are part of the compilation and then stop processing.
+
+[94m--loadExternalPlugins[39m
+Allow loading external content mapper plugins that execute code during compilation.
 
 [94m--locale[39m
 Set the language of the messaging from TypeScript. This does not affect emit.

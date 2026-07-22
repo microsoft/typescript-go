@@ -68,12 +68,12 @@ func makeUnitsFromTest(code string, fileName string) testCaseContent {
 	}
 	parseConfigHost := tsoptionstest.NewVFSParseConfigHostWithSymlinks(allFiles, symlinks, currentDirectory, true /*useCaseSensitiveFileNames*/)
 
-	// Content mappers are gated behind --dangerouslyLoadExternalPlugins, a command-line-only option. A test
-	// opts in with a top-level `// @dangerouslyLoadExternalPlugins: true`, which we surface to the config
+	// Content mappers are gated behind --loadExternalPlugins, a command-line-only option. A test
+	// opts in with a top-level `// @loadExternalPlugins: true`, which we surface to the config
 	// parse as an existing option so the gate passes and the mappers register.
 	var existingOptions *core.CompilerOptions
-	if globalOptions["dangerouslyloadexternalplugins"] == "true" {
-		existingOptions = &core.CompilerOptions{DangerouslyLoadExternalPlugins: core.TSTrue}
+	if globalOptions["loadexternalplugins"] == "true" {
+		existingOptions = &core.CompilerOptions{LoadExternalPlugins: core.TSTrue}
 	}
 
 	// check if project has tsconfig.json in the list of files

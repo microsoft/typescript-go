@@ -35,9 +35,9 @@ type StdioServerOptions struct {
 	// left unchanged; the client folds this data into its own timing snapshot
 	// on demand via getServerTiming / resetServerTiming requests.
 	CollectTiming bool
-	// DangerouslyLoadExternalPlugins allows configured content mappers to execute.
-	DangerouslyLoadExternalPlugins bool
-	ContentMapperSpawner           contentmapper.Spawner
+	// LoadExternalPlugins allows configured content mappers to execute.
+	LoadExternalPlugins  bool
+	ContentMapperSpawner contentmapper.Spawner
 }
 
 // StdioServer runs an API session over STDIO using MessagePack protocol.
@@ -88,11 +88,11 @@ func (s *StdioServer) Run(ctx context.Context) error {
 		Logger:        nil, // TODO: Add logging support
 		FS:            fs,
 		Options: &project.SessionOptions{
-			CurrentDirectory:               s.options.Cwd,
-			DefaultLibraryPath:             s.options.DefaultLibraryPath,
-			PositionEncoding:               lsproto.PositionEncodingKindUTF8,
-			LoggingEnabled:                 false,
-			DangerouslyLoadExternalPlugins: s.options.DangerouslyLoadExternalPlugins,
+			CurrentDirectory:    s.options.Cwd,
+			DefaultLibraryPath:  s.options.DefaultLibraryPath,
+			PositionEncoding:    lsproto.PositionEncodingKindUTF8,
+			LoggingEnabled:      false,
+			LoadExternalPlugins: s.options.LoadExternalPlugins,
 		},
 		Spawner: s.options.ContentMapperSpawner,
 	})

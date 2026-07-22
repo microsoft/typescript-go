@@ -67,11 +67,11 @@ type CommandLineTesting interface {
 }
 
 // NewContentMapperHost creates a content mapper host when content mappers are enabled via the
-// --dangerouslyLoadExternalPlugins flag, spawning mapper processes through the system's Spawn. It returns
+// --loadExternalPlugins flag, spawning mapper processes through the system's Spawn. It returns
 // nil otherwise, in which case no content-mapped files can be loaded. The caller owns the host and must
 // Close it when the compilation session ends.
 func NewContentMapperHost(ctx context.Context, sys System, options *core.CompilerOptions) contentmapper.Host {
-	if !options.DangerouslyLoadExternalPlugins.IsTrue() {
+	if !options.LoadExternalPlugins.IsTrue() {
 		return nil
 	}
 	return contentmapper.NewHost(ctx, sys)

@@ -8848,8 +8848,8 @@ type InitializationOptions struct {
 	// The initial log verbosity level, matching the client's output channel log level at startup. Subsequent changes are sent via custom/setLogVerbosity.
 	LogVerbosity *LogVerbosity `json:"logVerbosity,omitzero"`
 
-	// DangerouslyLoadExternalPlugins allows configured content mappers to launch external plugin processes. The client should set this only for trusted workspaces. It mirrors the --dangerouslyLoadExternalPlugins CLI flag.
-	DangerouslyLoadExternalPlugins *bool `json:"dangerouslyLoadExternalPlugins,omitzero"`
+	// LoadExternalPlugins allows configured content mappers to launch external plugin processes. The client should set this only for trusted workspaces. It mirrors the --loadExternalPlugins CLI flag.
+	LoadExternalPlugins *bool `json:"loadExternalPlugins,omitzero"`
 }
 
 var _ json.UnmarshalerFrom = (*InitializationOptions)(nil)

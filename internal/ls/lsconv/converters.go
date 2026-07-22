@@ -89,7 +89,7 @@ func (c *Converters) FromLSPRange(script Script, textRange lsproto.Range) (core.
 		int(c.lineAndCharacterToPosition(original, textRange.Start)),
 		int(c.lineAndCharacterToPosition(original, textRange.End)),
 	)
-	return spans.MapRangeToGenerated(origRange)
+	return spans.OriginalToGeneratedSpan(origRange)
 }
 
 // FromLSPPosition is the single-position analog of FromLSPRange.
@@ -100,7 +100,7 @@ func (c *Converters) FromLSPPosition(script Script, position lsproto.Position) (
 	}
 	original := originalTextScript{fileName: script.FileName(), text: script.OriginalText()}
 	origOffset := c.lineAndCharacterToPosition(original, position)
-	return spans.MapPositionToGenerated(origOffset)
+	return spans.OriginalToGeneratedPosition(origOffset)
 }
 
 func (c *Converters) FromLSPTextChange(script Script, change *lsproto.TextDocumentContentChangePartial) (core.TextChange, spanmap.Fidelity) {
@@ -118,7 +118,7 @@ func mapOutputToOriginal(script Script, textRange core.TextRange) (Script, core.
 	if script.SpanMap() == nil {
 		return script, textRange, spanmap.FidelityExact
 	}
-	mapped, fidelity := script.SpanMap().MapSpan(textRange)
+	mapped, fidelity := script.SpanMap().GeneratedToOriginalSpan(textRange)
 	return originalTextScript{fileName: script.FileName(), text: script.OriginalText()}, mapped, fidelity
 }
 
@@ -127,7 +127,7 @@ func mapOutputPositionToOriginal(script Script, position core.TextPos) (Script, 
 	if script.SpanMap() == nil {
 		return script, position, spanmap.FidelityExact
 	}
-	mapped, fidelity := script.SpanMap().MapPosition(position)
+	mapped, fidelity := script.SpanMap().GeneratedToOriginalPosition(position)
 	return originalTextScript{fileName: script.FileName(), text: script.OriginalText()}, mapped, fidelity
 }
 
@@ -425,7 +425,7 @@ func diagnosticScriptAndRange(file *ast.SourceFile, loc core.TextRange, source s
 		// A content mapper's own diagnostics already carry original-text ranges.
 		return original, loc
 	}
-	mapped, fidelity := file.SpanMap().MapSpan(loc)
+	mapped, fidelity := file.SpanMap().GeneratedToOriginalSpan(loc)
 	if fidelity == spanmap.FidelityNone {
 		// Entirely synthesized code has no original location; surface it at the top of the file.
 		return original, core.NewTextRange(0, 0)

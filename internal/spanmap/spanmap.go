@@ -77,7 +77,7 @@ type SpanMap struct {
 	segments []Segment
 
 	// origOnce guards lazy construction of origSorted, the segments ordered by OrigStart, used by
-	// MapRangeToGenerated for reverse (original -> generated) lookups.
+	// OriginalToGeneratedSpan for reverse (original -> generated) lookups.
 	origOnce   sync.Once
 	origSorted []Segment
 }
@@ -168,10 +168,10 @@ func (m *SpanMap) Segments() []Segment {
 	return slices.Clone(m.segments)
 }
 
-// MapSpan maps a generated range to an original range, along with the fidelity of the result. A generated
+// GeneratedToOriginalSpan maps a generated range to an original range, along with the fidelity of the result. A generated
 // range that lies entirely in a gap between segments (or in an empty map) is synthesized: it maps to the
 // insertion point in the original with FidelityNone. A nil SpanMap maps identically.
-func (m *SpanMap) MapSpan(r core.TextRange) (core.TextRange, Fidelity) {
+func (m *SpanMap) GeneratedToOriginalSpan(r core.TextRange) (core.TextRange, Fidelity) {
 	if m == nil {
 		return r, FidelityExact
 	}
@@ -205,10 +205,10 @@ func (m *SpanMap) MapSpan(r core.TextRange) (core.TextRange, Fidelity) {
 	return core.NewTextRange(int(origStart), int(origEnd)), FidelityApproximate
 }
 
-// MapPosition maps a single generated position to the corresponding original position, along with the
-// fidelity of the result. It is the single-position analog of MapSpan: a position in a gap (or in an empty
+// GeneratedToOriginalPosition maps a single generated position to the corresponding original position, along with the
+// fidelity of the result. It is the single-position analog of GeneratedToOriginalSpan: a position in a gap (or in an empty
 // map) is synthesized and maps to the insertion point with FidelityNone. A nil SpanMap maps identically.
-func (m *SpanMap) MapPosition(pos core.TextPos) (core.TextPos, Fidelity) {
+func (m *SpanMap) GeneratedToOriginalPosition(pos core.TextPos) (core.TextPos, Fidelity) {
 	if m == nil {
 		return pos, FidelityExact
 	}
@@ -270,11 +270,11 @@ func (m *SpanMap) mapHigh(pos core.TextPos, idx int, in bool) core.TextPos {
 	return seg.OrigEnd
 }
 
-// MapRangeToGenerated maps an original range to the corresponding range in the generated text, along with
-// the fidelity of the result; it is the inverse of MapSpan. An original range lying entirely in a gap
+// OriginalToGeneratedSpan maps an original range to the corresponding range in the generated text, along with
+// the fidelity of the result; it is the inverse of GeneratedToOriginalSpan. An original range lying entirely in a gap
 // (no segment covers it) is synthesized-in-reverse: it maps to the insertion point in the generated text
 // with FidelityNone. A nil SpanMap maps identically.
-func (m *SpanMap) MapRangeToGenerated(r core.TextRange) (core.TextRange, Fidelity) {
+func (m *SpanMap) OriginalToGeneratedSpan(r core.TextRange) (core.TextRange, Fidelity) {
 	if m == nil {
 		return r, FidelityExact
 	}
@@ -309,10 +309,10 @@ func (m *SpanMap) MapRangeToGenerated(r core.TextRange) (core.TextRange, Fidelit
 	return core.NewTextRange(int(genStart), int(genEnd)), FidelityApproximate
 }
 
-// MapPositionToGenerated maps a single original position to the corresponding generated position, along
-// with the fidelity of the result; it is the single-position inverse of MapPosition. A position in a gap
+// OriginalToGeneratedPosition maps a single original position to the corresponding generated position, along
+// with the fidelity of the result; it is the single-position inverse of GeneratedToOriginalPosition. A position in a gap
 // maps to the insertion point in the generated text with FidelityNone. A nil SpanMap maps identically.
-func (m *SpanMap) MapPositionToGenerated(pos core.TextPos) (core.TextPos, Fidelity) {
+func (m *SpanMap) OriginalToGeneratedPosition(pos core.TextPos) (core.TextPos, Fidelity) {
 	if m == nil {
 		return pos, FidelityExact
 	}

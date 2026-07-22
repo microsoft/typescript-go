@@ -222,7 +222,7 @@ func CompileFilesEx(
 	// Content mappers, when trusted, are served in-process by the test mapper (see contentmappertest).
 	// The host is shared by the pre- and post-emit programs and torn down when this compilation finishes.
 	var contentMapperHost contentmapper.Host
-	if compilerOptions.DangerouslyLoadExternalPlugins.IsTrue() && len(contentMappers) > 0 {
+	if compilerOptions.LoadExternalPlugins.IsTrue() && len(contentMappers) > 0 {
 		contentMapperHost = contentmapper.NewHost(context.Background(), contentmappertest.NewSpawner())
 		defer contentMapperHost.Close()
 	}

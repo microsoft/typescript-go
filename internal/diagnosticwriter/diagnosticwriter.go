@@ -96,7 +96,7 @@ func (d *ASTDiagnostic) resolve() resolvedLocation {
 	case d.Diagnostic.Source() != "":
 		return resolvedLocation{loc: loc, useOriginal: true}
 	case file.SpanMap() != nil:
-		mapped, fidelity := file.SpanMap().MapSpan(loc)
+		mapped, fidelity := file.SpanMap().GeneratedToOriginalSpan(loc)
 		if fidelity == spanmap.FidelityNone {
 			return resolvedLocation{loc: loc, generated: true}
 		}

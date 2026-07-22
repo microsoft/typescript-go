@@ -67,12 +67,12 @@ type SessionOptions struct {
 	LoggingEnabled         bool
 	TelemetryEnabled       bool
 	PushDiagnosticsEnabled bool
-	// DangerouslyLoadExternalPlugins allows configured content mappers to run their (external) processes,
-	// gated on workspace trust by the client. It corresponds to the --dangerouslyLoadExternalPlugins CLI flag.
-	DangerouslyLoadExternalPlugins bool
-	DebounceDelay                  time.Duration
-	Locale                         locale.Locale
-	CheckerPoolOptions             CheckerPoolOptions
+	// LoadExternalPlugins allows configured content mappers to run their (external) processes,
+	// gated on workspace trust by the client. It corresponds to the --loadExternalPlugins CLI flag.
+	LoadExternalPlugins bool
+	DebounceDelay       time.Duration
+	Locale              locale.Locale
+	CheckerPoolOptions  CheckerPoolOptions
 }
 
 type SessionInit struct {
@@ -102,7 +102,7 @@ type Session struct {
 	logger        logging.Logger
 	npmExecutor   ata.NpmExecutor
 	// contentMapperHost drives configured content mappers for all projects in the session. It is nil unless
-	// the workspace is trusted (DangerouslyLoadExternalPlugins) and a spawner is available. It is shared so
+	// the workspace is trusted (LoadExternalPlugins) and a spawner is available. It is shared so
 	// projects that use the same mapper share a single process, and is closed when the session ends.
 	contentMapperHost contentmapper.Host
 	fs                *overlayFS
@@ -204,7 +204,7 @@ type Session struct {
 // a spawner is available; otherwise it returns nil, and configured content mappers are rejected by the
 // config-file gate.
 func newContentMapperHost(init *SessionInit) contentmapper.Host {
-	if !init.Options.DangerouslyLoadExternalPlugins || init.Spawner == nil {
+	if !init.Options.LoadExternalPlugins || init.Spawner == nil {
 		return nil
 	}
 	return contentmapper.NewHost(init.BackgroundCtx, init.Spawner)

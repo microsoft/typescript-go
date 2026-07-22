@@ -4742,7 +4742,7 @@ func TestTscContentMapperEmit(t *testing.T) {
 				"tsContentMapper": { "exec": ["verbatim-mapper"] }
 			}`),
 		},
-		commandLineArgs: []string{"--dangerouslyLoadExternalPlugins"},
+		commandLineArgs: []string{"--loadExternalPlugins"},
 	}).run(t, "contentMapperEmit")
 }
 
@@ -4769,7 +4769,7 @@ func TestTscContentMapperFailures(t *testing.T) {
 				"/home/src/workspaces/project/app.vue":                        `<template>hi</template>`,
 				"/home/src/workspaces/project/node_modules/fail/package.json": failMapperPackageJSON,
 			},
-			commandLineArgs: []string{"--dangerouslyLoadExternalPlugins"},
+			commandLineArgs: []string{"--loadExternalPlugins"},
 		},
 		{
 			subScenario: "mapper is disabled after repeated failures",
@@ -4794,7 +4794,7 @@ func TestTscContentMapperFailures(t *testing.T) {
 			},
 			// --singleThreaded makes file loading order deterministic so the same files exceed the failure
 			// threshold on every run.
-			commandLineArgs: []string{"--dangerouslyLoadExternalPlugins", "--singleThreaded"},
+			commandLineArgs: []string{"--loadExternalPlugins", "--singleThreaded"},
 		},
 	}
 	for _, test := range testCases {
@@ -4825,6 +4825,6 @@ func TestTscContentMapperSynthesized(t *testing.T) {
 				"tsContentMapper": { "exec": ["synthesizing-mapper"] }
 			}`),
 		},
-		commandLineArgs: []string{"--dangerouslyLoadExternalPlugins"},
+		commandLineArgs: []string{"--loadExternalPlugins"},
 	}).run(t, "contentMapperSynthesized")
 }

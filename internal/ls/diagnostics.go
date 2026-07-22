@@ -83,7 +83,7 @@ func isSynthesizedContentMappedDiagnostic(diag *ast.Diagnostic) bool {
 	if file == nil || file.SpanMap() == nil || diag.Source() != "" {
 		return false
 	}
-	_, fidelity := file.SpanMap().MapSpan(diag.Loc())
+	_, fidelity := file.SpanMap().GeneratedToOriginalSpan(diag.Loc())
 	return fidelity == spanmap.FidelityNone
 }
 

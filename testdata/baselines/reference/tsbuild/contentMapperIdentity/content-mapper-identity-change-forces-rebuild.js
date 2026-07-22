@@ -21,7 +21,7 @@ export const local = 1;
     ]
 }
 
-tsgo --build --verbose --dangerouslyLoadExternalPlugins
+tsgo --build --verbose --loadExternalPlugins
 ExitStatus:: Success
 Output::
 [[90mHH:MM:SS AM[0m] Projects in this build: 
@@ -121,7 +121,7 @@ Signatures::
 
 Edit [0]:: no change
 
-tsgo --build --verbose --dangerouslyLoadExternalPlugins
+tsgo --build --verbose --loadExternalPlugins
 ExitStatus:: Success
 Output::
 [[90mHH:MM:SS AM[0m] Projects in this build: 
@@ -140,7 +140,7 @@ Edit [1]:: upgrade the content mapper package to a new version
     "tsContentMapper": { "exec": ["verbatim-mapper"] }
 }
 
-tsgo --build --verbose --dangerouslyLoadExternalPlugins
+tsgo --build --verbose --loadExternalPlugins
 ExitStatus:: Success
 Output::
 [[90mHH:MM:SS AM[0m] Projects in this build: 
@@ -165,7 +165,7 @@ Signatures::
 
 Edit [2]:: no change
 
-tsgo --build --verbose --dangerouslyLoadExternalPlugins
+tsgo --build --verbose --loadExternalPlugins
 ExitStatus:: Success
 Output::
 [[90mHH:MM:SS AM[0m] Projects in this build: 

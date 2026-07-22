@@ -1431,9 +1431,9 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	if s.initializationOptions.EnableTelemetry != nil {
 		enableTelemetry = *s.initializationOptions.EnableTelemetry
 	}
-	var dangerouslyLoadExternalPlugins bool
-	if s.initializationOptions.DangerouslyLoadExternalPlugins != nil {
-		dangerouslyLoadExternalPlugins = *s.initializationOptions.DangerouslyLoadExternalPlugins
+	var loadExternalPlugins bool
+	if s.initializationOptions.LoadExternalPlugins != nil {
+		loadExternalPlugins = *s.initializationOptions.LoadExternalPlugins
 	}
 	hasDynamicWatchRegistration := s.clientCapabilities.Workspace.DidChangeWatchedFiles.DynamicRegistration
 	if hasDynamicWatchRegistration {
@@ -1476,17 +1476,17 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	s.session = project.NewSession(&project.SessionInit{
 		BackgroundCtx: lsproto.WithClientCapabilities(s.backgroundCtx, &s.clientCapabilities),
 		Options: &project.SessionOptions{
-			CurrentDirectory:               cwd,
-			DefaultLibraryPath:             s.defaultLibraryPath,
-			TypingsLocation:                s.typingsLocation,
-			PositionEncoding:               s.positionEncoding,
-			WatchEnabled:                   s.watchEnabled,
-			LoggingEnabled:                 true,
-			TelemetryEnabled:               enableTelemetry,
-			DebounceDelay:                  500 * time.Millisecond,
-			PushDiagnosticsEnabled:         !disablePushDiagnostics,
-			Locale:                         s.locale,
-			DangerouslyLoadExternalPlugins: dangerouslyLoadExternalPlugins,
+			CurrentDirectory:       cwd,
+			DefaultLibraryPath:     s.defaultLibraryPath,
+			TypingsLocation:        s.typingsLocation,
+			PositionEncoding:       s.positionEncoding,
+			WatchEnabled:           s.watchEnabled,
+			LoggingEnabled:         true,
+			TelemetryEnabled:       enableTelemetry,
+			DebounceDelay:          500 * time.Millisecond,
+			PushDiagnosticsEnabled: !disablePushDiagnostics,
+			Locale:                 s.locale,
+			LoadExternalPlugins:    loadExternalPlugins,
 		},
 		FS:          s.fs,
 		Logger:      s.logger,

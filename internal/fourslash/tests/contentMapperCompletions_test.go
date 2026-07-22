@@ -88,8 +88,8 @@ import {} from "./[|/*loadedPath*/Lo|]";
 import {} from "./[|/*unloadedPath*/Un|]";
 `
 	f, done := fourslash.NewFourslashWithOptions(t, content, &fourslash.FourslashOptions{
-		ContentMapperSpawner:           contentmappertest.NewSpawner(),
-		DangerouslyLoadExternalPlugins: true,
+		ContentMapperSpawner: contentmappertest.NewSpawner(),
+		LoadExternalPlugins:  true,
 	})
 	defer done()
 

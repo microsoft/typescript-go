@@ -133,27 +133,27 @@ type CompilerOptions struct {
 	OutFile string `json:"outFile,omitzero"`
 
 	// Internal fields
-	ConfigFilePath                 string   `json:"configFilePath,omitzero"`
-	NoDtsResolution                Tristate `json:"noDtsResolution,omitzero"`
-	PathsBasePath                  string   `json:"pathsBasePath,omitzero"`
-	Diagnostics                    Tristate `json:"diagnostics,omitzero"`
-	ExtendedDiagnostics            Tristate `json:"extendedDiagnostics,omitzero"`
-	GenerateCpuProfile             string   `json:"generateCpuProfile,omitzero"`
-	GenerateTrace                  string   `json:"generateTrace,omitzero"`
-	ListEmittedFiles               Tristate `json:"listEmittedFiles,omitzero"`
-	ListFiles                      Tristate `json:"listFiles,omitzero"`
-	ExplainFiles                   Tristate `json:"explainFiles,omitzero"`
-	ListFilesOnly                  Tristate `json:"listFilesOnly,omitzero"`
-	NoEmitForJsFiles               Tristate `json:"noEmitForJsFiles,omitzero"`
-	PreserveWatchOutput            Tristate `json:"preserveWatchOutput,omitzero"`
-	Pretty                         Tristate `json:"pretty,omitzero"`
-	Version                        Tristate `json:"version,omitzero"`
-	Watch                          Tristate `json:"watch,omitzero"`
-	ShowConfig                     Tristate `json:"showConfig,omitzero"`
-	Build                          Tristate `json:"build,omitzero"`
-	Help                           Tristate `json:"help,omitzero"`
-	All                            Tristate `json:"all,omitzero"`
-	DangerouslyLoadExternalPlugins Tristate `json:"dangerouslyLoadExternalPlugins,omitzero"`
+	ConfigFilePath      string   `json:"configFilePath,omitzero"`
+	NoDtsResolution     Tristate `json:"noDtsResolution,omitzero"`
+	PathsBasePath       string   `json:"pathsBasePath,omitzero"`
+	Diagnostics         Tristate `json:"diagnostics,omitzero"`
+	ExtendedDiagnostics Tristate `json:"extendedDiagnostics,omitzero"`
+	GenerateCpuProfile  string   `json:"generateCpuProfile,omitzero"`
+	GenerateTrace       string   `json:"generateTrace,omitzero"`
+	ListEmittedFiles    Tristate `json:"listEmittedFiles,omitzero"`
+	ListFiles           Tristate `json:"listFiles,omitzero"`
+	ExplainFiles        Tristate `json:"explainFiles,omitzero"`
+	ListFilesOnly       Tristate `json:"listFilesOnly,omitzero"`
+	NoEmitForJsFiles    Tristate `json:"noEmitForJsFiles,omitzero"`
+	PreserveWatchOutput Tristate `json:"preserveWatchOutput,omitzero"`
+	Pretty              Tristate `json:"pretty,omitzero"`
+	Version             Tristate `json:"version,omitzero"`
+	Watch               Tristate `json:"watch,omitzero"`
+	ShowConfig          Tristate `json:"showConfig,omitzero"`
+	Build               Tristate `json:"build,omitzero"`
+	Help                Tristate `json:"help,omitzero"`
+	All                 Tristate `json:"all,omitzero"`
+	LoadExternalPlugins Tristate `json:"loadExternalPlugins,omitzero"`
 
 	PprofDir       string   `json:"pprofDir,omitzero"`
 	SingleThreaded Tristate `json:"singleThreaded,omitzero"`

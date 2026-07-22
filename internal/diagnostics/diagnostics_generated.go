@@ -4318,7 +4318,7 @@ var Content_mapper_file_extension_0_is_registered_by_more_than_one_content_mappe
 
 var Allow_loading_external_content_mapper_plugins_that_execute_code_during_compilation = &Message{code: 100023, category: CategoryMessage, key: "Allow_loading_external_content_mapper_plugins_that_execute_code_during_compilation_100023", text: "Allow loading external content mapper plugins that execute code during compilation."}
 
-var Content_mappers_require_the_dangerouslyLoadExternalPlugins_command_line_flag_to_be_enabled = &Message{code: 100024, category: CategoryError, key: "Content_mappers_require_the_dangerouslyLoadExternalPlugins_command_line_flag_to_be_enabled_100024", text: "Content mappers require the '--dangerouslyLoadExternalPlugins' command line flag to be enabled."}
+var Content_mappers_require_the_loadExternalPlugins_command_line_flag_to_be_enabled = &Message{code: 100024, category: CategoryError, key: "Content_mappers_require_the_loadExternalPlugins_command_line_flag_to_be_enabled_100024", text: "Content mappers require the '--loadExternalPlugins' command line flag to be enabled."}
 
 var The_content_mapper_0_failed_to_transform_this_file_Colon_1 = &Message{code: 100025, category: CategoryError, key: "The_content_mapper_0_failed_to_transform_this_file_Colon_1_100025", text: "The content mapper '{0}' failed to transform this file: {1}"}
 
@@ -8666,8 +8666,8 @@ func keyToMessage(key Key) *Message {
 		return Content_mapper_file_extension_0_is_registered_by_more_than_one_content_mapper
 	case "Allow_loading_external_content_mapper_plugins_that_execute_code_during_compilation_100023":
 		return Allow_loading_external_content_mapper_plugins_that_execute_code_during_compilation
-	case "Content_mappers_require_the_dangerouslyLoadExternalPlugins_command_line_flag_to_be_enabled_100024":
-		return Content_mappers_require_the_dangerouslyLoadExternalPlugins_command_line_flag_to_be_enabled
+	case "Content_mappers_require_the_loadExternalPlugins_command_line_flag_to_be_enabled_100024":
+		return Content_mappers_require_the_loadExternalPlugins_command_line_flag_to_be_enabled
 	case "The_content_mapper_0_failed_to_transform_this_file_Colon_1_100025":
 		return The_content_mapper_0_failed_to_transform_this_file_Colon_1
 	case "The_content_mapper_0_failed_1_times_and_will_not_be_used_100026":

@@ -79,21 +79,21 @@ func TestInProcessSpanKinds(t *testing.T) {
 	// Synthesized: __VERSION appears only in the injected preamble, which has no original counterpart.
 	synthStart := strings.Index(text, "__VERSION")
 	assert.Assert(t, synthStart >= 0)
-	_, synthFidelity := result.Mappings.MapSpan(core.NewTextRange(synthStart, synthStart+len("__VERSION")))
+	_, synthFidelity := result.Mappings.GeneratedToOriginalSpan(core.NewTextRange(synthStart, synthStart+len("__VERSION")))
 	assert.Equal(t, synthFidelity, spanmap.FidelityNone)
 
 	// Verbatim: "export const version" is copied through, so its generated span maps exactly onto the
 	// identical span in the original.
 	verbatimStart := strings.Index(text, "export const version")
 	assert.Assert(t, verbatimStart >= 0)
-	verbatimRange, verbatimFidelity := result.Mappings.MapSpan(core.NewTextRange(verbatimStart, verbatimStart+len("export")))
+	verbatimRange, verbatimFidelity := result.Mappings.GeneratedToOriginalSpan(core.NewTextRange(verbatimStart, verbatimStart+len("export")))
 	assert.Equal(t, verbatimFidelity, spanmap.FidelityExact)
 	original := transformRequest().Content
 	assert.Equal(t, original[verbatimRange.Pos():verbatimRange.End()], "export")
 
 	// Atom: the substituted "7" maps as a whole back to the original #{target} token span.
 	atomStart := strings.Index(text, "= 7;") + len("= ")
-	atomRange, atomFidelity := result.Mappings.MapSpan(core.NewTextRange(atomStart, atomStart+len("7")))
+	atomRange, atomFidelity := result.Mappings.GeneratedToOriginalSpan(core.NewTextRange(atomStart, atomStart+len("7")))
 	assert.Equal(t, atomFidelity, spanmap.FidelityAtom)
 	assert.Equal(t, original[atomRange.Pos():atomRange.End()], "#{target}")
 }
@@ -116,30 +116,30 @@ export const suffix = "!";
 	assert.NilError(t, err)
 
 	scriptStart := strings.Index(result.Text, "export const title")
-	_, exact := result.Mappings.MapSpan(core.NewTextRange(scriptStart, scriptStart+len("export")))
+	_, exact := result.Mappings.GeneratedToOriginalSpan(core.NewTextRange(scriptStart, scriptStart+len("export")))
 	assert.Equal(t, exact, spanmap.FidelityExact)
 
 	templateTitle := strings.LastIndex(result.Text, "title")
-	_, atom := result.Mappings.MapSpan(core.NewTextRange(templateTitle, templateTitle+len("title")))
+	_, atom := result.Mappings.GeneratedToOriginalSpan(core.NewTextRange(templateTitle, templateTitle+len("title")))
 	assert.Equal(t, atom, spanmap.FidelityAtom)
 
 	expressionStart := strings.Index(result.Text, "title + suffix")
-	_, approximate := result.Mappings.MapSpan(core.NewTextRange(expressionStart, expressionStart+len("title + suffix")))
+	_, approximate := result.Mappings.GeneratedToOriginalSpan(core.NewTextRange(expressionStart, expressionStart+len("title + suffix")))
 	assert.Equal(t, approximate, spanmap.FidelityApproximate)
 
 	renderStart := strings.Index(result.Text, "__render")
-	_, none := result.Mappings.MapSpan(core.NewTextRange(renderStart, renderStart+len("__render")))
+	_, none := result.Mappings.GeneratedToOriginalSpan(core.NewTextRange(renderStart, renderStart+len("__render")))
 	assert.Equal(t, none, spanmap.FidelityNone)
 
 	markupStart := strings.Index(content, "<h1>")
-	_, reverseNone := result.Mappings.MapPositionToGenerated(core.TextPos(markupStart))
+	_, reverseNone := result.Mappings.OriginalToGeneratedPosition(core.TextPos(markupStart))
 	assert.Equal(t, reverseNone, spanmap.FidelityNone)
 
 	componentName := strings.Index(result.Text, "ProfileCard")
-	_, componentNameFidelity := result.Mappings.MapSpan(core.NewTextRange(componentName, componentName+len("ProfileCard")))
+	_, componentNameFidelity := result.Mappings.GeneratedToOriginalSpan(core.NewTextRange(componentName, componentName+len("ProfileCard")))
 	assert.Equal(t, componentNameFidelity, spanmap.FidelityAtom)
 	componentDeclaration := strings.Index(result.Text, "export class ProfileCard")
-	_, componentDeclarationFidelity := result.Mappings.MapSpan(core.NewTextRange(componentDeclaration, componentDeclaration+len("export class ProfileCard {}")))
+	_, componentDeclarationFidelity := result.Mappings.GeneratedToOriginalSpan(core.NewTextRange(componentDeclaration, componentDeclaration+len("export class ProfileCard {}")))
 	assert.Equal(t, componentDeclarationFidelity, spanmap.FidelityApproximate)
 }
 

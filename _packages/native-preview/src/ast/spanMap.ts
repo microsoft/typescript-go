@@ -42,19 +42,19 @@ export class SpanMap {
         return fidelity === SpanMapFidelity.None;
     }
 
-    mapSpan(range: ReadonlyTextRange): MappedRange {
+    generatedToOriginalSpan(range: ReadonlyTextRange): MappedRange {
         return this.mapRange(range, this.segments, false);
     }
 
-    mapPosition(position: number): MappedPosition {
+    generatedToOriginalPosition(position: number): MappedPosition {
         return this.mapPoint(position, this.segments, false);
     }
 
-    mapRangeToGenerated(range: ReadonlyTextRange): MappedRange {
+    originalToGeneratedSpan(range: ReadonlyTextRange): MappedRange {
         return this.mapRange(range, this.getOriginalSegments(), true);
     }
 
-    mapPositionToGenerated(position: number): MappedPosition {
+    originalToGeneratedPosition(position: number): MappedPosition {
         return this.mapPoint(position, this.getOriginalSegments(), true);
     }
 

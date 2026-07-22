@@ -147,7 +147,7 @@
         "category": "Message",
         "code": 100023
     },
-    "Content mappers require the '--dangerouslyLoadExternalPlugins' command line flag to be enabled.": {
+    "Content mappers require the '--loadExternalPlugins' command line flag to be enabled.": {
         "category": "Error",
         "code": 100024
     },

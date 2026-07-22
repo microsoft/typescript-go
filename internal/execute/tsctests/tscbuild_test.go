@@ -321,7 +321,7 @@ func TestBuildContentMapperIdentity(t *testing.T) {
 					"tsContentMapper": { "exec": ["verbatim-mapper"] }
 				}`),
 			},
-			commandLineArgs: []string{"--build", "--verbose", "--dangerouslyLoadExternalPlugins"},
+			commandLineArgs: []string{"--build", "--verbose", "--loadExternalPlugins"},
 			edits: []*tscEdit{
 				noChange,
 				{
