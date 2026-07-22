@@ -3,8 +3,11 @@
 package bundled
 
 import (
+	"errors"
 	"fmt"
 	"os"
+	"os/exec"
+	"path/filepath"
 	"sync"
 	"testing"
 
@@ -29,18 +32,49 @@ var executableDir = sync.OnceValue(func() string {
 	return tspath.GetDirectoryPath(exe)
 })
 
+// argv0Dir returns the directory the executable was invoked from
+// (os.Args[0], resolved via PATH when bare, then symlink-walked per
+// component). It is the fallback when /proc/self/exe names the executable
+// somewhere its neighbours are not visible from — e.g. under PRoot's
+// link2symlink extension (Termux proot-distro on Android), which executes
+// hardlinked binaries out of a hidden symlink store that only the kernel
+// sees. Returns "" when no usable directory can be derived.
+func argv0Dir() string {
+	if len(os.Args) == 0 || os.Args[0] == "" {
+		return ""
+	}
+	argv0, err := exec.LookPath(os.Args[0])
+	if err != nil && !errors.Is(err, exec.ErrDot) {
+		return ""
+	}
+	abs, err := filepath.Abs(argv0)
+	if err != nil {
+		return ""
+	}
+	if walked, err := filepath.EvalSymlinks(abs); err == nil {
+		abs = walked
+	}
+	return tspath.GetDirectoryPath(tspath.NormalizeSlashes(abs))
+}
+
+func hasLibDTS(dir string) bool {
+	return osvfs.FS().Stat(tspath.CombinePaths(dir, "lib.d.ts")) != nil
+}
+
 var libPath = sync.OnceValue(func() string {
 	if testing.Testing() {
 		return TestingLibPath()
 	}
 	dir := executableDir()
-
-	libdts := tspath.CombinePaths(dir, "lib.d.ts")
-	if info := osvfs.FS().Stat(libdts); info == nil {
-		panic(fmt.Sprintf("bundled: %v does not exist; this executable may be misplaced", libdts))
+	if hasLibDTS(dir) {
+		return dir
 	}
 
-	return dir
+	if fallback := argv0Dir(); fallback != "" && fallback != dir && hasLibDTS(fallback) {
+		return fallback
+	}
+
+	panic(fmt.Sprintf("bundled: %v does not exist; this executable may be misplaced", tspath.CombinePaths(dir, "lib.d.ts")))
 })
 
 func IsBundled(path string) bool {
