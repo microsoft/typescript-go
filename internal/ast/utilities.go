@@ -43,14 +43,6 @@ func GetSymbolId(symbol *Symbol) SymbolId {
 	return SymbolId(id)
 }
 
-func GetNextNodeId() NodeId {
-	return NodeId(nextNodeId.Load())
-}
-
-func GetNextSymbolId() SymbolId {
-	return SymbolId(nextSymbolId.Load())
-}
-
 func GetSymbolTable(data *SymbolTable) SymbolTable {
 	if *data == nil {
 		*data = make(SymbolTable)

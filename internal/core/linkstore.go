@@ -42,8 +42,8 @@ const (
 // stored in fixed-size pages of 256 entries and an index of pages is maintained in an array for lower valued
 // page indices and a map for higher valued page indices.
 type PagedLinkStore[V any] struct {
-	pageMap  map[uint64]*[pageSize]V // Page table for page indices below maxPageCount
-	pageList []*[pageSize]V          // Page map for page indices above maxPageCount
+	pageMap  map[uint64]*[pageSize]V // Page map for page indices above maxPageCount
+	pageList []*[pageSize]V          // Page table for page indices below maxPageCount
 }
 
 func (s *PagedLinkStore[V]) Get(key uint64) *V {
