@@ -195,11 +195,15 @@ export class Client implements vscode.Disposable {
         // level changed between construction and start.
         this.clientOptions.initializationOptions.logVerbosity = this.outputChannel.logLevel;
 
+        const rawLocale = readUnifiedConfig("locale", "typescript", "locale", undefined, "auto");
+        const locale = rawLocale && rawLocale !== "auto" ? rawLocale : undefined;
+
         this.client = new NativePreviewLanguageClient(
             "js/ts",
             languageClientName,
             serverOptions,
             this.clientOptions,
+            locale,
         );
 
         // Register a static feature to advertise verbosityLevel support in hover capabilities.
@@ -402,9 +406,21 @@ function isInsiders(): boolean {
 // LanguageClient subclass that lets the user control whether a failed request
 // surfaces an error notification, via the `js/ts.server.showFailedResponses` setting.
 class NativePreviewLanguageClient extends LanguageClient {
+    private readonly _locale: string | undefined;
+
+    constructor(
+        id: string,
+        name: string,
+        serverOptions: ServerOptions,
+        clientOptions: LanguageClientOptions,
+        locale: string | undefined,
+    ) {
+        super(id, name, serverOptions, clientOptions);
+        this._locale = locale;
+    }
+
     protected override getLocale(): string {
-        const locale = readUnifiedConfig("locale", "typescript", "locale", undefined, "auto");
-        return locale && locale !== "auto" ? locale : super.getLocale();
+        return this._locale ?? super.getLocale();
     }
 
     override handleFailedRequest<T>(
