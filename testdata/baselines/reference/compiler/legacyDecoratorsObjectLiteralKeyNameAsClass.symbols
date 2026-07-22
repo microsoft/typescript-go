@@ -1,0 +1,72 @@
+//// [tests/cases/compiler/legacyDecoratorsObjectLiteralKeyNameAsClass.ts] ////
+
+=== legacyDecoratorsObjectLiteralKeyNameAsClass.ts ===
+// Repro from issue: class name used as object literal key should not be renamed to the alias
+
+const dec = (t: any) => t;
+>dec : Symbol(dec, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 2, 5))
+>t : Symbol(t, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 2, 13))
+>t : Symbol(t, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 2, 13))
+
+@dec
+>dec : Symbol(dec, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 2, 5))
+
+class SessionAuth {
+>SessionAuth : Symbol(SessionAuth, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 2, 26))
+
+    static requirement() {
+>requirement : Symbol(SessionAuth.requirement, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 5, 19))
+
+        return { SessionAuth: [] };
+>SessionAuth : Symbol(SessionAuth, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 7, 16))
+    }
+}
+
+// Method shorthand name in object literal should not be renamed
+@dec
+>dec : Symbol(dec, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 2, 5))
+
+class Foo {
+>Foo : Symbol(Foo, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 9, 1))
+
+    static methods() {
+>methods : Symbol(Foo.methods, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 13, 11))
+
+        return {
+            Foo() { return 1; }
+>Foo : Symbol(Foo, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 15, 16))
+
+        };
+    }
+}
+
+// Class field name should not be renamed
+@dec
+>dec : Symbol(dec, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 2, 5))
+
+class Bar {
+>Bar : Symbol(Bar, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 19, 1))
+
+    Bar = 42;
+>Bar : Symbol(Bar.Bar, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 23, 11))
+}
+
+// Self-reference in expression positions SHOULD still be renamed
+@dec
+>dec : Symbol(dec, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 2, 5))
+
+class SelfRef {
+>SelfRef : Symbol(SelfRef, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 25, 1))
+
+    static instance = new SelfRef();
+>instance : Symbol(SelfRef.instance, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 29, 15))
+>SelfRef : Symbol(SelfRef, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 25, 1))
+
+    method() {
+>method : Symbol(SelfRef.method, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 30, 36))
+
+        return SelfRef;
+>SelfRef : Symbol(SelfRef, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 25, 1))
+    }
+}
+
