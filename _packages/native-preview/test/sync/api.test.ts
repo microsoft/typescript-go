@@ -5699,20 +5699,22 @@ describe("Program - emit", () => {
                     outDir: "dist",
                 },
             }),
-            "/src/index.ts": "const value: string = 1;",
+            "/src/bad.ts": "export const bad = ;",
+            "/src/good.ts": "export const value = 1;",
         });
         try {
             const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
             const project = snapshot.getProject("/tsconfig.json")!;
-            const result = project.program.emit();
+            const result = project.program.emit(["/src/bad.ts", "/src/good.ts"]);
             assert.equal(result.emitSkipped, true);
-            assert.ok(result.diagnostics.length > 0);
+            assert.ok(result.diagnostics.some(d => d.code === 1109));
             assert.deepEqual(result.emittedFiles, []);
-            assert.equal(fs.readFile?.("/dist/src/index.js"), undefined);
+            assert.equal(fs.readFile?.("/dist/src/bad.js"), undefined);
+            assert.equal(fs.readFile?.("/dist/src/good.js"), undefined);
 
-            const stringResult = project.program.emitToString();
+            const stringResult = project.program.emitToString(["/src/bad.ts", "/src/good.ts"]);
             assert.equal(stringResult.emitSkipped, true);
-            assert.ok(stringResult.diagnostics.length > 0);
+            assert.ok(stringResult.diagnostics.some(d => d.code === 1109));
             assert.deepEqual(stringResult.outputFiles, []);
         }
         finally {

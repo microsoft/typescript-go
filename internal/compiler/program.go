@@ -1769,7 +1769,7 @@ func GetDiagnosticsOfAnyProgram(
 			return append(diagnostics, getDiagnostics(ctx, nil)...)
 		}
 		for _, file := range files {
-			diagnostics = append(allDiagnostics, getDiagnostics(ctx, file)...)
+			diagnostics = append(diagnostics, getDiagnostics(ctx, file)...)
 		}
 		return diagnostics
 	}
