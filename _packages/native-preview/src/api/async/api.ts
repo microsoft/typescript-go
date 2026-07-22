@@ -1,4 +1,5 @@
 /// <reference path="../node/node.ts" preserve="true" />
+import { CheckFlags } from "#enums/checkFlags";
 import { CompletionItemKind } from "#enums/completionItemKind";
 import { DiagnosticCategory } from "#enums/diagnosticCategory";
 import { ElementFlags } from "#enums/elementFlags";
@@ -22,6 +23,7 @@ import {
     type TypeNode,
     unescapeLeadingUnderscores,
 } from "../../ast/index.ts";
+import { assertNever } from "../../internal/utils.ts";
 import {
     encodeNode,
     uint8ArrayToBase64,
@@ -49,14 +51,18 @@ import type {
     ConfigResponse,
     DocumentIdentifier,
     DocumentPosition,
+    ImportAdderActionRequest,
+    ImportSymbolActionRequest,
     IndexInfoResponse,
     InitializeResponse,
     LSPUpdateSnapshotParams,
     ProfileResult,
+    ProjectReference,
     ProjectResponse,
     SignatureResponse,
     SourceFileMetadata,
     SymbolResponse,
+    TextEdit,
     TypePredicateResponse,
     TypeResponse,
     UpdateSnapshotParams,
@@ -88,7 +94,9 @@ import type {
     ConditionalType,
     Diagnostic,
     FreshableType,
+    GetImportEditsForSymbolsOptions,
     IdentifierTypePredicate,
+    ImportAdderAction,
     IndexedAccessType,
     IndexInfo,
     IndexType,
@@ -115,8 +123,8 @@ import type {
 } from "./types.ts";
 
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
-export { CompletionItemKind, DiagnosticCategory, ElementFlags, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
-export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, FreshableType, IdentifierTypePredicate, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export { CheckFlags, CompletionItemKind, DiagnosticCategory, ElementFlags, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
+export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ProjectReference, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 
 export class API<FromLSP extends boolean = false> {
     private client: Client;
@@ -206,6 +214,39 @@ export class API<FromLSP extends boolean = false> {
 
     clearSourceFileCache(): void {
         this.sourceFileCache.clear();
+    }
+
+    async runWithTemporaryFileUpdate(baseSnapshot: Snapshot, file: DocumentIdentifier, newText: string, cb: (newSnapshot: Snapshot) => void | Promise<void>): Promise<void> {
+        await this.ensureInitialized();
+
+        if (!this.activeSnapshots.has(baseSnapshot) || baseSnapshot.isDisposed()) {
+            throw new Error("Cannot run a temporary file update on an inactive snapshot");
+        }
+        const data = await this.client.apiRequest<UpdateSnapshotResponse>("updateTemporarySnapshot", { snapshot: baseSnapshot.id, file, newText });
+
+        // Retain cached source files from the base snapshot for files unchanged by
+        // the temporary update. The temporary snapshot is not the latest snapshot, so
+        // we never release the latest snapshot's cache here.
+        this.sourceFileCache.retainForSnapshot(data.snapshot, baseSnapshot.id, data.changes);
+
+        const snapshot = new Snapshot(
+            data,
+            this.client,
+            this.sourceFileCache,
+            this.toPath!,
+            () => {
+                this.activeSnapshots.delete(snapshot);
+                this.sourceFileCache.releaseSnapshot(snapshot.id);
+            },
+        );
+        this.activeSnapshots.add(snapshot);
+
+        try {
+            await cb(snapshot);
+        }
+        finally {
+            await snapshot.dispose();
+        }
     }
 
     /**
@@ -464,9 +505,9 @@ class ProjectObjectRegistry {
         this.signatures.clear();
     }
 
-    async fetchType<T extends Type>(source: Symbol | Signature | Type, method: string, handle: number | false | undefined): Promise<T> {
+    async fetchOptionalType<T extends Type>(source: Symbol | Signature | Type, method: string, handle: number | false | undefined): Promise<T | undefined> {
         if (handle !== false) {
-            if (!handle) return undefined as unknown as T;
+            if (!handle) return undefined;
             const cached = this.getType(handle);
             if (cached) return cached as unknown as T;
         }
@@ -476,8 +517,14 @@ class ProjectObjectRegistry {
             project: this.project.id,
             objectId: source.id,
         });
-        if (!data) throw new Error(`${method} returned null type for ${source.constructor.name} ${source.id}`);
+        if (!data) return undefined;
         return this.getOrCreateType(data) as unknown as T;
+    }
+
+    async fetchType<T extends Type>(source: Symbol | Signature | Type, method: string, handle: number | false | undefined): Promise<T> {
+        const result = await this.fetchOptionalType<T>(source, method, handle);
+        if (result === undefined) throw new Error(`${method} returned no type for ${source.constructor.name} ${source.id}`);
+        return result;
     }
 
     async fetchSymbol(source: Symbol | Signature | Type, method: string, handle: number | undefined): Promise<Symbol> {
@@ -536,6 +583,69 @@ class ProjectObjectRegistry {
         if (typesData == null) return [];
         return typesData.map(data => this.getOrCreateType(data));
     }
+
+    async fetchPropertiesOfType(source: Type): Promise<readonly Symbol[]> {
+        const data = await this.client.apiRequest<SymbolResponse[] | null>("getPropertiesOfType", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            type: source.id,
+        });
+        return data ? data.map(symbol => this.getOrCreateSymbol(symbol)) : [];
+    }
+
+    async fetchApparentPropertiesOfType(source: Type): Promise<readonly Symbol[]> {
+        const data = await this.client.apiRequest<SymbolResponse[] | null>("getApparentPropertiesOfType", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            objectId: source.id,
+        });
+        return data ? data.map(symbol => this.getOrCreateSymbol(symbol)) : [];
+    }
+
+    async fetchPropertyOfType(source: Type, name: string): Promise<Symbol | undefined> {
+        const data = await this.client.apiRequest<SymbolResponse | null>("getPropertyOfType", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            type: source.id,
+            name,
+        });
+        return data ? this.getOrCreateSymbol(data) : undefined;
+    }
+
+    async fetchSignaturesOfType(source: Type, kind: SignatureKind): Promise<readonly Signature[]> {
+        const data = await this.client.apiRequest<SignatureResponse[]>("getSignaturesOfType", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            type: source.id,
+            kind,
+        });
+        return data.map(signature => this.getOrCreateSignature(signature));
+    }
+
+    async fetchIndexInfosOfType(source: Type): Promise<readonly IndexInfo[]> {
+        const data = await this.client.apiRequest<IndexInfoResponse[] | null>("getIndexInfosOfType", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            type: source.id,
+        });
+        if (!data) return [];
+        return data.map(info => ({
+            keyType: this.getOrCreateType(info.keyType),
+            valueType: this.getOrCreateType(info.valueType),
+            isReadonly: info.isReadonly ?? false,
+            declaration: info.declaration ? new NodeHandle(info.declaration, this.project) : undefined,
+        }));
+    }
+
+    async fetchTypeParameterAtPosition(source: Signature, pos: number): Promise<Type> {
+        const data = await this.client.apiRequest<TypeResponse>("getTypeParameterAtPosition", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            signature: source.id,
+            index: pos,
+        });
+        return this.getOrCreateType(data);
+    }
 }
 
 export class Project {
@@ -548,6 +658,7 @@ export class Project {
     readonly checker: Checker;
     readonly emitter: Emitter;
     private client: Client;
+    private snapshotId: number;
 
     constructor(
         data: ProjectResponse,
@@ -562,6 +673,7 @@ export class Project {
         this.compilerOptions = data.compilerOptions;
         this.rootFiles = data.rootFiles;
         this.client = client;
+        this.snapshotId = snapshotId;
         this.program = new Program(
             snapshotId,
             this,
@@ -577,6 +689,51 @@ export class Project {
             objectRegistry,
         );
         this.emitter = new Emitter(client);
+    }
+
+    async getImportAdderEdits(file: DocumentIdentifier, actions: readonly ImportAdderAction[]): Promise<readonly TextEdit[]> {
+        const requestActions: ImportAdderActionRequest[] = actions.map(action => {
+            switch (action.kind) {
+                case "importSymbol":
+                    const importSymbolAction: ImportSymbolActionRequest = {
+                        kind: "importSymbol",
+                        symbol: action.symbol.id,
+                    };
+                    if (action.isValidTypeOnlyUseSite !== undefined) {
+                        importSymbolAction.isValidTypeOnlyUseSite = action.isValidTypeOnlyUseSite;
+                    }
+                    return importSymbolAction;
+                default:
+                    return assertNever(action.kind);
+            }
+        });
+
+        const data = await this.client.apiRequest<TextEdit[]>("getImportAdderEdits", {
+            snapshot: this.snapshotId,
+            project: this.id,
+            file,
+            actions: requestActions,
+        });
+        return data ?? [];
+    }
+
+    async getImportEditsForSymbols(file: DocumentIdentifier, symbols: readonly Symbol[], options: GetImportEditsForSymbolsOptions = {}): Promise<readonly TextEdit[]> {
+        return this.getImportAdderEdits(
+            file,
+            symbols.map((symbol): ImportAdderAction => {
+                if (options.isValidTypeOnlyUseSite !== undefined) {
+                    return {
+                        kind: "importSymbol",
+                        symbol,
+                        isValidTypeOnlyUseSite: options.isValidTypeOnlyUseSite,
+                    };
+                }
+                return {
+                    kind: "importSymbol",
+                    symbol,
+                };
+            }),
+        );
     }
 
     dispose(): void {
@@ -982,13 +1139,7 @@ export class Checker {
     }
 
     async getSignaturesOfType(type: Type, kind: SignatureKind): Promise<readonly Signature[]> {
-        const data = await this.client.apiRequest<SignatureResponse[]>("getSignaturesOfType", {
-            snapshot: this.snapshotId,
-            project: this.project.id,
-            type: type.id,
-            kind,
-        });
-        return data.map(d => this.objectRegistry.getOrCreateSignature(d));
+        return kind === SignatureKind.Call ? type.getCallSignatures() : type.getConstructSignatures();
     }
 
     /**
@@ -1074,12 +1225,7 @@ export class Checker {
 
     /** Get the type with `null` and `undefined` removed. Always returns a type. */
     async getNonNullableType(type: Type): Promise<Type> {
-        const data = await this.client.apiRequest<TypeResponse>("getNonNullableType", {
-            snapshot: this.snapshotId,
-            project: this.project.id,
-            type: type.id,
-        });
-        return this.objectRegistry.getOrCreateType(data);
+        return type.getNonNullableType();
     }
 
     /**
@@ -1264,12 +1410,7 @@ export class Checker {
 
     /** Get the return type of a signature. Always returns a type. */
     async getReturnTypeOfSignature(signature: Signature): Promise<Type> {
-        const data = await this.client.apiRequest<TypeResponse>("getReturnTypeOfSignature", {
-            snapshot: this.snapshotId,
-            project: this.project.id,
-            signature: signature.id,
-        });
-        return this.objectRegistry.getOrCreateType(data);
+        return signature.getReturnType();
     }
 
     /**
@@ -1305,46 +1446,20 @@ export class Checker {
      * yields an empty array.
      */
     async getBaseTypes(type: InterfaceType): Promise<readonly Type[]> {
-        const data = await this.client.apiRequest<TypeResponse[] | null>("getBaseTypes", {
-            snapshot: this.snapshotId,
-            project: this.project.id,
-            type: type.id,
-        });
-        return data ? data.map(d => this.objectRegistry.getOrCreateType(d)) : [];
+        return await type.getBaseTypes() ?? [];
     }
 
     /** Get the apparent type of a type. Always returns a type. */
     async getApparentType(type: Type): Promise<Type> {
-        const data = await this.client.apiRequest<TypeResponse>("getApparentType", {
-            snapshot: this.snapshotId,
-            project: this.project.id,
-            type: type.id,
-        });
-        return this.objectRegistry.getOrCreateType(data);
+        return type.getApparentType();
     }
 
     async getPropertiesOfType(type: Type): Promise<readonly Symbol[]> {
-        const data = await this.client.apiRequest<SymbolResponse[] | null>("getPropertiesOfType", {
-            snapshot: this.snapshotId,
-            project: this.project.id,
-            type: type.id,
-        });
-        return data ? data.map(d => this.objectRegistry.getOrCreateSymbol(d)) : [];
+        return type.getProperties();
     }
 
     async getIndexInfosOfType(type: Type): Promise<readonly IndexInfo[]> {
-        const data = await this.client.apiRequest<IndexInfoResponse[] | null>("getIndexInfosOfType", {
-            snapshot: this.snapshotId,
-            project: this.project.id,
-            type: type.id,
-        });
-        if (!data) return [];
-        return data.map(d => ({
-            keyType: this.objectRegistry.getOrCreateType(d.keyType),
-            valueType: this.objectRegistry.getOrCreateType(d.valueType),
-            isReadonly: d.isReadonly ?? false,
-            declaration: d.declaration ? new NodeHandle(d.declaration, this.project) : undefined,
-        }));
+        return type.getIndexInfos();
     }
 
     /**
@@ -1352,12 +1467,11 @@ export class Checker {
      * undefined if it has none.
      */
     async getConstraintOfTypeParameter(type: TypeParameter): Promise<Type | undefined> {
-        const data = await this.client.apiRequest<TypeResponse | null>("getConstraintOfTypeParameter", {
-            snapshot: this.snapshotId,
-            project: this.project.id,
-            type: type.id,
-        });
-        return data ? this.objectRegistry.getOrCreateType(data) : undefined;
+        return type.getConstraint();
+    }
+
+    async getDefaultFromTypeParameter(type: TypeParameter): Promise<Type | undefined> {
+        return type.getDefault();
     }
 
     async getBaseConstraintOfType(type: Type): Promise<Type | undefined> {
@@ -1624,7 +1738,7 @@ export class Symbol {
     /** The display name (escaped underscores removed). */
     readonly name: string;
     readonly flags: SymbolFlags;
-    readonly checkFlags: number;
+    readonly checkFlags: CheckFlags;
     readonly declarations: readonly NodeHandle[];
     readonly valueDeclaration: NodeHandle | undefined;
     private readonly parent!: number;
@@ -1698,6 +1812,8 @@ export class Symbol {
 class TypeObject implements Type {
     private objectRegistry: ProjectObjectRegistry;
 
+    // Fields included in TypeResponse. References to other objects are stored as IDs
+    // and resolved lazily via the object registry.
     readonly id: number;
     readonly flags: TypeFlags;
     readonly objectFlags!: ObjectFlags;
@@ -1724,8 +1840,25 @@ class TypeObject implements Type {
     readonly baseType!: number;
     readonly substConstraint!: number;
 
-    private trueType: number | false; // false if not yet loaded
-    private falseType: number | false; // false if not yet loaded
+    // Cached results of lazy fetches, not included in TypeResponse
+    // (typically because they require some amount of computation or
+    // could cause an arbitrarily large number of types to be cached
+    // on the server for ID-based lookup). `false` is a sentinel value
+    // indicating a fetch has not yet occurred.
+    private trueType: number | false;
+    private falseType: number | false;
+    private constraint: number | false;
+    private default: number | false;
+    private nonNullableType: number | false;
+    private apparentType: number | false;
+    private properties: readonly Symbol[] | false;
+    private apparentProperties: readonly Symbol[] | false;
+    private callSignatures: readonly Signature[] | false;
+    private constructSignatures: readonly Signature[] | false;
+    private indexInfos: readonly IndexInfo[] | false;
+    private baseTypes: readonly Type[] | false;
+    private stringIndexType: Type | undefined | false;
+    private numberIndexType: Type | undefined | false;
 
     constructor(data: TypeResponse, objectRegistry: ProjectObjectRegistry) {
         this.objectRegistry = objectRegistry;
@@ -1762,10 +1895,97 @@ class TypeObject implements Type {
 
         this.trueType = false;
         this.falseType = false;
+        this.constraint = false;
+        this.default = false;
+        this.nonNullableType = false;
+        this.apparentType = false;
+        this.properties = false;
+        this.apparentProperties = false;
+        this.callSignatures = false;
+        this.constructSignatures = false;
+        this.indexInfos = false;
+        this.baseTypes = false;
+        this.stringIndexType = false;
+        this.numberIndexType = false;
     }
 
     async getSymbol(): Promise<Symbol | undefined> {
         return this.objectRegistry.fetchSymbol(this, "getSymbolOfType", this.symbol);
+    }
+
+    async getProperties(): Promise<readonly Symbol[]> {
+        if (this.properties === false) {
+            this.properties = await this.objectRegistry.fetchPropertiesOfType(this);
+        }
+        return this.properties;
+    }
+
+    getProperty(propertyName: string): Promise<Symbol | undefined> {
+        return this.objectRegistry.fetchPropertyOfType(this, propertyName);
+    }
+
+    async getApparentProperties(): Promise<readonly Symbol[]> {
+        if (this.apparentProperties === false) {
+            this.apparentProperties = await this.objectRegistry.fetchApparentPropertiesOfType(this);
+        }
+        return this.apparentProperties;
+    }
+
+    async getCallSignatures(): Promise<readonly Signature[]> {
+        if (this.callSignatures === false) {
+            this.callSignatures = await this.objectRegistry.fetchSignaturesOfType(this, SignatureKind.Call);
+        }
+        return this.callSignatures;
+    }
+
+    async getConstructSignatures(): Promise<readonly Signature[]> {
+        if (this.constructSignatures === false) {
+            this.constructSignatures = await this.objectRegistry.fetchSignaturesOfType(this, SignatureKind.Construct);
+        }
+        return this.constructSignatures;
+    }
+
+    async getNonNullableType(): Promise<Type> {
+        const result = await this.objectRegistry.fetchType(this, "getNonNullableType", this.nonNullableType);
+        this.nonNullableType = result.id;
+        return result;
+    }
+
+    async getStringIndexType(): Promise<Type | undefined> {
+        if (this.stringIndexType === false) {
+            this.stringIndexType = await this.getStringIndexTypeWorker();
+        }
+        return this.stringIndexType;
+    }
+
+    private async getStringIndexTypeWorker(): Promise<Type | undefined> {
+        const infos = await this.getIndexInfos();
+        return infos.find(info => (info.keyType.flags & TypeFlags.String) !== 0)?.valueType;
+    }
+
+    async getNumberIndexType(): Promise<Type | undefined> {
+        if (this.numberIndexType === false) {
+            this.numberIndexType = await this.getNumberIndexTypeWorker();
+        }
+        return this.numberIndexType;
+    }
+
+    private async getNumberIndexTypeWorker(): Promise<Type | undefined> {
+        const infos = await this.getIndexInfos();
+        return infos.find(info => (info.keyType.flags & TypeFlags.Number) !== 0)?.valueType;
+    }
+
+    async getApparentType(): Promise<Type> {
+        const result = await this.objectRegistry.fetchType(this, "getApparentType", this.apparentType);
+        this.apparentType = result.id;
+        return result;
+    }
+
+    async getIndexInfos(): Promise<readonly IndexInfo[]> {
+        if (this.indexInfos === false) {
+            this.indexInfos = await this.objectRegistry.fetchIndexInfosOfType(this);
+        }
+        return this.indexInfos;
     }
 
     async getAliasSymbol(): Promise<Symbol | undefined> {
@@ -1777,11 +1997,11 @@ class TypeObject implements Type {
     }
 
     async getFreshType(): Promise<FreshableType | undefined> {
-        return this.objectRegistry.fetchType(this, "getFreshTypeOfType", this.freshType);
+        return this.objectRegistry.fetchOptionalType(this, "getFreshTypeOfType", this.freshType);
     }
 
     async getRegularType(): Promise<FreshableType | undefined> {
-        return this.objectRegistry.fetchType(this, "getRegularTypeOfType", this.regularType);
+        return this.objectRegistry.fetchOptionalType(this, "getRegularTypeOfType", this.regularType);
     }
 
     async getTypes(): Promise<readonly Type[] | undefined> {
@@ -1830,8 +2050,21 @@ class TypeObject implements Type {
         return this.objectRegistry.fetchType(this, "getBaseTypeOfType", this.baseType);
     }
 
-    async getConstraint(): Promise<Type> {
+    async getConstraint(): Promise<Type | undefined> {
+        // Type parameters resolve their constraint lazily through the checker,
+        // whereas substitution types carry a preloaded constraint handle.
+        if (this.flags & TypeFlags.TypeParameter) {
+            const result = await this.objectRegistry.fetchOptionalType(this, "getConstraintOfTypeParameter", this.constraint);
+            this.constraint = result ? result.id : 0;
+            return result;
+        }
         return this.objectRegistry.fetchType(this, "getConstraintOfType", this.substConstraint);
+    }
+
+    async getDefault(): Promise<Type | undefined> {
+        const result = await this.objectRegistry.fetchOptionalType(this, "getDefaultFromTypeParameter", this.default);
+        this.default = result ? result.id : 0;
+        return result;
     }
 
     async getTrueType(): Promise<Type> {
@@ -1854,7 +2087,10 @@ class TypeObject implements Type {
         if (!this.isClassOrInterface()) {
             return undefined;
         }
-        return this.objectRegistry.fetchBaseTypes(this);
+        if (this.baseTypes === false) {
+            this.baseTypes = await this.objectRegistry.fetchBaseTypes(this);
+        }
+        return this.baseTypes;
     }
 
     isClassOrInterface(): this is InterfaceType {
@@ -2034,6 +2270,7 @@ export class Signature {
     readonly parameters: readonly number[];
     readonly thisParameter?: number | undefined;
     readonly target?: number | undefined;
+    private returnType: number | false;
 
     constructor(data: SignatureResponse, project: Project, objectRegistry: ProjectObjectRegistry) {
         this.id = data.id;
@@ -2044,6 +2281,7 @@ export class Signature {
         this.parameters = data.parameters ?? [];
         this.thisParameter = data.thisParameter;
         this.target = data.target;
+        this.returnType = false;
     }
 
     async getTypeParameters(): Promise<readonly TypeParameter[]> {
@@ -2060,6 +2298,16 @@ export class Signature {
 
     async getTarget(): Promise<Signature | undefined> {
         return this.objectRegistry.fetchSignature(this, "getTargetOfSignature", this.target);
+    }
+
+    async getReturnType(): Promise<Type> {
+        const result = await this.objectRegistry.fetchType(this, "getReturnTypeOfSignature", this.returnType);
+        this.returnType = result.id;
+        return result;
+    }
+
+    getTypeParameterAtPosition(pos: number): Promise<Type> {
+        return this.objectRegistry.fetchTypeParameterAtPosition(this, pos);
     }
 
     get hasRestParameter(): boolean {
