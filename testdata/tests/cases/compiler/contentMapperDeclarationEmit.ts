@@ -1,4 +1,4 @@
-// @dangerouslyLoadExternalPlugins: true
+// @loadExternalPlugins: true
 
 // @Filename: /tsconfig.json
 {

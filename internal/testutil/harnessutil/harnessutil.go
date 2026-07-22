@@ -223,7 +223,7 @@ func CompileFilesEx(
 	// The host is shared by the pre- and post-emit programs and torn down when this compilation finishes.
 	var contentMapperHost contentmapper.Host
 	if compilerOptions.LoadExternalPlugins.IsTrue() && len(contentMappers) > 0 {
-		contentMapperHost = contentmapper.NewHost(context.Background(), contentmappertest.NewSpawner())
+		contentMapperHost = contentmapper.NewHost(context.Background(), contentmappertest.NewSpawner(), locale.Default)
 		defer contentMapperHost.Close()
 	}
 

@@ -112,7 +112,7 @@ export class Client implements vscode.Disposable {
                 enableTelemetry: true,
                 logVerbosity: this.outputChannel.logLevel,
                 // Content mappers run external plugin processes, so they are only enabled in a trusted workspace.
-                dangerouslyLoadExternalPlugins: vscode.workspace.isTrusted,
+                loadExternalPlugins: vscode.workspace.isTrusted,
             },
             errorHandler: this.errorHandler,
             middleware: {
@@ -239,7 +239,7 @@ export class Client implements vscode.Disposable {
 
         // Refresh options in case they changed between construction and start.
         this.clientOptions.initializationOptions.logVerbosity = this.outputChannel.logLevel;
-        this.clientOptions.initializationOptions.dangerouslyLoadExternalPlugins = vscode.workspace.isTrusted;
+        this.clientOptions.initializationOptions.loadExternalPlugins = vscode.workspace.isTrusted;
 
         this.client = new NativePreviewLanguageClient(
             "js/ts",

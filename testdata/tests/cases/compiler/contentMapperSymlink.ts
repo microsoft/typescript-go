@@ -1,4 +1,4 @@
-// @dangerouslyLoadExternalPlugins: true
+// @loadExternalPlugins: true
 
 // The mapper package really lives at /packages/mapper and is symlinked into node_modules, as in a
 // monorepo. Content mapper resolution must follow the symlink to find the package's manifest.

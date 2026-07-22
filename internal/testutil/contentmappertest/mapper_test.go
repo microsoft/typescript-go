@@ -10,6 +10,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/testutil/contentmappertest"
 	"gotest.tools/v3/assert"
@@ -65,7 +66,7 @@ func transformRequest() contentmapper.Request {
 // of a compiler-option token.
 func TestInProcessSpanKinds(t *testing.T) {
 	t.Parallel()
-	host := contentmapper.NewHost(t.Context(), contentmappertest.NewSpawner())
+	host := contentmapper.NewHost(t.Context(), contentmappertest.NewSpawner(), locale.Default)
 	defer host.Close()
 
 	result, err := host.Transform(testMapper(), transformRequest())
@@ -100,7 +101,7 @@ func TestInProcessSpanKinds(t *testing.T) {
 
 func TestComponentMapperSpanKinds(t *testing.T) {
 	t.Parallel()
-	host := contentmapper.NewHost(t.Context(), contentmappertest.NewSpawner())
+	host := contentmapper.NewHost(t.Context(), contentmappertest.NewSpawner(), locale.Default)
 	defer host.Close()
 
 	mapper := testMapper()
@@ -147,7 +148,7 @@ export const suffix = "!";
 // subprocess and drives it over stdio through the production content mapper host.
 func TestOutOfProcess(t *testing.T) {
 	t.Parallel()
-	host := contentmapper.NewHost(t.Context(), execSpawner{})
+	host := contentmapper.NewHost(t.Context(), execSpawner{}, locale.Default)
 	defer host.Close()
 
 	result, err := host.Transform(testMapper(), transformRequest())

@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ipc"
 	"github.com/microsoft/typescript-go/internal/json"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/spanmap"
 	"gotest.tools/v3/assert"
 )
@@ -172,7 +173,7 @@ func (c *countingReadWriteCloser) Close() error {
 
 func TestRunnerTransform(t *testing.T) {
 	t.Parallel()
-	r := contentmapper.NewHost(t.Context(), &fakeSpawner{})
+	r := contentmapper.NewHost(t.Context(), &fakeSpawner{}, locale.Default)
 	defer r.Close()
 
 	mapper := &contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "vue", Version: "1.0.0", Exec: []string{"vue-mapper"}}}
@@ -193,7 +194,7 @@ func TestRunnerPositionEncodings(t *testing.T) {
 	} {
 		t.Run(string(encoding), func(t *testing.T) {
 			t.Parallel()
-			r := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: unicodeMapper{encoding: encoding}})
+			r := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: unicodeMapper{encoding: encoding}}, locale.Default)
 			defer r.Close()
 			mapper := &contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: string(encoding), Exec: []string{"mapper"}}}
 			result, err := r.Transform(mapper, contentmapper.Request{FileName: "/a.vue", Content: "éx"})
@@ -218,7 +219,7 @@ func TestRunnerPositionEncodings(t *testing.T) {
 
 func TestRunnerRejectsUnsupportedPositionEncoding(t *testing.T) {
 	t.Parallel()
-	r := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: unicodeMapper{encoding: "utf-32"}})
+	r := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: unicodeMapper{encoding: "utf-32"}}, locale.Default)
 	defer r.Close()
 	mapper := &contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "invalid", Exec: []string{"mapper"}}}
 	_, err := r.Transform(mapper, contentmapper.Request{FileName: "/a.vue", Content: "x"})
@@ -236,7 +237,7 @@ func TestRunnerRejectsPositionsInsideUnicodeCharacters(t *testing.T) {
 	} {
 		t.Run(string(test.encoding), func(t *testing.T) {
 			t.Parallel()
-			r := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: invalidDiagnosticMapper{encoding: test.encoding}})
+			r := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: invalidDiagnosticMapper{encoding: test.encoding}}, locale.Default)
 			defer r.Close()
 			mapper := &contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: string(test.encoding), Exec: []string{"mapper"}}}
 			_, err := r.Transform(mapper, contentmapper.Request{FileName: "/a.vue", Content: test.content})
@@ -248,7 +249,7 @@ func TestRunnerRejectsPositionsInsideUnicodeCharacters(t *testing.T) {
 func TestRunnerConsolidatesByIdentity(t *testing.T) {
 	t.Parallel()
 	var spawner fakeSpawner
-	r := contentmapper.NewHost(t.Context(), &spawner)
+	r := contentmapper.NewHost(t.Context(), &spawner, locale.Default)
 	defer r.Close()
 
 	// Two logically-separate mappers with the same identity share one process.
@@ -266,7 +267,7 @@ func TestRunnerConsolidatesByIdentity(t *testing.T) {
 func TestRunnerLeaseLifecycle(t *testing.T) {
 	t.Parallel()
 	var spawner fakeSpawner
-	r := contentmapper.NewHost(t.Context(), &spawner)
+	r := contentmapper.NewHost(t.Context(), &spawner, locale.Default)
 	defer r.Close()
 
 	vueA := &contentmapper.Mapper{Definition: contentmapper.Definition{Package: "a"}, Manifest: contentmapper.Manifest{Name: "vue", Version: "1.0.0", Exec: []string{"vue-mapper"}}}
@@ -301,13 +302,21 @@ func TestRunnerLeaseLifecycle(t *testing.T) {
 // recordingMapper captures (as JSON) the options it receives on transform so a test can assert the host
 // forwarded only the declared subset, in order.
 type recordingMapper struct {
-	mu       sync.Mutex
-	received string
+	mu             sync.Mutex
+	received       string
+	receivedLocale string
 }
 
 func (m *recordingMapper) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
 	case contentmapper.MethodInitialize:
+		var p contentmapper.InitializeParams
+		if err := json.Unmarshal(params, &p); err != nil {
+			return nil, err
+		}
+		m.mu.Lock()
+		m.receivedLocale = p.Locale
+		m.mu.Unlock()
 		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8}, nil
 	case contentmapper.MethodTransform:
 		var p contentmapper.TransformParams
@@ -334,7 +343,9 @@ func (m *recordingMapper) HandleNotification(ctx context.Context, method string,
 func TestRunnerForwardsDeclaredOptions(t *testing.T) {
 	t.Parallel()
 	mapper := &recordingMapper{}
-	r := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: mapper})
+	diagnosticLocale, ok := locale.Parse("cs-CZ")
+	assert.Assert(t, ok)
+	r := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: mapper}, diagnosticLocale)
 	defer r.Close()
 
 	// target is declared and set (forwarded); jsx is declared but unset (omitted); strict is set but
@@ -354,4 +365,5 @@ func TestRunnerForwardsDeclaredOptions(t *testing.T) {
 	mapper.mu.Lock()
 	defer mapper.mu.Unlock()
 	assert.Equal(t, mapper.received, fmt.Sprintf(`{"target":%s}`, want))
+	assert.Equal(t, mapper.receivedLocale, "cs-CZ")
 }

@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/ipc"
 	"github.com/microsoft/typescript-go/internal/json"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/spanmap"
 )
 
@@ -28,6 +29,8 @@ const (
 // InitializeParams is the parameter object for the initialize request.
 type InitializeParams struct {
 	ProtocolVersion int `json:"protocolVersion"`
+	// Locale is the BCP 47 locale to use for mapper-authored diagnostic messages, when configured.
+	Locale string `json:"locale,omitempty"`
 	// PositionEncodings lists the coordinate spaces the host accepts.
 	PositionEncodings []PositionEncoding `json:"positionEncodings"`
 }
@@ -124,7 +127,7 @@ func (f SpawnerFunc) Spawn(command []string, dir string) (io.ReadWriteCloser, er
 // JSON-RPC connection. The host's lifetime is bound to ctx: cancelling it (e.g. the CLI's signal context
 // on SIGINT, or a build/watch session ending) tears every mapper process down, so owners of a session
 // context need not close the host explicitly. Close does the same synchronously.
-func NewHost(ctx context.Context, spawner Spawner) Host {
+func NewHost(ctx context.Context, spawner Spawner, diagnosticLocale locale.Locale) Host {
 	return newWithDial(ctx, func(ctx context.Context, mapper *Mapper) (ipc.Conn, io.Closer, PositionEncoding, error) {
 		if len(mapper.Exec) == 0 {
 			return nil, nil, "", fmt.Errorf("content mapper %q declares no command to run", mapper.Package)
@@ -135,7 +138,7 @@ func NewHost(ctx context.Context, spawner Spawner) Host {
 		}
 		conn := ipc.NewAsyncConn(rwc, rejectHandler{})
 		go func() { _ = conn.Run(ctx) }()
-		positionEncoding, err := handshake(ctx, conn)
+		positionEncoding, err := handshake(ctx, conn, diagnosticLocale)
 		if err != nil {
 			_ = rwc.Close()
 			return nil, nil, "", fmt.Errorf("content mapper %q failed to initialize: %w", mapper.Package, err)
@@ -271,9 +274,10 @@ func (h *host) release(identities []string) {
 	}
 }
 
-func handshake(ctx context.Context, conn ipc.Conn) (PositionEncoding, error) {
+func handshake(ctx context.Context, conn ipc.Conn, diagnosticLocale locale.Locale) (PositionEncoding, error) {
 	raw, err := conn.Call(ctx, MethodInitialize, InitializeParams{
 		ProtocolVersion:   ProtocolVersion,
+		Locale:            diagnosticLocale.String(),
 		PositionEncodings: []PositionEncoding{PositionEncodingUTF8, PositionEncodingUTF16},
 	})
 	if err != nil {

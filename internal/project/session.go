@@ -207,7 +207,7 @@ func newContentMapperHost(init *SessionInit) contentmapper.Host {
 	if !init.Options.LoadExternalPlugins || init.Spawner == nil {
 		return nil
 	}
-	return contentmapper.NewHost(init.BackgroundCtx, init.Spawner)
+	return contentmapper.NewHost(init.BackgroundCtx, init.Spawner, init.Options.Locale)
 }
 
 func NewSession(init *SessionInit) *Session {

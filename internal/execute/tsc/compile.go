@@ -74,7 +74,8 @@ func NewContentMapperHost(ctx context.Context, sys System, options *core.Compile
 	if !options.LoadExternalPlugins.IsTrue() {
 		return nil
 	}
-	return contentmapper.NewHost(ctx, sys)
+	diagnosticLocale, _ := locale.Parse(options.Locale)
+	return contentmapper.NewHost(ctx, sys, diagnosticLocale)
 }
 
 type CompileTimes struct {
