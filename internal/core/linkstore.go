@@ -32,37 +32,27 @@ func (s *LinkStore[K, V]) TryGet(key K) *V {
 }
 
 const (
-	pageShift = 8
-	pageSize  = 1 << pageShift
-	pageMask  = pageSize - 1
+	pageShift    = 8
+	pageSize     = 1 << pageShift
+	pageMask     = pageSize - 1
+	maxPageCount = 65536
 )
 
 // Implements a sparse-array-like structure for storing elements keyed by dense uint64 keys. Elements are
-// stored in fixed-size pages of 256 entries and an index of pages is maintained in either an array or a map.
+// stored in fixed-size pages of 256 entries and an index of pages is maintained in an array for lower valued
+// page indices and a map for higher valued page indices.
 type PagedLinkStore[V any] struct {
-	pageMap  map[int]*[pageSize]V // Page table as a map
-	pageList []*[pageSize]V       // Page table as an array
-}
-
-// Initialize the link store. If useArrayPageTable is true, the store will use an array for the page table.
-// Otherwise, the store defaults to using a map for the page table. An array-based page table is very fast,
-// but requires key values to range densely from 0 to the maximum possible value. A map-based page table
-// places no restrictions on the key values.
-func (s *PagedLinkStore[V]) Initialize(useArrayPageTable bool) {
-	s.pageMap = nil
-	s.pageList = nil
-	if useArrayPageTable {
-		s.pageList = []*[pageSize]V{}
-	}
+	pageMap  map[uint64]*[pageSize]V // Page table for page indices below maxPageCount
+	pageList []*[pageSize]V          // Page map for page indices above maxPageCount
 }
 
 func (s *PagedLinkStore[V]) Get(key uint64) *V {
 	var page *[pageSize]V
-	pageIndex := int(key >> pageShift)
-	if s.pageList != nil {
-		if pageIndex >= len(s.pageList) {
+	pageIndex := key >> pageShift
+	if pageIndex < maxPageCount {
+		if int(pageIndex) >= len(s.pageList) {
 			// Grow the length of the list to pageIndex+1
-			s.pageList = slices.Grow(s.pageList, pageIndex-len(s.pageList)+1)[:pageIndex+1]
+			s.pageList = slices.Grow(s.pageList, int(pageIndex)-len(s.pageList)+1)[:pageIndex+1]
 		}
 		page = s.pageList[pageIndex]
 		if page == nil {
@@ -74,7 +64,7 @@ func (s *PagedLinkStore[V]) Get(key uint64) *V {
 		if page == nil {
 			page = new([pageSize]V)
 			if s.pageMap == nil {
-				s.pageMap = make(map[int]*[pageSize]V)
+				s.pageMap = make(map[uint64]*[pageSize]V)
 			}
 			s.pageMap[pageIndex] = page
 		}
@@ -88,9 +78,9 @@ func (s *PagedLinkStore[V]) Has(key uint64) bool {
 
 func (s *PagedLinkStore[V]) TryGet(key uint64) *V {
 	var page *[pageSize]V
-	pageIndex := int(key >> pageShift)
-	if s.pageList != nil {
-		if pageIndex < len(s.pageList) {
+	pageIndex := key >> pageShift
+	if pageIndex < maxPageCount {
+		if int(pageIndex) < len(s.pageList) {
 			page = s.pageList[pageIndex]
 		}
 	} else {

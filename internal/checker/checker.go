@@ -925,8 +925,6 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.useUnknownInCatchVariables = c.compilerOptions.GetStrictOptionValue(c.compilerOptions.UseUnknownInCatchVariables)
 	c.exactOptionalPropertyTypes = c.compilerOptions.ExactOptionalPropertyTypes == core.TSTrue
 	c.canCollectSymbolAliasAccessibilityData = c.compilerOptions.VerbatimModuleSyntax.IsFalseOrUnknown()
-	c.symbolNodeLinks.Initialize()
-	c.valueSymbolLinks.Initialize()
 	c.arrayVariances = []VarianceFlags{VarianceFlagsCovariant}
 	c.globals = make(ast.SymbolTable, countGlobalSymbols(c.files))
 	c.evaluate = evaluator.NewEvaluator(c.evaluateEntity, ast.OEKParentheses)

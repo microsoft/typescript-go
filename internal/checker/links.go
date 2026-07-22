@@ -11,10 +11,6 @@ type nodeLinkStore[V any] struct {
 	store core.PagedLinkStore[V]
 }
 
-func (s *nodeLinkStore[V]) Initialize() {
-	s.store.Initialize(ast.GetNextNodeId() < 1_000_000 /*useArrayPageTable*/)
-}
-
 func (s *nodeLinkStore[V]) Get(node *ast.Node) *V {
 	return s.store.Get(uint64(ast.GetNodeId(node)))
 }
@@ -32,10 +28,6 @@ func (s *nodeLinkStore[V]) TryGet(node *ast.Node) *V {
 type symbolArenaLinkStore[V any] struct {
 	store core.PagedLinkStore[*V]
 	arena core.Arena[V]
-}
-
-func (s *symbolArenaLinkStore[V]) Initialize() {
-	s.store.Initialize(ast.GetNextSymbolId() < 1_000_000 /*useArrayPageTable*/)
 }
 
 func (s *symbolArenaLinkStore[V]) Get(symbol *ast.Symbol) *V {
