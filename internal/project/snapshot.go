@@ -317,7 +317,7 @@ func (s *Snapshot) Clone(
 		}
 		change.fileChanges = fs.expandAndFilterWatchEvents(change.fileChanges, contentMapperExtensions)
 		change.fileChanges = s.fs.expandRealpathAliases(change.fileChanges)
-		fs.markDirtyFiles(change.fileChanges)
+		change.fileChanges = fs.markDirtyFiles(change.fileChanges)
 		change.fileChanges = fs.convertOpenAndCloseToChanges(change.fileChanges)
 	}
 
