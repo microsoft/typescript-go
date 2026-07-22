@@ -99,6 +99,25 @@ func TestInProcessSpanKinds(t *testing.T) {
 	assert.Equal(t, original[atomRange.Pos():atomRange.End()], "#{target}")
 }
 
+func TestPurposePresenceRoundTrip(t *testing.T) {
+	t.Parallel()
+	transform := func(fileName string) []spanmap.Segment {
+		host := contentmapper.NewHost(t.Context(), contentmappertest.NewSpawner(), locale.Default)
+		defer host.Close()
+		mapper := testMapper()
+		mapper.Manifest.Exec = []string{contentmappertest.DuplicateMapper}
+		result, err := host.Transform(mapper, contentmapper.Request{FileName: fileName, Content: "value"})
+		assert.NilError(t, err)
+		return result.Mappings.Segments()
+	}
+
+	duplicates := transform("/value.dup")
+	assert.Equal(t, duplicates[0].Purpose, spanmap.PurposeSemantic)
+	assert.Equal(t, duplicates[1].Purpose, spanmap.PurposeNavigation)
+	disabled := transform("/disabled.dup")
+	assert.Equal(t, disabled[0].Purpose, spanmap.PurposeNone)
+}
+
 func TestComponentMapperSpanKinds(t *testing.T) {
 	t.Parallel()
 	host := contentmapper.NewHost(t.Context(), contentmappertest.NewSpawner(), locale.Default)
@@ -133,8 +152,7 @@ export const suffix = "!";
 	assert.Equal(t, none, spanmap.FidelityNone)
 
 	markupStart := strings.Index(content, "<h1>")
-	_, reverseNone := result.Mappings.OriginalToGeneratedPosition(core.TextPos(markupStart))
-	assert.Equal(t, reverseNone, spanmap.FidelityNone)
+	assert.Equal(t, len(result.Mappings.OriginalToGeneratedPositions(core.TextPos(markupStart), spanmap.PurposeAll)), 0)
 
 	componentName := strings.Index(result.Text, "ProfileCard")
 	_, componentNameFidelity := result.Mappings.GeneratedToOriginalSpan(core.NewTextRange(componentName, componentName+len("ProfileCard")))

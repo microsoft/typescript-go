@@ -74,13 +74,16 @@ func (c *Converters) ToLSPLocation(script Script, rng core.TextRange) (lsproto.L
 // FromLSPRange converts an incoming LSP range to the offset range the language service operates over,
 // mapping a content-mapped file's original text forward into its transformed text; it is the input analog
 // of ToLSPRange.
-func (c *Converters) FromLSPRange(script Script, textRange lsproto.Range) (core.TextRange, spanmap.Fidelity) {
+func (c *Converters) FromLSPRange(script Script, textRange lsproto.Range, purpose spanmap.Purpose) []spanmap.MappedSpan {
 	spans := script.SpanMap()
 	if spans == nil {
-		return core.NewTextRange(
-			int(c.lineAndCharacterToPosition(script, textRange.Start)),
-			int(c.lineAndCharacterToPosition(script, textRange.End)),
-		), spanmap.FidelityExact
+		return []spanmap.MappedSpan{{
+			Span: core.NewTextRange(
+				int(c.lineAndCharacterToPosition(script, textRange.Start)),
+				int(c.lineAndCharacterToPosition(script, textRange.End)),
+			),
+			Fidelity: spanmap.FidelityExact,
+		}}
 	}
 	// A content-mapped script's line map is its original text's, so convert against that text and then map
 	// the resulting original range forward into the transformed text.
@@ -89,26 +92,18 @@ func (c *Converters) FromLSPRange(script Script, textRange lsproto.Range) (core.
 		int(c.lineAndCharacterToPosition(original, textRange.Start)),
 		int(c.lineAndCharacterToPosition(original, textRange.End)),
 	)
-	return spans.OriginalToGeneratedSpan(origRange)
+	return spans.OriginalToGeneratedSpans(origRange, purpose)
 }
 
-// FromLSPPosition is the single-position analog of FromLSPRange.
-func (c *Converters) FromLSPPosition(script Script, position lsproto.Position) (core.TextPos, spanmap.Fidelity) {
+// FromLSPPosition maps one incoming LSP position to every generated projection supporting purpose.
+func (c *Converters) FromLSPPosition(script Script, position lsproto.Position, purpose spanmap.Purpose) []spanmap.MappedPosition {
 	spans := script.SpanMap()
 	if spans == nil {
-		return c.lineAndCharacterToPosition(script, position), spanmap.FidelityExact
+		return []spanmap.MappedPosition{{Position: c.lineAndCharacterToPosition(script, position), Fidelity: spanmap.FidelityExact}}
 	}
 	original := originalTextScript{fileName: script.FileName(), text: script.OriginalText()}
 	origOffset := c.lineAndCharacterToPosition(original, position)
-	return spans.OriginalToGeneratedPosition(origOffset)
-}
-
-func (c *Converters) FromLSPTextChange(script Script, change *lsproto.TextDocumentContentChangePartial) (core.TextChange, spanmap.Fidelity) {
-	textRange, fidelity := c.FromLSPRange(script, change.Range)
-	return core.TextChange{
-		TextRange: textRange,
-		NewText:   change.Text,
-	}, fidelity
+	return spans.OriginalToGeneratedPositions(origOffset, purpose)
 }
 
 // mapOutputToOriginal maps a range in a content mapper's transformed output back to its original text,

@@ -38,6 +38,8 @@ const (
 	// ComponentMapper selects a Vue-like mapper that extracts <script> contents verbatim, lowers identifiers
 	// in {{ template expressions }} as atom mappings, omits markup, and synthesizes component glue.
 	ComponentMapper = "component-mapper"
+	// DuplicateMapper maps one original identifier to separate semantic and navigation projections.
+	DuplicateMapper = "duplicate-mapper"
 	// PackageName is the conventional npm package name for the mapper in test fixtures.
 	PackageName = "mapper"
 )
@@ -63,6 +65,45 @@ type noNotifications struct{}
 
 func (noNotifications) HandleNotification(ctx context.Context, method string, params json.Value) error {
 	return nil
+}
+
+type duplicateHandler struct {
+	noNotifications
+}
+
+func (h duplicateHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
+	switch method {
+	case contentmapper.MethodInitialize:
+		return contentmapper.InitializeResult{
+			ProtocolVersion:  contentmapper.ProtocolVersion,
+			PositionEncoding: contentmapper.PositionEncodingUTF8,
+		}, nil
+	case contentmapper.MethodTransform:
+		var p contentmapper.TransformParams
+		if err := json.Unmarshal(params, &p); err != nil {
+			return nil, err
+		}
+		generated := "export const " + p.Content + " = 1;\n" + p.Content + ";\n"
+		first := len("export const ")
+		second := first + len(p.Content) + len(" = 1;\n")
+		disabled := strings.Contains(p.FileName, "disabled")
+		semanticPurpose := spanmap.PurposeSemantic
+		navigationPurpose := spanmap.PurposeNavigation
+		if disabled {
+			semanticPurpose = spanmap.PurposeNone
+			navigationPurpose = spanmap.PurposeNone
+		}
+		mappings, err := spanmap.New([]spanmap.Segment{
+			{GenStart: core.TextPos(first), GenEnd: core.TextPos(first + len(p.Content)), OrigStart: 0, OrigEnd: core.TextPos(len(p.Content)), Kind: spanmap.KindVerbatim, Purpose: semanticPurpose},
+			{GenStart: core.TextPos(second), GenEnd: core.TextPos(second + len(p.Content)), OrigStart: 0, OrigEnd: core.TextPos(len(p.Content)), Kind: spanmap.KindVerbatim, Purpose: navigationPurpose},
+		}).Marshal()
+		if err != nil {
+			return nil, err
+		}
+		return contentmapper.TransformResult{Text: generated, ScriptKind: core.ScriptKindTS, Mappings: json.Value(mappings)}, nil
+	default:
+		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
+	}
 }
 
 // Handler implements the content mapper protocol (see internal/contentmapper). It answers the
@@ -124,6 +165,7 @@ func transform(content string, options *collections.OrderedMap[string, json.Valu
 			OrigStart: core.TextPos(from),
 			OrigEnd:   core.TextPos(to),
 			Kind:      spanmap.KindVerbatim,
+			Purpose:   spanmap.PurposeAll,
 		})
 	}
 
@@ -138,6 +180,7 @@ func transform(content string, options *collections.OrderedMap[string, json.Valu
 			OrigStart: core.TextPos(from),
 			OrigEnd:   core.TextPos(to),
 			Kind:      spanmap.KindAtom,
+			Purpose:   spanmap.PurposeAll,
 		})
 	}
 
@@ -219,6 +262,7 @@ func (verbatimHandler) HandleRequest(ctx context.Context, method string, params 
 			GenEnd:  core.TextPos(len(p.Content)),
 			OrigEnd: core.TextPos(len(p.Content)),
 			Kind:    spanmap.KindVerbatim,
+			Purpose: spanmap.PurposeAll,
 		}}).Marshal()
 		if err != nil {
 			return nil, err
@@ -312,6 +356,7 @@ func transformComponent(content string) (string, json.Value, error) {
 			OrigStart: core.TextPos(origStart),
 			OrigEnd:   core.TextPos(origEnd),
 			Kind:      kind,
+			Purpose:   spanmap.PurposeAll,
 		})
 	}
 
@@ -420,6 +465,8 @@ func handlerForMapper(command []string) (ipc.Handler, error) {
 		return synthesizingHandler{}, nil
 	case ComponentMapper:
 		return componentHandler{}, nil
+	case DuplicateMapper:
+		return duplicateHandler{}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unknown mapper command %v", command)
 	}

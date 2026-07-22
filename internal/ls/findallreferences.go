@@ -20,6 +20,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -634,12 +635,31 @@ type SymbolAndEntriesData struct {
 func (l *LanguageService) provideSymbolsAndEntries(ctx context.Context, uri lsproto.DocumentUri, documentPosition lsproto.Position, isRename bool, implementations bool) (SymbolAndEntriesData, bool) {
 	// `findReferencedSymbols` except only computes the information needed to return reference locations
 	program, sourceFile := l.getProgramAndFile(uri)
-	textPos, fidelity := l.converters.FromLSPPosition(sourceFile, documentPosition)
-	if !fidelity.IsSingleSegment() {
+	positions := l.converters.FromLSPPosition(sourceFile, documentPosition, spanmap.PurposeNavigation)
+	if len(positions) == 0 {
 		return SymbolAndEntriesData{}, false
 	}
-	position := int(textPos)
+	var combined SymbolAndEntriesData
+	var ok bool
+	for _, mapped := range positions {
+		if !mapped.Fidelity.IsSingleSegment() {
+			continue
+		}
+		data, found := l.provideSymbolsAndEntriesAtPosition(ctx, program, sourceFile, int(mapped.Position), isRename, implementations)
+		if !found {
+			continue
+		}
+		if !ok {
+			combined.OriginalNode = data.OriginalNode
+			combined.Position = data.Position
+			ok = true
+		}
+		combined.SymbolsAndEntries = append(combined.SymbolsAndEntries, data.SymbolsAndEntries...)
+	}
+	return combined, ok
+}
 
+func (l *LanguageService) provideSymbolsAndEntriesAtPosition(ctx context.Context, program *compiler.Program, sourceFile *ast.SourceFile, position int, isRename bool, implementations bool) (SymbolAndEntriesData, bool) {
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
 	if isRename {
 		// Adjust modifier/keyword nodes to the declaration name, matching Strada's findRenameLocations.
@@ -731,9 +751,12 @@ func (l *LanguageService) ProvideVSReferences(ctx context.Context, params *lspro
 
 func (l *LanguageService) symbolAndEntriesToReferences(ctx context.Context, params *lsproto.ReferenceParams, data SymbolAndEntriesData, options symbolEntryTransformOptions) (lsproto.ReferencesResponse, error) {
 	// `findReferencedSymbols` except only computes the information needed to return reference locations
-	locations := core.FlatMap(data.SymbolsAndEntries, func(s *SymbolAndEntries) []lsproto.Location {
-		return l.convertSymbolAndEntriesToLocations(s, params.Context.IncludeDeclaration)
-	})
+	var locations []lsproto.Location
+	var seenLocations collections.Set[lsproto.Location]
+	for _, symbol := range data.SymbolsAndEntries {
+		symbolLocations := l.convertSymbolAndEntriesToLocations(symbol, params.Context.IncludeDeclaration)
+		locations = combineLocationArray(locations, &symbolLocations, &seenLocations)
+	}
 	return lsproto.LocationsOrNull{Locations: &locations}, nil
 }
 

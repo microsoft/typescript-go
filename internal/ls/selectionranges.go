@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 )
 
 func (l *LanguageService) ProvideSelectionRanges(ctx context.Context, params *lsproto.SelectionRangeParams) (lsproto.SelectionRangeResponse, error) {
@@ -18,11 +19,11 @@ func (l *LanguageService) ProvideSelectionRanges(ctx context.Context, params *ls
 
 	var results []*lsproto.SelectionRange
 	for _, position := range params.Positions {
-		pos, fidelity := l.converters.FromLSPPosition(sourceFile, position)
-		if !fidelity.IsSingleSegment() {
+		positions := l.converters.FromLSPPosition(sourceFile, position, spanmap.PurposeAll)
+		if len(positions) != 1 || !positions[0].Fidelity.IsSingleSegment() {
 			return lsproto.SelectionRangesOrNull{}, nil
 		}
-		selectionRange := getSmartSelectionRange(l, sourceFile, int(pos))
+		selectionRange := getSmartSelectionRange(l, sourceFile, int(positions[0].Position))
 		if selectionRange != nil {
 			results = append(results, selectionRange)
 		}

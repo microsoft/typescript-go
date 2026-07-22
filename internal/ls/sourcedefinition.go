@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/parser"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -26,14 +27,30 @@ func (l *LanguageService) ProvideSourceDefinition(
 	documentURI lsproto.DocumentUri,
 	position lsproto.Position,
 ) (lsproto.DefinitionResponse, error) {
+	_, file := l.getProgramAndFile(documentURI)
+	positions := l.converters.FromLSPPosition(file, position, spanmap.PurposeNavigation)
+	var results []lsproto.DefinitionResponse
+	for _, mapped := range positions {
+		if mapped.Fidelity.IsSingleSegment() {
+			result, err := l.provideSourceDefinitionAtPosition(ctx, documentURI, mapped.Position)
+			if err != nil {
+				return lsproto.DefinitionResponse{}, err
+			}
+			results = append(results, result)
+		}
+	}
+	return combineDefinitionResponses(results, lsproto.GetClientCapabilities(ctx).TextDocument.Definition.LinkSupport), nil
+}
+
+func (l *LanguageService) provideSourceDefinitionAtPosition(
+	ctx context.Context,
+	documentURI lsproto.DocumentUri,
+	textPos core.TextPos,
+) (lsproto.DefinitionResponse, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	clientSupportsLink := caps.TextDocument.Definition.LinkSupport
 
 	program, file := l.getProgramAndFile(documentURI)
-	textPos, fidelity := l.converters.FromLSPPosition(file, position)
-	if !fidelity.IsSingleSegment() {
-		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{}, nil
-	}
 	pos := int(textPos)
 	resolver := l.newSourceDefResolver(program, file.FileName())
 	node := astnav.GetTouchingPropertyName(file, pos)
@@ -60,7 +77,7 @@ func (l *LanguageService) ProvideSourceDefinition(
 				return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, getSourceDefinitionEntryDeclarations(sourceFile), nil), nil
 			}
 		}
-		return l.provideDefinitionWorker(ctx, documentURI, position)
+		return l.provideDefinitionAtPosition(ctx, program, file, textPos, clientSupportsLink), nil
 	}
 
 	// Phase 1: Syntactic fast path — when the cursor is inside an
@@ -102,7 +119,7 @@ func (l *LanguageService) ProvideSourceDefinition(
 				return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, getSourceDefinitionEntryDeclarations(sourceFile), nil), nil
 			}
 		}
-		return l.provideDefinitionWorker(ctx, documentURI, position)
+		return l.provideDefinitionAtPosition(ctx, program, file, textPos, clientSupportsLink), nil
 	}
 	return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, declarations, nil /*reference*/), nil
 }

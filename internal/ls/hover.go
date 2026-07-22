@@ -16,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 )
 
 const (
@@ -33,11 +34,11 @@ func (l *LanguageService) ProvideHover(ctx context.Context, params *lsproto.Hove
 	}
 
 	program, file := l.getProgramAndFile(params.TextDocument.Uri)
-	textPos, fidelity := l.converters.FromLSPPosition(file, params.Position)
-	if !fidelity.IsSingleSegment() {
+	positions := l.converters.FromLSPPosition(file, params.Position, spanmap.PurposeSemantic)
+	if len(positions) == 0 || !positions[0].Fidelity.IsSingleSegment() {
 		return lsproto.HoverOrNull{}, nil
 	}
-	position := int(textPos)
+	position := int(positions[0].Position)
 	node := astnav.GetTouchingPropertyName(file, position)
 	if ast.IsSourceFile(node) || ast.IsPropertyAccessOrQualifiedName(node) && isInComment(file, position, node) == nil {
 		// Avoid giving quickInfo for the sourceFile as a whole or inside the comment of a/**/.b

@@ -773,7 +773,11 @@ func encodeSpanMap(m *spanmap.SpanMap, generatedPositions *ast.PositionMap, orig
 	offset := uint32(len(*buf))
 	*buf = msgpackWriteArrayHeader(*buf, len(segments))
 	for _, segment := range segments {
-		*buf = msgpackWriteArrayHeader(*buf, 5)
+		tupleLength := 5
+		if segment.Purpose != spanmap.PurposeAll {
+			tupleLength = 6
+		}
+		*buf = msgpackWriteArrayHeader(*buf, tupleLength)
 		generatedStart := generatedPositions.UTF8ToUTF16(int(segment.GenStart))
 		generatedEnd := generatedPositions.UTF8ToUTF16(int(segment.GenEnd))
 		originalStart := originalPositions.UTF8ToUTF16(int(segment.OrigStart))
@@ -783,6 +787,9 @@ func encodeSpanMap(m *spanmap.SpanMap, generatedPositions *ast.PositionMap, orig
 		*buf = msgpackWriteUint(*buf, uint32(originalStart))
 		*buf = msgpackWriteUint(*buf, uint32(originalEnd-originalStart))
 		*buf = msgpackWriteUint(*buf, uint32(segment.Kind))
+		if tupleLength == 6 {
+			*buf = msgpackWriteUint(*buf, uint32(segment.Purpose))
+		}
 	}
 	return offset
 }

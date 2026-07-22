@@ -2,6 +2,7 @@ import {
     SpanMap,
     SpanMapFidelity,
     SpanMapKind,
+    SpanMapPurpose,
 } from "@typescript/native-preview/unstable/ast";
 import assert from "node:assert";
 import {
@@ -17,6 +18,7 @@ describe("SpanMap", () => {
     ]);
 
     test("maps generated positions and ranges to original", () => {
+        assert.equal(map.segments[0].purpose, SpanMapPurpose.All);
         assert.deepEqual(map.generatedToOriginalPosition(4), { position: 12, fidelity: SpanMapFidelity.Exact });
         assert.deepEqual(map.generatedToOriginalSpan({ pos: 3, end: 5 }), { range: { pos: 11, end: 13 }, fidelity: SpanMapFidelity.Exact });
         assert.deepEqual(map.generatedToOriginalPosition(9), { position: 20, fidelity: SpanMapFidelity.Atom });
@@ -31,10 +33,10 @@ describe("SpanMap", () => {
     });
 
     test("maps original positions and ranges to generated", () => {
-        assert.deepEqual(map.originalToGeneratedPosition(12), { position: 4, fidelity: SpanMapFidelity.Exact });
-        assert.deepEqual(map.originalToGeneratedSpan({ pos: 21, end: 25 }), { range: { pos: 8, end: 11 }, fidelity: SpanMapFidelity.Atom });
-        assert.deepEqual(map.originalToGeneratedSpan({ pos: 13, end: 31 }), { range: { pos: 5, end: 15 }, fidelity: SpanMapFidelity.Approximate });
-        assert.deepEqual(map.originalToGeneratedPosition(15), { position: 6, fidelity: SpanMapFidelity.None });
+        assert.deepEqual(map.originalToGeneratedPositions(12, SpanMapPurpose.All), [{ position: 4, fidelity: SpanMapFidelity.Exact }]);
+        assert.deepEqual(map.originalToGeneratedSpans({ pos: 21, end: 25 }, SpanMapPurpose.All), [{ range: { pos: 8, end: 11 }, fidelity: SpanMapFidelity.Atom }]);
+        assert.deepEqual(map.originalToGeneratedSpans({ pos: 13, end: 31 }, SpanMapPurpose.All), [{ range: { pos: 5, end: 15 }, fidelity: SpanMapFidelity.Approximate }]);
+        assert.deepEqual(map.originalToGeneratedPositions(15, SpanMapPurpose.All), []);
     });
 
     test("sorts generated and original indexes independently", () => {
@@ -43,14 +45,56 @@ describe("SpanMap", () => {
             { generatedStart: 2, generatedEnd: 4, originalStart: 0, originalEnd: 2, kind: SpanMapKind.Verbatim },
         ]);
         assert.deepEqual(reordered.generatedToOriginalPosition(3), { position: 1, fidelity: SpanMapFidelity.Exact });
-        assert.deepEqual(reordered.originalToGeneratedPosition(1), { position: 3, fidelity: SpanMapFidelity.Exact });
+        assert.deepEqual(reordered.originalToGeneratedPositions(1, SpanMapPurpose.All), [{ position: 3, fidelity: SpanMapFidelity.Exact }]);
     });
 
     test("an empty map describes fully synthesized output", () => {
         const empty = new SpanMap([]);
         assert.deepEqual(empty.generatedToOriginalPosition(5), { position: 0, fidelity: SpanMapFidelity.None });
         assert.deepEqual(empty.generatedToOriginalSpan({ pos: 2, end: 7 }), { range: { pos: 0, end: 0 }, fidelity: SpanMapFidelity.None });
-        assert.deepEqual(empty.originalToGeneratedPosition(5), { position: 0, fidelity: SpanMapFidelity.None });
+        assert.deepEqual(empty.originalToGeneratedPositions(5, SpanMapPurpose.All), []);
+    });
+
+    test("maps duplicate groups by purpose", () => {
+        const duplicates = new SpanMap([
+            { generatedStart: 0, generatedEnd: 3, originalStart: 10, originalEnd: 13, kind: SpanMapKind.Verbatim, purpose: SpanMapPurpose.Navigation },
+            { generatedStart: 10, generatedEnd: 13, originalStart: 10, originalEnd: 13, kind: SpanMapKind.Verbatim, purpose: SpanMapPurpose.Semantic },
+            { generatedStart: 14, generatedEnd: 17, originalStart: 10, originalEnd: 13, kind: SpanMapKind.Verbatim, purpose: SpanMapPurpose.Semantic },
+            { generatedStart: 20, generatedEnd: 25, originalStart: 10, originalEnd: 13, kind: SpanMapKind.Atom, purpose: SpanMapPurpose.Navigation },
+        ]);
+
+        assert.deepEqual(duplicates.originalToGeneratedPositions(11, SpanMapPurpose.Semantic), [
+            { position: 11, fidelity: SpanMapFidelity.Exact },
+            { position: 15, fidelity: SpanMapFidelity.Exact },
+        ]);
+        assert.deepEqual(duplicates.originalToGeneratedPositions(11, SpanMapPurpose.Navigation), [
+            { position: 1, fidelity: SpanMapFidelity.Exact },
+            { position: 20, fidelity: SpanMapFidelity.Atom },
+        ]);
+    });
+
+    test("maps minimal cross-group projections", () => {
+        const projections = new SpanMap([
+            { generatedStart: 0, generatedEnd: 2, originalStart: 0, originalEnd: 2, kind: SpanMapKind.Verbatim, purpose: SpanMapPurpose.Semantic },
+            { generatedStart: 2, generatedEnd: 4, originalStart: 2, originalEnd: 4, kind: SpanMapKind.Verbatim, purpose: SpanMapPurpose.Semantic },
+            { generatedStart: 10, generatedEnd: 12, originalStart: 0, originalEnd: 2, kind: SpanMapKind.Verbatim, purpose: SpanMapPurpose.Semantic },
+            { generatedStart: 12, generatedEnd: 14, originalStart: 2, originalEnd: 4, kind: SpanMapKind.Verbatim, purpose: SpanMapPurpose.Semantic },
+        ]);
+
+        assert.deepEqual(projections.originalToGeneratedSpans({ pos: 1, end: 3 }, SpanMapPurpose.Semantic), [
+            { range: { pos: 1, end: 3 }, fidelity: SpanMapFidelity.Approximate },
+            { range: { pos: 11, end: 13 }, fidelity: SpanMapFidelity.Approximate },
+        ]);
+    });
+
+    test("explicit zero purpose disables original-to-generated mapping", () => {
+        const disabled = new SpanMap([
+            { generatedStart: 0, generatedEnd: 3, originalStart: 10, originalEnd: 13, kind: SpanMapKind.Verbatim, purpose: SpanMapPurpose.None },
+        ]);
+
+        assert.deepEqual(disabled.originalToGeneratedPositions(11, SpanMapPurpose.Semantic), []);
+        assert.deepEqual(disabled.originalToGeneratedPositions(11, SpanMapPurpose.Navigation), []);
+        assert.deepEqual(disabled.originalToGeneratedSpans({ pos: 10, end: 13 }, SpanMapPurpose.Semantic), []);
     });
 
     test("exposes fidelity predicates", () => {

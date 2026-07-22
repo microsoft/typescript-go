@@ -137,8 +137,9 @@ func TestConvertersInvalidUTF8(t *testing.T) {
 	}
 	for _, m := range mappings {
 		lc := lsproto.Position{Line: m.line, Character: m.char}
-		textPosition, _ := conv.FromLSPPosition(script, lc)
-		assert.Equal(t, textPosition, m.bytePos,
+		positions := conv.FromLSPPosition(script, lc, spanmap.PurposeAll)
+		assert.Equal(t, len(positions), 1)
+		assert.Equal(t, positions[0].Position, m.bytePos,
 			fmt.Sprintf("LineAndCharacterToPosition(%d,%d)", m.line, m.char))
 		lspPosition, _ := conv.ToLSPPosition(script, m.bytePos)
 		assert.Equal(t, lspPosition, lc,
@@ -148,8 +149,9 @@ func TestConvertersInvalidUTF8(t *testing.T) {
 	// Byte-by-byte round-trip across the entire text.
 	for bytePos := core.TextPos(0); bytePos <= core.TextPos(len(text)); bytePos++ {
 		lc, _ := conv.ToLSPPosition(script, bytePos)
-		rt, _ := conv.FromLSPPosition(script, lc)
-		assert.Equal(t, rt, bytePos, fmt.Sprintf("round-trip byte %d", bytePos))
+		positions := conv.FromLSPPosition(script, lc, spanmap.PurposeAll)
+		assert.Equal(t, len(positions), 1)
+		assert.Equal(t, positions[0].Position, bytePos, fmt.Sprintf("round-trip byte %d", bytePos))
 	}
 }
 
@@ -325,8 +327,9 @@ func TestConvertersAgainstJSReference(t *testing.T) {
 				assert.Equal(t, gotLC, expectedLC,
 					fmt.Sprintf("PositionToLineAndCharacter(%d) mismatch in %q", bytePos, c.text))
 
-				gotPos, _ := conv.FromLSPPosition(script, expectedLC)
-				assert.Equal(t, gotPos, bytePos,
+				positions := conv.FromLSPPosition(script, expectedLC, spanmap.PurposeAll)
+				assert.Equal(t, len(positions), 1)
+				assert.Equal(t, positions[0].Position, bytePos,
 					fmt.Sprintf("LineAndCharacterToPosition(%d,%d) mismatch in %q", tup.Line, tup.Char, c.text))
 			}
 		})

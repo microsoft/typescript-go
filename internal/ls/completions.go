@@ -25,6 +25,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -43,13 +44,13 @@ func (l *LanguageService) ProvideCompletion(
 		triggerCharacter = context.TriggerCharacter
 	}
 	ctx = format.WithFormatCodeSettings(ctx, l.FormatOptions(), l.FormatOptions().NewLineCharacter)
-	textPos, fidelity := l.converters.FromLSPPosition(file, LSPPosition)
-	if !fidelity.IsExact() {
+	positions := l.converters.FromLSPPosition(file, LSPPosition, spanmap.PurposeSemantic)
+	if len(positions) == 0 || !positions[0].Fidelity.IsExact() {
 		// In a content-mapped file the cursor is outside a verbatim span, so any completion committed here
 		// could not be applied to the original text. Offer nothing rather than edits at a bogus location.
 		return lsproto.CompletionItemsOrListOrNull{}, nil
 	}
-	position := int(textPos)
+	position := int(positions[0].Position)
 	completionListInternal, err := l.getCompletionsAtPosition(
 		ctx,
 		file,

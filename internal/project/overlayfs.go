@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
@@ -363,7 +364,9 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 				})
 				for _, textChange := range change.Changes {
 					if partialChange := textChange.Partial; partialChange != nil {
-						textChange, _ := converters.FromLSPTextChange(o, partialChange)
+						ranges := converters.FromLSPRange(o, partialChange.Range, spanmap.PurposeAll)
+						debug.Assert(len(ranges) == 1, "expected exactly one range for partial change")
+						textChange := core.TextChange{TextRange: ranges[0].Span, NewText: partialChange.Text}
 						newContent := textChange.ApplyTo(o.content)
 						o = newOverlay(o.fileName, newContent, change.Version, o.kind)
 					} else if wholeChange := textChange.WholeDocument; wholeChange != nil {

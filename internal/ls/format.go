@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 )
 
 func (l *LanguageService) toLSProtoTextEdits(file *ast.SourceFile, changes []core.TextChange) []*lsproto.TextEdit {
@@ -57,12 +58,15 @@ func (l *LanguageService) ProvideFormatDocumentRange(
 	}
 	_, file := l.getProgramAndFile(documentURI)
 	formatOpts := lsutil.FromLSFormatOptions(l.FormatOptions(), options)
-	formatRange, _ := l.converters.FromLSPRange(file, r)
+	ranges := l.converters.FromLSPRange(file, r, spanmap.PurposeAll)
+	if len(ranges) != 1 || !ranges[0].Fidelity.IsExact() {
+		return lsproto.TextEditsOrNull{}, nil
+	}
 	edits := l.toLSProtoTextEdits(file, l.getFormattingEditsForRange(
 		ctx,
 		file,
 		formatOpts,
-		formatRange,
+		ranges[0].Span,
 	))
 	return lsproto.TextEditsOrNull{TextEdits: &edits}, nil
 }
@@ -79,15 +83,15 @@ func (l *LanguageService) ProvideFormatDocumentOnType(
 	}
 	_, file := l.getProgramAndFile(documentURI)
 	formatOpts := lsutil.FromLSFormatOptions(l.FormatOptions(), options)
-	textPos, fidelity := l.converters.FromLSPPosition(file, position)
-	if !fidelity.IsExact() {
+	positions := l.converters.FromLSPPosition(file, position, spanmap.PurposeAll)
+	if len(positions) != 1 || !positions[0].Fidelity.IsExact() {
 		return lsproto.TextEditsOrNull{}, nil
 	}
 	edits := l.toLSProtoTextEdits(file, l.getFormattingEditsAfterKeystroke(
 		ctx,
 		file,
 		formatOpts,
-		int(textPos),
+		int(positions[0].Position),
 		character,
 	))
 	return lsproto.TextEditsOrNull{TextEdits: &edits}, nil

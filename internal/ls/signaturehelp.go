@@ -15,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 )
 
 // SignatureHelpTriggerCharacters and SignatureHelpRetriggerCharacters are the characters that trigger and
@@ -52,11 +53,11 @@ func (l *LanguageService) ProvideSignatureHelp(
 	context *lsproto.SignatureHelpContext,
 ) (lsproto.SignatureHelpResponse, error) {
 	program, sourceFile := l.getProgramAndFile(documentURI)
-	textPos, fidelity := l.converters.FromLSPPosition(sourceFile, position)
-	if !fidelity.IsSingleSegment() {
+	positions := l.converters.FromLSPPosition(sourceFile, position, spanmap.PurposeSemantic)
+	if len(positions) == 0 || !positions[0].Fidelity.IsSingleSegment() {
 		return lsproto.SignatureHelpOrNull{}, nil
 	}
-	pos := int(textPos)
+	pos := int(positions[0].Position)
 	items := l.GetSignatureHelpItems(
 		ctx,
 		pos,

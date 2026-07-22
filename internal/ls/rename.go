@@ -16,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/module"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -46,20 +47,17 @@ func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.Ren
 
 func (l *LanguageService) GetRenameInfo(ctx context.Context, newName string, documentURI lsproto.DocumentUri, position lsproto.Position) RenameInfo {
 	program, sourceFile := l.getProgramAndFile(documentURI)
-	textPos, fidelity := l.converters.FromLSPPosition(sourceFile, position)
-	if !fidelity.IsExact() {
-		// In a content-mapped file the cursor is outside a verbatim span, so a rename originating here
-		// could not be written back to the original text.
-		return getRenameInfoError(ctx, diagnostics.You_cannot_rename_this_element)
-	}
-	pos := int(textPos)
-
-	node := astnav.GetTouchingPropertyName(sourceFile, pos)
-	node = getAdjustedLocation(node, true /*forRename*/, sourceFile)
-
-	if nodeIsEligibleForRename(node) {
-		if renameInfo, ok := l.getRenameInfoForNode(ctx, newName, node, sourceFile, program); ok {
-			return renameInfo
+	positions := l.converters.FromLSPPosition(sourceFile, position, spanmap.PurposeNavigation)
+	for _, mapped := range positions {
+		if !mapped.Fidelity.IsExact() {
+			continue
+		}
+		node := astnav.GetTouchingPropertyName(sourceFile, int(mapped.Position))
+		node = getAdjustedLocation(node, true /*forRename*/, sourceFile)
+		if nodeIsEligibleForRename(node) {
+			if renameInfo, ok := l.getRenameInfoForNode(ctx, newName, node, sourceFile, program); ok {
+				return renameInfo
+			}
 		}
 	}
 	return getRenameInfoError(ctx, diagnostics.You_cannot_rename_this_element)

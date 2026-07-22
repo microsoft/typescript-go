@@ -1,17 +1,20 @@
 package ls
 
 import (
+	"cmp"
 	"context"
 	"fmt"
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 )
 
 // tokenTypes defines the order of token types for encoding
@@ -150,14 +153,16 @@ func (l *LanguageService) ProvideSemanticTokensRange(ctx context.Context, docume
 	c, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
 
-	textRange, fidelity := l.converters.FromLSPRange(file, rng)
-	if fidelity.IsNone() {
-		return lsproto.SemanticTokensOrNull{}, nil
+	var tokens []semanticToken
+	var seen collections.Set[semanticToken]
+	for _, mapped := range l.converters.FromLSPRange(file, rng, spanmap.PurposeSemantic) {
+		for _, token := range l.collectSemanticTokensInRange(ctx, c, file, program, mapped.Span.Pos(), mapped.Span.End()) {
+			if seen.AddIfAbsent(token) {
+				tokens = append(tokens, token)
+			}
+		}
 	}
-	start := textRange.Pos()
-	end := textRange.End()
-
-	tokens := l.collectSemanticTokensInRange(ctx, c, file, program, start, end)
+	slices.SortFunc(tokens, func(a, b semanticToken) int { return cmp.Compare(a.node.Pos(), b.node.Pos()) })
 
 	if len(tokens) == 0 {
 		return lsproto.SemanticTokensOrNull{}, nil

@@ -18,6 +18,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
@@ -36,18 +37,21 @@ func (l *LanguageService) ProvideInlayHint(
 
 	checker, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
-	inlaySpan, _ := l.converters.FromLSPRange(file, params.Range)
-	inlayHintState := &inlayHintState{
-		ctx:             ctx,
-		span:            inlaySpan,
-		preferences:     inlayHintPreferences,
-		quotePreference: quotePreference,
-		file:            file,
-		checker:         checker,
-		converters:      l.converters,
+	var result []*lsproto.InlayHint
+	for _, mapped := range l.converters.FromLSPRange(file, params.Range, spanmap.PurposeSemantic) {
+		inlayHintState := &inlayHintState{
+			ctx:             ctx,
+			span:            mapped.Span,
+			preferences:     inlayHintPreferences,
+			quotePreference: quotePreference,
+			file:            file,
+			checker:         checker,
+			converters:      l.converters,
+		}
+		inlayHintState.visit(file.AsNode())
+		result = append(result, inlayHintState.result...)
 	}
-	inlayHintState.visit(file.AsNode())
-	return lsproto.InlayHintsOrNull{InlayHints: &inlayHintState.result}, nil
+	return lsproto.InlayHintsOrNull{InlayHints: &result}, nil
 }
 
 type inlayHintState struct {

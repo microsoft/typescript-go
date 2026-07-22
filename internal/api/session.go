@@ -27,6 +27,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/project"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -1743,11 +1744,14 @@ func toAPITextEdits(sourceFile *ast.SourceFile, converters *lsconv.Converters, e
 	positionMap := sourceFile.GetPositionMap()
 	result := make([]*TextEdit, len(edits))
 	for i, edit := range edits {
-		start, _ := converters.FromLSPPosition(sourceFile, edit.Range.Start)
-		end, _ := converters.FromLSPPosition(sourceFile, edit.Range.End)
+		starts := converters.FromLSPPosition(sourceFile, edit.Range.Start, spanmap.PurposeAll)
+		ends := converters.FromLSPPosition(sourceFile, edit.Range.End, spanmap.PurposeAll)
+		if len(starts) != 1 || len(ends) != 1 {
+			return nil
+		}
 		result[i] = &TextEdit{
-			Pos:     positionMap.UTF8ToUTF16(int(start)),
-			End:     positionMap.UTF8ToUTF16(int(end)),
+			Pos:     positionMap.UTF8ToUTF16(int(starts[0].Position)),
+			End:     positionMap.UTF8ToUTF16(int(ends[0].Position)),
 			NewText: edit.NewText,
 		}
 	}

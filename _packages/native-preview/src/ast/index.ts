@@ -9,6 +9,7 @@ export { ScriptKind } from "#enums/scriptKind";
 export { ScriptTarget } from "#enums/scriptTarget";
 export { SpanMapFidelity } from "#enums/spanMapFidelity";
 export { SpanMapKind } from "#enums/spanMapKind";
+export { SpanMapPurpose } from "#enums/spanMapPurpose";
 export { SyntaxKind } from "#enums/syntaxKind";
 export { TokenFlags } from "#enums/tokenFlags";
 export * from "./ast.ts";

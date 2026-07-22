@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -38,11 +39,17 @@ func (l *LanguageService) ProvideMultiDocumentHighlights(ctx context.Context, do
 
 func (l *LanguageService) provideDocumentHighlightsWorker(ctx context.Context, documentUri lsproto.DocumentUri, documentPosition lsproto.Position, filesToSearch []lsproto.DocumentUri) (lsproto.MultiDocumentHighlightsOrNull, error) {
 	program, sourceFile := l.getProgramAndFile(documentUri)
-	textPos, fidelity := l.converters.FromLSPPosition(sourceFile, documentPosition)
-	if !fidelity.IsSingleSegment() {
-		return lsproto.MultiDocumentHighlightsOrNull{}, nil
+	positions := l.converters.FromLSPPosition(sourceFile, documentPosition, spanmap.PurposeNavigation)
+	var results []lsproto.MultiDocumentHighlightsOrNull
+	for _, mapped := range positions {
+		if mapped.Fidelity.IsSingleSegment() {
+			results = append(results, l.provideDocumentHighlightsAtPosition(ctx, documentUri, int(mapped.Position), program, sourceFile, filesToSearch))
+		}
 	}
-	position := int(textPos)
+	return combineMultiDocumentHighlights(results), nil
+}
+
+func (l *LanguageService) provideDocumentHighlightsAtPosition(ctx context.Context, documentUri lsproto.DocumentUri, position int, program *compiler.Program, sourceFile *ast.SourceFile, filesToSearch []lsproto.DocumentUri) lsproto.MultiDocumentHighlightsOrNull {
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
 
 	// Cheap JSX check before resolving files to search.
@@ -69,7 +76,7 @@ func (l *LanguageService) provideDocumentHighlightsWorker(ctx context.Context, d
 		}
 		return lsproto.MultiDocumentHighlightsOrNull{
 			MultiDocumentHighlights: &multiHighlights,
-		}, nil
+		}
 	}
 
 	// Resolve the source files to search, deduplicating by file name.
@@ -98,7 +105,34 @@ func (l *LanguageService) provideDocumentHighlightsWorker(ctx context.Context, d
 			}
 		}
 	}
-	return lsproto.MultiDocumentHighlightsOrNull{MultiDocumentHighlights: &multiHighlights}, nil
+	return lsproto.MultiDocumentHighlightsOrNull{MultiDocumentHighlights: &multiHighlights}
+}
+
+func combineMultiDocumentHighlights(results []lsproto.MultiDocumentHighlightsOrNull) lsproto.MultiDocumentHighlightsOrNull {
+	byURI := make(map[lsproto.DocumentUri]*lsproto.MultiDocumentHighlight)
+	seen := make(map[lsproto.DocumentUri]collections.Set[lsproto.Range])
+	var combinedDocuments []*lsproto.MultiDocumentHighlight
+	for _, result := range results {
+		if result.MultiDocumentHighlights == nil {
+			continue
+		}
+		for _, document := range *result.MultiDocumentHighlights {
+			combinedDocument := byURI[document.Uri]
+			if combinedDocument == nil {
+				combinedDocument = &lsproto.MultiDocumentHighlight{Uri: document.Uri}
+				byURI[document.Uri] = combinedDocument
+				combinedDocuments = append(combinedDocuments, combinedDocument)
+			}
+			ranges := seen[document.Uri]
+			for _, highlight := range document.Highlights {
+				if ranges.AddIfAbsent(highlight.Range) {
+					combinedDocument.Highlights = append(combinedDocument.Highlights, highlight)
+				}
+			}
+			seen[document.Uri] = ranges
+		}
+	}
+	return lsproto.MultiDocumentHighlightsOrNull{MultiDocumentHighlights: &combinedDocuments}
 }
 
 func (l *LanguageService) getSemanticDocumentHighlights(ctx context.Context, position int, node *ast.Node, program *compiler.Program, sourceFiles []*ast.SourceFile) []*lsproto.MultiDocumentHighlight {

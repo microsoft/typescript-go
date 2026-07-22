@@ -1,10 +1,12 @@
-// Package spanmap provides a span-aware mapping from positions in a content mapper's transformed
-// output back to positions in the original, untransformed source. Unlike a source map, which records
+// Package spanmap provides bidirectional span-aware mapping between a content mapper's transformed
+// output and its original, untransformed source. Unlike a source map, which records
 // point correspondences and leaves spans and "no origin" implicit, a SpanMap records explicit segments
 // for the parts of the generated text that correspond to the original; positions not covered by any
 // segment are synthesized (generated content with no original counterpart). All positions are absolute
 // offsets (core.TextPos), matching the compiler's TextRange model.
 package spanmap
+
+// Keep this in sync with spanMap.ts
 
 import (
 	"fmt"
@@ -28,6 +30,23 @@ const (
 	// Used for renamed identifiers or short expressions.
 	KindAtom
 )
+
+// Purpose selects which generated projection should receive an original-to-generated language-service query.
+// It does not affect generated-to-original result mapping.
+type Purpose int32
+
+const (
+	// PurposeNone prevents original-to-generated language-service queries from selecting the segment.
+	PurposeNone Purpose = 0
+	// PurposeSemantic selects segments used by type-information features such as hover and completion.
+	PurposeSemantic Purpose = 1 << 0
+	// PurposeNavigation selects segments used by symbol-location features such as definitions and references.
+	PurposeNavigation Purpose = 1 << 1
+	// PurposeAll selects segments for both semantic and navigation queries.
+	PurposeAll Purpose = PurposeSemantic | PurposeNavigation
+)
+
+const purposeMask = PurposeAll
 
 // Fidelity describes how faithfully a mapped span reflects the original.
 type Fidelity int32
@@ -61,13 +80,27 @@ func (f Fidelity) IsNone() bool {
 	return f == FidelityNone
 }
 
-// Segment maps a contiguous generated span to an original span.
+// Segment maps the half-open generated range [GenStart, GenEnd) to the half-open original range
+// [OrigStart, OrigEnd). Purpose is consulted only for original-to-generated queries.
 type Segment struct {
 	GenStart  core.TextPos
 	GenEnd    core.TextPos
 	OrigStart core.TextPos
 	OrigEnd   core.TextPos
 	Kind      Kind
+	Purpose   Purpose
+}
+
+// MappedPosition is one generated projection of an original position and its mapping fidelity.
+type MappedPosition struct {
+	Position core.TextPos
+	Fidelity Fidelity
+}
+
+// MappedSpan is one generated projection of an original range and its mapping fidelity.
+type MappedSpan struct {
+	Span     core.TextRange
+	Fidelity Fidelity
 }
 
 // SpanMap is a sparse, ordered set of segments over a content mapper's generated text. Segments do not
@@ -76,8 +109,8 @@ type Segment struct {
 type SpanMap struct {
 	segments []Segment
 
-	// origOnce guards lazy construction of origSorted, the segments ordered by OrigStart, used by
-	// OriginalToGeneratedSpan for reverse (original -> generated) lookups.
+	// origOnce guards lazy construction of origSorted, the segments ordered by OrigStart, used for
+	// original-to-generated lookups.
 	origOnce   sync.Once
 	origSorted []Segment
 }
@@ -95,6 +128,10 @@ const (
 	MappingErrorKindOutOfBounds
 	// MappingErrorKindVerbatimMismatch means a verbatim segment's generated and original text differ.
 	MappingErrorKindVerbatimMismatch
+	// MappingErrorKindOriginalOverlap means original spans partially overlap or contain one another.
+	MappingErrorKindOriginalOverlap
+	// MappingErrorKindPurpose means a purpose annotation contains unsupported flags.
+	MappingErrorKindPurpose
 )
 
 // MappingError describes a single span map validation failure, including the offsets involved so the mapper's
@@ -106,6 +143,7 @@ type MappingError struct {
 	OrigPos core.TextPos
 }
 
+// Error describes the invalid mapping and the coordinate at which it was detected.
 func (p *MappingError) Error() string {
 	switch p.Kind {
 	case MappingErrorKindOverlap:
@@ -114,6 +152,10 @@ func (p *MappingError) Error() string {
 		return fmt.Sprintf("content mapper position mapping points outside the original content at original offset %d", p.OrigPos)
 	case MappingErrorKindVerbatimMismatch:
 		return fmt.Sprintf("content mapper verbatim mapping does not match the original content at output offset %d, original offset %d", p.GenPos, p.OrigPos)
+	case MappingErrorKindOriginalOverlap:
+		return fmt.Sprintf("content mapper position mappings partially overlap in the original content near offset %d", p.OrigPos)
+	case MappingErrorKindPurpose:
+		return fmt.Sprintf("content mapper position mappings have invalid purposes near original offset %d", p.OrigPos)
 	default:
 		return "content mapper produced an invalid position mapping"
 	}
@@ -146,6 +188,20 @@ func (m *SpanMap) Validate(transformed, original string) *MappingError {
 				return &MappingError{Kind: MappingErrorKindVerbatimMismatch, GenPos: s.GenStart, OrigPos: s.OrigStart}
 			}
 		}
+		if s.Purpose&^purposeMask != 0 {
+			return &MappingError{Kind: MappingErrorKindPurpose, GenPos: s.GenStart, OrigPos: s.OrigStart}
+		}
+	}
+	originalSegments := m.origIndex()
+	for i := 0; i < len(originalSegments); {
+		groupEnd := i + 1
+		for groupEnd < len(originalSegments) && originalSegments[groupEnd].OrigStart == originalSegments[i].OrigStart && originalSegments[groupEnd].OrigEnd == originalSegments[i].OrigEnd {
+			groupEnd++
+		}
+		if i > 0 && originalSegments[i].OrigStart < originalSegments[i-1].OrigEnd {
+			return &MappingError{Kind: MappingErrorKindOriginalOverlap, GenPos: originalSegments[i].GenStart, OrigPos: originalSegments[i].OrigStart}
+		}
+		i = groupEnd
 	}
 	return nil
 }
@@ -248,6 +304,8 @@ func (m *SpanMap) insertionPoint(prev int) core.TextPos {
 	return m.segments[prev].OrigEnd
 }
 
+// mapLow maps a generated lower range boundary to original coordinates. A boundary in a synthesized
+// gap uses that gap's insertion point; an atom uses its original start.
 func (m *SpanMap) mapLow(pos core.TextPos, idx int, in bool) core.TextPos {
 	if !in {
 		return m.insertionPoint(idx)
@@ -259,6 +317,8 @@ func (m *SpanMap) mapLow(pos core.TextPos, idx int, in bool) core.TextPos {
 	return seg.OrigStart
 }
 
+// mapHigh maps a generated upper range boundary to original coordinates. A boundary in a synthesized
+// gap uses that gap's insertion point; an atom uses its original end.
 func (m *SpanMap) mapHigh(pos core.TextPos, idx int, in bool) core.TextPos {
 	if !in {
 		return m.insertionPoint(idx)
@@ -270,62 +330,176 @@ func (m *SpanMap) mapHigh(pos core.TextPos, idx int, in bool) core.TextPos {
 	return seg.OrigEnd
 }
 
-// OriginalToGeneratedSpan maps an original range to the corresponding range in the generated text, along with
-// the fidelity of the result; it is the inverse of GeneratedToOriginalSpan. An original range lying entirely in a gap
-// (no segment covers it) is synthesized-in-reverse: it maps to the insertion point in the generated text
-// with FidelityNone. A nil SpanMap maps identically.
-func (m *SpanMap) OriginalToGeneratedSpan(r core.TextRange) (core.TextRange, Fidelity) {
+// OriginalToGeneratedPositions returns every generated projection of an original position whose segment
+// supports purpose. Results are ordered by generated start. It returns no results for an uncovered position
+// or when all covering segments reject purpose. A nil SpanMap maps identically.
+func (m *SpanMap) OriginalToGeneratedPositions(pos core.TextPos, purpose Purpose) []MappedPosition {
 	if m == nil {
-		return r, FidelityExact
+		return []MappedPosition{{Position: pos, Fidelity: FidelityExact}}
 	}
-	segs := m.origIndex()
-	origStart := core.TextPos(r.Pos())
-	origEnd := max(core.TextPos(r.End()), origStart)
-
-	startIdx, startIn := reverseIndexAt(segs, origStart)
-	endProbe := origEnd
-	if origEnd > origStart {
-		endProbe = origEnd - 1
+	segments, inside := originalSegmentsAt(m.origIndex(), pos)
+	if !inside {
+		return nil
 	}
-	endIdx, endIn := reverseIndexAt(segs, endProbe)
-
-	if startIdx == endIdx && startIn == endIn {
-		if startIn {
-			seg := &segs[startIdx]
-			if seg.Kind == KindVerbatim {
-				genStart := clamp(seg.GenStart+(origStart-seg.OrigStart), seg.GenStart, seg.GenEnd)
-				genEnd := clamp(seg.GenStart+(origEnd-seg.OrigStart), genStart, seg.GenEnd)
-				return core.NewTextRange(int(genStart), int(genEnd)), FidelityExact
-			}
-			return core.NewTextRange(int(seg.GenStart), int(seg.GenEnd)), FidelityAtom
+	results := make([]MappedPosition, 0, len(segments))
+	for _, segment := range segments {
+		if !supportsPurpose(segment, purpose) {
+			continue
 		}
-		// Entirely within a single gap: no generated counterpart.
-		pos := reverseInsertionPoint(segs, startIdx)
-		return core.NewTextRange(int(pos), int(pos)), FidelityNone
+		if segment.Kind == KindVerbatim {
+			results = append(results, MappedPosition{
+				Position: clamp(segment.GenStart+(pos-segment.OrigStart), segment.GenStart, segment.GenEnd),
+				Fidelity: FidelityExact,
+			})
+		} else {
+			results = append(results, MappedPosition{Position: segment.GenStart, Fidelity: FidelityAtom})
+		}
 	}
-
-	genStart := reverseMapLow(segs, origStart, startIdx, startIn)
-	genEnd := max(reverseMapHigh(segs, origEnd, endIdx, endIn), genStart)
-	return core.NewTextRange(int(genStart), int(genEnd)), FidelityApproximate
+	return results
 }
 
-// OriginalToGeneratedPosition maps a single original position to the corresponding generated position, along
-// with the fidelity of the result; it is the single-position inverse of GeneratedToOriginalPosition. A position in a gap
-// maps to the insertion point in the generated text with FidelityNone. A nil SpanMap maps identically.
-func (m *SpanMap) OriginalToGeneratedPosition(pos core.TextPos) (core.TextPos, Fidelity) {
+// OriginalToGeneratedSpans returns every purpose-compatible generated projection of an original range.
+// A range contained by one duplicate group produces one exact or atom result per matching group member.
+//
+// A range that starts in one group and ends in another can have several possible generated ranges. For
+// example, suppose two original segments are each copied twice into the generated text:
+//
+//	original:   [ A ][ B ]
+//	               [---)       range from inside A to inside B
+//
+//	generated:  [ A ][ B ]      [ A ][ B ]
+//	               ^   ^          ^   ^
+//	             start end      start end
+//	               1   3          11  13
+//
+// The map says that the range may start at 1 or 11 and end at 3 or 13, but it does not say which copy of A
+// belongs with which copy of B. We choose the smallest range around each possible location, producing [1,3)
+// and [11,13). We do not return [1,13), because it contains both smaller candidates and would include code
+// that may be unrelated to the original range. These cross-group results have approximate fidelity.
+// If either boundary is uncovered or disabled for purpose, there are no results. A nil SpanMap maps identically.
+func (m *SpanMap) OriginalToGeneratedSpans(r core.TextRange, purpose Purpose) []MappedSpan {
 	if m == nil {
-		return pos, FidelityExact
+		return []MappedSpan{{Span: r, Fidelity: FidelityExact}}
 	}
-	segs := m.origIndex()
-	idx, in := reverseIndexAt(segs, pos)
-	if !in {
-		return reverseInsertionPoint(segs, idx), FidelityNone
+	if results, matched := m.originalToGeneratedSpansInGroup(r, purpose); matched {
+		return results
 	}
-	seg := &segs[idx]
-	if seg.Kind == KindVerbatim {
-		return clamp(seg.GenStart+(pos-seg.OrigStart), seg.GenStart, seg.GenEnd), FidelityExact
+	start := core.TextPos(r.Pos())
+	end := max(core.TextPos(r.End()), start)
+	starts := m.originalStartProjections(start, purpose)
+	ends := m.originalEndProjections(start, end, purpose)
+	if len(starts) == 0 || len(ends) == 0 {
+		return nil
 	}
-	return seg.GenStart, FidelityAtom
+	results := make([]MappedSpan, 0, min(len(starts), len(ends)))
+	for i, genStart := range starts {
+		endIndex, _ := slices.BinarySearch(ends, genStart)
+		if endIndex == len(ends) || i+1 < len(starts) && starts[i+1] <= ends[endIndex] {
+			continue
+		}
+		results = append(results, MappedSpan{
+			Span:     core.NewTextRange(int(genStart), int(ends[endIndex])),
+			Fidelity: FidelityApproximate,
+		})
+	}
+	return results
+}
+
+// originalStartProjections maps the inclusive start of an original range through every matching segment.
+// Verbatim segments preserve the offset within the segment; atoms map to their generated start.
+//
+// For duplicate verbatim segments, the start keeps the same relative offset in every copy:
+//
+//	original:       [---------)
+//	                   ^ start
+//
+//	generated:  [---------)   [---------)
+//	               ^             ^
+//	             result        result
+func (m *SpanMap) originalStartProjections(start core.TextPos, purpose Purpose) []core.TextPos {
+	segments, inside := originalSegmentsAt(m.origIndex(), start)
+	if !inside {
+		return nil
+	}
+	results := make([]core.TextPos, 0, len(segments))
+	for _, segment := range segments {
+		if !supportsPurpose(segment, purpose) {
+			continue
+		}
+		if segment.Kind == KindVerbatim {
+			results = append(results, clamp(segment.GenStart+(start-segment.OrigStart), segment.GenStart, segment.GenEnd))
+		} else {
+			results = append(results, segment.GenStart)
+		}
+	}
+	return results
+}
+
+// originalEndProjections maps the exclusive end of an original range through every matching segment.
+// For a non-empty range, end-1 identifies the segment containing its final character, while end remains
+// the boundary that is mapped. Verbatim segments preserve that boundary; atoms map to their generated end.
+//
+// The lookup uses end-1 so an end at a segment boundary selects the segment on its left, not the next one:
+//
+//	original:       [---------)[ next segment )
+//	                         ^`-- end
+//	                         `--- end-1
+//
+//	generated:  [---------)   [---------)
+//	                      ^             ^
+//	                    result        result
+func (m *SpanMap) originalEndProjections(start core.TextPos, end core.TextPos, purpose Purpose) []core.TextPos {
+	lastCharacter := end
+	if end > start {
+		lastCharacter--
+	}
+	segments, inside := originalSegmentsAt(m.origIndex(), lastCharacter)
+	if !inside {
+		return nil
+	}
+	results := make([]core.TextPos, 0, len(segments))
+	for _, segment := range segments {
+		if !supportsPurpose(segment, purpose) {
+			continue
+		}
+		if segment.Kind == KindVerbatim {
+			results = append(results, clamp(segment.GenStart+(end-segment.OrigStart), segment.GenStart, segment.GenEnd))
+		} else {
+			results = append(results, segment.GenEnd)
+		}
+	}
+	return results
+}
+
+// originalToGeneratedSpansInGroup maps r when both boundaries lie in the same duplicate group. matched reports
+// whether the range is contained by one group, independently of whether any group member supports purpose.
+func (m *SpanMap) originalToGeneratedSpansInGroup(r core.TextRange, purpose Purpose) ([]MappedSpan, bool) {
+	start := core.TextPos(r.Pos())
+	end := max(core.TextPos(r.End()), start)
+	probe := end
+	if end > start {
+		probe--
+	}
+	startSegments, startInside := originalSegmentsAt(m.origIndex(), start)
+	endSegments, endInside := originalSegmentsAt(m.origIndex(), probe)
+	if !startInside || !endInside || len(startSegments) == 0 || len(endSegments) == 0 ||
+		startSegments[0].OrigStart != endSegments[0].OrigStart || startSegments[0].OrigEnd != endSegments[0].OrigEnd {
+		return nil, false
+	}
+	results := make([]MappedSpan, 0, len(startSegments))
+	for _, segment := range startSegments {
+		if !supportsPurpose(segment, purpose) {
+			continue
+		}
+		if segment.Kind == KindVerbatim {
+			genStart := clamp(segment.GenStart+(start-segment.OrigStart), segment.GenStart, segment.GenEnd)
+			genEnd := clamp(segment.GenStart+(end-segment.OrigStart), genStart, segment.GenEnd)
+			results = append(results, MappedSpan{Span: core.NewTextRange(int(genStart), int(genEnd)), Fidelity: FidelityExact})
+		} else {
+			results = append(results, MappedSpan{Span: core.NewTextRange(int(segment.GenStart), int(segment.GenEnd)), Fidelity: FidelityAtom})
+		}
+	}
+	return results, true
 }
 
 // origIndex returns the segments ordered by OrigStart, building it once on first use.
@@ -333,97 +507,88 @@ func (m *SpanMap) origIndex() []Segment {
 	m.origOnce.Do(func() {
 		m.origSorted = slices.Clone(m.segments)
 		slices.SortFunc(m.origSorted, func(a, b Segment) int {
-			return int(a.OrigStart - b.OrigStart)
+			if c := int(a.OrigStart - b.OrigStart); c != 0 {
+				return c
+			}
+			if c := int(a.OrigEnd - b.OrigEnd); c != 0 {
+				return c
+			}
+			return int(a.GenStart - b.GenStart)
 		})
 	})
 	return m.origSorted
 }
 
-// reverseIndexAt returns the index (within a slice ordered by OrigStart) of the segment whose original
-// span contains pos and true, or, when pos lies in a gap, the index of the segment immediately before pos
-// (-1 if none) and false.
-func reverseIndexAt(segs []Segment, pos core.TextPos) (int, bool) {
-	idx, found := slices.BinarySearchFunc(segs, pos, func(s Segment, p core.TextPos) int {
-		return int(s.OrigStart - p)
-	})
-	if found {
-		return idx, true
+// originalSegmentsAt returns the complete duplicate group containing pos from a slice ordered by original
+// start, original end, and generated start. Segment ends are exclusive; a segment start, including a zero-length
+// segment, is considered contained. The boolean reports whether any group contains pos.
+func originalSegmentsAt(segments []Segment, pos core.TextPos) ([]Segment, bool) {
+	start := 0
+	for start < len(segments) && segments[start].OrigEnd <= pos && segments[start].OrigStart != pos {
+		start++
 	}
-	prev := idx - 1
-	if prev >= 0 && pos < segs[prev].OrigEnd {
-		return prev, true
+	if start == len(segments) || !(segments[start].OrigStart == pos || (segments[start].OrigStart < pos && pos < segments[start].OrigEnd)) {
+		return nil, false
 	}
-	return prev, false
+	end := start + 1
+	for end < len(segments) && segments[end].OrigStart == segments[start].OrigStart && segments[end].OrigEnd == segments[start].OrigEnd {
+		end++
+	}
+	return segments[start:end], true
 }
 
-// reverseInsertionPoint returns the generated offset where content following segment prev sits: the
-// generated end of that segment, or 0 before the first segment.
-func reverseInsertionPoint(segs []Segment, prev int) core.TextPos {
-	if prev < 0 {
-		return 0
-	}
-	return segs[prev].GenEnd
+// supportsPurpose reports whether segment participates in an original-to-generated query for purpose.
+func supportsPurpose(segment Segment, purpose Purpose) bool {
+	return segment.Purpose&purpose != 0
 }
 
-func reverseMapLow(segs []Segment, pos core.TextPos, idx int, in bool) core.TextPos {
-	if !in {
-		return reverseInsertionPoint(segs, idx)
-	}
-	seg := &segs[idx]
-	if seg.Kind == KindVerbatim {
-		return clamp(seg.GenStart+(pos-seg.OrigStart), seg.GenStart, seg.GenEnd)
-	}
-	return seg.GenStart
-}
-
-func reverseMapHigh(segs []Segment, pos core.TextPos, idx int, in bool) core.TextPos {
-	if !in {
-		return reverseInsertionPoint(segs, idx)
-	}
-	seg := &segs[idx]
-	if seg.Kind == KindVerbatim {
-		return clamp(seg.GenStart+(pos-seg.OrigStart), seg.GenStart, seg.GenEnd)
-	}
-	return seg.GenEnd
-}
-
+// clamp confines v to the inclusive interval [lo, hi].
 func clamp(v, lo, hi core.TextPos) core.TextPos {
 	return max(lo, min(v, hi))
 }
 
-// wireSegment is the JSON tuple form exchanged with an out-of-process content mapper:
-// [genStart, genLength, origStart, origLength, kind].
-type wireSegment [5]int32
-
 // Unmarshal decodes a SpanMap from the JSON tuple form produced by an out-of-process content mapper.
+// Five-element tuples omit purpose and are normalized to PurposeAll; six-element tuples preserve the
+// explicit purpose, including PurposeNone.
 func Unmarshal(data []byte) (*SpanMap, error) {
-	var tuples []wireSegment
+	var tuples [][]int32
 	if err := json.Unmarshal(data, &tuples); err != nil {
 		return nil, err
 	}
 	segments := make([]Segment, len(tuples))
 	for i, t := range tuples {
+		if len(t) != 5 && len(t) != 6 {
+			return nil, fmt.Errorf("span map segment %d: expected 5 or 6 values, got %d", i, len(t))
+		}
 		segments[i] = Segment{
 			GenStart:  core.TextPos(t[0]),
 			GenEnd:    core.TextPos(t[0] + t[1]),
 			OrigStart: core.TextPos(t[2]),
 			OrigEnd:   core.TextPos(t[2] + t[3]),
 			Kind:      Kind(t[4]),
+			Purpose:   PurposeAll,
+		}
+		if len(t) == 6 {
+			segments[i].Purpose = Purpose(t[5])
 		}
 	}
 	return New(segments), nil
 }
 
-// Marshal encodes a SpanMap into the JSON tuple form.
+// Marshal encodes a SpanMap into the JSON tuple form. PurposeAll uses the backward-compatible five-element
+// tuple; every other purpose is emitted as a sixth element.
 func (m *SpanMap) Marshal() ([]byte, error) {
-	tuples := make([]wireSegment, len(m.segments))
+	tuples := make([][]int32, len(m.segments))
 	for i, s := range m.segments {
-		tuples[i] = wireSegment{
+		tuples[i] = []int32{
 			int32(s.GenStart),
 			int32(s.GenEnd - s.GenStart),
 			int32(s.OrigStart),
 			int32(s.OrigEnd - s.OrigStart),
 			int32(s.Kind),
+		}
+		if s.Purpose != PurposeAll {
+			tuples[i] = append(tuples[i], int32(s.Purpose))
 		}
 	}
 	return json.Marshal(tuples)

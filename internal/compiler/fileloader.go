@@ -455,6 +455,10 @@ func contentMapperMappingDiagnostic(file *ast.SourceFile, label string, problem 
 		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_a_position_mapping_that_points_outside_the_original_content_original_offset_1, label, int(problem.OrigPos))
 	case spanmap.MappingErrorKindVerbatimMismatch:
 		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_a_verbatim_mapping_that_does_not_match_the_original_content_output_offset_1_original_offset_2, label, int(problem.GenPos), int(problem.OrigPos))
+	case spanmap.MappingErrorKindOriginalOverlap:
+		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_overlapping_original_position_mappings_that_are_not_identical_near_original_offset_1, label, int(problem.OrigPos))
+	case spanmap.MappingErrorKindPurpose:
+		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_invalid_mapping_purposes_near_original_offset_1, label, int(problem.OrigPos))
 	default:
 		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_did_not_provide_the_required_position_mappings, label)
 	}

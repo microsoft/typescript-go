@@ -41,11 +41,12 @@ func (l *LanguageService) adjustFoldingEnd(ranges []*lsproto.FoldingRange, sourc
 	result := make([]*lsproto.FoldingRange, 0, len(ranges))
 	for _, r := range ranges {
 		if r.EndCharacter != nil && *r.EndCharacter > 0 {
-			endOffset, fidelity := l.converters.FromLSPPosition(sourceFile, lsproto.Position{
+			positions := l.converters.FromLSPPosition(sourceFile, lsproto.Position{
 				Line:      r.EndLine,
 				Character: *r.EndCharacter,
-			})
-			if !fidelity.IsNone() && endOffset > 0 && int(endOffset) <= len(sourceText) {
+			}, spanmap.PurposeAll)
+			if len(positions) == 1 && !positions[0].Fidelity.IsNone() && positions[0].Position > 0 && int(positions[0].Position) <= len(sourceText) {
+				endOffset := positions[0].Position
 				foldEndChar := sourceText[int(endOffset)-1]
 				if foldEndChar == '}' || foldEndChar == ']' || foldEndChar == ')' || foldEndChar == '`' || foldEndChar == '>' {
 					if r.EndLine > r.StartLine {

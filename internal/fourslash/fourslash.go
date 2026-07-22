@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/execute/tsctests"
@@ -93,8 +94,9 @@ func (c *testConverters) PositionToLineAndCharacter(script lsconv.Script, positi
 }
 
 func (c *testConverters) LineAndCharacterToPosition(script lsconv.Script, position lsproto.Position) core.TextPos {
-	textPosition, _ := c.FromLSPPosition(script, position)
-	return textPosition
+	positions := c.FromLSPPosition(script, position, spanmap.PurposeAll)
+	debug.Assert(len(positions) == 1, "fourslash script must have exactly one position projection")
+	return positions[0].Position
 }
 
 type textEditSpan struct {
@@ -2594,7 +2596,11 @@ func (f *FourslashTest) VerifyBaselineCodeLens(t *testing.T, preferences *lsutil
 				locations = locs
 			}
 
-			codeLensRange, _ := f.converters.FromLSPRange(f.getScriptInfo(openFile), resolvedCodeLens.Range)
+			ranges := f.converters.FromLSPRange(f.getScriptInfo(openFile), resolvedCodeLens.Range, spanmap.PurposeAll)
+			if len(ranges) != 1 {
+				continue
+			}
+			codeLensRange := ranges[0].Span
 			f.addResultToBaseline(t, codeLensesCmd, f.getBaselineForLocationsWithFileContents(locations, baselineFourslashLocationsOptions{
 				marker: &RangeMarker{
 					fileName: openFile,
@@ -4054,8 +4060,11 @@ func updatePosition(pos int, editStart int, editEnd int, newText string) int {
 }
 
 func (f *FourslashTest) fromLSPRange(script *scriptInfo, r lsproto.Range) core.TextRange {
-	textRange, _ := f.converters.FromLSPRange(script, r)
-	return textRange
+	ranges := f.converters.FromLSPRange(script, r, spanmap.PurposeAll)
+	if len(ranges) != 1 {
+		return core.TextRange{}
+	}
+	return ranges[0].Span
 }
 
 func (f *FourslashTest) editScript(t *testing.T, fileName string, change core.TextChange) *scriptInfo {

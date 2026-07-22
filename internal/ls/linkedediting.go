@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 )
 
 // allow the client to match more than valid tag names. This allows linked editing when typing is in progress or tag name is incomplete
@@ -16,10 +17,11 @@ var jsxTagWordPattern = new("[a-zA-Z0-9:\\-\\._$]*")
 
 func (l *LanguageService) ProvideLinkedEditingRange(ctx context.Context, params *lsproto.LinkedEditingRangeParams) (lsproto.LinkedEditingRangeResponse, error) {
 	_, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
-	position, fidelity := l.converters.FromLSPPosition(sourceFile, params.Position)
-	if !fidelity.IsExact() {
+	positions := l.converters.FromLSPPosition(sourceFile, params.Position, spanmap.PurposeAll)
+	if len(positions) != 1 || !positions[0].Fidelity.IsExact() {
 		return lsproto.LinkedEditingRangeResponse{}, nil
 	}
+	position := positions[0].Position
 	token := astnav.FindPrecedingToken(sourceFile, int(position))
 
 	if token == nil || token.Parent.Kind == ast.KindSourceFile {
