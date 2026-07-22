@@ -958,6 +958,14 @@ function patchAndPreprocessModel() {
             });
         }
 
+        if (structure.name === "CodeActionParams") {
+            structure.properties.push({
+                name: "formattingOptions",
+                type: { kind: "reference", name: "FormattingOptions" },
+                optional: true,
+            });
+        }
+
         // Patch Hover to add canIncreaseVerbosity
         if (structure.name === "Hover") {
             structure.properties.push(

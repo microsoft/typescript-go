@@ -1313,14 +1313,6 @@ func (s *Server) handleExit(ctx context.Context, _ lsproto.NoParams) error {
 }
 
 func (s *Server) handleDidChangeWorkspaceConfiguration(ctx context.Context, params *lsproto.DidChangeConfigurationParams) error {
-	if lsproto.GetClientCapabilities(ctx).Workspace.Configuration {
-		config, err := s.RequestConfiguration(ctx)
-		if err != nil {
-			return err
-		}
-		s.session.Configure(config)
-		return nil
-	}
 	if params.Settings == nil {
 		return nil
 	} else if settings, ok := params.Settings.(map[string]any); ok {

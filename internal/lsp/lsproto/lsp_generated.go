@@ -2822,6 +2822,8 @@ type CodeActionParams struct {
 
 	// Context carrying additional information.
 	Context *CodeActionContext `json:"context" lsp:"required"`
+
+	FormattingOptions *FormattingOptions `json:"formattingOptions,omitzero"`
 }
 
 func (s *CodeActionParams) TextDocumentURI() DocumentUri {
