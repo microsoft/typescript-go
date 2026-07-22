@@ -2497,7 +2497,7 @@ func (c *Checker) isReachableFlowNodeWorker(f *FlowState, flow *ast.FlowNode, no
 		}
 		flags := flow.Flags
 		if flags&ast.FlowFlagsShared != 0 {
-			if !noCacheCheck {
+			if !noCacheCheck && len(f.reduceLabels) == 0 {
 				if reachable, ok := c.flowNodeReachable[flow]; ok {
 					return reachable
 				}
