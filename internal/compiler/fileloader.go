@@ -421,11 +421,11 @@ func (p *fileLoader) parseContentMappedFile(opts ast.SourceFileParseOptions) *as
 	label := mapper.Name
 	if p.contentMapperDisabled(mapper) {
 		// The mapper already exceeded its failure budget; add the file empty without re-reporting.
-		return p.emptyContentMappedFile(opts, label)
+		return p.emptyContentMappedFile(opts, mapper.Identity())
 	}
 	sourceFile, err := p.opts.Host.GetContentMappedSourceFile(opts, mapper, p.opts.Config.CompilerOptions())
 	if err != nil {
-		sourceFile := p.emptyContentMappedFile(opts, label)
+		sourceFile := p.emptyContentMappedFile(opts, mapper.Identity())
 		if p.recordContentMapperFailure(mapper, label) {
 			if problem, ok := errors.AsType[*spanmap.MappingError](err); ok {
 				p.addContentMapperDiagnostic(contentMapperMappingDiagnostic(sourceFile, label, problem))
@@ -455,6 +455,8 @@ func contentMapperMappingDiagnostic(file *ast.SourceFile, label string, problem 
 		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_a_position_mapping_that_points_outside_the_original_content_original_offset_1, label, int(problem.OrigPos))
 	case spanmap.MappingErrorKindVerbatimMismatch:
 		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_a_verbatim_mapping_that_does_not_match_the_original_content_output_offset_1_original_offset_2, label, int(problem.GenPos), int(problem.OrigPos))
+	case spanmap.MappingErrorKindKind:
+		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_a_position_mapping_with_an_invalid_kind_near_output_offset_1, label, int(problem.GenPos))
 	case spanmap.MappingErrorKindOriginalOverlap:
 		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_overlapping_original_position_mappings_that_are_not_identical_near_original_offset_1, label, int(problem.OrigPos))
 	case spanmap.MappingErrorKindPurpose:
@@ -468,11 +470,11 @@ func contentMapperMappingDiagnostic(file *ast.SourceFile, label string, problem 
 // transform could not be used, retaining the original content for diagnostics. Importers see it as an
 // empty module rather than triggering a "cannot find module" error. It is still marked as content-mapped
 // so it is excluded from emit like a successfully mapped file.
-func (p *fileLoader) emptyContentMappedFile(opts ast.SourceFileParseOptions, label string) *ast.SourceFile {
+func (p *fileLoader) emptyContentMappedFile(opts ast.SourceFileParseOptions, mapperIdentity string) *ast.SourceFile {
 	content, _ := p.opts.Host.FS().ReadFile(opts.FileName)
 	sourceFile := parser.ParseSourceFile(opts, "", core.ScriptKindTS)
 	sourceFile.SetOriginalText(content)
-	sourceFile.SetContentMapper(label)
+	sourceFile.SetContentMapper(mapperIdentity)
 	return sourceFile
 }
 

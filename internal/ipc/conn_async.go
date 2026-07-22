@@ -63,6 +63,7 @@ func (c *AsyncConn) SetCollectTiming(enabled bool) {
 // Run starts processing messages on the connection.
 // It blocks until the context is cancelled or an error occurs.
 func (c *AsyncConn) Run(ctx context.Context) error {
+	defer c.closePendingCalls()
 	for {
 		if ctx.Err() != nil {
 			return ctx.Err()
@@ -83,6 +84,16 @@ func (c *AsyncConn) Run(ctx context.Context) error {
 		} else if msg.IsNotification() {
 			go c.handleNotification(ctx, msg)
 		}
+	}
+}
+
+// closePendingCalls unblocks requests waiting for a response when the connection read loop exits.
+func (c *AsyncConn) closePendingCalls() {
+	c.pendingMu.Lock()
+	defer c.pendingMu.Unlock()
+	for id, ch := range c.pending {
+		close(ch)
+		delete(c.pending, id)
 	}
 }
 
@@ -215,7 +226,10 @@ func (c *AsyncConn) Call(ctx context.Context, method string, params any) (json.V
 	select {
 	case <-ctx.Done():
 		return nil, ctx.Err()
-	case resp := <-responseChan:
+	case resp, ok := <-responseChan:
+		if !ok {
+			return nil, errors.New("ipc: connection closed before response")
+		}
 		if resp.Error != nil {
 			return nil, fmt.Errorf("ipc: remote error [%d]: %s", resp.Error.Code, resp.Error.Message)
 		}

@@ -383,6 +383,11 @@ func TestValidate(t *testing.T) {
 			segs:     []spanmap.Segment{{GenStart: 0, GenEnd: core.TextPos(len(transformed)), OrigStart: 0, OrigEnd: core.TextPos(len(transformed)), Kind: spanmap.KindVerbatim}},
 			wantKind: spanmap.MappingErrorKindVerbatimMismatch,
 		},
+		{
+			name:     "unknown kind",
+			segs:     []spanmap.Segment{{GenStart: 0, GenEnd: 1, OrigStart: 0, OrigEnd: 1, Kind: 2}},
+			wantKind: spanmap.MappingErrorKindKind,
+		},
 	}
 
 	for _, tc := range testCases {

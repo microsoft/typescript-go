@@ -1,6 +1,8 @@
 package incremental_test
 
 import (
+	"slices"
+	"strings"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/contentmapper"
@@ -31,7 +33,20 @@ func TestContentMapperIdentities(t *testing.T) {
 		&contentmapper.Mapper{Definition: contentmapper.Definition{Package: "svelte"}, Manifest: contentmapper.Manifest{Name: "svelte", Version: "3.0.0"}},
 		&contentmapper.Mapper{Definition: contentmapper.Definition{Package: "anon"}},
 	)
-	assert.DeepEqual(t, incremental.ContentMapperIdentities(config), []string{"svelte@3.0.0", "vue@2.0.0"})
+	identities := incremental.ContentMapperIdentities(config)
+	assert.Equal(t, len(identities), 2)
+	assert.Assert(t, strings.HasPrefix(identities[0], "svelte@3.0.0:"))
+	assert.Assert(t, strings.HasPrefix(identities[1], "vue@2.0.0:"))
+
+	jsxMapper := &contentmapper.Mapper{
+		Definition: contentmapper.Definition{Package: "jsx"},
+		Manifest:   contentmapper.Manifest{Name: "jsx", Version: "1.0.0", CompilerOptions: []string{"jsx"}},
+	}
+	jsxPreserve := configWithMappers(jsxMapper)
+	jsxPreserve.ParsedConfig.CompilerOptions.Jsx = core.JsxEmitPreserve
+	jsxReact := configWithMappers(jsxMapper)
+	jsxReact.ParsedConfig.CompilerOptions.Jsx = core.JsxEmitReact
+	assert.Assert(t, !slices.Equal(incremental.ContentMapperIdentities(jsxPreserve), incremental.ContentMapperIdentities(jsxReact)))
 }
 
 func TestContentMapperIdentitiesMatch(t *testing.T) {

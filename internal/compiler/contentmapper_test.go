@@ -2,6 +2,7 @@ package compiler_test
 
 import (
 	"context"
+	"errors"
 	"slices"
 	"testing"
 
@@ -109,6 +110,14 @@ func TestContentMapperInvalidMappings(t *testing.T) {
 			}}),
 			100030,
 		},
+		{
+			"invalidKind",
+			spanmap.New([]spanmap.Segment{{
+				GenStart: 0, GenEnd: core.TextPos(len(transformed)),
+				OrigStart: 0, OrigEnd: core.TextPos(len(original)), Kind: 2,
+			}}),
+			100041,
+		},
 	}
 
 	for _, tc := range testCases {
@@ -133,4 +142,36 @@ func TestContentMapperInvalidMappings(t *testing.T) {
 			assert.Assert(t, found, "expected diagnostic TS%d attributing the invalid mapping, got: %v", tc.wantCode, diags)
 		})
 	}
+}
+
+func TestContentMapperSourceFileState(t *testing.T) {
+	t.Parallel()
+
+	t.Run("successful synthesized empty file", func(t *testing.T) {
+		t.Parallel()
+		program := newContentMapperProgram(t, fakeContentMapperHost{
+			transform: func(fileName string, content string) (contentmapper.Result, error) {
+				return contentmapper.Result{Text: "export {};", ScriptKind: core.ScriptKindTS, Mappings: spanmap.New(nil)}, nil
+			},
+		}, map[string]string{"/src/empty.vue": ""}, []string{"/src/empty.vue"})
+		file := program.GetSourceFile("/src/empty.vue")
+		assert.Assert(t, file != nil)
+		assert.Equal(t, file.OriginalText(), "")
+		assert.Equal(t, file.ContentMapper(), "vue-mapper@1.0.0")
+		assert.Assert(t, !file.IsContentMapperFailureStub())
+	})
+
+	t.Run("failed transform", func(t *testing.T) {
+		t.Parallel()
+		program := newContentMapperProgram(t, fakeContentMapperHost{
+			transform: func(fileName string, content string) (contentmapper.Result, error) {
+				return contentmapper.Result{}, errors.New("failed")
+			},
+		}, map[string]string{"/src/fail.vue": "original"}, []string{"/src/fail.vue"})
+		file := program.GetSourceFile("/src/fail.vue")
+		assert.Assert(t, file != nil)
+		assert.Equal(t, file.OriginalText(), "original")
+		assert.Equal(t, file.ContentMapper(), "vue-mapper@1.0.0")
+		assert.Assert(t, file.IsContentMapperFailureStub())
+	})
 }

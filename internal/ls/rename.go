@@ -117,7 +117,8 @@ func (l *LanguageService) symbolAndEntriesToRename(ctx context.Context, params *
 func (l *LanguageService) renameEditRange(entry *ReferenceEntry) (lsproto.Range, bool) {
 	l.resolveEntry(entry)
 	if entry.node == nil {
-		return l.getRangeOfEntry(entry), true
+		location, fidelity := l.getMappedLocation(entry.fileName, *entry.textRange)
+		return location.Range, fidelity.IsExact()
 	}
 	sourceFile := ast.GetSourceFileOfNode(entry.node)
 	if sourceFile == nil || sourceFile.SpanMap() == nil {

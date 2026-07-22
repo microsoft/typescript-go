@@ -128,6 +128,8 @@ const (
 	MappingErrorKindOutOfBounds
 	// MappingErrorKindVerbatimMismatch means a verbatim segment's generated and original text differ.
 	MappingErrorKindVerbatimMismatch
+	// MappingErrorKindKind means a segment uses an unsupported mapping kind.
+	MappingErrorKindKind
 	// MappingErrorKindOriginalOverlap means original spans partially overlap or contain one another.
 	MappingErrorKindOriginalOverlap
 	// MappingErrorKindPurpose means a purpose annotation contains unsupported flags.
@@ -152,6 +154,8 @@ func (p *MappingError) Error() string {
 		return fmt.Sprintf("content mapper position mapping points outside the original content at original offset %d", p.OrigPos)
 	case MappingErrorKindVerbatimMismatch:
 		return fmt.Sprintf("content mapper verbatim mapping does not match the original content at output offset %d, original offset %d", p.GenPos, p.OrigPos)
+	case MappingErrorKindKind:
+		return fmt.Sprintf("content mapper position mapping has an invalid kind at output offset %d", p.GenPos)
 	case MappingErrorKindOriginalOverlap:
 		return fmt.Sprintf("content mapper position mappings partially overlap in the original content near offset %d", p.OrigPos)
 	case MappingErrorKindPurpose:
@@ -181,6 +185,9 @@ func (m *SpanMap) Validate(transformed, original string) *MappingError {
 		prevGenEnd = s.GenEnd
 		if s.OrigStart < 0 || s.OrigEnd < s.OrigStart || s.OrigEnd > origLen {
 			return &MappingError{Kind: MappingErrorKindOutOfBounds, GenPos: s.GenStart, OrigPos: s.OrigEnd}
+		}
+		if s.Kind != KindVerbatim && s.Kind != KindAtom {
+			return &MappingError{Kind: MappingErrorKindKind, GenPos: s.GenStart, OrigPos: s.OrigStart}
 		}
 		if s.Kind == KindVerbatim {
 			if s.GenEnd-s.GenStart != s.OrigEnd-s.OrigStart ||

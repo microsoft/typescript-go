@@ -539,7 +539,7 @@ func encodeSemanticTokens(ctx context.Context, tokens []semanticToken, file *ast
 		// Semantic tokens must describe one concrete source segment; synthesized and cross-segment
 		// tokens do not identify a coherent token in the original text.
 		lspRange, fidelity := converters.ToLSPRange(file, core.NewTextRange(tokenStart, tokenEnd))
-		if !fidelity.IsSingleSegment() {
+		if !fidelity.IsExact() {
 			continue
 		}
 		startPos := lspRange.Start

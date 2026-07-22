@@ -15,8 +15,8 @@ type Result struct {
 	// Diagnostics are syntax errors in the original content.
 	Diagnostics []*ast.Diagnostic
 	// Mappings maps positions in Text back to the original content, so that diagnostics the compiler
-	// produces against the transformed text can be reported at their original locations. A nil map
-	// means positions are used as-is.
+	// produces against the transformed text can be reported at their original locations. A successful
+	// transform must return a non-nil map; an empty map describes fully synthesized output.
 	Mappings *spanmap.SpanMap
 }
 
@@ -34,7 +34,7 @@ type Request struct {
 }
 
 // Host transforms foreign file content into TypeScript during program construction, by driving the
-// configured content mappers. Create one with New; Close tears down every mapper it spawned.
+// configured content mappers. Create one with NewHost; Close tears down every mapper it spawned.
 type Host interface {
 	// Acquire retains the processes for the given mapper identities until the returned lease is released.
 	// Acquiring a mapper does not start its process; processes remain lazy until Transform is called.

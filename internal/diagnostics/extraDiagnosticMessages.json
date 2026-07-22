@@ -175,6 +175,10 @@
         "category": "Error",
         "code": 100030
     },
+    "The content mapper '{0}' produced a position mapping with an invalid kind (near output offset {1}).": {
+        "category": "Error",
+        "code": 100041
+    },
     "The content mapper '{0}' produced overlapping original position mappings that are not identical (near original offset {1}).": {
         "category": "Error",
         "code": 100039

@@ -2472,7 +2472,7 @@ type SourceFile struct {
 	fileName       string // For debugging convenience
 	parseOptions   SourceFileParseOptions
 	text           string
-	originalText   string           // For content-mapped files, the untransformed source text; empty otherwise.
+	originalText   string           // For content-mapped files, the untransformed source text.
 	spanMap        *spanmap.SpanMap // For content-mapped files, maps transformed positions back to the original text.
 	contentMapper  string           // For content-mapped files, the identity of the mapper that produced this file.
 	Statements     *NodeList        // NodeList[*Statement]
@@ -2571,7 +2571,7 @@ func (node *SourceFile) Text() string {
 
 // OriginalText returns the untransformed source text for content-mapped files, or Text() otherwise.
 func (node *SourceFile) OriginalText() string {
-	if node.originalText != "" {
+	if node.ContentMapper() != "" {
 		return node.originalText
 	}
 	return node.text
@@ -2597,9 +2597,9 @@ func (node *SourceFile) ContentMapper() string {
 }
 
 // IsContentMapperFailureStub reports whether this file is the empty placeholder produced when a content
-// mapper's transform failed: it came from a content mapper but carries no span map.
+// mapper's transform failed.
 func (node *SourceFile) IsContentMapperFailureStub() bool {
-	return node.contentMapper != "" && node.spanMap == nil
+	return node.ContentMapper() != "" && node.SpanMap() == nil
 }
 
 // SetContentMapper records the identity of the content mapper that produced this file.
@@ -2706,6 +2706,9 @@ func (node *SourceFile) IsJS() bool {
 
 func (node *SourceFile) copyFrom(other *SourceFile) {
 	// Do not copy fields set by NewSourceFile (Text, FileName, Path, or Statements)
+	node.originalText = other.originalText
+	node.spanMap = other.spanMap
+	node.contentMapper = other.contentMapper
 	node.LanguageVariant = other.LanguageVariant
 	node.ScriptKind = other.ScriptKind
 	node.IsDeclarationFile = other.IsDeclarationFile

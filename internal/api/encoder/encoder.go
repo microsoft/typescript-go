@@ -661,7 +661,10 @@ func recordExtendedData_SourceFile(node *ast.Node, strs *stringTable, positionMa
 	referencedFilesOffset := encodeFileReferences(sf.ReferencedFiles, positionMap, structuredData)
 	typeRefDirectivesOffset := encodeFileReferences(sf.TypeReferenceDirectives, positionMap, structuredData)
 	libRefDirectivesOffset := encodeFileReferences(sf.LibReferenceDirectives, positionMap, structuredData)
-	spanMapOffset := encodeSpanMap(sf.SpanMap(), positionMap, ast.ComputePositionMap(sf.OriginalText()), structuredData)
+	spanMapOffset := uint32(noStructuredData)
+	if spanMap := sf.SpanMap(); spanMap != nil {
+		spanMapOffset = encodeSpanMap(spanMap, positionMap, ast.ComputePositionMap(sf.OriginalText()), structuredData)
+	}
 	// imports, moduleAugmentations, ambientModuleNames offsets are placeholders;
 	// they will be patched after the tree walk when node indices are known.
 	*extendedData = appendUint32s(*extendedData, textIndex, fileNameIndex, pathIndex, uint32(sf.LanguageVariant), uint32(sf.ScriptKind), referencedFilesOffset, typeRefDirectivesOffset, libRefDirectivesOffset, noStructuredData, noStructuredData, noStructuredData, 0, originalTextIndex, spanMapOffset)
