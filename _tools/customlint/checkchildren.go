@@ -232,6 +232,7 @@ func appendChecksIn(reachable []*ast.CallExpr, n ast.Node, checkCalls []*ast.Cal
 	}
 	return reachable
 }
+
 func isSwitchClause(n ast.Node) bool {
 	switch n.(type) {
 	case *ast.CaseClause, *ast.CommClause:
