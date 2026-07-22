@@ -111,12 +111,18 @@ export class SpanMap {
      * that may be unrelated to the original range. These cross-group results have approximate fidelity.
      */
     originalToGeneratedSpans(range: ReadonlyTextRange, purpose: SpanMapPurpose): readonly MappedRange[] {
-        const results = this.originalToGeneratedSpansInGroup(range, purpose);
-        if (results !== undefined) return results;
         const start = range.pos;
         const end = Math.max(range.end, start);
-        const starts = this.originalStartProjections(start, purpose);
-        const ends = this.originalEndProjections(start, end, purpose);
+        const lastCharacter = end > start ? end - 1 : end;
+        const originalSegments = this.getOriginalSegments();
+        const startSegments = originalSegmentsAt(originalSegments, start);
+        const endSegments = originalSegmentsAt(originalSegments, lastCharacter);
+        if (!startSegments || !endSegments) return [];
+        if (sameOriginalRange(startSegments[0], endSegments[0])) {
+            return originalToGeneratedSpansInGroup(startSegments, start, end, purpose);
+        }
+        const starts = originalStartProjections(startSegments, start, purpose);
+        const ends = originalEndProjections(endSegments, end, purpose);
         if (starts.length === 0 || ends.length === 0) return [];
         return starts.flatMap((generatedStart, index) => {
             const generatedEnd = ends.find(end => end >= generatedStart);
@@ -139,69 +145,6 @@ export class SpanMap {
      *              result        result
      * ```
      */
-    private originalStartProjections(start: number, purpose: SpanMapPurpose): readonly number[] {
-        const segments = originalSegmentsAt(this.getOriginalSegments(), start);
-        if (!segments) return [];
-        return segments
-            .filter(segment => supportsPurpose(segment, purpose))
-            .map(segment =>
-                segment.kind === SpanMapKind.Verbatim
-                    ? mapVerbatimPosition(segment, start, true)
-                    : segment.generatedStart
-            );
-    }
-
-    /**
-     * Maps the exclusive end of an original range through every matching segment. For a non-empty range,
-     * `end - 1` identifies the segment containing its final character, while `end` remains the mapped boundary.
-     *
-     * ```text
-     * original:       [---------)[ next segment )
-     *                          ^`-- end
-     *                          `--- end - 1
-     *
-     * generated:  [---------)   [---------)
-     *                       ^             ^
-     *                     result        result
-     * ```
-     */
-    private originalEndProjections(start: number, end: number, purpose: SpanMapPurpose): readonly number[] {
-        const lastCharacter = end > start ? end - 1 : end;
-        const segments = originalSegmentsAt(this.getOriginalSegments(), lastCharacter);
-        if (!segments) return [];
-        return segments
-            .filter(segment => supportsPurpose(segment, purpose))
-            .map(segment =>
-                segment.kind === SpanMapKind.Verbatim
-                    ? mapVerbatimPosition(segment, end, true)
-                    : segment.generatedEnd
-            );
-    }
-
-    /**
-     * Maps a range contained by one duplicate group. `undefined` means the range crosses groups; an empty array
-     * means the range is in one group but no member supports `purpose`.
-     */
-    private originalToGeneratedSpansInGroup(range: ReadonlyTextRange, purpose: SpanMapPurpose): readonly MappedRange[] | undefined {
-        const start = range.pos;
-        const end = Math.max(range.end, start);
-        const startSegments = originalSegmentsAt(this.getOriginalSegments(), start);
-        const endSegments = originalSegmentsAt(this.getOriginalSegments(), end > start ? end - 1 : end);
-        if (!startSegments || !endSegments || startSegments[0].originalStart !== endSegments[0].originalStart || startSegments[0].originalEnd !== endSegments[0].originalEnd) {
-            return undefined;
-        }
-        return startSegments
-            .filter(segment => supportsPurpose(segment, purpose))
-            .map(segment => {
-                if (segment.kind === SpanMapKind.Verbatim) {
-                    const mappedStart = mapVerbatimPosition(segment, start, true);
-                    const mappedEnd = Math.max(mappedStart, mapVerbatimPosition(segment, end, true));
-                    return { range: { pos: mappedStart, end: mappedEnd }, fidelity: SpanMapFidelity.Exact };
-                }
-                return { range: { pos: segment.generatedStart, end: segment.generatedEnd }, fidelity: SpanMapFidelity.Atom };
-            });
-    }
-
     /** Maps one range through an ordered segment index in the direction selected by `reverse`. */
     private mapRange(range: ReadonlyTextRange, segments: readonly SpanMapSegment[], reverse: boolean): MappedRange {
         const start = range.pos;
@@ -247,20 +190,99 @@ export class SpanMap {
 
     /** Returns the lazily built segment index ordered by original start. */
     private getOriginalSegments(): readonly NormalizedSpanMapSegment[] {
-        return this.originalSegments ??= [...this.segments].sort((left, right) => left.originalStart - right.originalStart);
+        return this.originalSegments ??= [...this.segments].sort((left, right) =>
+            left.originalStart - right.originalStart
+            || left.originalEnd - right.originalEnd
+            || left.generatedStart - right.generatedStart
+        );
     }
 }
 
 /**
+ * Maps the inclusive start of an original range through every matching segment. Verbatim segments preserve
+ * the offset within the segment; atoms map to their generated start.
+ *
+ * ```text
+ * original:       [---------)
+ *                    ^ start
+ *
+ * generated:  [---------)   [---------)
+ *                ^             ^
+ *              result        result
+ * ```
+ */
+function originalStartProjections(segments: readonly NormalizedSpanMapSegment[], start: number, purpose: SpanMapPurpose): readonly number[] {
+    return segments
+        .filter(segment => supportsPurpose(segment, purpose))
+        .map(segment =>
+            segment.kind === SpanMapKind.Verbatim
+                ? mapVerbatimPosition(segment, start, true)
+                : segment.generatedStart
+        );
+}
+
+/**
+ * Maps the exclusive end of an original range through every matching segment. The caller uses `end - 1`
+ * to find the segment containing the final character, while this helper maps the `end` boundary itself.
+ *
+ * ```text
+ * original:       [---------)[ next segment )
+ *                          ^`-- end
+ *                          `--- end - 1
+ *
+ * generated:  [---------)   [---------)
+ *                       ^             ^
+ *                     result        result
+ * ```
+ */
+function originalEndProjections(segments: readonly NormalizedSpanMapSegment[], end: number, purpose: SpanMapPurpose): readonly number[] {
+    return segments
+        .filter(segment => supportsPurpose(segment, purpose))
+        .map(segment =>
+            segment.kind === SpanMapKind.Verbatim
+                ? mapVerbatimPosition(segment, end, true)
+                : segment.generatedEnd
+        );
+}
+
+/** Maps a range whose boundaries are known to lie in one duplicate group. */
+function originalToGeneratedSpansInGroup(segments: readonly NormalizedSpanMapSegment[], start: number, end: number, purpose: SpanMapPurpose): readonly MappedRange[] {
+    return segments
+        .filter(segment => supportsPurpose(segment, purpose))
+        .map(segment => {
+            if (segment.kind === SpanMapKind.Verbatim) {
+                const mappedStart = mapVerbatimPosition(segment, start, true);
+                const mappedEnd = Math.max(mappedStart, mapVerbatimPosition(segment, end, true));
+                return { range: { pos: mappedStart, end: mappedEnd }, fidelity: SpanMapFidelity.Exact };
+            }
+            return { range: { pos: segment.generatedStart, end: segment.generatedEnd }, fidelity: SpanMapFidelity.Atom };
+        });
+}
+
+/** Reports whether two segments belong to the same duplicate group. */
+function sameOriginalRange(left: SpanMapSegment, right: SpanMapSegment): boolean {
+    return left.originalStart === right.originalStart && left.originalEnd === right.originalEnd;
+}
+
+/**
  * Returns the complete duplicate group containing `position`. Segment ends are exclusive; starts, including
- * zero-length segment starts, are included. `segments` must be ordered by original start.
+ * zero-length segment starts, are included. It finds a candidate in O(log n), then scans only the duplicate
+ * group. `segments` must be ordered by original start, original end, and generated start.
  */
 function originalSegmentsAt(segments: readonly NormalizedSpanMapSegment[], position: number): readonly NormalizedSpanMapSegment[] | undefined {
-    const first = segments.findIndex(segment => segment.originalStart === position || (segment.originalStart < position && position < segment.originalEnd));
-    if (first < 0) return undefined;
-    let end = first + 1;
-    while (end < segments.length && segments[end].originalStart === segments[first].originalStart && segments[end].originalEnd === segments[first].originalEnd) end++;
-    return segments.slice(first, end);
+    let low = 0;
+    let high = segments.length;
+    while (low < high) {
+        const middle = (low + high) >>> 1;
+        if (segments[middle].originalStart < position) low = middle + 1;
+        else high = middle;
+    }
+    let index = low < segments.length && segments[low].originalStart === position ? low : low - 1;
+    if (index < 0 || !(segments[index].originalStart === position || position < segments[index].originalEnd)) return undefined;
+    while (index > 0 && sameOriginalRange(segments[index - 1], segments[index])) index--;
+    let end = index + 1;
+    while (end < segments.length && sameOriginalRange(segments[end], segments[index])) end++;
+    return segments.slice(index, end);
 }
 
 /** Reports whether a segment participates in an original-to-generated query for `purpose`. */

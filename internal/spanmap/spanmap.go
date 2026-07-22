@@ -381,13 +381,23 @@ func (m *SpanMap) OriginalToGeneratedSpans(r core.TextRange, purpose Purpose) []
 	if m == nil {
 		return []MappedSpan{{Span: r, Fidelity: FidelityExact}}
 	}
-	if results, matched := m.originalToGeneratedSpansInGroup(r, purpose); matched {
-		return results
-	}
 	start := core.TextPos(r.Pos())
 	end := max(core.TextPos(r.End()), start)
-	starts := m.originalStartProjections(start, purpose)
-	ends := m.originalEndProjections(start, end, purpose)
+	lastCharacter := end
+	if end > start {
+		lastCharacter--
+	}
+	originalSegments := m.origIndex()
+	startSegments, startInside := originalSegmentsAt(originalSegments, start)
+	endSegments, endInside := originalSegmentsAt(originalSegments, lastCharacter)
+	if !startInside || !endInside {
+		return nil
+	}
+	if sameOriginalRange(startSegments[0], endSegments[0]) {
+		return originalToGeneratedSpansInGroup(startSegments, start, end, purpose)
+	}
+	starts := originalStartProjections(startSegments, start, purpose)
+	ends := originalEndProjections(endSegments, end, purpose)
 	if len(starts) == 0 || len(ends) == 0 {
 		return nil
 	}
@@ -416,11 +426,7 @@ func (m *SpanMap) OriginalToGeneratedSpans(r core.TextRange, purpose Purpose) []
 //	generated:  [---------)   [---------)
 //	               ^             ^
 //	             result        result
-func (m *SpanMap) originalStartProjections(start core.TextPos, purpose Purpose) []core.TextPos {
-	segments, inside := originalSegmentsAt(m.origIndex(), start)
-	if !inside {
-		return nil
-	}
+func originalStartProjections(segments []Segment, start core.TextPos, purpose Purpose) []core.TextPos {
 	results := make([]core.TextPos, 0, len(segments))
 	for _, segment := range segments {
 		if !supportsPurpose(segment, purpose) {
@@ -436,8 +442,8 @@ func (m *SpanMap) originalStartProjections(start core.TextPos, purpose Purpose) 
 }
 
 // originalEndProjections maps the exclusive end of an original range through every matching segment.
-// For a non-empty range, end-1 identifies the segment containing its final character, while end remains
-// the boundary that is mapped. Verbatim segments preserve that boundary; atoms map to their generated end.
+// The caller uses end-1 to find the segment containing the final character, while this helper maps the end
+// boundary itself. Verbatim segments preserve that boundary; atoms map to their generated end.
 //
 // The lookup uses end-1 so an end at a segment boundary selects the segment on its left, not the next one:
 //
@@ -448,15 +454,7 @@ func (m *SpanMap) originalStartProjections(start core.TextPos, purpose Purpose) 
 //	generated:  [---------)   [---------)
 //	                      ^             ^
 //	                    result        result
-func (m *SpanMap) originalEndProjections(start core.TextPos, end core.TextPos, purpose Purpose) []core.TextPos {
-	lastCharacter := end
-	if end > start {
-		lastCharacter--
-	}
-	segments, inside := originalSegmentsAt(m.origIndex(), lastCharacter)
-	if !inside {
-		return nil
-	}
+func originalEndProjections(segments []Segment, end core.TextPos, purpose Purpose) []core.TextPos {
 	results := make([]core.TextPos, 0, len(segments))
 	for _, segment := range segments {
 		if !supportsPurpose(segment, purpose) {
@@ -471,23 +469,10 @@ func (m *SpanMap) originalEndProjections(start core.TextPos, end core.TextPos, p
 	return results
 }
 
-// originalToGeneratedSpansInGroup maps r when both boundaries lie in the same duplicate group. matched reports
-// whether the range is contained by one group, independently of whether any group member supports purpose.
-func (m *SpanMap) originalToGeneratedSpansInGroup(r core.TextRange, purpose Purpose) ([]MappedSpan, bool) {
-	start := core.TextPos(r.Pos())
-	end := max(core.TextPos(r.End()), start)
-	probe := end
-	if end > start {
-		probe--
-	}
-	startSegments, startInside := originalSegmentsAt(m.origIndex(), start)
-	endSegments, endInside := originalSegmentsAt(m.origIndex(), probe)
-	if !startInside || !endInside || len(startSegments) == 0 || len(endSegments) == 0 ||
-		startSegments[0].OrigStart != endSegments[0].OrigStart || startSegments[0].OrigEnd != endSegments[0].OrigEnd {
-		return nil, false
-	}
-	results := make([]MappedSpan, 0, len(startSegments))
-	for _, segment := range startSegments {
+// originalToGeneratedSpansInGroup maps a range whose boundaries are known to lie in segments.
+func originalToGeneratedSpansInGroup(segments []Segment, start core.TextPos, end core.TextPos, purpose Purpose) []MappedSpan {
+	results := make([]MappedSpan, 0, len(segments))
+	for _, segment := range segments {
 		if !supportsPurpose(segment, purpose) {
 			continue
 		}
@@ -499,7 +484,12 @@ func (m *SpanMap) originalToGeneratedSpansInGroup(r core.TextRange, purpose Purp
 			results = append(results, MappedSpan{Span: core.NewTextRange(int(segment.GenStart), int(segment.GenEnd)), Fidelity: FidelityAtom})
 		}
 	}
-	return results, true
+	return results
+}
+
+// sameOriginalRange reports whether two segments belong to the same duplicate group.
+func sameOriginalRange(left Segment, right Segment) bool {
+	return left.OrigStart == right.OrigStart && left.OrigEnd == right.OrigEnd
 }
 
 // origIndex returns the segments ordered by OrigStart, building it once on first use.
@@ -521,17 +511,24 @@ func (m *SpanMap) origIndex() []Segment {
 
 // originalSegmentsAt returns the complete duplicate group containing pos from a slice ordered by original
 // start, original end, and generated start. Segment ends are exclusive; a segment start, including a zero-length
-// segment, is considered contained. The boolean reports whether any group contains pos.
+// segment, is considered contained. It finds a candidate in O(log n), then scans only the duplicate group.
+// The boolean reports whether any group contains pos.
 func originalSegmentsAt(segments []Segment, pos core.TextPos) ([]Segment, bool) {
-	start := 0
-	for start < len(segments) && segments[start].OrigEnd <= pos && segments[start].OrigStart != pos {
-		start++
+	index, found := slices.BinarySearchFunc(segments, pos, func(segment Segment, position core.TextPos) int {
+		return int(segment.OrigStart - position)
+	})
+	if !found {
+		index--
 	}
-	if start == len(segments) || !(segments[start].OrigStart == pos || (segments[start].OrigStart < pos && pos < segments[start].OrigEnd)) {
+	if index < 0 || !(segments[index].OrigStart == pos || pos < segments[index].OrigEnd) {
 		return nil, false
 	}
+	start := index
+	for start > 0 && sameOriginalRange(segments[start-1], segments[index]) {
+		start--
+	}
 	end := start + 1
-	for end < len(segments) && segments[end].OrigStart == segments[start].OrigStart && segments[end].OrigEnd == segments[start].OrigEnd {
+	for end < len(segments) && sameOriginalRange(segments[end], segments[start]) {
 		end++
 	}
 	return segments[start:end], true
