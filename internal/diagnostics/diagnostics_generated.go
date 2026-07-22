@@ -3738,6 +3738,8 @@ var The_value_0_cannot_be_used_here = &Message{code: 18050, category: CategoryEr
 
 var Compiler_option_0_cannot_be_given_an_empty_string = &Message{code: 18051, category: CategoryError, key: "Compiler_option_0_cannot_be_given_an_empty_string_18051", text: "Compiler option '{0}' cannot be given an empty string."}
 
+var A_project_reference_path_cannot_be_an_empty_string_Did_you_mean = &Message{code: 18052, category: CategoryError, key: "A_project_reference_path_cannot_be_an_empty_string_Did_you_mean_18052", text: "A project reference path cannot be an empty string. Did you mean '.'?"}
+
 var Its_type_0_is_not_a_valid_JSX_element_type = &Message{code: 18053, category: CategoryError, key: "Its_type_0_is_not_a_valid_JSX_element_type_18053", text: "Its type '{0}' is not a valid JSX element type."}
 
 var X_await_using_statements_cannot_be_used_inside_a_class_static_block = &Message{code: 18054, category: CategoryError, key: "await_using_statements_cannot_be_used_inside_a_class_static_block_18054", text: "'await using' statements cannot be used inside a class static block."}
@@ -8048,6 +8050,8 @@ func keyToMessage(key Key) *Message {
 		return The_value_0_cannot_be_used_here
 	case "Compiler_option_0_cannot_be_given_an_empty_string_18051":
 		return Compiler_option_0_cannot_be_given_an_empty_string
+	case "A_project_reference_path_cannot_be_an_empty_string_Did_you_mean_18052":
+		return A_project_reference_path_cannot_be_an_empty_string_Did_you_mean
 	case "Its_type_0_is_not_a_valid_JSX_element_type_18053":
 		return Its_type_0_is_not_a_valid_JSX_element_type
 	case "await_using_statements_cannot_be_used_inside_a_class_static_block_18054":
