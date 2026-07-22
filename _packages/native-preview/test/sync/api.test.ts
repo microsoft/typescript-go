@@ -254,7 +254,7 @@ describe("Snapshot", () => {
             assert.ok(!propertyType2.isUnionType());
             assert.ok(propertyType2.flags & TypeFlags.String);
 
-            // when `"exactOptionalPropertyTypes": true`
+            // when `"exactOptionalPropertyTypes": false`
             const snapshot2 = api.updateSnapshot({ openProject: "/tsconfig-two.json" });
             const project2 = snapshot2.getProject("/tsconfig-two.json")!;
             const type2 = project2.checker.getTypeAtPosition("/src/index.ts", 7);

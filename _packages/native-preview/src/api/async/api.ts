@@ -1061,9 +1061,9 @@ export class Checker {
 
     /**
      * Get the type of a symbol, excluding the missing type when
-     * `exactOptionalPropertyTypes: true` is set; for symbols whose declared
-     * type cannot be determined the checker yields the error type (use
-     * {@link Type.isErrorType} to detect it).
+     * `exactOptionalPropertyTypes: true` is set; for symbols whose
+     * type cannot be determined the checker yields the error type
+     * (use {@link Type.isErrorType} to detect it).
      */
     async getNonMissingTypeOfSymbol(symbol: Symbol): Promise<Type> {
         const data = await this.client.apiRequest<TypeResponse>("getNonMissingTypeOfSymbol", {
