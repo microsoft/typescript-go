@@ -60,9 +60,9 @@ type checkChildrenPass struct {
 func (p *checkChildrenPass) run() (any, error) {
 	in := p.pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 
-	// Collect all methods in the package, keyed by name, and the set of method
-	// names dispatched from the worker functions.
-	methodsByName := make(map[string]*ast.FuncDecl)
+	// Collect a cursor for every method in the package, keyed by name, and the
+	// set of method names dispatched from the worker functions.
+	methods := make(map[string]inspector.Cursor)
 	handlerNames := make(map[string]struct{})
 
 	for cursor := range in.Root().Preorder((*ast.FuncDecl)(nil)) {
@@ -71,18 +71,16 @@ func (p *checkChildrenPass) run() (any, error) {
 		if !ok {
 			continue
 		}
-		methodsByName[fd.Name.Name] = fd
+		methods[fd.Name.Name] = cursor
 		if checkWorkerFuncs[fd.Name.Name] {
 			collectDispatchedMethods(fd, recv, handlerNames)
 		}
 	}
 
 	for name := range handlerNames {
-		fd := methodsByName[name]
-		if fd == nil || fd.Body == nil {
-			continue
+		if cursor, ok := methods[name]; ok && cursor.Node().(*ast.FuncDecl).Body != nil {
+			p.analyzeMethod(cursor)
 		}
-		p.analyzeMethod(fd)
 	}
 
 	return nil, nil
@@ -103,26 +101,26 @@ func collectDispatchedMethods(fd *ast.FuncDecl, recv string, out map[string]stru
 	})
 }
 
-func (p *checkChildrenPass) analyzeMethod(fd *ast.FuncDecl) {
+func (p *checkChildrenPass) analyzeMethod(method inspector.Cursor) {
+	fd := method.Node().(*ast.FuncDecl)
 	recv, ok := receiverIdent(fd)
 	if !ok {
 		return
 	}
 
-	// Collect the child-checking calls and the explicit returns that belong to
-	// this method. Nested function literals are skipped: they have their own
-	// control flow and returns, which are not this method's concern.
-	var checkCalls []*ast.CallExpr
-	var returns []*ast.ReturnStmt
-	ast.Inspect(fd.Body, func(n ast.Node) bool {
-		switch n := n.(type) {
+	// Collect cursors for the child-checking calls and the explicit returns that
+	// belong to this method. Nested function literals are skipped: they have
+	// their own control flow and returns, which are not this method's concern.
+	var checks, returns []inspector.Cursor
+	method.Inspect([]ast.Node{(*ast.FuncLit)(nil), (*ast.ReturnStmt)(nil), (*ast.CallExpr)(nil)}, func(c inspector.Cursor) bool {
+		switch n := c.Node().(type) {
 		case *ast.FuncLit:
 			return false
 		case *ast.ReturnStmt:
-			returns = append(returns, n)
+			returns = append(returns, c)
 		case *ast.CallExpr:
 			if name, isCall := receiverCallName(n, recv); isCall && isChildCheckName(name) {
-				checkCalls = append(checkCalls, n)
+				checks = append(checks, c)
 			}
 		}
 		return true
@@ -130,22 +128,21 @@ func (p *checkChildrenPass) analyzeMethod(fd *ast.FuncDecl) {
 
 	// If the method never checks any children, there is nothing to enforce:
 	// either the node kind is a leaf, or checking is delegated elsewhere.
-	if len(checkCalls) == 0 {
+	if len(checks) == 0 {
 		return
 	}
 
-	parent := buildParentMap(fd)
 	for _, ret := range returns {
-		for _, call := range reachableChecksAfter(ret, checkCalls, parent) {
+		for _, call := range reachableChecksAfter(ret, checks) {
 			// A return that only fires when the child is absent (a `nil` guard on
 			// the very expression the later call would check) is fine: there is
 			// nothing to check on that path.
-			if child := firstArg(call); child != nil && guardedNil(ret, child, parent) {
+			if child := firstArg(call.Node().(*ast.CallExpr)); child != nil && guardedNil(ret, child) {
 				continue
 			}
 			p.pass.Report(analysis.Diagnostic{
-				Pos:     ret.Pos(),
-				End:     ret.End(),
+				Pos:     ret.Node().Pos(),
+				End:     ret.Node().End(),
 				Message: fd.Name.Name + " returns before checking its child nodes; check children (e.g. via checkExpression, checkSourceElement, or resolveCall) on all paths so diagnostics are stable regardless of traversal order",
 			})
 			break
@@ -154,83 +151,52 @@ func (p *checkChildrenPass) analyzeMethod(fd *ast.FuncDecl) {
 }
 
 // reachableChecksAfter returns the child-checking calls that would execute after
-// `start` if it fell through instead of returning. Walking up the ancestor
-// chain, only statements that genuinely follow `start` in execution order are
-// considered; mutually exclusive branches (the other arm of an if, sibling
-// switch cases) are not, while loop bodies are revisited in full.
-func reachableChecksAfter(start ast.Node, checkCalls []*ast.CallExpr, parent map[ast.Node]ast.Node) []*ast.CallExpr {
-	var reachable []*ast.CallExpr
-	child := start
-	for {
-		switch p := parent[child].(type) {
-		case nil:
-			return reachable
-		case *ast.FuncDecl, *ast.FuncLit:
+// `ret` if it fell through instead of returning. Walking up the ancestors, only
+// statements that genuinely follow `ret` in execution order are considered:
+// mutually exclusive branches (the other arm of an if, sibling switch cases) are
+// not, while loop bodies are revisited in full.
+func reachableChecksAfter(ret inspector.Cursor, checks []inspector.Cursor) []inspector.Cursor {
+	var reachable []inspector.Cursor
+	appendContained := func(scope inspector.Cursor) {
+		for _, check := range checks {
+			if scope.Contains(check) {
+				reachable = append(reachable, check)
+			}
+		}
+	}
+
+	for cur := ret; ; {
+		parent := cur.Parent()
+		switch p := parent.Node().(type) {
+		case nil, *ast.FuncDecl, *ast.FuncLit:
 			// Reached the enclosing function without finding a later check.
 			return reachable
-		case *ast.BlockStmt:
-			// Sibling switch/select clauses are alternatives, not successors.
-			if !isSwitchClause(child) {
-				reachable = appendChecksAfter(reachable, p.List, child, checkCalls)
+		case *ast.BlockStmt, *ast.CaseClause, *ast.CommClause:
+			// Statements after `cur` execute after it, but sibling switch/select
+			// clauses are alternatives, not successors.
+			if !isSwitchClause(cur.Node()) {
+				for sib, ok := cur.NextSibling(); ok; sib, ok = sib.NextSibling() {
+					appendContained(sib)
+				}
 			}
-			child = p
-		case *ast.CaseClause:
-			reachable = appendChecksAfter(reachable, p.Body, child, checkCalls)
-			child = p
-		case *ast.CommClause:
-			reachable = appendChecksAfter(reachable, p.Body, child, checkCalls)
-			child = p
 		case *ast.ForStmt:
-			// Falling through the loop body re-runs the whole loop.
-			if p.Body == child {
-				reachable = appendChecksIn(reachable, p.Body, checkCalls)
+			// Falling through the loop body re-runs the body, post, and condition.
+			if cur.Node() == p.Body {
+				appendContained(cur)
 				if p.Post != nil {
-					reachable = appendChecksIn(reachable, p.Post, checkCalls)
+					appendContained(parent.Child(p.Post))
 				}
 				if p.Cond != nil {
-					reachable = appendChecksIn(reachable, p.Cond, checkCalls)
+					appendContained(parent.Child(p.Cond))
 				}
 			}
-			child = p
 		case *ast.RangeStmt:
-			if p.Body == child {
-				reachable = appendChecksIn(reachable, p.Body, checkCalls)
+			if cur.Node() == p.Body {
+				appendContained(cur)
 			}
-			child = p
-		default:
-			child = p
 		}
+		cur = parent
 	}
-}
-
-// appendChecksAfter appends the child-checks contained in the statements that
-// follow `child` in `list`.
-func appendChecksAfter[T ast.Stmt](reachable []*ast.CallExpr, list []T, child ast.Node, checkCalls []*ast.CallExpr) []*ast.CallExpr {
-	idx := -1
-	for i, s := range list {
-		if ast.Node(s) == child {
-			idx = i
-			break
-		}
-	}
-	if idx < 0 {
-		return reachable
-	}
-	for _, s := range list[idx+1:] {
-		reachable = appendChecksIn(reachable, s, checkCalls)
-	}
-	return reachable
-}
-
-// appendChecksIn appends the child-checks whose call lies within the source
-// range of n.
-func appendChecksIn(reachable []*ast.CallExpr, n ast.Node, checkCalls []*ast.CallExpr) []*ast.CallExpr {
-	for _, call := range checkCalls {
-		if n.Pos() <= call.Pos() && call.Pos() < n.End() {
-			reachable = append(reachable, call)
-		}
-	}
-	return reachable
 }
 
 func isSwitchClause(n ast.Node) bool {
@@ -249,26 +215,24 @@ func firstArg(call *ast.CallExpr) ast.Expr {
 	return call.Args[0]
 }
 
-// guardedNil reports whether every path from an enclosing `if` guard to `ret`
-// establishes that `childExpr` is nil, i.e. the return only fires when the
-// child that a later call would check is absent.
-func guardedNil(ret ast.Node, childExpr ast.Expr, parent map[ast.Node]ast.Node) bool {
-	child := ret
-	for {
-		switch p := parent[child].(type) {
+// guardedNil reports whether an enclosing `if` guard proves that `childExpr` is
+// nil on the path to `ret`, i.e. the return only fires when the child that a
+// later call would check is absent.
+func guardedNil(ret inspector.Cursor, childExpr ast.Expr) bool {
+	for cur := ret; ; {
+		parent := cur.Parent()
+		switch p := parent.Node().(type) {
 		case nil, *ast.FuncDecl, *ast.FuncLit:
 			return false
 		case *ast.IfStmt:
-			if p.Body == child && condImpliesNil(p.Cond, childExpr, true) {
+			if cur.Node() == p.Body && condImpliesNil(p.Cond, childExpr, true) {
 				return true
 			}
-			if p.Else == child && condImpliesNil(p.Cond, childExpr, false) {
+			if cur.Node() == p.Else && condImpliesNil(p.Cond, childExpr, false) {
 				return true
 			}
-			child = p
-		default:
-			child = p
 		}
+		cur = parent
 	}
 }
 
@@ -330,24 +294,6 @@ func equalExpr(a, b ast.Expr) bool {
 	default:
 		return false
 	}
-}
-
-// buildParentMap maps each node in fd to its parent node.
-func buildParentMap(fd *ast.FuncDecl) map[ast.Node]ast.Node {
-	parent := make(map[ast.Node]ast.Node)
-	stack := make([]ast.Node, 0, 32)
-	ast.Inspect(fd, func(n ast.Node) bool {
-		if n == nil {
-			stack = stack[:len(stack)-1]
-			return true
-		}
-		if len(stack) > 0 {
-			parent[n] = stack[len(stack)-1]
-		}
-		stack = append(stack, n)
-		return true
-	})
-	return parent
 }
 
 // isChildCheckName reports whether a method name recursively checks a child node.
