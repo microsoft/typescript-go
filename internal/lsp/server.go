@@ -16,6 +16,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/api"
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/fswatch"
@@ -217,6 +218,20 @@ type Server struct {
 	projectProgress *projectLoadingProgress
 
 	startWatchdog func(parentPID int)
+
+	flakeLogging FlakeLogLevel
+}
+
+type FlakeLogLevel int
+
+const (
+	FlakeLogLevelNone FlakeLogLevel = iota
+	FlakeLogLevelLog
+	FlakeLogLevelPanic
+)
+
+func (s *Server) SetFlakeLogging(level FlakeLogLevel) {
+	s.flakeLogging = level
 }
 
 func (s *Server) Session() *project.Session { return s.session }
@@ -1363,7 +1378,46 @@ func (s *Server) handleSetLogVerbosity(_ context.Context, params *lsproto.SetLog
 
 func (s *Server) handleDocumentDiagnostic(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentDiagnosticParams) (lsproto.DocumentDiagnosticResponse, error) {
 	ctx = core.WithCheckerLifetime(ctx, core.CheckerLifetimeDiagnostics)
-	return ls.ProvideDiagnostics(ctx, params.TextDocument.Uri)
+	if s.flakeLogging == FlakeLogLevelNone {
+		return ls.ProvideDiagnostics(ctx, params.TextDocument.Uri)
+	}
+	direct, err := ls.ProvideDiagnostics(ctx, params.TextDocument.Uri)
+	if err != nil {
+		return direct, err
+	}
+	ls.GetProgram().Emit(ctx, compiler.EmitOptions{
+		WriteFile: func(fileName, text string, data *compiler.WriteFileData) error {
+			// do nothing
+			return nil
+		},
+	})
+	secondary, err2 := ls.ProvideDiagnostics(ctx, params.TextDocument.Uri)
+	if err2 != nil {
+		return direct, err
+	}
+	diff, sanitizedDiff := lsproto.CompareDiagnostics(direct.FullDocumentDiagnosticReport.Items, secondary.FullDocumentDiagnosticReport.Items, s.telemetryEnabled)
+	if diff == "" {
+		return direct, err
+	}
+
+	s.logger.Error(diff)
+
+	if s.telemetryEnabled {
+		_ = sendNotification(s, lsproto.TelemetryEventInfo, lsproto.TelemetryEvent{
+			RequestFailureTelemetryEvent: &lsproto.RequestFailureTelemetryEvent{
+				Properties: &lsproto.RequestFailureTelemetryProperties{
+					ErrorCode:     lsproto.ErrorCodeInternalError.String(),
+					RequestMethod: "textDocument.diagnostic.flakeLog",
+					Stack:         sanitizedDiff,
+				},
+			},
+		})
+	}
+
+	if s.flakeLogging == FlakeLogLevelPanic {
+		panic("flaky diagnostic(s) logged:\n" + diff)
+	}
+	return direct, err
 }
 
 func (s *Server) handleHover(ctx context.Context, ls *ls.LanguageService, params *lsproto.HoverParams) (lsproto.HoverResponse, error) {

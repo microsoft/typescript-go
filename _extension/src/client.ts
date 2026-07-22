@@ -161,6 +161,12 @@ export class Client implements vscode.Disposable {
             ?? readNativePreviewConfig<string | undefined>("pprofDir", undefined);
         const pprofArgs = pprofDir ? ["--pprofDir", pprofDir] : [];
 
+        const flakesFlag = vscode.workspace
+            .getConfiguration("js/ts")
+            .get<"panic" | "log" | "never" | "auto">("server.trackFlakyDiagnostics", "auto");
+        const effectiveflakesFlag = flakesFlag === "auto" ? (isInsiders() ? "log" : "never") : flakesFlag;
+        const flakesArgs = effectiveflakesFlag !== "never" ? ["--trackFlakyDiagnostics", effectiveflakesFlag] : [];
+
         const goMemLimit = readNativePreviewConfig<string | undefined>("server.goMemLimit", undefined)
             ?? readNativePreviewConfig<string | undefined>("goMemLimit", undefined);
         const env = { ...process.env };
@@ -178,13 +184,13 @@ export class Client implements vscode.Disposable {
         const serverOptions: ServerOptions = {
             run: {
                 command: this.exe.path,
-                args: ["--lsp", ...pprofArgs],
+                args: ["--lsp", ...pprofArgs, ...flakesArgs],
                 transport: TransportKind.stdio,
                 options: { env },
             },
             debug: {
                 command: this.exe.path,
-                args: ["--lsp", ...pprofArgs],
+                args: ["--lsp", ...pprofArgs, ...flakesArgs],
                 transport: TransportKind.stdio,
                 options: { env },
             },

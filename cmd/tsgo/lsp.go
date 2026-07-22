@@ -25,6 +25,7 @@ func runLSP(args []string) int {
 	_ = pipe
 	socket := flag.String("socket", "", "use socket for communication")
 	_ = socket
+	logFlakes := flag.String("trackFlakyDiagnostics", "log", "perform an additional diagnostics pass to check for and log flaky diagnostics")
 	if err := flag.Parse(args); err != nil {
 		return 2
 	}
@@ -63,6 +64,18 @@ func runLSP(args []string) int {
 		ProgressDelay:      250 * time.Millisecond,
 		SetParentProcessID: newParentProcessWatchdog(ctx, stop),
 	})
+
+	switch *logFlakes {
+	case "log":
+		s.SetFlakeLogging(lsp.FlakeLogLevelLog)
+	case "panic":
+		s.SetFlakeLogging(lsp.FlakeLogLevelPanic)
+	case "none":
+		s.SetFlakeLogging(lsp.FlakeLogLevelNone)
+	default:
+		fmt.Fprintln(os.Stderr, "invalid value for trackFlakyDiagnostics:", *logFlakes)
+		return 1
+	}
 
 	if err := s.Run(ctx); err != nil {
 		fmt.Fprintln(os.Stderr, err)
