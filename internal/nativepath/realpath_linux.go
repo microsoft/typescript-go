@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"sync"
 
 	"golang.org/x/sys/unix"
@@ -29,18 +30,13 @@ import (
 // Falls back to filepath.EvalSymlinks if /proc is not available (e.g. containers
 // or chroots without procfs mounted).
 //
-// The kernel's answer is validated with one invariant: canonicalization may
-// only rename the final path component when that component is a symlink. If
-// the name changed but lstat reports a non-symlink, the filesystem view is
-// being virtualized behind the process's back — e.g. PRoot's link2symlink
-// extension (the default under Termux proot-distro on Android), which
-// emulates hardlinks with symlinks into a hidden store and masks them from
-// lstat/readlink, but cannot mask names the kernel hands back through /proc.
-// In that case we fall back to the per-component walk, which sees the same
-// masked view as glibc's realpath(3) and returns a path that is actually
-// usable by this process. The check costs no extra syscalls on the common
-// path (a string comparison), and one lstat when the final component was
-// renamed.
+// The kernel's answer is validated with one invariant: resolution may only
+// rename the final path component (beyond lexical cleanup and case) when that
+// component is a symlink. If it was renamed but lstat reports a non-symlink,
+// the filesystem view is virtualized behind the process's back (e.g. PRoot's
+// link2symlink); fall back to the per-component walk, which sees the same
+// view as the rest of the process. Costs a string comparison on the common
+// path, one lstat otherwise.
 
 const _procSelfFD = "/proc/self/fd/"
 
@@ -59,11 +55,12 @@ func Realpath(path string) (string, error) {
 		return "", err
 	}
 
-	if filepath.Base(resolved) != filepath.Base(path) {
-		if info, err := os.Lstat(path); err == nil && info.Mode()&os.ModeSymlink == 0 {
-			if walked, err := filepath.EvalSymlinks(path); err == nil {
-				return walked, nil
-			}
+	// Clean so trailing slashes and "." / ".." don't defeat the fast path;
+	// EqualFold so case-normalizing filesystems keep the kernel's answer.
+	cleaned := filepath.Clean(path)
+	if !strings.EqualFold(filepath.Base(resolved), filepath.Base(cleaned)) && !IsSymlinkOrReparsePoint(cleaned) {
+		if walked, err := filepath.EvalSymlinks(path); err == nil {
+			return walked, nil
 		}
 	}
 

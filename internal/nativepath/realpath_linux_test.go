@@ -18,9 +18,10 @@ func mustRealpath(t *testing.T, path string) string {
 func TestRealpath(t *testing.T) {
 	t.Parallel()
 
-	// Canonicalize the temp dir itself so expectations are not polluted by
-	// symlinks higher up in the temp path.
-	tmp := mustRealpath(t, t.TempDir())
+	// Canonicalize the temp dir with an independent oracle so expectations
+	// are not derived from the function under test.
+	tmp, err := filepath.EvalSymlinks(t.TempDir())
+	assert.NilError(t, err)
 
 	t.Run("regular file resolves to itself", func(t *testing.T) {
 		t.Parallel()
@@ -31,8 +32,9 @@ func TestRealpath(t *testing.T) {
 
 	t.Run("directory symlink resolves, file name preserved", func(t *testing.T) {
 		t.Parallel()
-		// Mirrors the pnpm layout: the directory components are symlinked,
-		// the final component keeps its name.
+		// Directory components are symlinked, the final component keeps its
+		// name — the generic layout produced by symlink-based package
+		// managers (e.g. pnpm).
 		target := filepath.Join(tmp, "store", "pkg")
 		assert.NilError(t, os.MkdirAll(target, 0o777))
 		file := filepath.Join(target, "index.d.ts")
@@ -66,6 +68,30 @@ func TestRealpath(t *testing.T) {
 		assert.NilError(t, os.Link(first, second))
 
 		assert.Equal(t, mustRealpath(t, second), second)
+	})
+
+	t.Run("trailing slash on a directory symlink", func(t *testing.T) {
+		t.Parallel()
+		target := filepath.Join(tmp, "trailing-target")
+		assert.NilError(t, os.MkdirAll(target, 0o777))
+		link := filepath.Join(tmp, "trailing-link")
+		assert.NilError(t, os.Symlink(target, link))
+
+		assert.Equal(t, mustRealpath(t, link+"/"), target)
+	})
+
+	t.Run("dot-dot across a directory symlink", func(t *testing.T) {
+		t.Parallel()
+		// Lexically "link/.." names the link's parent; resolved, it names
+		// the target's parent. Exercises the masked-view fallback branch
+		// (final component renamed, not a symlink) on any filesystem.
+		parent := filepath.Join(tmp, "dotdot-parent")
+		target := filepath.Join(parent, "child")
+		assert.NilError(t, os.MkdirAll(target, 0o777))
+		link := filepath.Join(tmp, "dotdot-link")
+		assert.NilError(t, os.Symlink(target, link))
+
+		assert.Equal(t, mustRealpath(t, link+"/.."), parent)
 	})
 
 	t.Run("missing file errors", func(t *testing.T) {

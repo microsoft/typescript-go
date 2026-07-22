@@ -32,14 +32,11 @@ var executableDir = sync.OnceValue(func() string {
 	return tspath.GetDirectoryPath(exe)
 })
 
-// argv0Dir returns the directory the executable was invoked from
-// (os.Args[0], resolved via PATH when bare, then symlink-walked per
-// component). It is the fallback when /proc/self/exe names the executable
-// somewhere its neighbours are not visible from — e.g. under PRoot's
-// link2symlink extension (Termux proot-distro on Android), which executes
-// hardlinked binaries out of a hidden symlink store that only the kernel
-// sees. Returns "" when no usable directory can be derived.
-func argv0Dir() string {
+// argv0Path returns the invocation path of the executable (os.Args[0],
+// resolved via PATH when bare, then symlink-walked), as a fallback for when
+// /proc/self/exe reports a path this process cannot see (e.g. under PRoot's
+// link2symlink). Returns "" when no usable path can be derived.
+func argv0Path() string {
 	if len(os.Args) == 0 || os.Args[0] == "" {
 		return ""
 	}
@@ -54,7 +51,23 @@ func argv0Dir() string {
 	if walked, err := filepath.EvalSymlinks(abs); err == nil {
 		abs = walked
 	}
-	return tspath.GetDirectoryPath(tspath.NormalizeSlashes(abs))
+	return tspath.NormalizeSlashes(abs)
+}
+
+// sameAsExecutable reports whether path names the file the kernel reports as
+// the running executable. True when that file cannot be statted: a masked
+// filesystem leaves nothing to compare against.
+func sameAsExecutable(path string) bool {
+	exe, err := os.Executable()
+	if err != nil {
+		return false
+	}
+	exeInfo, err := os.Stat(exe)
+	if err != nil {
+		return true
+	}
+	info, err := os.Stat(path)
+	return err == nil && os.SameFile(exeInfo, info)
 }
 
 func hasLibDTS(dir string) bool {
@@ -70,11 +83,22 @@ var libPath = sync.OnceValue(func() string {
 		return dir
 	}
 
-	if fallback := argv0Dir(); fallback != "" && fallback != dir && hasLibDTS(fallback) {
-		return fallback
+	// Only trust argv[0] when it names the very file the kernel says is
+	// running; a different file could be another installation with
+	// mismatched libs.
+	fallback := ""
+	if argv0 := argv0Path(); argv0 != "" && sameAsExecutable(argv0) {
+		fallback = tspath.GetDirectoryPath(argv0)
+		if fallback != dir && hasLibDTS(fallback) {
+			return fallback
+		}
 	}
 
-	panic(fmt.Sprintf("bundled: %v does not exist; this executable may be misplaced", tspath.CombinePaths(dir, "lib.d.ts")))
+	msg := fmt.Sprintf("bundled: %v does not exist", tspath.CombinePaths(dir, "lib.d.ts"))
+	if fallback != "" && fallback != dir {
+		msg += fmt.Sprintf(" (also checked %v)", tspath.CombinePaths(fallback, "lib.d.ts"))
+	}
+	panic(msg + "; this executable may be misplaced")
 })
 
 func IsBundled(path string) bool {
