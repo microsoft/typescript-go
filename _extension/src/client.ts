@@ -18,12 +18,12 @@ import {
     TransportKind,
 } from "vscode-languageclient/node";
 
+import { codeActionResolveMiddleware } from "./codeActionResolveMiddleware";
 import { codeLensShowLocationsCommandName } from "./commands";
 import {
     configurationMiddleware,
     sendNotificationMiddleware,
 } from "./configurationMiddleware";
-import { sendRequestMiddleware } from "./formattingMiddleware";
 import { registerMultiDocumentHighlightFeature } from "./languageFeatures/documentHighlight";
 import { registerHoverFeature } from "./languageFeatures/hover";
 import { registerOnAutoInsertFeature } from "./languageFeatures/onAutoInsert";
@@ -97,7 +97,7 @@ export class Client implements vscode.Disposable {
                         return next(event);
                     },
                 },
-                sendRequest: sendRequestMiddleware,
+                ...codeActionResolveMiddleware,
                 sendNotification: sendNotificationMiddleware,
                 provideHover: () => undefined,
             },

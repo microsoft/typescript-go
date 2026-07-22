@@ -2822,8 +2822,6 @@ type CodeActionParams struct {
 
 	// Context carrying additional information.
 	Context *CodeActionContext `json:"context" lsp:"required"`
-
-	FormattingOptions *FormattingOptions `json:"formattingOptions,omitzero"`
 }
 
 func (s *CodeActionParams) TextDocumentURI() DocumentUri {
@@ -9345,8 +9343,18 @@ type TypeHierarchyItemData struct{}
 // InlayHintData is a placeholder for custom data preserved on a InlayHint.
 type InlayHintData struct{}
 
-// CodeActionData is a placeholder for custom data preserved on a CodeAction.
-type CodeActionData struct{}
+// CodeActionData is preserved on a CodeAction between CodeActionRequest and CodeActionResolveRequest.
+type CodeActionData struct {
+	Uri DocumentUri `json:"uri,omitzero"`
+
+	FormattingOptions *FormattingOptions `json:"formattingOptions,omitzero"`
+}
+
+var _ json.UnmarshalerFrom = (*CodeActionData)(nil)
+
+func (s *CodeActionData) UnmarshalJSONFrom(dec *json.Decoder) error {
+	return unmarshalStruct(s, dec)
+}
 
 // WorkspaceSymbolData is a placeholder for custom data preserved on a WorkspaceSymbol.
 type WorkspaceSymbolData struct{}

@@ -2055,7 +2055,6 @@ func (f *FourslashTest) verifyOrganizeImports(t *testing.T, expectedContent stri
 		Context: &lsproto.CodeActionContext{
 			Only: &[]lsproto.CodeActionKind{codeActionKind},
 		},
-		FormattingOptions: formattingOptions,
 	}
 
 	result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
@@ -2075,6 +2074,13 @@ func (f *FourslashTest) verifyOrganizeImports(t *testing.T, expectedContent stri
 	if organizeAction == nil {
 		t.Fatalf("No organize imports code action found")
 	}
+	if formattingOptions != nil {
+		if organizeAction.Data == nil {
+			t.Fatalf("Expected organize imports code action to have data")
+		}
+		organizeAction.Data.FormattingOptions = formattingOptions
+	}
+	organizeAction = sendRequest(t, f, lsproto.CodeActionResolveInfo, organizeAction)
 
 	expectedURI := lsconv.FileNameToDocumentURI(f.activeFilename)
 	if organizeAction.Edit != nil && organizeAction.Edit.Changes != nil {

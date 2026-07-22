@@ -85,7 +85,7 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 		for _, kind := range *params.Context.Only {
 			matchingKinds := getOrganizeImportsActionsForKind(kind)
 			for _, matchingKind := range matchingKinds {
-				organizeAction := l.createOrganizeImportsAction(ctx, program, file, matchingKind, params.FormattingOptions)
+				organizeAction := l.createOrganizeImportsAction(ctx, program, file, matchingKind, params.TextDocument.Uri)
 				actions = append(actions, *organizeAction)
 			}
 
@@ -343,9 +343,42 @@ func (l *LanguageService) createOrganizeImportsAction(
 	program *compiler.Program,
 	file *ast.SourceFile,
 	kind lsproto.CodeActionKind,
-	formattingOptions *lsproto.FormattingOptions,
+	uri lsproto.DocumentUri,
 ) *lsproto.CommandOrCodeAction {
 	title := getOrganizeImportsActionTitle(ctx, kind)
+	action := &lsproto.CodeAction{
+		Title: title,
+		Kind:  &kind,
+	}
+	if lsproto.SupportsCodeActionResolve(lsproto.GetClientCapabilities(ctx)) {
+		action.Data = &lsproto.CodeActionData{
+			Uri: uri,
+		}
+	} else {
+		action.Edit = l.organizeImportsWorkspaceEdit(ctx, program, file, kind, nil)
+	}
+	return &lsproto.CommandOrCodeAction{
+		CodeAction: action,
+	}
+}
+
+func (l *LanguageService) ResolveCodeAction(ctx context.Context, action *lsproto.CodeAction) (*lsproto.CodeAction, error) {
+	if action.Data == nil || action.Data.Uri == "" || action.Kind == nil || !isOrganizeImportsKind(*action.Kind) {
+		return action, nil
+	}
+
+	program, file := l.getProgramAndFile(action.Data.Uri)
+	action.Edit = l.organizeImportsWorkspaceEdit(ctx, program, file, *action.Kind, action.Data.FormattingOptions)
+	return action, nil
+}
+
+func (l *LanguageService) organizeImportsWorkspaceEdit(
+	ctx context.Context,
+	program *compiler.Program,
+	file *ast.SourceFile,
+	kind lsproto.CodeActionKind,
+	formattingOptions *lsproto.FormattingOptions,
+) *lsproto.WorkspaceEdit {
 	formatOptions := l.FormatOptions()
 	if formattingOptions != nil {
 		formatOptions = lsutil.FromLSFormatOptions(formatOptions, formattingOptions)
@@ -357,15 +390,6 @@ func (l *LanguageService) createOrganizeImportsAction(
 		kind,
 		formatOptions,
 	)
-	if len(changes) == 0 {
-		return &lsproto.CommandOrCodeAction{
-			CodeAction: &lsproto.CodeAction{
-				Title: title,
-				Kind:  &kind,
-				Edit:  &lsproto.WorkspaceEdit{Changes: &map[lsproto.DocumentUri][]*lsproto.TextEdit{}},
-			},
-		}
-	}
 
 	lspChanges := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
 	for fileName, edits := range changes {
@@ -373,13 +397,13 @@ func (l *LanguageService) createOrganizeImportsAction(
 		lspChanges[fileURI] = edits
 	}
 
-	return &lsproto.CommandOrCodeAction{
-		CodeAction: &lsproto.CodeAction{
-			Title: title,
-			Kind:  &kind,
-			Edit:  &lsproto.WorkspaceEdit{Changes: &lspChanges},
-		},
-	}
+	return &lsproto.WorkspaceEdit{Changes: &lspChanges}
+}
+
+func isOrganizeImportsKind(kind lsproto.CodeActionKind) bool {
+	return kind == lsproto.CodeActionKindSourceOrganizeImports ||
+		kind == lsproto.CodeActionKindSourceRemoveUnusedImports ||
+		kind == lsproto.CodeActionKindSourceSortImports
 }
 
 // containsErrorCode checks if the error code is in the list

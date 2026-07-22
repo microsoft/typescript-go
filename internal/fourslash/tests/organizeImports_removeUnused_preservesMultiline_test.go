@@ -96,7 +96,7 @@ func TestOrganizeImports_removeUnusedUsesCodeActionFormatOptions(t *testing.T) {
 } from "module";
 
 export { a, c };`
-	f, done := fourslash.NewFourslash(t, nil, content)
+	f, done := fourslash.NewFourslash(t, codeActionResolveCapabilities(), content)
 	defer done()
 	f.VerifyOrganizeImportsWithFormattingOptions(
 		t,
@@ -104,4 +104,15 @@ export { a, c };`
 		lsproto.CodeActionKindSourceRemoveUnusedImports,
 		&lsproto.FormattingOptions{TabSize: 2, InsertSpaces: false},
 	)
+}
+
+func codeActionResolveCapabilities() *lsproto.ClientCapabilities {
+	capabilities := fourslash.GetDefaultCapabilities()
+	capabilities.TextDocument.CodeAction = &lsproto.CodeActionClientCapabilities{
+		DataSupport: new(true),
+		ResolveSupport: &lsproto.ClientCodeActionResolveOptions{
+			Properties: []string{"edit"},
+		},
+	}
+	return capabilities
 }

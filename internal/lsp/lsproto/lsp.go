@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"net/url"
+	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
@@ -295,6 +296,14 @@ func GetClientCapabilities(ctx context.Context) *ResolvedClientCapabilities {
 		return caps
 	}
 	return &ResolvedClientCapabilities{}
+}
+
+func SupportsCodeActionResolve(caps *ResolvedClientCapabilities) bool {
+	if caps == nil {
+		return false
+	}
+	codeActionCapabilities := caps.TextDocument.CodeAction
+	return codeActionCapabilities.DataSupport && slices.Contains(codeActionCapabilities.ResolveSupport.Properties, "edit")
 }
 
 // PreferredMarkupKind returns the first (most preferred) markup kind from the given formats,

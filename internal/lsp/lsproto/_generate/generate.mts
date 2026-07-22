@@ -173,6 +173,22 @@ const customStructures: Structure[] = [
         ],
     },
     {
+        name: "CodeActionData",
+        properties: [
+            {
+                name: "uri",
+                type: { kind: "base", name: "DocumentUri" },
+                omitzeroValue: true,
+            },
+            {
+                name: "formattingOptions",
+                type: { kind: "reference", name: "FormattingOptions" },
+                optional: true,
+            },
+        ],
+        documentation: "CodeActionData is preserved on a CodeAction between CodeActionRequest and CodeActionResolveRequest.",
+    },
+    {
         name: "ExperimentalServerCapabilities",
         properties: [
             {
@@ -955,14 +971,6 @@ function patchAndPreprocessModel() {
                 type: { kind: "base", name: "integer" },
                 optional: true,
                 documentation: "Controls how many levels of type definitions will be expanded. Default is 0.",
-            });
-        }
-
-        if (structure.name === "CodeActionParams") {
-            structure.properties.push({
-                name: "formattingOptions",
-                type: { kind: "reference", name: "FormattingOptions" },
-                optional: true,
             });
         }
 
