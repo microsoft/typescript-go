@@ -53,8 +53,10 @@
 		}
 	}
 	
-	// checkEarlyReturn returns before its child is ever checked, so both returns
-	// are flagged.
+	// checkEarlyReturn returns before its child is ever checked.
+	// The first return is flagged as an issue since it doesn't check
+	// children, while the second is not since it checks nilness, presumably to prove
+	// that the children don't exist to check.
 	func (c *Checker) checkEarlyReturn(node *Node) {
 		if c.grammarError(node) {
 			return
