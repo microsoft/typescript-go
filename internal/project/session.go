@@ -2,6 +2,7 @@ package project
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"maps"
 	"math"
@@ -33,6 +34,9 @@ import (
 )
 
 type UpdateReason int
+
+// ErrNoProjectForUnknownScriptKind identifies requests for unsupported foreign files.
+var ErrNoProjectForUnknownScriptKind = errors.New("no project for unknown script kind")
 
 const (
 	UpdateReasonUnknown UpdateReason = iota
@@ -371,7 +375,7 @@ func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, ve
 	})
 	s.pendingFileChangesMu.Unlock()
 
-	// Editing a foreign (content-mapped) file changes the program like any source edit, but the client's
+	// Editing a content-mapped file changes the program like any source edit, but the client's
 	// pull-diagnostics machinery won't re-request diagnostics for dependent files: the foreign file is not
 	// in the diagnostic provider's document selector, so a change to it never triggers the client's
 	// inter-file re-pull. Prompt a workspace refresh so dependents update. We skip the debounce here so the
@@ -388,7 +392,7 @@ func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, ve
 // isContentMapperFile reports whether uri is a foreign file handled by a configured content mapper, based
 // on the extensions currently registered with the client for text document synchronization.
 func (s *Session) isContentMapperFile(uri lsproto.DocumentUri) bool {
-	contentMappers := s.Snapshot().contentMappers()
+	contentMappers := s.Snapshot().ConfigFileRegistry.contentMappers()
 	return contentMappers != nil && len(contentMappers.extensions) > 0 &&
 		tspath.FileExtensionIsOneOf(uri.FileName(), contentMappers.extensions)
 }
@@ -1041,6 +1045,9 @@ func (s *Session) getSnapshotAndDefaultProject(ctx context.Context, uri lsproto.
 	)
 	project := snapshot.GetDefaultProject(uri)
 	if project == nil {
+		if file := snapshot.GetFile(uri.FileName()); file != nil && file.Kind() == core.ScriptKindUnknown {
+			return nil, nil, nil, fmt.Errorf("%w: no project found for URI %s", ErrNoProjectForUnknownScriptKind, uri)
+		}
 		return nil, nil, nil, fmt.Errorf("no project found for URI %s", uri)
 	}
 	return snapshot, project, ls.NewLanguageService(project.configFilePath, project.GetProgram(), snapshot, uri.FileName()), nil
@@ -1298,12 +1305,12 @@ func (s *Session) adoptSnapshotChange(baseSnapshot, newSnapshot *Snapshot) {
 		// Session hasn't moved on; adopt the new snapshot. The clone's initial
 		// ref is transferred to become the session's ref for its current snapshot.
 		s.snapshot = newSnapshot
+		oldSnapshot.Deref(s)
 		s.snapshotMu.Unlock()
 		if s.options.LoggingEnabled {
 			s.logger.Logf("Adopted snapshot %d (parent %d) as current session snapshot (replacing %d)", newSnapshot.id, newSnapshot.parentId, oldSnapshot.id)
 			s.logger.Log(newSnapshot.builderLogs.String())
 		}
-		oldSnapshot.Deref(s)
 	} else {
 		// Session has moved on to a newer snapshot; discard this one.
 		// Release the clone's initial ref. If a handler is still using
@@ -1470,7 +1477,7 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 // with those extensions. This is how a foreign file (e.g. a `.vue`) begins flowing to the server once a
 // config that maps it is discovered.
 func (s *Session) updateContentMapperRegistrations(ctx context.Context, snapshot *Snapshot) error {
-	contentMappers := snapshot.contentMappers()
+	contentMappers := snapshot.ConfigFileRegistry.contentMappers()
 	extensions := contentMappers.extensions
 
 	s.contentMapperRegistrationMu.Lock()

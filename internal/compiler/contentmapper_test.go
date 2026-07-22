@@ -20,6 +20,10 @@ type fakeContentMapperHost struct {
 	transform func(fileName string, content string) (contentmapper.Result, error)
 }
 
+func (fakeContentMapperHost) Acquire(mappers []*contentmapper.Mapper) func() {
+	return func() {}
+}
+
 func (r fakeContentMapperHost) Transform(mapper *contentmapper.Mapper, request contentmapper.Request) (contentmapper.Result, error) {
 	return r.transform(request.FileName, request.Content)
 }

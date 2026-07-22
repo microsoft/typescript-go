@@ -85,6 +85,8 @@ type mapperConn struct {
 	// err, when non-nil, records that this mapper failed to start; it is cached so we do not repeatedly
 	// try (and fail) to spawn a broken mapper.
 	err error
+	// refs is the number of active Acquire calls retaining this identity.
+	refs int
 }
 
 var _ Host = (*host)(nil)
@@ -133,6 +135,30 @@ func newWithDial(ctx context.Context, dial dialFunc) *host {
 	return h
 }
 
+func (h *host) Acquire(mappers []*Mapper) func() {
+	seen := make(map[string]struct{}, len(mappers))
+	identities := make([]string, 0, len(mappers))
+	h.mu.Lock()
+	if h.conns != nil {
+		for _, mapper := range mappers {
+			identity := mapper.Identity()
+			if _, ok := seen[identity]; ok {
+				continue
+			}
+			seen[identity] = struct{}{}
+			identities = append(identities, identity)
+			entry := h.conns[identity]
+			if entry == nil {
+				entry = &mapperConn{}
+				h.conns[identity] = entry
+			}
+			entry.refs++
+		}
+	}
+	h.mu.Unlock()
+	return sync.OnceFunc(func() { h.release(identities) })
+}
+
 // Transform sends the file's content to the mapper's process and decodes the transformed result. The
 // mapper receives the subset of the project's compiler options it declared in initialize (an empty
 // object if it declared none) and the project's tsconfig file name.
@@ -163,34 +189,69 @@ func (h *host) Close() error {
 	h.stop()
 	h.cancel()
 	h.mu.Lock()
-	defer h.mu.Unlock()
-	var errs []error
+	var closers []io.Closer
 	for _, mc := range h.conns {
 		if mc.closer != nil {
-			if err := mc.closer.Close(); err != nil {
-				errs = append(errs, err)
-			}
+			closers = append(closers, mc.closer)
 		}
 	}
 	h.conns = nil
+	h.mu.Unlock()
+	var errs []error
+	for _, closer := range closers {
+		if err := closer.Close(); err != nil {
+			errs = append(errs, err)
+		}
+	}
 	return errors.Join(errs...)
 }
 
 // connFor returns the connection for a mapper's identity, spawning its process on first use. Mappers
-// sharing an identity share a single process; the dial is serialized so an identity is spawned once.
+// sharing an identity share a single process.
 func (h *host) connFor(mapper *Mapper) (ipc.Conn, error) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 	if h.conns == nil {
 		return nil, errors.New("content mapper host is closed")
 	}
-	key := mapper.Identity()
-	if mc, ok := h.conns[key]; ok {
-		return mc.conn, mc.err
+	identity := mapper.Identity()
+	entry := h.conns[identity]
+	if entry == nil {
+		entry = &mapperConn{}
+		h.conns[identity] = entry
+	}
+	if entry.conn != nil || entry.err != nil {
+		return entry.conn, entry.err
 	}
 	conn, closer, err := h.dial(h.ctx, mapper)
-	h.conns[key] = &mapperConn{conn: conn, closer: closer, err: err}
+	entry.conn = conn
+	entry.closer = closer
+	entry.err = err
 	return conn, err
+}
+
+func (h *host) release(identities []string) {
+	var closers []io.Closer
+	h.mu.Lock()
+	if h.conns != nil {
+		for _, identity := range identities {
+			entry := h.conns[identity]
+			if entry == nil {
+				continue
+			}
+			entry.refs--
+			if entry.refs == 0 {
+				delete(h.conns, identity)
+				if entry.closer != nil {
+					closers = append(closers, entry.closer)
+				}
+			}
+		}
+	}
+	h.mu.Unlock()
+	for _, closer := range closers {
+		_ = closer.Close()
+	}
 }
 
 func handshake(ctx context.Context, conn ipc.Conn) error {

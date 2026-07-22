@@ -37,6 +37,8 @@ export const title = "Profile";
 
 	var mu sync.Mutex
 	var registrations []*lsproto.Registration
+	var unregistrations []*lsproto.Unregistration
+	unregisteredSignal := make(chan struct{}, 1)
 	onServerRequest := func(_ context.Context, req *lsproto.RequestMessage) *lsproto.ResponseMessage {
 		switch req.Method {
 		case lsproto.MethodWorkspaceConfiguration:
@@ -49,6 +51,12 @@ export const title = "Profile";
 			mu.Unlock()
 			return &lsproto.ResponseMessage{ID: req.ID, JSONRPC: req.JSONRPC, Result: lsproto.Null{}}
 		case lsproto.MethodClientUnregisterCapability:
+			params, err := lsproto.UnmarshalParams[*lsproto.UnregistrationParams](req)
+			assert.NilError(t, err)
+			mu.Lock()
+			unregistrations = append(unregistrations, params.Unregisterations...)
+			mu.Unlock()
+			unregisteredSignal <- struct{}{}
 			return &lsproto.ResponseMessage{ID: req.ID, JSONRPC: req.JSONRPC, Result: lsproto.Null{}}
 		default:
 			return nil
@@ -111,4 +119,60 @@ export const title = "Profile";
 	})
 	assert.Assert(t, ok && hoverMsg.AsResponse().Error == nil)
 	assert.Assert(t, hover.Hover != nil, "expected hover after first foreign didOpen")
+
+	assert.NilError(t, fs.WriteFile("/home/project/tsconfig.json", `{
+		"compilerOptions": { "target": "es2020", "module": "esnext", "moduleResolution": "bundler", "strict": true }
+	}`))
+	lsptestutil.SendNotification(t, client, lsproto.WorkspaceDidChangeWatchedFilesInfo, &lsproto.DidChangeWatchedFilesParams{
+		Changes: []*lsproto.FileEvent{{Uri: "file:///home/project/tsconfig.json", Type: lsproto.FileChangeTypeChanged}},
+	})
+	hoverMsg, hover, _ = lsptestutil.SendRequest(t, client, lsproto.TextDocumentHoverInfo, &lsproto.HoverParams{
+		TextDocument: lsproto.TextDocumentIdentifier{Uri: uri},
+		Position:     lsproto.Position{Line: 3, Character: 15},
+	})
+	assert.Assert(t, hoverMsg != nil && hoverMsg.AsResponse().Error == nil, "request before didClose should return a null result")
+	assert.Assert(t, hover.Hover == nil)
+	diagnosticMsg, diagnostics, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentDiagnosticInfo, &lsproto.DocumentDiagnosticParams{
+		TextDocument: lsproto.TextDocumentIdentifier{Uri: uri},
+	})
+	assert.Assert(t, ok && diagnosticMsg.AsResponse().Error == nil, "diagnostics before didClose should return an empty report")
+	assert.Assert(t, diagnostics.FullDocumentDiagnosticReport != nil)
+	assert.Equal(t, len(diagnostics.FullDocumentDiagnosticReport.Items), 0)
+	completionMsg, completion, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentCompletionInfo, &lsproto.CompletionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{Uri: uri},
+		Position:     lsproto.Position{Line: 3, Character: 15},
+	})
+	assert.Assert(t, ok && completionMsg.AsResponse().Error == nil)
+	assert.Assert(t, completion.Items == nil && completion.List == nil)
+	referencesMsg, references, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentReferencesInfo, &lsproto.ReferenceParams{
+		TextDocument: lsproto.TextDocumentIdentifier{Uri: uri},
+		Position:     lsproto.Position{Line: 3, Character: 15},
+		Context:      &lsproto.ReferenceContext{IncludeDeclaration: true},
+	})
+	assert.Assert(t, ok && referencesMsg.AsResponse().Error == nil)
+	assert.Assert(t, references.Locations == nil)
+	renameMsg, rename, ok := lsptestutil.SendRequest(t, client, lsproto.TextDocumentRenameInfo, &lsproto.RenameParams{
+		TextDocument: lsproto.TextDocumentIdentifier{Uri: uri},
+		Position:     lsproto.Position{Line: 3, Character: 15},
+		NewName:      "renamed",
+	})
+	assert.Assert(t, ok && renameMsg.AsResponse().Error == nil)
+	assert.Assert(t, rename.WorkspaceEdit == nil)
+	<-unregisteredSignal
+
+	mu.Lock()
+	unregistered := append([]*lsproto.Unregistration(nil), unregistrations...)
+	mu.Unlock()
+	assert.Assert(t, len(unregistered) > 0, "expected dynamic unregistration")
+	var foundDidClose bool
+	for _, unregistration := range unregistered {
+		if unregistration.Id == "content-mapper-did-close" {
+			foundDidClose = true
+		}
+	}
+	assert.Assert(t, foundDidClose, "expected didClose unregistration")
+
+	lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidCloseInfo, &lsproto.DidCloseTextDocumentParams{
+		TextDocument: lsproto.TextDocumentIdentifier{Uri: uri},
+	})
 }

@@ -61,6 +61,7 @@ func (fakeMapper) HandleNotification(ctx context.Context, method string, params 
 // tests can assert process consolidation. When handler is nil it serves a fakeMapper.
 type fakeSpawner struct {
 	spawns  atomic.Int32
+	closes  atomic.Int32
 	handler ipc.Handler
 }
 
@@ -72,7 +73,18 @@ func (s *fakeSpawner) Spawn(command []string, dir string) (io.ReadWriteCloser, e
 	}
 	client, server := net.Pipe()
 	go func() { _ = ipc.NewAsyncConn(server, handler).Run(context.Background()) }()
-	return client, nil
+	return &countingReadWriteCloser{ReadWriteCloser: client, closes: &s.closes}, nil
+}
+
+type countingReadWriteCloser struct {
+	io.ReadWriteCloser
+	closes *atomic.Int32
+	once   sync.Once
+}
+
+func (c *countingReadWriteCloser) Close() error {
+	c.once.Do(func() { c.closes.Add(1) })
+	return c.ReadWriteCloser.Close()
 }
 
 func TestRunnerTransform(t *testing.T) {
@@ -106,6 +118,41 @@ func TestRunnerConsolidatesByIdentity(t *testing.T) {
 		assert.NilError(t, err)
 	}
 	assert.Equal(t, spawner.spawns.Load(), int32(2), "expected one process per identity")
+}
+
+func TestRunnerLeaseLifecycle(t *testing.T) {
+	t.Parallel()
+	var spawner fakeSpawner
+	r := contentmapper.NewHost(t.Context(), &spawner)
+	defer r.Close()
+
+	vueA := &contentmapper.Mapper{Definition: contentmapper.Definition{Package: "a"}, Manifest: contentmapper.Manifest{Name: "vue", Version: "1.0.0", Exec: []string{"vue-mapper"}}}
+	vueB := &contentmapper.Mapper{Definition: contentmapper.Definition{Package: "b"}, Manifest: contentmapper.Manifest{Name: "vue", Version: "1.0.0", Exec: []string{"vue-mapper"}}}
+	svelte := &contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "svelte", Version: "2.0.0", Exec: []string{"svelte-mapper"}}}
+
+	releaseVueA := r.Acquire([]*contentmapper.Mapper{vueA, vueA})
+	releaseVueB := r.Acquire([]*contentmapper.Mapper{vueB})
+	releaseSvelte := r.Acquire([]*contentmapper.Mapper{svelte})
+	for _, mapper := range []*contentmapper.Mapper{vueA, svelte} {
+		_, err := r.Transform(mapper, contentmapper.Request{FileName: "/x", Content: "y"})
+		assert.NilError(t, err)
+	}
+	assert.Equal(t, spawner.spawns.Load(), int32(2))
+
+	releaseVueA()
+	assert.Equal(t, spawner.closes.Load(), int32(0), "shared vue process should remain owned")
+	releaseSvelte()
+	assert.Equal(t, spawner.closes.Load(), int32(1), "final release should close the process")
+	releaseVueB()
+	releaseVueB()
+	assert.Equal(t, spawner.closes.Load(), int32(2), "final vue owner should close once")
+
+	releaseNew := r.Acquire([]*contentmapper.Mapper{vueA})
+	_, err := r.Transform(vueA, contentmapper.Request{FileName: "/x", Content: "y"})
+	assert.NilError(t, err)
+	assert.Equal(t, spawner.spawns.Load(), int32(3), "reacquiring should spawn a fresh process lazily")
+	releaseNew()
+	assert.Equal(t, spawner.closes.Load(), int32(3))
 }
 
 // recordingMapper captures (as JSON) the options it receives on transform so a test can assert the host

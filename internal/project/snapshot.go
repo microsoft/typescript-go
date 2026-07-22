@@ -5,12 +5,10 @@ import (
 	"fmt"
 	"maps"
 	"slices"
-	"sync"
 	"sync/atomic"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/collections"
-	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
@@ -44,16 +42,10 @@ type Snapshot struct {
 	autoImportsWatch                   *WatchedFiles[map[tspath.Path]string]
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	userPreferences                    lsutil.UserPreferences
-	contentMappersOnce                 sync.Once
-	contentMappersValue                *snapshotContentMappers
+	releaseContentMappers              func()
 
 	builderLogs *logging.LogTree
 	apiError    error
-}
-
-type snapshotContentMappers struct {
-	extensions []string
-	mappers    []*contentmapper.Mapper
 }
 
 // NewSnapshot initializes a snapshot with refCount 1.
@@ -131,34 +123,6 @@ func (s *Snapshot) Converters() *lsconv.Converters {
 
 func (s *Snapshot) AutoImportRegistry() *autoimport.Registry {
 	return s.AutoImports
-}
-
-func (s *Snapshot) contentMappers() *snapshotContentMappers {
-	s.contentMappersOnce.Do(func() {
-		var seenExtensions collections.Set[string]
-		var seenMappers collections.Set[*contentmapper.Mapper]
-		var extensions []string
-		var mappers []*contentmapper.Mapper
-		for _, path := range slices.Sorted(maps.Keys(s.ConfigFileRegistry.configs)) {
-			entry := s.ConfigFileRegistry.configs[path]
-			if entry.commandLine == nil {
-				continue
-			}
-			for _, mapper := range entry.commandLine.ContentMappers() {
-				if seenMappers.AddIfAbsent(mapper) {
-					mappers = append(mappers, mapper)
-				}
-				for _, extension := range mapper.Extensions {
-					if seenExtensions.AddIfAbsent(extension) {
-						extensions = append(extensions, extension)
-					}
-				}
-			}
-		}
-		slices.Sort(extensions)
-		s.contentMappersValue = &snapshotContentMappers{extensions: extensions, mappers: mappers}
-	})
-	return s.contentMappersValue
 }
 
 func (s *Snapshot) ID() uint64 {
@@ -328,7 +292,7 @@ func (s *Snapshot) Clone(
 	}
 
 	start := time.Now()
-	contentMappers := s.contentMappers()
+	contentMappers := s.ConfigFileRegistry.contentMappers()
 	fs := newSnapshotFSBuilder(session.fs.fs, s.fs.overlays, overlays, s.fs.diskFiles, s.fs.diskDirectories, s.fs.nodeModulesRealpathAliases, session.options.PositionEncoding, s.toPath)
 	if change.fileChanges.HasExcessiveWatchEvents() {
 		invalidateStart := time.Now()
@@ -383,7 +347,6 @@ func (s *Snapshot) Clone(
 		session.parseCache,
 		session.extendedConfigCache,
 		session.contentMapperHost,
-		contentMappers,
 		session.client,
 	)
 
@@ -509,6 +472,9 @@ func (s *Snapshot) Clone(
 	newSnapshot.parentId = s.id
 	newSnapshot.ProjectCollection = projectCollection
 	newSnapshot.ConfigFileRegistry = configFileRegistry
+	if session.contentMapperHost != nil {
+		newSnapshot.releaseContentMappers = session.contentMapperHost.Acquire(newSnapshot.ConfigFileRegistry.contentMappers().mappers)
+	}
 	newSnapshot.builderLogs = logger
 	newSnapshot.apiError = apiError
 
@@ -584,6 +550,9 @@ func (s *Snapshot) Deref(session *Session) {
 }
 
 func (s *Snapshot) dispose(session *Session) {
+	if s.releaseContentMappers != nil {
+		defer s.releaseContentMappers()
+	}
 	for _, project := range s.ProjectCollection.Projects() {
 		if project.Program != nil && session.programCounter.Deref(project.Program) {
 			// This program is no longer referenced by any snapshot.

@@ -896,6 +896,12 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 			idStr = " (" + req.ID.String() + ")"
 		}
 		if err != nil {
+			if resp, ok := contentMapperFallbackResponse(req.Method, err); ok {
+				if !s.logger.IsTracing() {
+					s.logger.Info("handled method '", req.Method, "'", idStr, " in ", time.Since(start))
+				}
+				return nil, s.sendResult(req.ID, resp)
+			}
 			if _, ok := errors.AsType[userFacingRequestFailedError](err); !ok {
 				s.logger.Error("error handling method '", req.Method, "'", idStr, ": ", err)
 			} else if !s.logger.IsTracing() {
@@ -927,6 +933,36 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 		return nil, s.sendError(req.ID, lsproto.ErrorCodeInvalidRequest)
 	}
 	return nil, nil
+}
+
+// contentMapperFallbackResponse returns an empty response for requests made for
+// unknown file types not handled by any content mapper. This typically serves a
+// short window in time between when the server has unregistered content mapper
+// extensions and when the client has stopped sending requests for those file types.
+func contentMapperFallbackResponse(method lsproto.Method, err error) (any, bool) {
+	if !errors.Is(err, project.ErrNoProjectForUnknownScriptKind) {
+		return nil, false
+	}
+	switch method {
+	case lsproto.MethodTextDocumentDiagnostic:
+		return lsproto.DocumentDiagnosticResponse{
+			FullDocumentDiagnosticReport: &lsproto.RelatedFullDocumentDiagnosticReport{
+				Items: []*lsproto.Diagnostic{},
+			},
+		}, true
+	case lsproto.MethodTextDocumentHover,
+		lsproto.MethodTextDocumentSignatureHelp,
+		lsproto.MethodTextDocumentDefinition,
+		lsproto.MethodTextDocumentTypeDefinition,
+		lsproto.MethodTextDocumentImplementation,
+		lsproto.MethodTextDocumentReferences,
+		lsproto.MethodTextDocumentDocumentHighlight,
+		lsproto.MethodTextDocumentCompletion,
+		lsproto.MethodTextDocumentRename:
+		return lsproto.Null{}, true
+	default:
+		return nil, false
+	}
 }
 
 // handlerMap maps LSP method to a handler function. The handler function executes any work that must be done synchronously
@@ -1558,9 +1594,9 @@ func (s *Server) handleSetLogVerbosity(_ context.Context, params *lsproto.SetLog
 	return nil
 }
 
-func (s *Server) handleDocumentDiagnostic(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentDiagnosticParams) (lsproto.DocumentDiagnosticResponse, error) {
+func (s *Server) handleDocumentDiagnostic(ctx context.Context, languageService *ls.LanguageService, params *lsproto.DocumentDiagnosticParams) (lsproto.DocumentDiagnosticResponse, error) {
 	ctx = core.WithCheckerLifetime(ctx, core.CheckerLifetimeDiagnostics)
-	return ls.ProvideDiagnostics(ctx, params.TextDocument.Uri)
+	return languageService.ProvideDiagnostics(ctx, params.TextDocument.Uri)
 }
 
 func (s *Server) handleHover(ctx context.Context, ls *ls.LanguageService, params *lsproto.HoverParams) (lsproto.HoverResponse, error) {

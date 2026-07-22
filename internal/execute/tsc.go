@@ -294,6 +294,9 @@ func performIncrementalCompilation(
 	testing tsc.CommandLineTesting,
 ) tsc.CommandLineResult {
 	contentMapperHost := tsc.NewContentMapperHost(ctx, sys, config.CompilerOptions())
+	if contentMapperHost != nil {
+		defer contentMapperHost.Acquire(config.ContentMappers())()
+	}
 	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing), contentMapperHost)
 	buildInfoReadStart := sys.Now()
 	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host), host)
@@ -345,6 +348,9 @@ func performCompilation(
 	testing tsc.CommandLineTesting,
 ) tsc.CommandLineResult {
 	contentMapperHost := tsc.NewContentMapperHost(ctx, sys, config.CompilerOptions())
+	if contentMapperHost != nil {
+		defer contentMapperHost.Acquire(config.ContentMappers())()
+	}
 	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing), contentMapperHost)
 
 	tr := startTracingIfNeeded(sys, config, testing)

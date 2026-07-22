@@ -36,6 +36,7 @@ type configFileRegistryBuilder struct {
 	configs                     *dirty.SyncMap[tspath.Path, *configFileEntry]
 	configFileNames             *dirty.Map[tspath.Path, *configFileNames]
 	customConfigFileNameChanged bool
+	allConfiguredContentMappers *configuredContentMappers
 }
 
 func newConfigFileRegistryBuilder(
@@ -58,6 +59,7 @@ func newConfigFileRegistryBuilder(
 		snapshotID:                   snapshotID,
 		customConfigFileName:         customConfigFileName,
 		customConfigFileNameChanged:  customConfigFileName != oldConfigFileRegistry.customConfigFileName,
+		allConfiguredContentMappers:  oldConfigFileRegistry.contentMappers(),
 
 		configs:         dirty.NewSyncMap(oldConfigFileRegistry.configs),
 		configFileNames: dirty.NewMap(oldConfigFileRegistry.configFileNames),
@@ -79,6 +81,7 @@ func (c *configFileRegistryBuilder) Finalize() *ConfigFileRegistry {
 	if configs, changedConfigs := c.configs.Finalize(); changedConfigs {
 		ensureCloned()
 		newRegistry.configs = configs
+		newRegistry.allConfiguredContentMappers = c.contentMappers()
 	}
 
 	if configFileNames, changedNames := c.configFileNames.Finalize(); changedNames {
@@ -92,6 +95,20 @@ func (c *configFileRegistryBuilder) Finalize() *ConfigFileRegistry {
 	}
 
 	return newRegistry
+}
+
+func (c *configFileRegistryBuilder) contentMappers() *configuredContentMappers {
+	if c.allConfiguredContentMappers == nil {
+		var commandLines []*tsoptions.ParsedCommandLine
+		c.configs.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *configFileEntry]) bool {
+			if commandLine := entry.Value().commandLine; commandLine != nil {
+				commandLines = append(commandLines, commandLine)
+			}
+			return true
+		})
+		c.allConfiguredContentMappers = collectConfiguredContentMappers(commandLines)
+	}
+	return c.allConfiguredContentMappers
 }
 
 func (c *configFileRegistryBuilder) findOrAcquireConfigForFile(
@@ -118,13 +135,13 @@ func (c *configFileRegistryBuilder) findOrAcquireConfigForFile(
 // pending reload state. This function should only be called from within the
 // Change() method of a dirty map entry.
 func (c *configFileRegistryBuilder) reloadIfNeeded(entry *configFileEntry, fileName string, path tspath.Path, logger *logging.LogTree) {
+	oldCommandLine := entry.commandLine
 	switch entry.pendingReload {
 	case PendingReloadFileNames:
 		logger.Log("Reloading file names for config: " + fileName)
 		entry.commandLine = entry.commandLine.ReloadFileNamesOfParsedCommandLine(c.fs)
 	case PendingReloadFull:
 		logger.Log("Loading config file: " + fileName)
-		oldCommandLine := entry.commandLine
 		// When the workspace is trusted, enable external content mappers so a config's contentMappers pass
 		// the dangerouslyLoadExternalPlugins gate and register, as they would with the CLI flag.
 		var existingOptions *core.CompilerOptions
@@ -139,6 +156,9 @@ func (c *configFileRegistryBuilder) reloadIfNeeded(entry *configFileEntry, fileN
 		return
 	}
 	entry.pendingReload = PendingReloadNone
+	if oldCommandLine != entry.commandLine {
+		c.allConfiguredContentMappers = nil
+	}
 }
 
 func (c *configFileRegistryBuilder) updateExtendingConfigs(extendingConfigPath tspath.Path, newCommandLine *tsoptions.ParsedCommandLine, oldCommandLine *tsoptions.ParsedCommandLine) {
@@ -730,10 +750,16 @@ func (c *configFileRegistryBuilder) GetExtendedConfig(fileName string, path tspa
 }
 
 func (c *configFileRegistryBuilder) Cleanup() {
+	changed := false
 	c.configs.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *configFileEntry]) bool {
 		entry.DeleteIf(func(value *configFileEntry) bool {
-			return len(value.retainingProjects) == 0 && len(value.retainingOpenFiles) == 0 && len(value.retainingConfigs) == 0
+			shouldDelete := len(value.retainingProjects) == 0 && len(value.retainingOpenFiles) == 0 && len(value.retainingConfigs) == 0
+			changed = changed || shouldDelete
+			return shouldDelete
 		})
 		return true
 	})
+	if changed {
+		c.allConfiguredContentMappers = nil
+	}
 }

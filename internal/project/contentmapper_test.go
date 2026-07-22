@@ -3,10 +3,15 @@ package project_test
 import (
 	"context"
 	"errors"
+	"fmt"
+	"io"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -14,6 +19,32 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
 	"gotest.tools/v3/assert"
 )
+
+type recordingContentMapperSpawner struct {
+	inner  contentmapper.Spawner
+	spawns atomic.Int32
+	closes atomic.Int32
+}
+
+func (s *recordingContentMapperSpawner) Spawn(command []string, dir string) (io.ReadWriteCloser, error) {
+	process, err := s.inner.Spawn(command, dir)
+	if err != nil {
+		return nil, err
+	}
+	s.spawns.Add(1)
+	return &recordingContentMapperProcess{ReadWriteCloser: process, closes: &s.closes}, nil
+}
+
+type recordingContentMapperProcess struct {
+	io.ReadWriteCloser
+	closes *atomic.Int32
+	once   sync.Once
+}
+
+func (p *recordingContentMapperProcess) Close() error {
+	p.once.Do(func() { p.closes.Add(1) })
+	return p.ReadWriteCloser.Close()
+}
 
 func TestContentMapperInProject(t *testing.T) {
 	t.Parallel()
@@ -226,6 +257,128 @@ func TestContentMapperOpenFileExcludedByConfigChange(t *testing.T) {
 	assert.Assert(t, boxFile != nil, "expected the open app.box in the inferred project")
 	assert.Assert(t, boxFile.ContentMapper() != "", "expected app.box to retain its content mapper")
 	assert.Assert(t, !strings.Contains(boxFile.Text(), "#{target}"), "expected app.box to be transformed: %q", boxFile.Text())
+}
+
+func TestContentMapperRemovalWithOpenFile(t *testing.T) {
+	t.Parallel()
+	files := map[string]any{
+		"/home/project/tsconfig.json": `{
+			"compilerOptions": { "target": "es2020", "module": "esnext", "moduleResolution": "bundler" },
+			"contentMappers": [ { "package": "mapper", "extensions": [".box"] } ]
+		}`,
+		"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.TransformingMapper),
+		"/home/project/app.box":                          "export const version = #{target};\n",
+	}
+	init, utils := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
+		CurrentDirectory:               "/home/project",
+		DefaultLibraryPath:             bundled.LibPath(),
+		TypingsLocation:                projecttestutil.TestTypingsLocation,
+		PositionEncoding:               lsproto.PositionEncodingKindUTF8,
+		DangerouslyLoadExternalPlugins: true,
+	}, nil)
+	spawner := &recordingContentMapperSpawner{inner: contentmappertest.NewSpawner()}
+	init.Spawner = spawner
+	session := project.NewSession(init)
+	defer session.Close()
+
+	ctx := context.Background()
+	boxURI := lsproto.DocumentUri("file:///home/project/app.box")
+	session.DidOpenFile(ctx, boxURI, 1, files["/home/project/app.box"].(string), lsproto.LanguageKind("box"))
+	languageService, err := session.GetLanguageService(ctx, boxURI)
+	assert.NilError(t, err)
+	assert.Assert(t, languageService.GetProgram().GetSourceFile("/home/project/app.box").ContentMapper() != "")
+	assert.Equal(t, spawner.spawns.Load(), int32(1))
+	assert.Equal(t, spawner.closes.Load(), int32(0))
+	for version := int32(2); version <= 4; version++ {
+		session.DidChangeFile(ctx, boxURI, version, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+			{WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{Text: fmt.Sprintf("export const version = %d;\n", version)}},
+		})
+		_, err = session.GetLanguageService(ctx, boxURI)
+		assert.NilError(t, err)
+		assert.Equal(t, spawner.spawns.Load(), int32(1), "snapshot clone should reuse the mapper process")
+		assert.Equal(t, spawner.closes.Load(), int32(0), "snapshot clone should preserve overlapping ownership")
+	}
+	releaseOldSnapshot, err := session.WithLanguageServiceAndSnapshot(ctx, boxURI, func(_ *ls.LanguageService, _ *project.Snapshot) (func() error, error) {
+		return func() error { return nil }, nil
+	})
+	assert.NilError(t, err)
+
+	assert.NilError(t, utils.FS().WriteFile("/home/project/tsconfig.json", `{
+		"compilerOptions": { "target": "es2020", "module": "esnext", "moduleResolution": "bundler" }
+	}`))
+	session.DidChangeWatchedFiles(ctx, []*lsproto.FileEvent{{
+		Uri:  "file:///home/project/tsconfig.json",
+		Type: lsproto.FileChangeTypeChanged,
+	}})
+
+	_, err = session.GetLanguageService(ctx, boxURI)
+	assert.ErrorContains(t, err, "no project found")
+	assert.Assert(t, session.Snapshot().GetFile("/home/project/app.box") != nil, "overlay should remain until didClose")
+	assert.Assert(t, session.Snapshot().GetDefaultProject(boxURI) == nil, "unsupported foreign file should not be in a project")
+
+	session.WaitForBackgroundTasks()
+	assert.Equal(t, spawner.closes.Load(), int32(0), "live old snapshot should retain the mapper process")
+	assert.NilError(t, releaseOldSnapshot())
+	assert.Equal(t, spawner.closes.Load(), int32(1), "process should close after the final live snapshot is released")
+	calls := utils.Client().RegisterContentMapperExtensionsCalls()
+	assert.Assert(t, len(calls) > 0, "expected content mapper registration updates")
+	assert.Equal(t, len(calls[len(calls)-1].Extensions), 0, "expected content mapper extensions to be unregistered")
+
+	session.DidCloseFile(ctx, boxURI)
+	_, err = session.GetLanguageService(ctx, boxURI)
+	assert.ErrorContains(t, err, "no project found")
+}
+
+func TestContentMapperProcessSharedAcrossProjects(t *testing.T) {
+	t.Parallel()
+	config := func(extension string) string {
+		return fmt.Sprintf(`{
+			"compilerOptions": { "target": "es2020", "module": "esnext", "moduleResolution": "bundler" },
+			"contentMappers": [ { "package": "mapper", "extensions": [%q] } ]
+		}`, extension)
+	}
+	files := map[string]any{
+		"/home/a/tsconfig.json":                    config(".box"),
+		"/home/a/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.TransformingMapper),
+		"/home/a/app.box":                          "export const a = 1;\n",
+		"/home/b/tsconfig.json":                    config(".panel"),
+		"/home/b/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.TransformingMapper),
+		"/home/b/app.panel":                        "export const b = 1;\n",
+	}
+	init, utils := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
+		CurrentDirectory:               "/home",
+		DefaultLibraryPath:             bundled.LibPath(),
+		TypingsLocation:                projecttestutil.TestTypingsLocation,
+		PositionEncoding:               lsproto.PositionEncodingKindUTF8,
+		DangerouslyLoadExternalPlugins: true,
+	}, nil)
+	spawner := &recordingContentMapperSpawner{inner: contentmappertest.NewSpawner()}
+	init.Spawner = spawner
+	session := project.NewSession(init)
+	defer session.Close()
+
+	ctx := context.Background()
+	aURI := lsproto.DocumentUri("file:///home/a/app.box")
+	bURI := lsproto.DocumentUri("file:///home/b/app.panel")
+	session.DidOpenFile(ctx, aURI, 1, files["/home/a/app.box"].(string), lsproto.LanguageKind("box"))
+	_, err := session.GetLanguageService(ctx, aURI)
+	assert.NilError(t, err)
+	session.DidOpenFile(ctx, bURI, 1, files["/home/b/app.panel"].(string), lsproto.LanguageKind("panel"))
+	_, err = session.GetLanguageService(ctx, bURI)
+	assert.NilError(t, err)
+	assert.Equal(t, spawner.spawns.Load(), int32(1), "same mapper identity should share one process")
+
+	assert.NilError(t, utils.FS().WriteFile("/home/a/tsconfig.json", `{}`))
+	session.DidChangeWatchedFiles(ctx, []*lsproto.FileEvent{{Uri: "file:///home/a/tsconfig.json", Type: lsproto.FileChangeTypeChanged}})
+	_, err = session.GetLanguageService(ctx, aURI)
+	assert.ErrorContains(t, err, "no project found")
+	assert.Equal(t, spawner.closes.Load(), int32(0), "second project still owns the shared process")
+
+	assert.NilError(t, utils.FS().WriteFile("/home/b/tsconfig.json", `{}`))
+	session.DidChangeWatchedFiles(ctx, []*lsproto.FileEvent{{Uri: "file:///home/b/tsconfig.json", Type: lsproto.FileChangeTypeChanged}})
+	_, err = session.GetLanguageService(ctx, bURI)
+	assert.ErrorContains(t, err, "no project found")
+	assert.Equal(t, spawner.closes.Load(), int32(1), "final project owner should close the shared process")
 }
 
 func TestContentMapperInferredProjectUsesSessionMappers(t *testing.T) {

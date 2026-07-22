@@ -36,6 +36,9 @@ type Request struct {
 // Host transforms foreign file content into TypeScript during program construction, by driving the
 // configured content mappers. Create one with New; Close tears down every mapper it spawned.
 type Host interface {
+	// Acquire retains the processes for the given mapper identities until the returned lease is released.
+	// Acquiring a mapper does not start its process; processes remain lazy until Transform is called.
+	Acquire(mappers []*Mapper) (release func())
 	// Transform maps a foreign file's content to TypeScript using the given content mapper.
 	//
 	// A non-nil error indicates the mapper itself failed to produce a result — for example the
