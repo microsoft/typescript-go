@@ -28,6 +28,19 @@ import (
 //
 // Falls back to filepath.EvalSymlinks if /proc is not available (e.g. containers
 // or chroots without procfs mounted).
+//
+// The kernel's answer is validated with one invariant: canonicalization may
+// only rename the final path component when that component is a symlink. If
+// the name changed but lstat reports a non-symlink, the filesystem view is
+// being virtualized behind the process's back — e.g. PRoot's link2symlink
+// extension (the default under Termux proot-distro on Android), which
+// emulates hardlinks with symlinks into a hidden store and masks them from
+// lstat/readlink, but cannot mask names the kernel hands back through /proc.
+// In that case we fall back to the per-component walk, which sees the same
+// masked view as glibc's realpath(3) and returns a path that is actually
+// usable by this process. The check costs no extra syscalls on the common
+// path (a string comparison), and one lstat when the final component was
+// renamed.
 
 const _procSelfFD = "/proc/self/fd/"
 
@@ -41,6 +54,23 @@ func Realpath(path string) (string, error) {
 		return filepath.EvalSymlinks(path)
 	}
 
+	resolved, err := procRealpath(path)
+	if err != nil {
+		return "", err
+	}
+
+	if filepath.Base(resolved) != filepath.Base(path) {
+		if info, err := os.Lstat(path); err == nil && info.Mode()&os.ModeSymlink == 0 {
+			if walked, err := filepath.EvalSymlinks(path); err == nil {
+				return walked, nil
+			}
+		}
+	}
+
+	return resolved, nil
+}
+
+func procRealpath(path string) (string, error) {
 	fd, err := ignoringEINTR(func() (int, error) {
 		return unix.Open(path, unix.O_CLOEXEC|unix.O_PATH, 0)
 	})
