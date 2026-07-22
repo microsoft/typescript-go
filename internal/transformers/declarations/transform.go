@@ -1373,6 +1373,7 @@ func (tx *DeclarationTransformer) transformCommonJSExportWorker(input *ast.Node,
 						tx.Factory().NewModifierList(nsMods),
 						ast.KindNamespaceKeyword,
 						nsName,
+						nil, /*attributes*/
 						tx.Factory().NewModuleBlock(tx.Factory().NewNodeList([]*ast.Node{classDecl})),
 					)
 
@@ -1520,6 +1521,7 @@ func (tx *DeclarationTransformer) wrapInCJSExportNamespace(content *ast.Node) *a
 		tx.Factory().NewModifierList(nsMods),
 		ast.KindNamespaceKeyword,
 		nsName,
+		nil, /*attributes*/
 		tx.Factory().NewModuleBlock(tx.Factory().NewNodeList(members)),
 	)
 }
@@ -1848,6 +1850,7 @@ func (tx *DeclarationTransformer) transformModuleDeclaration(input *ast.ModuleDe
 			mods,
 			keyword,
 			input.Name(),
+			input.Attributes,
 			body,
 		)
 	}
@@ -1864,6 +1867,7 @@ func (tx *DeclarationTransformer) transformModuleDeclaration(input *ast.ModuleDe
 			mods,
 			keyword,
 			input.Name(),
+			input.Attributes,
 			body,
 		)
 	}
@@ -1872,6 +1876,7 @@ func (tx *DeclarationTransformer) transformModuleDeclaration(input *ast.ModuleDe
 		mods,
 		keyword,
 		input.Name(),
+		input.Attributes,
 		nil,
 	)
 }
@@ -2789,7 +2794,7 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 		varModifiers = tx.Factory().NewModifierList(ast.CreateModifiersFromModifierFlags(ast.ModifierFlagsExport, tx.Factory().NewModifier))
 	}
 
-	synthesizedNamespace := tx.Factory().NewModuleDeclaration(nil /*modifiers*/, ast.KindNamespaceKeyword, name, tx.Factory().NewModuleBlock(tx.Factory().NewNodeList([]*ast.Node{})))
+	synthesizedNamespace := tx.Factory().NewModuleDeclaration(nil /*modifiers*/, ast.KindNamespaceKeyword, name, nil /*attributes*/, tx.Factory().NewModuleBlock(tx.Factory().NewNodeList([]*ast.Node{})))
 	synthesizedNamespace.Parent = tx.enclosingDeclaration
 	declarationData := synthesizedNamespace.DeclarationData()
 	declarationData.Symbol = host
@@ -2936,6 +2941,7 @@ func (tx *DeclarationTransformer) createFullExpandoBlock(id ast.NodeId) *ast.Nod
 				modifiers,
 				ast.KindNamespaceKeyword,
 				name,
+				nil, /*attributes*/
 				tx.Factory().NewModuleBlock(tx.Factory().NewNodeList(addOns)),
 			)
 			members := append(host, moduleDecl)
