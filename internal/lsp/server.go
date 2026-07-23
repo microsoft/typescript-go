@@ -1053,6 +1053,18 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			s.logger.SetVerbosity(v)
 		}
 	}
+	if s.initializationOptions.TrackFlakyDiagnostics != nil {
+		switch *s.initializationOptions.TrackFlakyDiagnostics {
+		case lsproto.DiagnosticFlakeLogLevelOff:
+			s.flakeLogging = FlakeLogLevelNone
+		case lsproto.DiagnosticFlakeLogLevelLog:
+			s.flakeLogging = FlakeLogLevelLog
+		case lsproto.DiagnosticFlakeLogLevelPanic:
+			s.flakeLogging = FlakeLogLevelPanic
+		default:
+			return nil, fmt.Errorf("invalid value for trackFlakyDiagnostics: %v", *s.initializationOptions.TrackFlakyDiagnostics)
+		}
+	}
 	s.clientCapabilities = params.Capabilities.Resolve()
 	if s.clientCapabilities.Window.WorkDoneProgress {
 		s.projectProgress = newProjectLoadingProgress(s, s.progressDelay)

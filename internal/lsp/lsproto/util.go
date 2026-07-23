@@ -3,6 +3,7 @@ package lsproto
 import (
 	"cmp"
 	"fmt"
+	"strconv"
 	"strings"
 )
 

@@ -165,7 +165,6 @@ export class Client implements vscode.Disposable {
             .getConfiguration("js/ts")
             .get<"panic" | "log" | "never" | "auto">("server.trackFlakyDiagnostics", "auto");
         const effectiveflakesFlag = flakesFlag === "auto" ? (isInsiders() ? "log" : "never") : flakesFlag;
-        const flakesArgs = effectiveflakesFlag !== "never" ? ["--trackFlakyDiagnostics", effectiveflakesFlag] : [];
 
         const goMemLimit = readNativePreviewConfig<string | undefined>("server.goMemLimit", undefined)
             ?? readNativePreviewConfig<string | undefined>("goMemLimit", undefined);
@@ -184,13 +183,13 @@ export class Client implements vscode.Disposable {
         const serverOptions: ServerOptions = {
             run: {
                 command: this.exe.path,
-                args: ["--lsp", ...pprofArgs, ...flakesArgs],
+                args: ["--lsp", ...pprofArgs],
                 transport: TransportKind.stdio,
                 options: { env },
             },
             debug: {
                 command: this.exe.path,
-                args: ["--lsp", ...pprofArgs, ...flakesArgs],
+                args: ["--lsp", ...pprofArgs],
                 transport: TransportKind.stdio,
                 options: { env },
             },
@@ -199,6 +198,7 @@ export class Client implements vscode.Disposable {
         // Refresh the initial log verbosity in case the output channel's log
         // level changed between construction and start.
         this.clientOptions.initializationOptions.logVerbosity = this.outputChannel.logLevel;
+        this.clientOptions.initializationOptions.trackFlakyDiagnostics = effectiveflakesFlag !== "never" ? (effectiveflakesFlag === "panic" ? 2 : 1) : 0;
 
         this.client = new NativePreviewLanguageClient(
             "js/ts",
