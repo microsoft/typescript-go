@@ -186,7 +186,7 @@ const (
 	CompletionKindString
 )
 
-var TriggerCharacters = []string{".", `"`, "'", "`", "/", "@", "<", "#", " "}
+var TriggerCharacters = []string{".", `"`, "'", "`", "/", "@", "<", "#", " ", "*"}
 
 // All commit characters, valid when `isNewIdentifierLocation` is false.
 var allCommitCharacters = []string{".", ",", ";"}
@@ -343,6 +343,10 @@ func (l *LanguageService) getCompletionsAtPosition(
 			return &CompletionList{IsIncomplete: true}, nil
 		}
 		return nil, nil
+	}
+
+	if jsDocSnippetCompletion := l.getJSDocSnippetCompletion(ctx, file, position); jsDocSnippetCompletion != nil {
+		return jsDocSnippetCompletion, nil
 	}
 
 	compilerOptions := l.GetProgram().Options()
@@ -2697,7 +2701,7 @@ func getRelevantTokens(position int, file *ast.SourceFile) (contextToken *ast.No
 	return previousToken, previousToken
 }
 
-// "." | '"' | "'" | "`" | "/" | "@" | "<" | "#" | " "
+// "." | '"' | "'" | "`" | "/" | "@" | "<" | "#" | " " | "*"
 type CompletionsTriggerCharacter = string
 
 func isValidTrigger(file *ast.SourceFile, triggerCharacter CompletionsTriggerCharacter, contextToken *ast.Node, position int) bool {
@@ -2728,6 +2732,8 @@ func isValidTrigger(file *ast.SourceFile, triggerCharacter CompletionsTriggerCha
 		return contextToken.Kind == ast.KindLessThanSlashToken && ast.IsJsxClosingElement(contextToken.Parent)
 	case " ":
 		return contextToken != nil && contextToken.Kind == ast.KindImportKeyword && contextToken.Parent.Kind == ast.KindSourceFile
+	case "*":
+		return isPotentiallyValidJSDocSnippetCompletionPosition(file, position)
 	default:
 		panic("Unknown trigger character: " + triggerCharacter)
 	}
@@ -4153,7 +4159,7 @@ func tryGetContainingJsxElement(contextToken *ast.Node, file *ast.SourceFile) *a
 	parent := contextToken.Parent
 	switch contextToken.Kind {
 	case ast.KindGreaterThanToken, ast.KindLessThanSlashToken, ast.KindSlashToken, ast.KindIdentifier,
-		ast.KindPropertyAccessExpression, ast.KindJsxAttributes, ast.KindJsxAttribute, ast.KindJsxSpreadAttribute:
+		ast.KindPropertyAccessExpression, ast.KindJsxNamespacedName, ast.KindJsxAttributes, ast.KindJsxAttribute, ast.KindJsxSpreadAttribute:
 		if parent != nil && (parent.Kind == ast.KindJsxSelfClosingElement || parent.Kind == ast.KindJsxOpeningElement) {
 			if contextToken.Kind == ast.KindGreaterThanToken {
 				precedingToken := astnav.FindPrecedingToken(file, contextToken.Pos())
@@ -4163,6 +4169,9 @@ func tryGetContainingJsxElement(contextToken *ast.Node, file *ast.SourceFile) *a
 				}
 			}
 			return parent
+		} else if parent != nil && ast.IsJsxNamespacedName(parent) &&
+			parent.Parent != nil && (parent.Parent.Kind == ast.KindJsxSelfClosingElement || parent.Parent.Kind == ast.KindJsxOpeningElement) {
+			return parent.Parent
 		} else if parent != nil && parent.Kind == ast.KindJsxAttribute {
 			// Currently we parse JsxOpeningLikeElement as:
 			//      JsxOpeningLikeElement
@@ -5119,7 +5128,7 @@ func (l *LanguageService) createCompletionDetailsForSymbol(
 	position int,
 	docFormat lsproto.MarkupKind,
 ) *lsproto.CompletionItem {
-	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(checker, symbol, location, docFormat, nil)
+	quickInfo, documentation, _, _ := l.getQuickInfoAndDocumentationForSymbol(checker, symbol, location, docFormat, nil, false /*vsCapability*/)
 	return createCompletionDetails(item, quickInfo, documentation, docFormat)
 }
 

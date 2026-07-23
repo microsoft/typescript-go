@@ -3050,7 +3050,6 @@ func TestTscModuleResolution(t *testing.T) {
 					edit: func(sys *TestSys) {
 						sys.replaceFileText(`/user/username/projects/myproject/packages/pkg1/package.json`, `"module"`, `"commonjs"`)
 					},
-					expectedDiff: "Package.json watch pending, so no change detected yet",
 				},
 				{
 					caption: "removes those errors when a package file is changed back",
@@ -3063,7 +3062,6 @@ func TestTscModuleResolution(t *testing.T) {
 					edit: func(sys *TestSys) {
 						sys.replaceFileText(`/user/username/projects/myproject/packages/pkg1/package.json`, `"module"`, `"commonjs"`)
 					},
-					expectedDiff: "Package.json watch pending, so no change detected yet",
 				},
 				{
 					caption: "removes those errors when a package file is changed to cjs extensions",
@@ -3119,12 +3117,80 @@ func TestTscModuleResolution(t *testing.T) {
 					edit: func(sys *TestSys) {
 						sys.replaceFileText(`/user/username/projects/myproject/packages/pkg2/package.json`, `index.js`, `other.js`)
 					},
-					expectedDiff: "Package.json watch pending, so no change detected yet",
 				},
 				{
 					caption: "removes those errors when a package file is changed back",
 					edit: func(sys *TestSys) {
 						sys.replaceFileText(`/user/username/projects/myproject/packages/pkg2/package.json`, `other.js`, `index.js`)
+					},
+				},
+			},
+		},
+		{
+			subScenario: `build mode watches missing package-json lookups`,
+			files: FileMap{
+				`/user/username/projects/myproject/packages/pkg1/index.ts`: stringtestutil.Dedent(`
+					import type { TheNum } from 'pkg2'
+					export const theNum: TheNum = 42;`),
+				`/user/username/projects/myproject/packages/pkg1/tsconfig.json`: stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"outDir": "build",
+						},
+					}`),
+			},
+			cwd:             "/user/username/projects/myproject",
+			commandLineArgs: []string{"-b", "packages/pkg1", "-w", "--verbose", "--traceResolution"},
+			edits: []*tscEdit{
+				{
+					caption: "resolves import after package is installed",
+					edit: func(sys *TestSys) {
+						sys.writeFileNoError(`/user/username/projects/myproject/node_modules/pkg2/package.json`, stringtestutil.Dedent(`
+							{
+								"name": "pkg2",
+								"version": "1.0.0",
+								"types": "index.d.ts"
+							}`))
+						sys.writeFileNoError(`/user/username/projects/myproject/node_modules/pkg2/index.d.ts`, `export type TheNum = 42;`)
+					},
+				},
+				{
+					caption: "reports import errors after package is removed",
+					edit: func(sys *TestSys) {
+						sys.removeNoError(`/user/username/projects/myproject/node_modules/pkg2/package.json`)
+						sys.removeNoError(`/user/username/projects/myproject/node_modules/pkg2/index.d.ts`)
+					},
+				},
+			},
+		},
+		{
+			subScenario: `build mode watches package-json lookups from existing buildinfo`,
+			files: GetFileMapWithBuild(FileMap{
+				`/user/username/projects/myproject/packages/pkg1/index.ts`: stringtestutil.Dedent(`
+					import type { TheNum } from 'pkg2'
+					export const theNum: TheNum = 42;`),
+				`/user/username/projects/myproject/packages/pkg1/tsconfig.json`: stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"outDir": "zzbuild",
+						},
+					}`),
+				`/user/username/projects/myproject/node_modules/pkg2/package.json`: stringtestutil.Dedent(`
+					{
+						"name": "pkg2",
+						"version": "1.0.0",
+						"types": "index.d.ts"
+					}`),
+				`/user/username/projects/myproject/node_modules/pkg2/index.d.ts`: `export type TheNum = 42;`,
+			}, []string{"-b", "/user/username/projects/myproject/packages/pkg1", "--verbose", "--traceResolution"}),
+			cwd:             "/user/username/projects/myproject",
+			commandLineArgs: []string{"-b", "packages/pkg1", "-w", "--verbose", "--traceResolution"},
+			edits: []*tscEdit{
+				{
+					caption: "reports import errors after package is removed",
+					edit: func(sys *TestSys) {
+						sys.removeNoError(`/user/username/projects/myproject/node_modules/pkg2/package.json`)
+						sys.removeNoError(`/user/username/projects/myproject/node_modules/pkg2/index.d.ts`)
 					},
 				},
 			},
@@ -4066,6 +4132,44 @@ func TestTscProjectReferences(t *testing.T) {
 					"references": [
 						{ "path": "../utils" },
 					],
+				}`),
+			},
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--p", "project"},
+		},
+		{
+			subScenario: "when project references have invalid fields",
+			files: FileMap{
+				"/home/src/workspaces/solution/project/index.ts": `export const x = 10;`,
+				"/home/src/workspaces/solution/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"noEmit": true
+					},
+					"files": ["index.ts"],
+					"references": [
+						{ "path": true },
+						{ "circular": true },
+						{ "path": "../utils", "circular": "yes" },
+						{ "path": "" },
+						{ "path": "../valid", "circular": true }
+					]
+				}`),
+				"/home/src/workspaces/solution/utils/index.ts":   "export const y = 10;",
+				"/home/src/workspaces/solution/utils/index.d.ts": "export declare const y = 10;",
+				"/home/src/workspaces/solution/utils/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true
+					}
+				}`),
+				"/home/src/workspaces/solution/valid/index.ts":   "export const z = 10;",
+				"/home/src/workspaces/solution/valid/index.d.ts": "export declare const z = 10;",
+				"/home/src/workspaces/solution/valid/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true
+					}
 				}`),
 			},
 			cwd:             "/home/src/workspaces/solution",
