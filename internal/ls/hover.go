@@ -153,6 +153,13 @@ func (l *LanguageService) getDocumentationForSymbol(c *checker.Checker, symbol *
 	if documentation != "" {
 		return documentation
 	}
+	// Synthetic union and intersection properties can have declarations without a value declaration.
+	if info.declaration == nil && symbol != nil {
+		documentation = l.getDocumentationFromDeclarations(c, symbol, symbol.Declarations, node, contentFormat, false /*commentOnly*/)
+		if documentation != "" {
+			return quickInfo, documentation
+		}
+	}
 
 	return l.documentationFromAlias(c, symbol, node, contentFormat, commentOnly)
 }
