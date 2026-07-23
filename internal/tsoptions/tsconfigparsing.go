@@ -168,13 +168,6 @@ func (e *ExtendedConfigCacheEntry) ExtendedFileNames() []string {
 	return nil
 }
 
-func (e *ExtendedConfigCacheEntry) SourceFile() *ast.SourceFile {
-	if e.extendedResult != nil {
-		return e.extendedResult.SourceFile
-	}
-	return nil
-}
-
 type parsedTsconfig struct {
 	raw     any
 	options *core.CompilerOptions

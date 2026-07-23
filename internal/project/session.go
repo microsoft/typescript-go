@@ -261,14 +261,6 @@ func (s *Session) GetCurrentDirectory() string {
 	return s.options.CurrentDirectory
 }
 
-func (s *Session) PeekExtendedConfigSourceFile(path tspath.Path) *ast.SourceFile {
-	entry, ok := s.extendedConfigCache.Peek(path)
-	if !ok {
-		return nil
-	}
-	return entry.SourceFile()
-}
-
 // Gets copy of current configuration
 func (s *Session) Config() lsutil.UserPreferences {
 	s.userConfigRWMu.Lock()

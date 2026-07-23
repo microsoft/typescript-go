@@ -1179,11 +1179,10 @@ func (s *Session) handleGetConfigFileNames(ctx context.Context, params *GetProje
 
 // handleGetConfigSourceFile returns a tsconfig source file associated with the project's command line.
 func (s *Session) handleGetConfigSourceFile(ctx context.Context, params *GetSourceFileParams) (any, error) {
-	sd, err := s.retainSnapshotData(params.Snapshot)
+	sd, err := s.getSnapshotData(params.Snapshot)
 	if err != nil {
 		return nil, err
 	}
-	defer func() { _ = s.releaseSnapshot(params.Snapshot) }()
 
 	program, err := sd.getProgram(params.Project)
 	if err != nil {
@@ -1205,7 +1204,14 @@ func (s *Session) handleGetConfigSourceFile(ctx context.Context, params *GetSour
 		if tspath.ToPath(configFileName, program.GetCurrentDirectory(), program.UseCaseSensitiveFileNames()) != requestedPath {
 			continue
 		}
-		return s.encodeSourceFileResponse(s.projectSession.PeekExtendedConfigSourceFile(requestedPath))
+
+		configFileContent, ok := s.projectSession.FS().ReadFile(configFileName)
+		if !ok {
+			return s.encodeSourceFileResponse(nil)
+		}
+
+		configSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(configFileName, requestedPath, configFileContent)
+		return s.encodeSourceFileResponse(configSourceFile.SourceFile)
 	}
 
 	return s.encodeSourceFileResponse(nil)

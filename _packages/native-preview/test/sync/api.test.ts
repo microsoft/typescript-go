@@ -5136,9 +5136,8 @@ describe("Program - diagnostics", () => {
     });
 
     test("getConfigFileNames and getConfigSourceFile", () => {
-        const baseConfigText = `{ "compilerOptions": { "strict": true } }`;
-        const { api, fs } = spawnAPIWithFS({
-            "/tsconfig.base.json": baseConfigText,
+        const api = spawnAPI({
+            "/tsconfig.base.json": `{ "compilerOptions": { "strict": true } }`,
             "/tsconfig.json": `{ "extends": "./tsconfig.base.json", "files": ["./src/index.ts"] }`,
             "/src/index.ts": `export const x = 1;`,
         });
@@ -5152,11 +5151,9 @@ describe("Program - diagnostics", () => {
             assert.ok(rootConfig);
             assert.equal(rootConfig.fileName, "/tsconfig.json");
 
-            fs.writeFile!("/tsconfig.base.json", `{ "compilerOptions": { "strict": false } }`);
             const extendedConfig = project.program.getConfigSourceFile("/tsconfig.base.json");
             assert.ok(extendedConfig);
             assert.equal(extendedConfig.fileName, "/tsconfig.base.json");
-            assert.equal(extendedConfig.getFullText(), baseConfigText);
 
             const nonConfig = project.program.getConfigSourceFile("/src/index.ts");
             assert.equal(nonConfig, undefined);
