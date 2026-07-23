@@ -54,8 +54,11 @@ func TestTripleSlashRefPathCompletionAbsolutePaths(t *testing.T) {
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				"e1.ts",
+				"e2.js",
 				"f1.ts",
 				"f2.tsx",
+				"f3.js",
+				"f4.jsx",
 				"folder",
 				"tests",
 			},
