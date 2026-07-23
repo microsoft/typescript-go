@@ -60,7 +60,7 @@ export declare const y = "world";
 export const y = "world";
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[2,4],"fileNames":["lib.es2025.full.d.ts","./file1.ts","./random.d.ts","./file2.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";","signature":"0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n","impliedNodeFormat":1},"c532960cfbb52b79226b1f24e7a00dee-export const random = \"world\";",{"version":"451897c48dcc1d64ace3fbee4cc28ab8-import { random } from \"./random\";\nexport const y = \"world\";","signature":"64ca81919be0c5adb4964999189ddb2c-export declare const y = \"world\";\n","impliedNodeFormat":1}],"fileIdsList":[[3]],"options":{"composite":true},"referencedMap":[[4,1]],"latestChangedDtsFile":"./file2.d.ts"}
+{"version":"FakeTSVersion","root":[2,4],"fileNames":["lib.es2025.full.d.ts","./file1.ts","./random.d.ts","./file2.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";","c532960cfbb52b79226b1f24e7a00dee-export const random = \"world\";","451897c48dcc1d64ace3fbee4cc28ab8-import { random } from \"./random\";\nexport const y = \"world\";"],"fileIdsList":[[3]],"options":{"composite":true},"referencedMap":[[4,1]],"latestChangedDtsFile":"./file2.d.ts","emitSignatures":[[2,"0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n"],[4,"64ca81919be0c5adb4964999189ddb2c-export declare const y = \"world\";\n"]]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -100,13 +100,8 @@ export const y = "world";
     {
       "fileName": "./file1.ts",
       "version": "cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";",
-      "signature": "0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";",
-        "signature": "0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "cc7052ed344567798ec87f1c0f8f276c-export const x = \"hello\";",
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "./random.d.ts",
@@ -117,13 +112,8 @@ export const y = "world";
     {
       "fileName": "./file2.ts",
       "version": "451897c48dcc1d64ace3fbee4cc28ab8-import { random } from \"./random\";\nexport const y = \"world\";",
-      "signature": "64ca81919be0c5adb4964999189ddb2c-export declare const y = \"world\";\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "451897c48dcc1d64ace3fbee4cc28ab8-import { random } from \"./random\";\nexport const y = \"world\";",
-        "signature": "64ca81919be0c5adb4964999189ddb2c-export declare const y = \"world\";\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "451897c48dcc1d64ace3fbee4cc28ab8-import { random } from \"./random\";\nexport const y = \"world\";",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "fileIdsList": [
@@ -140,7 +130,25 @@ export const y = "world";
     ]
   },
   "latestChangedDtsFile": "./file2.d.ts",
-  "size": 1484
+  "emitSignatures": [
+    {
+      "file": "./file1.ts",
+      "signature": "0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n",
+      "original": [
+        2,
+        "0c71c4d05f424f4dc52c978a9207cdf6-export declare const x = \"hello\";\n"
+      ]
+    },
+    {
+      "file": "./file2.ts",
+      "signature": "64ca81919be0c5adb4964999189ddb2c-export declare const y = \"world\";\n",
+      "original": [
+        4,
+        "64ca81919be0c5adb4964999189ddb2c-export declare const y = \"world\";\n"
+      ]
+    }
+  ],
+  "size": 1419
 }
 
 tsconfig.json::
@@ -170,7 +178,7 @@ Output::
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[3],"fileNames":["lib.es2025.full.d.ts","./random.d.ts","./file2.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"c532960cfbb52b79226b1f24e7a00dee-export const random = \"world\";",{"version":"451897c48dcc1d64ace3fbee4cc28ab8-import { random } from \"./random\";\nexport const y = \"world\";","signature":"64ca81919be0c5adb4964999189ddb2c-export declare const y = \"world\";\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./file2.d.ts"}
+{"version":"FakeTSVersion","root":[3],"fileNames":["lib.es2025.full.d.ts","./random.d.ts","./file2.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"c532960cfbb52b79226b1f24e7a00dee-export const random = \"world\";","451897c48dcc1d64ace3fbee4cc28ab8-import { random } from \"./random\";\nexport const y = \"world\";"],"fileIdsList":[[2]],"options":{"composite":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./file2.d.ts","emitSignatures":[[3,"64ca81919be0c5adb4964999189ddb2c-export declare const y = \"world\";\n"]]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -209,13 +217,8 @@ Output::
     {
       "fileName": "./file2.ts",
       "version": "451897c48dcc1d64ace3fbee4cc28ab8-import { random } from \"./random\";\nexport const y = \"world\";",
-      "signature": "64ca81919be0c5adb4964999189ddb2c-export declare const y = \"world\";\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "451897c48dcc1d64ace3fbee4cc28ab8-import { random } from \"./random\";\nexport const y = \"world\";",
-        "signature": "64ca81919be0c5adb4964999189ddb2c-export declare const y = \"world\";\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "451897c48dcc1d64ace3fbee4cc28ab8-import { random } from \"./random\";\nexport const y = \"world\";",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "fileIdsList": [
@@ -232,7 +235,17 @@ Output::
     ]
   },
   "latestChangedDtsFile": "./file2.d.ts",
-  "size": 1287
+  "emitSignatures": [
+    {
+      "file": "./file2.ts",
+      "signature": "64ca81919be0c5adb4964999189ddb2c-export declare const y = \"world\";\n",
+      "original": [
+        3,
+        "64ca81919be0c5adb4964999189ddb2c-export declare const y = \"world\";\n"
+      ]
+    }
+  ],
+  "size": 1264
 }
 
 tsconfig.json::

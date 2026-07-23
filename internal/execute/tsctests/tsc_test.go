@@ -3809,6 +3809,7 @@ func TestTscNoEmit(t *testing.T) {
 				files: FileMap{
 					"/home/src/workspaces/project/a.ts": `export const a = class { private p = 10; };`,
 					"/home/src/workspaces/project/b.ts": `export const b = 10;`,
+					"/home/src/workspaces/project/c.ts": `import { b } from "./b"; export const c = b;`,
 					"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
 						{
 							"compilerOptions": {
@@ -3826,6 +3827,13 @@ func TestTscNoEmit(t *testing.T) {
 					},
 					{
 						caption:         "emit after fixing error",
+						commandLineArgs: []string{},
+					},
+					{
+						caption: "implementation-only change after emit",
+						edit: func(sys *TestSys) {
+							sys.writeFileNoError("/home/src/workspaces/project/b.ts", `export const b = 10; // implementation-only change`)
+						},
 						commandLineArgs: []string{},
 					},
 				},

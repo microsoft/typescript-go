@@ -53,7 +53,7 @@ export declare const FOO: string;
 export const FOO = 'THEFOOEXPORT';
 
 //// [/home/src/workspaces/project/lib/dist/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","../foo.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"7f94c001790f66ce6f219bcc674cfb1b-export const FOO: string = 'THEFOOEXPORT';","signature":"4ea8c248dd335c2208c4fdcf4812cc6f-export declare const FOO: string;\n","impliedNodeFormat":1}],"options":{"composite":true,"outDir":"./"},"latestChangedDtsFile":"./foo.d.ts"}
+{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","../foo.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"7f94c001790f66ce6f219bcc674cfb1b-export const FOO: string = 'THEFOOEXPORT';"],"options":{"composite":true,"outDir":"./"},"latestChangedDtsFile":"./foo.d.ts","emitSignatures":[[2,"4ea8c248dd335c2208c4fdcf4812cc6f-export declare const FOO: string;\n"]]}
 //// [/home/src/workspaces/project/lib/dist/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -85,13 +85,8 @@ export const FOO = 'THEFOOEXPORT';
     {
       "fileName": "../foo.ts",
       "version": "7f94c001790f66ce6f219bcc674cfb1b-export const FOO: string = 'THEFOOEXPORT';",
-      "signature": "4ea8c248dd335c2208c4fdcf4812cc6f-export declare const FOO: string;\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "7f94c001790f66ce6f219bcc674cfb1b-export const FOO: string = 'THEFOOEXPORT';",
-        "signature": "4ea8c248dd335c2208c4fdcf4812cc6f-export declare const FOO: string;\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "7f94c001790f66ce6f219bcc674cfb1b-export const FOO: string = 'THEFOOEXPORT';",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "options": {
@@ -99,7 +94,17 @@ export const FOO = 'THEFOOEXPORT';
     "outDir": "./"
   },
   "latestChangedDtsFile": "./foo.d.ts",
-  "size": 1145
+  "emitSignatures": [
+    {
+      "file": "../foo.ts",
+      "signature": "4ea8c248dd335c2208c4fdcf4812cc6f-export declare const FOO: string;\n",
+      "original": [
+        2,
+        "4ea8c248dd335c2208c4fdcf4812cc6f-export declare const FOO: string;\n"
+      ]
+    }
+  ],
+  "size": 1122
 }
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
 {"version":"FakeTSVersion","root":["./index.ts","./lib/foo.ts"]}

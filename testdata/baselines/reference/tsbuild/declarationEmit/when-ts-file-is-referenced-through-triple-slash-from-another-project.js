@@ -61,7 +61,7 @@ export declare const include = 1;
 export const include = 1;
 
 //// [/home/src/workspaces/solution/include/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","./include.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"67fdcc4760be899102ce56504bd98850-export const include = 1;","signature":"2a0dff0e1bbd6db3f4d58fc79a892ff5-export declare const include = 1;\n","impliedNodeFormat":1}],"options":{"composite":true,"declaration":true},"latestChangedDtsFile":"./include.d.ts"}
+{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","./include.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"67fdcc4760be899102ce56504bd98850-export const include = 1;"],"options":{"composite":true,"declaration":true},"latestChangedDtsFile":"./include.d.ts","emitSignatures":[[2,"2a0dff0e1bbd6db3f4d58fc79a892ff5-export declare const include = 1;\n"]]}
 //// [/home/src/workspaces/solution/include/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -93,13 +93,8 @@ export const include = 1;
     {
       "fileName": "./include.ts",
       "version": "67fdcc4760be899102ce56504bd98850-export const include = 1;",
-      "signature": "2a0dff0e1bbd6db3f4d58fc79a892ff5-export declare const include = 1;\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "67fdcc4760be899102ce56504bd98850-export const include = 1;",
-        "signature": "2a0dff0e1bbd6db3f4d58fc79a892ff5-export declare const include = 1;\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "67fdcc4760be899102ce56504bd98850-export const include = 1;",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "options": {
@@ -107,7 +102,17 @@ export const include = 1;
     "declaration": true
   },
   "latestChangedDtsFile": "./include.d.ts",
-  "size": 1140
+  "emitSignatures": [
+    {
+      "file": "./include.ts",
+      "signature": "2a0dff0e1bbd6db3f4d58fc79a892ff5-export declare const include = 1;\n",
+      "original": [
+        2,
+        "2a0dff0e1bbd6db3f4d58fc79a892ff5-export declare const include = 1;\n"
+      ]
+    }
+  ],
+  "size": 1117
 }
 //// [/home/src/workspaces/solution/src/main.d.ts] *new* 
 /// <reference path="../include/include.d.ts" preserve="true" />
@@ -118,7 +123,7 @@ export declare const main = 23;
 export const main = 23;
 
 //// [/home/src/workspaces/solution/src/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[3],"fileNames":["lib.es2025.full.d.ts","../include/include.d.ts","./main.ts","../include/include.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"2a0dff0e1bbd6db3f4d58fc79a892ff5-export declare const include = 1;\n",{"version":"7aa654f7776b0488d5e129f89e8878fa-/// <reference path=\"../include/include.ts\" preserve=\"true\" />\nexport const main = 23;","signature":"c0efabe26d066f427c370b23e0a62be4-/// <reference path=\"../include/include.d.ts\" preserve=\"true\" />\nexport declare const main = 23;\n","impliedNodeFormat":1}],"fileIdsList":[[4]],"options":{"composite":true,"declaration":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./main.d.ts"}
+{"version":"FakeTSVersion","root":[3],"fileNames":["lib.es2025.full.d.ts","../include/include.d.ts","./main.ts","../include/include.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"2a0dff0e1bbd6db3f4d58fc79a892ff5-export declare const include = 1;\n","7aa654f7776b0488d5e129f89e8878fa-/// <reference path=\"../include/include.ts\" preserve=\"true\" />\nexport const main = 23;"],"fileIdsList":[[4]],"options":{"composite":true,"declaration":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./main.d.ts","emitSignatures":[[3,"c0efabe26d066f427c370b23e0a62be4-/// <reference path=\"../include/include.d.ts\" preserve=\"true\" />\nexport declare const main = 23;\n"]]}
 //// [/home/src/workspaces/solution/src/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -158,13 +163,8 @@ export const main = 23;
     {
       "fileName": "./main.ts",
       "version": "7aa654f7776b0488d5e129f89e8878fa-/// <reference path=\"../include/include.ts\" preserve=\"true\" />\nexport const main = 23;",
-      "signature": "c0efabe26d066f427c370b23e0a62be4-/// <reference path=\"../include/include.d.ts\" preserve=\"true\" />\nexport declare const main = 23;\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "7aa654f7776b0488d5e129f89e8878fa-/// <reference path=\"../include/include.ts\" preserve=\"true\" />\nexport const main = 23;",
-        "signature": "c0efabe26d066f427c370b23e0a62be4-/// <reference path=\"../include/include.d.ts\" preserve=\"true\" />\nexport declare const main = 23;\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "7aa654f7776b0488d5e129f89e8878fa-/// <reference path=\"../include/include.ts\" preserve=\"true\" />\nexport const main = 23;",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "fileIdsList": [
@@ -182,7 +182,17 @@ export const main = 23;
     ]
   },
   "latestChangedDtsFile": "./main.d.ts",
-  "size": 1433
+  "emitSignatures": [
+    {
+      "file": "./main.ts",
+      "signature": "c0efabe26d066f427c370b23e0a62be4-/// <reference path=\"../include/include.d.ts\" preserve=\"true\" />\nexport declare const main = 23;\n",
+      "original": [
+        3,
+        "c0efabe26d066f427c370b23e0a62be4-/// <reference path=\"../include/include.d.ts\" preserve=\"true\" />\nexport declare const main = 23;\n"
+      ]
+    }
+  ],
+  "size": 1410
 }
 
 include/tsconfig.json::

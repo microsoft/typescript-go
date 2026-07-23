@@ -73,7 +73,7 @@ export declare const b = 0;
 export const b = 0;
 
 //// [/home/src/workspaces/solution/dist/main/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","../../src/main/b.ts","../../src/main/a.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"2f7fab911757709567c90bfcebca3267-export const b = 0;","signature":"fbf340689494c12531e629cae5a8c1a2-export declare const b = 0;\n","impliedNodeFormat":1},{"version":"55c21d13f07678cedb8ef3bdf6dd6c91-import { b } from './b';\nconst a = b;","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true,"declaration":true,"outDir":"..","rootDir":"../../src","skipDefaultLibCheck":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./a.d.ts"}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","../../src/main/b.ts","../../src/main/a.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"2f7fab911757709567c90bfcebca3267-export const b = 0;","55c21d13f07678cedb8ef3bdf6dd6c91-import { b } from './b';\nconst a = b;"],"fileIdsList":[[2]],"options":{"composite":true,"declaration":true,"outDir":"..","rootDir":"../../src","skipDefaultLibCheck":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./a.d.ts","emitSignatures":[[2,"fbf340689494c12531e629cae5a8c1a2-export declare const b = 0;\n"],[3,"abe7d9981d6018efb6b2b794f40a1607-export {};\n"]]}
 //// [/home/src/workspaces/solution/dist/main/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -110,24 +110,14 @@ export const b = 0;
     {
       "fileName": "../../src/main/b.ts",
       "version": "2f7fab911757709567c90bfcebca3267-export const b = 0;",
-      "signature": "fbf340689494c12531e629cae5a8c1a2-export declare const b = 0;\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "2f7fab911757709567c90bfcebca3267-export const b = 0;",
-        "signature": "fbf340689494c12531e629cae5a8c1a2-export declare const b = 0;\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "2f7fab911757709567c90bfcebca3267-export const b = 0;",
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "../../src/main/a.ts",
       "version": "55c21d13f07678cedb8ef3bdf6dd6c91-import { b } from './b';\nconst a = b;",
-      "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "55c21d13f07678cedb8ef3bdf6dd6c91-import { b } from './b';\nconst a = b;",
-        "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "55c21d13f07678cedb8ef3bdf6dd6c91-import { b } from './b';\nconst a = b;",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "fileIdsList": [
@@ -148,7 +138,25 @@ export const b = 0;
     ]
   },
   "latestChangedDtsFile": "./a.d.ts",
-  "size": 1430
+  "emitSignatures": [
+    {
+      "file": "../../src/main/b.ts",
+      "signature": "fbf340689494c12531e629cae5a8c1a2-export declare const b = 0;\n",
+      "original": [
+        2,
+        "fbf340689494c12531e629cae5a8c1a2-export declare const b = 0;\n"
+      ]
+    },
+    {
+      "file": "../../src/main/a.ts",
+      "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
+      "original": [
+        3,
+        "abe7d9981d6018efb6b2b794f40a1607-export {};\n"
+      ]
+    }
+  ],
+  "size": 1365
 }
 //// [/home/src/workspaces/solution/dist/other/other.d.ts] *new* 
 export declare const Other = 0;
@@ -157,7 +165,7 @@ export declare const Other = 0;
 export const Other = 0;
 
 //// [/home/src/workspaces/solution/dist/other/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","../../src/other/other.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"d2f577239ee4ce2c34ee068494c1717b-export const Other = 0;","signature":"9820e072d57306b22c4790242196d240-export declare const Other = 0;\n","impliedNodeFormat":1}],"options":{"composite":true,"declaration":true,"outDir":"..","rootDir":"../../src","skipDefaultLibCheck":true},"latestChangedDtsFile":"./other.d.ts"}
+{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","../../src/other/other.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"d2f577239ee4ce2c34ee068494c1717b-export const Other = 0;"],"options":{"composite":true,"declaration":true,"outDir":"..","rootDir":"../../src","skipDefaultLibCheck":true},"latestChangedDtsFile":"./other.d.ts","emitSignatures":[[2,"9820e072d57306b22c4790242196d240-export declare const Other = 0;\n"]]}
 //// [/home/src/workspaces/solution/dist/other/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -189,13 +197,8 @@ export const Other = 0;
     {
       "fileName": "../../src/other/other.ts",
       "version": "d2f577239ee4ce2c34ee068494c1717b-export const Other = 0;",
-      "signature": "9820e072d57306b22c4790242196d240-export declare const Other = 0;\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "d2f577239ee4ce2c34ee068494c1717b-export const Other = 0;",
-        "signature": "9820e072d57306b22c4790242196d240-export declare const Other = 0;\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "d2f577239ee4ce2c34ee068494c1717b-export const Other = 0;",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "options": {
@@ -206,7 +209,17 @@ export const Other = 0;
     "skipDefaultLibCheck": true
   },
   "latestChangedDtsFile": "./other.d.ts",
-  "size": 1209
+  "emitSignatures": [
+    {
+      "file": "../../src/other/other.ts",
+      "signature": "9820e072d57306b22c4790242196d240-export declare const Other = 0;\n",
+      "original": [
+        2,
+        "9820e072d57306b22c4790242196d240-export declare const Other = 0;\n"
+      ]
+    }
+  ],
+  "size": 1186
 }
 
 src/other/tsconfig.json::

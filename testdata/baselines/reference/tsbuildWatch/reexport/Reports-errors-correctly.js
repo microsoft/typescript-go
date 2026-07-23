@@ -117,7 +117,7 @@ export interface Session {
 export {};
 
 //// [/user/username/projects/reexport/out/pure/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","../../src/pure/session.ts","../../src/pure/index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"1beb34deefa28062ed4b4b605c69e42f-export interface Session {\n    foo: number;\n    // bar: number;\n}","signature":"90b43415bdb2993dfd8c888e444ab471-export interface Session {\n    foo: number;\n}\n","impliedNodeFormat":1},{"version":"c3b7227625b1dcb56b6fb13c17c504fe-export * from \"./session\";","signature":"14ab788547e1e852fa86d4bf1731e8c8-export * from \"./session\";\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"..","rootDir":"../../src"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./index.d.ts"}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","../../src/pure/session.ts","../../src/pure/index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"1beb34deefa28062ed4b4b605c69e42f-export interface Session {\n    foo: number;\n    // bar: number;\n}","c3b7227625b1dcb56b6fb13c17c504fe-export * from \"./session\";"],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"..","rootDir":"../../src"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./index.d.ts","emitSignatures":[[2,"90b43415bdb2993dfd8c888e444ab471-export interface Session {\n    foo: number;\n}\n"],[3,"14ab788547e1e852fa86d4bf1731e8c8-export * from \"./session\";\n"]]}
 //// [/user/username/projects/reexport/out/pure/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -154,24 +154,14 @@ export {};
     {
       "fileName": "../../src/pure/session.ts",
       "version": "1beb34deefa28062ed4b4b605c69e42f-export interface Session {\n    foo: number;\n    // bar: number;\n}",
-      "signature": "90b43415bdb2993dfd8c888e444ab471-export interface Session {\n    foo: number;\n}\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "1beb34deefa28062ed4b4b605c69e42f-export interface Session {\n    foo: number;\n    // bar: number;\n}",
-        "signature": "90b43415bdb2993dfd8c888e444ab471-export interface Session {\n    foo: number;\n}\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "1beb34deefa28062ed4b4b605c69e42f-export interface Session {\n    foo: number;\n    // bar: number;\n}",
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "../../src/pure/index.ts",
       "version": "c3b7227625b1dcb56b6fb13c17c504fe-export * from \"./session\";",
-      "signature": "14ab788547e1e852fa86d4bf1731e8c8-export * from \"./session\";\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "c3b7227625b1dcb56b6fb13c17c504fe-export * from \"./session\";",
-        "signature": "14ab788547e1e852fa86d4bf1731e8c8-export * from \"./session\";\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "c3b7227625b1dcb56b6fb13c17c504fe-export * from \"./session\";",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "fileIdsList": [
@@ -190,7 +180,25 @@ export {};
     ]
   },
   "latestChangedDtsFile": "./index.d.ts",
-  "size": 1475
+  "emitSignatures": [
+    {
+      "file": "../../src/pure/session.ts",
+      "signature": "90b43415bdb2993dfd8c888e444ab471-export interface Session {\n    foo: number;\n}\n",
+      "original": [
+        2,
+        "90b43415bdb2993dfd8c888e444ab471-export interface Session {\n    foo: number;\n}\n"
+      ]
+    },
+    {
+      "file": "../../src/pure/index.ts",
+      "signature": "14ab788547e1e852fa86d4bf1731e8c8-export * from \"./session\";\n",
+      "original": [
+        3,
+        "14ab788547e1e852fa86d4bf1731e8c8-export * from \"./session\";\n"
+      ]
+    }
+  ],
+  "size": 1410
 }
 
 Watch Registrations::

@@ -340,6 +340,8 @@ type snapshot struct {
 	allFilesExcludingDefaultLibraryFile []*ast.SourceFile
 	hasChangedDtsFile                   bool
 	hasEmitDiagnostics                  bool
+	// Stores signatures before an in-progress shape update is committed.
+	oldSignatures collections.SyncMap[tspath.Path, string]
 
 	// Used with testing to add text of hash for better comparison
 	hashWithText bool

@@ -72,7 +72,7 @@ export declare const marker: string;
 export const marker = globalMarker;
 
 //// [/home/src/workspaces/project/dist/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[3,4]],"packageJsons":["../node_modules/dep-b/package.json"],"fileNames":["lib.es2025.full.d.ts","../node_modules/dep-b/index.d.ts","../src/env.ts","../src/user.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"cd032fb5030949e5f19325decfe193f4-declare global {\n    var globalMarker: string;\n}\nexport {};","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"fcc1d4c4b073cc5a548e7244f608884c-import \"dep-b\";","signature":"9fb8fd76a089f5d7d03937148c718fd8-import \"dep-b\";\n","impliedNodeFormat":1},{"version":"8e795fc4632e557befae4a0de611e036-export const marker: string = globalMarker;","signature":"62128710b5d65ffc36c246ad1f599f44-export declare const marker: string;\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"./","strict":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./src/user.d.ts"}
+{"version":"FakeTSVersion","root":[[3,4]],"packageJsons":["../node_modules/dep-b/package.json"],"fileNames":["lib.es2025.full.d.ts","../node_modules/dep-b/index.d.ts","../src/env.ts","../src/user.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"cd032fb5030949e5f19325decfe193f4-declare global {\n    var globalMarker: string;\n}\nexport {};","affectsGlobalScope":true,"impliedNodeFormat":1},"fcc1d4c4b073cc5a548e7244f608884c-import \"dep-b\";","8e795fc4632e557befae4a0de611e036-export const marker: string = globalMarker;"],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"./","strict":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./src/user.d.ts","emitSignatures":[[3,"9fb8fd76a089f5d7d03937148c718fd8-import \"dep-b\";\n"],[4,"62128710b5d65ffc36c246ad1f599f44-export declare const marker: string;\n"]]}
 //// [/home/src/workspaces/project/dist/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -125,24 +125,14 @@ export const marker = globalMarker;
     {
       "fileName": "../src/env.ts",
       "version": "fcc1d4c4b073cc5a548e7244f608884c-import \"dep-b\";",
-      "signature": "9fb8fd76a089f5d7d03937148c718fd8-import \"dep-b\";\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "fcc1d4c4b073cc5a548e7244f608884c-import \"dep-b\";",
-        "signature": "9fb8fd76a089f5d7d03937148c718fd8-import \"dep-b\";\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "fcc1d4c4b073cc5a548e7244f608884c-import \"dep-b\";",
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "../src/user.ts",
       "version": "8e795fc4632e557befae4a0de611e036-export const marker: string = globalMarker;",
-      "signature": "62128710b5d65ffc36c246ad1f599f44-export declare const marker: string;\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "8e795fc4632e557befae4a0de611e036-export const marker: string = globalMarker;",
-        "signature": "62128710b5d65ffc36c246ad1f599f44-export declare const marker: string;\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "8e795fc4632e557befae4a0de611e036-export const marker: string = globalMarker;",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "fileIdsList": [
@@ -161,7 +151,25 @@ export const marker = globalMarker;
     ]
   },
   "latestChangedDtsFile": "./src/user.d.ts",
-  "size": 1638
+  "emitSignatures": [
+    {
+      "file": "../src/env.ts",
+      "signature": "9fb8fd76a089f5d7d03937148c718fd8-import \"dep-b\";\n",
+      "original": [
+        3,
+        "9fb8fd76a089f5d7d03937148c718fd8-import \"dep-b\";\n"
+      ]
+    },
+    {
+      "file": "../src/user.ts",
+      "signature": "62128710b5d65ffc36c246ad1f599f44-export declare const marker: string;\n",
+      "original": [
+        4,
+        "62128710b5d65ffc36c246ad1f599f44-export declare const marker: string;\n"
+      ]
+    }
+  ],
+  "size": 1573
 }
 
 tsconfig.json::
