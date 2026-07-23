@@ -109,7 +109,11 @@ func (t *parseTask) load(loader *fileLoader) {
 		t.metadata = loader.loadSourceFileMetaData(t.normalizedFilePath)
 	}
 
-	file := loader.parseSourceFile(t)
+	// Parse on a fixed-size pool to bound peak grown-stack memory; see GoroutinePool.
+	var file *ast.SourceFile
+	loader.filesParser.parsePool.Run(func() {
+		file = loader.parseSourceFile(t)
+	})
 	if file == nil {
 		return
 	}
@@ -204,6 +208,7 @@ func (t *parseTask) addSubTask(ref resolvedRef, libFile *LibFile) {
 
 type filesParser struct {
 	wg             core.WorkGroup
+	parsePool      core.GoroutinePool
 	taskDataByPath collections.SyncMap[tspath.Path, *parseTaskData]
 	maxDepth       int
 }
@@ -240,6 +245,7 @@ type parseTaskData struct {
 func (w *filesParser) parse(loader *fileLoader, tasks []*parseTask) {
 	w.start(loader, tasks, 0)
 	w.wg.RunAndWait()
+	w.parsePool.Close()
 }
 
 func (w *filesParser) start(loader *fileLoader, tasks []*parseTask, depth int) {
