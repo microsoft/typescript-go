@@ -1281,7 +1281,6 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 			TelemetryEnabled:       enableTelemetry,
 			DebounceDelay:          500 * time.Millisecond,
 			PushDiagnosticsEnabled: !disablePushDiagnostics,
-			Locale:                 s.GetLocale(),
 		},
 		FS:          s.fs,
 		Logger:      s.logger,

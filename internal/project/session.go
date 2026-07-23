@@ -62,7 +62,6 @@ type SessionOptions struct {
 	TelemetryEnabled       bool
 	PushDiagnosticsEnabled bool
 	DebounceDelay          time.Duration
-	Locale                 locale.Locale
 	CheckerPoolOptions     CheckerPoolOptions
 }
 
