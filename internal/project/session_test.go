@@ -1406,6 +1406,19 @@ export const value = content;`,
 		assert.Equal(t, len(inlayHintsRefreshCalls), 1, "expected one RefreshInlayHints call after inlay hints preference change")
 	})
 
+	t.Run("sets locale when configured", func(t *testing.T) {
+		t.Parallel()
+		session, utils := projecttestutil.Setup(map[string]any{})
+		prefs := lsutil.NewDefaultUserPreferences()
+		prefs.Locale = "fr"
+
+		session.Configure(prefs)
+
+		setLocaleCalls := utils.Client().SetLocaleCalls()
+		assert.Equal(t, len(setLocaleCalls), 1)
+		assert.Equal(t, setLocaleCalls[0].LocaleMoqParam, "fr")
+	})
+
 	t.Run("schedules diagnostics refresh when reportStyleChecksAsWarnings changes", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{

@@ -280,6 +280,10 @@ func (s *Session) Configure(config lsutil.UserPreferences) {
 	oldConfig := s.workspaceUserPreferences
 	s.workspaceUserPreferences = config
 
+	if config.Locale != "" {
+		s.client.SetLocale(config.Locale)
+	}
+
 	// Tell the client to re-request certain commands depending on user preference changes.
 	s.refreshInlayHintsIfNeeded(oldConfig, config)
 	s.refreshCodeLensIfNeeded(oldConfig, config)

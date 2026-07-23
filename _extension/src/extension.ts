@@ -83,26 +83,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     };
 
     let configChangeTimeout: ReturnType<typeof setTimeout> | undefined;
-    let pendingUseTsgoChange = false;
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(event => {
         if (
             event.affectsConfiguration("typescript.experimental.useTsgo")
             || event.affectsConfiguration("js/ts.experimental.useTsgo")
         ) {
-            pendingUseTsgoChange = true;
-        }
-
-        if (!pendingUseTsgoChange) {
-            return;
-        }
-
-        // Debounce to coalesce rapid events when both settings are updated together.
-        clearTimeout(configChangeTimeout);
-        configChangeTimeout = setTimeout(async () => {
-            const hadUseTsgoChange = pendingUseTsgoChange;
-            pendingUseTsgoChange = false;
-
-            if (hadUseTsgoChange) {
+            // Debounce to coalesce rapid events when both settings are updated together.
+            clearTimeout(configChangeTimeout);
+            configChangeTimeout = setTimeout(async () => {
                 if (needsExtHostRestartOnChange()) {
                     const selected = await vscode.window.showInformationMessage(vscode.l10n.t("TypeScript 7 setting has changed. Restart extensions to apply changes."), vscode.l10n.t("Restart Extensions"));
                     if (selected) {
@@ -117,8 +105,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
                         await sessionManager.stop();
                     }
                 }
-            }
-        }, 100);
+            }, 100);
+        }
     }));
     context.subscriptions.push({ dispose: () => clearTimeout(configChangeTimeout) });
 

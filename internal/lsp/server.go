@@ -176,6 +176,7 @@ type Server struct {
 	initializationOptions *lsproto.InitializationOptions
 	clientCapabilities    lsproto.ResolvedClientCapabilities
 	positionEncoding      lsproto.PositionEncodingKind
+	localeMu              sync.RWMutex
 	locale                locale.Locale
 	// initLocale is the locale resolved from the initialize request; it is
 	// used as the fallback when the user's locale preference is "auto".
@@ -367,7 +368,24 @@ func (s *Server) ProgressFinish(message *diagnostics.Message, args ...any) {
 
 // GetLocale implements project.Client.
 func (s *Server) GetLocale() locale.Locale {
+	s.localeMu.RLock()
+	defer s.localeMu.RUnlock()
 	return s.locale
+}
+
+// SetLocale implements project.Client.
+func (s *Server) SetLocale(localeString string) {
+	newLocale := s.initLocale
+	if localeString != "auto" {
+		parsed, ok := locale.Parse(localeString)
+		if !ok {
+			return
+		}
+		newLocale = parsed
+	}
+	s.localeMu.Lock()
+	s.locale = newLocale
+	s.localeMu.Unlock()
 }
 
 func (s *Server) RequestConfiguration(ctx context.Context) (lsutil.UserPreferences, error) {
@@ -547,7 +565,7 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 		}
 
 		s.lastRequestTimeMs.Store(time.Now().UnixMilli())
-		requestCtx := locale.WithLocale(ctx, s.locale)
+		requestCtx := locale.WithLocale(ctx, s.GetLocale())
 		var cancel context.CancelFunc
 		if req.ID != nil {
 			requestCtx, cancel = context.WithCancel(core.WithRequestID(requestCtx, req.ID.String()))
@@ -1263,7 +1281,7 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 			TelemetryEnabled:       enableTelemetry,
 			DebounceDelay:          500 * time.Millisecond,
 			PushDiagnosticsEnabled: !disablePushDiagnostics,
-			Locale:                 s.locale,
+			Locale:                 s.GetLocale(),
 		},
 		FS:          s.fs,
 		Logger:      s.logger,
@@ -1326,33 +1344,8 @@ func (s *Server) handleDidChangeWorkspaceConfiguration(ctx context.Context, para
 		return nil
 	} else if settings, ok := params.Settings.(map[string]any); ok {
 		s.session.Configure(lsutil.ParseUserPreferences(settings))
-		s.locale = s.localeFromSettings(settings)
 	}
 	return nil
-}
-
-// localeFromSettings extracts the diagnostic locale from a workspace configuration
-// settings map. When the locale is absent, empty, or "auto", it falls back to
-// the locale negotiated during the initialize handshake (initLocale), which
-// itself already resolved "auto" to the editor's display language.
-func (s *Server) localeFromSettings(settings map[string]any) locale.Locale {
-	// The extension's sendNotificationMiddleware sends the same merged config for
-	// every section (js/ts > typescript > javascript), so checking any one section
-	// is sufficient. We use "js/ts" as the canonical source.
-	for _, section := range []string{"js/ts", "typescript"} {
-		sectionMap, ok := settings[section].(map[string]any)
-		if !ok {
-			continue
-		}
-		localeStr, ok := sectionMap["locale"].(string)
-		if !ok || localeStr == "" || localeStr == "auto" {
-			break
-		}
-		if parsed, ok := locale.Parse(localeStr); ok {
-			return parsed
-		}
-	}
-	return s.initLocale
 }
 
 func (s *Server) handleDidOpen(ctx context.Context, params *lsproto.DidOpenTextDocumentParams) error {

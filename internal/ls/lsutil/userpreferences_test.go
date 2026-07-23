@@ -179,6 +179,7 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 					"maximumHoverLength": 100,
 					"allowRenameOfImportPath": true
 				}
+
 			}`,
 			expected: UserPreferences{
 				DisableSuggestions:      core.TSTrue,
@@ -422,6 +423,21 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 			assert.DeepEqual(t, tt.expected, parsed)
 		})
 	}
+}
+
+func TestUserPreferencesLocale(t *testing.T) {
+	t.Parallel()
+
+	prefs := ParseUserPreferences(map[string]any{
+		"typescript": map[string]any{
+			"locale": "de",
+		},
+		"js/ts": map[string]any{
+			"locale": "fr",
+		},
+	})
+
+	assert.Equal(t, prefs.Locale, "fr")
 }
 
 func TestUserPreferencesReportStyleChecksAsWarnings(t *testing.T) {
