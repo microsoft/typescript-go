@@ -1636,10 +1636,11 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 	}
 
 	if options.EmitOnly != EmitOnlyForcedDts {
-		result := HandleNoEmitOnError(
+		result := HandleNoEmitOptions(
 			ctx,
 			p,
 			options.TargetSourceFile,
+			nil,
 		)
 		if result != nil || ctx.Err() != nil {
 			return result
@@ -1730,26 +1731,39 @@ type ProgramLike interface {
 	Program() *Program
 }
 
-func HandleNoEmitOnError(ctx context.Context, program ProgramLike, file *ast.SourceFile) *EmitResult {
-	if !program.Options().NoEmitOnError.IsTrue() {
-		return nil // No emit on error is not set, so we can proceed with emitting
-	}
+// HandleNoEmitOptions mirrors tsc's handleNoEmitOptions.
+func HandleNoEmitOptions(ctx context.Context, program ProgramLike, file *ast.SourceFile, emitBuildInfo func() *EmitResult) *EmitResult {
+	if !program.Options().NoEmit.IsTrue() {
+		if !program.Options().NoEmitOnError.IsTrue() {
+			return nil // NoEmit is false and NoEmitOnError is also false, so we can proceed with normal emit
+		}
 
-	diagnostics := GetDiagnosticsOfAnyProgram(
-		ctx,
-		program,
-		file,
-		true,
-		program.GetBindDiagnostics,
-		program.GetSemanticDiagnostics,
-	)
-	if len(diagnostics) == 0 {
-		return nil // No diagnostics, so we can proceed with emitting
+		diagnostics := GetDiagnosticsOfAnyProgram(
+			ctx,
+			program,
+			file,
+			true,
+			program.GetBindDiagnostics,
+			program.GetSemanticDiagnostics,
+		)
+		if len(diagnostics) == 0 {
+			return nil // NoEmitOnError is enabled, but no diagnostics were found, so we can proceed with emitting
+		}
+		return &EmitResult{
+			Diagnostics: diagnostics,
+			EmitSkipped: true,
+		}
 	}
-	return &EmitResult{
-		Diagnostics: diagnostics,
-		EmitSkipped: true,
+	if file != nil {
+		return &EmitResult{EmitSkipped: true}
 	}
+	if emitBuildInfo != nil {
+		result := emitBuildInfo()
+		if result != nil {
+			return result
+		}
+	}
+	return &EmitResult{}
 }
 
 func GetDiagnosticsOfAnyProgram(
