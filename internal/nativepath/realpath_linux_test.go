@@ -15,13 +15,19 @@ func mustRealpath(t *testing.T, path string) string {
 	return resolved
 }
 
+// canonicalTempDir canonicalizes a fresh temp dir with an independent oracle
+// so expectations are not derived from the function under test.
+func canonicalTempDir(t *testing.T) string {
+	t.Helper()
+	tmp, err := filepath.EvalSymlinks(t.TempDir())
+	assert.NilError(t, err)
+	return tmp
+}
+
 func TestRealpath(t *testing.T) {
 	t.Parallel()
 
-	// Canonicalize the temp dir with an independent oracle so expectations
-	// are not derived from the function under test.
-	tmp, err := filepath.EvalSymlinks(t.TempDir())
-	assert.NilError(t, err)
+	tmp := canonicalTempDir(t)
 
 	t.Run("regular file resolves to itself", func(t *testing.T) {
 		t.Parallel()
