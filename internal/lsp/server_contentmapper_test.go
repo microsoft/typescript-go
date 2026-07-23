@@ -3,6 +3,7 @@ package lsp_test
 import (
 	"context"
 	"io"
+	"strings"
 	"sync"
 	"testing"
 
@@ -100,6 +101,9 @@ export const title = "Profile";
 	assert.Assert(t, len(registered) > 0, "expected dynamic registrations")
 	var foundDidOpen bool
 	for _, registration := range registered {
+		if registration.Id != "content-mapper-did-open" && registration.Id != "content-mapper-did-change" && registration.Id != "content-mapper-did-close" {
+			assert.Assert(t, !strings.HasPrefix(registration.Id, "content-mapper-"), "unexpected unsupported content mapper registration %q", registration.Id)
+		}
 		if registration.Id == "content-mapper-did-open" {
 			foundDidOpen = true
 			assert.Assert(t, registration.RegisterOptions != nil && registration.RegisterOptions.TextDocumentDidOpen != nil)
@@ -166,6 +170,9 @@ export const title = "Profile";
 	assert.Assert(t, len(unregistered) > 0, "expected dynamic unregistration")
 	var foundDidClose bool
 	for _, unregistration := range unregistered {
+		if unregistration.Id != "content-mapper-did-open" && unregistration.Id != "content-mapper-did-change" && unregistration.Id != "content-mapper-did-close" {
+			assert.Assert(t, !strings.HasPrefix(unregistration.Id, "content-mapper-"), "unexpected unsupported content mapper unregistration %q", unregistration.Id)
+		}
 		if unregistration.Id == "content-mapper-did-close" {
 			foundDidClose = true
 		}

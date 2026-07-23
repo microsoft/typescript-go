@@ -56,7 +56,6 @@ func transformRequest() contentmapper.Request {
 	return contentmapper.Request{
 		FileName:        "/app.box",
 		Content:         "export const version = #{target};\n",
-		ConfigFileName:  "/tsconfig.json",
 		CompilerOptions: &core.CompilerOptions{Target: core.ScriptTargetES2020},
 	}
 }

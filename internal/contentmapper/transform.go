@@ -29,7 +29,6 @@ func TransformAndParse(
 	result, err := host.Transform(mapper, Request{
 		FileName:        parseOptions.FileName,
 		Content:         content,
-		ConfigFileName:  compilerOptions.ConfigFilePath,
 		CompilerOptions: compilerOptions,
 	})
 	if err != nil {

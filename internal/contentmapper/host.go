@@ -26,8 +26,6 @@ type Request struct {
 	FileName string
 	// Content is the foreign file's text.
 	Content string
-	// ConfigFileName is the tsconfig file name of the project the file is being loaded for.
-	ConfigFileName string
 	// CompilerOptions is the project's compiler options. The host marshals and forwards only the subset
 	// each mapper declared it depends on; a mapper that declares none receives an empty object.
 	CompilerOptions *core.CompilerOptions

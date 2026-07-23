@@ -59,8 +59,6 @@ const (
 type TransformParams struct {
 	FileName string `json:"fileName"`
 	Content  string `json:"content"`
-	// ConfigFileName is the tsconfig file name of the project the file is being transformed for.
-	ConfigFileName string `json:"configFileName"`
 	// CompilerOptions holds the values of the options the mapper declared in initialize, keyed by option
 	// name and ordered by the mapper's declaration. It is an empty object when the mapper declared none.
 	CompilerOptions *collections.OrderedMap[string, json.Value] `json:"compilerOptions"`
@@ -184,8 +182,8 @@ func (h *host) Acquire(mappers []*Mapper) func() {
 }
 
 // Transform sends the file's content to the mapper's process and decodes the transformed result. The
-// mapper receives the subset of the project's compiler options it declared in initialize (an empty
-// object if it declared none) and the project's tsconfig file name.
+// mapper receives the subset of the project's compiler options it declared in its manifest (an empty
+// object if it declared none).
 func (h *host) Transform(mapper *Mapper, request Request) (Result, error) {
 	conn, positionEncoding, diagnosticSource, err := h.connFor(mapper)
 	if err != nil {
@@ -198,7 +196,6 @@ func (h *host) Transform(mapper *Mapper, request Request) (Result, error) {
 	raw, err := conn.Call(h.ctx, MethodTransform, TransformParams{
 		FileName:        request.FileName,
 		Content:         request.Content,
-		ConfigFileName:  request.ConfigFileName,
 		CompilerOptions: options,
 	})
 	if err != nil {

@@ -318,6 +318,35 @@ const (
 	contentMapperRenameRegistrationID            = "content-mapper-rename"
 )
 
+func (s *Server) supportsContentMapperRegistration(id string) bool {
+	switch id {
+	case contentMapperDidOpenRegistrationID, contentMapperDidChangeRegistrationID, contentMapperDidCloseRegistrationID:
+		return s.clientCapabilities.TextDocument.Synchronization.DynamicRegistration
+	case contentMapperDiagnosticRegistrationID:
+		return s.clientCapabilities.TextDocument.Diagnostic.DynamicRegistration
+	case contentMapperHoverRegistrationID:
+		return s.clientCapabilities.TextDocument.Hover.DynamicRegistration
+	case contentMapperSignatureHelpRegistrationID:
+		return s.clientCapabilities.TextDocument.SignatureHelp.DynamicRegistration
+	case contentMapperDefinitionRegistrationID:
+		return s.clientCapabilities.TextDocument.Definition.DynamicRegistration
+	case contentMapperTypeDefinitionRegistrationID:
+		return s.clientCapabilities.TextDocument.TypeDefinition.DynamicRegistration
+	case contentMapperImplementationRegistrationID:
+		return s.clientCapabilities.TextDocument.Implementation.DynamicRegistration
+	case contentMapperReferencesRegistrationID:
+		return s.clientCapabilities.TextDocument.References.DynamicRegistration
+	case contentMapperDocumentHighlightRegistrationID:
+		return s.clientCapabilities.TextDocument.DocumentHighlight.DynamicRegistration
+	case contentMapperCompletionRegistrationID:
+		return s.clientCapabilities.TextDocument.Completion.DynamicRegistration
+	case contentMapperRenameRegistrationID:
+		return s.clientCapabilities.TextDocument.Rename.DynamicRegistration
+	default:
+		return false
+	}
+}
+
 // RegisterContentMapperExtensions implements project.Client. It dynamically registers text document
 // synchronization and pull diagnostics for the given foreign file extensions so the editor forwards their
 // open/change/close notifications to the server and requests diagnostics for them. It is called with the
@@ -331,22 +360,26 @@ func (s *Server) RegisterContentMapperExtensions(ctx context.Context, extensions
 	defer s.contentMapperRegistrationMu.Unlock()
 
 	if s.contentMapperExtensionsRegistered {
+		unregistrations := []*lsproto.Unregistration{
+			{Id: contentMapperDidOpenRegistrationID, Method: string(lsproto.MethodTextDocumentDidOpen)},
+			{Id: contentMapperDidChangeRegistrationID, Method: string(lsproto.MethodTextDocumentDidChange)},
+			{Id: contentMapperDidCloseRegistrationID, Method: string(lsproto.MethodTextDocumentDidClose)},
+			{Id: contentMapperDiagnosticRegistrationID, Method: string(lsproto.MethodTextDocumentDiagnostic)},
+			{Id: contentMapperHoverRegistrationID, Method: string(lsproto.MethodTextDocumentHover)},
+			{Id: contentMapperSignatureHelpRegistrationID, Method: string(lsproto.MethodTextDocumentSignatureHelp)},
+			{Id: contentMapperDefinitionRegistrationID, Method: string(lsproto.MethodTextDocumentDefinition)},
+			{Id: contentMapperTypeDefinitionRegistrationID, Method: string(lsproto.MethodTextDocumentTypeDefinition)},
+			{Id: contentMapperImplementationRegistrationID, Method: string(lsproto.MethodTextDocumentImplementation)},
+			{Id: contentMapperReferencesRegistrationID, Method: string(lsproto.MethodTextDocumentReferences)},
+			{Id: contentMapperDocumentHighlightRegistrationID, Method: string(lsproto.MethodTextDocumentDocumentHighlight)},
+			{Id: contentMapperCompletionRegistrationID, Method: string(lsproto.MethodTextDocumentCompletion)},
+			{Id: contentMapperRenameRegistrationID, Method: string(lsproto.MethodTextDocumentRename)},
+		}
+		unregistrations = slices.DeleteFunc(unregistrations, func(registration *lsproto.Unregistration) bool {
+			return !s.supportsContentMapperRegistration(registration.Id)
+		})
 		if _, err := sendClientRequest(ctx, s, lsproto.ClientUnregisterCapabilityInfo, &lsproto.UnregistrationParams{
-			Unregisterations: []*lsproto.Unregistration{
-				{Id: contentMapperDidOpenRegistrationID, Method: string(lsproto.MethodTextDocumentDidOpen)},
-				{Id: contentMapperDidChangeRegistrationID, Method: string(lsproto.MethodTextDocumentDidChange)},
-				{Id: contentMapperDidCloseRegistrationID, Method: string(lsproto.MethodTextDocumentDidClose)},
-				{Id: contentMapperDiagnosticRegistrationID, Method: string(lsproto.MethodTextDocumentDiagnostic)},
-				{Id: contentMapperHoverRegistrationID, Method: string(lsproto.MethodTextDocumentHover)},
-				{Id: contentMapperSignatureHelpRegistrationID, Method: string(lsproto.MethodTextDocumentSignatureHelp)},
-				{Id: contentMapperDefinitionRegistrationID, Method: string(lsproto.MethodTextDocumentDefinition)},
-				{Id: contentMapperTypeDefinitionRegistrationID, Method: string(lsproto.MethodTextDocumentTypeDefinition)},
-				{Id: contentMapperImplementationRegistrationID, Method: string(lsproto.MethodTextDocumentImplementation)},
-				{Id: contentMapperReferencesRegistrationID, Method: string(lsproto.MethodTextDocumentReferences)},
-				{Id: contentMapperDocumentHighlightRegistrationID, Method: string(lsproto.MethodTextDocumentDocumentHighlight)},
-				{Id: contentMapperCompletionRegistrationID, Method: string(lsproto.MethodTextDocumentCompletion)},
-				{Id: contentMapperRenameRegistrationID, Method: string(lsproto.MethodTextDocumentRename)},
-			},
+			Unregisterations: unregistrations,
 		}); err != nil {
 			return fmt.Errorf("failed to unregister content mapper text document sync: %w", err)
 		}
@@ -367,108 +400,112 @@ func (s *Server) RegisterContentMapperExtensions(ctx context.Context, extensions
 	}
 	selector := lsproto.DocumentSelectorOrNull{DocumentSelector: &filters}
 
-	if _, err := sendClientRequest(ctx, s, lsproto.ClientRegisterCapabilityInfo, &lsproto.RegistrationParams{
-		Registrations: []*lsproto.Registration{
-			{
-				Id: contentMapperDidOpenRegistrationID,
-				RegisterOptions: &lsproto.RegisterOptions{
-					TextDocumentDidOpen: &lsproto.TextDocumentRegistrationOptions{DocumentSelector: selector},
+	registrations := []*lsproto.Registration{
+		{
+			Id: contentMapperDidOpenRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentDidOpen: &lsproto.TextDocumentRegistrationOptions{DocumentSelector: selector},
+			},
+		},
+		{
+			Id: contentMapperDidChangeRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentDidChange: &lsproto.TextDocumentChangeRegistrationOptions{
+					DocumentSelector: selector,
+					SyncKind:         lsproto.TextDocumentSyncKindIncremental,
 				},
 			},
-			{
-				Id: contentMapperDidChangeRegistrationID,
-				RegisterOptions: &lsproto.RegisterOptions{
-					TextDocumentDidChange: &lsproto.TextDocumentChangeRegistrationOptions{
-						DocumentSelector: selector,
-						SyncKind:         lsproto.TextDocumentSyncKindIncremental,
-					},
+		},
+		{
+			Id: contentMapperDidCloseRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentDidClose: &lsproto.TextDocumentRegistrationOptions{DocumentSelector: selector},
+			},
+		},
+		{
+			Id: contentMapperDiagnosticRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentDiagnostic: &lsproto.DiagnosticRegistrationOptions{
+					DocumentSelector:      selector,
+					Identifier:            new("typescript"),
+					InterFileDependencies: true,
 				},
 			},
-			{
-				Id: contentMapperDidCloseRegistrationID,
-				RegisterOptions: &lsproto.RegisterOptions{
-					TextDocumentDidClose: &lsproto.TextDocumentRegistrationOptions{DocumentSelector: selector},
+		},
+		{
+			Id: contentMapperHoverRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentHover: &lsproto.HoverRegistrationOptions{DocumentSelector: selector},
+			},
+		},
+		{
+			Id: contentMapperSignatureHelpRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentSignatureHelp: &lsproto.SignatureHelpRegistrationOptions{
+					DocumentSelector:    selector,
+					TriggerCharacters:   &ls.SignatureHelpTriggerCharacters,
+					RetriggerCharacters: &ls.SignatureHelpRetriggerCharacters,
 				},
 			},
-			{
-				Id: contentMapperDiagnosticRegistrationID,
-				RegisterOptions: &lsproto.RegisterOptions{
-					TextDocumentDiagnostic: &lsproto.DiagnosticRegistrationOptions{
-						DocumentSelector:      selector,
-						Identifier:            new("typescript"),
-						InterFileDependencies: true,
-					},
-				},
+		},
+		{
+			Id: contentMapperDefinitionRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentDefinition: &lsproto.DefinitionRegistrationOptions{DocumentSelector: selector},
 			},
-			{
-				Id: contentMapperHoverRegistrationID,
-				RegisterOptions: &lsproto.RegisterOptions{
-					TextDocumentHover: &lsproto.HoverRegistrationOptions{DocumentSelector: selector},
-				},
+		},
+		{
+			Id: contentMapperTypeDefinitionRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentTypeDefinition: &lsproto.TypeDefinitionRegistrationOptions{DocumentSelector: selector},
 			},
-			{
-				Id: contentMapperSignatureHelpRegistrationID,
-				RegisterOptions: &lsproto.RegisterOptions{
-					TextDocumentSignatureHelp: &lsproto.SignatureHelpRegistrationOptions{
-						DocumentSelector:    selector,
-						TriggerCharacters:   &ls.SignatureHelpTriggerCharacters,
-						RetriggerCharacters: &ls.SignatureHelpRetriggerCharacters,
-					},
-				},
+		},
+		{
+			Id: contentMapperImplementationRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentImplementation: &lsproto.ImplementationRegistrationOptions{DocumentSelector: selector},
 			},
-			{
-				Id: contentMapperDefinitionRegistrationID,
-				RegisterOptions: &lsproto.RegisterOptions{
-					TextDocumentDefinition: &lsproto.DefinitionRegistrationOptions{DocumentSelector: selector},
-				},
+		},
+		{
+			Id: contentMapperReferencesRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentReferences: &lsproto.ReferenceRegistrationOptions{DocumentSelector: selector},
 			},
-			{
-				Id: contentMapperTypeDefinitionRegistrationID,
-				RegisterOptions: &lsproto.RegisterOptions{
-					TextDocumentTypeDefinition: &lsproto.TypeDefinitionRegistrationOptions{DocumentSelector: selector},
-				},
+		},
+		{
+			Id: contentMapperDocumentHighlightRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentDocumentHighlight: &lsproto.DocumentHighlightRegistrationOptions{DocumentSelector: selector},
 			},
-			{
-				Id: contentMapperImplementationRegistrationID,
-				RegisterOptions: &lsproto.RegisterOptions{
-					TextDocumentImplementation: &lsproto.ImplementationRegistrationOptions{DocumentSelector: selector},
-				},
-			},
-			{
-				Id: contentMapperReferencesRegistrationID,
-				RegisterOptions: &lsproto.RegisterOptions{
-					TextDocumentReferences: &lsproto.ReferenceRegistrationOptions{DocumentSelector: selector},
-				},
-			},
-			{
-				Id: contentMapperDocumentHighlightRegistrationID,
-				RegisterOptions: &lsproto.RegisterOptions{
-					TextDocumentDocumentHighlight: &lsproto.DocumentHighlightRegistrationOptions{DocumentSelector: selector},
-				},
-			},
-			{
-				Id: contentMapperCompletionRegistrationID,
-				RegisterOptions: &lsproto.RegisterOptions{
-					TextDocumentCompletion: &lsproto.CompletionRegistrationOptions{
-						DocumentSelector:  selector,
-						TriggerCharacters: &ls.CompletionTriggerCharacters,
-						ResolveProvider:   new(true),
-						CompletionItem: &lsproto.ServerCompletionItemOptions{
-							LabelDetailsSupport: new(true),
-						},
-					},
-				},
-			},
-			{
-				Id: contentMapperRenameRegistrationID,
-				RegisterOptions: &lsproto.RegisterOptions{
-					TextDocumentRename: &lsproto.RenameRegistrationOptions{
-						DocumentSelector: selector,
-						PrepareProvider:  new(true),
+		},
+		{
+			Id: contentMapperCompletionRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentCompletion: &lsproto.CompletionRegistrationOptions{
+					DocumentSelector:  selector,
+					TriggerCharacters: &ls.CompletionTriggerCharacters,
+					ResolveProvider:   new(true),
+					CompletionItem: &lsproto.ServerCompletionItemOptions{
+						LabelDetailsSupport: new(true),
 					},
 				},
 			},
 		},
+		{
+			Id: contentMapperRenameRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentRename: &lsproto.RenameRegistrationOptions{
+					DocumentSelector: selector,
+					PrepareProvider:  new(true),
+				},
+			},
+		},
+	}
+	registrations = slices.DeleteFunc(registrations, func(registration *lsproto.Registration) bool {
+		return !s.supportsContentMapperRegistration(registration.Id)
+	})
+	if _, err := sendClientRequest(ctx, s, lsproto.ClientRegisterCapabilityInfo, &lsproto.RegistrationParams{
+		Registrations: registrations,
 	}); err != nil {
 		return fmt.Errorf("failed to register content mapper text document sync: %w", err)
 	}
