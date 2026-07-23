@@ -23,6 +23,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/project/background"
 	"github.com/microsoft/typescript-go/internal/project/logging"
@@ -74,6 +75,7 @@ type SessionInit struct {
 	Logger        logging.Logger
 	NpmExecutor   ata.NpmExecutor
 	ParseCache    *ParseCache
+	PnpApi        *pnp.PnpApi
 }
 
 // Session manages the state of an LSP session. It receives textDocument
@@ -91,6 +93,7 @@ type Session struct {
 	logger        logging.Logger
 	npmExecutor   ata.NpmExecutor
 	fs            *overlayFS
+	pnpApi        *pnp.PnpApi
 
 	// parseCache is the ref-counted cache of source files used when
 	// creating programs during snapshot cloning.
@@ -202,6 +205,7 @@ func NewSession(init *SessionInit) *Session {
 		logger:              sessionLogger,
 		npmExecutor:         init.NpmExecutor,
 		fs:                  overlayFS,
+		pnpApi:              init.PnpApi,
 		parseCache:          parseCache,
 		extendedConfigCache: extendedConfigCache,
 		programCounter:      &programCounter{},
@@ -234,6 +238,7 @@ func NewSession(init *SessionInit) *Session {
 				},
 			),
 			toPath,
+			init.PnpApi,
 		),
 		initialUserPreferences:   lsutil.NewDefaultUserPreferences(),
 		workspaceUserPreferences: lsutil.NewDefaultUserPreferences(),
@@ -259,6 +264,11 @@ func (s *Session) FS() vfs.FS {
 // GetCurrentDirectory implements module.ResolutionHost
 func (s *Session) GetCurrentDirectory() string {
 	return s.options.CurrentDirectory
+}
+
+// PnpApi implements module.ResolutionHost
+func (s *Session) PnpApi() *pnp.PnpApi {
+	return s.pnpApi
 }
 
 // Gets copy of current configuration
@@ -361,7 +371,11 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 		case lsproto.FileChangeTypeCreated:
 			kind = FileChangeKindWatchCreate
 		case lsproto.FileChangeTypeChanged:
-			kind = FileChangeKindWatchChange
+			if s.pnpApi != nil && strings.HasSuffix(change.Uri.FileName(), ".pnp.cjs") {
+				kind = FileChangeKindPnpInstall
+			} else {
+				kind = FileChangeKindWatchChange
+			}
 		case lsproto.FileChangeTypeDeleted:
 			kind = FileChangeKindWatchDelete
 		default:
@@ -1389,10 +1403,12 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 		func(_ tspath.Path, addedProject *Project) {
 			errors = append(errors, updateWatch(ctx, s, s.logger, nil, addedProject.programFilesWatch)...)
 			errors = append(errors, updateWatch(ctx, s, s.logger, nil, addedProject.typingsWatch)...)
+			errors = append(errors, updateWatch(ctx, s, s.logger, nil, addedProject.pnpManifestWatch)...)
 		},
 		func(_ tspath.Path, removedProject *Project) {
 			errors = append(errors, updateWatch(ctx, s, s.logger, removedProject.programFilesWatch, nil)...)
 			errors = append(errors, updateWatch(ctx, s, s.logger, removedProject.typingsWatch, nil)...)
+			errors = append(errors, updateWatch(ctx, s, s.logger, removedProject.pnpManifestWatch, nil)...)
 		},
 		func(_ tspath.Path, oldProject, newProject *Project) {
 			if oldProject.programFilesWatch.ID() != newProject.programFilesWatch.ID() {
@@ -1407,6 +1423,13 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 			} else {
 				if s.watches.IsPending(newProject.typingsWatch.ID()) {
 					errors = append(errors, updateWatch(ctx, s, s.logger, nil, newProject.typingsWatch)...)
+				}
+			}
+			if oldProject.pnpManifestWatch.ID() != newProject.pnpManifestWatch.ID() {
+				errors = append(errors, updateWatch(ctx, s, s.logger, oldProject.pnpManifestWatch, newProject.pnpManifestWatch)...)
+			} else {
+				if s.watches.IsPending(newProject.pnpManifestWatch.ID()) {
+					errors = append(errors, updateWatch(ctx, s, s.logger, nil, newProject.pnpManifestWatch)...)
 				}
 			}
 		},

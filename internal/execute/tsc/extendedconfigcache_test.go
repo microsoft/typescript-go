@@ -4,19 +4,21 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
 
 type testParseConfigHost struct {
-	fs  vfs.FS
-	cwd string
+	fs     vfs.FS
+	cwd    string
+	pnpApi *pnp.PnpApi
 }
 
 func (h *testParseConfigHost) FS() vfs.FS                  { return h.fs }
 func (h *testParseConfigHost) GetCurrentDirectory() string { return h.cwd }
-
+func (h *testParseConfigHost) PnpApi() *pnp.PnpApi         { return h.pnpApi }
 func TestExtendedConfigCacheExtendsCircularity(t *testing.T) {
 	t.Parallel()
 

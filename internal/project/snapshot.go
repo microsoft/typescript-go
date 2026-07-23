@@ -15,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/project/logging"
@@ -45,6 +46,8 @@ type Snapshot struct {
 
 	builderLogs *logging.LogTree
 	apiError    error
+
+	pnpApi *pnp.PnpApi
 }
 
 // NewSnapshot initializes a snapshot with refCount 1.
@@ -59,6 +62,7 @@ func NewSnapshot(
 	autoImports *autoimport.Registry,
 	autoImportsWatch *WatchedFiles[map[tspath.Path]string],
 	toPath func(fileName string) tspath.Path,
+	pnpApi *pnp.PnpApi,
 ) *Snapshot {
 	s := &Snapshot{
 		id: id,
@@ -70,9 +74,11 @@ func NewSnapshot(
 		ConfigFileRegistry:                 configFileRegistry,
 		ProjectCollection:                  &ProjectCollection{toPath: toPath, openFiles: openFilePaths(fs.overlays)},
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
-		userPreferences:                    userPreferences,
-		AutoImports:                        autoImports,
-		autoImportsWatch:                   autoImportsWatch,
+
+		userPreferences:  userPreferences,
+		AutoImports:      autoImports,
+		autoImportsWatch: autoImportsWatch,
+		pnpApi:           pnpApi,
 	}
 	s.refCount.Store(1)
 	s.converters = lsconv.NewConverters(s.sessionOptions.PositionEncoding, s.LSPLineMap)
@@ -130,6 +136,10 @@ func (s *Snapshot) ID() uint64 {
 
 func (s *Snapshot) UseCaseSensitiveFileNames() bool {
 	return s.fs.fs.UseCaseSensitiveFileNames()
+}
+
+func (s *Snapshot) PnpApi() *pnp.PnpApi {
+	return s.pnpApi
 }
 
 func (s *Snapshot) ReadFile(fileName string) (string, bool) {
@@ -310,6 +320,12 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		change.fileChanges = fs.convertOpenAndCloseToChanges(change.fileChanges)
 	}
 
+	if session.pnpApi != nil && change.fileChanges.InvalidateAll {
+		if err := session.pnpApi.RefreshManifest(); err != nil {
+			logger.Logf("Failed to refresh PnP manifest: %v", err)
+		}
+	}
+
 	compilerOptionsForInferredProjects := s.compilerOptionsForInferredProjects
 	if change.compilerOptionsForInferredProjects != nil {
 		// !!! mark inferred projects as dirty?
@@ -327,6 +343,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		ctx,
 		newSnapshotID,
 		fs,
+		session.pnpApi,
 		s.ProjectCollection,
 		s.ConfigFileRegistry,
 		s.ProjectCollection.apiState,
@@ -416,6 +433,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		projectCollection,
 		session.parseCache,
 		fs,
+		session.pnpApi,
 		s.sessionOptions.CurrentDirectory,
 		s.toPath,
 	)
@@ -456,6 +474,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		autoImports,
 		autoImportsWatch,
 		s.toPath,
+		session.pnpApi,
 	)
 	newSnapshot.parentId = s.id
 	newSnapshot.ProjectCollection = projectCollection
