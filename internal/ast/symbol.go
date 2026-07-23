@@ -1,7 +1,6 @@
 package ast
 
 import (
-	"strings"
 	"sync/atomic"
 )
 
@@ -10,7 +9,7 @@ import (
 type Symbol struct {
 	Flags            SymbolFlags
 	CheckFlags       CheckFlags // Non-zero only in transient symbols created by Checker
-	Name             string
+	Name             SymbolNameKey
 	Declarations     []*Node
 	ValueDeclaration *Node
 	Members          SymbolTable
@@ -42,62 +41,61 @@ func (s *Symbol) CombinedLocalAndExportSymbolFlags() SymbolFlags {
 
 // SymbolTable
 
-type SymbolTable map[string]*Symbol
+type SymbolNameKey string
 
-const InternalSymbolNamePrefix = "\xFE" // Invalid UTF8 sequence, will never occur as IdentifierName
+type SymbolTable map[SymbolNameKey]*Symbol
+
+func (name SymbolNameKey) EscapedText() string {
+	return string(name)
+}
+
+func InternalSymbolName(suffix string) SymbolNameKey {
+	return SymbolNameKey(InternalSymbolNamePrefix + suffix)
+}
+
+const InternalSymbolNamePrefix = "__"
 
 const (
-	InternalSymbolNameCall                    = InternalSymbolNamePrefix + "call"                    // Call signatures
-	InternalSymbolNameConstructor             = InternalSymbolNamePrefix + "constructor"             // Constructor implementations
-	InternalSymbolNameNew                     = InternalSymbolNamePrefix + "new"                     // Constructor signatures
-	InternalSymbolNameIndex                   = InternalSymbolNamePrefix + "index"                   // Index signatures
-	InternalSymbolNameExportStar              = InternalSymbolNamePrefix + "export"                  // Module export * declarations
-	InternalSymbolNameGlobal                  = InternalSymbolNamePrefix + "global"                  // Global self-reference
-	InternalSymbolNameMissing                 = InternalSymbolNamePrefix + "missing"                 // Indicates missing symbol
-	InternalSymbolNameType                    = InternalSymbolNamePrefix + "type"                    // Anonymous type literal symbol
-	InternalSymbolNameObject                  = InternalSymbolNamePrefix + "object"                  // Anonymous object literal declaration
-	InternalSymbolNameJSXAttributes           = InternalSymbolNamePrefix + "jsxAttributes"           // Anonymous JSX attributes object literal declaration
-	InternalSymbolNameClass                   = InternalSymbolNamePrefix + "class"                   // Unnamed class expression
-	InternalSymbolNameFunction                = InternalSymbolNamePrefix + "function"                // Unnamed function expression
-	InternalSymbolNameComputed                = InternalSymbolNamePrefix + "computed"                // Computed property name declaration with dynamic name
-	InternalSymbolNameAssignmentDeclaration   = InternalSymbolNamePrefix + "assignment"              // Assignment declarations
-	InternalSymbolNameInstantiationExpression = InternalSymbolNamePrefix + "instantiationExpression" // Instantiation expressions
-	InternalSymbolNameImportAttributes        = InternalSymbolNamePrefix + "importAttributes"
-	InternalSymbolNameExportEquals            = "export=" // Export assignment symbol
-	InternalSymbolNameDefault                 = "default" // Default export symbol (technically not wholly internal, but included here for usability)
-	InternalSymbolNameThis                    = "this"
-	InternalSymbolNameModuleExports           = "module.exports"
+	InternalSymbolNameCall                    SymbolNameKey = InternalSymbolNamePrefix + "call"                    // Call signatures
+	InternalSymbolNameConstructor             SymbolNameKey = InternalSymbolNamePrefix + "constructor"             // Constructor implementations
+	InternalSymbolNameNew                     SymbolNameKey = InternalSymbolNamePrefix + "new"                     // Constructor signatures
+	InternalSymbolNameIndex                   SymbolNameKey = InternalSymbolNamePrefix + "index"                   // Index signatures
+	InternalSymbolNameExportStar              SymbolNameKey = InternalSymbolNamePrefix + "export"                  // Module export * declarations
+	InternalSymbolNameGlobal                  SymbolNameKey = InternalSymbolNamePrefix + "global"                  // Global self-reference
+	InternalSymbolNameMissing                 SymbolNameKey = InternalSymbolNamePrefix + "missing"                 // Indicates missing symbol
+	InternalSymbolNameType                    SymbolNameKey = InternalSymbolNamePrefix + "type"                    // Anonymous type literal symbol
+	InternalSymbolNameObject                  SymbolNameKey = InternalSymbolNamePrefix + "object"                  // Anonymous object literal declaration
+	InternalSymbolNameJSXAttributes           SymbolNameKey = InternalSymbolNamePrefix + "jsxAttributes"           // Anonymous JSX attributes object literal declaration
+	InternalSymbolNameClass                   SymbolNameKey = InternalSymbolNamePrefix + "class"                   // Unnamed class expression
+	InternalSymbolNameFunction                SymbolNameKey = InternalSymbolNamePrefix + "function"                // Unnamed function expression
+	InternalSymbolNameComputed                SymbolNameKey = InternalSymbolNamePrefix + "computed"                // Computed property name declaration with dynamic name
+	InternalSymbolNameAssignmentDeclaration   SymbolNameKey = InternalSymbolNamePrefix + "assignment"              // Assignment declarations
+	InternalSymbolNameInstantiationExpression SymbolNameKey = InternalSymbolNamePrefix + "instantiationExpression" // Instantiation expressions
+	InternalSymbolNameImportAttributes        SymbolNameKey = InternalSymbolNamePrefix + "importAttributes"
+	InternalSymbolNameExportEquals            SymbolNameKey = "export=" // Export assignment symbol
+	InternalSymbolNameDefault                 SymbolNameKey = "default" // Default export symbol (technically not wholly internal, but included here for usability)
+	InternalSymbolNameThis                    SymbolNameKey = "this"
+	InternalSymbolNameModuleExports           SymbolNameKey = "module.exports"
 )
 
 func SymbolName(symbol *Symbol) string {
 	if symbol.ValueDeclaration != nil && IsPrivateIdentifierClassElementDeclaration(symbol.ValueDeclaration) {
 		return symbol.ValueDeclaration.Name().Text()
 	}
-	return symbol.Name
+	return UnescapeLeadingUnderscores(symbol.Name)
 }
 
-// EscapeAllInternalSymbolNames replaces internal symbol name markers ("\xFE") with "__".
-func EscapeAllInternalSymbolNames(name string) string {
-	return strings.ReplaceAll(name, InternalSymbolNamePrefix, "__")
-}
-
-func EscapeInternalSymbolName(name string) string {
-	if rest, ok := strings.CutPrefix(name, InternalSymbolNamePrefix); ok {
-		return "__" + rest
+func EscapeLeadingUnderscores(identifier string) SymbolNameKey {
+	if len(identifier) >= 2 && identifier[0] == '_' && identifier[1] == '_' {
+		return SymbolNameKey("_" + identifier)
 	}
-	return name
+	return SymbolNameKey(identifier)
 }
 
-// EscapeSymbolName converts a binder symbol name into its escaped "__String"
-// form. Internal names (prefixed with the "\xFE" sentinel) become "__"-prefixed,
-// and user names that already begin with "__" gain an extra leading underscore
-// so they can be distinguished from internal names.
-func EscapeSymbolName(name string) string {
-	if rest, ok := strings.CutPrefix(name, InternalSymbolNamePrefix); ok {
-		return "__" + rest
-	}
-	if len(name) >= 2 && name[0] == '_' && name[1] == '_' {
-		return "_" + name
+func UnescapeLeadingUnderscores(identifier SymbolNameKey) string {
+	name := string(identifier)
+	if len(name) >= 3 && name[0] == '_' && name[1] == '_' && name[2] == '_' {
+		return name[1:]
 	}
 	return name
 }

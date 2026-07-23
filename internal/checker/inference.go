@@ -1233,13 +1233,14 @@ func (c *Checker) createEmptyObjectTypeFromStringLiteral(t *Type) *Type {
 			continue
 		}
 		name := getStringLiteralValue(t)
-		literalProp := c.newSymbol(ast.SymbolFlagsProperty, name)
+		symbolName := ast.EscapeLeadingUnderscores(name)
+		literalProp := c.newSymbol(ast.SymbolFlagsProperty, symbolName)
 		c.valueSymbolLinks.Get(literalProp).resolvedType = c.anyType
 		if t.symbol != nil {
 			literalProp.Declarations = t.symbol.Declarations
 			literalProp.ValueDeclaration = t.symbol.ValueDeclaration
 		}
-		members[name] = literalProp
+		members[symbolName] = literalProp
 	}
 	var indexInfos []*IndexInfo
 	if t.flags&TypeFlagsString != 0 {

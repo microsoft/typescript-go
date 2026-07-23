@@ -260,7 +260,8 @@ func (f *isolatedDeclarationsFixer) createNamespaceForExpandoProperties(expandoF
 
 	var newProperties []*ast.Node
 	for _, symbol := range elements {
-		if !scanner.IsIdentifierText(symbol.Name, core.LanguageVariantStandard) {
+		name := ast.UnescapeLeadingUnderscores(symbol.Name)
+		if !scanner.IsIdentifierText(name, core.LanguageVariantStandard) {
 			continue
 		}
 		// skip symbols that already have a variable declaration
@@ -274,7 +275,7 @@ func (f *isolatedDeclarationsFixer) createNamespaceForExpandoProperties(expandoF
 			continue
 		}
 
-		varDecl := factory.NewVariableDeclaration(factory.NewIdentifier(symbol.Name), nil, typeNode, nil)
+		varDecl := factory.NewVariableDeclaration(factory.NewIdentifier(name), nil, typeNode, nil)
 		exportToken := factory.NewToken(ast.KindExportKeyword)
 		varDeclList := factory.NewVariableDeclarationList(factory.NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsNone)
 		varStmt := factory.NewVariableStatement(factory.NewModifierList([]*ast.Node{exportToken}), varDeclList)
@@ -1383,7 +1384,7 @@ func (f *isolatedDeclarationsFixer) addSymbolToExistingImport(sym *ast.Symbol) {
 
 	// Find the module specifier for this symbol
 	moduleSymbol := sym.Parent
-	symbolName := sym.Name
+	symbolName := ast.UnescapeLeadingUnderscores(sym.Name)
 
 	// Walk the source file's import declarations to find the one importing from the same module
 	for _, stmt := range f.sourceFile.Statements.Nodes {

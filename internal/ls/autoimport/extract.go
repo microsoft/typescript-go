@@ -164,7 +164,7 @@ func (e *exportExtractor) extractFromModuleDeclaration(decl *ast.ModuleDeclarati
 	}
 }
 
-func (e *symbolExtractor) extractFromSymbol(name string, symbol *ast.Symbol, moduleID ModuleID, moduleFileName string, file *ast.SourceFile, exports *[]*Export) {
+func (e *symbolExtractor) extractFromSymbol(name ast.SymbolNameKey, symbol *ast.Symbol, moduleID ModuleID, moduleFileName string, file *ast.SourceFile, exports *[]*Export) {
 	if shouldIgnoreSymbol(symbol) {
 		return
 	}
@@ -191,12 +191,12 @@ func (e *symbolExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 				if parent != nil && parent.IsExternalModule() {
 					if targetModuleID, ok := e.getModuleIDForSymbol(parent); ok {
 						export.Target = ExportID{
-							ExportName: reexportedSymbol.Name,
+							ExportName: ast.UnescapeLeadingUnderscores(reexportedSymbol.Name),
 							ModuleID:   targetModuleID,
 						}
 					}
 				}
-				export.through = ast.InternalSymbolNameExportStar
+				export.through = ast.UnescapeLeadingUnderscores(ast.InternalSymbolNameExportStar)
 				*exports = append(*exports, export)
 			}
 		}
@@ -219,7 +219,7 @@ func (e *symbolExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 				if innerName != ast.InternalSymbolNameExportStar {
 					export, _ := e.createExport(namedExport, moduleID, moduleFileName, syntax, file, checkerLease)
 					if export != nil {
-						export.through = name
+						export.through = ast.UnescapeLeadingUnderscores(name)
 						*exports = append(*exports, export)
 					}
 				}
@@ -234,9 +234,9 @@ func (e *symbolExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 			*exports = slices.Grow(*exports, len(expression.AsObjectLiteralExpression().Properties.Nodes))
 			for _, prop := range expression.AsObjectLiteralExpression().Properties.Nodes {
 				if ast.IsShorthandPropertyAssignment(prop) || ast.IsPropertyAssignment(prop) && prop.AsPropertyAssignment().Name().Kind == ast.KindIdentifier {
-					export, _ := e.createExport(expression.Symbol().Members[prop.Name().Text()], moduleID, moduleFileName, syntax, file, checkerLease)
+					export, _ := e.createExport(expression.Symbol().Members[ast.EscapeLeadingUnderscores(prop.Name().Text())], moduleID, moduleFileName, syntax, file, checkerLease)
 					if export != nil {
-						export.through = name
+						export.through = ast.UnescapeLeadingUnderscores(name)
 						*exports = append(*exports, export)
 					}
 				}
@@ -253,7 +253,7 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, mo
 
 	export := &Export{
 		ExportID: ExportID{
-			ExportName: symbol.Name,
+			ExportName: ast.UnescapeLeadingUnderscores(symbol.Name),
 			ModuleID:   moduleID,
 		},
 		ModuleFileName: moduleFileName,
@@ -264,8 +264,8 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, mo
 	}
 
 	if syntax == ExportSyntaxUMD {
-		export.ExportName = ast.InternalSymbolNameExportEquals
-		export.localName = symbol.Name
+		export.ExportName = ast.UnescapeLeadingUnderscores(ast.InternalSymbolNameExportEquals)
+		export.localName = ast.UnescapeLeadingUnderscores(symbol.Name)
 	}
 
 	var targetSymbol *ast.Symbol
@@ -306,7 +306,7 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, mo
 				}
 			}
 			export.Target = ExportID{
-				ExportName: targetSymbol.Name,
+				ExportName: ast.UnescapeLeadingUnderscores(targetSymbol.Name),
 				ModuleID:   targetModuleID,
 			}
 		}
@@ -438,9 +438,9 @@ func getSyntax(symbol *ast.Symbol) ExportSyntax {
 func isUnusableName(name string) bool {
 	return name == "" ||
 		name == "_default" ||
-		name == ast.InternalSymbolNameExportStar ||
-		name == ast.InternalSymbolNameDefault ||
-		name == ast.InternalSymbolNameExportEquals
+		ast.EscapeLeadingUnderscores(name) == ast.InternalSymbolNameExportStar ||
+		ast.EscapeLeadingUnderscores(name) == ast.InternalSymbolNameDefault ||
+		ast.EscapeLeadingUnderscores(name) == ast.InternalSymbolNameExportEquals
 }
 
 // fileNameForDefaultExportName returns the best file name to use when deriving

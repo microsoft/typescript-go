@@ -2795,7 +2795,7 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 	declarationData.Symbol = host
 	containerData := synthesizedNamespace.LocalsContainerData()
 	containerData.Locals = make(ast.SymbolTable, 0)
-	containerData.Locals[localName.Text()] = symbol
+	containerData.Locals[ast.EscapeLeadingUnderscores(localName.Text())] = symbol
 
 	oldEnclosing := tx.enclosingDeclaration
 	tx.enclosingDeclaration = synthesizedNamespace

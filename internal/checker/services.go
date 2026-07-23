@@ -125,7 +125,7 @@ func (c *Checker) GetExportsOfModule(symbol *ast.Symbol) []*ast.Symbol {
 func (c *Checker) ForEachExportAndPropertyOfModule(moduleSymbol *ast.Symbol, cb func(*ast.Symbol, string)) {
 	for key, exportedSymbol := range c.getExportsOfModule(moduleSymbol) {
 		if !isReservedMemberName(key) {
-			cb(exportedSymbol, key)
+			cb(exportedSymbol, ast.UnescapeLeadingUnderscores(key))
 		}
 	}
 
@@ -146,7 +146,7 @@ func (c *Checker) ForEachExportAndPropertyOfModule(moduleSymbol *ast.Symbol, cb 
 	}
 	for name, symbol := range c.resolveStructuredTypeMembers(reducedType).members {
 		if c.isNamedMember(symbol, name) {
-			cb(symbol, name)
+			cb(symbol, ast.UnescapeLeadingUnderscores(name))
 		}
 	}
 }
@@ -173,7 +173,7 @@ func (c *Checker) isValidPropertyAccessWithType(node *ast.Node, isSuper bool, pr
 		return true
 	}
 
-	prop := c.getPropertyOfType(t, propertyName)
+	prop := c.getPropertyOfType(t, ast.EscapeLeadingUnderscores(propertyName))
 	return prop != nil && c.isPropertyAccessible(node, isSuper, false /*isWrite*/, t, prop)
 }
 
@@ -295,14 +295,14 @@ func (c *Checker) TryGetMemberInModuleExportsAndProperties(memberName string, mo
 
 	t := c.getTypeOfSymbol(exportEquals)
 	if c.shouldTreatPropertiesOfExternalModuleAsExports(t) {
-		return c.getPropertyOfType(t, memberName)
+		return c.getPropertyOfType(t, ast.EscapeLeadingUnderscores(memberName))
 	}
 	return nil
 }
 
 func (c *Checker) TryGetMemberInModuleExports(memberName string, moduleSymbol *ast.Symbol) *ast.Symbol {
 	symbolTable := c.getExportsOfModule(moduleSymbol)
-	return symbolTable[memberName]
+	return symbolTable[ast.EscapeLeadingUnderscores(memberName)]
 }
 
 func (c *Checker) shouldTreatPropertiesOfExternalModuleAsExports(resolvedExternalModuleType *Type) bool {
@@ -577,7 +577,7 @@ func (c *Checker) GetReferencesToSymbolInFile(
 	sourceFile *ast.SourceFile,
 	symbol *ast.Symbol,
 ) []*ast.Node {
-	identifierText := symbol.Name
+	identifierText := ast.UnescapeLeadingUnderscores(symbol.Name)
 	var result []*ast.Node
 	for _, token := range getPossibleSymbolReferenceNodes(sourceFile, identifierText, sourceFile.AsNode()) {
 		if !ast.IsIdentifier(token) {
@@ -814,7 +814,7 @@ func (c *Checker) IsTypeInvalidDueToUnionDiscriminant(contextualType *Type, obj 
 				nameType = c.getLiteralTypeFromPropertyName(propertyName)
 			}
 		}
-		var name string
+		var name ast.SymbolNameKey
 		if nameType != nil && isTypeUsableAsPropertyName(nameType) {
 			name = getPropertyNameFromType(nameType)
 		}
@@ -996,14 +996,14 @@ func isKnownGenericTypeName(name string) bool {
 }
 
 func (c *Checker) GetFirstTypeArgumentFromKnownType(t *Type) *Type {
-	if t.objectFlags&ObjectFlagsReference != 0 && t.symbol != nil && isKnownGenericTypeName(t.symbol.Name) {
-		symbol := c.getGlobalSymbol(t.symbol.Name, ast.SymbolFlagsType, nil)
+	if t.objectFlags&ObjectFlagsReference != 0 && t.symbol != nil && isKnownGenericTypeName(ast.UnescapeLeadingUnderscores(t.symbol.Name)) {
+		symbol := c.getGlobalSymbol(ast.UnescapeLeadingUnderscores(t.symbol.Name), ast.SymbolFlagsType, nil)
 		if symbol != nil && symbol == t.Target().symbol {
 			return core.FirstOrNil(c.getTypeArguments(t))
 		}
 	}
-	if t.alias != nil && isKnownGenericTypeName(t.alias.symbol.Name) {
-		symbol := c.getGlobalSymbol(t.alias.symbol.Name, ast.SymbolFlagsType, nil)
+	if t.alias != nil && isKnownGenericTypeName(ast.UnescapeLeadingUnderscores(t.alias.symbol.Name)) {
+		symbol := c.getGlobalSymbol(ast.UnescapeLeadingUnderscores(t.alias.symbol.Name), ast.SymbolFlagsType, nil)
 		if symbol != nil && symbol == t.alias.symbol {
 			return core.FirstOrNil(t.alias.typeArguments)
 		}
@@ -1017,8 +1017,9 @@ func (c *Checker) GetPropertySymbolsFromContextualType(node *ast.Node, contextua
 	if name == "" {
 		return nil
 	}
+	symbolName := ast.EscapeLeadingUnderscores(name)
 	if contextualType.flags&TypeFlagsUnion == 0 {
-		if symbol := c.getPropertyOfType(contextualType, name); symbol != nil {
+		if symbol := c.getPropertyOfType(contextualType, symbolName); symbol != nil {
 			return []*ast.Symbol{symbol}
 		}
 		return nil
@@ -1030,17 +1031,17 @@ func (c *Checker) GetPropertySymbolsFromContextualType(node *ast.Node, contextua
 		})
 	}
 	discriminatedPropertySymbols := core.MapNonNil(filteredTypes, func(t *Type) *ast.Symbol {
-		return c.getPropertyOfType(t, name)
+		return c.getPropertyOfType(t, symbolName)
 	})
 	if unionSymbolOk && (len(discriminatedPropertySymbols) == 0 || len(discriminatedPropertySymbols) == len(contextualType.Types())) {
-		if symbol := c.getPropertyOfType(contextualType, name); symbol != nil {
+		if symbol := c.getPropertyOfType(contextualType, symbolName); symbol != nil {
 			return []*ast.Symbol{symbol}
 		}
 	}
 	if len(filteredTypes) == 0 && len(discriminatedPropertySymbols) == 0 {
 		// Bad discriminant -- do again without discriminating
 		return core.MapNonNil(contextualType.Types(), func(t *Type) *ast.Symbol {
-			return c.getPropertyOfType(t, name)
+			return c.getPropertyOfType(t, symbolName)
 		})
 	}
 	// by eliminating duplicates we might even end up with a single symbol
@@ -1061,7 +1062,7 @@ func (c *Checker) GetPropertySymbolOfDestructuringAssignment(location *ast.Node)
 	if ast.IsArrayLiteralOrObjectLiteralDestructuringPattern(location.Parent.Parent) {
 		// Get the type of the object or array literal and then look for property of given name in the type
 		if typeOfObjectLiteral := c.getTypeOfAssignmentPattern(location.Parent.Parent); typeOfObjectLiteral != nil {
-			return c.getPropertyOfType(typeOfObjectLiteral, location.Text())
+			return c.getPropertyOfType(typeOfObjectLiteral, ast.EscapeLeadingUnderscores(location.Text()))
 		}
 	}
 	return nil

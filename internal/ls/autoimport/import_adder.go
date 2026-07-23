@@ -474,7 +474,7 @@ func getNameForExportedSymbol(symbol *ast.Symbol, preferCapitalized bool) string
 		debug.Assert(symbol.Parent != nil, "Expected exported symbol to have module symbol as parent")
 		return lsutil.ModuleSymbolToValidIdentifier(symbol.Parent, preferCapitalized)
 	}
-	return symbol.Name
+	return ast.UnescapeLeadingUnderscores(symbol.Name)
 }
 
 func replaceFirstIdentifierOfEntityName(factory *ast.NodeFactory, name *ast.EntityName, newIdentifier *ast.IdentifierNode) *ast.EntityName {

@@ -533,7 +533,7 @@ func (c *Checker) elaborateArrayLiteral(node *ast.Node, source *Type, target *Ty
 	}
 	reportedError := false
 	for i, element := range node.Elements() {
-		if ast.IsOmittedExpression(element) || c.isTupleLikeType(target) && c.getPropertyOfType(target, jsnum.Number(i).String()) == nil {
+		if ast.IsOmittedExpression(element) || c.isTupleLikeType(target) && c.getPropertyOfType(target, ast.EscapeLeadingUnderscores(jsnum.Number(i).String())) == nil {
 			continue
 		}
 		nameType := c.getNumberLiteralType(jsnum.Number(i))
@@ -585,7 +585,7 @@ func (c *Checker) elaborateElement(source *Type, target *Type, relation *Relatio
 		return false
 	}
 	diagnostic := diags[0]
-	var propertyName string
+	var propertyName ast.SymbolNameKey
 	var targetProp *ast.Symbol
 	if isTypeUsableAsPropertyName(nameType) {
 		propertyName = getPropertyNameFromType(nameType)
@@ -607,10 +607,10 @@ func (c *Checker) elaborateElement(source *Type, target *Type, relation *Relatio
 			targetNode = target.symbol.Declarations[0]
 		}
 		if propertyName == "" || nameType.flags&TypeFlagsUniqueESSymbol != 0 {
-			propertyName = c.TypeToString(nameType)
+			propertyName = ast.EscapeLeadingUnderscores(c.TypeToString(nameType))
 		}
 		if !c.program.IsSourceFileDefaultLibrary(ast.GetSourceFileOfNode(targetNode).Path()) {
-			diagnostic.AddRelatedInfo(createDiagnosticForNode(targetNode, diagnostics.The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1, propertyName, c.TypeToString(target)))
+			diagnostic.AddRelatedInfo(createDiagnosticForNode(targetNode, diagnostics.The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1, ast.UnescapeLeadingUnderscores(propertyName), c.TypeToString(target)))
 		}
 	}
 	c.reportDiagnostic(diagnostic, diagnosticOutput)
@@ -716,7 +716,7 @@ func (c *Checker) hasCommonProperties(source *Type, target *Type, isComparingJsx
  * @param name a property name to search
  * @param isComparingJsxAttributes a boolean flag indicating whether we are searching in JsxAttributesType
  */
-func (c *Checker) isKnownProperty(targetType *Type, name string, isComparingJsxAttributes bool) bool {
+func (c *Checker) isKnownProperty(targetType *Type, name ast.SymbolNameKey, isComparingJsxAttributes bool) bool {
 	if targetType.flags&TypeFlagsObject != 0 {
 		// For backwards compatibility a symbol-named property is satisfied by a string index signature. This
 		// is incorrect and inconsistent with element access expressions, where it is an error, so eventually
@@ -724,7 +724,7 @@ func (c *Checker) isKnownProperty(targetType *Type, name string, isComparingJsxA
 		if c.getPropertyOfObjectType(targetType, name) != nil ||
 			c.getApplicableIndexInfoForName(targetType, name) != nil ||
 			isLateBoundName(name) && c.getIndexInfoOfType(targetType, c.stringType) != nil ||
-			isComparingJsxAttributes && isHyphenatedJsxName(name) {
+			isComparingJsxAttributes && isHyphenatedJsxName(ast.UnescapeLeadingUnderscores(name)) {
 			// For JSXAttributes, if the attribute has a hyphenated name, consider that the attribute to be known.
 			return true
 		}
@@ -1019,7 +1019,7 @@ func excludeProperties(properties []*ast.Symbol, excludedProperties collections.
 	var reduced []*ast.Symbol
 	var excluded bool
 	for i, prop := range properties {
-		if !excludedProperties.Has(prop.Name) {
+		if !excludedProperties.Has(ast.UnescapeLeadingUnderscores(prop.Name)) {
 			if excluded {
 				reduced = append(reduced, prop)
 			}
@@ -1045,7 +1045,7 @@ func (d *TypeDiscriminator) len() int {
 }
 
 func (d *TypeDiscriminator) name(index int) string {
-	return d.props[index].Name
+	return ast.UnescapeLeadingUnderscores(d.props[index].Name)
 }
 
 func (d *TypeDiscriminator) matches(index int, t *Type) bool {
@@ -1084,7 +1084,7 @@ func (c *Checker) findDiscriminantProperties(sourceProperties []*ast.Symbol, tar
 	return result
 }
 
-func (c *Checker) isDiscriminantProperty(t *Type, name string) bool {
+func (c *Checker) isDiscriminantProperty(t *Type, name ast.SymbolNameKey) bool {
 	if t != nil && t.flags&TypeFlagsUnion != 0 {
 		prop := c.getUnionOrIntersectionProperty(t, name, false /*skipObjectFunctionPropertyAugment*/)
 		if prop != nil && prop.CheckFlags&ast.CheckFlagsSyntheticProperty != 0 {
@@ -1115,7 +1115,7 @@ func (c *Checker) getMatchingUnionConstituentForType(unionType *Type, t *Type) *
 // Return the name of a discriminant property for which it was possible and feasible to construct a map of
 // constituent types keyed by the literal types of the property by that name in each constituent type. Return
 // an empty string if no such discriminant property exists.
-func (c *Checker) getKeyPropertyName(t *Type) string {
+func (c *Checker) getKeyPropertyName(t *Type) ast.SymbolNameKey {
 	u := t.AsUnionType()
 	if u.keyPropertyName == "" {
 		u.keyPropertyName, u.constituentMap = c.computeKeyPropertyNameAndMap(t)
@@ -1136,7 +1136,7 @@ func (c *Checker) getConstituentTypeForKeyType(t *Type, keyType *Type) *Type {
 	return nil
 }
 
-func (c *Checker) computeKeyPropertyNameAndMap(t *Type) (string, map[*Type]*Type) {
+func (c *Checker) computeKeyPropertyNameAndMap(t *Type) (ast.SymbolNameKey, map[*Type]*Type) {
 	types := t.Types()
 	if len(types) < 10 || t.objectFlags&ObjectFlagsPrimitiveUnion != 0 || core.CountWhere(types, isObjectOrInstantiableNonPrimitive) < 10 {
 		return ast.InternalSymbolNameMissing, nil
@@ -1156,7 +1156,7 @@ func isObjectOrInstantiableNonPrimitive(t *Type) bool {
 	return t.flags&(TypeFlagsObject|TypeFlagsInstantiableNonPrimitive) != 0
 }
 
-func (c *Checker) getKeyPropertyCandidateName(types []*Type) string {
+func (c *Checker) getKeyPropertyCandidateName(types []*Type) ast.SymbolNameKey {
 	for _, t := range types {
 		if t.flags&(TypeFlagsObject|TypeFlagsInstantiableNonPrimitive) != 0 {
 			for _, p := range c.getPropertiesOfType(t) {
@@ -1173,7 +1173,7 @@ func (c *Checker) getKeyPropertyCandidateName(types []*Type) string {
 // types of the property by that name in each constituent type. No map is returned if some key property
 // has a non-literal type or if less than 10 or less than 50% of the constituents have a unique key.
 // Entries with duplicate keys have unknownType as the value.
-func (c *Checker) mapTypesByKeyProperty(types []*Type, keyPropertyName string) map[*Type]*Type {
+func (c *Checker) mapTypesByKeyProperty(types []*Type, keyPropertyName ast.SymbolNameKey) map[*Type]*Type {
 	typesByKey := make(map[*Type]*Type)
 	count := 0
 	for _, t := range types {
@@ -1929,7 +1929,7 @@ func (c *Checker) isInstantiatedGenericParameter(signature *Signature, pos int) 
 func (c *Checker) getParameterNameAtPosition(signature *Signature, pos int) string {
 	paramCount := len(signature.parameters) - core.IfElse(signatureHasRestParameter(signature), 1, 0)
 	if pos < paramCount {
-		return signature.parameters[pos].Name
+		return ast.UnescapeLeadingUnderscores(signature.parameters[pos].Name)
 	}
 	restParameter := signature.parameters[paramCount]
 	restType := c.getTypeOfSymbol(restParameter)
@@ -1937,7 +1937,7 @@ func (c *Checker) getParameterNameAtPosition(signature *Signature, pos int) stri
 		index := pos - paramCount
 		return c.getTupleElementLabel(restType.TargetTupleType().elementInfos[index], restParameter, index)
 	}
-	return restParameter.Name
+	return ast.UnescapeLeadingUnderscores(restParameter.Name)
 }
 
 func (c *Checker) getTupleElementLabel(elementInfo TupleElementInfo, restSymbol *ast.Symbol, index int) string {
@@ -1949,7 +1949,7 @@ func (c *Checker) getTupleElementLabel(elementInfo TupleElementInfo, restSymbol 
 	}
 	var rootName string
 	if restSymbol != nil {
-		rootName = restSymbol.Name
+		rootName = ast.UnescapeLeadingUnderscores(restSymbol.Name)
 	} else {
 		rootName = "arg"
 	}
@@ -2093,7 +2093,7 @@ func (c *Checker) createTypePredicateFromTypePredicateNode(node *ast.Node, signa
 	}
 	kind := core.IfElse(predicateNode.AssertsModifier != nil, TypePredicateKindAssertsIdentifier, TypePredicateKindIdentifier)
 	name := predicateNode.ParameterName.Text()
-	index := core.FindIndex(signature.parameters, func(p *ast.Symbol) bool { return p.Name == name })
+	index := core.FindIndex(signature.parameters, func(p *ast.Symbol) bool { return p.Name == ast.EscapeLeadingUnderscores(name) })
 	return c.newTypePredicate(kind, name, int32(index), t)
 }
 
@@ -2793,7 +2793,7 @@ func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors b
 	return false
 }
 
-func (c *Checker) getTypeOfPropertyInTypes(types []*Type, name string) *Type {
+func (c *Checker) getTypeOfPropertyInTypes(types []*Type, name ast.SymbolNameKey) *Type {
 	var propTypes []*Type
 	for _, t := range types {
 		propTypes = append(propTypes, c.getTypeOfPropertyInType(t, name))
@@ -2801,7 +2801,7 @@ func (c *Checker) getTypeOfPropertyInTypes(types []*Type, name string) *Type {
 	return c.getUnionType(propTypes)
 }
 
-func (c *Checker) getTypeOfPropertyInType(t *Type, name string) *Type {
+func (c *Checker) getTypeOfPropertyInType(t *Type, name ast.SymbolNameKey) *Type {
 	t = c.getApparentType(t)
 	var prop *ast.Symbol
 	if t.flags&TypeFlagsUnionOrIntersection != 0 {
@@ -2824,7 +2824,7 @@ func shouldCheckAsExcessProperty(prop *ast.Symbol, container *ast.Symbol) bool {
 }
 
 func isIgnoredJsxProperty(source *Type, sourceProp *ast.Symbol) bool {
-	return source.objectFlags&ObjectFlagsJsxAttributes != 0 && isHyphenatedJsxName(sourceProp.Name)
+	return source.objectFlags&ObjectFlagsJsxAttributes != 0 && isHyphenatedJsxName(ast.UnescapeLeadingUnderscores(sourceProp.Name))
 }
 
 func (c *Checker) isTypeSubsetOf(source *Type, target *Type) bool {
@@ -4025,7 +4025,7 @@ func (r *Relater) typeRelatedToDiscriminatedType(source *Type, target *Type) Ter
 	for i, sourceProperty := range sourcePropertiesFiltered {
 		sourcePropertyType := r.c.getNonMissingTypeOfSymbol(sourceProperty)
 		sourceDiscriminantTypes[i] = sourcePropertyType.Distributed()
-		excludedProperties.Add(sourceProperty.Name)
+		excludedProperties.Add(ast.UnescapeLeadingUnderscores(sourceProperty.Name))
 	}
 	// Build the cartesian product
 	discriminantCombinations := make([][]*Type, numCombinations)
@@ -4246,7 +4246,8 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 	numericNamesOnly := isTupleType(source) && isTupleType(target)
 	for _, targetProp := range excludeProperties(properties, excludedProperties) {
 		name := targetProp.Name
-		if targetProp.Flags&ast.SymbolFlagsPrototype == 0 && (!numericNamesOnly || isNumericLiteralName(name) || name == "length") && (!optionalsOnly || targetProp.Flags&ast.SymbolFlagsOptional != 0) {
+		unescapedName := ast.UnescapeLeadingUnderscores(name)
+		if targetProp.Flags&ast.SymbolFlagsPrototype == 0 && (!numericNamesOnly || isNumericLiteralName(unescapedName) || unescapedName == "length") && (!optionalsOnly || targetProp.Flags&ast.SymbolFlagsOptional != 0) {
 			sourceProp := r.c.getPropertyOfType(source, name)
 			if sourceProp != nil && sourceProp != targetProp {
 				related := r.propertyRelatedTo(source, target, sourceProp, targetProp, r.c.getNonMissingTypeOfSymbol, reportErrors, intersectionState, r.relation == r.c.comparableRelation)

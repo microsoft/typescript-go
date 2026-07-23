@@ -203,8 +203,8 @@ type AliasSymbolLinks struct {
 // Links for module symbols
 
 type ModuleSymbolLinks struct {
-	resolvedExports       ast.SymbolTable      // Resolved exports of module or combined early- and late-bound static members of a class.
-	typeOnlyExportStarMap map[string]*ast.Node // Set on a module symbol when some of its exports were resolved through a 'export type * from "mod"' declaration
+	resolvedExports       ast.SymbolTable                 // Resolved exports of module or combined early- and late-bound static members of a class.
+	typeOnlyExportStarMap map[ast.SymbolNameKey]*ast.Node // Set on a module symbol when some of its exports were resolved through a 'export type * from "mod"' declaration
 	exportsChecked        bool
 }
 
@@ -905,7 +905,7 @@ func (t *LiteralType) String() string {
 
 type UniqueESSymbolType struct {
 	TypeBase
-	name string
+	name ast.SymbolNameKey
 }
 
 // ConstrainedType (type with computed base constraint)
@@ -1140,9 +1140,9 @@ type UnionType struct {
 	UnionOrIntersectionType
 	resolvedReducedType *Type
 	regularType         *Type
-	origin              *Type           // Denormalized union, intersection, or index type in which union originates
-	keyPropertyName     string          // Property with unique unit type that exists in every object/intersection in union type
-	constituentMap      map[*Type]*Type // Constituents keyed by unit type discriminants
+	origin              *Type             // Denormalized union, intersection, or index type in which union originates
+	keyPropertyName     ast.SymbolNameKey // Property with unique unit type that exists in every object/intersection in union type
+	constituentMap      map[*Type]*Type   // Constituents keyed by unit type discriminants
 }
 
 // IntersectionType

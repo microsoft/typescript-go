@@ -113,7 +113,7 @@ loop:
 				result = moduleExports[ast.InternalSymbolNameDefault]
 				if result != nil {
 					localSymbol := GetLocalSymbolForExportDefault(result)
-					if localSymbol != nil && result.Flags&meaning != 0 && localSymbol.Name == name {
+					if localSymbol != nil && result.Flags&meaning != 0 && localSymbol.Name == ast.EscapeLeadingUnderscores(name) {
 						break loop
 					}
 					result = nil
@@ -129,12 +129,12 @@ loop:
 				//     2. We check === SymbolFlags.Alias in order to check that the symbol is *purely*
 				//        an alias. If we used &, we'd be throwing out symbols that have non alias aspects,
 				//        which is not the desired behavior.
-				moduleExport := moduleExports[name]
+				moduleExport := moduleExports[ast.EscapeLeadingUnderscores(name)]
 				if moduleExport != nil && moduleExport.Flags == ast.SymbolFlagsAlias && (ast.GetDeclarationOfKind(moduleExport, ast.KindExportSpecifier) != nil || ast.GetDeclarationOfKind(moduleExport, ast.KindNamespaceExport) != nil) {
 					break
 				}
 			}
-			if name != ast.InternalSymbolNameDefault {
+			if ast.EscapeLeadingUnderscores(name) != ast.InternalSymbolNameDefault {
 				if result = r.lookup(moduleExports, name, meaning&ast.SymbolFlagsModuleMember); result != nil {
 					if ast.IsSourceFile(location) && location.AsSourceFile().CommonJSModuleIndicator != nil && result.Flags&ast.SymbolFlagsType == 0 {
 						result = nil
@@ -153,7 +153,7 @@ loop:
 				if nameNotFoundMessage != nil && r.CompilerOptions.GetIsolatedModules() && location.Flags&ast.NodeFlagsAmbient == 0 && ast.GetSourceFileOfNode(location) != ast.GetSourceFileOfNode(result.ValueDeclaration) {
 					isolatedModulesLikeFlagName := core.IfElse(r.CompilerOptions.VerbatimModuleSyntax == core.TSTrue, "verbatimModuleSyntax", "isolatedModules")
 					r.error(originalLocation, diagnostics.Cannot_access_0_from_another_file_without_qualification_when_1_is_enabled_Use_2_instead,
-						name, isolatedModulesLikeFlagName, enumSymbol.Name+"."+name)
+						name, isolatedModulesLikeFlagName, ast.UnescapeLeadingUnderscores(enumSymbol.Name)+"."+name)
 				}
 				break loop
 			}
@@ -421,7 +421,7 @@ func (r *NameResolver) lookup(symbols ast.SymbolTable, name string, meaning ast.
 	}
 	// Default implementation does not support following aliases or merged symbols
 	if meaning != 0 {
-		symbol := symbols[name]
+		symbol := symbols[ast.EscapeLeadingUnderscores(name)]
 		if symbol != nil {
 			if symbol.Flags&meaning != 0 {
 				return symbol

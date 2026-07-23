@@ -143,7 +143,7 @@ func (sd *snapshotData) newSymbolResponse(symbol *ast.Symbol, canonicalProject P
 	resp := &SymbolResponse{
 		Id:         id,
 		Project:    project,
-		Name:       ast.EscapeSymbolName(symbol.Name),
+		Name:       symbol.Name.EscapedText(),
 		Flags:      uint32(symbol.Flags),
 		CheckFlags: uint32(symbol.CheckFlags),
 	}

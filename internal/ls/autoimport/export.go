@@ -73,14 +73,14 @@ func (e *Export) Name() string {
 	if e.localName != "" {
 		return e.localName
 	}
-	if e.ExportName == ast.InternalSymbolNameExportEquals {
+	if ast.EscapeLeadingUnderscores(e.ExportName) == ast.InternalSymbolNameExportEquals {
 		return e.Target.ExportName
 	}
 	return e.ExportName
 }
 
 func (e *Export) IsRenameable() bool {
-	return e.ExportName == ast.InternalSymbolNameExportEquals || e.ExportName == ast.InternalSymbolNameDefault
+	return ast.EscapeLeadingUnderscores(e.ExportName) == ast.InternalSymbolNameExportEquals || ast.EscapeLeadingUnderscores(e.ExportName) == ast.InternalSymbolNameDefault
 }
 
 func (e *Export) AmbientModuleName() string {
@@ -117,13 +117,13 @@ func SymbolToExport(symbol *ast.Symbol, ch *checker.Checker) *Export {
 	moduleFileName := file.FileName()
 	target := ch.GetMergedSymbol(ch.SkipAlias(symbol))
 
-	if export := tryGetModuleExport(ast.InternalSymbolNameDefault, target, moduleSymbol, ch, moduleID, moduleFileName, file); export != nil {
+	if export := tryGetModuleExport(ast.UnescapeLeadingUnderscores(ast.InternalSymbolNameDefault), target, moduleSymbol, ch, moduleID, moduleFileName, file); export != nil {
 		return export
 	}
-	if export := tryGetModuleExport(ast.InternalSymbolNameExportEquals, target, moduleSymbol, ch, moduleID, moduleFileName, file); export != nil {
+	if export := tryGetModuleExport(ast.UnescapeLeadingUnderscores(ast.InternalSymbolNameExportEquals), target, moduleSymbol, ch, moduleID, moduleFileName, file); export != nil {
 		return export
 	}
-	return tryGetModuleExport(symbol.Name, target, moduleSymbol, ch, moduleID, moduleFileName, file)
+	return tryGetModuleExport(ast.UnescapeLeadingUnderscores(symbol.Name), target, moduleSymbol, ch, moduleID, moduleFileName, file)
 }
 
 func tryGetModuleExport(exportName string, target *ast.Symbol, moduleSymbol *ast.Symbol, ch *checker.Checker, moduleID ModuleID, moduleFileName string, file *ast.SourceFile) *Export {
