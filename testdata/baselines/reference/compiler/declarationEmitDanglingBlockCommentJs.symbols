@@ -1,0 +1,30 @@
+//// [tests/cases/compiler/declarationEmitDanglingBlockCommentJs.ts] ////
+
+=== topComment-js.js ===
+/** Comment on nothing */
+
+/** Comment on noop */
+(function noop() {})();
+>noop : Symbol(noop, Decl(topComment-js.js, 3, 1))
+
+export const pi = 3;
+>pi : Symbol(pi, Decl(topComment-js.js, 5, 12))
+
+=== nonTopComment-js.js ===
+export const e = 3;
+>e : Symbol(e, Decl(nonTopComment-js.js, 0, 12))
+
+/** Comment on nothing */
+
+/** Comment on noop */
+(function noop() {})();
+>noop : Symbol(noop, Decl(nonTopComment-js.js, 5, 1))
+
+export const pi = 3;
+>pi : Symbol(pi, Decl(nonTopComment-js.js, 7, 12))
+
+=== attachedComment-js.js ===
+/** Comment on pi */
+export const pi = 3;
+>pi : Symbol(pi, Decl(attachedComment-js.js, 1, 12))
+
