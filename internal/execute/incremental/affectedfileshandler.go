@@ -117,8 +117,6 @@ func (h *affectedFilesHandler) getFilesAffectedBy(path tspath.Path) []*ast.Sourc
 		return []*ast.SourceFile{file}
 	}
 
-	// When a change affects the global scope, every file other than the default library files is affected,
-	// so that dependents get their cached semantic diagnostics removed even when no reference edge leads to them.
 	if info, _ := h.program.snapshot.fileInfos.Load(file.Path()); info.affectsGlobalScope {
 		h.hasAllFilesExcludingDefaultLibraryFile.Store(true)
 		return h.program.snapshot.getAllFilesExcludingDefaultLibraryFile(h.program.program, file)
