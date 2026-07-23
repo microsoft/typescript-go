@@ -733,6 +733,7 @@ type Checker struct {
 	uniqueLiteralType                           *Type
 	uniqueLiteralMapper                         *TypeMapper
 	reliabilityFlags                            RelationComparisonResult
+	varianceStack                               []*ast.Symbol
 	reportUnreliableMapper                      *TypeMapper
 	reportUnmeasurableMapper                    *TypeMapper
 	restrictiveMapper                           *TypeMapper
