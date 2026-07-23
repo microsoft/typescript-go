@@ -907,6 +907,7 @@ func (c *EmitContext) VisitFunctionBody(node *ast.BlockOrExpression, visitor *as
 	if !ast.IsBlock(updated) {
 		returnStatement := c.Factory.NewReturnStatement(updated)
 		returnStatement.Loc = updated.Loc
+		c.AddEmitFlags(updated, EFNoComments)
 		statements := c.MergeEnvironment([]*ast.Statement{returnStatement}, declarations)
 		return c.Factory.NewBlock(c.Factory.NewNodeList(statements), false /*multiLine*/)
 	}
