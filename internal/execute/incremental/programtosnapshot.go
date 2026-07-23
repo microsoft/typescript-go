@@ -100,7 +100,11 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 			}
 			if t.oldProgram != nil {
 				if oldFileInfo, ok := t.oldProgram.snapshot.fileInfos.Load(file.Path()); ok {
-					signature = oldFileInfo.signature
+					if oldUncommittedSignature, ok := t.oldProgram.snapshot.oldSignatures.Load(file.Path()); ok {
+						signature = oldUncommittedSignature
+					} else {
+						signature = oldFileInfo.signature
+					}
 					if oldFileInfo.version != version || oldFileInfo.affectsGlobalScope != affectsGlobalScope || oldFileInfo.impliedNodeFormat != impliedNodeFormat {
 						t.snapshot.addFileToChangeSet(file.Path())
 					} else if oldReferences, _ := t.oldProgram.snapshot.referencedMap.getReferences(file.Path()); !newReferences.Equals(oldReferences) {

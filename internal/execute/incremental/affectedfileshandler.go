@@ -68,6 +68,8 @@ func (h *affectedFilesHandler) removeDiagnosticsOfLibraryFiles() {
 
 func (h *affectedFilesHandler) computeDtsSignature(file *ast.SourceFile) string {
 	var signature string
+	done := h.program.beginNestedEmit()
+	defer done()
 	h.program.program.Emit(h.ctx, compiler.EmitOptions{
 		TargetSourceFile: file,
 		EmitOnly:         compiler.EmitOnlyForcedDts,
@@ -104,6 +106,7 @@ func (h *affectedFilesHandler) updateShapeSignature(file *ast.SourceFile, useFil
 		update.signature = info.version
 		update.kind = SignatureUpdateKindUsedVersion
 	}
+	h.program.snapshot.oldSignatures.Store(file.Path(), prevSignature)
 	return update.signature != prevSignature
 }
 
@@ -348,6 +351,7 @@ func (h *affectedFilesHandler) updateSnapshot() {
 			h.program.snapshot.addFileToAffectedFilesPendingEmit(filePath, emitKind)
 		}
 	}
+	h.program.snapshot.oldSignatures = collections.SyncMap[tspath.Path, string]{}
 	h.program.snapshot.changedFilesSet = collections.SyncSet[tspath.Path]{}
 	h.program.snapshot.buildInfoEmitPending.Store(true)
 }

@@ -105,7 +105,7 @@ export function child2() {
 }
 
 //// [/home/src/workspaces/solution/child/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","./child2.ts","./child.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"85942d10a7b48fc9efb88a3f01fa243f-export function child2() {\n}","signature":"a48d766cad04341d4c420407878f4d51-export declare function child2(): void;\n","impliedNodeFormat":1},{"version":"9686fb058ae9baf28ea93ef1e3b32b74-import { child2 } from \"../child/child2\";\nexport function child() {\n    child2();\n}","signature":"3a48d078ac909d932ed914f17038d634-export declare function child(): void;\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./child.d.ts"}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","./child2.ts","./child.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"85942d10a7b48fc9efb88a3f01fa243f-export function child2() {\n}","9686fb058ae9baf28ea93ef1e3b32b74-import { child2 } from \"../child/child2\";\nexport function child() {\n    child2();\n}"],"fileIdsList":[[2]],"options":{"composite":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./child.d.ts","emitSignatures":[[2,"a48d766cad04341d4c420407878f4d51-export declare function child2(): void;\n"],[3,"3a48d078ac909d932ed914f17038d634-export declare function child(): void;\n"]]}
 //// [/home/src/workspaces/solution/child/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -142,24 +142,14 @@ export function child2() {
     {
       "fileName": "./child2.ts",
       "version": "85942d10a7b48fc9efb88a3f01fa243f-export function child2() {\n}",
-      "signature": "a48d766cad04341d4c420407878f4d51-export declare function child2(): void;\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "85942d10a7b48fc9efb88a3f01fa243f-export function child2() {\n}",
-        "signature": "a48d766cad04341d4c420407878f4d51-export declare function child2(): void;\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "85942d10a7b48fc9efb88a3f01fa243f-export function child2() {\n}",
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "./child.ts",
       "version": "9686fb058ae9baf28ea93ef1e3b32b74-import { child2 } from \"../child/child2\";\nexport function child() {\n    child2();\n}",
-      "signature": "3a48d078ac909d932ed914f17038d634-export declare function child(): void;\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "9686fb058ae9baf28ea93ef1e3b32b74-import { child2 } from \"../child/child2\";\nexport function child() {\n    child2();\n}",
-        "signature": "3a48d078ac909d932ed914f17038d634-export declare function child(): void;\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "9686fb058ae9baf28ea93ef1e3b32b74-import { child2 } from \"../child/child2\";\nexport function child() {\n    child2();\n}",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "fileIdsList": [
@@ -176,7 +166,25 @@ export function child2() {
     ]
   },
   "latestChangedDtsFile": "./child.d.ts",
-  "size": 1435
+  "emitSignatures": [
+    {
+      "file": "./child2.ts",
+      "signature": "a48d766cad04341d4c420407878f4d51-export declare function child2(): void;\n",
+      "original": [
+        2,
+        "a48d766cad04341d4c420407878f4d51-export declare function child2(): void;\n"
+      ]
+    },
+    {
+      "file": "./child.ts",
+      "signature": "3a48d078ac909d932ed914f17038d634-export declare function child(): void;\n",
+      "original": [
+        3,
+        "3a48d078ac909d932ed914f17038d634-export declare function child(): void;\n"
+      ]
+    }
+  ],
+  "size": 1370
 }
 //// [/home/src/workspaces/solution/main/main.d.ts] *new* 
 export declare function main(): void;
@@ -188,7 +196,7 @@ export function main() {
 }
 
 //// [/home/src/workspaces/solution/main/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[3],"fileNames":["lib.es2025.full.d.ts","../child/child.d.ts","./main.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"3a48d078ac909d932ed914f17038d634-export declare function child(): void;\n",{"version":"d75ecee856a9674923c51d13bc094a97-import { child } from \"../child/child\";\nexport function main() {\n    child();\n}","signature":"c59caa3814ee834e4ffefaf173a2be2a-export declare function main(): void;\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./main.d.ts"}
+{"version":"FakeTSVersion","root":[3],"fileNames":["lib.es2025.full.d.ts","../child/child.d.ts","./main.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"3a48d078ac909d932ed914f17038d634-export declare function child(): void;\n","d75ecee856a9674923c51d13bc094a97-import { child } from \"../child/child\";\nexport function main() {\n    child();\n}"],"fileIdsList":[[2]],"options":{"composite":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./main.d.ts","emitSignatures":[[3,"c59caa3814ee834e4ffefaf173a2be2a-export declare function main(): void;\n"]]}
 //// [/home/src/workspaces/solution/main/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -227,13 +235,8 @@ export function main() {
     {
       "fileName": "./main.ts",
       "version": "d75ecee856a9674923c51d13bc094a97-import { child } from \"../child/child\";\nexport function main() {\n    child();\n}",
-      "signature": "c59caa3814ee834e4ffefaf173a2be2a-export declare function main(): void;\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "d75ecee856a9674923c51d13bc094a97-import { child } from \"../child/child\";\nexport function main() {\n    child();\n}",
-        "signature": "c59caa3814ee834e4ffefaf173a2be2a-export declare function main(): void;\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "d75ecee856a9674923c51d13bc094a97-import { child } from \"../child/child\";\nexport function main() {\n    child();\n}",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "fileIdsList": [
@@ -250,7 +253,17 @@ export function main() {
     ]
   },
   "latestChangedDtsFile": "./main.d.ts",
-  "size": 1320
+  "emitSignatures": [
+    {
+      "file": "./main.ts",
+      "signature": "c59caa3814ee834e4ffefaf173a2be2a-export declare function main(): void;\n",
+      "original": [
+        3,
+        "c59caa3814ee834e4ffefaf173a2be2a-export declare function main(): void;\n"
+      ]
+    }
+  ],
+  "size": 1297
 }
 
 child/tsconfig.json::

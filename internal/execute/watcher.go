@@ -306,7 +306,7 @@ func (w *Watcher) doBuild() error {
 	w.program = incremental.NewProgram(compiler.NewProgram(compiler.ProgramOptions{
 		Config: w.config,
 		Host:   host,
-	}), w.program, nil, w.testing != nil)
+	}), w.program, nil, w.sys.Now, w.testing != nil)
 
 	result := w.compileAndEmit()
 	cached.DisableAndClearCache()

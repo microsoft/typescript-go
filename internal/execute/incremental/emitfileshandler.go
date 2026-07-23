@@ -98,9 +98,16 @@ func (h *emitFilesHandler) updateHasEmitDiagnostics(result *compiler.EmitResult)
 
 func (h *emitFilesHandler) emitBuildInfo(options compiler.EmitOptions, result *compiler.EmitResult) {
 	buildInfoResult := h.program.emitBuildInfo(h.ctx, options)
-	if buildInfoResult != nil {
-		result.Diagnostics = append(result.Diagnostics, buildInfoResult.Diagnostics...)
-		result.EmittedFiles = append(result.EmittedFiles, buildInfoResult.EmittedFiles...)
+	if buildInfoResult == nil {
+		if h.ctx.Err() == nil {
+			h.program.snapshot.oldSignatures = collections.SyncMap[tspath.Path, string]{}
+		}
+		return
+	}
+	result.Diagnostics = append(result.Diagnostics, buildInfoResult.Diagnostics...)
+	result.EmittedFiles = append(result.EmittedFiles, buildInfoResult.EmittedFiles...)
+	if !buildInfoResult.EmitSkipped {
+		h.program.snapshot.oldSignatures = collections.SyncMap[tspath.Path, string]{}
 	}
 }
 
@@ -204,6 +211,7 @@ func (h *emitFilesHandler) getEmitOptions(options compiler.EmitOptions) compiler
 							emitSignature = signature
 						}
 						if signature != info.version { // Update it
+							h.program.snapshot.oldSignatures.LoadOrStore(options.TargetSourceFile.Path(), info.signature)
 							h.signatures.Store(options.TargetSourceFile.Path(), signature)
 						}
 					}
@@ -335,6 +343,7 @@ func emitFiles(ctx context.Context, program *Program, options compiler.EmitOptio
 			return nil
 		}
 		emitHandler.updateSnapshot()
+		program.snapshot.oldSignatures = collections.SyncMap[tspath.Path, string]{}
 		return result
 	}
 

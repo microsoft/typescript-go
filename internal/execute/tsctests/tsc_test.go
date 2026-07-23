@@ -3788,6 +3788,33 @@ func TestTscNoEmit(t *testing.T) {
 				commandLineArgs: []string{"--noEmit"},
 				edits:           noChangeOnlyEdit,
 			},
+			{
+				subScenario:     "preserves uncommitted signatures when emitting after noEmit",
+				commandLineArgs: []string{"--noEmit"},
+				files: FileMap{
+					"/home/src/workspaces/project/a.ts": `export const a = class { private p = 10; };`,
+					"/home/src/workspaces/project/b.ts": `export const b = 10;`,
+					"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+						{
+							"compilerOptions": {
+								"incremental": true,
+								"declaration": true
+							}
+						}`),
+				},
+				edits: []*tscEdit{
+					{
+						caption: "fix declaration emit error",
+						edit: func(sys *TestSys) {
+							sys.writeFileNoError("/home/src/workspaces/project/a.ts", `export const a = "hello";`)
+						},
+					},
+					{
+						caption:         "emit after fixing error",
+						commandLineArgs: []string{},
+					},
+				},
+			},
 			getTscNoEmitLoopTestCase("", []string{"-b", "-w", "-verbose"}),
 			getTscNoEmitLoopTestCase(" with incremental", []string{"-b", "-w", "-verbose", "--incremental"}),
 		},
