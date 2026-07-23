@@ -255,7 +255,7 @@ func (o *Orchestrator) Watch(ctx context.Context) {
 		o.wm.EnsureDefaultBackend()
 	}
 
-	o.updateWatch()
+	o.updateWatch(ctx)
 	desiredDirs := o.computeDesiredWatches()
 	if err := o.wm.ReconcileWatches(desiredDirs); err != nil {
 		fmt.Fprintf(o.opts.Sys.Writer(), "%v\n", err)
@@ -270,10 +270,10 @@ func (o *Orchestrator) Watch(ctx context.Context) {
 	}
 }
 
-func (o *Orchestrator) updateWatch() {
+func (o *Orchestrator) updateWatch(ctx context.Context) {
 	oldCache := o.host.mTimes
 	o.host.mTimes = &collections.SyncMap[tspath.Path, time.Time]{}
-	o.rangeTask(context.Background(), func(_ context.Context, path tspath.Path, task *BuildTask) {
+	o.rangeTask(ctx, func(_ context.Context, path tspath.Path, task *BuildTask) {
 		task.updateWatch(o, oldCache)
 	})
 }
@@ -398,6 +398,7 @@ func (o *Orchestrator) checkTasksForEventChanges(changedPaths map[string]fswatch
 		for eventPath := range changedPaths {
 			if o.host.FS().DirectoryExists(eventPath) {
 				if o.wm.IsPathUnderWatch(eventPath, opts) {
+					// There is nothing interesting to cancel, just pass Background.
 					o.rangeTask(context.Background(), func(_ context.Context, path tspath.Path, task *BuildTask) {
 						task.resetStatus()
 						task.reportDone = make(chan struct{})
@@ -562,6 +563,7 @@ func (o *Orchestrator) DoCycle() {
 
 	if overflow {
 		// Overflow: reset all tasks to force a full rebuild.
+		// There is nothing interesting to cancel, just pass Background.
 		o.rangeTask(context.Background(), func(_ context.Context, path tspath.Path, task *BuildTask) {
 			task.resetConfig(o, path)
 			task.reportDone = make(chan struct{})
@@ -585,9 +587,10 @@ func (o *Orchestrator) DoCycle() {
 		o.GenerateGraphReusingOldTasks()
 	}
 
-	// TODO: propagate a proper context here and support cancellation with cycle
-	o.buildOrClean(context.Background())
-	o.updateWatch()
+	// TODO: propagate a proper context here and support cancellation within a cycle
+	ctx := context.Background()
+	o.buildOrClean(ctx)
+	o.updateWatch(ctx)
 	desiredDirs := o.computeDesiredWatches()
 	if err := o.wm.ReconcileWatches(desiredDirs); err != nil {
 		fmt.Fprintf(o.opts.Sys.Writer(), "%v\n", err)
