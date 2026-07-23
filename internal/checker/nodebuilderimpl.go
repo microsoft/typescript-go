@@ -2605,10 +2605,34 @@ func (b *NodeBuilderImpl) addPropertyToElementList(propertySymbol *ast.Symbol, t
 	}
 	propertySignature := b.f.NewPropertySignatureDeclaration(modifiers, propertyName, optionalToken, propertyTypeNode, nil)
 
-	b.setCommentRange(propertySignature, propertySymbol.ValueDeclaration)
+	b.preserveCommentsOn(propertySignature, propertySymbol)
 	typeElements = append(typeElements, propertySignature)
 
 	return typeElements
+}
+
+// preserveCommentsOn copies documentation comments from a property symbol onto a synthesized node
+// for declaration emit. Properties declared via a JSDoc `@property`/`@typedef` tag are reparsed into
+// property signatures whose comment lives on a synthetic JSDoc rather than in a source comment range,
+// so it is reattached as a synthetic leading comment (mirroring the old emitter's `preserveCommentsOn`).
+// Otherwise the comment range of the value declaration is copied.
+func (b *NodeBuilderImpl) preserveCommentsOn(node *ast.Node, propertySymbol *ast.Symbol) {
+	jsdocPropertyDeclaration := core.Find(propertySymbol.Declarations, func(d *ast.Node) bool {
+		return d.Flags&ast.NodeFlagsReparsed != 0 && d.Flags&ast.NodeFlagsHasJSDoc != 0
+	})
+	if jsdocPropertyDeclaration != nil {
+		jsdoc := core.FirstOrNil(jsdocPropertyDeclaration.EagerJSDoc(ast.GetSourceFileOfNode(jsdocPropertyDeclaration)))
+		if jsdoc != nil {
+			commentText := scanner.GetTextOfJSDocComment(jsdoc.AsJSDoc().Comment)
+			if commentText != "" {
+				comment := "*\n * " + strings.ReplaceAll(commentText, "\n", "\n * ") + "\n "
+				b.e.AddSyntheticLeadingComment(node, ast.KindMultiLineCommentTrivia, comment, true /*hasTrailingNewLine*/)
+			}
+		}
+	} else if propertySymbol.ValueDeclaration != nil {
+		// Copy comments to node for declaration emit
+		b.setCommentRange(node, propertySymbol.ValueDeclaration)
+	}
 }
 
 func (b *NodeBuilderImpl) createTypeNodesFromResolvedType(resolvedType *StructuredType) *ast.NodeList {
