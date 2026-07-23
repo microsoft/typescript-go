@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 )
@@ -22,6 +23,9 @@ var _ project.Client = &ClientMock{}
 //
 //		// make and configure a mocked project.Client
 //		mockedClient := &ClientMock{
+//			GetLocaleFunc: func() locale.Locale {
+//				panic("mock out the GetLocale method")
+//			},
 //			IsActiveFunc: func() bool {
 //				panic("mock out the IsActive method")
 //			},
@@ -59,6 +63,9 @@ var _ project.Client = &ClientMock{}
 //
 //	}
 type ClientMock struct {
+	// GetLocaleFunc mocks the GetLocale method.
+	GetLocaleFunc func() locale.Locale
+
 	// IsActiveFunc mocks the IsActive method.
 	IsActiveFunc func() bool
 
@@ -91,6 +98,8 @@ type ClientMock struct {
 
 	// calls tracks calls to the methods.
 	calls struct {
+		// GetLocale holds details about calls to the GetLocale method.
+		GetLocale []struct{}
 		// IsActive holds details about calls to the IsActive method.
 		IsActive []struct{}
 		// ProgressFinish holds details about calls to the ProgressFinish method.
@@ -153,6 +162,7 @@ type ClientMock struct {
 			Watchers []*lsproto.FileSystemWatcher
 		}
 	}
+	lockGetLocale          sync.RWMutex
 	lockIsActive           sync.RWMutex
 	lockProgressFinish     sync.RWMutex
 	lockProgressStart      sync.RWMutex
@@ -163,6 +173,31 @@ type ClientMock struct {
 	lockSendTelemetry      sync.RWMutex
 	lockUnwatchFiles       sync.RWMutex
 	lockWatchFiles         sync.RWMutex
+}
+
+// GetLocale calls GetLocaleFunc.
+func (mock *ClientMock) GetLocale() locale.Locale {
+	callInfo := struct{}{}
+	mock.lockGetLocale.Lock()
+	mock.calls.GetLocale = append(mock.calls.GetLocale, callInfo)
+	mock.lockGetLocale.Unlock()
+	if mock.GetLocaleFunc == nil {
+		var localeOut locale.Locale
+		return localeOut
+	}
+	return mock.GetLocaleFunc()
+}
+
+// GetLocaleCalls gets all the calls that were made to GetLocale.
+// Check the length with:
+//
+//	len(mockedClient.GetLocaleCalls())
+func (mock *ClientMock) GetLocaleCalls() []struct{} {
+	var calls []struct{}
+	mock.lockGetLocale.RLock()
+	calls = mock.calls.GetLocale
+	mock.lockGetLocale.RUnlock()
+	return calls
 }
 
 // IsActive calls IsActiveFunc.

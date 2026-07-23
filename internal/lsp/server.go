@@ -177,6 +177,9 @@ type Server struct {
 	clientCapabilities    lsproto.ResolvedClientCapabilities
 	positionEncoding      lsproto.PositionEncodingKind
 	locale                locale.Locale
+	// initLocale is the locale resolved from the initialize request; it is
+	// used as the fallback when the user's locale preference is "auto".
+	initLocale locale.Locale
 
 	watchEnabled     bool
 	telemetryEnabled bool
@@ -360,6 +363,11 @@ func (s *Server) ProgressFinish(message *diagnostics.Message, args ...any) {
 	if s.projectProgress != nil {
 		s.projectProgress.finish(message, args...)
 	}
+}
+
+// GetLocale implements project.Client.
+func (s *Server) GetLocale() locale.Locale {
+	return s.locale
 }
 
 func (s *Server) RequestConfiguration(ctx context.Context) (lsutil.UserPreferences, error) {
@@ -1057,6 +1065,7 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 	if s.initializeParams.Locale != nil {
 		s.locale, _ = locale.Parse(*s.initializeParams.Locale)
 	}
+	s.initLocale = s.locale
 
 	if s.startWatchdog != nil && params.ProcessId.Integer != nil {
 		s.startWatchdog(int(*params.ProcessId.Integer))
@@ -1317,8 +1326,33 @@ func (s *Server) handleDidChangeWorkspaceConfiguration(ctx context.Context, para
 		return nil
 	} else if settings, ok := params.Settings.(map[string]any); ok {
 		s.session.Configure(lsutil.ParseUserPreferences(settings))
+		s.locale = s.localeFromSettings(settings)
 	}
 	return nil
+}
+
+// localeFromSettings extracts the diagnostic locale from a workspace configuration
+// settings map. When the locale is absent, empty, or "auto", it falls back to
+// the locale negotiated during the initialize handshake (initLocale), which
+// itself already resolved "auto" to the editor's display language.
+func (s *Server) localeFromSettings(settings map[string]any) locale.Locale {
+	// The extension's sendNotificationMiddleware sends the same merged config for
+	// every section (js/ts > typescript > javascript), so checking any one section
+	// is sufficient. We use "js/ts" as the canonical source.
+	for _, section := range []string{"js/ts", "typescript"} {
+		sectionMap, ok := settings[section].(map[string]any)
+		if !ok {
+			continue
+		}
+		localeStr, ok := sectionMap["locale"].(string)
+		if !ok || localeStr == "" || localeStr == "auto" {
+			break
+		}
+		if parsed, ok := locale.Parse(localeStr); ok {
+			return parsed
+		}
+	}
+	return s.initLocale
 }
 
 func (s *Server) handleDidOpen(ctx context.Context, params *lsproto.DidOpenTextDocumentParams) error {

@@ -1683,6 +1683,10 @@ func (s *Session) publishProjectDiagnostics(ctx context.Context, configFilePath 
 	if s.Config().EnableValidation.IsFalse() {
 		diagnostics = nil
 	}
+	// Inject the current locale so that push-diagnostic messages are formatted
+	// in the user's chosen language, even when ctx is the background context
+	// (which does not have a locale set by the LSP dispatch loop).
+	ctx = locale.WithLocale(ctx, s.client.GetLocale())
 	lspDiagnostics := make([]*lsproto.Diagnostic, 0, len(diagnostics))
 	for _, diag := range diagnostics {
 		lspDiagnostics = append(lspDiagnostics, lsconv.DiagnosticToLSPPush(ctx, converters, diag))

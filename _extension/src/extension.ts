@@ -83,16 +83,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     };
 
     let configChangeTimeout: ReturnType<typeof setTimeout> | undefined;
-    let pendingLocaleChange = false;
     let pendingUseTsgoChange = false;
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(event => {
-        if (
-            event.affectsConfiguration("js/ts.locale")
-            || event.affectsConfiguration("typescript.locale")
-        ) {
-            pendingLocaleChange = true;
-        }
-
         if (
             event.affectsConfiguration("typescript.experimental.useTsgo")
             || event.affectsConfiguration("js/ts.experimental.useTsgo")
@@ -100,16 +92,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
             pendingUseTsgoChange = true;
         }
 
-        if (!pendingLocaleChange && !pendingUseTsgoChange) {
+        if (!pendingUseTsgoChange) {
             return;
         }
 
-        // Debounce to coalesce rapid events when multiple settings are updated together.
+        // Debounce to coalesce rapid events when both settings are updated together.
         clearTimeout(configChangeTimeout);
         configChangeTimeout = setTimeout(async () => {
-            const hadLocaleChange = pendingLocaleChange;
             const hadUseTsgoChange = pendingUseTsgoChange;
-            pendingLocaleChange = false;
             pendingUseTsgoChange = false;
 
             if (hadUseTsgoChange) {
@@ -127,9 +117,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
                         await sessionManager.stop();
                     }
                 }
-            }
-            else if (hadLocaleChange && sessionManager.currentSession) {
-                await sessionManager.restart(context);
             }
         }, 100);
     }));

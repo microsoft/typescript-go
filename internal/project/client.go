@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
@@ -18,4 +19,8 @@ type Client interface {
 	ProgressFinish(message *diagnostics.Message, args ...any)
 	SendTelemetry(ctx context.Context, telemetry lsproto.TelemetryEvent) error
 	IsActive() bool
+	// GetLocale returns the current display locale for diagnostic messages.
+	// Implementations should return the most up-to-date locale; the value may
+	// change when the user updates their locale preference at runtime.
+	GetLocale() locale.Locale
 }
