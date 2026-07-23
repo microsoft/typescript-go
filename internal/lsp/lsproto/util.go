@@ -4,7 +4,6 @@ import (
 	"cmp"
 	"fmt"
 	"strconv"
-	"strings"
 )
 
 // Implements a cmp.Compare like function for two Position
@@ -87,26 +86,20 @@ func diagnosticMessagesEqual(message1 StringOrMarkupContent, message2 StringOrMa
 	return false
 }
 
-func CompareDiagnostics(preEmit []*Diagnostic, postEmit []*Diagnostic, sanitizedDiffEnabled bool) (string, string) {
-	sanitizedMsgBuilder := strings.Builder{}
-	msgBuilder := strings.Builder{}
-	for _, elem := range preEmit {
-		if !diagnosticExistsInSlice(elem, postEmit) {
-			msgBuilder.WriteString(fmt.Sprintf("Diagnostic `%v` was present before emit but not after emit\n", elem.AsString()))
-			if sanitizedDiffEnabled {
-				sanitizedMsgBuilder.WriteString(fmt.Sprintf("Diagnostic %v was present before emit but not after emit\n", elem.CodeAsString()))
-			}
+func CompareDiagnostics(list1 []*Diagnostic, list2 []*Diagnostic) ([]*Diagnostic, []*Diagnostic) {
+	missingFromList1 := []*Diagnostic{}
+	missingFromList2 := []*Diagnostic{}
+	for _, elem := range list1 {
+		if !diagnosticExistsInSlice(elem, list2) {
+			missingFromList2 = append(missingFromList2, elem)
 		}
 	}
-	for _, elem := range postEmit {
-		if !diagnosticExistsInSlice(elem, preEmit) {
-			msgBuilder.WriteString(fmt.Sprintf("Diagnostic `%v` was present after emit but not before emit\n", elem.AsString()))
-			if sanitizedDiffEnabled {
-				sanitizedMsgBuilder.WriteString(fmt.Sprintf("Diagnostic %v was present after emit but not before emit\n", elem.CodeAsString()))
-			}
+	for _, elem := range list2 {
+		if !diagnosticExistsInSlice(elem, list1) {
+			missingFromList1 = append(missingFromList1, elem)
 		}
 	}
-	return msgBuilder.String(), sanitizedMsgBuilder.String()
+	return missingFromList1, missingFromList2
 }
 
 func (elem *Diagnostic) AsString() string {

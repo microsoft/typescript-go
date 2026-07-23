@@ -1386,14 +1386,17 @@ func (s *Server) handleDocumentDiagnostic(ctx context.Context, ls *ls.LanguageSe
 	if err2 != nil {
 		return direct, err
 	}
-	diff, sanitizedDiff := lsproto.CompareDiagnostics(direct.FullDocumentDiagnosticReport.Items, secondary.FullDocumentDiagnosticReport.Items, s.telemetryEnabled)
-	if diff == "" {
+	missingFromPre, missingFromPost := lsproto.CompareDiagnostics(direct.FullDocumentDiagnosticReport.Items, secondary.FullDocumentDiagnosticReport.Items)
+	if len(missingFromPre) == 0 && len(missingFromPost) == 0 {
 		return direct, err
 	}
+
+	diff := generateDiagnosticDiffString(missingFromPre, missingFromPost, (*lsproto.Diagnostic).AsString)
 
 	s.logger.Error(diff)
 
 	if s.telemetryEnabled {
+		sanitizedDiff := generateDiagnosticDiffString(missingFromPre, missingFromPost, (*lsproto.Diagnostic).CodeAsString)
 		_ = sendNotification(s, lsproto.TelemetryEventInfo, lsproto.TelemetryEvent{
 			RequestFailureTelemetryEvent: &lsproto.RequestFailureTelemetryEvent{
 				Properties: &lsproto.RequestFailureTelemetryProperties{
@@ -1409,6 +1412,17 @@ func (s *Server) handleDocumentDiagnostic(ctx context.Context, ls *ls.LanguageSe
 		panic("flaky diagnostic(s) logged:\n" + diff)
 	}
 	return direct, err
+}
+
+func generateDiagnosticDiffString(missingFromPre []*lsproto.Diagnostic, missingFromPost []*lsproto.Diagnostic, stringifier func(*lsproto.Diagnostic) string) string {
+	var b strings.Builder
+	for _, elem := range missingFromPre {
+		b.WriteString(fmt.Sprintf("Diagnostic %v was present after emit but not before emit\n", stringifier(elem)))
+	}
+	for _, elem := range missingFromPost {
+		b.WriteString(fmt.Sprintf("Diagnostic %v was present before emit but not after emit\n", stringifier(elem)))
+	}
+	return b.String()
 }
 
 func (s *Server) handleHover(ctx context.Context, ls *ls.LanguageService, params *lsproto.HoverParams) (lsproto.HoverResponse, error) {
