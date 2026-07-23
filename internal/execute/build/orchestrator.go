@@ -255,6 +255,9 @@ func (o *Orchestrator) replaceContentMapperLease() {
 func (o *Orchestrator) Start(ctx context.Context) tsc.CommandLineResult {
 	o.ctx = ctx
 	o.contentMapperHost = tsc.NewContentMapperHost(ctx, o.opts.Sys, o.opts.Command.CompilerOptions)
+	if o.contentMapperHost != nil && !o.opts.Command.CompilerOptions.Watch.IsTrue() {
+		defer o.contentMapperHost.Close()
+	}
 	if o.opts.Command.CompilerOptions.Watch.IsTrue() {
 		o.watchStatusReporter(ast.NewCompilerDiagnostic(diagnostics.Starting_compilation_in_watch_mode))
 	}

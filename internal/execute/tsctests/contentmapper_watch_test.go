@@ -54,6 +54,26 @@ func (p *recordingContentMapperProcess) Close() error {
 	return err
 }
 
+func TestContentMapperBuildLifecycle(t *testing.T) {
+	t.Parallel()
+	input := &tscInput{files: FileMap{
+		"/home/src/workspaces/project/tsconfig.json": `{
+			"compilerOptions": { "composite": true },
+			"contentMappers": [{ "package": "mapper", "extensions": [".vue"] }]
+		}`,
+		"/home/src/workspaces/project/app.vue":                          `export const app = 1;`,
+		"/home/src/workspaces/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.VerbatimMapper),
+	}}
+	testSys := newTestSys(input, false)
+	spawner := &recordingContentMapperSpawner{inner: contentmappertest.NewSpawner()}
+	sys := &recordingContentMapperSystem{TestSys: testSys, spawner: spawner}
+
+	result := execute.CommandLine(t.Context(), sys, []string{"--build", "--loadExternalPlugins"}, testSys)
+	assert.Assert(t, result.Watcher == nil)
+	assert.Equal(t, spawner.spawns.Load(), int32(1))
+	assert.Equal(t, spawner.closes.Load(), int32(1))
+}
+
 func TestContentMapperWatchLifecycle(t *testing.T) {
 	t.Parallel()
 	for _, test := range []struct {
