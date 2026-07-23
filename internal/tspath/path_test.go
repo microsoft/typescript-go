@@ -177,6 +177,13 @@ func TestGetLongestExtensionFromPath(t *testing.T) {
 	assert.Equal(t, GetLongestExtensionFromPath("/src/Component.y.Z", extensions, true), ".y.Z")
 }
 
+func TestRemoveAnyFileExtension(t *testing.T) {
+	t.Parallel()
+	assert.Equal(t, RemoveAnyFileExtension("/src/Component.vue"), "/src/Component")
+	assert.Equal(t, RemoveAnyFileExtension("/src/Component.d.ts"), "/src/Component")
+	assert.Equal(t, RemoveAnyFileExtension("/src/Component"), "/src/Component")
+}
+
 // !!!
 // getBaseFileName
 // getAnyExtensionFromPath

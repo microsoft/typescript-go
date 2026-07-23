@@ -42,6 +42,45 @@ profileTi/**/
 	f.BaselineAutoImportsCompletions(t, []string{""})
 }
 
+func TestContentMapperAnonymousDefaultAutoImportName(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	f, done := newContentMapperFourslash(t, `// @Filename: /Component.vue
+<script lang="ts">
+export default {};
+</script>
+
+// @Filename: /main.ts
+Comp/**/
+`, contentmappertest.ComponentMapper, ".vue")
+	defer done()
+
+	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
+		UserPreferences: &lsutil.UserPreferences{
+			IncludeCompletionsForModuleExports:    core.TSTrue,
+			IncludeCompletionsForImportStatements: core.TSTrue,
+		},
+		IsIncomplete: false,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
+		},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{"Component"},
+			Excludes: []string{"ComponentVue"},
+		},
+	})
+	f.VerifyApplyCodeActionFromCompletion(t, new(""), &fourslash.ApplyCodeActionFromCompletionOptions{
+		Name:        "Component",
+		Source:      "./Component.vue",
+		Description: "Add import from \"./Component.vue\"",
+		NewFileContent: new(`import Component from "./Component.vue";
+
+Comp
+`),
+	})
+}
+
 func TestContentMapperAutoImportsIntoMappedFile(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
