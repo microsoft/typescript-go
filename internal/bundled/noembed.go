@@ -54,9 +54,8 @@ func argv0Path() string {
 	return tspath.NormalizeSlashes(abs)
 }
 
-// sameAsExecutable reports whether path names the file the kernel reports as
-// the running executable. True when that file cannot be statted: a masked
-// filesystem leaves nothing to compare against.
+// sameAsExecutable reports whether path provably names the same file the
+// kernel reports as the running executable.
 func sameAsExecutable(path string) bool {
 	exe, err := os.Executable()
 	if err != nil {
@@ -64,7 +63,7 @@ func sameAsExecutable(path string) bool {
 	}
 	exeInfo, err := os.Stat(exe)
 	if err != nil {
-		return true
+		return false
 	}
 	info, err := os.Stat(path)
 	return err == nil && os.SameFile(exeInfo, info)

@@ -30,13 +30,15 @@ import (
 // Falls back to filepath.EvalSymlinks if /proc is not available (e.g. containers
 // or chroots without procfs mounted).
 //
-// The kernel's answer is validated with one invariant: resolution may only
-// rename the final path component (beyond lexical cleanup and case) when that
-// component is a symlink. If it was renamed but lstat reports a non-symlink,
-// the filesystem view is virtualized behind the process's back (e.g. PRoot's
-// link2symlink); fall back to the per-component walk, which sees the same
-// view as the rest of the process. Costs a string comparison on the common
-// path, one lstat otherwise.
+// The kernel's answer is validated with one invariant: resolving symlinks in
+// the directory prefix may rewrite that prefix arbitrarily, but the base name
+// of the final component survives resolution unless that component is itself
+// a symlink — only the leaf can rename the leaf. If the base name changed
+// (beyond lexical cleanup and case) and lstat reports a non-symlink, the
+// filesystem view is being virtualized behind the process's back (e.g.
+// PRoot's link2symlink); fall back to the per-component walk, which sees the
+// same view as the rest of the process. Costs a string comparison on the
+// common path, one lstat otherwise.
 
 const _procSelfFD = "/proc/self/fd/"
 
