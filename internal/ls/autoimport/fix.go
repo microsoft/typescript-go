@@ -785,7 +785,7 @@ func getImportKind(importingFile *ast.SourceFile, export *Export, program *compi
 	case ExportSyntaxDefaultModifier, ExportSyntaxDefaultDeclaration:
 		return lsproto.ImportKindDefault
 	case ExportSyntaxNamed:
-		if ast.EscapeLeadingUnderscores(export.ExportName) == ast.InternalSymbolNameDefault {
+		if export.ExportName == ast.InternalSymbolNameDefault {
 			return lsproto.ImportKindDefault
 		}
 		fallthrough
@@ -793,7 +793,7 @@ func getImportKind(importingFile *ast.SourceFile, export *Export, program *compi
 		return lsproto.ImportKindNamed
 	case ExportSyntaxEquals, ExportSyntaxCommonJSModuleExports, ExportSyntaxUMD:
 		// export.Syntax will be ExportSyntaxEquals for named exports/properties of an export='s target.
-		if ast.EscapeLeadingUnderscores(export.ExportName) != ast.InternalSymbolNameExportEquals {
+		if export.ExportName != ast.InternalSymbolNameExportEquals {
 			return lsproto.ImportKindNamed
 		}
 		// !!! cache this?

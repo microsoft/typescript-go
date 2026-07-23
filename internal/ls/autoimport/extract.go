@@ -191,12 +191,12 @@ func (e *symbolExtractor) extractFromSymbol(name ast.SymbolNameKey, symbol *ast.
 				if parent != nil && parent.IsExternalModule() {
 					if targetModuleID, ok := e.getModuleIDForSymbol(parent); ok {
 						export.Target = ExportID{
-							ExportName: ast.UnescapeLeadingUnderscores(reexportedSymbol.Name),
+							ExportName: reexportedSymbol.Name,
 							ModuleID:   targetModuleID,
 						}
 					}
 				}
-				export.through = ast.UnescapeLeadingUnderscores(ast.InternalSymbolNameExportStar)
+				export.through = ast.InternalSymbolNameExportStar
 				*exports = append(*exports, export)
 			}
 		}
@@ -219,7 +219,7 @@ func (e *symbolExtractor) extractFromSymbol(name ast.SymbolNameKey, symbol *ast.
 				if innerName != ast.InternalSymbolNameExportStar {
 					export, _ := e.createExport(namedExport, moduleID, moduleFileName, syntax, file, checkerLease)
 					if export != nil {
-						export.through = ast.UnescapeLeadingUnderscores(name)
+						export.through = name
 						*exports = append(*exports, export)
 					}
 				}
@@ -236,7 +236,7 @@ func (e *symbolExtractor) extractFromSymbol(name ast.SymbolNameKey, symbol *ast.
 				if ast.IsShorthandPropertyAssignment(prop) || ast.IsPropertyAssignment(prop) && prop.AsPropertyAssignment().Name().Kind == ast.KindIdentifier {
 					export, _ := e.createExport(expression.Symbol().Members[ast.EscapeLeadingUnderscores(prop.Name().Text())], moduleID, moduleFileName, syntax, file, checkerLease)
 					if export != nil {
-						export.through = ast.UnescapeLeadingUnderscores(name)
+						export.through = name
 						*exports = append(*exports, export)
 					}
 				}
@@ -253,7 +253,7 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, mo
 
 	export := &Export{
 		ExportID: ExportID{
-			ExportName: ast.UnescapeLeadingUnderscores(symbol.Name),
+			ExportName: symbol.Name,
 			ModuleID:   moduleID,
 		},
 		ModuleFileName: moduleFileName,
@@ -264,7 +264,7 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, mo
 	}
 
 	if syntax == ExportSyntaxUMD {
-		export.ExportName = ast.UnescapeLeadingUnderscores(ast.InternalSymbolNameExportEquals)
+		export.ExportName = ast.InternalSymbolNameExportEquals
 		export.localName = ast.UnescapeLeadingUnderscores(symbol.Name)
 	}
 
@@ -306,7 +306,7 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, mo
 				}
 			}
 			export.Target = ExportID{
-				ExportName: ast.UnescapeLeadingUnderscores(targetSymbol.Name),
+				ExportName: targetSymbol.Name,
 				ModuleID:   targetModuleID,
 			}
 		}
@@ -321,10 +321,10 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, mo
 			namedSymbol = s
 		}
 		export.localName = getDefaultLikeExportNameFromDeclaration(namedSymbol)
-		if isUnusableName(export.localName) {
-			export.localName = export.Target.ExportName
+		if isUnusableName(ast.EscapeLeadingUnderscores(export.localName)) {
+			export.localName = ast.UnescapeLeadingUnderscores(export.Target.ExportName)
 		}
-		if isUnusableName(export.localName) {
+		if isUnusableName(ast.EscapeLeadingUnderscores(export.localName)) {
 			if targetSymbol != nil {
 				namedSymbol = targetSymbol
 				if s := binder.GetLocalSymbolForExportDefault(targetSymbol); s != nil {
@@ -333,7 +333,7 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, mo
 				export.localName = getDefaultLikeExportNameFromDeclaration(namedSymbol)
 			}
 		}
-		if isUnusableName(export.localName) {
+		if isUnusableName(ast.EscapeLeadingUnderscores(export.localName)) {
 			// Last resort: derive identifier from the file name. Use FileName() (original
 			// casing) rather than ModuleID/Path() which is lowercased on case-insensitive
 			// file systems, losing PascalCase.
@@ -341,7 +341,7 @@ func (e *symbolExtractor) createExport(symbol *ast.Symbol, moduleID ModuleID, mo
 		}
 	}
 
-	if isUnusableName(export.Name()) {
+	if isUnusableName(export.NameKey()) {
 		return nil, nil
 	}
 
@@ -435,12 +435,12 @@ func getSyntax(symbol *ast.Symbol) ExportSyntax {
 	return ExportSyntaxNone
 }
 
-func isUnusableName(name string) bool {
+func isUnusableName(name ast.SymbolNameKey) bool {
 	return name == "" ||
 		name == "_default" ||
-		ast.EscapeLeadingUnderscores(name) == ast.InternalSymbolNameExportStar ||
-		ast.EscapeLeadingUnderscores(name) == ast.InternalSymbolNameDefault ||
-		ast.EscapeLeadingUnderscores(name) == ast.InternalSymbolNameExportEquals
+		name == ast.InternalSymbolNameExportStar ||
+		name == ast.InternalSymbolNameDefault ||
+		name == ast.InternalSymbolNameExportEquals
 }
 
 // fileNameForDefaultExportName returns the best file name to use when deriving

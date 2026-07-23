@@ -1,0 +1,36 @@
+// === SignatureHelp ===
+=== /signatureHelpLeadingUnderscores.ts ===
+// function __foo(value: number) {}
+// 
+// __foo();
+//       ^
+// | ----------------------------------------------------------------------
+// | __foo(**value: number**): void
+// | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 40,
+      "LSPosition": {
+        "line": 2,
+        "character": 6
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "__foo(value: number): void",
+          "parameters": [
+            {
+              "label": "value: number"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  }
+]

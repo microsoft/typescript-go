@@ -976,15 +976,15 @@ func (l *LanguageService) getCompletionData(
 		members := getPropertiesForCompletion(containerExpectedType, typeChecker)
 		existingMembers := getPropertiesForCompletion(containerActualType, typeChecker)
 
-		existingMemberNames := collections.Set[string]{}
+		existingMemberNames := collections.Set[ast.SymbolNameKey]{}
 		for _, member := range existingMembers {
-			existingMemberNames.Add(ast.UnescapeLeadingUnderscores(member.Name))
+			existingMemberNames.Add(member.Name)
 		}
 
 		symbols = append(
 			symbols,
 			core.Filter(members, func(member *ast.Symbol) bool {
-				return !existingMemberNames.Has(ast.UnescapeLeadingUnderscores(member.Name))
+				return !existingMemberNames.Has(member.Name)
 			})...,
 		)
 

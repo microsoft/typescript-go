@@ -299,8 +299,7 @@ func (l *LanguageService) createSignatureHelpItems(ctx context.Context, candidat
 	// "__type". There is no meaningful name to show, so render the signature with
 	// no prefix (as we already do when there is no call target symbol) rather than
 	// leaking the internal name.
-	if callTargetSymbol != nil &&
-		!strings.HasPrefix(callTargetSymbol.Name.EscapedText(), ast.InternalSymbolNamePrefix) {
+	if callTargetSymbol != nil && callTargetSymbol.Name != ast.InternalSymbolNameType {
 		if useFullPrefix {
 			callTargetDisplayParts.WriteString(c.SymbolToStringEx(callTargetSymbol, sourceFile.AsNode(), ast.SymbolFlagsNone, checker.SymbolFormatFlagsUseAliasDefinedOutsideCurrentScope))
 		} else {

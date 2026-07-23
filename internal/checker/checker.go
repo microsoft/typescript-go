@@ -18416,11 +18416,11 @@ func (w *WideningContext) getChildContext(propertyName ast.SymbolNameKey) *Widen
 
 func (c *Checker) getPropertiesOfContext(context *WideningContext) []*ast.Symbol {
 	if context.resolvedProperties == nil {
-		var names collections.OrderedMap[string, *ast.Symbol]
+		var names collections.OrderedMap[ast.SymbolNameKey, *ast.Symbol]
 		for _, t := range c.getSiblingsOfContext(context) {
 			if isObjectLiteralType(t) && t.objectFlags&ObjectFlagsContainsSpread == 0 {
 				for _, prop := range c.getPropertiesOfType(t) {
-					names.Set(ast.UnescapeLeadingUnderscores(prop.Name), prop)
+					names.Set(prop.Name, prop)
 				}
 			}
 		}

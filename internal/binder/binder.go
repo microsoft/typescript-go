@@ -73,7 +73,7 @@ type Binder struct {
 	inAssignmentPattern     bool
 	seenParseError          bool
 	symbolCount             int
-	classifiableNames       collections.Set[string]
+	classifiableNames       collections.Set[ast.SymbolNameKey]
 	notConstEnumOnlyModules collections.Set[*ast.Symbol]
 	symbolArena             core.Arena[ast.Symbol]
 	flowNodeArena           core.Arena[ast.FlowNode]
@@ -193,7 +193,7 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 		// just add this node into the declarations list of the symbol.
 		symbol = symbolTable[name]
 		if includes&ast.SymbolFlagsClassifiable != 0 {
-			b.classifiableNames.Add(string(name))
+			b.classifiableNames.Add(name)
 		}
 		if symbol == nil {
 			symbol = b.newSymbol(ast.SymbolFlagsNone, name)
@@ -305,10 +305,7 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 // unless it is a well known Symbol.
 func (b *Binder) getDeclarationName(node *ast.Node) ast.SymbolNameKey {
 	if ast.IsExportAssignment(node) {
-		if node.AsExportAssignment().IsExportEquals {
-			return ast.InternalSymbolNameExportEquals
-		}
-		return ast.InternalSymbolNameDefault
+		return core.IfElse(node.AsExportAssignment().IsExportEquals, ast.InternalSymbolNameExportEquals, ast.InternalSymbolNameDefault)
 	}
 	name := ast.GetNameOfDeclaration(node)
 	if name != nil {
@@ -369,7 +366,7 @@ func (b *Binder) getDisplayName(node *ast.Node) string {
 	}
 	name := b.getDeclarationName(node)
 	if name != ast.InternalSymbolNameMissing {
-		return string(name)
+		return ast.UnescapeLeadingUnderscores(name)
 	}
 	return "(Missing)"
 }
@@ -954,7 +951,7 @@ func (b *Binder) bindClassLikeDeclaration(node *ast.Node) {
 		nameText := ast.InternalSymbolNameClass
 		if name != nil {
 			nameText = ast.EscapeLeadingUnderscores(name.Text())
-			b.classifiableNames.Add(string(nameText))
+			b.classifiableNames.Add(nameText)
 		}
 		b.bindAnonymousDeclaration(node, ast.SymbolFlagsClass, nameText)
 	}
