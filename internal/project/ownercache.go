@@ -75,6 +75,21 @@ func (c *OwnerCache[K, V, LoadArgs]) Has(identity K) bool {
 	return ok
 }
 
+func (c *OwnerCache[K, V, LoadArgs]) Peek(identity K) (V, bool) {
+	entry, ok := c.entries.Load(identity)
+	if !ok {
+		var zero V
+		return zero, false
+	}
+	entry.mu.Lock()
+	defer entry.mu.Unlock()
+	if len(entry.owners) == 0 {
+		var zero V
+		return zero, false
+	}
+	return entry.value, true
+}
+
 func (c *OwnerCache[K, V, LoadArgs]) Release(identity K, owner uint64) {
 	entry, ok := c.entries.Load(identity)
 	if !ok {

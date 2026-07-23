@@ -596,6 +596,10 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetSourceFileNames(ctx, parsed.(*GetSourceFileNamesParams))
 	case string(MethodGetSourceFileMetadata):
 		return s.handleGetSourceFileMetadata(ctx, parsed.(*GetSourceFileParams))
+	case string(MethodGetConfigFileNames):
+		return s.handleGetConfigFileNames(ctx, parsed.(*GetProjectDiagnosticsParams))
+	case string(MethodGetConfigSourceFile):
+		return s.handleGetConfigSourceFile(ctx, parsed.(*GetSourceFileParams))
 	case string(MethodGetSymbolAtPosition):
 		return s.handleGetSymbolAtPosition(ctx, parsed.(*GetSymbolAtPositionParams))
 	case string(MethodGetSymbolsAtPositions):
@@ -1122,12 +1126,16 @@ func (s *Session) handleParseConfigFile(ctx context.Context, params *ParseConfig
 		nil, /*extraFileExtensions*/
 		nil, /*extendedConfigCache*/
 	)
+	rawConfig, _ := parsedCommandLine.Raw.(*collections.OrderedMap[string, any])
 
-	return &ConfigFileResponse{
-		FileNames:         parsedCommandLine.FileNames(),
-		Options:           parsedCommandLine.CompilerOptions(),
-		ProjectReferences: parsedCommandLine.ProjectReferences(),
-	}, nil
+	compileOnSave := parsedCommandLine.CompileOnSave
+	if compileOnSave == nil && rawConfig != nil {
+		if value, ok := rawConfig.GetOrZero("compileOnSave").(bool); ok {
+			compileOnSave = &value
+		}
+	}
+
+	return NewConfigFileResponse(parsedCommandLine, compileOnSave), nil
 }
 
 // handleGetSourceFile returns a source file from a project within a snapshot.
@@ -1142,7 +1150,68 @@ func (s *Session) handleGetSourceFile(ctx context.Context, params *GetSourceFile
 		return nil, err
 	}
 
-	sourceFile := program.GetSourceFile(params.File.ToFileName())
+	return s.encodeSourceFileResponse(program.GetSourceFile(params.File.ToFileName()))
+}
+
+// handleGetConfigFileNames returns tsconfig file names associated with the project's command line.
+func (s *Session) handleGetConfigFileNames(ctx context.Context, params *GetProjectDiagnosticsParams) ([]string, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	commandLine := program.CommandLine()
+	if commandLine == nil || commandLine.ConfigFile == nil || commandLine.ConfigFile.SourceFile == nil {
+		return nil, nil
+	}
+
+	extendedFiles := commandLine.ExtendedSourceFiles()
+	configFiles := make([]string, 0, len(extendedFiles)+1)
+	configFiles = append(configFiles, commandLine.ConfigFile.SourceFile.FileName())
+	configFiles = append(configFiles, extendedFiles...)
+	return configFiles, nil
+}
+
+// handleGetConfigSourceFile returns a tsconfig source file associated with the project's command line.
+func (s *Session) handleGetConfigSourceFile(ctx context.Context, params *GetSourceFileParams) (any, error) {
+	sd, err := s.retainSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = s.releaseSnapshot(params.Snapshot) }()
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	commandLine := program.CommandLine()
+	if commandLine == nil || commandLine.ConfigFile == nil || commandLine.ConfigFile.SourceFile == nil {
+		return s.encodeSourceFileResponse(nil)
+	}
+
+	requestedPath := tspath.ToPath(params.File.ToFileName(), program.GetCurrentDirectory(), program.UseCaseSensitiveFileNames())
+	rootConfigSourceFile := commandLine.ConfigFile.SourceFile
+	if rootConfigSourceFile.Path() == requestedPath {
+		return s.encodeSourceFileResponse(rootConfigSourceFile)
+	}
+
+	for _, configFileName := range commandLine.ExtendedSourceFiles() {
+		if tspath.ToPath(configFileName, program.GetCurrentDirectory(), program.UseCaseSensitiveFileNames()) != requestedPath {
+			continue
+		}
+		return s.encodeSourceFileResponse(s.projectSession.PeekExtendedConfigSourceFile(requestedPath))
+	}
+
+	return s.encodeSourceFileResponse(nil)
+}
+
+func (s *Session) encodeSourceFileResponse(sourceFile *ast.SourceFile) (any, error) {
 	if sourceFile == nil {
 		if s.useBinaryResponses {
 			return RawBinary(nil), nil
@@ -1156,7 +1225,6 @@ func (s *Session) handleGetSourceFile(ctx context.Context, params *GetSourceFile
 		return nil, fmt.Errorf("failed to encode source file: %w", err)
 	}
 
-	// Return raw binary for msgpack protocol, or base64 for JSON
 	if s.useBinaryResponses {
 		return RawBinary(data), nil
 	}
