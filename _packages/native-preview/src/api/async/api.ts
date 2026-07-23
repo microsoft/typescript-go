@@ -48,7 +48,6 @@ import {
 import type {
     CompilerOptions,
     CompletionInfoResponse,
-    ConfigResponse,
     DocumentIdentifier,
     DocumentPosition,
     ImportAdderActionRequest,
@@ -56,6 +55,7 @@ import type {
     IndexInfoResponse,
     InitializeResponse,
     LSPUpdateSnapshotParams,
+    ParsedCommandLine,
     ProfileResult,
     ProjectReference,
     ProjectResponse,
@@ -63,6 +63,7 @@ import type {
     SourceFileMetadata,
     SymbolResponse,
     TextEdit,
+    TypeAcquisition,
     TypePredicateResponse,
     TypeResponse,
     UpdateSnapshotParams,
@@ -124,7 +125,7 @@ import type {
 
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 export { CheckFlags, CompletionItemKind, DiagnosticCategory, ElementFlags, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
-export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ProjectReference, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ParsedCommandLine, ProjectReference, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeAcquisition, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 
 export class API<FromLSP extends boolean = false> {
     private client: Client;
@@ -161,9 +162,9 @@ export class API<FromLSP extends boolean = false> {
         }
     }
 
-    async parseConfigFile(file: DocumentIdentifier): Promise<ConfigResponse> {
+    async parseConfigFile(file: DocumentIdentifier): Promise<ParsedCommandLine> {
         await this.ensureInitialized();
-        return this.client.apiRequest<ConfigResponse>("parseConfigFile", { file });
+        return this.client.apiRequest<ParsedCommandLine>("parseConfigFile", { file });
     }
 
     async updateSnapshot(params?: FromLSP extends true ? LSPUpdateSnapshotParams : UpdateSnapshotParams): Promise<Snapshot> {
@@ -651,7 +652,10 @@ class ProjectObjectRegistry {
 export class Project {
     readonly id: Path;
     readonly configFileName: string;
+    readonly parsedCommandLine: ParsedCommandLine;
+    /** @deprecated Use `parsedCommandLine.options`. */
     readonly compilerOptions: CompilerOptions;
+    /** @deprecated Use `parsedCommandLine.fileNames`. */
     readonly rootFiles: readonly string[];
 
     readonly program: Program;
@@ -670,8 +674,9 @@ export class Project {
     ) {
         this.id = data.id;
         this.configFileName = data.configFileName;
-        this.compilerOptions = data.compilerOptions;
-        this.rootFiles = data.rootFiles;
+        this.parsedCommandLine = data.parsedCommandLine;
+        this.compilerOptions = this.parsedCommandLine.options;
+        this.rootFiles = this.parsedCommandLine.fileNames;
         this.client = client;
         this.snapshotId = snapshotId;
         this.program = new Program(
@@ -856,6 +861,48 @@ export class Program {
     async isSourceFileDefaultLibrary(file: SourceFile): Promise<boolean> {
         const metadata = await this.getSourceFileMetadataByPath(file.path);
         return metadata?.isDefaultLibrary ?? false;
+    }
+
+    /**
+     * Get all config source file names associated with this program's project config.
+     * Includes the root config file and any extended config files.
+     */
+    async getConfigFileNames(): Promise<readonly string[]> {
+        const data = await this.client.apiRequest<string[]>("getConfigFileNames", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+        });
+        return data ?? [];
+    }
+
+    /**
+     * Get a config source file by file name/URI.
+     * This can return the project's root tsconfig file or one of its extended config files.
+     */
+    async getConfigSourceFile(file: DocumentIdentifier): Promise<SourceFile | undefined> {
+        const fileName = resolveFileName(file);
+        const path = this.toPath(fileName);
+
+        const retained = this.sourceFileCache.getRetained(path, this.snapshotId, this.project.id);
+        if (retained) {
+            return retained;
+        }
+
+        const binaryData = await this.client.apiRequestBinary("getConfigSourceFile", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            file,
+        });
+        if (!binaryData) {
+            return undefined;
+        }
+
+        const view = new DataView(binaryData.buffer, binaryData.byteOffset, binaryData.byteLength);
+        const contentHash = readSourceFileHash(view);
+        const parseOptionsKey = readParseOptionsKey(view);
+
+        const sourceFile = new RemoteSourceFile(binaryData, this.decoder) as unknown as SourceFile;
+        return this.sourceFileCache.set(path, sourceFile, parseOptionsKey, contentHash, this.snapshotId, this.project.id);
     }
 
     /**
