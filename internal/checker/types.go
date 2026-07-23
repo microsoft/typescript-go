@@ -456,41 +456,42 @@ const (
 	TypeFlagsIntersection    TypeFlags = 1 << 28 // Intersection (T & U)
 	TypeFlagsReserved1       TypeFlags = 1 << 29 // Used by union/intersection type construction
 	TypeFlagsReserved2       TypeFlags = 1 << 30 // Used by union/intersection type construction
-	TypeFlagsReserved3       TypeFlags = 1 << 31
+	TypeFlagsPrivateNameType TypeFlags = 1 << 31
 
-	TypeFlagsAnyOrUnknown                  = TypeFlagsAny | TypeFlagsUnknown
-	TypeFlagsNullable                      = TypeFlagsUndefined | TypeFlagsNull
-	TypeFlagsLiteral                       = TypeFlagsStringLiteral | TypeFlagsNumberLiteral | TypeFlagsBigIntLiteral | TypeFlagsBooleanLiteral
-	TypeFlagsUnit                          = TypeFlagsEnum | TypeFlagsLiteral | TypeFlagsUniqueESSymbol | TypeFlagsNullable
-	TypeFlagsFreshable                     = TypeFlagsEnum | TypeFlagsLiteral
-	TypeFlagsStringOrNumberLiteral         = TypeFlagsStringLiteral | TypeFlagsNumberLiteral
-	TypeFlagsStringOrNumberLiteralOrUnique = TypeFlagsStringLiteral | TypeFlagsNumberLiteral | TypeFlagsUniqueESSymbol
-	TypeFlagsDefinitelyFalsy               = TypeFlagsStringLiteral | TypeFlagsNumberLiteral | TypeFlagsBigIntLiteral | TypeFlagsBooleanLiteral | TypeFlagsVoid | TypeFlagsUndefined | TypeFlagsNull
-	TypeFlagsPossiblyFalsy                 = TypeFlagsDefinitelyFalsy | TypeFlagsString | TypeFlagsNumber | TypeFlagsBigInt | TypeFlagsBoolean
-	TypeFlagsIntrinsic                     = TypeFlagsAny | TypeFlagsUnknown | TypeFlagsString | TypeFlagsNumber | TypeFlagsBigInt | TypeFlagsESSymbol | TypeFlagsVoid | TypeFlagsUndefined | TypeFlagsNull | TypeFlagsNever | TypeFlagsNonPrimitive
-	TypeFlagsStringLike                    = TypeFlagsString | TypeFlagsStringLiteral | TypeFlagsTemplateLiteral | TypeFlagsStringMapping
-	TypeFlagsNumberLike                    = TypeFlagsNumber | TypeFlagsNumberLiteral | TypeFlagsEnum
-	TypeFlagsBigIntLike                    = TypeFlagsBigInt | TypeFlagsBigIntLiteral
-	TypeFlagsBooleanLike                   = TypeFlagsBoolean | TypeFlagsBooleanLiteral
-	TypeFlagsEnumLike                      = TypeFlagsEnum | TypeFlagsEnumLiteral
-	TypeFlagsESSymbolLike                  = TypeFlagsESSymbol | TypeFlagsUniqueESSymbol
-	TypeFlagsVoidLike                      = TypeFlagsVoid | TypeFlagsUndefined
-	TypeFlagsPrimitive                     = TypeFlagsStringLike | TypeFlagsNumberLike | TypeFlagsBigIntLike | TypeFlagsBooleanLike | TypeFlagsEnumLike | TypeFlagsESSymbolLike | TypeFlagsVoidLike | TypeFlagsNull
-	TypeFlagsDefinitelyNonNullable         = TypeFlagsStringLike | TypeFlagsNumberLike | TypeFlagsBigIntLike | TypeFlagsBooleanLike | TypeFlagsEnumLike | TypeFlagsESSymbolLike | TypeFlagsObject | TypeFlagsNonPrimitive
-	TypeFlagsDisjointDomains               = TypeFlagsNonPrimitive | TypeFlagsStringLike | TypeFlagsNumberLike | TypeFlagsBigIntLike | TypeFlagsBooleanLike | TypeFlagsESSymbolLike | TypeFlagsVoidLike | TypeFlagsNull
-	TypeFlagsUnionOrIntersection           = TypeFlagsUnion | TypeFlagsIntersection
-	TypeFlagsStructuredType                = TypeFlagsObject | TypeFlagsUnion | TypeFlagsIntersection
-	TypeFlagsTypeVariable                  = TypeFlagsTypeParameter | TypeFlagsIndexedAccess
-	TypeFlagsInstantiableNonPrimitive      = TypeFlagsTypeVariable | TypeFlagsConditional | TypeFlagsSubstitution
-	TypeFlagsInstantiablePrimitive         = TypeFlagsIndex | TypeFlagsTemplateLiteral | TypeFlagsStringMapping
-	TypeFlagsInstantiable                  = TypeFlagsInstantiableNonPrimitive | TypeFlagsInstantiablePrimitive
-	TypeFlagsStructuredOrInstantiable      = TypeFlagsStructuredType | TypeFlagsInstantiable
-	TypeFlagsObjectFlagsType               = TypeFlagsAny | TypeFlagsNullable | TypeFlagsNever | TypeFlagsObject | TypeFlagsUnion | TypeFlagsIntersection
-	TypeFlagsSimplifiable                  = TypeFlagsIndexedAccess | TypeFlagsConditional | TypeFlagsIndex
-	TypeFlagsSingleton                     = TypeFlagsAny | TypeFlagsUnknown | TypeFlagsString | TypeFlagsNumber | TypeFlagsBoolean | TypeFlagsBigInt | TypeFlagsESSymbol | TypeFlagsVoid | TypeFlagsUndefined | TypeFlagsNull | TypeFlagsNever | TypeFlagsNonPrimitive
+	TypeFlagsAnyOrUnknown                               = TypeFlagsAny | TypeFlagsUnknown
+	TypeFlagsNullable                                   = TypeFlagsUndefined | TypeFlagsNull
+	TypeFlagsLiteral                                    = TypeFlagsStringLiteral | TypeFlagsNumberLiteral | TypeFlagsBigIntLiteral | TypeFlagsBooleanLiteral
+	TypeFlagsUnit                                       = TypeFlagsEnum | TypeFlagsLiteral | TypeFlagsUniqueESSymbol | TypeFlagsPrivateNameType | TypeFlagsNullable
+	TypeFlagsFreshable                                  = TypeFlagsEnum | TypeFlagsLiteral
+	TypeFlagsStringOrNumberLiteral                      = TypeFlagsStringLiteral | TypeFlagsNumberLiteral
+	TypeFlagsStringOrNumberLiteralOrUnique              = TypeFlagsStringLiteral | TypeFlagsNumberLiteral | TypeFlagsUniqueESSymbol
+	TypeFlagsStringOrNumberLiteralOrUniqueOrPrivateName = TypeFlagsStringOrNumberLiteralOrUnique | TypeFlagsPrivateNameType
+	TypeFlagsDefinitelyFalsy                            = TypeFlagsStringLiteral | TypeFlagsNumberLiteral | TypeFlagsBigIntLiteral | TypeFlagsBooleanLiteral | TypeFlagsVoid | TypeFlagsUndefined | TypeFlagsNull
+	TypeFlagsPossiblyFalsy                              = TypeFlagsDefinitelyFalsy | TypeFlagsString | TypeFlagsNumber | TypeFlagsBigInt | TypeFlagsBoolean
+	TypeFlagsIntrinsic                                  = TypeFlagsAny | TypeFlagsUnknown | TypeFlagsString | TypeFlagsNumber | TypeFlagsBigInt | TypeFlagsESSymbol | TypeFlagsVoid | TypeFlagsUndefined | TypeFlagsNull | TypeFlagsNever | TypeFlagsNonPrimitive
+	TypeFlagsStringLike                                 = TypeFlagsString | TypeFlagsStringLiteral | TypeFlagsTemplateLiteral | TypeFlagsStringMapping
+	TypeFlagsNumberLike                                 = TypeFlagsNumber | TypeFlagsNumberLiteral | TypeFlagsEnum
+	TypeFlagsBigIntLike                                 = TypeFlagsBigInt | TypeFlagsBigIntLiteral
+	TypeFlagsBooleanLike                                = TypeFlagsBoolean | TypeFlagsBooleanLiteral
+	TypeFlagsEnumLike                                   = TypeFlagsEnum | TypeFlagsEnumLiteral
+	TypeFlagsESSymbolLike                               = TypeFlagsESSymbol | TypeFlagsUniqueESSymbol
+	TypeFlagsVoidLike                                   = TypeFlagsVoid | TypeFlagsUndefined
+	TypeFlagsPrimitive                                  = TypeFlagsStringLike | TypeFlagsNumberLike | TypeFlagsBigIntLike | TypeFlagsBooleanLike | TypeFlagsEnumLike | TypeFlagsESSymbolLike | TypeFlagsPrivateNameType | TypeFlagsVoidLike | TypeFlagsNull
+	TypeFlagsDefinitelyNonNullable                      = TypeFlagsStringLike | TypeFlagsNumberLike | TypeFlagsBigIntLike | TypeFlagsBooleanLike | TypeFlagsEnumLike | TypeFlagsESSymbolLike | TypeFlagsPrivateNameType | TypeFlagsObject | TypeFlagsNonPrimitive
+	TypeFlagsDisjointDomains                            = TypeFlagsNonPrimitive | TypeFlagsStringLike | TypeFlagsNumberLike | TypeFlagsBigIntLike | TypeFlagsBooleanLike | TypeFlagsESSymbolLike | TypeFlagsPrivateNameType | TypeFlagsVoidLike | TypeFlagsNull
+	TypeFlagsUnionOrIntersection                        = TypeFlagsUnion | TypeFlagsIntersection
+	TypeFlagsStructuredType                             = TypeFlagsObject | TypeFlagsUnion | TypeFlagsIntersection
+	TypeFlagsTypeVariable                               = TypeFlagsTypeParameter | TypeFlagsIndexedAccess
+	TypeFlagsInstantiableNonPrimitive                   = TypeFlagsTypeVariable | TypeFlagsConditional | TypeFlagsSubstitution
+	TypeFlagsInstantiablePrimitive                      = TypeFlagsIndex | TypeFlagsTemplateLiteral | TypeFlagsStringMapping
+	TypeFlagsInstantiable                               = TypeFlagsInstantiableNonPrimitive | TypeFlagsInstantiablePrimitive
+	TypeFlagsStructuredOrInstantiable                   = TypeFlagsStructuredType | TypeFlagsInstantiable
+	TypeFlagsObjectFlagsType                            = TypeFlagsAny | TypeFlagsNullable | TypeFlagsNever | TypeFlagsObject | TypeFlagsUnion | TypeFlagsIntersection
+	TypeFlagsSimplifiable                               = TypeFlagsIndexedAccess | TypeFlagsConditional | TypeFlagsIndex
+	TypeFlagsSingleton                                  = TypeFlagsAny | TypeFlagsUnknown | TypeFlagsString | TypeFlagsNumber | TypeFlagsBoolean | TypeFlagsBigInt | TypeFlagsESSymbol | TypeFlagsVoid | TypeFlagsUndefined | TypeFlagsNull | TypeFlagsNever | TypeFlagsNonPrimitive
 	// 'TypeFlagsNarrowable' types are types where narrowing actually narrows.
 	// This *should* be every type other than null, undefined, void, and never
-	TypeFlagsNarrowable = TypeFlagsAny | TypeFlagsUnknown | TypeFlagsStructuredOrInstantiable | TypeFlagsStringLike | TypeFlagsNumberLike | TypeFlagsBigIntLike | TypeFlagsBooleanLike | TypeFlagsESSymbol | TypeFlagsUniqueESSymbol | TypeFlagsNonPrimitive
+	TypeFlagsNarrowable = TypeFlagsAny | TypeFlagsUnknown | TypeFlagsStructuredOrInstantiable | TypeFlagsStringLike | TypeFlagsNumberLike | TypeFlagsBigIntLike | TypeFlagsBooleanLike | TypeFlagsESSymbol | TypeFlagsUniqueESSymbol | TypeFlagsPrivateNameType | TypeFlagsNonPrimitive
 	// The following flags are aggregated during union and intersection type construction
 	TypeFlagsIncludesMask = TypeFlagsAny | TypeFlagsUnknown | TypeFlagsPrimitive | TypeFlagsNever | TypeFlagsObject | TypeFlagsUnion | TypeFlagsIntersection | TypeFlagsNonPrimitive | TypeFlagsTemplateLiteral | TypeFlagsStringMapping
 	// The following flags are used for different purposes during union and intersection type construction
@@ -537,6 +538,7 @@ var typeFlagNames = [...]struct {
 	{TypeFlagsConditional, "Conditional"},
 	{TypeFlagsUnion, "Union"},
 	{TypeFlagsIntersection, "Intersection"},
+	{TypeFlagsPrivateNameType, "PrivateNameType"},
 }
 
 // FormatTypeFlags returns the individual flag names as a slice of strings.
@@ -695,6 +697,7 @@ func (t *Type) ObjectFlags() ObjectFlags {
 func (t *Type) AsIntrinsicType() *IntrinsicType           { return t.data.(*IntrinsicType) }
 func (t *Type) AsLiteralType() *LiteralType               { return t.data.(*LiteralType) }
 func (t *Type) AsUniqueESSymbolType() *UniqueESSymbolType { return t.data.(*UniqueESSymbolType) }
+func (t *Type) AsPrivateNameType() *PrivateNameType       { return t.data.(*PrivateNameType) }
 func (t *Type) AsTupleType() *TupleType                   { return t.data.(*TupleType) }
 func (t *Type) AsInstantiationExpressionType() *InstantiationExpressionType {
 	return t.data.(*InstantiationExpressionType)
@@ -906,6 +909,12 @@ func (t *LiteralType) String() string {
 type UniqueESSymbolType struct {
 	TypeBase
 	name string
+}
+
+// PrivateNameTypeData
+
+type PrivateNameType struct {
+	TypeBase
 }
 
 // ConstrainedType (type with computed base constraint)

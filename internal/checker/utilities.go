@@ -483,7 +483,7 @@ func CompareTypes(t1, t2 *Type) int {
 		if c := compareTypeLists(t1.Types(), t2.Types()); c != 0 {
 			return c
 		}
-	case t1.flags&(TypeFlagsEnum|TypeFlagsEnumLiteral|TypeFlagsUniqueESSymbol) != 0:
+	case t1.flags&(TypeFlagsEnum|TypeFlagsEnumLiteral|TypeFlagsUniqueESSymbol|TypeFlagsPrivateNameType) != 0:
 		// Enum members are ordered by their symbol (and thus their declaration order).
 		if c := t1.checker.compareSymbols(t1.symbol, t2.symbol); c != 0 {
 			return c
@@ -854,7 +854,7 @@ func isNodeDescendantOf(node *ast.Node, ancestor *ast.Node) bool {
 }
 
 func isTypeUsableAsPropertyName(t *Type) bool {
-	return t.flags&TypeFlagsStringOrNumberLiteralOrUnique != 0
+	return t.flags&TypeFlagsStringOrNumberLiteralOrUniqueOrPrivateName != 0
 }
 
 /**
@@ -862,6 +862,8 @@ func isTypeUsableAsPropertyName(t *Type) bool {
  */
 func getPropertyNameFromType(t *Type) string {
 	switch {
+	case t.flags&TypeFlagsPrivateNameType != 0:
+		return t.symbol.Name
 	case t.flags&TypeFlagsStringLiteral != 0:
 		return t.AsLiteralType().value.(string)
 	case t.flags&TypeFlagsNumberLiteral != 0:

@@ -988,6 +988,10 @@ export interface LiteralTypeNode extends TypeNodeBase {
     readonly kind: SyntaxKind.LiteralType;
     readonly literal: Node;
 }
+export interface PrivateNameTypeNode extends TypeNodeBase {
+    readonly kind: SyntaxKind.PrivateNameType;
+    readonly name: PrivateIdentifier;
+}
 export interface ThisTypeNode extends TypeNodeBase {
     readonly kind: SyntaxKind.ThisType;
 }

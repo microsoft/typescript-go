@@ -1,0 +1,194 @@
+//// [tests/cases/conformance/classes/members/privateNames/privateNameInTypeQuery.ts] ////
+
+=== privateNameInTypeQuery.ts ===
+export class C1 {
+>C1 : Symbol(C1, Decl(privateNameInTypeQuery.ts, 0, 0))
+
+    #a = 1;
+>#a : Symbol(C1.#a, Decl(privateNameInTypeQuery.ts, 0, 17))
+
+    static #b = "";
+>#b : Symbol(C1.#b, Decl(privateNameInTypeQuery.ts, 1, 11))
+
+    #c() {
+>#c : Symbol(C1.#c, Decl(privateNameInTypeQuery.ts, 3, 19))
+
+        return 1 as const;
+>const : Symbol(const)
+    }
+
+    get #d() {
+>#d : Symbol(C1.#d, Decl(privateNameInTypeQuery.ts, 7, 5))
+
+        return new Date();
+>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 2 more)
+    }
+
+    ["#a"] = true;
+>["#a"] : Symbol(C1["#a"], Decl(privateNameInTypeQuery.ts, 11, 5))
+>"#a" : Symbol(C1["#a"], Decl(privateNameInTypeQuery.ts, 11, 5))
+
+    a: this[#a] = 1;
+>a : Symbol(C1.a, Decl(privateNameInTypeQuery.ts, 13, 18))
+
+    test1(a: C1) {
+>test1 : Symbol(C1.test1, Decl(privateNameInTypeQuery.ts, 15, 20))
+>a : Symbol(a, Decl(privateNameInTypeQuery.ts, 17, 10))
+>C1 : Symbol(C1, Decl(privateNameInTypeQuery.ts, 0, 0))
+
+        const b: C1[#a] = 1;
+>b : Symbol(b, Decl(privateNameInTypeQuery.ts, 18, 13))
+>C1 : Symbol(C1, Decl(privateNameInTypeQuery.ts, 0, 0))
+
+        const c: typeof a[#a] = 1;
+>c : Symbol(c, Decl(privateNameInTypeQuery.ts, 19, 13))
+>a : Symbol(a, Decl(privateNameInTypeQuery.ts, 17, 10))
+
+        const d: C2[#a] = 1;
+>d : Symbol(d, Decl(privateNameInTypeQuery.ts, 20, 13))
+>C2 : Symbol(C2, Decl(privateNameInTypeQuery.ts, 55, 1))
+
+        const e: typeof C1[#b] = "";
+>e : Symbol(e, Decl(privateNameInTypeQuery.ts, 21, 13))
+>C1 : Symbol(C1, Decl(privateNameInTypeQuery.ts, 0, 0))
+
+        const f: C1["#a"] = true;
+>f : Symbol(f, Decl(privateNameInTypeQuery.ts, 22, 13))
+>C1 : Symbol(C1, Decl(privateNameInTypeQuery.ts, 0, 0))
+
+        const g: C1[#c] = this.#c;
+>g : Symbol(g, Decl(privateNameInTypeQuery.ts, 23, 13))
+>C1 : Symbol(C1, Decl(privateNameInTypeQuery.ts, 0, 0))
+>this.#c : Symbol(C1.#c, Decl(privateNameInTypeQuery.ts, 3, 19))
+>this : Symbol(C1, Decl(privateNameInTypeQuery.ts, 0, 0))
+
+        const h: C1[#d] = this.#d;
+>h : Symbol(h, Decl(privateNameInTypeQuery.ts, 24, 13))
+>C1 : Symbol(C1, Decl(privateNameInTypeQuery.ts, 0, 0))
+>this.#d : Symbol(C1.#d, Decl(privateNameInTypeQuery.ts, 7, 5))
+>this : Symbol(C1, Decl(privateNameInTypeQuery.ts, 0, 0))
+
+        type A = #a;
+>A : Symbol(A, Decl(privateNameInTypeQuery.ts, 24, 34))
+
+        const i: C1[A] = 1;
+>i : Symbol(i, Decl(privateNameInTypeQuery.ts, 27, 13))
+>C1 : Symbol(C1, Decl(privateNameInTypeQuery.ts, 0, 0))
+>A : Symbol(A, Decl(privateNameInTypeQuery.ts, 24, 34))
+
+        const j: C1[#a | "#a"] = Math.random() ? 1 : true;
+>j : Symbol(j, Decl(privateNameInTypeQuery.ts, 28, 13))
+>C1 : Symbol(C1, Decl(privateNameInTypeQuery.ts, 0, 0))
+>Math.random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2025.float16.d.ts, --, --))
+>random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+
+        const k: C1[#a] = "";
+>k : Symbol(k, Decl(privateNameInTypeQuery.ts, 29, 13))
+>C1 : Symbol(C1, Decl(privateNameInTypeQuery.ts, 0, 0))
+
+        type B = C1[#b];
+>B : Symbol(B, Decl(privateNameInTypeQuery.ts, 29, 29))
+>C1 : Symbol(C1, Decl(privateNameInTypeQuery.ts, 0, 0))
+
+        type C = typeof C1[#a];
+>C : Symbol(C, Decl(privateNameInTypeQuery.ts, 31, 24))
+>C1 : Symbol(C1, Decl(privateNameInTypeQuery.ts, 0, 0))
+
+        const l = undefined as unknown as B;
+>l : Symbol(l, Decl(privateNameInTypeQuery.ts, 33, 13))
+>undefined : Symbol(undefined)
+>B : Symbol(B, Decl(privateNameInTypeQuery.ts, 29, 29))
+
+        const n = undefined as unknown as C;
+>n : Symbol(n, Decl(privateNameInTypeQuery.ts, 34, 13))
+>undefined : Symbol(undefined)
+>C : Symbol(C, Decl(privateNameInTypeQuery.ts, 31, 24))
+
+        return [b, c, d, e, f, g, h, i, j, k, l, n];
+>b : Symbol(b, Decl(privateNameInTypeQuery.ts, 18, 13))
+>c : Symbol(c, Decl(privateNameInTypeQuery.ts, 19, 13))
+>d : Symbol(d, Decl(privateNameInTypeQuery.ts, 20, 13))
+>e : Symbol(e, Decl(privateNameInTypeQuery.ts, 21, 13))
+>f : Symbol(f, Decl(privateNameInTypeQuery.ts, 22, 13))
+>g : Symbol(g, Decl(privateNameInTypeQuery.ts, 23, 13))
+>h : Symbol(h, Decl(privateNameInTypeQuery.ts, 24, 13))
+>i : Symbol(i, Decl(privateNameInTypeQuery.ts, 27, 13))
+>j : Symbol(j, Decl(privateNameInTypeQuery.ts, 28, 13))
+>k : Symbol(k, Decl(privateNameInTypeQuery.ts, 29, 13))
+>l : Symbol(l, Decl(privateNameInTypeQuery.ts, 33, 13))
+>n : Symbol(n, Decl(privateNameInTypeQuery.ts, 34, 13))
+    }
+
+    test2<T extends C1>(a: T): T[#a] {
+>test2 : Symbol(C1.test2, Decl(privateNameInTypeQuery.ts, 37, 5))
+>T : Symbol(T, Decl(privateNameInTypeQuery.ts, 39, 10))
+>C1 : Symbol(C1, Decl(privateNameInTypeQuery.ts, 0, 0))
+>a : Symbol(a, Decl(privateNameInTypeQuery.ts, 39, 24))
+>T : Symbol(T, Decl(privateNameInTypeQuery.ts, 39, 10))
+>T : Symbol(T, Decl(privateNameInTypeQuery.ts, 39, 10))
+
+        const b: T[#a] = a.#a;
+>b : Symbol(b, Decl(privateNameInTypeQuery.ts, 40, 13))
+>T : Symbol(T, Decl(privateNameInTypeQuery.ts, 39, 10))
+>a.#a : Symbol(C1.#a, Decl(privateNameInTypeQuery.ts, 0, 17))
+>a : Symbol(a, Decl(privateNameInTypeQuery.ts, 39, 24))
+
+        return b;
+>b : Symbol(b, Decl(privateNameInTypeQuery.ts, 40, 13))
+    }
+
+    test3<T extends C1 | { a: string }>(): T[#a] {
+>test3 : Symbol(C1.test3, Decl(privateNameInTypeQuery.ts, 42, 5))
+>T : Symbol(T, Decl(privateNameInTypeQuery.ts, 44, 10))
+>C1 : Symbol(C1, Decl(privateNameInTypeQuery.ts, 0, 0))
+>a : Symbol(a, Decl(privateNameInTypeQuery.ts, 44, 26))
+>T : Symbol(T, Decl(privateNameInTypeQuery.ts, 44, 10))
+
+        return undefined as any;
+>undefined : Symbol(undefined)
+    }
+
+    test4(): any[#a] {
+>test4 : Symbol(C1.test4, Decl(privateNameInTypeQuery.ts, 46, 5))
+
+        return "";
+    }
+
+    test5(): never[#a] {
+>test5 : Symbol(C1.test5, Decl(privateNameInTypeQuery.ts, 50, 5))
+
+        throw new Error();
+>Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
+    }
+}
+
+export class C2 {
+>C2 : Symbol(C2, Decl(privateNameInTypeQuery.ts, 55, 1))
+
+    #a = 1;
+>#a : Symbol(C2.#a, Decl(privateNameInTypeQuery.ts, 57, 17))
+
+    test1(): void {
+>test1 : Symbol(C2.test1, Decl(privateNameInTypeQuery.ts, 58, 11))
+
+        class C {
+>C : Symbol(C, Decl(privateNameInTypeQuery.ts, 60, 19))
+
+            test1(a: C2): typeof a[#a] {
+>test1 : Symbol(C.test1, Decl(privateNameInTypeQuery.ts, 61, 17))
+>a : Symbol(a, Decl(privateNameInTypeQuery.ts, 62, 18))
+>C2 : Symbol(C2, Decl(privateNameInTypeQuery.ts, 55, 1))
+>a : Symbol(a, Decl(privateNameInTypeQuery.ts, 62, 18))
+
+                return 1;
+            }
+        }
+        new C().test1(this);
+>new C().test1 : Symbol(C.test1, Decl(privateNameInTypeQuery.ts, 61, 17))
+>C : Symbol(C, Decl(privateNameInTypeQuery.ts, 60, 19))
+>test1 : Symbol(C.test1, Decl(privateNameInTypeQuery.ts, 61, 17))
+>this : Symbol(C2, Decl(privateNameInTypeQuery.ts, 55, 1))
+    }
+}
+

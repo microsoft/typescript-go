@@ -951,6 +951,27 @@ func (r *EmitResolver) CreateReturnTypeOfSignatureDeclaration(emitContext *print
 	return requestNodeBuilder.SerializeReturnTypeForSignature(original, enclosingDeclaration, flags, internalFlags, tracker)
 }
 
+func (r *EmitResolver) ResolveIndexedAccessTypeNode(emitContext *printer.EmitContext, typeNode *ast.IndexedAccessTypeNode, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
+	original := emitContext.ParseNode(typeNode.AsNode())
+	if original == nil {
+		return nil
+	}
+
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+	t := r.checker.resolveIndexedAccessTypeNodeForDeclarationEmit(original)
+	if t == nil {
+		return nil
+	}
+
+	requestNodeBuilder := NewNodeBuilder(r.checker, emitContext) // TODO: cache per-context
+	result := requestNodeBuilder.TypeToTypeNode(t, enclosingDeclaration, flags, internalFlags, tracker)
+	if result == nil {
+		return emitContext.Factory.NewKeywordTypeNode(ast.KindAnyKeyword)
+	}
+	return result
+}
+
 func (r *EmitResolver) CreateTypeParametersOfSignatureDeclaration(emitContext *printer.EmitContext, signatureDeclaration *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node {
 	original := emitContext.ParseNode(signatureDeclaration)
 	if original == nil {
