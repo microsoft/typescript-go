@@ -314,8 +314,9 @@ const (
 	contentMapperImplementationRegistrationID    = "content-mapper-implementation"
 	contentMapperReferencesRegistrationID        = "content-mapper-references"
 	contentMapperDocumentHighlightRegistrationID = "content-mapper-document-highlight"
-	contentMapperCompletionRegistrationID        = "content-mapper-completion"
-	contentMapperRenameRegistrationID            = "content-mapper-rename"
+	contentMapperCompletionRegistrationID         = "content-mapper-completion"
+	contentMapperRenameRegistrationID             = "content-mapper-rename"
+	contentMapperSemanticTokensRegistrationID     = "content-mapper-semantic-tokens"
 )
 
 func (s *Server) supportsContentMapperRegistration(id string) bool {
@@ -342,6 +343,8 @@ func (s *Server) supportsContentMapperRegistration(id string) bool {
 		return s.clientCapabilities.TextDocument.Completion.DynamicRegistration
 	case contentMapperRenameRegistrationID:
 		return s.clientCapabilities.TextDocument.Rename.DynamicRegistration
+	case contentMapperSemanticTokensRegistrationID:
+		return s.clientCapabilities.TextDocument.SemanticTokens.DynamicRegistration
 	default:
 		return false
 	}
@@ -374,6 +377,7 @@ func (s *Server) RegisterContentMapperExtensions(ctx context.Context, extensions
 			{Id: contentMapperDocumentHighlightRegistrationID, Method: string(lsproto.MethodTextDocumentDocumentHighlight)},
 			{Id: contentMapperCompletionRegistrationID, Method: string(lsproto.MethodTextDocumentCompletion)},
 			{Id: contentMapperRenameRegistrationID, Method: string(lsproto.MethodTextDocumentRename)},
+			{Id: contentMapperSemanticTokensRegistrationID, Method: string(lsproto.MethodTextDocumentSemanticTokens)},
 		}
 		unregistrations = slices.DeleteFunc(unregistrations, func(registration *lsproto.Unregistration) bool {
 			return !s.supportsContentMapperRegistration(registration.Id)
@@ -497,6 +501,21 @@ func (s *Server) RegisterContentMapperExtensions(ctx context.Context, extensions
 				TextDocumentRename: &lsproto.RenameRegistrationOptions{
 					DocumentSelector: selector,
 					PrepareProvider:  new(true),
+				},
+			},
+		},
+		{
+			Id: contentMapperSemanticTokensRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentSemanticTokens: &lsproto.SemanticTokensRegistrationOptions{
+					DocumentSelector: selector,
+					Legend:           ls.SemanticTokensLegend(s.clientCapabilities.TextDocument.SemanticTokens),
+					Full: &lsproto.BooleanOrSemanticTokensFullDelta{
+						Boolean: new(true),
+					},
+					Range: &lsproto.BooleanOrEmptyObject{
+						Boolean: new(true),
+					},
 				},
 			},
 		},
