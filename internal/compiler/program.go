@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/json"
@@ -234,7 +235,7 @@ func (p *Program) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.Fi
 	// Still, without the failed lookup reporting that only the loader does, this isn't terribly complicated
 
 	fileName := tspath.ResolvePath(tspath.GetDirectoryPath(origin.FileName()), ref.FileName)
-	supportedExtensionsBase := tsoptions.GetSupportedExtensions(p.Options(), nil /*extraFileExtensions*/)
+	supportedExtensionsBase := tsoptions.GetSupportedExtensions(p.Options(), p.CommandLine().ContentMapperExtensions())
 	supportedExtensions := tsoptions.GetSupportedExtensionsWithJsonIfResolveJsonModule(p.Options(), supportedExtensionsBase)
 	allowNonTsExtensions := p.Options().AllowNonTsExtensions.IsTrue()
 	if tspath.HasExtension(fileName) {
@@ -298,7 +299,20 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 	}
 
 	oldFile := p.filesByPath[changedFilePath]
-	newFile := newHost.GetSourceFile(oldFile.ParseOptions())
+	var newFile *ast.SourceFile
+	if oldFile.ContentMapper() != "" {
+		// Content-mapped files are produced by running an external transform, which a plain reparse can't
+		// reproduce. Re-run the transform through the host; any failure (or a missing file) falls back to
+		// a full rebuild so the file loader's failure policy runs.
+		mapper := newOpts.Config.GetContentMapperForFileName(oldFile.FileName())
+		var err error
+		newFile, err = newHost.GetContentMappedSourceFile(oldFile.ParseOptions(), mapper, newOpts.Config.CompilerOptions())
+		if err != nil {
+			return NewProgram(newOpts), nil, false
+		}
+	} else {
+		newFile = newHost.GetSourceFile(oldFile.ParseOptions())
+	}
 
 	// If this file is part of a package redirect group (same package installed in multiple
 	// node_modules locations), we need to rebuild the program because the redirect targets
@@ -402,9 +416,17 @@ func equalCheckJSDirectives(d1 *ast.CheckJsDirective, d2 *ast.CheckJsDirective) 
 func (p *Program) SourceFiles() []*ast.SourceFile               { return p.files }
 func (p *Program) DuplicateSourceFiles() []*DuplicateSourceFile { return p.duplicateSourceFiles }
 func (p *Program) Options() *core.CompilerOptions               { return p.opts.Config.CompilerOptions() }
-func (p *Program) CommandLine() *tsoptions.ParsedCommandLine    { return p.opts.Config }
-func (p *Program) Host() CompilerHost                           { return p.opts.Host }
-func (p *Program) Tracing() *tracing.Tracing                    { return p.opts.Tracing }
+
+// GetContentMapper returns the content mapper that produced the given source file, or nil if the
+// file was not produced by a content mapper.
+func (p *Program) GetContentMapper(file *ast.SourceFile) *contentmapper.Mapper {
+	return p.contentMapperForFile[file.Path()]
+}
+
+func (p *Program) ContentMapperExtensions() []string         { return p.opts.Config.ContentMapperExtensions() }
+func (p *Program) CommandLine() *tsoptions.ParsedCommandLine { return p.opts.Config }
+func (p *Program) Host() CompilerHost                        { return p.opts.Host }
+func (p *Program) Tracing() *tracing.Tracing                 { return p.opts.Tracing }
 func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 	return slices.Clip(p.opts.Config.GetConfigFileParsingDiagnostics())
 }
@@ -674,8 +696,9 @@ func (p *Program) GetSuggestionDiagnostics(ctx context.Context, sourceFile *ast.
 }
 
 func (p *Program) GetProgramDiagnostics() []*ast.Diagnostic {
-	return SortAndDeduplicateDiagnostics(core.Concatenate(
+	return SortAndDeduplicateDiagnostics(slices.Concat(
 		p.programDiagnostics,
+		p.contentMapperDiagnostics,
 		p.includeProcessor.getDiagnostics(p).GetGlobalDiagnostics(),
 	))
 }
@@ -701,7 +724,7 @@ func (p *Program) canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile) 
 		return false
 	}
 
-	if sourceFile.ScriptKind == core.ScriptKindTS || sourceFile.ScriptKind == core.ScriptKindTSX || sourceFile.ScriptKind == core.ScriptKindExternal {
+	if sourceFile.ScriptKind == core.ScriptKindTS || sourceFile.ScriptKind == core.ScriptKindTSX {
 		return true
 	}
 
@@ -709,11 +732,10 @@ func (p *Program) canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile) 
 	isCheckJS := isJS && ast.IsCheckJSEnabledForFile(sourceFile, p.Options())
 	isPlainJS := ast.IsPlainJSFile(sourceFile, p.Options().CheckJs)
 
-	// By default, only type-check .ts, .tsx, Deferred, plain JS, checked JS and External
+	// By default, only type-check .ts, .tsx, plain JS, and checked JS
 	// - plain JS: .js files with no // ts-check and checkJs: undefined
 	// - check JS: .js files with either // ts-check or checkJs: true
-	// - external: files that are added by plugins
-	return isPlainJS || isCheckJS || sourceFile.ScriptKind == core.ScriptKindDeferred
+	return isPlainJS || isCheckJS
 }
 
 func (p *Program) getSourceFilesToEmit(targetSourceFile *ast.SourceFile, forceDtsEmit bool) []*ast.SourceFile {
@@ -1763,7 +1785,13 @@ func GetDiagnosticsOfAnyProgram(
 	allDiagnostics := slices.Clip(program.GetConfigFileParsingDiagnostics())
 	configFileParsingDiagnosticsLength := len(allDiagnostics)
 
-	allDiagnostics = append(allDiagnostics, program.GetSyntacticDiagnostics(ctx, file)...)
+	syntacticDiagnostics := program.GetSyntacticDiagnostics(ctx, file)
+	if len(syntacticDiagnostics) > 0 {
+		// Per-file content mapper failures are syntactic diagnostics, but the locationless diagnostic
+		// that disables a repeatedly failing mapper must still be reported.
+		allDiagnostics = append(allDiagnostics, program.Program().contentMapperDiagnostics...)
+	}
+	allDiagnostics = append(allDiagnostics, syntacticDiagnostics...)
 
 	// If we didn't have any syntactic errors, then also try getting the program (options),
 	// global and semantic errors.

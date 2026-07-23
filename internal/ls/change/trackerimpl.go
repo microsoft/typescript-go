@@ -15,12 +15,16 @@ import (
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
 func (t *Tracker) getTextChangesFromChanges() map[string][]*lsproto.TextEdit {
 	changes := map[string][]*lsproto.TextEdit{}
 	for sourceFile, changesInFile := range t.changes.M {
+		if t.unmappableFiles.Has(sourceFile.FileName()) {
+			continue
+		}
 		// order changes by start position
 		// If the start position is the same, put the shorter range first, since an empty range (x, x) may precede (x, y) but not vice-versa.
 		slices.SortStableFunc(changesInFile, func(a, b *trackerEdit) int { return lsproto.CompareRanges(a.Range, b.Range) })
@@ -62,30 +66,50 @@ func (t *Tracker) computeNewText(change *trackerEdit, targetSourceFile *ast.Sour
 		return change.NewText
 	}
 
-	pos := int(t.converters.LineAndCharacterToPosition(sourceFile, change.Range.Start))
-	formatNode := func(n *ast.Node) string {
-		return t.getFormattedTextOfNode(n, targetSourceFile, sourceFile, pos, change.options)
-	}
-
-	var text string
-	switch change.kind {
-
-	case trackerEditKindReplaceWithMultipleNodes:
-		if change.options.joiner == "" {
-			change.options.joiner = t.newLine
+	positions := t.converters.FromLSPPosition(sourceFile, change.Range.Start, spanmap.PurposeAll)
+	var result string
+	found := false
+	// The original range may have multiple verbatim copies; it is safe to lose their identity only when
+	// formatting at every exact projection produces the same edit.
+	for _, mapped := range positions {
+		if !mapped.Fidelity.IsExact() {
+			continue
 		}
-		text = strings.Join(core.Map(change.nodes, func(n *ast.Node) string { return strings.TrimSuffix(formatNode(n), t.newLine) }), change.options.joiner)
-	case trackerEditKindReplaceWithSingleNode:
-		text = formatNode(change.Node)
-	default:
-		panic(fmt.Sprintf("change kind %d should have been handled earlier", change.kind))
+		pos := int(mapped.Position)
+		formatNode := func(n *ast.Node) string {
+			return t.getFormattedTextOfNode(n, targetSourceFile, sourceFile, pos, change.options)
+		}
+
+		var text string
+		switch change.kind {
+		case trackerEditKindReplaceWithMultipleNodes:
+			joiner := change.options.joiner
+			if joiner == "" {
+				joiner = t.newLine
+			}
+			text = strings.Join(core.Map(change.nodes, func(n *ast.Node) string { return strings.TrimSuffix(formatNode(n), t.newLine) }), joiner)
+		case trackerEditKindReplaceWithSingleNode:
+			text = formatNode(change.Node)
+		default:
+			panic(fmt.Sprintf("change kind %d should have been handled earlier", change.kind))
+		}
+		// Strip initial indentation if text will be inserted in the middle of the line.
+		noIndent := text
+		if !(change.options.indentation != nil || format.GetLineStartPositionForPosition(pos, targetSourceFile) == pos) {
+			noIndent = strings.TrimLeftFunc(text, unicode.IsSpace)
+		}
+		candidate := change.options.Prefix + noIndent + core.IfElse(strings.HasSuffix(noIndent, change.options.Suffix), "", change.options.Suffix)
+		if found && candidate != result {
+			t.unmappableFiles.Add(sourceFile.FileName())
+			return ""
+		}
+		result = candidate
+		found = true
 	}
-	// strip initial indentation (spaces or tabs) if text will be inserted in the middle of the line
-	noIndent := text
-	if !(change.options.indentation != nil || format.GetLineStartPositionForPosition(pos, targetSourceFile) == pos) {
-		noIndent = strings.TrimLeftFunc(text, unicode.IsSpace)
+	if !found {
+		t.unmappableFiles.Add(sourceFile.FileName())
 	}
-	return change.options.Prefix + noIndent + core.IfElse(strings.HasSuffix(noIndent, change.options.Suffix), "", change.options.Suffix)
+	return result
 }
 
 /** Note: this may mutate `nodeIn`. */
@@ -159,7 +183,7 @@ func (t *Tracker) getNonformattedText(node *ast.Node, sourceFile *ast.SourceFile
 // method on the changeTracker because use of converters
 // GetAdjustedRange computes the adjusted range for a node in a source file, accounting for trivia.
 func (t *Tracker) GetAdjustedRange(sourceFile *ast.SourceFile, startNode *ast.Node, endNode *ast.Node, leadingOption LeadingTriviaOption, trailingOption TrailingTriviaOption) lsproto.Range {
-	return t.converters.ToLSPRange(
+	return t.toLSPEditRange(
 		sourceFile,
 		core.NewTextRange(
 			t.getAdjustedStartPosition(sourceFile, startNode, leadingOption, false),

@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 )
 
 // CodeFixProvider represents a provider for a specific type of code fix
@@ -117,31 +118,31 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 					continue
 				}
 
-				position := l.converters.LineAndCharacterToPosition(file, diag.Range.Start)
-				endPosition := l.converters.LineAndCharacterToPosition(file, diag.Range.End)
-				fixContext := &CodeFixContext{
-					SourceFile: file,
-					Span:       core.NewTextRange(int(position), int(endPosition)),
-					ErrorCode:  errorCode,
-					Program:    program,
-					LS:         l,
-					Diagnostic: diag,
-					Params:     params,
-				}
-
-				providerActions, err := provider.GetCodeActions(ctx, fixContext)
-				if err != nil {
-					return lsproto.CodeActionResponse{}, err
-				}
-				for _, action := range providerActions {
-					i, found := slices.BinarySearchFunc(seen, action, (*CodeAction).Compare)
-					if found {
-						continue
+				for _, mapped := range l.converters.FromLSPRange(file, diag.Range, spanmap.PurposeSemantic) {
+					fixContext := &CodeFixContext{
+						SourceFile: file,
+						Span:       mapped.Span,
+						ErrorCode:  errorCode,
+						Program:    program,
+						LS:         l,
+						Diagnostic: diag,
+						Params:     params,
 					}
-					seen = slices.Insert(seen, i, action)
-					actions = append(actions, convertToLSPCodeAction(action, diag, params.TextDocument.Uri))
-					if action.FixID != "" {
-						fixIdSeen[action.FixID] = provider
+
+					providerActions, err := provider.GetCodeActions(ctx, fixContext)
+					if err != nil {
+						return lsproto.CodeActionResponse{}, err
+					}
+					for _, action := range providerActions {
+						i, found := slices.BinarySearchFunc(seen, action, (*CodeAction).Compare)
+						if found {
+							continue
+						}
+						seen = slices.Insert(seen, i, action)
+						actions = append(actions, convertToLSPCodeAction(action, diag, params.TextDocument.Uri))
+						if action.FixID != "" {
+							fixIdSeen[action.FixID] = provider
+						}
 					}
 				}
 			}

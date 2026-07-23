@@ -343,6 +343,11 @@ func (t *BuildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 		return &upToDateStatus{kind: upToDateStatusTypeTsVersionOutputOfDate, data: buildInfo.Version}
 	}
 
+	// If a configured content mapper's identity has changed, files it produced may be stale.
+	if !buildInfo.ContentMapperIdentitiesMatch(incremental.ContentMapperIdentities(t.resolved)) {
+		return &upToDateStatus{kind: upToDateStatusTypeOutOfDateOptions, data: buildInfoPath}
+	}
+
 	// Report errors if build info indicates errors
 	if buildInfo.Errors || // Errors that need to be reported irrespective of "--noCheck"
 		(!t.resolved.CompilerOptions().NoCheck.IsTrue() && (buildInfo.SemanticErrors || buildInfo.CheckPending)) { // Errors without --noCheck

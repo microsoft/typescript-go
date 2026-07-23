@@ -243,6 +243,7 @@ func tscCompilation(ctx context.Context, sys tsc.System, commandLine *tsoptions.
 		return tsc.CommandLineResult{Status: tsc.ExitStatusSuccess, Watcher: watcher}
 	} else if configForCompilation.CompilerOptions().IsIncremental() {
 		return performIncrementalCompilation(
+			ctx,
 			sys,
 			configForCompilation,
 			reportDiagnostic,
@@ -253,6 +254,7 @@ func tscCompilation(ctx context.Context, sys tsc.System, commandLine *tsoptions.
 		)
 	}
 	return performCompilation(
+		ctx,
 		sys,
 		configForCompilation,
 		reportDiagnostic,
@@ -282,6 +284,7 @@ func getTraceFromSys(sys tsc.System, locale locale.Locale, testing tsc.CommandLi
 }
 
 func performIncrementalCompilation(
+	ctx context.Context,
 	sys tsc.System,
 	config *tsoptions.ParsedCommandLine,
 	reportDiagnostic tsc.DiagnosticReporter,
@@ -290,7 +293,11 @@ func performIncrementalCompilation(
 	compileTimes *tsc.CompileTimes,
 	testing tsc.CommandLineTesting,
 ) tsc.CommandLineResult {
-	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing))
+	contentMapperHost := tsc.NewContentMapperHost(ctx, sys, config.CompilerOptions())
+	if contentMapperHost != nil {
+		defer contentMapperHost.Acquire(config.ContentMappers())()
+	}
+	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing), contentMapperHost)
 	buildInfoReadStart := sys.Now()
 	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host), host)
 	compileTimes.BuildInfoReadTime = sys.Now().Sub(buildInfoReadStart)
@@ -331,6 +338,7 @@ func performIncrementalCompilation(
 }
 
 func performCompilation(
+	ctx context.Context,
 	sys tsc.System,
 	config *tsoptions.ParsedCommandLine,
 	reportDiagnostic tsc.DiagnosticReporter,
@@ -339,7 +347,11 @@ func performCompilation(
 	compileTimes *tsc.CompileTimes,
 	testing tsc.CommandLineTesting,
 ) tsc.CommandLineResult {
-	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing))
+	contentMapperHost := tsc.NewContentMapperHost(ctx, sys, config.CompilerOptions())
+	if contentMapperHost != nil {
+		defer contentMapperHost.Acquire(config.ContentMappers())()
+	}
+	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing), contentMapperHost)
 
 	tr := startTracingIfNeeded(sys, config, testing)
 

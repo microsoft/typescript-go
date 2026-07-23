@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"gotest.tools/v3/assert"
 )
 
@@ -93,8 +94,10 @@ type testScript struct {
 	text string
 }
 
-func (s *testScript) FileName() string { return s.name }
-func (s *testScript) Text() string     { return s.text }
+func (s *testScript) FileName() string          { return s.name }
+func (s *testScript) Text() string              { return s.text }
+func (s *testScript) OriginalText() string      { return s.text }
+func (s *testScript) SpanMap() *spanmap.SpanMap { return nil }
 
 func newTestConverters(text string) (*lsconv.Converters, *testScript) {
 	script := &testScript{name: "test.ts", text: text}
@@ -134,17 +137,21 @@ func TestConvertersInvalidUTF8(t *testing.T) {
 	}
 	for _, m := range mappings {
 		lc := lsproto.Position{Line: m.line, Character: m.char}
-		assert.Equal(t, conv.LineAndCharacterToPosition(script, lc), m.bytePos,
+		positions := conv.FromLSPPosition(script, lc, spanmap.PurposeAll)
+		assert.Equal(t, len(positions), 1)
+		assert.Equal(t, positions[0].Position, m.bytePos,
 			fmt.Sprintf("LineAndCharacterToPosition(%d,%d)", m.line, m.char))
-		assert.Equal(t, conv.PositionToLineAndCharacter(script, m.bytePos), lc,
+		lspPosition, _ := conv.ToLSPPosition(script, m.bytePos)
+		assert.Equal(t, lspPosition, lc,
 			fmt.Sprintf("PositionToLineAndCharacter(%d)", m.bytePos))
 	}
 
 	// Byte-by-byte round-trip across the entire text.
 	for bytePos := core.TextPos(0); bytePos <= core.TextPos(len(text)); bytePos++ {
-		lc := conv.PositionToLineAndCharacter(script, bytePos)
-		rt := conv.LineAndCharacterToPosition(script, lc)
-		assert.Equal(t, rt, bytePos, fmt.Sprintf("round-trip byte %d", bytePos))
+		lc, _ := conv.ToLSPPosition(script, bytePos)
+		positions := conv.FromLSPPosition(script, lc, spanmap.PurposeAll)
+		assert.Equal(t, len(positions), 1)
+		assert.Equal(t, positions[0].Position, bytePos, fmt.Sprintf("round-trip byte %d", bytePos))
 	}
 }
 
@@ -316,12 +323,13 @@ func TestConvertersAgainstJSReference(t *testing.T) {
 				bytePos := core.TextPos(tup.BytePos)
 				expectedLC := lsproto.Position{Line: uint32(tup.Line), Character: uint32(tup.Char)}
 
-				gotLC := conv.PositionToLineAndCharacter(script, bytePos)
+				gotLC, _ := conv.ToLSPPosition(script, bytePos)
 				assert.Equal(t, gotLC, expectedLC,
 					fmt.Sprintf("PositionToLineAndCharacter(%d) mismatch in %q", bytePos, c.text))
 
-				gotPos := conv.LineAndCharacterToPosition(script, expectedLC)
-				assert.Equal(t, gotPos, bytePos,
+				positions := conv.FromLSPPosition(script, expectedLC, spanmap.PurposeAll)
+				assert.Equal(t, len(positions), 1)
+				assert.Equal(t, positions[0].Position, bytePos,
 					fmt.Sprintf("LineAndCharacterToPosition(%d,%d) mismatch in %q", tup.Line, tup.Char, c.text))
 			}
 		})

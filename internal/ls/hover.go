@@ -16,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 )
 
 const (
@@ -33,7 +34,11 @@ func (l *LanguageService) ProvideHover(ctx context.Context, params *lsproto.Hove
 	}
 
 	program, file := l.getProgramAndFile(params.TextDocument.Uri)
-	position := int(l.converters.LineAndCharacterToPosition(file, params.Position))
+	positions := l.converters.FromLSPPosition(file, params.Position, spanmap.PurposeSemantic)
+	if len(positions) == 0 || !positions[0].Fidelity.IsSingleSegment() {
+		return lsproto.HoverOrNull{}, nil
+	}
+	position := int(positions[0].Position)
 	node := astnav.GetTouchingPropertyName(file, position)
 	if ast.IsSourceFile(node) || ast.IsPropertyAccessOrQualifiedName(node) && isInComment(file, position, node) == nil {
 		// Avoid giving quickInfo for the sourceFile as a whole or inside the comment of a/**/.b
@@ -61,7 +66,9 @@ func (l *LanguageService) ProvideHover(ctx context.Context, params *lsproto.Hove
 	if quickInfo == "" {
 		return lsproto.HoverOrNull{}, nil
 	}
-	hoverRange := l.getLspRangeOfNode(rangeNode, nil, nil)
+	rangeFile := ast.GetSourceFileOfNode(rangeNode)
+	textRange := getRangeOfNode(rangeNode, rangeFile, nil /*endNode*/)
+	hoverRange, hoverFidelity := l.createLspRangeFromBounds(textRange.Pos(), textRange.End(), rangeFile)
 
 	var content string
 	if contentFormat == lsproto.MarkupKindMarkdown {
@@ -77,7 +84,9 @@ func (l *LanguageService) ProvideHover(ctx context.Context, params *lsproto.Hove
 				Value: content,
 			},
 		},
-		Range: &hoverRange,
+	}
+	if hoverFidelity.IsSingleSegment() {
+		hover.Range = &hoverRange
 	}
 
 	if caps.Experimental.HoverVerbosityLevel {
@@ -1113,13 +1122,13 @@ func (l *LanguageService) writeNameLink(b *strings.Builder, c *checker.Checker, 
 		declaration := declarations[0]
 		file := ast.GetSourceFileOfNode(declaration)
 		node := core.OrElse(ast.GetNameOfDeclaration(declaration), declaration)
-		loc := l.getMappedLocation(file.FileName(), createRangeFromNode(node, file))
+		loc, fidelity := l.getMappedLocation(file.FileName(), createRangeFromNode(node, file))
 		prefixLen := core.IfElse(strings.HasPrefix(text, "()"), 2, 0)
 		linkText := trimCommentPrefix(text[prefixLen:])
 		if linkText == "" {
 			linkText = getEntityNameString(name) + text[:prefixLen]
 		}
-		if isMarkdown {
+		if isMarkdown && fidelity.IsSingleSegment() {
 			linkUri := fmt.Sprintf("%s#%d,%d-%d,%d", loc.Uri, loc.Range.Start.Line+1, loc.Range.Start.Character+1, loc.Range.End.Line+1, loc.Range.End.Character+1)
 			writeMarkdownLink(b, linkText, linkUri, quote)
 		} else {

@@ -15,6 +15,15 @@ import (
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/spanmap"
+)
+
+// SignatureHelpTriggerCharacters and SignatureHelpRetriggerCharacters are the characters that trigger and
+// re-trigger signature help. They are advertised both in the static server capabilities and in the dynamic
+// content-mapper registration, so they live here to keep those two declarations in sync.
+var (
+	SignatureHelpTriggerCharacters   = []string{"(", ",", "<"}
+	SignatureHelpRetriggerCharacters = []string{")"}
 )
 
 type callInvocation struct {
@@ -44,9 +53,14 @@ func (l *LanguageService) ProvideSignatureHelp(
 	context *lsproto.SignatureHelpContext,
 ) (lsproto.SignatureHelpResponse, error) {
 	program, sourceFile := l.getProgramAndFile(documentURI)
+	positions := l.converters.FromLSPPosition(sourceFile, position, spanmap.PurposeSemantic)
+	if len(positions) == 0 || !positions[0].Fidelity.IsSingleSegment() {
+		return lsproto.SignatureHelpOrNull{}, nil
+	}
+	pos := int(positions[0].Position)
 	items := l.GetSignatureHelpItems(
 		ctx,
-		int(l.converters.LineAndCharacterToPosition(sourceFile, position)),
+		pos,
 		program,
 		sourceFile,
 		context,

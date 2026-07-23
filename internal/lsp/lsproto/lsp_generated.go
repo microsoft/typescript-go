@@ -8790,6 +8790,9 @@ type InitializationOptions struct {
 
 	// The initial log verbosity level, matching the client's output channel log level at startup. Subsequent changes are sent via custom/setLogVerbosity.
 	LogVerbosity *LogVerbosity `json:"logVerbosity,omitzero"`
+
+	// LoadExternalPlugins allows configured content mappers to launch external plugin processes. The client should set this only for trusted workspaces. It mirrors the --loadExternalPlugins CLI flag.
+	LoadExternalPlugins *bool `json:"loadExternalPlugins,omitzero"`
 }
 
 var _ json.UnmarshalerFrom = (*InitializationOptions)(nil)
@@ -9087,6 +9090,33 @@ type ProjectInfoResult struct {
 var _ json.UnmarshalerFrom = (*ProjectInfoResult)(nil)
 
 func (s *ProjectInfoResult) UnmarshalJSONFrom(dec *json.Decoder) error {
+	return unmarshalStruct(s, dec)
+}
+
+// Parameters for the custom/discoverContentMappers request.
+type DiscoverContentMappersParams struct {
+	// Open foreign documents whose configured projects should be checked for content mappers.
+	TextDocuments []TextDocumentIdentifier `json:"textDocuments" lsp:"required"`
+
+	// Candidate foreign file extensions, including the leading dot.
+	Extensions []string `json:"extensions" lsp:"required"`
+}
+
+var _ json.UnmarshalerFrom = (*DiscoverContentMappersParams)(nil)
+
+func (s *DiscoverContentMappersParams) UnmarshalJSONFrom(dec *json.Decoder) error {
+	return unmarshalStruct(s, dec)
+}
+
+// Result for the custom/discoverContentMappers request.
+type DiscoverContentMappersResult struct {
+	// Requested extensions provided by content mappers in discovered configured projects.
+	Extensions []string `json:"extensions" lsp:"required"`
+}
+
+var _ json.UnmarshalerFrom = (*DiscoverContentMappersResult)(nil)
+
+func (s *DiscoverContentMappersResult) UnmarshalJSONFrom(dec *json.Decoder) error {
 	return unmarshalStruct(s, dec)
 }
 
@@ -10991,6 +11021,8 @@ const (
 	MethodCustomInitializeAPISession Method = "custom/initializeAPISession"
 	// Returns project information (e.g. the tsconfig.json path) for a given text document.
 	MethodCustomProjectInfo Method = "custom/projectInfo"
+	// Discovers content mappers from configured projects governing the supplied foreign documents.
+	MethodCustomDiscoverContentMappers Method = "custom/discoverContentMappers"
 	// Request to get source definitions for a position.
 	MethodCustomTextDocumentSourceDefinition Method = "custom/textDocument/sourceDefinition"
 	// Request to get document highlights across multiple files.
@@ -11539,6 +11571,12 @@ type CustomProjectInfoResponse = *ProjectInfoResult
 
 // Type mapping info for `custom/projectInfo`
 var CustomProjectInfoInfo = RequestInfo[*ProjectInfoParams, CustomProjectInfoResponse]{Method: MethodCustomProjectInfo}
+
+// Response type for `custom/discoverContentMappers`
+type CustomDiscoverContentMappersResponse = *DiscoverContentMappersResult
+
+// Type mapping info for `custom/discoverContentMappers`
+var CustomDiscoverContentMappersInfo = RequestInfo[*DiscoverContentMappersParams, CustomDiscoverContentMappersResponse]{Method: MethodCustomDiscoverContentMappers}
 
 // Response type for `custom/textDocument/sourceDefinition`
 type CustomTextDocumentSourceDefinitionResponse = *LocationOrLocationsOrDefinitionLinksOrNull

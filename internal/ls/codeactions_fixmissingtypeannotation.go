@@ -153,7 +153,7 @@ func getAllIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *Code
 		fixer.addSymbolToExistingImport(sym)
 	}
 
-	changes := changeTracker.GetChanges()
+	changes, _ := changeTracker.GetChanges()
 	fileChanges := changes[fixContext.SourceFile.FileName()]
 	if len(fileChanges) == 0 {
 		return nil, nil
@@ -192,7 +192,7 @@ func tryCodeAction(ctx context.Context, fixContext *CodeFixContext, ch *checker.
 		fixer.addSymbolToExistingImport(sym)
 	}
 
-	changes := changeTracker.GetChanges()
+	changes, _ := changeTracker.GetChanges()
 	fileChanges := changes[fixContext.SourceFile.FileName()]
 
 	// Add import edits if import adder has fixes

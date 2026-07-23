@@ -1,12 +1,15 @@
 package tsc
 
 import (
+	"context"
 	"io"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/locale"
@@ -22,6 +25,7 @@ type System interface {
 	WriteOutputIsTTY() bool
 	GetWidthOfTerminal() int
 	GetEnvironmentVariable(name string) string
+	Spawn(command []string, dir string) (io.ReadWriteCloser, error)
 
 	Now() time.Time
 	SinceStart() time.Duration
@@ -60,6 +64,18 @@ type CommandLineTesting interface {
 	OnWatchStatusReportEnd()
 	GetTrace(w io.Writer, locale locale.Locale) func(msg *diagnostics.Message, args ...any)
 	OnProgram(program *incremental.Program)
+}
+
+// NewContentMapperHost creates a content mapper host when content mappers are enabled via the
+// --loadExternalPlugins flag, spawning mapper processes through the system's Spawn. It returns
+// nil otherwise, in which case no content-mapped files can be loaded. The caller owns the host and must
+// Close it when the compilation session ends.
+func NewContentMapperHost(ctx context.Context, sys System, options *core.CompilerOptions) contentmapper.Host {
+	if !options.LoadExternalPlugins.IsTrue() {
+		return nil
+	}
+	diagnosticLocale, _ := locale.Parse(options.Locale)
+	return contentmapper.NewHost(ctx, sys, diagnosticLocale)
 }
 
 type CompileTimes struct {

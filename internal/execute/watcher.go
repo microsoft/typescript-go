@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
@@ -65,6 +66,14 @@ type Watcher struct {
 	reportWatchStatus              tsc.DiagnosticReporter
 	testing                        tsc.CommandLineTesting
 
+	// ctx bounds the whole watch session (the CLI signal context); it is set by start and used to bound
+	// resources that outlive a single cycle, such as content mapper processes.
+	ctx context.Context
+	// contentMapperHost transforms content-mapped files; it is created once per watch session (when
+	// enabled) and reused across cycles. It closes itself when ctx is cancelled (see contentmapper.New).
+	contentMapperHost     contentmapper.Host
+	releaseContentMappers func()
+
 	program             *incremental.Program
 	extendedConfigCache *tsc.ExtendedConfigCache
 	configModified      bool
@@ -112,9 +121,12 @@ func createWatcher(
 }
 
 func (w *Watcher) start(ctx context.Context) {
+	w.ctx = ctx
+	w.contentMapperHost = tsc.NewContentMapperHost(ctx, w.sys, w.config.CompilerOptions())
+	w.replaceContentMapperLease(w.config.ContentMappers())
 	w.wm.Lock()
 	w.extendedConfigCache = &tsc.ExtendedConfigCache{}
-	host := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
+	host := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing), nil)
 	w.program = incremental.ReadBuildInfoProgram(w.config, incremental.NewBuildInfoReader(host), host)
 
 	if w.configFileName != "" {
@@ -136,8 +148,20 @@ func (w *Watcher) start(ctx context.Context) {
 	w.wm.Unlock()
 
 	if w.testing == nil {
+		// The content mapper host closes itself when ctx is cancelled (see contentmapper.New).
 		w.wm.RunLoop(ctx, w.DoCycle)
 	}
+}
+
+func (w *Watcher) replaceContentMapperLease(mappers []*contentmapper.Mapper) {
+	if w.contentMapperHost == nil {
+		return
+	}
+	release := w.contentMapperHost.Acquire(mappers)
+	if w.releaseContentMappers != nil {
+		w.releaseContentMappers()
+	}
+	w.releaseContentMappers = release
 }
 
 func (w *Watcher) computeDesiredWatches(seenFilePaths []string) map[string]bool {
@@ -286,7 +310,7 @@ func (w *Watcher) doBuild() error {
 
 	cached := cachedvfs.From(w.sys.FS())
 	tfs := &trackingvfs.FS{Inner: cached}
-	innerHost := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), tfs, w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
+	innerHost := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), tfs, w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing), w.contentMapperHost)
 	host := &watchCompilerHost{CompilerHost: innerHost, cache: w.sourceFileCache}
 
 	var wildcardDirs map[string]bool
@@ -418,6 +442,7 @@ func (w *Watcher) recheckTsConfig() bool {
 	if !reflect.DeepEqual(w.config.ParsedConfig, configParseResult.ParsedConfig) {
 		w.configModified = true
 	}
+	w.replaceContentMapperLease(configParseResult.ContentMappers())
 	w.config = configParseResult
 	return false
 }

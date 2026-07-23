@@ -47,6 +47,11 @@ func ReadBuildInfoProgram(config *tsoptions.ParsedCommandLine, reader BuildInfoR
 	if buildInfo == nil || !buildInfo.IsValidVersion() || !buildInfo.IsIncremental() {
 		return nil
 	}
+	// If any configured content mapper's identity has changed, files it produced may be stale, so the
+	// old program cannot be reused.
+	if !buildInfo.ContentMapperIdentitiesMatch(ContentMapperIdentities(config)) {
+		return nil
+	}
 
 	// Convert to information that can be used to create incremental program
 	incrementalProgram := &Program{

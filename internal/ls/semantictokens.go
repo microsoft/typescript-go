@@ -1,17 +1,20 @@
 package ls
 
 import (
+	"cmp"
 	"context"
 	"fmt"
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 )
 
 // tokenTypes defines the order of token types for encoding
@@ -150,10 +153,16 @@ func (l *LanguageService) ProvideSemanticTokensRange(ctx context.Context, docume
 	c, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
 
-	start := int(l.converters.LineAndCharacterToPosition(file, rng.Start))
-	end := int(l.converters.LineAndCharacterToPosition(file, rng.End))
-
-	tokens := l.collectSemanticTokensInRange(ctx, c, file, program, start, end)
+	var tokens []semanticToken
+	var seen collections.Set[semanticToken]
+	for _, mapped := range l.converters.FromLSPRange(file, rng, spanmap.PurposeSemantic) {
+		for _, token := range l.collectSemanticTokensInRange(ctx, c, file, program, mapped.Span.Pos(), mapped.Span.End()) {
+			if seen.AddIfAbsent(token) {
+				tokens = append(tokens, token)
+			}
+		}
+	}
+	slices.SortFunc(tokens, func(a, b semanticToken) int { return cmp.Compare(a.node.Pos(), b.node.Pos()) })
 
 	if len(tokens) == 0 {
 		return lsproto.SemanticTokensOrNull{}, nil
@@ -527,9 +536,14 @@ func encodeSemanticTokens(ctx context.Context, tokens []semanticToken, file *ast
 		tokenStart := scanner.GetTokenPosOfNode(token.node, file, false)
 		tokenEnd := token.node.End()
 
-		// Convert both start and end positions to LSP coordinates, then compute length
-		startPos := converters.PositionToLineAndCharacter(file, core.TextPos(tokenStart))
-		endPos := converters.PositionToLineAndCharacter(file, core.TextPos(tokenEnd))
+		// Semantic tokens must describe one concrete source segment; synthesized and cross-segment
+		// tokens do not identify a coherent token in the original text.
+		lspRange, fidelity := converters.ToLSPRange(file, core.NewTextRange(tokenStart, tokenEnd))
+		if !fidelity.IsExact() {
+			continue
+		}
+		startPos := lspRange.Start
+		endPos := lspRange.End
 
 		// Length is the character difference when on the same line
 		var tokenLength uint32

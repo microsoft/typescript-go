@@ -42,6 +42,7 @@ type Snapshot struct {
 	autoImportsWatch                   *WatchedFiles[map[tspath.Path]string]
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	userPreferences                    lsutil.UserPreferences
+	releaseContentMappers              func()
 
 	builderLogs *logging.LogTree
 	apiError    error
@@ -232,7 +233,12 @@ type ATAStateChange struct {
 	Logs                *logging.LogTree
 }
 
-func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays map[tspath.Path]*Overlay, session *Session) *Snapshot {
+func (s *Snapshot) Clone(
+	ctx context.Context,
+	change SnapshotChange,
+	overlays map[tspath.Path]*Overlay,
+	session *Session,
+) *Snapshot {
 	var logger *logging.LogTree
 
 	// Print in-progress logs immediately if cloning fails
@@ -286,6 +292,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	}
 
 	start := time.Now()
+	contentMappers := s.ConfigFileRegistry.contentMappers()
 	fs := newSnapshotFSBuilder(session.fs.fs, s.fs.overlays, overlays, s.fs.diskFiles, s.fs.diskDirectories, s.fs.nodeModulesRealpathAliases, session.options.PositionEncoding, s.toPath)
 	if change.fileChanges.HasExcessiveWatchEvents() {
 		invalidateStart := time.Now()
@@ -304,7 +311,11 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			logger.Logf("npm install detected, invalidated node_modules cache in %v", time.Since(invalidateStart))
 		}
 	} else {
-		change.fileChanges = fs.expandAndFilterWatchEvents(change.fileChanges)
+		var contentMapperExtensions []string
+		if contentMappers != nil {
+			contentMapperExtensions = contentMappers.extensions
+		}
+		change.fileChanges = fs.expandAndFilterWatchEvents(change.fileChanges, contentMapperExtensions)
 		change.fileChanges = s.fs.expandRealpathAliases(change.fileChanges)
 		change.fileChanges = fs.markDirtyFiles(change.fileChanges)
 		change.fileChanges = fs.convertOpenAndCloseToChanges(change.fileChanges)
@@ -335,6 +346,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		customConfigFileName,
 		session.parseCache,
 		session.extendedConfigCache,
+		session.contentMapperHost,
 		session.client,
 	)
 
@@ -460,6 +472,9 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	newSnapshot.parentId = s.id
 	newSnapshot.ProjectCollection = projectCollection
 	newSnapshot.ConfigFileRegistry = configFileRegistry
+	if session.contentMapperHost != nil {
+		newSnapshot.releaseContentMappers = session.contentMapperHost.Acquire(newSnapshot.ConfigFileRegistry.contentMappers().mappers)
+	}
 	newSnapshot.builderLogs = logger
 	newSnapshot.apiError = apiError
 
@@ -535,6 +550,9 @@ func (s *Snapshot) Deref(session *Session) {
 }
 
 func (s *Snapshot) dispose(session *Session) {
+	if s.releaseContentMappers != nil {
+		defer s.releaseContentMappers()
+	}
 	for _, project := range s.ProjectCollection.Projects() {
 		if project.Program != nil && session.programCounter.Deref(project.Program) {
 			// This program is no longer referenced by any snapshot.
@@ -545,10 +563,14 @@ func (s *Snapshot) dispose(session *Session) {
 				project.checkerPool.Discard()
 			}
 			for _, file := range project.Program.SourceFiles() {
-				session.parseCache.Deref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
+				if !file.IsContentMapperFailureStub() {
+					session.parseCache.Deref(parseCacheKeyForFile(file))
+				}
 			}
 			for _, file := range project.Program.DuplicateSourceFiles() {
-				session.parseCache.Deref(NewParseCacheKey(file.ParseOptions, file.Hash, file.ScriptKind))
+				if !file.IsContentMapperFailureStub {
+					session.parseCache.Deref(parseCacheKeyForDuplicate(file))
+				}
 			}
 		}
 	}

@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/glob"
@@ -25,7 +26,7 @@ const (
 )
 
 type ParsedCommandLine struct {
-	ParsedConfig *core.ParsedOptions `json:"parsedConfig"`
+	ParsedConfig *ParsedOptions `json:"parsedConfig"`
 
 	ConfigFile    *TsConfigSourceFile `json:"configFile"` // TsConfigSourceFile, used in Program and ExecuteCommandLine
 	Errors        []*ast.Diagnostic   `json:"errors"`
@@ -37,7 +38,6 @@ type ParsedCommandLine struct {
 	wildcardDirectories     map[string]bool
 	includeGlobsOnce        sync.Once
 	includeGlobs            []*glob.Glob
-	extraFileExtensions     []FileExtensionInfo
 
 	sourceAndOutputMapsOnce     sync.Once
 	sourceToProjectReference    map[tspath.Path]*SourceOutputAndProjectReference
@@ -63,7 +63,7 @@ func NewParsedCommandLine(
 	comparePathsOptions tspath.ComparePathsOptions,
 ) *ParsedCommandLine {
 	return &ParsedCommandLine{
-		ParsedConfig: &core.ParsedOptions{
+		ParsedConfig: &ParsedOptions{
 			CompilerOptions: compilerOptions,
 			FileNames:       rootFileNames,
 		},
@@ -267,7 +267,7 @@ func (p *ParsedCommandLine) LiteralFileNames() []string {
 	return nil
 }
 
-func (p *ParsedCommandLine) SetParsedOptions(o *core.ParsedOptions) {
+func (p *ParsedCommandLine) SetParsedOptions(o *ParsedOptions) {
 	p.ParsedConfig = o
 }
 
@@ -308,6 +308,33 @@ func (p *ParsedCommandLine) FileNamesByPath() map[tspath.Path]string {
 
 func (p *ParsedCommandLine) ProjectReferences() []*core.ProjectReference {
 	return p.ParsedConfig.ProjectReferences
+}
+
+func (p *ParsedCommandLine) ContentMappers() []*contentmapper.Mapper {
+	if p == nil || p.ParsedConfig == nil {
+		return nil
+	}
+	return p.ParsedConfig.ContentMappers
+}
+
+// ContentMapperExtensions returns the flattened list of file extensions registered by the
+// config's content mappers.
+func (p *ParsedCommandLine) ContentMapperExtensions() []string {
+	return core.FlatMap(p.ContentMappers(), func(m *contentmapper.Mapper) []string {
+		return m.Extensions
+	})
+}
+
+// GetContentMapperForFileName returns the configured content mapper whose extensions include fileName,
+// or nil if no content mapper is registered for the file's extension.
+func (p *ParsedCommandLine) GetContentMapperForFileName(fileName string) *contentmapper.Mapper {
+	extension := tspath.GetLongestExtensionFromPath(fileName, p.ContentMapperExtensions(), false)
+	for _, mapper := range p.ContentMappers() {
+		if slices.Contains(mapper.Extensions, extension) {
+			return mapper
+		}
+	}
+	return nil
 }
 
 func (p *ParsedCommandLine) ResolvedProjectReferencePaths() []string {
@@ -397,7 +424,7 @@ func (p *ParsedCommandLine) ReloadFileNamesOfParsedCommandLine(fs vfs.FS) *Parse
 		p.GetCurrentDirectory(),
 		p.CompilerOptions(),
 		fs,
-		p.extraFileExtensions,
+		p.ContentMapperExtensions(),
 	)
 	parsedConfig.FileNames = fileNames
 	parsedCommandLine := ParsedCommandLine{
@@ -409,7 +436,6 @@ func (p *ParsedCommandLine) ReloadFileNamesOfParsedCommandLine(fs vfs.FS) *Parse
 		comparePathsOptions: p.comparePathsOptions,
 		wildcardDirectories: p.wildcardDirectories,
 		includeGlobs:        p.includeGlobs,
-		extraFileExtensions: p.extraFileExtensions,
 		literalFileNamesLen: literalFileNamesLen,
 	}
 	return &parsedCommandLine

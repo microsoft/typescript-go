@@ -786,6 +786,8 @@ describe("RemoteNode + getSynthesizedDeepClone", () => {
             assert.strictEqual(clone.moduleAugmentations, moduleAugmentations);
             assert.strictEqual(clone.ambientModuleNames, ambientModuleNames);
             assert.strictEqual(clone.externalModuleIndicator, sf.externalModuleIndicator);
+            assert.strictEqual(clone.originalText, sf.originalText);
+            assert.strictEqual(clone.spanMap, sf.spanMap);
         }
         finally {
             api.close();

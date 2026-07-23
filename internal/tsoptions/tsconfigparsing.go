@@ -8,6 +8,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
@@ -15,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/parser"
+	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
@@ -64,6 +66,10 @@ var tsconfigRootOptionsMap = &CommandLineOption{
 			Name: "references",
 			Kind: CommandLineOptionTypeList, // should be a list of projectReference
 			// Category: diagnostics.Projects,
+		},
+		{
+			Name: "contentMappers",
+			Kind: CommandLineOptionTypeList, // list of content mapper objects
 		},
 		{
 			Name: "files",
@@ -143,12 +149,6 @@ func (c *configFileSpecs) getMatchedFileSpec(fileName string, comparePathsOption
 		}
 	}
 	return ""
-}
-
-type FileExtensionInfo struct {
-	Extension      string
-	IsMixedContent bool
-	ScriptKind     core.ScriptKind
 }
 
 type ExtendedConfigCache interface {
@@ -731,11 +731,10 @@ func ParseJsonSourceFileConfigFileContent(
 	existingOptionsRaw *collections.OrderedMap[string, any],
 	configFileName string,
 	resolutionStack []tspath.Path,
-	extraFileExtensions []FileExtensionInfo,
 	extendedConfigCache ExtendedConfigCache,
 ) *ParsedCommandLine {
 	// tracing?.push(tracing.Phase.Parse, "parseJsonSourceFileConfigFileContent", { path: sourceFile.fileName });
-	result := parseJsonConfigFileContentWorker(nil /*json*/, sourceFile, host, basePath, existingOptions, existingOptionsRaw, configFileName, resolutionStack, extraFileExtensions, extendedConfigCache)
+	result := parseJsonConfigFileContentWorker(nil /*json*/, sourceFile, host, basePath, existingOptions, existingOptionsRaw, configFileName, resolutionStack, extendedConfigCache)
 	// tracing?.pop();
 	return result
 }
@@ -870,8 +869,8 @@ func convertPropertyValueToJson(sourceFile *ast.SourceFile, valueExpression *ast
 // jsonNode: The contents of the config file to parse
 // host: Instance of ParseConfigHost used to enumerate files in folder.
 // basePath: A root directory to resolve relative path entries in the config file to. e.g. outDir
-func ParseJsonConfigFileContent(json any, host ParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []FileExtensionInfo, extendedConfigCache ExtendedConfigCache) *ParsedCommandLine {
-	result := parseJsonConfigFileContentWorker(parseJsonToStringKey(json), nil /*sourceFile*/, host, basePath, existingOptions, nil /*existingOptionsRaw*/, configFileName, resolutionStack, extraFileExtensions, extendedConfigCache)
+func ParseJsonConfigFileContent(json any, host ParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extendedConfigCache ExtendedConfigCache) *ParsedCommandLine {
+	result := parseJsonConfigFileContentWorker(parseJsonToStringKey(json), nil /*sourceFile*/, host, basePath, existingOptions, nil /*existingOptionsRaw*/, configFileName, resolutionStack, extendedConfigCache)
 	return result
 }
 
@@ -1192,7 +1191,6 @@ func parseJsonConfigFileContentWorker(
 	existingOptionsRaw *collections.OrderedMap[string, any],
 	configFileName string,
 	resolutionStack []tspath.Path,
-	extraFileExtensions []FileExtensionInfo,
 	extendedConfigCache ExtendedConfigCache,
 ) *ParsedCommandLine {
 	debug.Assert((json == nil && sourceFile != nil) || (json != nil && sourceFile == nil))
@@ -1326,9 +1324,78 @@ func parseJsonConfigFileContentWorker(
 		sourceFile.configFileSpecs = &configFileSpecs
 	}
 
+	var contentMapperSourceFile *ast.SourceFile
+	if sourceFile != nil {
+		contentMapperSourceFile = sourceFile.SourceFile
+	}
+	var contentMappers []*contentmapper.Mapper
+	var contentMapperIndices []int
+	contentMappersOfRaw := getPropFromRaw("contentMappers", func(element any) bool { return reflect.TypeOf(element) == orderedMapType }, "object")
+	for i, element := range contentMappersOfRaw.sliceValue {
+		mapper, mapperErrors := parseContentMapper(element)
+		for _, mapperError := range mapperErrors {
+			errors = append(errors, setContentMapperDiagnosticLocation(mapperError, contentMapperSourceFile, getContentMapperSyntax(contentMapperSourceFile, i, "")))
+		}
+		if mapper != nil {
+			contentMappers = append(contentMappers, mapper)
+			contentMapperIndices = append(contentMapperIndices, i)
+		}
+	}
+	totalContentMapperExtensions := 0
+	for _, mapper := range contentMappers {
+		totalContentMapperExtensions += len(mapper.Extensions)
+	}
+	seenContentMapperExtensions := make(map[string]struct{}, totalContentMapperExtensions)
+	contentMapperExtensions := make([]string, 0, totalContentMapperExtensions)
+	nativeExtensions := core.Flatten(tspath.AllSupportedExtensionsWithJson)
+	for j, mapper := range contentMappers {
+		validExtensions := make([]string, 0, len(mapper.Extensions))
+		for _, ext := range mapper.Extensions {
+			extNode := getContentMapperExtensionSyntax(contentMapperSourceFile, contentMapperIndices[j], ext)
+			switch {
+			case !strings.HasPrefix(ext, "."):
+				errors = append(errors, setContentMapperDiagnosticLocation(ast.NewCompilerDiagnostic(diagnostics.Content_mapper_file_extension_0_must_begin_with_a, ext), contentMapperSourceFile, extNode))
+			case slices.Contains(nativeExtensions, ext):
+				errors = append(errors, setContentMapperDiagnosticLocation(ast.NewCompilerDiagnostic(diagnostics.Content_mapper_file_extension_0_is_a_built_in_extension_and_cannot_be_registered_by_a_content_mapper, ext), contentMapperSourceFile, extNode))
+			default:
+				if _, seen := seenContentMapperExtensions[ext]; seen {
+					errors = append(errors, setContentMapperDiagnosticLocation(ast.NewCompilerDiagnostic(diagnostics.Content_mapper_file_extension_0_is_registered_by_more_than_one_content_mapper, ext), contentMapperSourceFile, extNode))
+				} else {
+					seenContentMapperExtensions[ext] = struct{}{}
+					contentMapperExtensions = append(contentMapperExtensions, ext)
+					validExtensions = append(validExtensions, ext)
+				}
+			}
+		}
+		mapper.Extensions = validExtensions
+	}
+	if len(contentMappers) > 0 && !(parsedConfig.options != nil && parsedConfig.options.LoadExternalPlugins.IsTrue()) {
+		errors = append(errors, setContentMapperDiagnosticLocation(ast.NewCompilerDiagnostic(diagnostics.Content_mappers_require_the_loadExternalPlugins_command_line_flag_to_be_enabled), contentMapperSourceFile, getContentMappersKeySyntax(contentMapperSourceFile)))
+		// Without the flag the mappers are not trusted to run, so drop them entirely: their extensions are
+		// not registered and their files are not intercepted (they are treated as unknown foreign files).
+		contentMappers = nil
+		contentMapperExtensions = nil
+	} else if len(contentMappers) > 0 {
+		// Resolve each mapper's package.json now so its name, version, and run command are available to
+		// everything downstream (diagnostics, build-info staleness) without executing anything.
+		containingFile := configFileName
+		if containingFile == "" {
+			containingFile = tspath.CombinePaths(basePathForFileNames, "tsconfig.json")
+		}
+		for j, mapper := range contentMappers {
+			manifest, packageDirectory, diagnostic := resolveContentMapperManifest(host, containingFile, mapper.Package)
+			if diagnostic != nil {
+				errors = append(errors, setContentMapperDiagnosticLocation(diagnostic, contentMapperSourceFile, getContentMapperSyntax(contentMapperSourceFile, contentMapperIndices[j], "package")))
+				continue
+			}
+			mapper.Manifest = manifest
+			mapper.PackageDirectory = packageDirectory
+		}
+	}
+
 	getFileNames := func(basePath string) ([]string, int) {
 		parsedConfigOptions := parsedConfig.options
-		fileNames, literalFileNamesLen := getFileNamesFromConfigSpecs(configFileSpecs, basePath, parsedConfigOptions, host.FS(), extraFileExtensions)
+		fileNames, literalFileNamesLen := getFileNamesFromConfigSpecs(configFileSpecs, basePath, parsedConfigOptions, host.FS(), contentMapperExtensions)
 		if shouldReportNoInputFiles(fileNames, canJsonReportNoInputFiles(rawConfig), resolutionStack) {
 			includeSpecs := configFileSpecs.includeSpecs
 			excludeSpecs := configFileSpecs.excludeSpecs
@@ -1376,18 +1443,18 @@ func parseJsonConfigFileContentWorker(
 
 	fileNames, literalFileNamesLen := getFileNames(basePathForFileNames)
 	return &ParsedCommandLine{
-		ParsedConfig: &core.ParsedOptions{
+		ParsedConfig: &ParsedOptions{
 			CompilerOptions: parsedConfig.options,
 			TypeAcquisition: parsedConfig.typeAcquisition,
 			// WatchOptions:      nil,
 			FileNames:         fileNames,
 			ProjectReferences: getProjectReferences(basePathForFileNames),
+			ContentMappers:    contentMappers,
 		},
 		ConfigFile: sourceFile,
 		Raw:        parsedConfig.raw,
 		Errors:     errors,
 
-		extraFileExtensions: extraFileExtensions,
 		comparePathsOptions: tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
 			CurrentDirectory:          basePathForFileNames,
@@ -1535,6 +1602,70 @@ func GetCallbackForFindingPropertyAssignmentByValue(value string) func(property 
 
 func GetOptionsSyntaxByArrayElementValue(objectLiteral *ast.ObjectLiteralExpression, propKey string, elementValue string) *ast.Node {
 	return ForEachPropertyAssignment(objectLiteral, propKey, GetCallbackForFindingPropertyAssignmentByValue(elementValue))
+}
+
+// getContentMapperSyntax returns the tsconfig JSON node to attribute a diagnostic about the content
+// mapper at index to: the value of subKey within that mapper's object (when subKey is non-empty),
+// falling back to the mapper element, then to the "contentMappers" array. An index outside the array
+// (e.g. -1) yields the array itself. Returns nil when there is no source file (JSON API).
+func getContentMapperSyntax(sourceFile *ast.SourceFile, index int, subKey string) *ast.Node {
+	if sourceFile == nil {
+		return nil
+	}
+	return ForEachTsConfigPropArray(sourceFile, "contentMappers", func(property *ast.PropertyAssignment) *ast.Node {
+		if !ast.IsArrayLiteralExpression(property.Initializer) {
+			return property.Initializer
+		}
+		elements := property.Initializer.Elements()
+		if index < 0 || index >= len(elements) {
+			return property.Initializer
+		}
+		element := elements[index]
+		if subKey != "" && ast.IsObjectLiteralExpression(element) {
+			if node := ForEachPropertyAssignment(element.AsObjectLiteralExpression(), subKey, func(property *ast.PropertyAssignment) *ast.Node {
+				return property.Initializer
+			}); node != nil {
+				return node
+			}
+		}
+		return element
+	})
+}
+
+// getContentMappersKeySyntax returns the "contentMappers" property key node, used to attribute a
+// diagnostic about the setting as a whole rather than a specific mapper.
+func getContentMappersKeySyntax(sourceFile *ast.SourceFile) *ast.Node {
+	if sourceFile == nil {
+		return nil
+	}
+	return ForEachTsConfigPropArray(sourceFile, "contentMappers", func(property *ast.PropertyAssignment) *ast.Node {
+		return property.Name()
+	})
+}
+
+// getContentMapperExtensionSyntax returns the node for a specific extension string within the content
+// mapper at index, falling back to the "extensions" array or the mapper element.
+func getContentMapperExtensionSyntax(sourceFile *ast.SourceFile, index int, ext string) *ast.Node {
+	node := getContentMapperSyntax(sourceFile, index, "extensions")
+	if node != nil && ast.IsArrayLiteralExpression(node) {
+		if element := core.Find(node.Elements(), func(element *ast.Node) bool {
+			return ast.IsStringLiteral(element) && element.Text() == ext
+		}); element != nil {
+			return element
+		}
+	}
+	return node
+}
+
+// setContentMapperDiagnosticLocation attaches a source location to a content mapper diagnostic when a
+// tsconfig source file and node are available (the jsonSourceFile API), leaving it as a location-less
+// compiler diagnostic otherwise (the JSON API).
+func setContentMapperDiagnosticLocation(diagnostic *ast.Diagnostic, sourceFile *ast.SourceFile, node *ast.Node) *ast.Diagnostic {
+	if sourceFile != nil && node != nil {
+		diagnostic.SetFile(sourceFile)
+		diagnostic.SetLocation(core.NewTextRange(scanner.SkipTrivia(sourceFile.Text(), node.Pos()), node.End()))
+	}
+	return diagnostic
 }
 
 func ForEachPropertyAssignment[T any](objectLiteral *ast.ObjectLiteralExpression, key string, callback func(property *ast.PropertyAssignment) *T, key2 ...string) *T {
@@ -1693,15 +1824,14 @@ func removeWildcardFilesWithLowerPriorityExtension(file string, wildcardFiles *c
 // basePath is the base path for any relative file specifications.
 // options is the Compiler options.
 // host is the host used to resolve files and directories.
-// extraFileExtensions optionally file extra file extension information from host
+// extraExtensions are additional file extensions (e.g. from content mappers) to treat as supported.
 func getFileNamesFromConfigSpecs(
 	configFileSpecs configFileSpecs,
 	basePath string, // considering this is the current directory
 	options *core.CompilerOptions,
 	host vfs.FS,
-	extraFileExtensions []FileExtensionInfo,
+	extraExtensions []string,
 ) ([]string, int) {
-	extraFileExtensions = []FileExtensionInfo{}
 	basePath = tspath.NormalizePath(basePath)
 	keyMappper := func(value string) string { return tspath.GetCanonicalFileName(value, host.UseCaseSensitiveFileNames()) }
 	// Literal file names (provided via the "files" array in tsconfig.json) are stored in a
@@ -1721,7 +1851,7 @@ func getFileNamesFromConfigSpecs(
 	validatedExcludeSpecs := configFileSpecs.validatedExcludeSpecs
 	// Rather than re-query this for each file and filespec, we query the supported extensions
 	// once and store it on the expansion context.
-	supportedExtensions := GetSupportedExtensions(options, extraFileExtensions)
+	supportedExtensions := GetSupportedExtensions(options, extraExtensions)
 	supportedExtensionsWithJsonIfResolveJsonModule := GetSupportedExtensionsWithJsonIfResolveJsonModule(options, supportedExtensions)
 	// Literal files are always included verbatim. An "include" or "exclude" specification cannot
 	// remove a literal file.
@@ -1787,30 +1917,28 @@ func getFileNamesFromConfigSpecs(
 	return files, literalFileMap.Size()
 }
 
-func GetSupportedExtensions(compilerOptions *core.CompilerOptions, extraFileExtensions []FileExtensionInfo) [][]string {
+func GetSupportedExtensions(compilerOptions *core.CompilerOptions, extraExtensions []string) [][]string {
 	needJSExtensions := compilerOptions.GetAllowJS()
-	if len(extraFileExtensions) == 0 {
-		if needJSExtensions {
-			return tspath.AllSupportedExtensions
-		} else {
-			return tspath.SupportedTSExtensions
-		}
-	}
 	var builtins [][]string
 	if needJSExtensions {
 		builtins = tspath.AllSupportedExtensions
 	} else {
 		builtins = tspath.SupportedTSExtensions
 	}
+	if len(extraExtensions) == 0 {
+		return builtins
+	}
 	flatBuiltins := core.Flatten(builtins)
 	var result [][]string
-	for _, x := range extraFileExtensions {
-		if x.ScriptKind == core.ScriptKindDeferred || (needJSExtensions && (x.ScriptKind == core.ScriptKindJS || x.ScriptKind == core.ScriptKindJSX)) && !slices.Contains(flatBuiltins, x.Extension) {
-			result = append(result, []string{x.Extension})
+	for _, ext := range extraExtensions {
+		if !slices.Contains(flatBuiltins, ext) {
+			result = append(result, []string{ext})
 		}
 	}
-	extensions := slices.Concat(builtins, result)
-	return extensions
+	if len(result) == 0 {
+		return builtins
+	}
+	return slices.Concat(builtins, result)
 }
 
 func GetSupportedExtensionsWithJsonIfResolveJsonModule(compilerOptions *core.CompilerOptions, supportedExtensions [][]string) [][]string {
@@ -1863,7 +1991,6 @@ func GetParsedCommandLineOfConfigFilePath(
 		options,
 		optionsRaw,
 		configFileName,
-		nil,
 		nil,
 		extendedConfigCache,
 	), nil

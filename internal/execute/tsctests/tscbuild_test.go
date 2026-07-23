@@ -297,6 +297,52 @@ console.log(tsconfig);`,
 	}
 }
 
+func TestBuildContentMapperIdentity(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario: "content mapper identity change forces rebuild",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"incremental": true
+					},
+					"contentMappers": [
+						{ "package": "vue-ts-mapper", "extensions": [".vue"] }
+					]
+				}`),
+				"/home/src/workspaces/project/index.ts": `export const local = 1;`,
+				"/home/src/workspaces/project/app.vue":  `export const app = 1;`,
+				"/home/src/workspaces/project/node_modules/vue-ts-mapper/package.json": stringtestutil.Dedent(`
+				{
+					"name": "vue-ts-mapper",
+					"version": "1.0.0",
+					"tsContentMapper": { "exec": ["verbatim-mapper"] }
+				}`),
+			},
+			commandLineArgs: []string{"--build", "--verbose", "--loadExternalPlugins"},
+			edits: []*tscEdit{
+				noChange,
+				{
+					caption: "upgrade the content mapper package to a new version",
+					edit: func(sys *TestSys) {
+						sys.replaceFileText(
+							"/home/src/workspaces/project/node_modules/vue-ts-mapper/package.json",
+							`"version": "1.0.0"`,
+							`"version": "2.0.0"`,
+						)
+					},
+				},
+				noChange,
+			},
+		},
+	}
+	for _, test := range testCases {
+		test.run(t, "contentMapperIdentity")
+	}
+}
+
 func TestBuildClean(t *testing.T) {
 	t.Parallel()
 	testCases := []*tscInput{

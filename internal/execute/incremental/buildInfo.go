@@ -1,8 +1,10 @@
 package incremental
 
 import (
+	"encoding/hex"
 	"fmt"
 	"iter"
+	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -463,11 +465,12 @@ type BuildInfo struct {
 	Version string `json:"version,omitzero"`
 
 	// Common between incremental and tsc -b buildinfo for non incremental programs
-	Errors              bool             `json:"errors,omitzero"`
-	CheckPending        bool             `json:"checkPending,omitzero"`
-	Root                []*BuildInfoRoot `json:"root,omitzero"`
-	PackageJsons        []string         `json:"packageJsons,omitzero"`
-	MissingPackageJsons []string         `json:"missingPackageJsons,omitzero"`
+	Errors                  bool             `json:"errors,omitzero"`
+	CheckPending            bool             `json:"checkPending,omitzero"`
+	Root                    []*BuildInfoRoot `json:"root,omitzero"`
+	PackageJsons            []string         `json:"packageJsons,omitzero"`
+	MissingPackageJsons     []string         `json:"missingPackageJsons,omitzero"`
+	ContentMapperIdentities []string         `json:"contentMapperIdentities,omitzero"`
 
 	// IncrementalProgram info
 	FileNames                  []string                             `json:"fileNames,omitzero"`
@@ -489,6 +492,32 @@ type BuildInfo struct {
 
 func (b *BuildInfo) IsValidVersion() bool {
 	return b.Version == core.Version()
+}
+
+// ContentMapperIdentities returns sorted fingerprints of the content mappers configured in config. Each
+// fingerprint includes the mapper identity and values of its declared compiler options, so changing either
+// invalidates build info. Mappers with no resolved name are omitted. Returns nil when no mapper has an identity.
+func ContentMapperIdentities(config *tsoptions.ParsedCommandLine) []string {
+	mappers := config.ContentMappers()
+	identities := make([]string, 0, len(mappers))
+	for _, mapper := range mappers {
+		if identity := mapper.Identity(); identity != "" {
+			hash := mapper.TransformIdentity(config.CompilerOptions())
+			bytes := hash.Bytes()
+			identities = append(identities, identity+":"+hex.EncodeToString(bytes[:]))
+		}
+	}
+	if len(identities) == 0 {
+		return nil
+	}
+	slices.Sort(identities)
+	return identities
+}
+
+// ContentMapperIdentitiesMatch reports whether the content mapper identities recorded in this build info
+// match the given current identities (as produced by ContentMapperIdentities).
+func (b *BuildInfo) ContentMapperIdentitiesMatch(current []string) bool {
+	return slices.Equal(b.ContentMapperIdentities, current)
 }
 
 func (b *BuildInfo) IsIncremental() bool {

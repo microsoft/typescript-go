@@ -139,7 +139,7 @@ function recordExtendedData(node: Node, strs: StringTable, extendedData: number[
         const referencedFilesOffset = encodeFileReferences(sf.referencedFiles, structuredWriter);
         const typeRefDirectivesOffset = encodeFileReferences(sf.typeReferenceDirectives, structuredWriter);
         const libRefDirectivesOffset = encodeFileReferences(sf.libReferenceDirectives, structuredWriter);
-        extendedData.push(textIndex, fileNameIndex, pathIndex, sf.languageVariant, sf.scriptKind, referencedFilesOffset, typeRefDirectivesOffset, libRefDirectivesOffset, NO_STRUCTURED_DATA, NO_STRUCTURED_DATA, NO_STRUCTURED_DATA, 0);
+        extendedData.push(textIndex, fileNameIndex, pathIndex, sf.languageVariant, sf.scriptKind, referencedFilesOffset, typeRefDirectivesOffset, libRefDirectivesOffset, NO_STRUCTURED_DATA, NO_STRUCTURED_DATA, NO_STRUCTURED_DATA, 0, textIndex, NO_STRUCTURED_DATA);
     }
     else if (
         node.kind === SyntaxKind.TemplateHead ||

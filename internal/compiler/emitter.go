@@ -215,6 +215,10 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 	if sourceFile == nil || e.emitOnly == EmitOnlyJs || len(declarationFilePath) == 0 {
 		return
 	}
+	// Declaration files for content-mapped files don't get source maps because the mapped positions would point into
+	// transformed TS content that exists only in-memory during the build. As a future improvement, it may be possible
+	// to double-map the positions using the content-mapped file's spanmap.
+	emitDeclarationMap := e.emitOnly != EmitOnlyForcedDts && options.DeclarationMap.IsTrue() && sourceFile.ContentMapper() == ""
 
 	if e.tr != nil {
 		defer e.tr.Push(tracing.PhaseEmit, "emitDeclarationFileOrBundle", map[string]any{"declarationFilePath": declarationFilePath}, true)()
@@ -247,7 +251,7 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 		// Module: 			   options.Module, // NYI
 		// ModuleResolution:   options.ModuleResolution, // NYI
 		Target:          options.GetEmitScriptTarget(),
-		SourceMap:       e.emitOnly != EmitOnlyForcedDts && options.DeclarationMap.IsTrue(),
+		SourceMap:       emitDeclarationMap,
 		InlineSourceMap: options.InlineSourceMap.IsTrue(),
 		// InlineSources:       options.InlineSources.IsTrue(), // ignored, per strada
 		// ExtendedDiagnostics: options.ExtendedDiagnostics.IsTrue(), // NYI
@@ -261,7 +265,7 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 	}, emitContext)
 
 	declarationMapOptions := &core.CompilerOptions{
-		SourceMap:  core.IfElse(e.emitOnly != EmitOnlyForcedDts && options.DeclarationMap.IsTrue(), core.TSTrue, core.TSFalse),
+		SourceMap:  core.IfElse(emitDeclarationMap, core.TSTrue, core.TSFalse),
 		SourceRoot: options.SourceRoot,
 		MapRoot:    options.MapRoot,
 		// Explicitly do not pass through either inline option.
@@ -458,6 +462,12 @@ func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host SourceFileMayBeEmit
 
 	// Declaration files are not emitted
 	if sourceFile.IsDeclarationFile {
+		return false
+	}
+
+	// Runtime output for content-mapped files is owned by the external content mapper or build tool. Only
+	// include them in the emit set when their transformed TypeScript can produce declarations.
+	if sourceFile.ContentMapper() != "" && !forceDtsEmit && !options.GetEmitDeclarations() {
 		return false
 	}
 
