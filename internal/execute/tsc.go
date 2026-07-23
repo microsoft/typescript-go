@@ -55,15 +55,15 @@ func CommandLine(ctx context.Context, sys tsc.System, commandLineArgs []string, 
 		case "-b", "--b", "-build", "--build":
 			return tscBuildCompilation(ctx, sys, tsoptions.ParseBuildCommandLine(commandLineArgs, sys), testing)
 			// case "-f":
-			// 	return fmtMain(sys, commandLineArgs[1], commandLineArgs[1])
+			// 	return fmtMain(ctx, sys, commandLineArgs[1], commandLineArgs[1])
 		}
 	}
 
 	return tscCompilation(ctx, sys, tsoptions.ParseCommandLine(commandLineArgs, sys), testing)
 }
 
-func fmtMain(sys tsc.System, input, output string) tsc.ExitStatus {
-	ctx := format.WithFormatCodeSettings(context.Background(), lsutil.GetDefaultFormatCodeSettings(), "\n")
+func fmtMain(ctx context.Context, sys tsc.System, input, output string) tsc.ExitStatus {
+	ctx = format.WithFormatCodeSettings(ctx, lsutil.GetDefaultFormatCodeSettings(), "\n")
 	input = string(tspath.ToPath(input, sys.GetCurrentDirectory(), sys.FS().UseCaseSensitiveFileNames()))
 	output = string(tspath.ToPath(output, sys.GetCurrentDirectory(), sys.FS().UseCaseSensitiveFileNames()))
 	fileContent, ok := sys.FS().ReadFile(input)
