@@ -43,7 +43,7 @@ func (m IntegerOrString) AsString() string {
 	if m.String != nil {
 		codeStr = *m.String
 	} else if m.Integer != nil {
-		codeStr = fmt.Sprintf("%v", *m.Integer)
+		codeStr = strconv.Itoa(int(*m.Integer))
 	} else {
 		codeStr = "-1"
 	}
