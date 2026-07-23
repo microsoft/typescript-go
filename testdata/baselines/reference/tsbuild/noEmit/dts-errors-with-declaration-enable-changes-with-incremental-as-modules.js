@@ -23,7 +23,7 @@ Output::
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
 
 //// [/home/src/projects/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"9c1fc7106f3a21aadb5219db8b3209bc-export const a = class { private p = 10; };","907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;"],"affectedFilesPendingEmit":[2,3]}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"9c1fc7106f3a21aadb5219db8b3209bc-export const a = class { private p = 10; };","907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;"],"declarationInputSignatures":["","eb81244bc1a36f7e29abd2c88d68362b","3b79365e3bf984ca8976ff5d3ea515e0"],"affectedFilesPendingEmit":[2,3]}
 //// [/home/src/projects/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -70,6 +70,10 @@ Output::
       "impliedNodeFormat": "CommonJS"
     }
   ],
+  "declarationInputSignatures": {
+    "./a.ts": "eb81244bc1a36f7e29abd2c88d68362b",
+    "./b.ts": "3b79365e3bf984ca8976ff5d3ea515e0"
+  },
   "affectedFilesPendingEmit": [
     [
       "./a.ts",
@@ -82,7 +86,7 @@ Output::
       3
     ]
   ],
-  "size": 1049
+  "size": 1153
 }
 //// [/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -154,7 +158,7 @@ Output::
 Found 1 error in a.ts[90m:1[0m
 
 //// [/home/src/projects/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"9c1fc7106f3a21aadb5219db8b3209bc-export const a = class { private p = 10; };","907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;"],"options":{"declaration":true},"emitDiagnosticsPerFile":[[2,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["a"]}]}]]],"affectedFilesPendingEmit":[[2,17],[3,17]]}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"9c1fc7106f3a21aadb5219db8b3209bc-export const a = class { private p = 10; };","907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;"],"declarationInputSignatures":["","eb81244bc1a36f7e29abd2c88d68362b","3b79365e3bf984ca8976ff5d3ea515e0"],"options":{"declaration":true},"emitDiagnosticsPerFile":[[2,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["a"]}]}]]],"affectedFilesPendingEmit":[[2,17],[3,17]]}
 //// [/home/src/projects/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -201,6 +205,10 @@ Found 1 error in a.ts[90m:1[0m
       "impliedNodeFormat": "CommonJS"
     }
   ],
+  "declarationInputSignatures": {
+    "./a.ts": "eb81244bc1a36f7e29abd2c88d68362b",
+    "./b.ts": "3b79365e3bf984ca8976ff5d3ea515e0"
+  },
   "options": {
     "declaration": true
   },
@@ -251,7 +259,7 @@ Found 1 error in a.ts[90m:1[0m
       ]
     ]
   ],
-  "size": 1432
+  "size": 1536
 }
 
 tsconfig.json::
@@ -284,7 +292,7 @@ Output::
 Found 1 error in a.ts[90m:1[0m
 
 //// [/home/src/projects/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"9c1fc7106f3a21aadb5219db8b3209bc-export const a = class { private p = 10; };","907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;"],"options":{"declaration":true,"declarationMap":true},"emitDiagnosticsPerFile":[[2,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["a"]}]}]]],"affectedFilesPendingEmit":[[2,49],[3,49]]}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"9c1fc7106f3a21aadb5219db8b3209bc-export const a = class { private p = 10; };","907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;"],"declarationInputSignatures":["","eb81244bc1a36f7e29abd2c88d68362b","3b79365e3bf984ca8976ff5d3ea515e0"],"options":{"declaration":true,"declarationMap":true},"emitDiagnosticsPerFile":[[2,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["a"]}]}]]],"affectedFilesPendingEmit":[[2,49],[3,49]]}
 //// [/home/src/projects/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -331,6 +339,10 @@ Found 1 error in a.ts[90m:1[0m
       "impliedNodeFormat": "CommonJS"
     }
   ],
+  "declarationInputSignatures": {
+    "./a.ts": "eb81244bc1a36f7e29abd2c88d68362b",
+    "./b.ts": "3b79365e3bf984ca8976ff5d3ea515e0"
+  },
   "options": {
     "declaration": true,
     "declarationMap": true
@@ -382,7 +394,7 @@ Found 1 error in a.ts[90m:1[0m
       ]
     ]
   ],
-  "size": 1454
+  "size": 1558
 }
 
 tsconfig.json::
@@ -439,7 +451,7 @@ export declare const b = 10;
 export const b = 10;
 
 //// [/home/src/projects/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"9c1fc7106f3a21aadb5219db8b3209bc-export const a = class { private p = 10; };",{"version":"907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;","signature":"eaed5dafb4668e1b7c86b65b584b776a-export declare const b = 10;\n","impliedNodeFormat":1}],"options":{"declaration":true},"emitDiagnosticsPerFile":[[2,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["a"]}]}]]]}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"9c1fc7106f3a21aadb5219db8b3209bc-export const a = class { private p = 10; };",{"version":"907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;","signature":"eaed5dafb4668e1b7c86b65b584b776a-export declare const b = 10;\n","impliedNodeFormat":1}],"declarationInputSignatures":["","eb81244bc1a36f7e29abd2c88d68362b"],"options":{"declaration":true},"emitDiagnosticsPerFile":[[2,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["a"]}]}]]]}
 //// [/home/src/projects/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -491,6 +503,9 @@ export const b = 10;
       }
     }
   ],
+  "declarationInputSignatures": {
+    "./a.ts": "eb81244bc1a36f7e29abd2c88d68362b"
+  },
   "options": {
     "declaration": true
   },
@@ -523,7 +538,7 @@ export const b = 10;
       ]
     ]
   ],
-  "size": 1501
+  "size": 1570
 }
 
 tsconfig.json::

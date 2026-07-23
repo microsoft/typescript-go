@@ -102,7 +102,7 @@ function logMessage(person) {
 export {};
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","./MessageablePerson.ts","./main.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"500cfddf7f97c595e46579b9b5afc9bd-const Messageable = () => {\n    return class MessageableClass {\n        public message = 'hello';\n    }\n};\nconst wrapper = () => Messageable();\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;","f1d6119c9df9ff1b48604c0e5c5f624f-import MessageablePerson from './MessageablePerson.js';\nfunction logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}"],"fileIdsList":[[2]],"options":{"module":99},"referencedMap":[[3,1]],"semanticDiagnosticsPerFile":[[2,[{"pos":169,"end":181,"code":2304,"category":1,"messageKey":"Cannot_find_name_0_2304","messageArgs":["InstanceType"]},{"pos":182,"end":192,"code":2304,"category":1,"messageKey":"Cannot_find_name_0_2304","messageArgs":["ReturnType"]}]]]}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","./MessageablePerson.ts","./main.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"500cfddf7f97c595e46579b9b5afc9bd-const Messageable = () => {\n    return class MessageableClass {\n        public message = 'hello';\n    }\n};\nconst wrapper = () => Messageable();\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;","f1d6119c9df9ff1b48604c0e5c5f624f-import MessageablePerson from './MessageablePerson.js';\nfunction logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}"],"declarationInputSignatures":["","4f96b8f25e230984037645ba1126bfff","0b88a75a666c354d65d664c67df3af4c"],"fileIdsList":[[2]],"options":{"module":99},"referencedMap":[[3,1]],"semanticDiagnosticsPerFile":[[2,[{"pos":169,"end":181,"code":2304,"category":1,"messageKey":"Cannot_find_name_0_2304","messageArgs":["InstanceType"]},{"pos":182,"end":192,"code":2304,"category":1,"messageKey":"Cannot_find_name_0_2304","messageArgs":["ReturnType"]}]]]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -149,6 +149,10 @@ export {};
       "impliedNodeFormat": "CommonJS"
     }
   ],
+  "declarationInputSignatures": {
+    "./MessageablePerson.ts": "4f96b8f25e230984037645ba1126bfff",
+    "./main.ts": "0b88a75a666c354d65d664c67df3af4c"
+  },
   "fileIdsList": [
     [
       "./MessageablePerson.ts"
@@ -189,7 +193,7 @@ export {};
       ]
     ]
   ],
-  "size": 1706
+  "size": 1810
 }
 
 tsconfig.json::

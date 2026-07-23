@@ -18,10 +18,13 @@ import (
 )
 
 type FileInfo struct {
-	version            string
-	signature          string
-	affectsGlobalScope bool
-	impliedNodeFormat  core.ResolutionMode
+	version                            string
+	signature                          string
+	declarationInputSignature          string
+	signatureIsVersion                 bool
+	declarationInputSignatureUnchanged bool
+	affectsGlobalScope                 bool
+	impliedNodeFormat                  core.ResolutionMode
 }
 
 func (f *FileInfo) Version() string                        { return f.version }

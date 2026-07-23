@@ -60,7 +60,7 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 //// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../shared/types/db.ts","../src/main.ts","../src/other.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}","6cc24027429965f7fa7493c1b9efd532-import { A } from \"../shared/types/db\";\nexport const a = class { private p = 10; };","ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }"],"fileIdsList":[[2]],"options":{"declaration":true,"noEmitOnError":true,"outDir":"./"},"referencedMap":[[3,1]],"emitDiagnosticsPerFile":[[3,[{"pos":53,"end":54,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":53,"end":54,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["a"]}]}]]],"affectedFilesPendingEmit":[[2,17],[3,17],[4,17]]}
+{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../shared/types/db.ts","../src/main.ts","../src/other.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}","6cc24027429965f7fa7493c1b9efd532-import { A } from \"../shared/types/db\";\nexport const a = class { private p = 10; };","ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }"],"declarationInputSignatures":["","a93d53e36f5f2385a674bdb736730cb0","b8648ec86b51669ee657764f7ca432d5","3dd2e7a0ad2f09882ecb058547e6a0ad"],"fileIdsList":[[2]],"options":{"declaration":true,"noEmitOnError":true,"outDir":"./"},"referencedMap":[[3,1]],"emitDiagnosticsPerFile":[[3,[{"pos":53,"end":54,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":53,"end":54,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["a"]}]}]]],"affectedFilesPendingEmit":[[2,17],[3,17],[4,17]]}
 //// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -115,6 +115,11 @@ declare const console: { log(msg: any): void; };
       "impliedNodeFormat": "CommonJS"
     }
   ],
+  "declarationInputSignatures": {
+    "../shared/types/db.ts": "a93d53e36f5f2385a674bdb736730cb0",
+    "../src/main.ts": "b8648ec86b51669ee657764f7ca432d5",
+    "../src/other.ts": "3dd2e7a0ad2f09882ecb058547e6a0ad"
+  },
   "fileIdsList": [
     [
       "../shared/types/db.ts"
@@ -185,7 +190,7 @@ declare const console: { log(msg: any): void; };
       ]
     ]
   ],
-  "size": 1692
+  "size": 1831
 }
 
 tsconfig.json::

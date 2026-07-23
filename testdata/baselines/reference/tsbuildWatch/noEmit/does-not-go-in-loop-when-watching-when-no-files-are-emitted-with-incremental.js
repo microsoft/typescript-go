@@ -51,7 +51,7 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 //// [/user/username/projects/myproject/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","./a.js","./b.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"99aa06d3014798d86001c324468d497f-","99aa06d3014798d86001c324468d497f-"],"options":{"allowJs":true},"affectedFilesPendingEmit":[2,3]}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","./a.js","./b.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"99aa06d3014798d86001c324468d497f-","99aa06d3014798d86001c324468d497f-"],"declarationInputSignatures":["","99aa06d3014798d86001c324468d497f","99aa06d3014798d86001c324468d497f"],"options":{"allowJs":true},"affectedFilesPendingEmit":[2,3]}
 //// [/user/username/projects/myproject/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -98,6 +98,10 @@ declare const console: { log(msg: any): void; };
       "impliedNodeFormat": "CommonJS"
     }
   ],
+  "declarationInputSignatures": {
+    "./a.js": "99aa06d3014798d86001c324468d497f",
+    "./b.ts": "99aa06d3014798d86001c324468d497f"
+  },
   "options": {
     "allowJs": true
   },
@@ -113,7 +117,7 @@ declare const console: { log(msg: any): void; };
       3
     ]
   ],
-  "size": 1013
+  "size": 1117
 }
 
 Watch Registrations::

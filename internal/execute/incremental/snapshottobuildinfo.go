@@ -212,9 +212,14 @@ func (t *toBuildInfo) collectRootFiles() {
 }
 
 func (t *toBuildInfo) setFileInfoAndEmitSignatures() {
-	t.buildInfo.FileInfos = core.Map(t.program.GetSourceFiles(), func(file *ast.SourceFile) *BuildInfoFileInfo {
+	sourceFiles := t.program.GetSourceFiles()
+	t.buildInfo.DeclarationInputSignatures = make([]string, len(sourceFiles))
+	t.buildInfo.FileInfos = core.Map(sourceFiles, func(file *ast.SourceFile) *BuildInfoFileInfo {
 		info, _ := t.snapshot.fileInfos.Load(file.Path())
 		fileId := t.toFileId(file.Path())
+		if info.signatureIsVersion {
+			t.buildInfo.DeclarationInputSignatures[fileId-1] = info.declarationInputSignature
+		}
 		//  tryAddRoot(key, fileId);
 		if t.buildInfo.FileNames[fileId-1] != t.relativeToBuildInfo(string(file.Path())) {
 			if libFile := t.program.GetDefaultLibFile(file.Path()); libFile == nil || libFile.Replaced || t.buildInfo.FileNames[fileId-1] != libFile.Name {
@@ -245,6 +250,13 @@ func (t *toBuildInfo) setFileInfoAndEmitSignatures() {
 		}
 		return newBuildInfoFileInfo(info)
 	})
+	for len(t.buildInfo.DeclarationInputSignatures) > 0 &&
+		t.buildInfo.DeclarationInputSignatures[len(t.buildInfo.DeclarationInputSignatures)-1] == "" {
+		t.buildInfo.DeclarationInputSignatures = t.buildInfo.DeclarationInputSignatures[:len(t.buildInfo.DeclarationInputSignatures)-1]
+	}
+	if len(t.buildInfo.DeclarationInputSignatures) == 0 {
+		t.buildInfo.DeclarationInputSignatures = nil
+	}
 }
 
 func (t *toBuildInfo) setRootOfIncrementalProgram() {

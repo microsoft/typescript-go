@@ -197,7 +197,7 @@ func (h *emitFilesHandler) getEmitOptions(options compiler.EmitOptions) compiler
 				if canUseIncrementalState {
 					var emitSignature string
 					info, _ := h.program.snapshot.fileInfos.Load(options.TargetSourceFile.Path())
-					if info.signature == info.version {
+					if info.signatureIsVersion {
 						signature := h.program.snapshot.computeSignatureWithDiagnostics(options.TargetSourceFile, text, data)
 						// With d.ts diagnostics they are also part of the signature so emitSignature will be different from it since its just hash of d.ts
 						if len(data.Diagnostics) == 0 {
@@ -277,6 +277,7 @@ func (h *emitFilesHandler) updateSnapshot() []*compiler.EmitResult {
 		h.signatures.Range(func(file tspath.Path, signature string) bool {
 			info, _ := h.program.snapshot.fileInfos.Load(file)
 			info.signature = signature
+			info.signatureIsVersion = false
 			if h.program.testingData != nil {
 				h.program.testingData.UpdatedSignatureKinds[file] = SignatureUpdateKindStoredAtEmit
 			}

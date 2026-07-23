@@ -27,7 +27,7 @@ Output::
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
 
 //// [/home/src/projects/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"9c1fc7106f3a21aadb5219db8b3209bc-export const a = class { private p = 10; };","907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;","6f729672e1964d12037938bd07604115-export const c = class { private p = 10; };","eee493071f513e65e5368e45a4d35584-export const d = class { private p = 10; };"],"affectedFilesPendingEmit":[2,3,4,5]}
+{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"9c1fc7106f3a21aadb5219db8b3209bc-export const a = class { private p = 10; };","907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;","6f729672e1964d12037938bd07604115-export const c = class { private p = 10; };","eee493071f513e65e5368e45a4d35584-export const d = class { private p = 10; };"],"declarationInputSignatures":["","eb81244bc1a36f7e29abd2c88d68362b","3b79365e3bf984ca8976ff5d3ea515e0","cff0bf06aea5daaa064bbb845d05e33e","1f26802bd54d1a009091d47d5d22791c"],"affectedFilesPendingEmit":[2,3,4,5]}
 //// [/home/src/projects/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -90,6 +90,12 @@ Output::
       "impliedNodeFormat": "CommonJS"
     }
   ],
+  "declarationInputSignatures": {
+    "./a.ts": "eb81244bc1a36f7e29abd2c88d68362b",
+    "./b.ts": "3b79365e3bf984ca8976ff5d3ea515e0",
+    "./c.ts": "cff0bf06aea5daaa064bbb845d05e33e",
+    "./d.ts": "1f26802bd54d1a009091d47d5d22791c"
+  },
   "affectedFilesPendingEmit": [
     [
       "./a.ts",
@@ -112,7 +118,7 @@ Output::
       5
     ]
   ],
-  "size": 1229
+  "size": 1403
 }
 //// [/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -209,7 +215,7 @@ Errors  Files
      1  d.ts[90m:1[0m
 
 //// [/home/src/projects/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"9c1fc7106f3a21aadb5219db8b3209bc-export const a = class { private p = 10; };","907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;","6f729672e1964d12037938bd07604115-export const c = class { private p = 10; };","eee493071f513e65e5368e45a4d35584-export const d = class { private p = 10; };"],"options":{"declaration":true},"emitDiagnosticsPerFile":[[2,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["a"]}]}]],[4,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["c"]}]}]],[5,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["d"]}]}]]],"affectedFilesPendingEmit":[[2,17],[3,17],[4,17],[5,17]]}
+{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"9c1fc7106f3a21aadb5219db8b3209bc-export const a = class { private p = 10; };","907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;","6f729672e1964d12037938bd07604115-export const c = class { private p = 10; };","eee493071f513e65e5368e45a4d35584-export const d = class { private p = 10; };"],"declarationInputSignatures":["","eb81244bc1a36f7e29abd2c88d68362b","3b79365e3bf984ca8976ff5d3ea515e0","cff0bf06aea5daaa064bbb845d05e33e","1f26802bd54d1a009091d47d5d22791c"],"options":{"declaration":true},"emitDiagnosticsPerFile":[[2,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["a"]}]}]],[4,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["c"]}]}]],[5,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["d"]}]}]]],"affectedFilesPendingEmit":[[2,17],[3,17],[4,17],[5,17]]}
 //// [/home/src/projects/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -272,6 +278,12 @@ Errors  Files
       "impliedNodeFormat": "CommonJS"
     }
   ],
+  "declarationInputSignatures": {
+    "./a.ts": "eb81244bc1a36f7e29abd2c88d68362b",
+    "./b.ts": "3b79365e3bf984ca8976ff5d3ea515e0",
+    "./c.ts": "cff0bf06aea5daaa064bbb845d05e33e",
+    "./d.ts": "1f26802bd54d1a009091d47d5d22791c"
+  },
   "options": {
     "declaration": true
   },
@@ -392,7 +404,7 @@ Errors  Files
       ]
     ]
   ],
-  "size": 2252
+  "size": 2426
 }
 
 tsconfig.json::
@@ -448,7 +460,7 @@ Errors  Files
      1  d.ts[90m:1[0m
 
 //// [/home/src/projects/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"9c1fc7106f3a21aadb5219db8b3209bc-export const a = class { private p = 10; };","907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;","6f729672e1964d12037938bd07604115-export const c = class { private p = 10; };","eee493071f513e65e5368e45a4d35584-export const d = class { private p = 10; };"],"options":{"declaration":true,"declarationMap":true},"emitDiagnosticsPerFile":[[2,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["a"]}]}]],[4,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["c"]}]}]],[5,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["d"]}]}]]],"affectedFilesPendingEmit":[[2,49],[3,49],[4,49],[5,49]]}
+{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"9c1fc7106f3a21aadb5219db8b3209bc-export const a = class { private p = 10; };","907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;","6f729672e1964d12037938bd07604115-export const c = class { private p = 10; };","eee493071f513e65e5368e45a4d35584-export const d = class { private p = 10; };"],"declarationInputSignatures":["","eb81244bc1a36f7e29abd2c88d68362b","3b79365e3bf984ca8976ff5d3ea515e0","cff0bf06aea5daaa064bbb845d05e33e","1f26802bd54d1a009091d47d5d22791c"],"options":{"declaration":true,"declarationMap":true},"emitDiagnosticsPerFile":[[2,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["a"]}]}]],[4,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["c"]}]}]],[5,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["d"]}]}]]],"affectedFilesPendingEmit":[[2,49],[3,49],[4,49],[5,49]]}
 //// [/home/src/projects/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -511,6 +523,12 @@ Errors  Files
       "impliedNodeFormat": "CommonJS"
     }
   ],
+  "declarationInputSignatures": {
+    "./a.ts": "eb81244bc1a36f7e29abd2c88d68362b",
+    "./b.ts": "3b79365e3bf984ca8976ff5d3ea515e0",
+    "./c.ts": "cff0bf06aea5daaa064bbb845d05e33e",
+    "./d.ts": "1f26802bd54d1a009091d47d5d22791c"
+  },
   "options": {
     "declaration": true,
     "declarationMap": true
@@ -632,7 +650,7 @@ Errors  Files
       ]
     ]
   ],
-  "size": 2274
+  "size": 2448
 }
 
 tsconfig.json::
@@ -722,7 +740,7 @@ export const d = class {
 };
 
 //// [/home/src/projects/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"9c1fc7106f3a21aadb5219db8b3209bc-export const a = class { private p = 10; };",{"version":"907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;","signature":"eaed5dafb4668e1b7c86b65b584b776a-export declare const b = 10;\n","impliedNodeFormat":1},"6f729672e1964d12037938bd07604115-export const c = class { private p = 10; };","eee493071f513e65e5368e45a4d35584-export const d = class { private p = 10; };"],"options":{"declaration":true},"emitDiagnosticsPerFile":[[2,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["a"]}]}]],[4,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["c"]}]}]],[5,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["d"]}]}]]]}
+{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"9c1fc7106f3a21aadb5219db8b3209bc-export const a = class { private p = 10; };",{"version":"907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;","signature":"eaed5dafb4668e1b7c86b65b584b776a-export declare const b = 10;\n","impliedNodeFormat":1},"6f729672e1964d12037938bd07604115-export const c = class { private p = 10; };","eee493071f513e65e5368e45a4d35584-export const d = class { private p = 10; };"],"declarationInputSignatures":["","eb81244bc1a36f7e29abd2c88d68362b","","cff0bf06aea5daaa064bbb845d05e33e","1f26802bd54d1a009091d47d5d22791c"],"options":{"declaration":true},"emitDiagnosticsPerFile":[[2,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["a"]}]}]],[4,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["c"]}]}]],[5,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["d"]}]}]]]}
 //// [/home/src/projects/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -790,6 +808,11 @@ export const d = class {
       "impliedNodeFormat": "CommonJS"
     }
   ],
+  "declarationInputSignatures": {
+    "./a.ts": "eb81244bc1a36f7e29abd2c88d68362b",
+    "./c.ts": "cff0bf06aea5daaa064bbb845d05e33e",
+    "./d.ts": "1f26802bd54d1a009091d47d5d22791c"
+  },
   "options": {
     "declaration": true
   },
@@ -876,7 +899,7 @@ export const d = class {
       ]
     ]
   ],
-  "size": 2307
+  "size": 2449
 }
 
 tsconfig.json::
@@ -900,7 +923,7 @@ Output::
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
 
 //// [/home/src/projects/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"257f0ffae056266a216e22aca9e25055-export const a = class { public p = 10; };","signature":"1aa32af20adf1f5d970642bd31541eeb-export declare const a: {\n    new (): {\n        p: number;\n    };\n};\n","impliedNodeFormat":1},{"version":"907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;","signature":"eaed5dafb4668e1b7c86b65b584b776a-export declare const b = 10;\n","impliedNodeFormat":1},"6f729672e1964d12037938bd07604115-export const c = class { private p = 10; };","eee493071f513e65e5368e45a4d35584-export const d = class { private p = 10; };"],"emitDiagnosticsPerFile":[[4,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["c"]}]}]],[5,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["d"]}]}]]],"affectedFilesPendingEmit":[2]}
+{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"257f0ffae056266a216e22aca9e25055-export const a = class { public p = 10; };","signature":"1aa32af20adf1f5d970642bd31541eeb-export declare const a: {\n    new (): {\n        p: number;\n    };\n};\n","impliedNodeFormat":1},{"version":"907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;","signature":"eaed5dafb4668e1b7c86b65b584b776a-export declare const b = 10;\n","impliedNodeFormat":1},"6f729672e1964d12037938bd07604115-export const c = class { private p = 10; };","eee493071f513e65e5368e45a4d35584-export const d = class { private p = 10; };"],"declarationInputSignatures":["","","","cff0bf06aea5daaa064bbb845d05e33e","1f26802bd54d1a009091d47d5d22791c"],"emitDiagnosticsPerFile":[[4,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["c"]}]}]],[5,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["d"]}]}]]],"affectedFilesPendingEmit":[2]}
 //// [/home/src/projects/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -973,6 +996,10 @@ Output::
       "impliedNodeFormat": "CommonJS"
     }
   ],
+  "declarationInputSignatures": {
+    "./c.ts": "cff0bf06aea5daaa064bbb845d05e33e",
+    "./d.ts": "1f26802bd54d1a009091d47d5d22791c"
+  },
   "emitDiagnosticsPerFile": [
     [
       "./c.ts",
@@ -1036,7 +1063,7 @@ Output::
       2
     ]
   ],
-  "size": 2147
+  "size": 2257
 }
 
 tsconfig.json::
@@ -1084,7 +1111,7 @@ Errors  Files
      1  d.ts[90m:1[0m
 
 //// [/home/src/projects/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"257f0ffae056266a216e22aca9e25055-export const a = class { public p = 10; };","signature":"1aa32af20adf1f5d970642bd31541eeb-export declare const a: {\n    new (): {\n        p: number;\n    };\n};\n","impliedNodeFormat":1},{"version":"907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;","signature":"eaed5dafb4668e1b7c86b65b584b776a-export declare const b = 10;\n","impliedNodeFormat":1},"6f729672e1964d12037938bd07604115-export const c = class { private p = 10; };","eee493071f513e65e5368e45a4d35584-export const d = class { private p = 10; };"],"options":{"declaration":true},"emitDiagnosticsPerFile":[[4,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["c"]}]}]],[5,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["d"]}]}]]],"affectedFilesPendingEmit":[[2,17],[3,16],[4,16],[5,16]]}
+{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"257f0ffae056266a216e22aca9e25055-export const a = class { public p = 10; };","signature":"1aa32af20adf1f5d970642bd31541eeb-export declare const a: {\n    new (): {\n        p: number;\n    };\n};\n","impliedNodeFormat":1},{"version":"907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;","signature":"eaed5dafb4668e1b7c86b65b584b776a-export declare const b = 10;\n","impliedNodeFormat":1},"6f729672e1964d12037938bd07604115-export const c = class { private p = 10; };","eee493071f513e65e5368e45a4d35584-export const d = class { private p = 10; };"],"declarationInputSignatures":["","","","cff0bf06aea5daaa064bbb845d05e33e","1f26802bd54d1a009091d47d5d22791c"],"options":{"declaration":true},"emitDiagnosticsPerFile":[[4,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["c"]}]}]],[5,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["d"]}]}]]],"affectedFilesPendingEmit":[[2,17],[3,16],[4,16],[5,16]]}
 //// [/home/src/projects/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -1157,6 +1184,10 @@ Errors  Files
       "impliedNodeFormat": "CommonJS"
     }
   ],
+  "declarationInputSignatures": {
+    "./c.ts": "cff0bf06aea5daaa064bbb845d05e33e",
+    "./d.ts": "1f26802bd54d1a009091d47d5d22791c"
+  },
   "options": {
     "declaration": true
   },
@@ -1250,7 +1281,7 @@ Errors  Files
       ]
     ]
   ],
-  "size": 2204
+  "size": 2314
 }
 
 tsconfig.json::
@@ -1296,7 +1327,7 @@ Errors  Files
      1  d.ts[90m:1[0m
 
 //// [/home/src/projects/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"257f0ffae056266a216e22aca9e25055-export const a = class { public p = 10; };","signature":"1aa32af20adf1f5d970642bd31541eeb-export declare const a: {\n    new (): {\n        p: number;\n    };\n};\n","impliedNodeFormat":1},{"version":"907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;","signature":"eaed5dafb4668e1b7c86b65b584b776a-export declare const b = 10;\n","impliedNodeFormat":1},"6f729672e1964d12037938bd07604115-export const c = class { private p = 10; };","eee493071f513e65e5368e45a4d35584-export const d = class { private p = 10; };"],"options":{"declaration":true,"declarationMap":true},"emitDiagnosticsPerFile":[[4,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["c"]}]}]],[5,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["d"]}]}]]],"affectedFilesPendingEmit":[[2,49],[3,48],[4,48],[5,48]]}
+{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"257f0ffae056266a216e22aca9e25055-export const a = class { public p = 10; };","signature":"1aa32af20adf1f5d970642bd31541eeb-export declare const a: {\n    new (): {\n        p: number;\n    };\n};\n","impliedNodeFormat":1},{"version":"907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;","signature":"eaed5dafb4668e1b7c86b65b584b776a-export declare const b = 10;\n","impliedNodeFormat":1},"6f729672e1964d12037938bd07604115-export const c = class { private p = 10; };","eee493071f513e65e5368e45a4d35584-export const d = class { private p = 10; };"],"declarationInputSignatures":["","","","cff0bf06aea5daaa064bbb845d05e33e","1f26802bd54d1a009091d47d5d22791c"],"options":{"declaration":true,"declarationMap":true},"emitDiagnosticsPerFile":[[4,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["c"]}]}]],[5,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["d"]}]}]]],"affectedFilesPendingEmit":[[2,49],[3,48],[4,48],[5,48]]}
 //// [/home/src/projects/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -1369,6 +1400,10 @@ Errors  Files
       "impliedNodeFormat": "CommonJS"
     }
   ],
+  "declarationInputSignatures": {
+    "./c.ts": "cff0bf06aea5daaa064bbb845d05e33e",
+    "./d.ts": "1f26802bd54d1a009091d47d5d22791c"
+  },
   "options": {
     "declaration": true,
     "declarationMap": true
@@ -1463,7 +1498,7 @@ Errors  Files
       ]
     ]
   ],
-  "size": 2226
+  "size": 2336
 }
 
 tsconfig.json::
@@ -1498,7 +1533,7 @@ Output::
 Found 1 error in d.ts[90m:1[0m
 
 //// [/home/src/projects/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"257f0ffae056266a216e22aca9e25055-export const a = class { public p = 10; };","signature":"1aa32af20adf1f5d970642bd31541eeb-export declare const a: {\n    new (): {\n        p: number;\n    };\n};\n","impliedNodeFormat":1},{"version":"907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;","signature":"eaed5dafb4668e1b7c86b65b584b776a-export declare const b = 10;\n","impliedNodeFormat":1},{"version":"dc7165893e9c62cfeea6f0fad1d8b57c-export const c = class { public p = 10; };","signature":"17c24c6640bff8629aa96eed43575ace-export declare const c: {\n    new (): {\n        p: number;\n    };\n};\n","impliedNodeFormat":1},"eee493071f513e65e5368e45a4d35584-export const d = class { private p = 10; };"],"options":{"declaration":true,"declarationMap":true},"emitDiagnosticsPerFile":[[5,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["d"]}]}]]],"affectedFilesPendingEmit":[[2,49],[3,48],[4,49],[5,48]]}
+{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"257f0ffae056266a216e22aca9e25055-export const a = class { public p = 10; };","signature":"1aa32af20adf1f5d970642bd31541eeb-export declare const a: {\n    new (): {\n        p: number;\n    };\n};\n","impliedNodeFormat":1},{"version":"907abc8137ceb88f0ddd6eccfa92d573-export const b = 10;","signature":"eaed5dafb4668e1b7c86b65b584b776a-export declare const b = 10;\n","impliedNodeFormat":1},{"version":"dc7165893e9c62cfeea6f0fad1d8b57c-export const c = class { public p = 10; };","signature":"17c24c6640bff8629aa96eed43575ace-export declare const c: {\n    new (): {\n        p: number;\n    };\n};\n","impliedNodeFormat":1},"eee493071f513e65e5368e45a4d35584-export const d = class { private p = 10; };"],"declarationInputSignatures":["","","","","1f26802bd54d1a009091d47d5d22791c"],"options":{"declaration":true,"declarationMap":true},"emitDiagnosticsPerFile":[[5,[{"pos":13,"end":14,"code":4094,"category":1,"messageKey":"Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094","messageArgs":["p"],"relatedInformation":[{"pos":13,"end":14,"code":9027,"category":1,"messageKey":"Add_a_type_annotation_to_the_variable_0_9027","messageArgs":["d"]}]}]]],"affectedFilesPendingEmit":[[2,49],[3,48],[4,49],[5,48]]}
 //// [/home/src/projects/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -1576,6 +1611,9 @@ Found 1 error in d.ts[90m:1[0m
       "impliedNodeFormat": "CommonJS"
     }
   ],
+  "declarationInputSignatures": {
+    "./d.ts": "1f26802bd54d1a009091d47d5d22791c"
+  },
   "options": {
     "declaration": true,
     "declarationMap": true
@@ -1643,7 +1681,7 @@ Found 1 error in d.ts[90m:1[0m
       ]
     ]
   ],
-  "size": 2066
+  "size": 2144
 }
 
 tsconfig.json::

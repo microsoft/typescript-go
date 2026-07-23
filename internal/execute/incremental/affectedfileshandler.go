@@ -22,9 +22,11 @@ func (c dtsMayChange) addFileToAffectedFilesPendingEmit(filePath tspath.Path, em
 }
 
 type updatedSignature struct {
-	mu        sync.Mutex
-	signature string
-	kind      SignatureUpdateKind
+	mu                 sync.Mutex
+	signature          string
+	signatureIsVersion bool
+	changed            bool
+	kind               SignatureUpdateKind
 }
 
 type affectedFilesHandler struct {
@@ -48,8 +50,7 @@ func (h *affectedFilesHandler) isChangedSignature(path tspath.Path) bool {
 	newSignature, _ := h.updatedSignatures.Load(path)
 	// This method is called after updating signatures of that path, so signature is present in updatedSignatures
 	// And is already calculated, so no need to lock and unlock mutex on the entry
-	oldInfo, _ := h.program.snapshot.fileInfos.Load(path)
-	return newSignature.signature != oldInfo.signature
+	return newSignature.changed
 }
 
 func (h *affectedFilesHandler) removeSemanticDiagnosticsOf(path tspath.Path) {
@@ -96,15 +97,28 @@ func (h *affectedFilesHandler) updateShapeSignature(file *ast.SourceFile, useFil
 
 	info, _ := h.program.snapshot.fileInfos.Load(file.Path())
 	prevSignature := info.signature
+	// If only non-declaration trivia changed, advance the provisional signature without
+	// treating the file's public shape as changed.
+	if !file.IsDeclarationFile &&
+		!useFileVersionAsSignature &&
+		info.signatureIsVersion &&
+		info.declarationInputSignatureUnchanged {
+		update.signature = info.version
+		update.signatureIsVersion = true
+		update.kind = SignatureUpdateKindUsedVersion
+		return false
+	}
 	if !file.IsDeclarationFile && !useFileVersionAsSignature {
 		update.signature = h.computeDtsSignature(file)
 	}
 	// Default is to use file version as signature
 	if update.signature == "" {
 		update.signature = info.version
+		update.signatureIsVersion = true
 		update.kind = SignatureUpdateKindUsedVersion
 	}
-	return update.signature != prevSignature
+	update.changed = update.signature != prevSignature
+	return update.changed
 }
 
 func (h *affectedFilesHandler) getFilesAffectedBy(path tspath.Path) []*ast.SourceFile {
@@ -333,6 +347,7 @@ func (h *affectedFilesHandler) updateSnapshot() {
 	h.updatedSignatures.Range(func(filePath tspath.Path, update *updatedSignature) bool {
 		if info, ok := h.program.snapshot.fileInfos.Load(filePath); ok {
 			info.signature = update.signature
+			info.signatureIsVersion = update.signatureIsVersion
 			if h.program.testingData != nil {
 				h.program.testingData.UpdatedSignatureKinds[filePath] = update.kind
 			}

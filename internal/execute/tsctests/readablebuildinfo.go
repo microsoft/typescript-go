@@ -25,6 +25,7 @@ type readableBuildInfo struct {
 	// IncrementalProgram info
 	FileNames                  []string                                  `json:"fileNames,omitzero"`
 	FileInfos                  []*readableBuildInfoFileInfo              `json:"fileInfos,omitzero"`
+	DeclarationInputSignatures *collections.OrderedMap[string, string]   `json:"declarationInputSignatures,omitzero"`
 	FileIdsList                [][]string                                `json:"fileIdsList,omitzero"`
 	Options                    *collections.OrderedMap[string, any]      `json:"options,omitzero"`
 	ReferencedMap              *collections.OrderedMap[string, []string] `json:"referencedMap,omitzero"`
@@ -221,6 +222,7 @@ func toReadableBuildInfo(buildInfo *incremental.BuildInfo, buildInfoText string)
 		Size:                 len(buildInfoText),
 	}
 	readable.setFileInfos()
+	readable.setDeclarationInputSignatures()
 	readable.setRoot()
 	readable.setFileIdsList()
 	readable.setReferencedMap()
@@ -235,6 +237,21 @@ func toReadableBuildInfo(buildInfo *incremental.BuildInfo, buildInfoText string)
 		panic("readableBuildInfo: failed to marshal readable build info: " + err.Error())
 	}
 	return string(contents)
+}
+
+func (r *readableBuildInfo) setDeclarationInputSignatures() {
+	if len(r.buildInfo.DeclarationInputSignatures) == 0 {
+		return
+	}
+	signatures := collections.NewOrderedMapWithSizeHint[string, string](len(r.buildInfo.DeclarationInputSignatures))
+	for index, signature := range r.buildInfo.DeclarationInputSignatures {
+		if signature != "" {
+			signatures.Set(r.buildInfo.FileNames[index], signature)
+		}
+	}
+	if signatures.Size() != 0 {
+		r.DeclarationInputSignatures = signatures
+	}
 }
 
 func (r *readableBuildInfo) toFilePath(fileId incremental.BuildInfoFileId) string {

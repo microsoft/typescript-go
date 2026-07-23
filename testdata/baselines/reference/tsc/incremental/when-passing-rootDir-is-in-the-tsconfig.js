@@ -42,7 +42,7 @@ declare const console: { log(msg: any): void; };
 export const x = 10;
 
 //// [/home/src/workspaces/project/dist/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","../src/main.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"28e8748a7acd58f4f59388926e914f86-export const x = 10;"],"options":{"outDir":"./","rootDir":".."}}
+{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","../src/main.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"28e8748a7acd58f4f59388926e914f86-export const x = 10;"],"declarationInputSignatures":["","9388e99e8b5d190da2aaad454bf5009e"],"options":{"outDir":"./","rootDir":".."}}
 //// [/home/src/workspaces/project/dist/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -78,11 +78,14 @@ export const x = 10;
       "impliedNodeFormat": "CommonJS"
     }
   ],
+  "declarationInputSignatures": {
+    "../src/main.ts": "9388e99e8b5d190da2aaad454bf5009e"
+  },
   "options": {
     "outDir": "./",
     "rootDir": ".."
   },
-  "size": 973
+  "size": 1042
 }
 
 tsconfig.json::

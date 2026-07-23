@@ -62,7 +62,7 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.es2025.full.d.ts","./src/class.ts","./src/indirectClass.ts","./src/directUse.ts","./src/indirectUse.ts","./src/noChangeFile.ts","./src/noChangeFileWithEmitSpecificError.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"5106d5119e9d454b0e9d7956b0f66ab8-export class classC {\n    prop = 1;\n}","2d32895543847620d7c9848ddd3a7306-import { classC } from './class';\nexport class indirectClass {\n    classC = new classC();\n}","1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;","1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;","12f2d04905c254bde932222194cd2d1b-export function writeLog(s: string) {\n}",{"version":"f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}","affectsGlobalScope":true,"impliedNodeFormat":1}],"fileIdsList":[[3],[2]],"options":{"composite":true},"referencedMap":[[4,1],[3,2],[5,1]],"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1100,"category":1,"messageKey":"Invalid_use_of_0_in_strict_mode_1100","messageArgs":["arguments"]}]]],"affectedFilesPendingEmit":[2,4,3,5,6,7],"emitSignatures":[2,3,4,5,6,7]}
+{"version":"FakeTSVersion","root":[[2,7]],"fileNames":["lib.es2025.full.d.ts","./src/class.ts","./src/indirectClass.ts","./src/directUse.ts","./src/indirectUse.ts","./src/noChangeFile.ts","./src/noChangeFileWithEmitSpecificError.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"5106d5119e9d454b0e9d7956b0f66ab8-export class classC {\n    prop = 1;\n}","2d32895543847620d7c9848ddd3a7306-import { classC } from './class';\nexport class indirectClass {\n    classC = new classC();\n}","1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;","1e7a664a983b65ba5fbd926c9dad4a26-import { indirectClass } from './indirectClass';\nnew indirectClass().classC.prop;","12f2d04905c254bde932222194cd2d1b-export function writeLog(s: string) {\n}",{"version":"f54e687ca7ac9fc3c2161967d09e9950-function someFunc(arguments: boolean, ...rest: any[]) {\n}","affectsGlobalScope":true,"impliedNodeFormat":1}],"declarationInputSignatures":["","319156b98ea340a624291945112bda69","c27019e1e53ebf43a9af14a2fadb132f","266afe9afe33062dde7b5cd414a1bf67","266afe9afe33062dde7b5cd414a1bf67","4ba9b262970fa031957149d0c9bc79b6","eb18d1dd111a59d0bd7c820eb66b72db"],"fileIdsList":[[3],[2]],"options":{"composite":true},"referencedMap":[[4,1],[3,2],[5,1]],"semanticDiagnosticsPerFile":[[7,[{"pos":18,"end":27,"code":1100,"category":1,"messageKey":"Invalid_use_of_0_in_strict_mode_1100","messageArgs":["arguments"]}]]],"affectedFilesPendingEmit":[2,4,3,5,6,7],"emitSignatures":[2,3,4,5,6,7]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -147,6 +147,14 @@ declare const console: { log(msg: any): void; };
       }
     }
   ],
+  "declarationInputSignatures": {
+    "./src/class.ts": "319156b98ea340a624291945112bda69",
+    "./src/indirectClass.ts": "c27019e1e53ebf43a9af14a2fadb132f",
+    "./src/directUse.ts": "266afe9afe33062dde7b5cd414a1bf67",
+    "./src/indirectUse.ts": "266afe9afe33062dde7b5cd414a1bf67",
+    "./src/noChangeFile.ts": "4ba9b262970fa031957149d0c9bc79b6",
+    "./src/noChangeFileWithEmitSpecificError.ts": "eb18d1dd111a59d0bd7c820eb66b72db"
+  },
   "fileIdsList": [
     [
       "./src/indirectClass.ts"
@@ -244,7 +252,7 @@ declare const console: { log(msg: any): void; };
       "original": 7
     }
   ],
-  "size": 2012
+  "size": 2256
 }
 
 tsconfig.json::

@@ -72,6 +72,8 @@ func (t *toProgramSnapshot) reuseFromOldProgram() {
 func (t *toProgramSnapshot) computeProgramFileChanges() {
 	canCopySemanticDiagnostics := t.oldProgram != nil &&
 		!tsoptions.CompilerOptionsAffectSemanticDiagnostics(t.oldProgram.snapshot.options, t.program.Options())
+	canUseDeclarationInputSignature := canCopySemanticDiagnostics &&
+		!tsoptions.CompilerOptionsAffectEmit(t.oldProgram.snapshot.options, t.program.Options())
 	// We can only reuse emit signatures (i.e. .d.ts signatures) if the .d.ts file is unchanged,
 	// which will eg be depedent on change in options like declarationDir and outDir options are unchanged.
 	// We need to look in oldState.compilerOptions, rather than oldCompilerOptions (i.e.we need to disregard useOldState) because
@@ -94,6 +96,10 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 			impliedNodeFormat := t.program.GetSourceFileMetaData(file.Path()).ImpliedNodeFormat
 			affectsGlobalScope := fileAffectsGlobalScope(file)
 			var signature string
+			var declarationInputSignature string
+			var signatureIsVersion bool
+			var declarationInputSignatureUnchanged bool
+			canComputeDeclarationInputSignature := !file.IsDeclarationFile
 			newReferences := getReferencedFiles(t.program, file)
 			if newReferences != nil {
 				t.snapshot.referencedMap.storeReferences(file.Path(), newReferences)
@@ -101,24 +107,50 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 			if t.oldProgram != nil {
 				if oldFileInfo, ok := t.oldProgram.snapshot.fileInfos.Load(file.Path()); ok {
 					signature = oldFileInfo.signature
-					if oldFileInfo.version != version || oldFileInfo.affectsGlobalScope != affectsGlobalScope || oldFileInfo.impliedNodeFormat != impliedNodeFormat {
-						t.snapshot.addFileToChangeSet(file.Path())
-					} else if oldReferences, _ := t.oldProgram.snapshot.referencedMap.getReferences(file.Path()); !newReferences.Equals(oldReferences) {
-						// Referenced files changed
-						t.snapshot.addFileToChangeSet(file.Path())
-					} else if newReferences != nil {
+					signatureIsVersion = oldFileInfo.signatureIsVersion
+					declarationInputSignature = oldFileInfo.declarationInputSignature
+					textChanged := oldFileInfo.version != version
+					if canComputeDeclarationInputSignature &&
+						oldFileInfo.signatureIsVersion &&
+						(textChanged || declarationInputSignature == "") {
+						declarationInputSignature = computeDeclarationInputSignature(file.Text())
+					}
+					metadataChanged := oldFileInfo.affectsGlobalScope != affectsGlobalScope || oldFileInfo.impliedNodeFormat != impliedNodeFormat
+					oldReferences, _ := t.oldProgram.snapshot.referencedMap.getReferences(file.Path())
+					referencesChanged := !newReferences.Equals(oldReferences)
+					referencedFileDeleted := false
+					if !referencesChanged && newReferences != nil {
 						for refPath := range newReferences.Keys() {
 							if t.program.GetSourceFileByPath(refPath) == nil {
 								if _, ok := t.oldProgram.snapshot.fileInfos.Load(refPath); ok {
-									// Referenced file was deleted in the new program
-									t.snapshot.addFileToChangeSet(file.Path())
+									referencedFileDeleted = true
 									break
 								}
 							}
 						}
 					}
+					if textChanged || metadataChanged {
+						t.snapshot.addFileToChangeSet(file.Path())
+					} else if referencesChanged {
+						// Referenced files changed
+						t.snapshot.addFileToChangeSet(file.Path())
+					} else if referencedFileDeleted {
+						// Referenced file was deleted in the new program
+						t.snapshot.addFileToChangeSet(file.Path())
+					}
+					declarationInputSignatureUnchanged = canUseDeclarationInputSignature &&
+						!t.oldProgram.snapshot.changedFilesSet.Has(file.Path()) &&
+						textChanged &&
+						!metadataChanged &&
+						!referencesChanged &&
+						!referencedFileDeleted &&
+						oldFileInfo.declarationInputSignature != "" &&
+						oldFileInfo.declarationInputSignature == declarationInputSignature
 				} else {
 					t.snapshot.addFileToChangeSet(file.Path())
+					if canComputeDeclarationInputSignature {
+						declarationInputSignature = computeDeclarationInputSignature(file.Text())
+					}
 				}
 				if !t.snapshot.changedFilesSet.Has(file.Path()) {
 					if emitDiagnostics, ok := t.oldProgram.snapshot.emitDiagnosticsPerFile.Load(file.Path()); ok {
@@ -142,12 +174,19 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 			} else {
 				t.snapshot.addFileToAffectedFilesPendingEmit(file.Path(), GetFileEmitKind(t.snapshot.options))
 				signature = version
+				signatureIsVersion = true
+				if canComputeDeclarationInputSignature {
+					declarationInputSignature = computeDeclarationInputSignature(file.Text())
+				}
 			}
 			t.snapshot.fileInfos.Store(file.Path(), &FileInfo{
-				version:            version,
-				signature:          signature,
-				affectsGlobalScope: affectsGlobalScope,
-				impliedNodeFormat:  impliedNodeFormat,
+				version:                            version,
+				signature:                          signature,
+				declarationInputSignature:          declarationInputSignature,
+				signatureIsVersion:                 signatureIsVersion,
+				declarationInputSignatureUnchanged: declarationInputSignatureUnchanged,
+				affectsGlobalScope:                 affectsGlobalScope,
+				impliedNodeFormat:                  impliedNodeFormat,
 			})
 		})
 	}

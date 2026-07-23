@@ -48,7 +48,7 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 //// [/home/src/workspaces/project/outDir/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","../file1.ts","../file2.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"15ec141484c003c242081ba307fd0794-export const x: 30 = \"hello\";","f7d221ab360f516a6280e3b725f4cd31-export class D { }"],"options":{"noEmitOnError":true,"outDir":"./"},"semanticDiagnosticsPerFile":[[2,[{"pos":13,"end":14,"code":2322,"category":1,"messageKey":"Type_0_is_not_assignable_to_type_1_2322","messageArgs":["\"hello\"","30"]}]]],"affectedFilesPendingEmit":[2,3]}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","../file1.ts","../file2.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"15ec141484c003c242081ba307fd0794-export const x: 30 = \"hello\";","f7d221ab360f516a6280e3b725f4cd31-export class D { }"],"declarationInputSignatures":["","ca5985c10e3c2e5a74b3d347211195ff","f8fd8a7e060782ee59333d55889abda0"],"options":{"noEmitOnError":true,"outDir":"./"},"semanticDiagnosticsPerFile":[[2,[{"pos":13,"end":14,"code":2322,"category":1,"messageKey":"Type_0_is_not_assignable_to_type_1_2322","messageArgs":["\"hello\"","30"]}]]],"affectedFilesPendingEmit":[2,3]}
 //// [/home/src/workspaces/project/outDir/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -95,6 +95,10 @@ declare const console: { log(msg: any): void; };
       "impliedNodeFormat": "CommonJS"
     }
   ],
+  "declarationInputSignatures": {
+    "../file1.ts": "ca5985c10e3c2e5a74b3d347211195ff",
+    "../file2.ts": "f8fd8a7e060782ee59333d55889abda0"
+  },
   "options": {
     "noEmitOnError": true,
     "outDir": "./"
@@ -129,7 +133,7 @@ declare const console: { log(msg: any): void; };
       3
     ]
   ],
-  "size": 1262
+  "size": 1366
 }
 
 tsconfig.json::
@@ -155,7 +159,7 @@ Output::
 Found 1 error in file1.ts[90m:1[0m
 
 //// [/home/src/workspaces/project/outDir/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","../file1.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"15ec141484c003c242081ba307fd0794-export const x: 30 = \"hello\";"],"options":{"noEmitOnError":true,"outDir":"./"},"semanticDiagnosticsPerFile":[[2,[{"pos":13,"end":14,"code":2322,"category":1,"messageKey":"Type_0_is_not_assignable_to_type_1_2322","messageArgs":["\"hello\"","30"]}]]],"affectedFilesPendingEmit":[2]}
+{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","../file1.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"15ec141484c003c242081ba307fd0794-export const x: 30 = \"hello\";"],"declarationInputSignatures":["","ca5985c10e3c2e5a74b3d347211195ff"],"options":{"noEmitOnError":true,"outDir":"./"},"semanticDiagnosticsPerFile":[[2,[{"pos":13,"end":14,"code":2322,"category":1,"messageKey":"Type_0_is_not_assignable_to_type_1_2322","messageArgs":["\"hello\"","30"]}]]],"affectedFilesPendingEmit":[2]}
 //// [/home/src/workspaces/project/outDir/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -191,6 +195,9 @@ Found 1 error in file1.ts[90m:1[0m
       "impliedNodeFormat": "CommonJS"
     }
   ],
+  "declarationInputSignatures": {
+    "../file1.ts": "ca5985c10e3c2e5a74b3d347211195ff"
+  },
   "options": {
     "noEmitOnError": true,
     "outDir": "./"
@@ -220,7 +227,7 @@ Found 1 error in file1.ts[90m:1[0m
       2
     ]
   ],
-  "size": 1188
+  "size": 1257
 }
 
 tsconfig.json::

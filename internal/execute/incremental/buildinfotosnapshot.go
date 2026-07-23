@@ -118,6 +118,9 @@ func (t *toSnapshot) setFileInfoAndEmitSignatures() {
 	for index, buildInfoFileInfo := range t.buildInfo.FileInfos {
 		path := t.toFilePath(BuildInfoFileId(index + 1))
 		info := buildInfoFileInfo.GetFileInfo()
+		if index < len(t.buildInfo.DeclarationInputSignatures) {
+			info.declarationInputSignature = t.buildInfo.DeclarationInputSignatures[index]
+		}
 		t.snapshot.fileInfos.Store(path, info)
 		// Add default emit signature as file's signature
 		if info.signature != "" && isComposite {
