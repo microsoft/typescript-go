@@ -165,7 +165,8 @@ func reachableChecksAfter(ret inspector.Cursor, checks []inspector.Cursor) []ins
 		}
 	}
 
-	for cur := ret; ; {
+	cur := ret
+	for {
 		parent := cur.Parent()
 		switch p := parent.Node().(type) {
 		case nil, *ast.FuncDecl, *ast.FuncLit:
