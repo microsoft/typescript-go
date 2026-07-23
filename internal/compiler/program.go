@@ -1785,7 +1785,13 @@ func GetDiagnosticsOfAnyProgram(
 	allDiagnostics := slices.Clip(program.GetConfigFileParsingDiagnostics())
 	configFileParsingDiagnosticsLength := len(allDiagnostics)
 
-	allDiagnostics = append(allDiagnostics, program.GetSyntacticDiagnostics(ctx, file)...)
+	syntacticDiagnostics := program.GetSyntacticDiagnostics(ctx, file)
+	if len(syntacticDiagnostics) > 0 {
+		// Per-file content mapper failures are syntactic diagnostics, but the locationless diagnostic
+		// that disables a repeatedly failing mapper must still be reported.
+		allDiagnostics = append(allDiagnostics, program.Program().contentMapperDiagnostics...)
+	}
+	allDiagnostics = append(allDiagnostics, syntacticDiagnostics...)
 
 	// If we didn't have any syntactic errors, then also try getting the program (options),
 	// global and semantic errors.

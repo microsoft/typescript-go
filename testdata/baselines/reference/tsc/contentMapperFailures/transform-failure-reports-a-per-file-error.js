@@ -21,7 +21,8 @@ import "./app.vue";
 tsgo --loadExternalPlugins
 ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
-[96mapp.vue[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TS100025: [0mThe content mapper 'fail' failed to transform this file: ipc: remote error [-32603]: content mapper failed to transform the file
+[96mapp.vue[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TS100025: [0mThe content mapper 'fail' failed to transform this file.
+  The content mapper process failed while handling the transform request.
 
 [7m1[0m 
 [7m [0m [91m~[0m

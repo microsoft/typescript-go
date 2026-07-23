@@ -427,21 +427,56 @@ func (p *fileLoader) parseContentMappedFile(opts ast.SourceFileParseOptions) *as
 	if err != nil {
 		sourceFile := p.emptyContentMappedFile(opts, mapper.Identity())
 		if p.recordContentMapperFailure(mapper, label) {
+			var diagnostic *ast.Diagnostic
 			if problem, ok := errors.AsType[*spanmap.MappingError](err); ok {
-				p.addContentMapperDiagnostic(contentMapperMappingDiagnostic(sourceFile, label, problem))
+				diagnostic = contentMapperMappingDiagnostic(sourceFile, label, problem)
 			} else {
-				p.addContentMapperDiagnostic(ast.NewDiagnostic(
-					sourceFile,
-					core.NewTextRange(0, 0),
-					diagnostics.The_content_mapper_0_failed_to_transform_this_file_Colon_1,
-					label,
-					err.Error(),
-				))
+				diagnostic = contentMapperTransformDiagnostic(sourceFile, label, err)
 			}
+			sourceFile.SetDiagnostics(append(sourceFile.Diagnostics(), diagnostic))
 		}
 		return sourceFile
 	}
 	return sourceFile
+}
+
+func contentMapperTransformDiagnostic(file *ast.SourceFile, label string, err error) *ast.Diagnostic {
+	if transformError, ok := errors.AsType[*contentmapper.TransformError](err); ok {
+		switch transformError.Kind {
+		case contentmapper.TransformErrorKindInitialize:
+			if initializeError, ok := errors.AsType[*contentmapper.InitializeError](transformError); ok {
+				switch initializeError.Kind {
+				case contentmapper.InitializeErrorKindProtocolVersion:
+					return contentMapperTransformDiagnosticChain(file, label, diagnostics.The_content_mapper_uses_unsupported_protocol_version_0_expected_version_1, initializeError.ProtocolVersion, contentmapper.ProtocolVersion)
+				case contentmapper.InitializeErrorKindPositionEncoding:
+					return contentMapperTransformDiagnosticChain(file, label, diagnostics.The_content_mapper_selected_unsupported_position_encoding_0, initializeError.PositionEncoding)
+				case contentmapper.InitializeErrorKindEmptyDiagnosticSource:
+					return contentMapperTransformDiagnosticChain(file, label, diagnostics.The_content_mapper_diagnostic_source_must_not_be_empty)
+				case contentmapper.InitializeErrorKindReservedDiagnosticSource:
+					return contentMapperTransformDiagnosticChain(file, label, diagnostics.The_content_mapper_diagnostic_source_0_is_reserved_by_TypeScript, initializeError.DiagnosticSource)
+				}
+			}
+			return contentMapperTransformDiagnosticChain(file, label, diagnostics.The_content_mapper_process_could_not_be_started_or_initialized)
+		case contentmapper.TransformErrorKindCompilerOptions:
+			return contentMapperTransformDiagnosticChain(file, label, diagnostics.The_compiler_options_requested_by_the_content_mapper_could_not_be_prepared)
+		case contentmapper.TransformErrorKindRequest:
+			return contentMapperTransformDiagnosticChain(file, label, diagnostics.The_content_mapper_process_failed_while_handling_the_transform_request)
+		case contentmapper.TransformErrorKindResponse:
+			return contentMapperTransformDiagnosticChain(file, label, diagnostics.The_content_mapper_returned_an_invalid_transform_response)
+		case contentmapper.TransformErrorKindMappings:
+			return ast.NewDiagnostic(file, core.NewTextRange(0, 0), diagnostics.The_content_mapper_0_did_not_provide_the_required_position_mappings, label)
+		}
+	}
+	return ast.NewDiagnostic(file, core.NewTextRange(0, 0), diagnostics.The_content_mapper_0_failed_to_transform_this_file, label)
+}
+
+func contentMapperTransformDiagnosticChain(file *ast.SourceFile, label string, message *diagnostics.Message, args ...any) *ast.Diagnostic {
+	return ast.NewDiagnostic(
+		file,
+		core.NewTextRange(0, 0),
+		diagnostics.The_content_mapper_0_failed_to_transform_this_file,
+		label,
+	).AddMessageChain(ast.NewCompilerDiagnostic(message, args...))
 }
 
 // contentMapperMappingDiagnostic builds the diagnostic reported against a mapper that produced an
@@ -523,12 +558,6 @@ func (p *fileLoader) recordContentMapperFailure(mapper *contentmapper.Mapper, la
 		))
 	}
 	return true
-}
-
-func (p *fileLoader) addContentMapperDiagnostic(diagnostic *ast.Diagnostic) {
-	p.contentMapperMu.Lock()
-	defer p.contentMapperMu.Unlock()
-	p.contentMapperDiagnostics = append(p.contentMapperDiagnostics, diagnostic)
 }
 
 func (p *fileLoader) isSupportedExtension(canonicalFileName string) bool {

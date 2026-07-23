@@ -242,10 +242,8 @@ func TestRunnerRejectsInvalidDiagnosticSource(t *testing.T) {
 			_, err := r.Transform(mapper, contentmapper.Request{FileName: "/a.vue", Content: "x"})
 			if strings.TrimSpace(source) == "" {
 				assert.ErrorContains(t, err, "diagnostic source must not be empty")
-			} else if strings.EqualFold(source, "typescript") || strings.EqualFold(source, "tsc") {
-				assert.ErrorContains(t, err, "is reserved by TypeScript")
 			} else {
-				assert.ErrorContains(t, err, "conflicts with a built-in file extension")
+				assert.ErrorContains(t, err, "is reserved by TypeScript")
 			}
 		})
 	}

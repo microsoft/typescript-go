@@ -187,11 +187,11 @@ func (h *host) Acquire(mappers []*Mapper) func() {
 func (h *host) Transform(mapper *Mapper, request Request) (Result, error) {
 	conn, positionEncoding, diagnosticSource, err := h.connFor(mapper)
 	if err != nil {
-		return Result{}, err
+		return Result{}, NewTransformError(TransformErrorKindInitialize, err)
 	}
 	options, err := mapper.MarshalDeclaredOptions(request.CompilerOptions)
 	if err != nil {
-		return Result{}, err
+		return Result{}, NewTransformError(TransformErrorKindCompilerOptions, err)
 	}
 	raw, err := conn.Call(h.ctx, MethodTransform, TransformParams{
 		FileName:        request.FileName,
@@ -199,9 +199,13 @@ func (h *host) Transform(mapper *Mapper, request Request) (Result, error) {
 		CompilerOptions: options,
 	})
 	if err != nil {
-		return Result{}, err
+		return Result{}, NewTransformError(TransformErrorKindRequest, err)
 	}
-	return decodeTransformResult(raw, request.Content, positionEncoding, diagnosticSource)
+	result, err := decodeTransformResult(raw, request.Content, positionEncoding, diagnosticSource)
+	if err != nil {
+		return Result{}, NewTransformError(TransformErrorKindResponse, err)
+	}
+	return result, nil
 }
 
 // Close shuts down every mapper process. It is safe to call more than once and is invoked automatically
@@ -291,22 +295,22 @@ func handshake(ctx context.Context, conn ipc.Conn, diagnosticLocale locale.Local
 		return "", "", err
 	}
 	if res.ProtocolVersion != ProtocolVersion {
-		return "", "", fmt.Errorf("unsupported protocol version %d (expected %d)", res.ProtocolVersion, ProtocolVersion)
+		return "", "", &InitializeError{Kind: InitializeErrorKindProtocolVersion, ProtocolVersion: res.ProtocolVersion}
 	}
 	if res.PositionEncoding != PositionEncodingUTF8 && res.PositionEncoding != PositionEncodingUTF16 {
-		return "", "", fmt.Errorf("unsupported position encoding %q", res.PositionEncoding)
+		return "", "", &InitializeError{Kind: InitializeErrorKindPositionEncoding, PositionEncoding: res.PositionEncoding}
 	}
 	if strings.TrimSpace(res.DiagnosticSource) == "" {
-		return "", "", errors.New("diagnostic source must not be empty")
+		return "", "", &InitializeError{Kind: InitializeErrorKindEmptyDiagnosticSource}
 	}
 	if strings.EqualFold(res.DiagnosticSource, "typescript") || strings.EqualFold(res.DiagnosticSource, "tsc") {
-		return "", "", fmt.Errorf("diagnostic source %q is reserved by TypeScript", res.DiagnosticSource)
+		return "", "", &InitializeError{Kind: InitializeErrorKindReservedDiagnosticSource, DiagnosticSource: res.DiagnosticSource}
 	}
 	nativeExtensions := core.Flatten(tspath.AllSupportedExtensionsWithJson)
 	if slices.ContainsFunc(nativeExtensions, func(extension string) bool {
 		return strings.EqualFold(res.DiagnosticSource, strings.TrimPrefix(extension, "."))
 	}) {
-		return "", "", fmt.Errorf("diagnostic source %q conflicts with a built-in file extension", res.DiagnosticSource)
+		return "", "", &InitializeError{Kind: InitializeErrorKindReservedDiagnosticSource, DiagnosticSource: res.DiagnosticSource}
 	}
 	return res.PositionEncoding, res.DiagnosticSource, nil
 }

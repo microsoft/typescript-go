@@ -1,10 +1,69 @@
 package contentmapper
 
 import (
+	"fmt"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/spanmap"
 )
+
+type TransformErrorKind uint8
+
+const (
+	TransformErrorKindUnknown TransformErrorKind = iota
+	TransformErrorKindInitialize
+	TransformErrorKindCompilerOptions
+	TransformErrorKindRequest
+	TransformErrorKindResponse
+	TransformErrorKindMappings
+)
+
+type TransformError struct {
+	Kind TransformErrorKind
+	err  error
+}
+
+func NewTransformError(kind TransformErrorKind, err error) *TransformError {
+	return &TransformError{Kind: kind, err: err}
+}
+
+func (e *TransformError) Error() string {
+	return fmt.Sprintf("content mapper transform failed: %v", e.err)
+}
+
+func (e *TransformError) Unwrap() error { return e.err }
+
+type InitializeErrorKind uint8
+
+const (
+	InitializeErrorKindProtocolVersion InitializeErrorKind = iota
+	InitializeErrorKindPositionEncoding
+	InitializeErrorKindEmptyDiagnosticSource
+	InitializeErrorKindReservedDiagnosticSource
+)
+
+type InitializeError struct {
+	Kind             InitializeErrorKind
+	ProtocolVersion  int
+	PositionEncoding PositionEncoding
+	DiagnosticSource string
+}
+
+func (e *InitializeError) Error() string {
+	switch e.Kind {
+	case InitializeErrorKindProtocolVersion:
+		return fmt.Sprintf("unsupported protocol version %d (expected %d)", e.ProtocolVersion, ProtocolVersion)
+	case InitializeErrorKindPositionEncoding:
+		return fmt.Sprintf("unsupported position encoding %q", e.PositionEncoding)
+	case InitializeErrorKindEmptyDiagnosticSource:
+		return "diagnostic source must not be empty"
+	case InitializeErrorKindReservedDiagnosticSource:
+		return fmt.Sprintf("diagnostic source %q is reserved by TypeScript", e.DiagnosticSource)
+	default:
+		return "content mapper initialization failed"
+	}
+}
 
 // Result is the outcome of transforming a foreign file's content into TypeScript.
 type Result struct {

@@ -4320,7 +4320,7 @@ var Allow_loading_external_content_mapper_plugins_that_execute_code_during_compi
 
 var Content_mappers_require_the_loadExternalPlugins_command_line_flag_to_be_enabled = &Message{code: 100024, category: CategoryError, key: "Content_mappers_require_the_loadExternalPlugins_command_line_flag_to_be_enabled_100024", text: "Content mappers require the '--loadExternalPlugins' command line flag to be enabled."}
 
-var The_content_mapper_0_failed_to_transform_this_file_Colon_1 = &Message{code: 100025, category: CategoryError, key: "The_content_mapper_0_failed_to_transform_this_file_Colon_1_100025", text: "The content mapper '{0}' failed to transform this file: {1}"}
+var The_content_mapper_0_failed_to_transform_this_file = &Message{code: 100025, category: CategoryError, key: "The_content_mapper_0_failed_to_transform_this_file_100025", text: "The content mapper '{0}' failed to transform this file."}
 
 var The_content_mapper_0_failed_1_times_and_will_not_be_used = &Message{code: 100026, category: CategoryError, key: "The_content_mapper_0_failed_1_times_and_will_not_be_used_100026", text: "The content mapper '{0}' failed {1} times and will not be used."}
 
@@ -4351,6 +4351,22 @@ var The_content_mapper_0_produced_overlapping_original_position_mappings_that_ar
 var The_content_mapper_0_produced_invalid_mapping_purposes_near_original_offset_1 = &Message{code: 100040, category: CategoryError, key: "The_content_mapper_0_produced_invalid_mapping_purposes_near_original_offset_1_100040", text: "The content mapper '{0}' produced invalid mapping purposes near original offset {1}."}
 
 var The_content_mapper_0_produced_a_position_mapping_with_an_invalid_kind_near_output_offset_1 = &Message{code: 100041, category: CategoryError, key: "The_content_mapper_0_produced_a_position_mapping_with_an_invalid_kind_near_output_offset_1_100041", text: "The content mapper '{0}' produced a position mapping with an invalid kind (near output offset {1})."}
+
+var The_content_mapper_process_could_not_be_started_or_initialized = &Message{code: 100042, category: CategoryMessage, key: "The_content_mapper_process_could_not_be_started_or_initialized_100042", text: "The content mapper process could not be started or initialized."}
+
+var The_compiler_options_requested_by_the_content_mapper_could_not_be_prepared = &Message{code: 100043, category: CategoryMessage, key: "The_compiler_options_requested_by_the_content_mapper_could_not_be_prepared_100043", text: "The compiler options requested by the content mapper could not be prepared."}
+
+var The_content_mapper_process_failed_while_handling_the_transform_request = &Message{code: 100044, category: CategoryMessage, key: "The_content_mapper_process_failed_while_handling_the_transform_request_100044", text: "The content mapper process failed while handling the transform request."}
+
+var The_content_mapper_returned_an_invalid_transform_response = &Message{code: 100045, category: CategoryMessage, key: "The_content_mapper_returned_an_invalid_transform_response_100045", text: "The content mapper returned an invalid transform response."}
+
+var The_content_mapper_uses_unsupported_protocol_version_0_expected_version_1 = &Message{code: 100047, category: CategoryMessage, key: "The_content_mapper_uses_unsupported_protocol_version_0_expected_version_1_100047", text: "The content mapper uses unsupported protocol version {0}; expected version {1}."}
+
+var The_content_mapper_selected_unsupported_position_encoding_0 = &Message{code: 100048, category: CategoryMessage, key: "The_content_mapper_selected_unsupported_position_encoding_0_100048", text: "The content mapper selected unsupported position encoding '{0}'."}
+
+var The_content_mapper_diagnostic_source_must_not_be_empty = &Message{code: 100049, category: CategoryMessage, key: "The_content_mapper_diagnostic_source_must_not_be_empty_100049", text: "The content mapper diagnostic source must not be empty."}
+
+var The_content_mapper_diagnostic_source_0_is_reserved_by_TypeScript = &Message{code: 100050, category: CategoryMessage, key: "The_content_mapper_diagnostic_source_0_is_reserved_by_TypeScript_100050", text: "The content mapper diagnostic source '{0}' is reserved by TypeScript."}
 
 func keyToMessage(key Key) *Message {
 	switch key {
@@ -8672,8 +8688,8 @@ func keyToMessage(key Key) *Message {
 		return Allow_loading_external_content_mapper_plugins_that_execute_code_during_compilation
 	case "Content_mappers_require_the_loadExternalPlugins_command_line_flag_to_be_enabled_100024":
 		return Content_mappers_require_the_loadExternalPlugins_command_line_flag_to_be_enabled
-	case "The_content_mapper_0_failed_to_transform_this_file_Colon_1_100025":
-		return The_content_mapper_0_failed_to_transform_this_file_Colon_1
+	case "The_content_mapper_0_failed_to_transform_this_file_100025":
+		return The_content_mapper_0_failed_to_transform_this_file
 	case "The_content_mapper_0_failed_1_times_and_will_not_be_used_100026":
 		return The_content_mapper_0_failed_1_times_and_will_not_be_used
 	case "The_content_mapper_0_did_not_provide_the_required_position_mappings_100027":
@@ -8704,6 +8720,22 @@ func keyToMessage(key Key) *Message {
 		return The_content_mapper_0_produced_invalid_mapping_purposes_near_original_offset_1
 	case "The_content_mapper_0_produced_a_position_mapping_with_an_invalid_kind_near_output_offset_1_100041":
 		return The_content_mapper_0_produced_a_position_mapping_with_an_invalid_kind_near_output_offset_1
+	case "The_content_mapper_process_could_not_be_started_or_initialized_100042":
+		return The_content_mapper_process_could_not_be_started_or_initialized
+	case "The_compiler_options_requested_by_the_content_mapper_could_not_be_prepared_100043":
+		return The_compiler_options_requested_by_the_content_mapper_could_not_be_prepared
+	case "The_content_mapper_process_failed_while_handling_the_transform_request_100044":
+		return The_content_mapper_process_failed_while_handling_the_transform_request
+	case "The_content_mapper_returned_an_invalid_transform_response_100045":
+		return The_content_mapper_returned_an_invalid_transform_response
+	case "The_content_mapper_uses_unsupported_protocol_version_0_expected_version_1_100047":
+		return The_content_mapper_uses_unsupported_protocol_version_0_expected_version_1
+	case "The_content_mapper_selected_unsupported_position_encoding_0_100048":
+		return The_content_mapper_selected_unsupported_position_encoding_0
+	case "The_content_mapper_diagnostic_source_must_not_be_empty_100049":
+		return The_content_mapper_diagnostic_source_must_not_be_empty
+	case "The_content_mapper_diagnostic_source_0_is_reserved_by_TypeScript_100050":
+		return The_content_mapper_diagnostic_source_0_is_reserved_by_TypeScript
 	default:
 		return nil
 	}

@@ -3,6 +3,7 @@ package fourslash_test
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/testutil/contentmappertest"
 )
@@ -37,4 +38,24 @@ func TestContentMapperSynthesizedDiagnostics(t *testing.T) {
 	defer done()
 
 	f.VerifyBaselineNonSuggestionDiagnostics(t)
+}
+
+func TestContentMapperTransformFailureDiagnostics(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	f, done := newContentMapperFourslash(t, `// @Filename: /app.vue
+[||]<template>hi</template>
+`, contentmappertest.FailingMapper, ".vue")
+	defer done()
+	f.GoToFile(t, "/app.vue")
+
+	f.VerifyNonSuggestionDiagnostics(t, []*lsproto.Diagnostic{
+		{
+			Code: &lsproto.IntegerOrString{Integer: new(int32(100025))},
+			Message: lsproto.StringOrMarkupContent{String: new(
+				"The content mapper 'mapper' failed to transform this file.\n  The content mapper process failed while handling the transform request.",
+			)},
+			Range: f.Ranges()[0].LSRange,
+		},
+	})
 }
