@@ -101,9 +101,6 @@ if (options.forRelease && !options.setPrerelease && (!nativePreviewReleaseVersio
 if (usePublishedPlatformPackagesForVsix && !publishAsTypescript) {
     throw new Error("usePublishedPlatformPackagesForVsix requires nativePreviewReleaseProfile to be 'typescript'");
 }
-if (usePublishedPlatformPackagesForVsix && !options.forRelease) {
-    throw new Error("usePublishedPlatformPackagesForVsix requires forRelease");
-}
 
 const defaultGoBuildTags = [
     ...(options.noembed ? ["noembed"] : []),
@@ -1813,7 +1810,7 @@ export const buildNativePreviewPackages = task({
 
 async function runBuildNativePreviewPackages() {
     if (usePublishedPlatformPackagesForVsix) {
-        getPublishedTypeScriptVersion();
+        checkPublishedPlatformPackagesForVsix();
         await rimraf(builtNpm);
         console.log("Skipping npm package builds; VSIX packaging will use published platform packages.");
         return;
@@ -1988,6 +1985,7 @@ async function runSignNativePreviewPackages() {
         throw new Error("This task should not be run in non-release builds.");
     }
     if (usePublishedPlatformPackagesForVsix) {
+        checkPublishedPlatformPackagesForVsix();
         console.log("Skipping npm package signing; VSIX packaging will use published platform packages.");
         return;
     }
@@ -2111,6 +2109,7 @@ export const packNativePreviewPackages = task({
 
 async function runPackNativePreviewPackages() {
     if (usePublishedPlatformPackagesForVsix) {
+        checkPublishedPlatformPackagesForVsix();
         await rimraf(builtNpm);
         console.log("Skipping npm package packing; VSIX packaging will use published platform packages.");
         return;
@@ -2186,6 +2185,13 @@ function getPublishedTypeScriptVersion() {
     return version;
 }
 
+function checkPublishedPlatformPackagesForVsix() {
+    if (!options.forRelease) {
+        throw new Error("usePublishedPlatformPackagesForVsix requires forRelease");
+    }
+    getPublishedTypeScriptVersion();
+}
+
 const getPackageLock = memoize(() => JSON.parse(fs.readFileSync(path.join(__dirname, "package-lock.json"), "utf8")));
 
 /**
@@ -2250,7 +2256,7 @@ async function runPackVsixExtensions() {
     await rimraf(builtVsix);
     await fs.promises.mkdir(builtVsix, { recursive: true });
     if (usePublishedPlatformPackagesForVsix) {
-        getPublishedTypeScriptVersion();
+        checkPublishedPlatformPackagesForVsix();
         publishedPlatformPackageLibDirs.clear();
         await rimraf(builtPublishedPlatformPackages);
     }
