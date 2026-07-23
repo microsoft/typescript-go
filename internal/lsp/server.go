@@ -219,19 +219,7 @@ type Server struct {
 
 	startWatchdog func(parentPID int)
 
-	flakeLogging FlakeLogLevel
-}
-
-type FlakeLogLevel int
-
-const (
-	FlakeLogLevelNone FlakeLogLevel = iota
-	FlakeLogLevelLog
-	FlakeLogLevelPanic
-)
-
-func (s *Server) SetFlakeLogging(level FlakeLogLevel) {
-	s.flakeLogging = level
+	flakeLogging lsproto.DiagnosticFlakeLogLevel
 }
 
 func (s *Server) Session() *project.Session { return s.session }
@@ -1054,16 +1042,7 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 		}
 	}
 	if s.initializationOptions.TrackFlakyDiagnostics != nil {
-		switch *s.initializationOptions.TrackFlakyDiagnostics {
-		case lsproto.DiagnosticFlakeLogLevelOff:
-			s.flakeLogging = FlakeLogLevelNone
-		case lsproto.DiagnosticFlakeLogLevelLog:
-			s.flakeLogging = FlakeLogLevelLog
-		case lsproto.DiagnosticFlakeLogLevelPanic:
-			s.flakeLogging = FlakeLogLevelPanic
-		default:
-			return nil, fmt.Errorf("invalid value for trackFlakyDiagnostics: %v", *s.initializationOptions.TrackFlakyDiagnostics)
-		}
+		s.flakeLogging = *s.initializationOptions.TrackFlakyDiagnostics
 	}
 	s.clientCapabilities = params.Capabilities.Resolve()
 	if s.clientCapabilities.Window.WorkDoneProgress {
@@ -1390,7 +1369,7 @@ func (s *Server) handleSetLogVerbosity(_ context.Context, params *lsproto.SetLog
 
 func (s *Server) handleDocumentDiagnostic(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentDiagnosticParams) (lsproto.DocumentDiagnosticResponse, error) {
 	ctx = core.WithCheckerLifetime(ctx, core.CheckerLifetimeDiagnostics)
-	if s.flakeLogging == FlakeLogLevelNone {
+	if s.flakeLogging == lsproto.DiagnosticFlakeLogLevelOff {
 		return ls.ProvideDiagnostics(ctx, params.TextDocument.Uri)
 	}
 	direct, err := ls.ProvideDiagnostics(ctx, params.TextDocument.Uri)
@@ -1426,7 +1405,7 @@ func (s *Server) handleDocumentDiagnostic(ctx context.Context, ls *ls.LanguageSe
 		})
 	}
 
-	if s.flakeLogging == FlakeLogLevelPanic {
+	if s.flakeLogging == lsproto.DiagnosticFlakeLogLevelPanic {
 		panic("flaky diagnostic(s) logged:\n" + diff)
 	}
 	return direct, err

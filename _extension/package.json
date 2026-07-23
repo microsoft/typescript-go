@@ -206,6 +206,9 @@
                             "%native-preview.trackFlakyDiagnostics.auto%"
                         ],
                         "default": "auto",
+                        "tags": [
+                            "experimental"
+                        ],
                         "description": "%native-preview.trackFlakyDiagnostics.description%",
                         "scope": "window"
                     }
