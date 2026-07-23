@@ -1375,29 +1375,17 @@ func (p *Program) getDiagnosticsWithPrecedingDirectives(sourceFile *ast.SourceFi
 	filtered := make([]*ast.Diagnostic, 0, len(diags))
 	for _, diagnostic := range diags {
 		ignoreDiagnostic := false
-		startLines := []int{scanner.ComputeLineOfPosition(lineStarts, diagnostic.Pos()) - 1}
-		if openingElement := getJsxOpeningElementForDiagnostic(sourceFile, diagnostic.Pos()); openingElement != nil {
-			openingElementLine := scanner.ComputeLineOfPosition(lineStarts, openingElement.TagName().Pos()) - 1
-			if openingElementLine != startLines[0] {
-				startLines = append(startLines, openingElementLine)
+		for line := scanner.ComputeLineOfPosition(lineStarts, diagnostic.Pos()) - 1; line >= 0; line-- {
+			// If line contains a @ts-ignore or @ts-expect-error directive, ignore this diagnostic and change
+			// the directive kind to @ts-ignore to indicate it was used.
+			if directive, ok := directivesByLine[line]; ok {
+				ignoreDiagnostic = true
+				directive.Kind = ast.CommentDirectiveKindIgnore
+				directivesByLine[line] = directive
+				break
 			}
-		}
-		for _, startLine := range startLines {
-			for line := startLine; line >= 0; line-- {
-				// If line contains a @ts-ignore or @ts-expect-error directive, ignore this diagnostic and change
-				// the directive kind to @ts-ignore to indicate it was used.
-				if directive, ok := directivesByLine[line]; ok {
-					ignoreDiagnostic = true
-					directive.Kind = ast.CommentDirectiveKindIgnore
-					directivesByLine[line] = directive
-					break
-				}
-				// Stop searching backwards when we encounter a line that isn't blank or a comment.
-				if !isCommentOrBlankLine(sourceFile.Text(), int(lineStarts[line])) {
-					break
-				}
-			}
-			if ignoreDiagnostic {
+			// Stop searching backwards when we encounter a line that isn't blank or a comment.
+			if !isCommentOrBlankLine(sourceFile.Text(), int(lineStarts[line])) {
 				break
 			}
 		}
@@ -1406,20 +1394,6 @@ func (p *Program) getDiagnosticsWithPrecedingDirectives(sourceFile *ast.SourceFi
 		}
 	}
 	return filtered, directivesByLine
-}
-
-func getJsxOpeningElementForDiagnostic(sourceFile *ast.SourceFile, pos int) *ast.Node {
-	node := ast.GetNodeAtPosition(sourceFile, pos, false)
-	attribute := ast.FindAncestor(node, ast.IsJsxAttribute)
-	if attribute == nil || attribute.Parent == nil || !ast.IsJsxOpeningElement(attribute.Parent.Parent) {
-		return nil
-	}
-	openingElement := attribute.Parent.Parent
-	parent := openingElement.Parent
-	if parent != nil && ast.IsJsxElement(parent) && parent.AsJsxElement().OpeningElement == openingElement && len(ast.GetSemanticJsxChildren(parent.Children().Nodes)) != 0 {
-		return openingElement
-	}
-	return nil
 }
 
 func (p *Program) getDeclarationDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {

@@ -2729,7 +2729,19 @@ func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors b
 		}
 		checkTypes = reducedTarget.Distributed()
 	}
-	for _, prop := range r.c.getPropertiesOfType(source) {
+	properties := r.c.getPropertiesOfType(source)
+	if isComparingJsxAttributes {
+		// Strada's insertion-ordered spread puts synthetic JSX children before explicit attributes.
+		for i, prop := range properties {
+			if i != 0 && prop.ValueDeclaration != nil && ast.IsPropertySignatureDeclaration(prop.ValueDeclaration) && ast.IsJsxAttributes(prop.ValueDeclaration.Parent) {
+				properties = slices.Clone(properties)
+				copy(properties[1:i+1], properties[:i])
+				properties[0] = prop
+				break
+			}
+		}
+	}
+	for _, prop := range properties {
 		if shouldCheckAsExcessProperty(prop, source.symbol) && !isIgnoredJsxProperty(source, prop) {
 			if !r.c.isKnownProperty(reducedTarget, prop.Name, isComparingJsxAttributes) {
 				if reportErrors {
