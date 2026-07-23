@@ -1,6 +1,7 @@
 package contentmapper
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -35,7 +36,7 @@ func TransformAndParse(
 		return nil, err
 	}
 	if result.Mappings == nil {
-		return nil, fmt.Errorf("content mapper host returned a successful transform without position mappings")
+		return nil, errors.New("content mapper host returned a successful transform without position mappings")
 	}
 	if problem := result.Mappings.Validate(result.Text, content); problem != nil {
 		return nil, problem

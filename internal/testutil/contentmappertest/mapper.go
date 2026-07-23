@@ -40,6 +40,8 @@ const (
 	ComponentMapper = "component-mapper"
 	// DuplicateMapper maps one original identifier to separate semantic and navigation projections.
 	DuplicateMapper = "duplicate-mapper"
+	// LispMapper transforms one small Lisp expression and maps its operator to a generated helper as an alias.
+	LispMapper = "lisp-mapper"
 	// PackageName is the conventional npm package name for the mapper in test fixtures.
 	PackageName = "mapper"
 )
@@ -69,6 +71,42 @@ func (noNotifications) HandleNotification(ctx context.Context, method string, pa
 
 type duplicateHandler struct {
 	noNotifications
+}
+
+type lispHandler struct{ noNotifications }
+
+func (lispHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
+	switch method {
+	case contentmapper.MethodInitialize:
+		return contentmapper.InitializeResult{
+			ProtocolVersion:  contentmapper.ProtocolVersion,
+			PositionEncoding: contentmapper.PositionEncodingUTF8,
+		}, nil
+	case contentmapper.MethodTransform:
+		var p contentmapper.TransformParams
+		if err := json.Unmarshal(params, &p); err != nil {
+			return nil, err
+		}
+		if strings.TrimSuffix(p.Content, "\n") != `(+ 1 2 "oops")` {
+			return nil, fmt.Errorf("contentmappertest: unsupported Lisp expression %q", p.Content)
+		}
+		mappings, err := spanmap.New([]spanmap.Segment{
+			{GenStart: 0, GenEnd: 3, OrigStart: 1, OrigEnd: 2, Kind: spanmap.KindAlias, Purpose: spanmap.PurposeAll},
+			{GenStart: 4, GenEnd: 5, OrigStart: 3, OrigEnd: 4, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeAll},
+			{GenStart: 7, GenEnd: 8, OrigStart: 5, OrigEnd: 6, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeAll},
+			{GenStart: 10, GenEnd: 16, OrigStart: 7, OrigEnd: 13, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeAll},
+		}).Marshal()
+		if err != nil {
+			return nil, err
+		}
+		return contentmapper.TransformResult{
+			Text:       `add(1, 2, "oops");`,
+			ScriptKind: core.ScriptKindTS,
+			Mappings:   json.Value(mappings),
+		}, nil
+	default:
+		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
+	}
 }
 
 func (h duplicateHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
@@ -467,6 +505,8 @@ func handlerForMapper(command []string) (ipc.Handler, error) {
 		return componentHandler{}, nil
 	case DuplicateMapper:
 		return duplicateHandler{}, nil
+	case LispMapper:
+		return lispHandler{}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unknown mapper command %v", command)
 	}

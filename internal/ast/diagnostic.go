@@ -110,7 +110,7 @@ func (d *Diagnostic) Localize(locale locale.Locale) string {
 	if d.message == nil && d.messageText != "" {
 		return d.messageText
 	}
-	return diagnostics.Localize(locale, d.message, d.messageKey, d.messageArgs...)
+	return diagnostics.Localize(locale, d.message, d.messageKey, d.displayMessageArgs()...)
 }
 
 // For debugging only.
@@ -118,7 +118,41 @@ func (d *Diagnostic) String() string {
 	if d.message == nil && d.messageText != "" {
 		return d.messageText
 	}
-	return diagnostics.Localize(locale.Default, d.message, d.messageKey, d.messageArgs...)
+	return diagnostics.Localize(locale.Default, d.message, d.messageKey, d.displayMessageArgs()...)
+}
+
+// displayMessageArgs substitutes the original text for a complete alias span when a diagnostic argument
+// exactly matches the generated alias. Stored arguments remain unchanged for code fixes and serialization.
+func (d *Diagnostic) displayMessageArgs() []string {
+	if d.file == nil || d.source != "" {
+		return d.messageArgs
+	}
+	segment, ok := d.file.SpanMap().AliasForGeneratedSpan(d.loc)
+	if !ok {
+		return d.messageArgs
+	}
+	generatedText := d.file.Text()
+	originalText := d.file.OriginalText()
+	if segment.GenStart < 0 || segment.GenEnd > core.TextPos(len(generatedText)) ||
+		segment.OrigStart < 0 || segment.OrigEnd > core.TextPos(len(originalText)) {
+		return d.messageArgs
+	}
+	generatedName := generatedText[segment.GenStart:segment.GenEnd]
+	originalName := originalText[segment.OrigStart:segment.OrigEnd]
+	var result []string
+	for i, arg := range d.messageArgs {
+		if arg != generatedName {
+			continue
+		}
+		if result == nil {
+			result = slices.Clone(d.messageArgs)
+		}
+		result[i] = originalName
+	}
+	if result != nil {
+		return result
+	}
+	return d.messageArgs
 }
 
 func NewDiagnosticFromSerialized(

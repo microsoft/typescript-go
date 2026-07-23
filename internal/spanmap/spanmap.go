@@ -29,6 +29,9 @@ const (
 	// interpolatable (the lengths may differ), so positions within clamp to the segment's endpoints.
 	// Used for renamed identifiers or short expressions.
 	KindAtom
+	// KindAlias has atom geometry, but additionally asserts that the generated and original texts are
+	// names for the same logical entity. Diagnostic presentation may substitute the original name.
+	KindAlias
 )
 
 // Purpose selects which generated projection should receive an original-to-generated language-service query.
@@ -186,7 +189,7 @@ func (m *SpanMap) Validate(transformed, original string) *MappingError {
 		if s.OrigStart < 0 || s.OrigEnd < s.OrigStart || s.OrigEnd > origLen {
 			return &MappingError{Kind: MappingErrorKindOutOfBounds, GenPos: s.GenStart, OrigPos: s.OrigEnd}
 		}
-		if s.Kind != KindVerbatim && s.Kind != KindAtom {
+		if s.Kind != KindVerbatim && s.Kind != KindAtom && s.Kind != KindAlias {
 			return &MappingError{Kind: MappingErrorKindKind, GenPos: s.GenStart, OrigPos: s.OrigStart}
 		}
 		if s.Kind == KindVerbatim {
@@ -284,6 +287,20 @@ func (m *SpanMap) GeneratedToOriginalPosition(pos core.TextPos) (core.TextPos, F
 		return clamp(seg.OrigStart+(pos-seg.GenStart), seg.OrigStart, seg.OrigEnd), FidelityExact
 	}
 	return seg.OrigStart, FidelityAtom
+}
+
+// AliasForGeneratedSpan returns the alias segment exactly covering r. Partial overlap does not qualify:
+// diagnostic text may be substituted only when the diagnostic identifies the complete generated alias.
+func (m *SpanMap) AliasForGeneratedSpan(r core.TextRange) (Segment, bool) {
+	if m == nil {
+		return Segment{}, false
+	}
+	index, inside := m.segmentIndexAt(core.TextPos(r.Pos()))
+	if !inside {
+		return Segment{}, false
+	}
+	segment := m.segments[index]
+	return segment, segment.Kind == KindAlias && r.Pos() == int(segment.GenStart) && r.End() == int(segment.GenEnd)
 }
 
 // segmentIndexAt returns the index of the segment containing pos and true, or, when pos lies in a gap,

@@ -26,6 +26,16 @@ describe("SpanMap", () => {
         assert.deepEqual(map.generatedToOriginalSpan({ pos: 5, end: 15 }), { range: { pos: 13, end: 31 }, fidelity: SpanMapFidelity.Approximate });
     });
 
+    test("maps aliases with atom geometry", () => {
+        const alias = new SpanMap([
+            { generatedStart: 0, generatedEnd: 3, originalStart: 0, originalEnd: 1, kind: SpanMapKind.Alias },
+        ]);
+        assert.deepEqual(alias.generatedToOriginalSpan({ pos: 0, end: 3 }), {
+            range: { pos: 0, end: 1 },
+            fidelity: SpanMapFidelity.Atom,
+        });
+    });
+
     test("maps synthesized gaps to insertion points", () => {
         assert.deepEqual(map.generatedToOriginalPosition(0), { position: 0, fidelity: SpanMapFidelity.None });
         assert.deepEqual(map.generatedToOriginalSpan({ pos: 6, end: 8 }), { range: { pos: 14, end: 14 }, fidelity: SpanMapFidelity.None });

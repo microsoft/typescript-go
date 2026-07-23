@@ -37,6 +37,29 @@ func TestGeneratedToOriginalSpanAtom(t *testing.T) {
 	assert.Equal(t, fidelity, spanmap.FidelityAtom)
 }
 
+func TestGeneratedAlias(t *testing.T) {
+	t.Parallel()
+
+	m := spanmap.New([]spanmap.Segment{
+		{GenStart: 3, GenEnd: 6, OrigStart: 10, OrigEnd: 11, Kind: spanmap.KindAlias, Purpose: spanmap.PurposeAll},
+	})
+
+	got, fidelity := m.GeneratedToOriginalSpan(core.NewTextRange(3, 6))
+	assert.Equal(t, got, core.NewTextRange(10, 11))
+	assert.Equal(t, fidelity, spanmap.FidelityAtom)
+	alias, ok := m.AliasForGeneratedSpan(core.NewTextRange(3, 6))
+	assert.Assert(t, ok)
+	assert.Equal(t, alias.Kind, spanmap.KindAlias)
+	_, partial := m.AliasForGeneratedSpan(core.NewTextRange(4, 6))
+	assert.Assert(t, !partial)
+
+	data, err := m.Marshal()
+	assert.NilError(t, err)
+	decoded, err := spanmap.Unmarshal(data)
+	assert.NilError(t, err)
+	assert.Equal(t, decoded.Segments()[0].Kind, spanmap.KindAlias)
+}
+
 func TestGeneratedToOriginalSpanSynthesizedGap(t *testing.T) {
 	t.Parallel()
 
@@ -385,7 +408,7 @@ func TestValidate(t *testing.T) {
 		},
 		{
 			name:     "unknown kind",
-			segs:     []spanmap.Segment{{GenStart: 0, GenEnd: 1, OrigStart: 0, OrigEnd: 1, Kind: 2}},
+			segs:     []spanmap.Segment{{GenStart: 0, GenEnd: 1, OrigStart: 0, OrigEnd: 1, Kind: 3}},
 			wantKind: spanmap.MappingErrorKindKind,
 		},
 	}

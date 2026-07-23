@@ -114,7 +114,7 @@ func TestContentMapperInvalidMappings(t *testing.T) {
 			"invalidKind",
 			spanmap.New([]spanmap.Segment{{
 				GenStart: 0, GenEnd: core.TextPos(len(transformed)),
-				OrigStart: 0, OrigEnd: core.TextPos(len(original)), Kind: 2,
+				OrigStart: 0, OrigEnd: core.TextPos(len(original)), Kind: 3,
 			}}),
 			100041,
 		},

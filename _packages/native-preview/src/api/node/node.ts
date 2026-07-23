@@ -260,7 +260,7 @@ export class RemoteSourceFile extends RemoteNode implements SourceFileInfo {
             const originalLength = reader.readUint();
             const kind = reader.readUint();
             const purpose = tupleLength === 6 ? reader.readUint() as SpanMapPurpose : SpanMapPurpose.All;
-            if (kind !== SpanMapKind.Verbatim && kind !== SpanMapKind.Atom) throw new Error(`Invalid span map kind: ${kind}`);
+            if (kind !== SpanMapKind.Verbatim && kind !== SpanMapKind.Atom && kind !== SpanMapKind.Alias) throw new Error(`Invalid span map kind: ${kind}`);
             segments[i] = {
                 generatedStart,
                 generatedEnd: generatedStart + generatedLength,

@@ -3,4 +3,5 @@ export var SpanMapKind: any;
 (function (SpanMapKind) {
     SpanMapKind[SpanMapKind["Verbatim"] = 0] = "Verbatim";
     SpanMapKind[SpanMapKind["Atom"] = 1] = "Atom";
+    SpanMapKind[SpanMapKind["Alias"] = 2] = "Alias";
 })(SpanMapKind || (SpanMapKind = {}));
