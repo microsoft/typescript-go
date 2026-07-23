@@ -130,6 +130,12 @@ export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 export { CheckFlags, CompletionItemKind, DiagnosticCategory, ElementFlags, EmitOnly, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
 export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutput, EmitOutputFile, EmitResult, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ProjectReference, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 
+interface EmitOutputResponse {
+    readonly emitSkipped: boolean;
+    readonly diagnostics: readonly Diagnostic[];
+    readonly outputFiles: readonly (EmitOutputFile & { readonly fileName: string; })[];
+}
+
 export class API<FromLSP extends boolean = false> {
     private client: Client;
     private sourceFileCache: SourceFileCache;
@@ -978,34 +984,49 @@ export class Program {
      * Emits files and returns their contents without writing to the filesystem.
      */
     async emitToString(emitOnly?: EmitOnly): Promise<EmitOutput> {
-        return this.client.apiRequest<EmitOutput>("emitToString", {
+        const response = await this.client.apiRequest<EmitOutputResponse>("emitToString", {
             snapshot: this.snapshotId,
             project: this.project.id,
             emitOnly,
         });
+        return toEmitOutput(response);
     }
 
     /**
      * Gets JavaScript output for selected files regardless of project `noEmit`, `emitDeclarationOnly`, and `noEmitOnError` settings.
      */
     async getJavaScriptEmit(files: readonly DocumentIdentifier[]): Promise<EmitOutput> {
-        return this.client.apiRequest<EmitOutput>("getJavaScriptEmit", {
+        const response = await this.client.apiRequest<EmitOutputResponse>("getJavaScriptEmit", {
             snapshot: this.snapshotId,
             project: this.project.id,
             files,
         });
+        return toEmitOutput(response);
     }
 
     /**
      * Gets declaration output for selected files regardless of project `noEmit`, `declaration`, `emitDeclarationOnly`, and `noEmitOnError` settings.
      */
     async getDeclarationEmit(files: readonly DocumentIdentifier[]): Promise<EmitOutput> {
-        return this.client.apiRequest<EmitOutput>("getDeclarationEmit", {
+        const response = await this.client.apiRequest<EmitOutputResponse>("getDeclarationEmit", {
             snapshot: this.snapshotId,
             project: this.project.id,
             files,
         });
+        return toEmitOutput(response);
     }
+}
+
+function toEmitOutput(response: EmitOutputResponse): EmitOutput {
+    const outputFiles = new Map<string, EmitOutputFile>();
+    for (const { fileName, ...outputFile } of response.outputFiles) {
+        outputFiles.set(fileName, outputFile);
+    }
+    return {
+        emitSkipped: response.emitSkipped,
+        diagnostics: response.diagnostics,
+        outputFiles,
+    };
 }
 
 export class Checker {

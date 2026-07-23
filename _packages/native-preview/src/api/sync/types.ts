@@ -396,7 +396,6 @@ export interface Diagnostic {
 }
 
 export interface EmitOutputFile {
-    readonly fileName: string;
     readonly text: string;
     readonly sourceFileName?: string | undefined;
 }
@@ -410,7 +409,7 @@ export interface EmitResult {
 export interface EmitOutput {
     readonly emitSkipped: boolean;
     readonly diagnostics: readonly Diagnostic[];
-    readonly outputFiles: readonly EmitOutputFile[];
+    readonly outputFiles: ReadonlyMap<string, EmitOutputFile>;
 }
 
 export interface ImportSymbolAction {

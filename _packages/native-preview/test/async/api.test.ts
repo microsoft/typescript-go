@@ -4669,13 +4669,14 @@ describe("Program - selected file emit", () => {
             const project = snapshot.getProject("/tsconfig.json")!;
             const result = await project.program.getJavaScriptEmit(["/src/a.ts", "/src/b.ts"]);
             assert.equal(result.emitSkipped, false);
-            assert.deepEqual(result.outputFiles.map(f => f.fileName), [
+            assert.deepEqual([...result.outputFiles.keys()], [
                 "/src/a.js",
                 "/src/a.js.map",
                 "/src/b.js",
                 "/src/b.js.map",
             ]);
-            assert.ok(result.outputFiles.every(f => f.sourceFileName === "/src/a.ts" || f.sourceFileName === "/src/b.ts"));
+            assert.equal(result.outputFiles.get("/src/a.js")?.sourceFileName, "/src/a.ts");
+            assert.match(result.outputFiles.get("/src/a.js")!.text, /export const a = 1/);
             assert.equal(fs.readFile?.("/src/a.js"), undefined);
         }
         finally {
@@ -4690,12 +4691,13 @@ describe("Program - selected file emit", () => {
             const project = snapshot.getProject("/tsconfig.json")!;
             const result = await project.program.getDeclarationEmit(["/src/a.ts", "/src/b.ts"]);
             assert.equal(result.emitSkipped, false);
-            assert.deepEqual(result.outputFiles.map(f => f.fileName), [
+            assert.deepEqual([...result.outputFiles.keys()], [
                 "/src/a.d.ts",
                 "/src/a.d.ts.map",
                 "/src/b.d.ts",
                 "/src/b.d.ts.map",
             ]);
+            assert.equal(result.outputFiles.get("/src/a.d.ts")?.sourceFileName, "/src/a.ts");
             assert.equal(fs.readFile?.("/src/a.d.ts"), undefined);
         }
         finally {
@@ -4708,8 +4710,8 @@ describe("Program - selected file emit", () => {
         try {
             const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
             const project = snapshot.getProject("/tsconfig.json")!;
-            assert.deepEqual((await project.program.getJavaScriptEmit([])).outputFiles, []);
-            assert.deepEqual((await project.program.getDeclarationEmit([])).outputFiles, []);
+            assert.deepEqual((await project.program.getJavaScriptEmit([])).outputFiles, new Map());
+            assert.deepEqual((await project.program.getDeclarationEmit([])).outputFiles, new Map());
         }
         finally {
             await api.close();
@@ -5585,11 +5587,57 @@ describe("Program - emit", () => {
             const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
             const project = snapshot.getProject("/tsconfig.json")!;
             const result = await project.program.emitToString(EmitOnly.OnlyDts);
-            assert.deepEqual(result.outputFiles.map(f => f.fileName), [
+            assert.deepEqual([...result.outputFiles.keys()], [
                 "/dist/src/index.d.ts",
                 "/dist/src/testing.d.ts",
             ]);
             assert.equal(fs.readFile?.("/dist/src/index.js"), undefined);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("whole-program emit includes option-controlled maps", async () => {
+        const { api, fs } = spawnAPIWithFS({
+            "/tsconfig.json": JSON.stringify({
+                compilerOptions: {
+                    declaration: true,
+                    declarationMap: true,
+                    outDir: "dist",
+                    sourceMap: true,
+                },
+            }),
+            "/src/index.ts": "export const value: number = 1;",
+        });
+        try {
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+
+            const result = await project.program.emit();
+            assert.deepEqual(
+                new Set(result.emittedFiles),
+                new Set([
+                    "/dist/src/index.js",
+                    "/dist/src/index.js.map",
+                    "/dist/src/index.d.ts",
+                    "/dist/src/index.d.ts.map",
+                ]),
+            );
+            assert.ok(fs.fileExists?.("/dist/src/index.js.map"));
+            assert.ok(fs.fileExists?.("/dist/src/index.d.ts.map"));
+
+            const js = await project.program.emitToString(EmitOnly.OnlyJs);
+            assert.deepEqual([...js.outputFiles.keys()], [
+                "/dist/src/index.js",
+                "/dist/src/index.js.map",
+            ]);
+
+            const dts = await project.program.emitToString(EmitOnly.OnlyDts);
+            assert.deepEqual([...dts.outputFiles.keys()], [
+                "/dist/src/index.d.ts",
+                "/dist/src/index.d.ts.map",
+            ]);
         }
         finally {
             await api.close();
@@ -5620,7 +5668,7 @@ describe("Program - emit", () => {
             const stringResult = await project.program.emitToString();
             assert.equal(stringResult.emitSkipped, true);
             assert.ok(stringResult.diagnostics.some(d => d.code === 1109));
-            assert.deepEqual(stringResult.outputFiles, []);
+            assert.deepEqual(stringResult.outputFiles, new Map());
         }
         finally {
             await api.close();
@@ -5643,7 +5691,7 @@ describe("Program - emit", () => {
             assert.deepEqual(await project.program.emitToString(), {
                 diagnostics: [],
                 emitSkipped: true,
-                outputFiles: [],
+                outputFiles: new Map(),
             });
             assert.equal(fs.readFile?.("/src/index.js"), undefined);
         }
