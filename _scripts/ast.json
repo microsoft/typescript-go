@@ -444,6 +444,7 @@
             },
             "NotEmittedStatement",
             "PartiallyEmittedExpression",
+            "CommaListExpression",
             "SyntheticReferenceExpression",
             "NotEmittedTypeElement"
         ],
@@ -4040,6 +4041,19 @@
                     {
                         "name": "Expression",
                         "type": "Expression"
+                    }
+                ]
+            },
+            "CommaListExpression": {
+                "generateSubtreeFacts": true,
+                "extends": [
+                    "ExpressionBase"
+                ],
+                "members": [
+                    {
+                        "name": "Elements",
+                        "type": "Expression",
+                        "list": "NodeList"
                     }
                 ]
             },

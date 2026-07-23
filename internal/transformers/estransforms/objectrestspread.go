@@ -13,6 +13,7 @@ type objectRestSpreadTransformer struct {
 
 	inExportedVariableStatement bool
 	expressionResultIsUnused    bool
+	unusedExpressionVisitor     *ast.NodeVisitor
 
 	parametersWithPrecedingObjectRestOrSpread map[*ast.Node]struct{}
 }
@@ -33,6 +34,8 @@ func (ch *objectRestSpreadTransformer) visit(node *ast.Node) *ast.Node {
 		return ch.visitObjectLiteralExpression(node.AsObjectLiteralExpression())
 	case ast.KindBinaryExpression:
 		return ch.visitBinaryExpression(node.AsBinaryExpression(), expressionResultIsUnused)
+	case ast.KindCommaListExpression:
+		return ch.visitCommaListExpression(node.AsCommaListExpression(), expressionResultIsUnused)
 	case ast.KindExpressionStatement:
 		ch.expressionResultIsUnused = true
 		return ch.Visitor().VisitEachChild(node)
@@ -513,6 +516,20 @@ func (ch *objectRestSpreadTransformer) visitBinaryExpression(node *ast.BinaryExp
 	return ch.Visitor().VisitEachChild(node.AsNode())
 }
 
+func (ch *objectRestSpreadTransformer) visitWithUnusedExpressionResult(node *ast.Node) *ast.Node {
+	ch.expressionResultIsUnused = true
+	return ch.visit(node)
+}
+
+func (ch *objectRestSpreadTransformer) visitCommaListExpression(node *ast.CommaListExpression, expressionResultIsUnused bool) *ast.Node {
+	if expressionResultIsUnused {
+		ch.expressionResultIsUnused = true
+		return ch.Visitor().VisitEachChild(node.AsNode())
+	}
+	elements := ast.VisitCommaListElements(node.Elements, ch.Visitor(), ch.unusedExpressionVisitor)
+	return ch.Factory().UpdateCommaListExpression(node, elements)
+}
+
 func (ch *objectRestSpreadTransformer) visitObjectLiteralExpression(node *ast.ObjectLiteralExpression) *ast.Node {
 	if (node.SubtreeFacts() & ast.SubtreeContainsObjectRestOrSpread) == 0 {
 		return ch.Visitor().VisitEachChild(node.AsNode())
@@ -589,5 +606,7 @@ func (ch *objectRestSpreadTransformer) chunkObjectLiteralElements(list *ast.Node
 
 func newObjectRestSpreadTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	tx := &objectRestSpreadTransformer{compilerOptions: opts.CompilerOptions}
-	return tx.NewTransformer(tx.visit, opts.Context)
+	result := tx.NewTransformer(tx.visit, opts.Context)
+	tx.unusedExpressionVisitor = tx.EmitContext().NewNodeVisitor(tx.visitWithUnusedExpressionResult)
+	return result
 }

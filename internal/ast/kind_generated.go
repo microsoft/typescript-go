@@ -386,6 +386,7 @@ const (
 	// Transformation nodes
 	KindNotEmittedStatement
 	KindPartiallyEmittedExpression
+	KindCommaListExpression
 	KindSyntheticReferenceExpression
 	KindNotEmittedTypeElement
 	KindCount

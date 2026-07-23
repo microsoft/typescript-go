@@ -1052,6 +1052,8 @@ func (n *Node) ElementList() *NodeList {
 		return n.AsArrayLiteralExpression().Elements
 	case KindTupleType:
 		return n.AsTupleTypeNode().Elements
+	case KindCommaListExpression:
+		return n.AsCommaListExpression().Elements
 	}
 	panic("Unhandled case in Node.ElementList: " + n.Kind.String())
 }
