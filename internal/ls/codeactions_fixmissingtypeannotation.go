@@ -429,7 +429,7 @@ func (f *isolatedDeclarationsFixer) extractAsVariable(span core.TextRange) strin
 			return ""
 		}
 
-		tempName := f.changeTracker.EmitContext.Factory.NewUniqueNameEx(getIdentifierNameForNode(targetNode), printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+		tempName := f.changeTracker.Factory.NewUniqueNameEx(getIdentifierNameForNode(targetNode), printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
 
 		replacementTarget := targetNode
 		initializationNode := targetNode
@@ -596,7 +596,7 @@ func (f *isolatedDeclarationsFixer) transformExportAssignment(defaultExport *ast
 
 	factory := f.changeTracker.NodeFactory
 
-	defaultIdentifier := f.changeTracker.EmitContext.Factory.NewUniqueName("_default")
+	defaultIdentifier := f.changeTracker.Factory.NewUniqueName("_default")
 
 	// Deep clone the expression so synthesized nodes don't reference original source positions
 	clonedExpression := factory.DeepCloneNode(expression)
@@ -644,7 +644,7 @@ func (f *isolatedDeclarationsFixer) transformExtendsClauseWithExpression(classDe
 	if cd.Name() != nil {
 		baseName = cd.Name().Text() + "Base"
 	}
-	baseClassName := f.changeTracker.EmitContext.Factory.NewUniqueNameEx(baseName, printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+	baseClassName := f.changeTracker.Factory.NewUniqueNameEx(baseName, printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
 
 	// Create: const <BaseName>: <type> = <expression>;
 	clonedExpression := factory.DeepCloneNode(expression)
@@ -681,7 +681,7 @@ func (f *isolatedDeclarationsFixer) transformDestructuringPatterns(bindingPatter
 	var baseExprNode *ast.Node
 	if !ast.IsIdentifier(initializer) {
 		// Create a temporary variable for complex expressions
-		tempName := f.changeTracker.EmitContext.Factory.NewUniqueNameEx("dest", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+		tempName := f.changeTracker.Factory.NewUniqueNameEx("dest", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
 		clonedInitializer := factory.DeepCloneNode(initializer)
 		varDecl := factory.NewVariableDeclaration(tempName.AsNode(), nil, nil, clonedInitializer)
 		varDeclList := factory.NewVariableDeclarationList(factory.NewNodeList([]*ast.Node{varDecl}), ast.NodeFlagsConst)
@@ -750,7 +750,7 @@ func (f *isolatedDeclarationsFixer) extractBindingElements(
 			if be.PropertyName != nil && ast.IsComputedPropertyName(be.PropertyName) {
 				// Handle computed property names: create a temp variable for the computed expression
 				computedExpression := be.PropertyName.AsComputedPropertyName().Expression
-				identifierForComputedProperty := f.changeTracker.EmitContext.Factory.NewGeneratedNameForNode(computedExpression)
+				identifierForComputedProperty := f.changeTracker.Factory.NewGeneratedNameForNode(computedExpression)
 				compVarDecl := factory.NewVariableDeclaration(identifierForComputedProperty.AsNode(), nil, nil, computedExpression)
 				compVarDeclList := factory.NewVariableDeclarationList(factory.NewNodeList([]*ast.Node{compVarDecl}), ast.NodeFlagsConst)
 				compVarStmt := factory.NewVariableStatement(nil, compVarDeclList)
@@ -815,7 +815,7 @@ func (f *isolatedDeclarationsFixer) emitBindingElementVariable(
 		if propName != nil && ast.IsIdentifier(propName) {
 			tempBaseName = propName.Text()
 		}
-		tempName := f.changeTracker.EmitContext.Factory.NewUniqueNameEx(tempBaseName, printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+		tempName := f.changeTracker.Factory.NewUniqueNameEx(tempBaseName, printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
 		tempVarDecl := factory.NewVariableDeclaration(tempName.AsNode(), nil, nil, variableInitializer)
 		tempVarDeclList := factory.NewVariableDeclarationList(factory.NewNodeList([]*ast.Node{tempVarDecl}), ast.NodeFlagsConst)
 		tempVarStmt := factory.NewVariableStatement(nil, tempVarDeclList)
@@ -845,8 +845,8 @@ func (f *isolatedDeclarationsFixer) emitBindingElementVariable(
 
 func (f *isolatedDeclarationsFixer) getExportModifier(enclosingVarStmt *ast.Node) *ast.ModifierList {
 	if ast.HasSyntacticModifier(enclosingVarStmt, ast.ModifierFlagsExport) {
-		exportToken := f.changeTracker.NodeFactory.NewToken(ast.KindExportKeyword)
-		return f.changeTracker.NodeFactory.NewModifierList([]*ast.Node{exportToken})
+		exportToken := f.changeTracker.NewToken(ast.KindExportKeyword)
+		return f.changeTracker.NewModifierList([]*ast.Node{exportToken})
 	}
 	return nil
 }
@@ -932,8 +932,8 @@ func (f *isolatedDeclarationsFixer) getExtraFlags(node *ast.Node, t *checker.Typ
 
 // createTypeOfFromEntityNameExpression creates a `typeof X` type query node.
 func (f *isolatedDeclarationsFixer) createTypeOfFromEntityNameExpression(node *ast.Node) *ast.TypeNode {
-	return f.changeTracker.NodeFactory.NewTypeQueryNode(
-		f.changeTracker.NodeFactory.DeepCloneNode(node), nil,
+	return f.changeTracker.NewTypeQueryNode(
+		f.changeTracker.DeepCloneNode(node), nil,
 	)
 }
 
@@ -1060,7 +1060,7 @@ func (f *isolatedDeclarationsFixer) makeSpreadVariable(
 	intersectionTypes *[]*ast.TypeNode,
 	newSpreads *[]*ast.Node,
 ) {
-	tempName := f.changeTracker.EmitContext.Factory.NewUniqueNameEx(
+	tempName := f.changeTracker.Factory.NewUniqueNameEx(
 		name+"_Part"+strconv.Itoa(len(*newSpreads)+1),
 		printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic},
 	).AsNode()
@@ -1183,8 +1183,8 @@ func (f *isolatedDeclarationsFixer) typeToMinimizedReferenceType(t *checker.Type
 			cutoff := endOfRequiredTypeParameters(f.checker, t)
 			if cutoff < len(nodeTypeArgs) {
 				// Trim trailing default type arguments
-				trimmedArgs := f.changeTracker.NodeFactory.NewNodeList(nodeTypeArgs[:cutoff])
-				typeNode = f.changeTracker.NodeFactory.UpdateTypeReferenceNode(
+				trimmedArgs := f.changeTracker.NewNodeList(nodeTypeArgs[:cutoff])
+				typeNode = f.changeTracker.UpdateTypeReferenceNode(
 					typeNode.AsTypeReferenceNode(),
 					typeNode.AsTypeReferenceNode().TypeName,
 					trimmedArgs,
@@ -1279,8 +1279,8 @@ func (f *isolatedDeclarationsFixer) addTypeToVariableLike(decl *ast.Node) string
 // consistently with the actual code edits, and passes the source file so that the printer's
 // name generator can check for conflicts with existing file-level identifiers.
 func typeToStringForDiag(typeNode *ast.Node, sourceFile *ast.SourceFile, ct *change.Tracker) string {
-	savedFlags := ct.EmitContext.EmitFlags(typeNode)
-	ct.EmitContext.SetEmitFlags(typeNode, savedFlags|printer.EFSingleLine)
+	savedFlags := ct.EmitFlags(typeNode)
+	ct.SetEmitFlags(typeNode, savedFlags|printer.EFSingleLine)
 	p := printer.NewPrinter(
 		printer.PrinterOptions{
 			NewLine: core.NewLineKindLF,
@@ -1291,7 +1291,7 @@ func typeToStringForDiag(typeNode *ast.Node, sourceFile *ast.SourceFile, ct *cha
 	writer, release := printer.GetSingleLineStringWriter()
 	defer release()
 	p.Write(typeNode, sourceFile, writer, nil)
-	ct.EmitContext.SetEmitFlags(typeNode, savedFlags)
+	ct.SetEmitFlags(typeNode, savedFlags)
 	result := writer.String()
 	if len(result) > 160 {
 		return result[:157] + "..."

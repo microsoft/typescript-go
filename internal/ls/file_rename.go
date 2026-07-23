@@ -121,7 +121,7 @@ func (l *LanguageService) updateTsconfigFiles(program *compiler.Program, changeT
 						changeTracker.InsertNodeAfter(
 							configFile,
 							elements[len(elements)-1],
-							changeTracker.NodeFactory.NewStringLiteral(relativePathFromDirectory(configDir, newPath, l.UseCaseSensitiveFileNames()), ast.TokenFlagsNone),
+							changeTracker.NewStringLiteral(relativePathFromDirectory(configDir, newPath, l.UseCaseSensitiveFileNames()), ast.TokenFlagsNone),
 						)
 					}
 				}

@@ -77,9 +77,9 @@ func (f *missingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 		typeNode := f.createTypeNode(t, enclosingDeclaration, flags, nodeBuilder, idToSymbol)
 		var questionToken *ast.TokenNode
 		if optional && preserveOptional&preserveOptionalFlagsProperty != 0 {
-			questionToken = f.changeTracker.NodeFactory.NewToken(ast.KindQuestionToken)
+			questionToken = f.changeTracker.NewToken(ast.KindQuestionToken)
 		}
-		return append(nodes, f.changeTracker.NodeFactory.NewPropertyDeclaration(modifiers, createPropertyName(f.changeTracker.NodeFactory, declarationName, quotePreference), questionToken, typeNode, nil /*initializer*/))
+		return append(nodes, f.changeTracker.NewPropertyDeclaration(modifiers, createPropertyName(f.changeTracker.NodeFactory, declarationName, quotePreference), questionToken, typeNode, nil /*initializer*/))
 
 	case ast.KindGetAccessor, ast.KindSetAccessor:
 		nodeBuilder, idToSymbol := f.createNodeBuilder()
@@ -95,7 +95,7 @@ func (f *missingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 			if ast.IsGetAccessorDeclaration(accessor) {
 				nodes = append(
 					nodes,
-					f.changeTracker.NodeFactory.NewGetAccessorDeclaration(
+					f.changeTracker.NewGetAccessorDeclaration(
 						modifiers, createPropertyName(f.changeTracker.NodeFactory, declarationName, quotePreference),
 						nil /*typeParameters*/, nil /*parameters*/, f.createTypeNode(t, enclosingDeclaration, flags, nodeBuilder, idToSymbol), nil /*fullSignature*/, f.createBody(body, ambient, quotePreference),
 					),
@@ -109,7 +109,7 @@ func (f *missingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 				}
 
 				nodes = append(
-					nodes, f.changeTracker.NodeFactory.NewSetAccessorDeclaration(
+					nodes, f.changeTracker.NewSetAccessorDeclaration(
 						modifiers, createPropertyName(f.changeTracker.NodeFactory, declarationName, quotePreference),
 						nil /*typeParameters*/, createDummyParameters(f.changeTracker.NodeFactory, 1, []string{parameter.Name().Text()}, []*ast.TypeNode{f.createTypeNode(t, enclosingDeclaration, flags, nodeBuilder, idToSymbol)}, 1, ast.IsInJSFile(enclosingDeclaration)),
 						nil /*type*/, nil /*fullSignature*/, f.createBody(body, ambient, quotePreference),
@@ -198,7 +198,7 @@ func (f *missingMemberFixer) createModifiers(symbol *ast.Symbol, declaration *as
 	if modifierFlags == ast.ModifierFlagsNone {
 		return nil
 	}
-	return f.changeTracker.NodeFactory.NewModifierList(ast.CreateModifiersFromModifierFlags(modifierFlags, f.changeTracker.NodeFactory.NewModifier))
+	return f.changeTracker.NewModifierList(ast.CreateModifiersFromModifierFlags(modifierFlags, f.changeTracker.NewModifier))
 }
 
 func (f *missingMemberFixer) shouldAddOverrideKeyword(declaration *ast.Node) bool {
@@ -244,12 +244,12 @@ func (f *missingMemberFixer) createSignatureDeclarationFromSignature(signature *
 				}
 
 				nodes = append(nodes,
-					f.changeTracker.NodeFactory.UpdateTypeParameterDeclaration(typeParameter, typeParameter.Modifiers(), typeParameter.Name(), constraint, typeParameter.Expression, defaultType))
+					f.changeTracker.UpdateTypeParameterDeclaration(typeParameter, typeParameter.Modifiers(), typeParameter.Name(), constraint, typeParameter.Expression, defaultType))
 			} else {
 				nodes = append(nodes, tp)
 			}
 		}
-		typeParameters = f.changeTracker.NodeFactory.NewNodeList(nodes)
+		typeParameters = f.changeTracker.NewNodeList(nodes)
 	}
 
 	if parameters != nil {
@@ -266,9 +266,9 @@ func (f *missingMemberFixer) createSignatureDeclarationFromSignature(signature *
 			}
 
 			nodes = append(nodes,
-				f.changeTracker.NodeFactory.UpdateParameterDeclaration(parameter, parameter.Modifiers(), parameter.DotDotDotToken, parameter.Name(), core.IfElse(isJS, nil, parameter.QuestionToken), parameterTypeNode, parameter.Initializer))
+				f.changeTracker.UpdateParameterDeclaration(parameter, parameter.Modifiers(), parameter.DotDotDotToken, parameter.Name(), core.IfElse(isJS, nil, parameter.QuestionToken), parameterTypeNode, parameter.Initializer))
 		}
-		parameters = f.changeTracker.NodeFactory.NewNodeList(nodes)
+		parameters = f.changeTracker.NewNodeList(nodes)
 	}
 
 	if typeNode != nil {
@@ -277,26 +277,26 @@ func (f *missingMemberFixer) createSignatureDeclarationFromSignature(signature *
 
 	var questionToken *ast.TokenNode
 	if optional {
-		questionToken = f.changeTracker.NodeFactory.NewToken(ast.KindQuestionToken)
+		questionToken = f.changeTracker.NewToken(ast.KindQuestionToken)
 	}
 
 	switch kind {
 	case ast.KindFunctionExpression:
 		fn := signatureDeclaration.AsFunctionExpression()
-		return f.changeTracker.NodeFactory.UpdateFunctionExpression(fn, modifiers, fn.AsteriskToken, core.IfElse(name != nil && ast.IsIdentifier(name), name, nil), typeParameters, parameters, typeNode, fn.FullSignature, core.OrElse(body, fn.Body))
+		return f.changeTracker.UpdateFunctionExpression(fn, modifiers, fn.AsteriskToken, core.IfElse(name != nil && ast.IsIdentifier(name), name, nil), typeParameters, parameters, typeNode, fn.FullSignature, core.OrElse(body, fn.Body))
 
 	case ast.KindArrowFunction:
 		fn := signatureDeclaration.AsArrowFunction()
-		return f.changeTracker.NodeFactory.UpdateArrowFunction(fn, modifiers, typeParameters, parameters, typeNode, fn.FullSignature, fn.EqualsGreaterThanToken, core.OrElse(body, fn.Body))
+		return f.changeTracker.UpdateArrowFunction(fn, modifiers, typeParameters, parameters, typeNode, fn.FullSignature, fn.EqualsGreaterThanToken, core.OrElse(body, fn.Body))
 
 	case ast.KindMethodDeclaration:
 		method := signatureDeclaration.AsMethodDeclaration()
-		methodName := core.IfElse(name == nil, f.changeTracker.NodeFactory.NewIdentifier(""), createPropertyName(f.changeTracker.NodeFactory, name, quotePreference))
-		return f.changeTracker.NodeFactory.UpdateMethodDeclaration(method, modifiers, method.AsteriskToken, methodName, questionToken, typeParameters, parameters, typeNode, method.FullSignature, body)
+		methodName := core.IfElse(name == nil, f.changeTracker.NewIdentifier(""), createPropertyName(f.changeTracker.NodeFactory, name, quotePreference))
+		return f.changeTracker.UpdateMethodDeclaration(method, modifiers, method.AsteriskToken, methodName, questionToken, typeParameters, parameters, typeNode, method.FullSignature, body)
 
 	case ast.KindFunctionDeclaration:
 		fn := signatureDeclaration.AsFunctionDeclaration()
-		return f.changeTracker.NodeFactory.UpdateFunctionDeclaration(fn, modifiers, fn.AsteriskToken, core.IfElse(name != nil && ast.IsIdentifier(name), name, nil), typeParameters, parameters, typeNode, fn.FullSignature, core.OrElse(body, fn.Body))
+		return f.changeTracker.UpdateFunctionDeclaration(fn, modifiers, fn.AsteriskToken, core.IfElse(name != nil && ast.IsIdentifier(name), name, nil), typeParameters, parameters, typeNode, fn.FullSignature, core.OrElse(body, fn.Body))
 	}
 
 	return nil
@@ -337,20 +337,20 @@ func (f *missingMemberFixer) createSignatureDeclarationFromSignatures(signatures
 
 		var questionToken *ast.QuestionToken
 		if maxNonRestArgs >= minArgumentCount {
-			questionToken = f.changeTracker.NodeFactory.NewToken(ast.KindQuestionToken)
+			questionToken = f.changeTracker.NewToken(ast.KindQuestionToken)
 		}
 
-		parameters.Nodes = append(parameters.Nodes, f.changeTracker.NodeFactory.NewParameterDeclaration(
-			nil /*modifiers*/, f.changeTracker.NodeFactory.NewToken(ast.KindDotDotDotToken),
-			f.changeTracker.NodeFactory.NewIdentifier(restParameterName), questionToken,
-			f.changeTracker.NodeFactory.NewArrayTypeNode(f.changeTracker.NodeFactory.NewKeywordTypeNode(ast.KindUnknownKeyword)), nil, /*initializer*/
+		parameters.Nodes = append(parameters.Nodes, f.changeTracker.NewParameterDeclaration(
+			nil /*modifiers*/, f.changeTracker.NewToken(ast.KindDotDotDotToken),
+			f.changeTracker.NewIdentifier(restParameterName), questionToken,
+			f.changeTracker.NewArrayTypeNode(f.changeTracker.NewKeywordTypeNode(ast.KindUnknownKeyword)), nil, /*initializer*/
 		))
 	}
 
-	methodName := core.IfElse(name == nil, f.changeTracker.NodeFactory.NewIdentifier(""), createPropertyName(f.changeTracker.NodeFactory, name, quotePreference))
+	methodName := core.IfElse(name == nil, f.changeTracker.NewIdentifier(""), createPropertyName(f.changeTracker.NodeFactory, name, quotePreference))
 
-	return f.changeTracker.NodeFactory.NewMethodDeclaration(
-		modifiers, nil /*asteriskToken*/, methodName, core.IfElse(optional, f.changeTracker.NodeFactory.NewToken(ast.KindQuestionToken), nil),
+	return f.changeTracker.NewMethodDeclaration(
+		modifiers, nil /*asteriskToken*/, methodName, core.IfElse(optional, f.changeTracker.NewToken(ast.KindQuestionToken), nil),
 		nil /*typeParameters*/, parameters, f.getReturnTypeFromSignatures(signatures, enclosingDeclaration, nodeBuilder, idToSymbol),
 		nil /*fullSignature*/, f.createBody(body, false /*ambient*/, quotePreference),
 	)
@@ -408,7 +408,7 @@ func (f *missingMemberFixer) createBody(body *ast.FunctionBody, ambient bool, qu
 	if ambient {
 		return nil
 	}
-	body = f.changeTracker.NodeFactory.DeepCloneNode(body)
+	body = f.changeTracker.DeepCloneNode(body)
 	if body == nil {
 		return f.createStubbedMethodBody(quotePreference)
 	}
@@ -421,11 +421,11 @@ func (f *missingMemberFixer) createStubbedMethodBody(quotePreference lsutil.Quot
 		tokenFlags = ast.TokenFlagsSingleQuote
 	}
 
-	return f.changeTracker.NodeFactory.NewBlock(f.changeTracker.NodeFactory.NewNodeList([]*ast.Node{
-		f.changeTracker.NodeFactory.NewThrowStatement(
-			f.changeTracker.NodeFactory.NewNewExpression(
-				f.changeTracker.NodeFactory.NewIdentifier("Error"), nil /*typeArguments*/, f.changeTracker.NodeFactory.NewNodeList([]*ast.Node{
-					f.changeTracker.NodeFactory.NewStringLiteral(diagnostics.Method_not_implemented.Localize(f.locale), tokenFlags),
+	return f.changeTracker.NewBlock(f.changeTracker.NewNodeList([]*ast.Node{
+		f.changeTracker.NewThrowStatement(
+			f.changeTracker.NewNewExpression(
+				f.changeTracker.NewIdentifier("Error"), nil /*typeArguments*/, f.changeTracker.NewNodeList([]*ast.Node{
+					f.changeTracker.NewStringLiteral(diagnostics.Method_not_implemented.Localize(f.locale), tokenFlags),
 				}),
 			),
 		),
