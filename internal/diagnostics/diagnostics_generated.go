@@ -4326,8 +4326,6 @@ var The_content_mapper_0_failed_1_times_and_will_not_be_used = &Message{code: 10
 
 var The_content_mapper_0_did_not_provide_the_required_position_mappings = &Message{code: 100027, category: CategoryError, key: "The_content_mapper_0_did_not_provide_the_required_position_mappings_100027", text: "The content mapper '{0}' did not provide the required position mappings."}
 
-var The_content_mapper_0_produced_position_mappings_that_do_not_cover_the_entire_transformed_output_near_output_offset_1 = &Message{code: 100028, category: CategoryError, key: "The_content_mapper_0_produced_position_mappings_that_do_not_cover_the_entire_transformed_output_near_100028", text: "The content mapper '{0}' produced position mappings that do not cover the entire transformed output (near output offset {1})."}
-
 var The_content_mapper_0_produced_a_position_mapping_that_points_outside_the_original_content_original_offset_1 = &Message{code: 100029, category: CategoryError, key: "The_content_mapper_0_produced_a_position_mapping_that_points_outside_the_original_content_original_o_100029", text: "The content mapper '{0}' produced a position mapping that points outside the original content (original offset {1})."}
 
 var The_content_mapper_0_produced_a_verbatim_mapping_that_does_not_match_the_original_content_output_offset_1_original_offset_2 = &Message{code: 100030, category: CategoryError, key: "The_content_mapper_0_produced_a_verbatim_mapping_that_does_not_match_the_original_content_output_off_100030", text: "The content mapper '{0}' produced a verbatim mapping that does not match the original content (output offset {1}, original offset {2})."}
@@ -8680,8 +8678,6 @@ func keyToMessage(key Key) *Message {
 		return The_content_mapper_0_failed_1_times_and_will_not_be_used
 	case "The_content_mapper_0_did_not_provide_the_required_position_mappings_100027":
 		return The_content_mapper_0_did_not_provide_the_required_position_mappings
-	case "The_content_mapper_0_produced_position_mappings_that_do_not_cover_the_entire_transformed_output_near_100028":
-		return The_content_mapper_0_produced_position_mappings_that_do_not_cover_the_entire_transformed_output_near_output_offset_1
 	case "The_content_mapper_0_produced_a_position_mapping_that_points_outside_the_original_content_original_o_100029":
 		return The_content_mapper_0_produced_a_position_mapping_that_points_outside_the_original_content_original_offset_1
 	case "The_content_mapper_0_produced_a_verbatim_mapping_that_does_not_match_the_original_content_output_off_100030":
