@@ -126,7 +126,7 @@ console.log('Hello, world!');
 export {};
 
 //// [/home/src/workspaces/solution/projects/server/dist/server/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","../../../shared/dist/src/myClass.d.ts","../../src/server.ts","../../../shared/dist/src/logging.d.ts","../../../shared/dist/src/random.d.ts","../../../shared/src/myClass.ts","../../../shared/src/logging.ts","../../../shared/src/random.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n",{"version":"12354a7ec5afade35d10a2c1fa79eb29-import { MyClass } from ':shared/myClass.js';\nconsole.log('Hello, world!');","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1},"380f2d6d625cf989bc9f9bcd67ce3afe-export declare function log(str: string): void;\n","1d6adcd8c4dee61b744fc1ff84370372-export declare function randomFn(str: string): void;\n"],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"..","rootDir":"../../.."},"referencedMap":[[3,1]],"latestChangedDtsFile":"./src/server.d.ts","resolvedRoot":[[2,6],[4,7],[5,8]]}
+{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","../../../shared/dist/src/myClass.d.ts","../../src/server.ts","../../../shared/dist/src/logging.d.ts","../../../shared/dist/src/random.d.ts","../../../shared/src/myClass.ts","../../../shared/src/logging.ts","../../../shared/src/random.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n","12354a7ec5afade35d10a2c1fa79eb29-import { MyClass } from ':shared/myClass.js';\nconsole.log('Hello, world!');","380f2d6d625cf989bc9f9bcd67ce3afe-export declare function log(str: string): void;\n","1d6adcd8c4dee61b744fc1ff84370372-export declare function randomFn(str: string): void;\n"],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"..","rootDir":"../../.."},"referencedMap":[[3,1]],"latestChangedDtsFile":"./src/server.d.ts","emitSignatures":[[3,"abe7d9981d6018efb6b2b794f40a1607-export {};\n"]],"resolvedRoot":[[2,6],[4,7],[5,8]]}
 //// [/home/src/workspaces/solution/projects/server/dist/server/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -176,13 +176,8 @@ export {};
     {
       "fileName": "../../src/server.ts",
       "version": "12354a7ec5afade35d10a2c1fa79eb29-import { MyClass } from ':shared/myClass.js';\nconsole.log('Hello, world!');",
-      "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "12354a7ec5afade35d10a2c1fa79eb29-import { MyClass } from ':shared/myClass.js';\nconsole.log('Hello, world!');",
-        "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "12354a7ec5afade35d10a2c1fa79eb29-import { MyClass } from ':shared/myClass.js';\nconsole.log('Hello, world!');",
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "../../../shared/dist/src/logging.d.ts",
@@ -213,6 +208,16 @@ export {};
     ]
   },
   "latestChangedDtsFile": "./src/server.d.ts",
+  "emitSignatures": [
+    {
+      "file": "../../src/server.ts",
+      "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
+      "original": [
+        3,
+        "abe7d9981d6018efb6b2b794f40a1607-export {};\n"
+      ]
+    }
+  ],
   "resolvedRoot": [
     [
       "../../../shared/dist/src/myClass.d.ts",
@@ -227,7 +232,7 @@ export {};
       "../../../shared/src/random.ts"
     ]
   ],
-  "size": 1740
+  "size": 1717
 }
 //// [/home/src/workspaces/solution/projects/shared/dist/src/logging.d.ts] *new* 
 export declare function log(str: string): void;
@@ -254,7 +259,7 @@ export function randomFn(str) {
 }
 
 //// [/home/src/workspaces/solution/projects/shared/dist/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../src/logging.ts","../src/myClass.ts","../src/random.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"e8c4594410128d4531f2321647cc451d-export function log(str: string) {\n    console.log(str);\n}","signature":"380f2d6d625cf989bc9f9bcd67ce3afe-export declare function log(str: string): void;\n","impliedNodeFormat":1},{"version":"22f018e389f527d25fc2ad2b2c6c9702-export class MyClass { }","signature":"21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n","impliedNodeFormat":1},{"version":"4f1c4e78a007da37552cba1c9b98db63-export function randomFn(str: string) {\n    console.log(str);\n}","signature":"1d6adcd8c4dee61b744fc1ff84370372-export declare function randomFn(str: string): void;\n","impliedNodeFormat":1}],"options":{"composite":true,"outDir":"./"},"latestChangedDtsFile":"./src/random.d.ts"}
+{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../src/logging.ts","../src/myClass.ts","../src/random.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"e8c4594410128d4531f2321647cc451d-export function log(str: string) {\n    console.log(str);\n}","22f018e389f527d25fc2ad2b2c6c9702-export class MyClass { }","4f1c4e78a007da37552cba1c9b98db63-export function randomFn(str: string) {\n    console.log(str);\n}"],"options":{"composite":true,"outDir":"./"},"latestChangedDtsFile":"./src/random.d.ts","emitSignatures":[[2,"380f2d6d625cf989bc9f9bcd67ce3afe-export declare function log(str: string): void;\n"],[3,"21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n"],[4,"1d6adcd8c4dee61b744fc1ff84370372-export declare function randomFn(str: string): void;\n"]]}
 //// [/home/src/workspaces/solution/projects/shared/dist/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -293,35 +298,20 @@ export function randomFn(str) {
     {
       "fileName": "../src/logging.ts",
       "version": "e8c4594410128d4531f2321647cc451d-export function log(str: string) {\n    console.log(str);\n}",
-      "signature": "380f2d6d625cf989bc9f9bcd67ce3afe-export declare function log(str: string): void;\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "e8c4594410128d4531f2321647cc451d-export function log(str: string) {\n    console.log(str);\n}",
-        "signature": "380f2d6d625cf989bc9f9bcd67ce3afe-export declare function log(str: string): void;\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "e8c4594410128d4531f2321647cc451d-export function log(str: string) {\n    console.log(str);\n}",
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "../src/myClass.ts",
       "version": "22f018e389f527d25fc2ad2b2c6c9702-export class MyClass { }",
-      "signature": "21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "22f018e389f527d25fc2ad2b2c6c9702-export class MyClass { }",
-        "signature": "21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "22f018e389f527d25fc2ad2b2c6c9702-export class MyClass { }",
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "../src/random.ts",
       "version": "4f1c4e78a007da37552cba1c9b98db63-export function randomFn(str: string) {\n    console.log(str);\n}",
-      "signature": "1d6adcd8c4dee61b744fc1ff84370372-export declare function randomFn(str: string): void;\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "4f1c4e78a007da37552cba1c9b98db63-export function randomFn(str: string) {\n    console.log(str);\n}",
-        "signature": "1d6adcd8c4dee61b744fc1ff84370372-export declare function randomFn(str: string): void;\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "4f1c4e78a007da37552cba1c9b98db63-export function randomFn(str: string) {\n    console.log(str);\n}",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "options": {
@@ -329,7 +319,33 @@ export function randomFn(str) {
     "outDir": "./"
   },
   "latestChangedDtsFile": "./src/random.d.ts",
-  "size": 1649
+  "emitSignatures": [
+    {
+      "file": "../src/logging.ts",
+      "signature": "380f2d6d625cf989bc9f9bcd67ce3afe-export declare function log(str: string): void;\n",
+      "original": [
+        2,
+        "380f2d6d625cf989bc9f9bcd67ce3afe-export declare function log(str: string): void;\n"
+      ]
+    },
+    {
+      "file": "../src/myClass.ts",
+      "signature": "21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n",
+      "original": [
+        3,
+        "21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n"
+      ]
+    },
+    {
+      "file": "../src/random.ts",
+      "signature": "1d6adcd8c4dee61b744fc1ff84370372-export declare function randomFn(str: string): void;\n",
+      "original": [
+        4,
+        "1d6adcd8c4dee61b744fc1ff84370372-export declare function randomFn(str: string): void;\n"
+      ]
+    }
+  ],
+  "size": 1542
 }
 
 projects/shared/tsconfig.json::
@@ -424,7 +440,7 @@ projects/shared/dist/src/random.d.ts
    Matched by include pattern '../shared/src/**/*.ts' in 'projects/server/tsconfig.json'
    File is output of project reference source 'projects/shared/src/random.ts'
 //// [/home/src/workspaces/solution/projects/server/dist/server/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","../../../shared/dist/src/myClass.d.ts","../../src/server.ts","../../../shared/dist/src/logging.d.ts","../../../shared/dist/src/random.d.ts","../../../shared/src/myClass.ts","../../../shared/src/logging.ts","../../../shared/src/random.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n",{"version":"12354a7ec5afade35d10a2c1fa79eb29-import { MyClass } from ':shared/myClass.js';\nconsole.log('Hello, world!');","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1},"5178e2a779ca8b29fb07201995347a09-export declare function log(str: string): void;\nexport declare const x = 10;\n","1d6adcd8c4dee61b744fc1ff84370372-export declare function randomFn(str: string): void;\n"],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"..","rootDir":"../../.."},"referencedMap":[[3,1]],"latestChangedDtsFile":"./src/server.d.ts","resolvedRoot":[[2,6],[4,7],[5,8]]}
+{"version":"FakeTSVersion","root":[[2,5]],"fileNames":["lib.es2025.full.d.ts","../../../shared/dist/src/myClass.d.ts","../../src/server.ts","../../../shared/dist/src/logging.d.ts","../../../shared/dist/src/random.d.ts","../../../shared/src/myClass.ts","../../../shared/src/logging.ts","../../../shared/src/random.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n","12354a7ec5afade35d10a2c1fa79eb29-import { MyClass } from ':shared/myClass.js';\nconsole.log('Hello, world!');","5178e2a779ca8b29fb07201995347a09-export declare function log(str: string): void;\nexport declare const x = 10;\n","1d6adcd8c4dee61b744fc1ff84370372-export declare function randomFn(str: string): void;\n"],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"..","rootDir":"../../.."},"referencedMap":[[3,1]],"latestChangedDtsFile":"./src/server.d.ts","emitSignatures":[[3,"abe7d9981d6018efb6b2b794f40a1607-export {};\n"]],"resolvedRoot":[[2,6],[4,7],[5,8]]}
 //// [/home/src/workspaces/solution/projects/server/dist/server/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -474,13 +490,8 @@ projects/shared/dist/src/random.d.ts
     {
       "fileName": "../../src/server.ts",
       "version": "12354a7ec5afade35d10a2c1fa79eb29-import { MyClass } from ':shared/myClass.js';\nconsole.log('Hello, world!');",
-      "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "12354a7ec5afade35d10a2c1fa79eb29-import { MyClass } from ':shared/myClass.js';\nconsole.log('Hello, world!');",
-        "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "12354a7ec5afade35d10a2c1fa79eb29-import { MyClass } from ':shared/myClass.js';\nconsole.log('Hello, world!');",
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "../../../shared/dist/src/logging.d.ts",
@@ -511,6 +522,16 @@ projects/shared/dist/src/random.d.ts
     ]
   },
   "latestChangedDtsFile": "./src/server.d.ts",
+  "emitSignatures": [
+    {
+      "file": "../../src/server.ts",
+      "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
+      "original": [
+        3,
+        "abe7d9981d6018efb6b2b794f40a1607-export {};\n"
+      ]
+    }
+  ],
   "resolvedRoot": [
     [
       "../../../shared/dist/src/myClass.d.ts",
@@ -525,7 +546,7 @@ projects/shared/dist/src/random.d.ts
       "../../../shared/src/random.ts"
     ]
   ],
-  "size": 1770
+  "size": 1747
 }
 //// [/home/src/workspaces/solution/projects/shared/dist/src/logging.d.ts] *modified* 
 export declare function log(str: string): void;
@@ -538,7 +559,7 @@ export function log(str) {
 export const x = 10;
 
 //// [/home/src/workspaces/solution/projects/shared/dist/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../src/logging.ts","../src/myClass.ts","../src/random.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"107fb48a395fd47390346ab424ebcc12-export function log(str: string) {\n    console.log(str);\n}export const x = 10;","signature":"5178e2a779ca8b29fb07201995347a09-export declare function log(str: string): void;\nexport declare const x = 10;\n","impliedNodeFormat":1},{"version":"22f018e389f527d25fc2ad2b2c6c9702-export class MyClass { }","signature":"21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n","impliedNodeFormat":1},{"version":"4f1c4e78a007da37552cba1c9b98db63-export function randomFn(str: string) {\n    console.log(str);\n}","signature":"1d6adcd8c4dee61b744fc1ff84370372-export declare function randomFn(str: string): void;\n","impliedNodeFormat":1}],"options":{"composite":true,"outDir":"./"},"latestChangedDtsFile":"./src/logging.d.ts"}
+{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../src/logging.ts","../src/myClass.ts","../src/random.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"107fb48a395fd47390346ab424ebcc12-export function log(str: string) {\n    console.log(str);\n}export const x = 10;","signature":"5178e2a779ca8b29fb07201995347a09-export declare function log(str: string): void;\nexport declare const x = 10;\n","impliedNodeFormat":1},"22f018e389f527d25fc2ad2b2c6c9702-export class MyClass { }","4f1c4e78a007da37552cba1c9b98db63-export function randomFn(str: string) {\n    console.log(str);\n}"],"options":{"composite":true,"outDir":"./"},"latestChangedDtsFile":"./src/logging.d.ts","emitSignatures":[[3,"21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n"],[4,"1d6adcd8c4dee61b744fc1ff84370372-export declare function randomFn(str: string): void;\n"]]}
 //// [/home/src/workspaces/solution/projects/shared/dist/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -588,24 +609,14 @@ export const x = 10;
     {
       "fileName": "../src/myClass.ts",
       "version": "22f018e389f527d25fc2ad2b2c6c9702-export class MyClass { }",
-      "signature": "21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "22f018e389f527d25fc2ad2b2c6c9702-export class MyClass { }",
-        "signature": "21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "22f018e389f527d25fc2ad2b2c6c9702-export class MyClass { }",
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "../src/random.ts",
       "version": "4f1c4e78a007da37552cba1c9b98db63-export function randomFn(str: string) {\n    console.log(str);\n}",
-      "signature": "1d6adcd8c4dee61b744fc1ff84370372-export declare function randomFn(str: string): void;\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "4f1c4e78a007da37552cba1c9b98db63-export function randomFn(str: string) {\n    console.log(str);\n}",
-        "signature": "1d6adcd8c4dee61b744fc1ff84370372-export declare function randomFn(str: string): void;\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "4f1c4e78a007da37552cba1c9b98db63-export function randomFn(str: string) {\n    console.log(str);\n}",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "options": {
@@ -613,7 +624,25 @@ export const x = 10;
     "outDir": "./"
   },
   "latestChangedDtsFile": "./src/logging.d.ts",
-  "size": 1700
+  "emitSignatures": [
+    {
+      "file": "../src/myClass.ts",
+      "signature": "21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n",
+      "original": [
+        3,
+        "21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n"
+      ]
+    },
+    {
+      "file": "../src/random.ts",
+      "signature": "1d6adcd8c4dee61b744fc1ff84370372-export declare function randomFn(str: string): void;\n",
+      "original": [
+        4,
+        "1d6adcd8c4dee61b744fc1ff84370372-export declare function randomFn(str: string): void;\n"
+      ]
+    }
+  ],
+  "size": 1635
 }
 
 projects/shared/tsconfig.json::
@@ -691,7 +720,7 @@ projects/shared/dist/src/logging.d.ts
    Matched by include pattern '../shared/src/**/*.ts' in 'projects/server/tsconfig.json'
    File is output of project reference source 'projects/shared/src/logging.ts'
 //// [/home/src/workspaces/solution/projects/server/dist/server/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../../../shared/dist/src/myClass.d.ts","../../src/server.ts","../../../shared/dist/src/logging.d.ts","../../../shared/src/myClass.ts","../../../shared/src/logging.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n",{"version":"12354a7ec5afade35d10a2c1fa79eb29-import { MyClass } from ':shared/myClass.js';\nconsole.log('Hello, world!');","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1},"5178e2a779ca8b29fb07201995347a09-export declare function log(str: string): void;\nexport declare const x = 10;\n"],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"..","rootDir":"../../.."},"referencedMap":[[3,1]],"latestChangedDtsFile":"./src/server.d.ts","resolvedRoot":[[2,5],[4,6]]}
+{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../../../shared/dist/src/myClass.d.ts","../../src/server.ts","../../../shared/dist/src/logging.d.ts","../../../shared/src/myClass.ts","../../../shared/src/logging.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n","12354a7ec5afade35d10a2c1fa79eb29-import { MyClass } from ':shared/myClass.js';\nconsole.log('Hello, world!');","5178e2a779ca8b29fb07201995347a09-export declare function log(str: string): void;\nexport declare const x = 10;\n"],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"..","rootDir":"../../.."},"referencedMap":[[3,1]],"latestChangedDtsFile":"./src/server.d.ts","emitSignatures":[[3,"abe7d9981d6018efb6b2b794f40a1607-export {};\n"]],"resolvedRoot":[[2,5],[4,6]]}
 //// [/home/src/workspaces/solution/projects/server/dist/server/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -738,13 +767,8 @@ projects/shared/dist/src/logging.d.ts
     {
       "fileName": "../../src/server.ts",
       "version": "12354a7ec5afade35d10a2c1fa79eb29-import { MyClass } from ':shared/myClass.js';\nconsole.log('Hello, world!');",
-      "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "12354a7ec5afade35d10a2c1fa79eb29-import { MyClass } from ':shared/myClass.js';\nconsole.log('Hello, world!');",
-        "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "12354a7ec5afade35d10a2c1fa79eb29-import { MyClass } from ':shared/myClass.js';\nconsole.log('Hello, world!');",
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "../../../shared/dist/src/logging.d.ts",
@@ -769,6 +793,16 @@ projects/shared/dist/src/logging.d.ts
     ]
   },
   "latestChangedDtsFile": "./src/server.d.ts",
+  "emitSignatures": [
+    {
+      "file": "../../src/server.ts",
+      "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
+      "original": [
+        3,
+        "abe7d9981d6018efb6b2b794f40a1607-export {};\n"
+      ]
+    }
+  ],
   "resolvedRoot": [
     [
       "../../../shared/dist/src/myClass.d.ts",
@@ -779,10 +813,10 @@ projects/shared/dist/src/logging.d.ts
       "../../../shared/src/logging.ts"
     ]
   ],
-  "size": 1603
+  "size": 1580
 }
 //// [/home/src/workspaces/solution/projects/shared/dist/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","../src/logging.ts","../src/myClass.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"107fb48a395fd47390346ab424ebcc12-export function log(str: string) {\n    console.log(str);\n}export const x = 10;","signature":"5178e2a779ca8b29fb07201995347a09-export declare function log(str: string): void;\nexport declare const x = 10;\n","impliedNodeFormat":1},{"version":"22f018e389f527d25fc2ad2b2c6c9702-export class MyClass { }","signature":"21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n","impliedNodeFormat":1}],"options":{"composite":true,"outDir":"./"},"latestChangedDtsFile":"./src/logging.d.ts"}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","../src/logging.ts","../src/myClass.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"107fb48a395fd47390346ab424ebcc12-export function log(str: string) {\n    console.log(str);\n}export const x = 10;","signature":"5178e2a779ca8b29fb07201995347a09-export declare function log(str: string): void;\nexport declare const x = 10;\n","impliedNodeFormat":1},"22f018e389f527d25fc2ad2b2c6c9702-export class MyClass { }"],"options":{"composite":true,"outDir":"./"},"latestChangedDtsFile":"./src/logging.d.ts","emitSignatures":[[3,"21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n"]]}
 //// [/home/src/workspaces/solution/projects/shared/dist/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -830,13 +864,8 @@ projects/shared/dist/src/logging.d.ts
     {
       "fileName": "../src/myClass.ts",
       "version": "22f018e389f527d25fc2ad2b2c6c9702-export class MyClass { }",
-      "signature": "21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "22f018e389f527d25fc2ad2b2c6c9702-export class MyClass { }",
-        "signature": "21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "22f018e389f527d25fc2ad2b2c6c9702-export class MyClass { }",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "options": {
@@ -844,7 +873,17 @@ projects/shared/dist/src/logging.d.ts
     "outDir": "./"
   },
   "latestChangedDtsFile": "./src/logging.d.ts",
-  "size": 1444
+  "emitSignatures": [
+    {
+      "file": "../src/myClass.ts",
+      "signature": "21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n",
+      "original": [
+        3,
+        "21b0030a128ccc5aedc6fdbe3cdf12e3-export declare class MyClass {\n}\n"
+      ]
+    }
+  ],
+  "size": 1421
 }
 
 projects/shared/tsconfig.json::

@@ -107,7 +107,7 @@ export type Wrap<C> = {
 export {};
 
 //// [/home/src/workspaces/project/outDir/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../src/box.ts","../src/wrap.ts","../src/bug.js"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"1cd060b4cfa55ea2a47d197d9f36eb29-export interface Box<T> {\n    unbox(): T\n}","signature":"ccd603d89ad1b8ff239d77bc32963c82-export interface Box<T> {\n    unbox(): T;\n}\n","impliedNodeFormat":1},{"version":"1bc7a2cd8efebbc7d3a335f2e15093fd-export type Wrap<C> = {\n    [K in keyof C]: { wrapped: C[K] }\n}","signature":"78de3c807d49489120ea1f77c5bb07aa-export type Wrap<C> = {\n    [K in keyof C]: {\n        wrapped: C[K];\n    };\n};\n","impliedNodeFormat":1},{"version":"b4e9b31d9609a8709f2fc33522d84448-import * as B from \"./box.js\"\nimport * as W from \"./wrap.js\"\n\n/**\n * @template {object} C\n * @param {C} source\n * @returns {W.Wrap<C>}\n */\nconst wrap = source => {\nthrow source\n}\n\n/**\n * @returns {B.Box<number>}\n */\nconst box = (n = 0) => ({ unbox: () => n })\n\nexport const bug = wrap({ n: box(1) });","signature":"7c385e40e65a179131e0621fad086d2a-import * as B from \"./box.js\";\nimport * as W from \"./wrap.js\";\nexport declare const bug: W.Wrap<{\n    n: B.Box<number>;\n}>;\n","impliedNodeFormat":1}],"fileIdsList":[[2,3]],"options":{"checkJs":true,"composite":true,"outDir":"./"},"referencedMap":[[4,1]],"latestChangedDtsFile":"./src/bug.d.ts"}
+{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../src/box.ts","../src/wrap.ts","../src/bug.js"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"1cd060b4cfa55ea2a47d197d9f36eb29-export interface Box<T> {\n    unbox(): T\n}","1bc7a2cd8efebbc7d3a335f2e15093fd-export type Wrap<C> = {\n    [K in keyof C]: { wrapped: C[K] }\n}","b4e9b31d9609a8709f2fc33522d84448-import * as B from \"./box.js\"\nimport * as W from \"./wrap.js\"\n\n/**\n * @template {object} C\n * @param {C} source\n * @returns {W.Wrap<C>}\n */\nconst wrap = source => {\nthrow source\n}\n\n/**\n * @returns {B.Box<number>}\n */\nconst box = (n = 0) => ({ unbox: () => n })\n\nexport const bug = wrap({ n: box(1) });"],"fileIdsList":[[2,3]],"options":{"checkJs":true,"composite":true,"outDir":"./"},"referencedMap":[[4,1]],"latestChangedDtsFile":"./src/bug.d.ts","emitSignatures":[[2,"ccd603d89ad1b8ff239d77bc32963c82-export interface Box<T> {\n    unbox(): T;\n}\n"],[3,"78de3c807d49489120ea1f77c5bb07aa-export type Wrap<C> = {\n    [K in keyof C]: {\n        wrapped: C[K];\n    };\n};\n"],[4,"7c385e40e65a179131e0621fad086d2a-import * as B from \"./box.js\";\nimport * as W from \"./wrap.js\";\nexport declare const bug: W.Wrap<{\n    n: B.Box<number>;\n}>;\n"]]}
 //// [/home/src/workspaces/project/outDir/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -146,35 +146,20 @@ export {};
     {
       "fileName": "../src/box.ts",
       "version": "1cd060b4cfa55ea2a47d197d9f36eb29-export interface Box<T> {\n    unbox(): T\n}",
-      "signature": "ccd603d89ad1b8ff239d77bc32963c82-export interface Box<T> {\n    unbox(): T;\n}\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "1cd060b4cfa55ea2a47d197d9f36eb29-export interface Box<T> {\n    unbox(): T\n}",
-        "signature": "ccd603d89ad1b8ff239d77bc32963c82-export interface Box<T> {\n    unbox(): T;\n}\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "1cd060b4cfa55ea2a47d197d9f36eb29-export interface Box<T> {\n    unbox(): T\n}",
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "../src/wrap.ts",
       "version": "1bc7a2cd8efebbc7d3a335f2e15093fd-export type Wrap<C> = {\n    [K in keyof C]: { wrapped: C[K] }\n}",
-      "signature": "78de3c807d49489120ea1f77c5bb07aa-export type Wrap<C> = {\n    [K in keyof C]: {\n        wrapped: C[K];\n    };\n};\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "1bc7a2cd8efebbc7d3a335f2e15093fd-export type Wrap<C> = {\n    [K in keyof C]: { wrapped: C[K] }\n}",
-        "signature": "78de3c807d49489120ea1f77c5bb07aa-export type Wrap<C> = {\n    [K in keyof C]: {\n        wrapped: C[K];\n    };\n};\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "1bc7a2cd8efebbc7d3a335f2e15093fd-export type Wrap<C> = {\n    [K in keyof C]: { wrapped: C[K] }\n}",
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "../src/bug.js",
       "version": "b4e9b31d9609a8709f2fc33522d84448-import * as B from \"./box.js\"\nimport * as W from \"./wrap.js\"\n\n/**\n * @template {object} C\n * @param {C} source\n * @returns {W.Wrap<C>}\n */\nconst wrap = source => {\nthrow source\n}\n\n/**\n * @returns {B.Box<number>}\n */\nconst box = (n = 0) => ({ unbox: () => n })\n\nexport const bug = wrap({ n: box(1) });",
-      "signature": "7c385e40e65a179131e0621fad086d2a-import * as B from \"./box.js\";\nimport * as W from \"./wrap.js\";\nexport declare const bug: W.Wrap<{\n    n: B.Box<number>;\n}>;\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "b4e9b31d9609a8709f2fc33522d84448-import * as B from \"./box.js\"\nimport * as W from \"./wrap.js\"\n\n/**\n * @template {object} C\n * @param {C} source\n * @returns {W.Wrap<C>}\n */\nconst wrap = source => {\nthrow source\n}\n\n/**\n * @returns {B.Box<number>}\n */\nconst box = (n = 0) => ({ unbox: () => n })\n\nexport const bug = wrap({ n: box(1) });",
-        "signature": "7c385e40e65a179131e0621fad086d2a-import * as B from \"./box.js\";\nimport * as W from \"./wrap.js\";\nexport declare const bug: W.Wrap<{\n    n: B.Box<number>;\n}>;\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "b4e9b31d9609a8709f2fc33522d84448-import * as B from \"./box.js\"\nimport * as W from \"./wrap.js\"\n\n/**\n * @template {object} C\n * @param {C} source\n * @returns {W.Wrap<C>}\n */\nconst wrap = source => {\nthrow source\n}\n\n/**\n * @returns {B.Box<number>}\n */\nconst box = (n = 0) => ({ unbox: () => n })\n\nexport const bug = wrap({ n: box(1) });",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "fileIdsList": [
@@ -195,7 +180,33 @@ export {};
     ]
   },
   "latestChangedDtsFile": "./src/bug.d.ts",
-  "size": 2104
+  "emitSignatures": [
+    {
+      "file": "../src/box.ts",
+      "signature": "ccd603d89ad1b8ff239d77bc32963c82-export interface Box<T> {\n    unbox(): T;\n}\n",
+      "original": [
+        2,
+        "ccd603d89ad1b8ff239d77bc32963c82-export interface Box<T> {\n    unbox(): T;\n}\n"
+      ]
+    },
+    {
+      "file": "../src/wrap.ts",
+      "signature": "78de3c807d49489120ea1f77c5bb07aa-export type Wrap<C> = {\n    [K in keyof C]: {\n        wrapped: C[K];\n    };\n};\n",
+      "original": [
+        3,
+        "78de3c807d49489120ea1f77c5bb07aa-export type Wrap<C> = {\n    [K in keyof C]: {\n        wrapped: C[K];\n    };\n};\n"
+      ]
+    },
+    {
+      "file": "../src/bug.js",
+      "signature": "7c385e40e65a179131e0621fad086d2a-import * as B from \"./box.js\";\nimport * as W from \"./wrap.js\";\nexport declare const bug: W.Wrap<{\n    n: B.Box<number>;\n}>;\n",
+      "original": [
+        4,
+        "7c385e40e65a179131e0621fad086d2a-import * as B from \"./box.js\";\nimport * as W from \"./wrap.js\";\nexport declare const bug: W.Wrap<{\n    n: B.Box<number>;\n}>;\n"
+      ]
+    }
+  ],
+  "size": 1997
 }
 
 tsconfig.json::
@@ -261,7 +272,7 @@ export const bug = wrap({ n: box(1) });
 export const something = 1;
 
 //// [/home/src/workspaces/project/outDir/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../src/box.ts","../src/wrap.ts","../src/bug.js"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"1cd060b4cfa55ea2a47d197d9f36eb29-export interface Box<T> {\n    unbox(): T\n}","signature":"ccd603d89ad1b8ff239d77bc32963c82-export interface Box<T> {\n    unbox(): T;\n}\n","impliedNodeFormat":1},{"version":"1bc7a2cd8efebbc7d3a335f2e15093fd-export type Wrap<C> = {\n    [K in keyof C]: { wrapped: C[K] }\n}","signature":"78de3c807d49489120ea1f77c5bb07aa-export type Wrap<C> = {\n    [K in keyof C]: {\n        wrapped: C[K];\n    };\n};\n","impliedNodeFormat":1},{"version":"6eacf2e4d90c851011e8978446ec65d2-import * as B from \"./box.js\"\nimport * as W from \"./wrap.js\"\n\n/**\n * @template {object} C\n * @param {C} source\n * @returns {W.Wrap<C>}\n */\nconst wrap = source => {\nthrow source\n}\n\n/**\n * @returns {B.Box<number>}\n */\nconst box = (n = 0) => ({ unbox: () => n })\n\nexport const bug = wrap({ n: box(1) });export const something = 1;","signature":"d57e9c5bf62a61457d245408176c990e-import * as B from \"./box.js\";\nimport * as W from \"./wrap.js\";\nexport declare const bug: W.Wrap<{\n    n: B.Box<number>;\n}>;\nexport declare const something = 1;\n","impliedNodeFormat":1}],"fileIdsList":[[2,3]],"options":{"checkJs":true,"composite":true,"outDir":"./"},"referencedMap":[[4,1]],"latestChangedDtsFile":"./src/bug.d.ts"}
+{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../src/box.ts","../src/wrap.ts","../src/bug.js"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"1cd060b4cfa55ea2a47d197d9f36eb29-export interface Box<T> {\n    unbox(): T\n}","1bc7a2cd8efebbc7d3a335f2e15093fd-export type Wrap<C> = {\n    [K in keyof C]: { wrapped: C[K] }\n}",{"version":"6eacf2e4d90c851011e8978446ec65d2-import * as B from \"./box.js\"\nimport * as W from \"./wrap.js\"\n\n/**\n * @template {object} C\n * @param {C} source\n * @returns {W.Wrap<C>}\n */\nconst wrap = source => {\nthrow source\n}\n\n/**\n * @returns {B.Box<number>}\n */\nconst box = (n = 0) => ({ unbox: () => n })\n\nexport const bug = wrap({ n: box(1) });export const something = 1;","signature":"d57e9c5bf62a61457d245408176c990e-import * as B from \"./box.js\";\nimport * as W from \"./wrap.js\";\nexport declare const bug: W.Wrap<{\n    n: B.Box<number>;\n}>;\nexport declare const something = 1;\n","impliedNodeFormat":1}],"fileIdsList":[[2,3]],"options":{"checkJs":true,"composite":true,"outDir":"./"},"referencedMap":[[4,1]],"latestChangedDtsFile":"./src/bug.d.ts","emitSignatures":[[2,"ccd603d89ad1b8ff239d77bc32963c82-export interface Box<T> {\n    unbox(): T;\n}\n"],[3,"78de3c807d49489120ea1f77c5bb07aa-export type Wrap<C> = {\n    [K in keyof C]: {\n        wrapped: C[K];\n    };\n};\n"]]}
 //// [/home/src/workspaces/project/outDir/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -300,24 +311,14 @@ export const something = 1;
     {
       "fileName": "../src/box.ts",
       "version": "1cd060b4cfa55ea2a47d197d9f36eb29-export interface Box<T> {\n    unbox(): T\n}",
-      "signature": "ccd603d89ad1b8ff239d77bc32963c82-export interface Box<T> {\n    unbox(): T;\n}\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "1cd060b4cfa55ea2a47d197d9f36eb29-export interface Box<T> {\n    unbox(): T\n}",
-        "signature": "ccd603d89ad1b8ff239d77bc32963c82-export interface Box<T> {\n    unbox(): T;\n}\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "1cd060b4cfa55ea2a47d197d9f36eb29-export interface Box<T> {\n    unbox(): T\n}",
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "../src/wrap.ts",
       "version": "1bc7a2cd8efebbc7d3a335f2e15093fd-export type Wrap<C> = {\n    [K in keyof C]: { wrapped: C[K] }\n}",
-      "signature": "78de3c807d49489120ea1f77c5bb07aa-export type Wrap<C> = {\n    [K in keyof C]: {\n        wrapped: C[K];\n    };\n};\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "1bc7a2cd8efebbc7d3a335f2e15093fd-export type Wrap<C> = {\n    [K in keyof C]: { wrapped: C[K] }\n}",
-        "signature": "78de3c807d49489120ea1f77c5bb07aa-export type Wrap<C> = {\n    [K in keyof C]: {\n        wrapped: C[K];\n    };\n};\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "1bc7a2cd8efebbc7d3a335f2e15093fd-export type Wrap<C> = {\n    [K in keyof C]: { wrapped: C[K] }\n}",
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "../src/bug.js",
@@ -349,7 +350,25 @@ export const something = 1;
     ]
   },
   "latestChangedDtsFile": "./src/bug.d.ts",
-  "size": 2168
+  "emitSignatures": [
+    {
+      "file": "../src/box.ts",
+      "signature": "ccd603d89ad1b8ff239d77bc32963c82-export interface Box<T> {\n    unbox(): T;\n}\n",
+      "original": [
+        2,
+        "ccd603d89ad1b8ff239d77bc32963c82-export interface Box<T> {\n    unbox(): T;\n}\n"
+      ]
+    },
+    {
+      "file": "../src/wrap.ts",
+      "signature": "78de3c807d49489120ea1f77c5bb07aa-export type Wrap<C> = {\n    [K in keyof C]: {\n        wrapped: C[K];\n    };\n};\n",
+      "original": [
+        3,
+        "78de3c807d49489120ea1f77c5bb07aa-export type Wrap<C> = {\n    [K in keyof C]: {\n        wrapped: C[K];\n    };\n};\n"
+      ]
+    }
+  ],
+  "size": 2103
 }
 
 tsconfig.json::

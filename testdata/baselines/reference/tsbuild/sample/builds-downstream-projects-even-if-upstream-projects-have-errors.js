@@ -132,7 +132,7 @@ export function leftPad(s, n) { return s + n; }
 export function multiply(a, b) { return a * b; }
 
 //// [/user/username/projects/sample1/core/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","./anotherModule.ts","./index.ts","./some_decl.d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"19cd44ed7278957051fca663f821c916-export const World = \"hello\";","signature":"5aad0de3e7b08bb6e110c7b97361b89e-export declare const World = \"hello\";\n","impliedNodeFormat":1},{"version":"2753a1085d587a7d57069e1105af24ec-export const someString: string = \"HELLO WORLD\";\nexport function leftPad(s: string, n: number) { return s + n; }\nexport function multiply(a: number, b: number) { return a * b; }","signature":"da642d80443e7ccd327091080a82a43c-export declare const someString: string;\nexport declare function leftPad(s: string, n: number): string;\nexport declare function multiply(a: number, b: number): number;\n","impliedNodeFormat":1},{"version":"6ceab83400a6167be2fb5feab881ded0-declare const dts: any;","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"composite":true,"declaration":true,"declarationMap":true,"skipDefaultLibCheck":true},"latestChangedDtsFile":"./index.d.ts"}
+{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","./anotherModule.ts","./index.ts","./some_decl.d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"19cd44ed7278957051fca663f821c916-export const World = \"hello\";","2753a1085d587a7d57069e1105af24ec-export const someString: string = \"HELLO WORLD\";\nexport function leftPad(s: string, n: number) { return s + n; }\nexport function multiply(a: number, b: number) { return a * b; }",{"version":"6ceab83400a6167be2fb5feab881ded0-declare const dts: any;","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"composite":true,"declaration":true,"declarationMap":true,"skipDefaultLibCheck":true},"latestChangedDtsFile":"./index.d.ts","emitSignatures":[[2,"5aad0de3e7b08bb6e110c7b97361b89e-export declare const World = \"hello\";\n"],[3,"da642d80443e7ccd327091080a82a43c-export declare const someString: string;\nexport declare function leftPad(s: string, n: number): string;\nexport declare function multiply(a: number, b: number): number;\n"]]}
 //// [/user/username/projects/sample1/core/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -171,24 +171,14 @@ export function multiply(a, b) { return a * b; }
     {
       "fileName": "./anotherModule.ts",
       "version": "19cd44ed7278957051fca663f821c916-export const World = \"hello\";",
-      "signature": "5aad0de3e7b08bb6e110c7b97361b89e-export declare const World = \"hello\";\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "19cd44ed7278957051fca663f821c916-export const World = \"hello\";",
-        "signature": "5aad0de3e7b08bb6e110c7b97361b89e-export declare const World = \"hello\";\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "19cd44ed7278957051fca663f821c916-export const World = \"hello\";",
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "./index.ts",
       "version": "2753a1085d587a7d57069e1105af24ec-export const someString: string = \"HELLO WORLD\";\nexport function leftPad(s: string, n: number) { return s + n; }\nexport function multiply(a: number, b: number) { return a * b; }",
-      "signature": "da642d80443e7ccd327091080a82a43c-export declare const someString: string;\nexport declare function leftPad(s: string, n: number): string;\nexport declare function multiply(a: number, b: number): number;\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "2753a1085d587a7d57069e1105af24ec-export const someString: string = \"HELLO WORLD\";\nexport function leftPad(s: string, n: number) { return s + n; }\nexport function multiply(a: number, b: number) { return a * b; }",
-        "signature": "da642d80443e7ccd327091080a82a43c-export declare const someString: string;\nexport declare function leftPad(s: string, n: number): string;\nexport declare function multiply(a: number, b: number): number;\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "2753a1085d587a7d57069e1105af24ec-export const someString: string = \"HELLO WORLD\";\nexport function leftPad(s: string, n: number) { return s + n; }\nexport function multiply(a: number, b: number) { return a * b; }",
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "./some_decl.d.ts",
@@ -210,7 +200,25 @@ export function multiply(a, b) { return a * b; }
     "skipDefaultLibCheck": true
   },
   "latestChangedDtsFile": "./index.d.ts",
-  "size": 1830
+  "emitSignatures": [
+    {
+      "file": "./anotherModule.ts",
+      "signature": "5aad0de3e7b08bb6e110c7b97361b89e-export declare const World = \"hello\";\n",
+      "original": [
+        2,
+        "5aad0de3e7b08bb6e110c7b97361b89e-export declare const World = \"hello\";\n"
+      ]
+    },
+    {
+      "file": "./index.ts",
+      "signature": "da642d80443e7ccd327091080a82a43c-export declare const someString: string;\nexport declare function leftPad(s: string, n: number): string;\nexport declare function multiply(a: number, b: number): number;\n",
+      "original": [
+        3,
+        "da642d80443e7ccd327091080a82a43c-export declare const someString: string;\nexport declare function leftPad(s: string, n: number): string;\nexport declare function multiply(a: number, b: number): number;\n"
+      ]
+    }
+  ],
+  "size": 1765
 }
 //// [/user/username/projects/sample1/logic/index.d.ts] *new* 
 export declare function getSecondsInDay(): any;
@@ -228,7 +236,7 @@ export const m = mod;
 //// [/user/username/projects/sample1/logic/index.js.map] *new* 
 {"version":3,"file":"index.js","sourceRoot":"","sources":["index.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,CAAC,MAAM,eAAe,CAAC;AACnC,MAAM,UAAU,eAAe;IAC3B,OAAO,CAAC,CAAC,OAAO,EAAE,CAAC;AACvB,CAAC;AACD,OAAO,KAAK,GAAG,MAAM,uBAAuB,CAAC;AAC7C,MAAM,CAAC,MAAM,CAAC,GAAG,GAAG,CAAC"}
 //// [/user/username/projects/sample1/logic/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[4],"fileNames":["lib.es2025.full.d.ts","../core/index.d.ts","../core/anotherModule.d.ts","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"fc70810d80f598d415c6f21c113a400b-export declare const someString: string;\nexport declare function leftPad(s: string, n: number): string;\nexport declare function multiply(a: number, b: number): number;\n//# sourceMappingURL=index.d.ts.map","5ef600f6f6585506cfe942fc161e76c5-export declare const World = \"hello\";\n//# sourceMappingURL=anotherModule.d.ts.map",{"version":"4da0a6ee7d4a662685afc8fe143c994d-import * as c from '../core/index';\nexport function getSecondsInDay() {\n    return c.muitply();\n}\nimport * as mod from '../core/anotherModule';\nexport const m = mod;","signature":"07587a8dc02fb971c487c21dd8f4849b-export declare function getSecondsInDay(): any;\nimport * as mod from '../core/anotherModule';\nexport declare const m: typeof mod;\n","impliedNodeFormat":1}],"fileIdsList":[[2,3]],"options":{"composite":true,"declaration":true,"skipDefaultLibCheck":true,"sourceMap":true},"referencedMap":[[4,1]],"semanticDiagnosticsPerFile":[[4,[{"pos":85,"end":92,"code":2339,"category":1,"messageKey":"Property_0_does_not_exist_on_type_1_2339","messageArgs":["muitply","typeof import(\"/user/username/projects/sample1/core/index\")"]}]]],"latestChangedDtsFile":"./index.d.ts"}
+{"version":"FakeTSVersion","root":[4],"fileNames":["lib.es2025.full.d.ts","../core/index.d.ts","../core/anotherModule.d.ts","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"fc70810d80f598d415c6f21c113a400b-export declare const someString: string;\nexport declare function leftPad(s: string, n: number): string;\nexport declare function multiply(a: number, b: number): number;\n//# sourceMappingURL=index.d.ts.map","5ef600f6f6585506cfe942fc161e76c5-export declare const World = \"hello\";\n//# sourceMappingURL=anotherModule.d.ts.map","4da0a6ee7d4a662685afc8fe143c994d-import * as c from '../core/index';\nexport function getSecondsInDay() {\n    return c.muitply();\n}\nimport * as mod from '../core/anotherModule';\nexport const m = mod;"],"fileIdsList":[[2,3]],"options":{"composite":true,"declaration":true,"skipDefaultLibCheck":true,"sourceMap":true},"referencedMap":[[4,1]],"semanticDiagnosticsPerFile":[[4,[{"pos":85,"end":92,"code":2339,"category":1,"messageKey":"Property_0_does_not_exist_on_type_1_2339","messageArgs":["muitply","typeof import(\"/user/username/projects/sample1/core/index\")"]}]]],"latestChangedDtsFile":"./index.d.ts","emitSignatures":[[4,"07587a8dc02fb971c487c21dd8f4849b-export declare function getSecondsInDay(): any;\nimport * as mod from '../core/anotherModule';\nexport declare const m: typeof mod;\n"]]}
 //// [/user/username/projects/sample1/logic/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -274,13 +282,8 @@ export const m = mod;
     {
       "fileName": "./index.ts",
       "version": "4da0a6ee7d4a662685afc8fe143c994d-import * as c from '../core/index';\nexport function getSecondsInDay() {\n    return c.muitply();\n}\nimport * as mod from '../core/anotherModule';\nexport const m = mod;",
-      "signature": "07587a8dc02fb971c487c21dd8f4849b-export declare function getSecondsInDay(): any;\nimport * as mod from '../core/anotherModule';\nexport declare const m: typeof mod;\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "4da0a6ee7d4a662685afc8fe143c994d-import * as c from '../core/index';\nexport function getSecondsInDay() {\n    return c.muitply();\n}\nimport * as mod from '../core/anotherModule';\nexport const m = mod;",
-        "signature": "07587a8dc02fb971c487c21dd8f4849b-export declare function getSecondsInDay(): any;\nimport * as mod from '../core/anotherModule';\nexport declare const m: typeof mod;\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "4da0a6ee7d4a662685afc8fe143c994d-import * as c from '../core/index';\nexport function getSecondsInDay() {\n    return c.muitply();\n}\nimport * as mod from '../core/anotherModule';\nexport const m = mod;",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "fileIdsList": [
@@ -320,7 +323,17 @@ export const m = mod;
     ]
   ],
   "latestChangedDtsFile": "./index.d.ts",
-  "size": 2109
+  "emitSignatures": [
+    {
+      "file": "./index.ts",
+      "signature": "07587a8dc02fb971c487c21dd8f4849b-export declare function getSecondsInDay(): any;\nimport * as mod from '../core/anotherModule';\nexport declare const m: typeof mod;\n",
+      "original": [
+        4,
+        "07587a8dc02fb971c487c21dd8f4849b-export declare function getSecondsInDay(): any;\nimport * as mod from '../core/anotherModule';\nexport declare const m: typeof mod;\n"
+      ]
+    }
+  ],
+  "size": 2086
 }
 //// [/user/username/projects/sample1/tests/index.d.ts] *new* 
 import * as mod from '../core/anotherModule';
@@ -335,7 +348,7 @@ import * as mod from '../core/anotherModule';
 export const m = mod;
 
 //// [/user/username/projects/sample1/tests/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[5],"fileNames":["lib.es2025.full.d.ts","../core/index.d.ts","../core/anotherModule.d.ts","../logic/index.d.ts","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"fc70810d80f598d415c6f21c113a400b-export declare const someString: string;\nexport declare function leftPad(s: string, n: number): string;\nexport declare function multiply(a: number, b: number): number;\n//# sourceMappingURL=index.d.ts.map","5ef600f6f6585506cfe942fc161e76c5-export declare const World = \"hello\";\n//# sourceMappingURL=anotherModule.d.ts.map","07587a8dc02fb971c487c21dd8f4849b-export declare function getSecondsInDay(): any;\nimport * as mod from '../core/anotherModule';\nexport declare const m: typeof mod;\n",{"version":"7fa4162f733e6b9e7f7d9d9410e62f61-import * as c from '../core/index';\nimport * as logic from '../logic/index';\n\nc.leftPad(\"\", 10);\nlogic.getSecondsInDay();\n\nimport * as mod from '../core/anotherModule';\nexport const m = mod;","signature":"4b3c99afe665034856f74c660f74d6fd-import * as mod from '../core/anotherModule';\nexport declare const m: typeof mod;\n","impliedNodeFormat":1}],"fileIdsList":[[3],[2,3,4]],"options":{"composite":true,"declaration":true,"skipDefaultLibCheck":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./index.d.ts"}
+{"version":"FakeTSVersion","root":[5],"fileNames":["lib.es2025.full.d.ts","../core/index.d.ts","../core/anotherModule.d.ts","../logic/index.d.ts","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"fc70810d80f598d415c6f21c113a400b-export declare const someString: string;\nexport declare function leftPad(s: string, n: number): string;\nexport declare function multiply(a: number, b: number): number;\n//# sourceMappingURL=index.d.ts.map","5ef600f6f6585506cfe942fc161e76c5-export declare const World = \"hello\";\n//# sourceMappingURL=anotherModule.d.ts.map","07587a8dc02fb971c487c21dd8f4849b-export declare function getSecondsInDay(): any;\nimport * as mod from '../core/anotherModule';\nexport declare const m: typeof mod;\n","7fa4162f733e6b9e7f7d9d9410e62f61-import * as c from '../core/index';\nimport * as logic from '../logic/index';\n\nc.leftPad(\"\", 10);\nlogic.getSecondsInDay();\n\nimport * as mod from '../core/anotherModule';\nexport const m = mod;"],"fileIdsList":[[3],[2,3,4]],"options":{"composite":true,"declaration":true,"skipDefaultLibCheck":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./index.d.ts","emitSignatures":[[5,"4b3c99afe665034856f74c660f74d6fd-import * as mod from '../core/anotherModule';\nexport declare const m: typeof mod;\n"]]}
 //// [/user/username/projects/sample1/tests/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -388,13 +401,8 @@ export const m = mod;
     {
       "fileName": "./index.ts",
       "version": "7fa4162f733e6b9e7f7d9d9410e62f61-import * as c from '../core/index';\nimport * as logic from '../logic/index';\n\nc.leftPad(\"\", 10);\nlogic.getSecondsInDay();\n\nimport * as mod from '../core/anotherModule';\nexport const m = mod;",
-      "signature": "4b3c99afe665034856f74c660f74d6fd-import * as mod from '../core/anotherModule';\nexport declare const m: typeof mod;\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "7fa4162f733e6b9e7f7d9d9410e62f61-import * as c from '../core/index';\nimport * as logic from '../logic/index';\n\nc.leftPad(\"\", 10);\nlogic.getSecondsInDay();\n\nimport * as mod from '../core/anotherModule';\nexport const m = mod;",
-        "signature": "4b3c99afe665034856f74c660f74d6fd-import * as mod from '../core/anotherModule';\nexport declare const m: typeof mod;\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "7fa4162f733e6b9e7f7d9d9410e62f61-import * as c from '../core/index';\nimport * as logic from '../logic/index';\n\nc.leftPad(\"\", 10);\nlogic.getSecondsInDay();\n\nimport * as mod from '../core/anotherModule';\nexport const m = mod;",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "fileIdsList": [
@@ -423,7 +431,17 @@ export const m = mod;
     ]
   },
   "latestChangedDtsFile": "./index.d.ts",
-  "size": 2047
+  "emitSignatures": [
+    {
+      "file": "./index.ts",
+      "signature": "4b3c99afe665034856f74c660f74d6fd-import * as mod from '../core/anotherModule';\nexport declare const m: typeof mod;\n",
+      "original": [
+        5,
+        "4b3c99afe665034856f74c660f74d6fd-import * as mod from '../core/anotherModule';\nexport declare const m: typeof mod;\n"
+      ]
+    }
+  ],
+  "size": 2024
 }
 
 core/tsconfig.json::

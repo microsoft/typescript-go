@@ -64,7 +64,7 @@ import { myValue } from "abs-dep";
 export const value = myValue;
 
 //// [C:/work/project/dist/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[3],"fileNames":["lib.es2025.full.d.ts","d:/work/deps/dep.d.ts","../src/index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"4384f7716e1c7cc875e39624007cccc9-export declare const myValue: string;",{"version":"6c77917c7b17b3698cb1dbdb7227fbff-import { myValue } from \"abs-dep\";\nexport const value: string = myValue;","signature":"d704bb9feb766d5360f4081857e4c09e-export declare const value: string;\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"./","strict":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./src/index.d.ts"}
+{"version":"FakeTSVersion","root":[3],"fileNames":["lib.es2025.full.d.ts","d:/work/deps/dep.d.ts","../src/index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"4384f7716e1c7cc875e39624007cccc9-export declare const myValue: string;","6c77917c7b17b3698cb1dbdb7227fbff-import { myValue } from \"abs-dep\";\nexport const value: string = myValue;"],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"./","strict":true},"referencedMap":[[3,1]],"latestChangedDtsFile":"./src/index.d.ts","emitSignatures":[[3,"d704bb9feb766d5360f4081857e4c09e-export declare const value: string;\n"]]}
 //// [C:/work/project/dist/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -103,13 +103,8 @@ export const value = myValue;
     {
       "fileName": "../src/index.ts",
       "version": "6c77917c7b17b3698cb1dbdb7227fbff-import { myValue } from \"abs-dep\";\nexport const value: string = myValue;",
-      "signature": "d704bb9feb766d5360f4081857e4c09e-export declare const value: string;\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "6c77917c7b17b3698cb1dbdb7227fbff-import { myValue } from \"abs-dep\";\nexport const value: string = myValue;",
-        "signature": "d704bb9feb766d5360f4081857e4c09e-export declare const value: string;\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "6c77917c7b17b3698cb1dbdb7227fbff-import { myValue } from \"abs-dep\";\nexport const value: string = myValue;",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "fileIdsList": [
@@ -128,7 +123,17 @@ export const value = myValue;
     ]
   },
   "latestChangedDtsFile": "./src/index.d.ts",
-  "size": 1347
+  "emitSignatures": [
+    {
+      "file": "../src/index.ts",
+      "signature": "d704bb9feb766d5360f4081857e4c09e-export declare const value: string;\n",
+      "original": [
+        3,
+        "d704bb9feb766d5360f4081857e4c09e-export declare const value: string;\n"
+      ]
+    }
+  ],
+  "size": 1324
 }
 
 Watch Registrations::

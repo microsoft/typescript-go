@@ -221,19 +221,28 @@ func (t *toBuildInfo) setFileInfoAndEmitSignatures() {
 				panic(fmt.Sprintf("File name at index %d does not match expected relative path or libName: %s != %s", fileId-1, t.buildInfo.FileNames[fileId-1], t.relativeToBuildInfo(string(file.Path()))))
 			}
 		}
+		actualInfo := info
+		if oldSignature, ok := t.snapshot.oldSignatures.Load(file.Path()); ok {
+			actualInfo = &FileInfo{
+				version:            info.version,
+				signature:          oldSignature,
+				affectsGlobalScope: info.affectsGlobalScope,
+				impliedNodeFormat:  info.impliedNodeFormat,
+			}
+		}
 		if t.snapshot.options.Composite.IsTrue() {
 			if !ast.IsJsonSourceFile(file) && t.program.SourceFileMayBeEmitted(file, false) {
 				if emitSignature, loaded := t.snapshot.emitSignatures.Load(file.Path()); !loaded {
 					t.buildInfo.EmitSignatures = append(t.buildInfo.EmitSignatures, &BuildInfoEmitSignature{
 						FileId: fileId,
 					})
-				} else if emitSignature.signature != info.signature {
+				} else if emitSignature.signature != actualInfo.signature {
 					incrementalEmitSignature := &BuildInfoEmitSignature{
 						FileId: fileId,
 					}
 					if emitSignature.signature != "" {
 						incrementalEmitSignature.Signature = emitSignature.signature
-					} else if emitSignature.signatureWithDifferentOptions[0] == info.signature {
+					} else if emitSignature.signatureWithDifferentOptions[0] == actualInfo.signature {
 						incrementalEmitSignature.DiffersOnlyInDtsMap = true
 					} else {
 						incrementalEmitSignature.Signature = emitSignature.signatureWithDifferentOptions[0]
@@ -243,7 +252,7 @@ func (t *toBuildInfo) setFileInfoAndEmitSignatures() {
 				}
 			}
 		}
-		return newBuildInfoFileInfo(info)
+		return newBuildInfoFileInfo(actualInfo)
 	})
 }
 

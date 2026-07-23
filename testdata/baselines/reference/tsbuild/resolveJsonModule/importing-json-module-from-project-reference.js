@@ -106,7 +106,7 @@ const foo_json_1 = require("../strings/foo.json");
 console.log(foo_json_1.foo);
 
 //// [/home/src/workspaces/solution/project/main/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","errors":true,"root":[3],"fileNames":["lib.d.ts","../strings/foo.json","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"0358fbc55b36110a5af2f042a2f514aa-{\n    \"foo\": \"bar baz\"\n}"},{"version":"a22713a27f380b4892020f4caa9bb85f-import { foo } from '../strings/foo.json';\nconsole.log(foo);","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true,"module":1,"rootDir":"..","strict":true,"target":1,"esModuleInterop":true},"referencedMap":[[3,1]],"semanticDiagnosticsPerFile":[1,2,3],"latestChangedDtsFile":"./index.d.ts"}
+{"version":"FakeTSVersion","errors":true,"root":[3],"fileNames":["lib.d.ts","../strings/foo.json","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"0358fbc55b36110a5af2f042a2f514aa-{\n    \"foo\": \"bar baz\"\n}"},"a22713a27f380b4892020f4caa9bb85f-import { foo } from '../strings/foo.json';\nconsole.log(foo);"],"fileIdsList":[[2]],"options":{"composite":true,"module":1,"rootDir":"..","strict":true,"target":1,"esModuleInterop":true},"referencedMap":[[3,1]],"semanticDiagnosticsPerFile":[1,2,3],"latestChangedDtsFile":"./index.d.ts","emitSignatures":[[3,"abe7d9981d6018efb6b2b794f40a1607-export {};\n"]]}
 //// [/home/src/workspaces/solution/project/main/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -149,13 +149,8 @@ console.log(foo_json_1.foo);
     {
       "fileName": "./index.ts",
       "version": "a22713a27f380b4892020f4caa9bb85f-import { foo } from '../strings/foo.json';\nconsole.log(foo);",
-      "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "a22713a27f380b4892020f4caa9bb85f-import { foo } from '../strings/foo.json';\nconsole.log(foo);",
-        "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "a22713a27f380b4892020f4caa9bb85f-import { foo } from '../strings/foo.json';\nconsole.log(foo);",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "fileIdsList": [
@@ -182,7 +177,17 @@ console.log(foo_json_1.foo);
     "./index.ts"
   ],
   "latestChangedDtsFile": "./index.d.ts",
-  "size": 1387
+  "emitSignatures": [
+    {
+      "file": "./index.ts",
+      "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
+      "original": [
+        3,
+        "abe7d9981d6018efb6b2b794f40a1607-export {};\n"
+      ]
+    }
+  ],
+  "size": 1364
 }
 //// [/home/src/workspaces/solution/project/strings/tsconfig.tsbuildinfo] *new* 
 {"version":"FakeTSVersion","errors":true,"root":[2],"fileNames":["lib.d.ts","./foo.json"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"0358fbc55b36110a5af2f042a2f514aa-{\n    \"foo\": \"bar baz\"\n}"}],"options":{"composite":true,"module":1,"rootDir":"..","strict":true,"target":1,"esModuleInterop":true},"semanticDiagnosticsPerFile":[1,2]}

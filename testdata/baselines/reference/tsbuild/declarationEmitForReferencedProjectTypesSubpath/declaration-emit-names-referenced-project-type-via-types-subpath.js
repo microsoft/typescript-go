@@ -107,7 +107,7 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 //// [/home/src/workspaces/solution/packages/consumer/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[5],"packageJsons":["./package.json","../dep/package.json"],"fileNames":["lib.es2025.full.d.ts","../dep/types/themes/componentTypes/formFieldLayout.d.ts","../dep/types/themes/componentTypes/index.d.ts","../dep/types/index.d.ts","./src/index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"2265bb6aae4ea44359eda1a1333669d7-export type FormFieldLayout = {\n    textColor: string;\n    fontSize: string;\n};\nexport default FormFieldLayout;\n","262c77b15a9433c1a517a42af08dabc4-import type FormFieldLayout from \"./formFieldLayout.js\";\nexport type ComponentTypes = {\n    formFieldLayout: () => FormFieldLayout;\n};\n","8c960f82affa27b6eaa999ea3cdac3e7-import type { ComponentTypes as NewComponentTypes } from \"./themes/componentTypes/index.js\";\nexport type { NewComponentTypes };\n",{"version":"0eb11471bc41fb5a80fd0098368e8295-import type { NewComponentTypes } from \"@scope/dep\"\ndeclare const c: NewComponentTypes\nexport const style = c.formFieldLayout()","signature":"9cca47ad36e3ee3df7f98a27c15d37b0-export declare const style: import(\"@scope/dep/types/themes/componentTypes/formFieldLayout.js\").FormFieldLayout;\n","impliedNodeFormat":1}],"fileIdsList":[[4],[3],[2]],"options":{"composite":true,"emitDeclarationOnly":true,"declaration":true,"declarationDir":"./types","module":99,"outDir":"./types","rootDir":"./src","strict":true},"referencedMap":[[5,1],[4,2],[3,3]],"latestChangedDtsFile":"./types/index.d.ts"}
+{"version":"FakeTSVersion","root":[5],"packageJsons":["./package.json","../dep/package.json"],"fileNames":["lib.es2025.full.d.ts","../dep/types/themes/componentTypes/formFieldLayout.d.ts","../dep/types/themes/componentTypes/index.d.ts","../dep/types/index.d.ts","./src/index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"2265bb6aae4ea44359eda1a1333669d7-export type FormFieldLayout = {\n    textColor: string;\n    fontSize: string;\n};\nexport default FormFieldLayout;\n","262c77b15a9433c1a517a42af08dabc4-import type FormFieldLayout from \"./formFieldLayout.js\";\nexport type ComponentTypes = {\n    formFieldLayout: () => FormFieldLayout;\n};\n","8c960f82affa27b6eaa999ea3cdac3e7-import type { ComponentTypes as NewComponentTypes } from \"./themes/componentTypes/index.js\";\nexport type { NewComponentTypes };\n","0eb11471bc41fb5a80fd0098368e8295-import type { NewComponentTypes } from \"@scope/dep\"\ndeclare const c: NewComponentTypes\nexport const style = c.formFieldLayout()"],"fileIdsList":[[4],[3],[2]],"options":{"composite":true,"emitDeclarationOnly":true,"declaration":true,"declarationDir":"./types","module":99,"outDir":"./types","rootDir":"./src","strict":true},"referencedMap":[[5,1],[4,2],[3,3]],"latestChangedDtsFile":"./types/index.d.ts","emitSignatures":[[5,"9cca47ad36e3ee3df7f98a27c15d37b0-export declare const style: import(\"@scope/dep/types/themes/componentTypes/formFieldLayout.js\").FormFieldLayout;\n"]]}
 //// [/home/src/workspaces/solution/packages/consumer/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -164,13 +164,8 @@ declare const console: { log(msg: any): void; };
     {
       "fileName": "./src/index.ts",
       "version": "0eb11471bc41fb5a80fd0098368e8295-import type { NewComponentTypes } from \"@scope/dep\"\ndeclare const c: NewComponentTypes\nexport const style = c.formFieldLayout()",
-      "signature": "9cca47ad36e3ee3df7f98a27c15d37b0-export declare const style: import(\"@scope/dep/types/themes/componentTypes/formFieldLayout.js\").FormFieldLayout;\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "0eb11471bc41fb5a80fd0098368e8295-import type { NewComponentTypes } from \"@scope/dep\"\ndeclare const c: NewComponentTypes\nexport const style = c.formFieldLayout()",
-        "signature": "9cca47ad36e3ee3df7f98a27c15d37b0-export declare const style: import(\"@scope/dep/types/themes/componentTypes/formFieldLayout.js\").FormFieldLayout;\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "0eb11471bc41fb5a80fd0098368e8295-import type { NewComponentTypes } from \"@scope/dep\"\ndeclare const c: NewComponentTypes\nexport const style = c.formFieldLayout()",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "fileIdsList": [
@@ -206,13 +201,23 @@ declare const console: { log(msg: any): void; };
     ]
   },
   "latestChangedDtsFile": "./types/index.d.ts",
-  "size": 2200
+  "emitSignatures": [
+    {
+      "file": "./src/index.ts",
+      "signature": "9cca47ad36e3ee3df7f98a27c15d37b0-export declare const style: import(\"@scope/dep/types/themes/componentTypes/formFieldLayout.js\").FormFieldLayout;\n",
+      "original": [
+        5,
+        "9cca47ad36e3ee3df7f98a27c15d37b0-export declare const style: import(\"@scope/dep/types/themes/componentTypes/formFieldLayout.js\").FormFieldLayout;\n"
+      ]
+    }
+  ],
+  "size": 2177
 }
 //// [/home/src/workspaces/solution/packages/consumer/types/index.d.ts] *new* 
 export declare const style: import("@scope/dep/types/themes/componentTypes/formFieldLayout.js").FormFieldLayout;
 
 //// [/home/src/workspaces/solution/packages/dep/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,4]],"packageJsons":["./package.json"],"fileNames":["lib.es2025.full.d.ts","./src/themes/componentTypes/formFieldLayout.ts","./src/themes/componentTypes/index.ts","./src/index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"d384c9df99c755540ca5330780b4f5e5-export type FormFieldLayout = {\n    textColor: string\n    fontSize: string\n}\nexport default FormFieldLayout","signature":"2265bb6aae4ea44359eda1a1333669d7-export type FormFieldLayout = {\n    textColor: string;\n    fontSize: string;\n};\nexport default FormFieldLayout;\n","impliedNodeFormat":1},{"version":"7e5adf3645b6325e5ba90d41821e4802-import type FormFieldLayout from \"./formFieldLayout.js\"\nexport type ComponentTypes = {\n    formFieldLayout: () => FormFieldLayout\n}","signature":"262c77b15a9433c1a517a42af08dabc4-import type FormFieldLayout from \"./formFieldLayout.js\";\nexport type ComponentTypes = {\n    formFieldLayout: () => FormFieldLayout;\n};\n","impliedNodeFormat":1},{"version":"aac956f8322a5530cde691c46bad3b7d-import type { ComponentTypes as NewComponentTypes } from \"./themes/componentTypes/index.js\"\nexport type { NewComponentTypes }","signature":"8c960f82affa27b6eaa999ea3cdac3e7-import type { ComponentTypes as NewComponentTypes } from \"./themes/componentTypes/index.js\";\nexport type { NewComponentTypes };\n","impliedNodeFormat":1}],"fileIdsList":[[3],[2]],"options":{"composite":true,"emitDeclarationOnly":true,"declaration":true,"declarationDir":"./types","module":99,"outDir":"./types","rootDir":"./src","strict":true},"referencedMap":[[4,1],[3,2]],"latestChangedDtsFile":"./types/index.d.ts"}
+{"version":"FakeTSVersion","root":[[2,4]],"packageJsons":["./package.json"],"fileNames":["lib.es2025.full.d.ts","./src/themes/componentTypes/formFieldLayout.ts","./src/themes/componentTypes/index.ts","./src/index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"d384c9df99c755540ca5330780b4f5e5-export type FormFieldLayout = {\n    textColor: string\n    fontSize: string\n}\nexport default FormFieldLayout","7e5adf3645b6325e5ba90d41821e4802-import type FormFieldLayout from \"./formFieldLayout.js\"\nexport type ComponentTypes = {\n    formFieldLayout: () => FormFieldLayout\n}","aac956f8322a5530cde691c46bad3b7d-import type { ComponentTypes as NewComponentTypes } from \"./themes/componentTypes/index.js\"\nexport type { NewComponentTypes }"],"fileIdsList":[[3],[2]],"options":{"composite":true,"emitDeclarationOnly":true,"declaration":true,"declarationDir":"./types","module":99,"outDir":"./types","rootDir":"./src","strict":true},"referencedMap":[[4,1],[3,2]],"latestChangedDtsFile":"./types/index.d.ts","emitSignatures":[[2,"2265bb6aae4ea44359eda1a1333669d7-export type FormFieldLayout = {\n    textColor: string;\n    fontSize: string;\n};\nexport default FormFieldLayout;\n"],[3,"262c77b15a9433c1a517a42af08dabc4-import type FormFieldLayout from \"./formFieldLayout.js\";\nexport type ComponentTypes = {\n    formFieldLayout: () => FormFieldLayout;\n};\n"],[4,"8c960f82affa27b6eaa999ea3cdac3e7-import type { ComponentTypes as NewComponentTypes } from \"./themes/componentTypes/index.js\";\nexport type { NewComponentTypes };\n"]]}
 //// [/home/src/workspaces/solution/packages/dep/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -254,35 +259,20 @@ export declare const style: import("@scope/dep/types/themes/componentTypes/formF
     {
       "fileName": "./src/themes/componentTypes/formFieldLayout.ts",
       "version": "d384c9df99c755540ca5330780b4f5e5-export type FormFieldLayout = {\n    textColor: string\n    fontSize: string\n}\nexport default FormFieldLayout",
-      "signature": "2265bb6aae4ea44359eda1a1333669d7-export type FormFieldLayout = {\n    textColor: string;\n    fontSize: string;\n};\nexport default FormFieldLayout;\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "d384c9df99c755540ca5330780b4f5e5-export type FormFieldLayout = {\n    textColor: string\n    fontSize: string\n}\nexport default FormFieldLayout",
-        "signature": "2265bb6aae4ea44359eda1a1333669d7-export type FormFieldLayout = {\n    textColor: string;\n    fontSize: string;\n};\nexport default FormFieldLayout;\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "d384c9df99c755540ca5330780b4f5e5-export type FormFieldLayout = {\n    textColor: string\n    fontSize: string\n}\nexport default FormFieldLayout",
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "./src/themes/componentTypes/index.ts",
       "version": "7e5adf3645b6325e5ba90d41821e4802-import type FormFieldLayout from \"./formFieldLayout.js\"\nexport type ComponentTypes = {\n    formFieldLayout: () => FormFieldLayout\n}",
-      "signature": "262c77b15a9433c1a517a42af08dabc4-import type FormFieldLayout from \"./formFieldLayout.js\";\nexport type ComponentTypes = {\n    formFieldLayout: () => FormFieldLayout;\n};\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "7e5adf3645b6325e5ba90d41821e4802-import type FormFieldLayout from \"./formFieldLayout.js\"\nexport type ComponentTypes = {\n    formFieldLayout: () => FormFieldLayout\n}",
-        "signature": "262c77b15a9433c1a517a42af08dabc4-import type FormFieldLayout from \"./formFieldLayout.js\";\nexport type ComponentTypes = {\n    formFieldLayout: () => FormFieldLayout;\n};\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "7e5adf3645b6325e5ba90d41821e4802-import type FormFieldLayout from \"./formFieldLayout.js\"\nexport type ComponentTypes = {\n    formFieldLayout: () => FormFieldLayout\n}",
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "./src/index.ts",
       "version": "aac956f8322a5530cde691c46bad3b7d-import type { ComponentTypes as NewComponentTypes } from \"./themes/componentTypes/index.js\"\nexport type { NewComponentTypes }",
-      "signature": "8c960f82affa27b6eaa999ea3cdac3e7-import type { ComponentTypes as NewComponentTypes } from \"./themes/componentTypes/index.js\";\nexport type { NewComponentTypes };\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "aac956f8322a5530cde691c46bad3b7d-import type { ComponentTypes as NewComponentTypes } from \"./themes/componentTypes/index.js\"\nexport type { NewComponentTypes }",
-        "signature": "8c960f82affa27b6eaa999ea3cdac3e7-import type { ComponentTypes as NewComponentTypes } from \"./themes/componentTypes/index.js\";\nexport type { NewComponentTypes };\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "aac956f8322a5530cde691c46bad3b7d-import type { ComponentTypes as NewComponentTypes } from \"./themes/componentTypes/index.js\"\nexport type { NewComponentTypes }",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "fileIdsList": [
@@ -312,7 +302,33 @@ export declare const style: import("@scope/dep/types/themes/componentTypes/formF
     ]
   },
   "latestChangedDtsFile": "./types/index.d.ts",
-  "size": 2384
+  "emitSignatures": [
+    {
+      "file": "./src/themes/componentTypes/formFieldLayout.ts",
+      "signature": "2265bb6aae4ea44359eda1a1333669d7-export type FormFieldLayout = {\n    textColor: string;\n    fontSize: string;\n};\nexport default FormFieldLayout;\n",
+      "original": [
+        2,
+        "2265bb6aae4ea44359eda1a1333669d7-export type FormFieldLayout = {\n    textColor: string;\n    fontSize: string;\n};\nexport default FormFieldLayout;\n"
+      ]
+    },
+    {
+      "file": "./src/themes/componentTypes/index.ts",
+      "signature": "262c77b15a9433c1a517a42af08dabc4-import type FormFieldLayout from \"./formFieldLayout.js\";\nexport type ComponentTypes = {\n    formFieldLayout: () => FormFieldLayout;\n};\n",
+      "original": [
+        3,
+        "262c77b15a9433c1a517a42af08dabc4-import type FormFieldLayout from \"./formFieldLayout.js\";\nexport type ComponentTypes = {\n    formFieldLayout: () => FormFieldLayout;\n};\n"
+      ]
+    },
+    {
+      "file": "./src/index.ts",
+      "signature": "8c960f82affa27b6eaa999ea3cdac3e7-import type { ComponentTypes as NewComponentTypes } from \"./themes/componentTypes/index.js\";\nexport type { NewComponentTypes };\n",
+      "original": [
+        4,
+        "8c960f82affa27b6eaa999ea3cdac3e7-import type { ComponentTypes as NewComponentTypes } from \"./themes/componentTypes/index.js\";\nexport type { NewComponentTypes };\n"
+      ]
+    }
+  ],
+  "size": 2277
 }
 //// [/home/src/workspaces/solution/packages/dep/types/index.d.ts] *new* 
 import type { ComponentTypes as NewComponentTypes } from "./themes/componentTypes/index.js";
