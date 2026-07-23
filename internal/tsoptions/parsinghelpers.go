@@ -109,18 +109,25 @@ func parseContentMapper(json any) (*contentmapper.Mapper, []*ast.Diagnostic) {
 	var errors []*ast.Diagnostic
 	mapper := &contentmapper.Mapper{}
 	if pkg, ok := v.Get("package"); ok {
-		if str, valid := pkg.(string); valid && str != "" {
+		if str, isString := pkg.(string); isString && str != "" {
 			mapper.Package = str
 		} else {
 			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, "contentMapper.package", "string"))
 		}
+	} else {
+		errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, "contentMapper.package", "string"))
 	}
 	if extensions, ok := v.Get("extensions"); ok {
-		if strs, valid := parseStringArrayStrict(extensions); valid {
+		if strs, isStringArray := parseStringArrayStrict(extensions); isStringArray {
 			mapper.Extensions = strs
 		} else {
 			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, "contentMapper.extensions", "string[]"))
 		}
+	} else {
+		errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, "contentMapper.extensions", "string[]"))
+	}
+	if len(errors) != 0 {
+		return nil, errors
 	}
 	return mapper, errors
 }

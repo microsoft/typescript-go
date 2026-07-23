@@ -383,7 +383,10 @@ func diagnosticToLSP(ctx context.Context, converters *Converters, diagnostic *as
 	}
 
 	var code *lsproto.IntegerOrString
-	var source *string
+	sourceText := diagnostic.Source()
+	if sourceText == "" {
+		sourceText = "ts"
+	}
 	if opts.visualStudio {
 		code = &lsproto.IntegerOrString{
 			String: new(fmt.Sprintf("TS%d", diagnostic.Code())),
@@ -392,7 +395,6 @@ func diagnosticToLSP(ctx context.Context, converters *Converters, diagnostic *as
 		code = &lsproto.IntegerOrString{
 			Integer: new(diagnostic.Code()),
 		}
-		source = new("ts")
 	}
 
 	return &lsproto.Diagnostic{
@@ -400,7 +402,7 @@ func diagnosticToLSP(ctx context.Context, converters *Converters, diagnostic *as
 		Code:               code,
 		Severity:           &severity,
 		Message:            lsproto.StringOrMarkupContent{String: new(messageChainToString(diagnostic, locale))},
-		Source:             source,
+		Source:             &sourceText,
 		RelatedInformation: ptrToSliceIfNonEmpty(relatedInformation),
 		Tags:               ptrToSliceIfNonEmpty(tags),
 	}

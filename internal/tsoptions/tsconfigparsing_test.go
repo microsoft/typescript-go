@@ -1106,6 +1106,11 @@ func TestContentMappersValidation(t *testing.T) {
 			expectedCode:   diagnostics.Content_mapper_file_extension_0_is_a_built_in_extension_and_cannot_be_registered_by_a_content_mapper.Code(),
 		},
 		{
+			name:           "missing extensions",
+			contentMappers: `[{ "package": "x" }]`,
+			expectedCode:   diagnostics.Compiler_option_0_requires_a_value_of_type_1.Code(),
+		},
+		{
 			name:           "duplicate extension across mappers",
 			contentMappers: `[{ "package": "a", "extensions": [".vue"] }, { "package": "b", "extensions": [".vue"] }]`,
 			expectedCode:   diagnostics.Content_mapper_file_extension_0_is_registered_by_more_than_one_content_mapper.Code(),
@@ -1123,6 +1128,11 @@ func TestContentMappersValidation(t *testing.T) {
 		{
 			name:           "package is not a string",
 			contentMappers: `[{ "package": ["x"], "extensions": [".vue"] }]`,
+			expectedCode:   diagnostics.Compiler_option_0_requires_a_value_of_type_1.Code(),
+		},
+		{
+			name:           "missing package",
+			contentMappers: `[{ "extensions": [".vue"] }]`,
 			expectedCode:   diagnostics.Compiler_option_0_requires_a_value_of_type_1.Code(),
 		},
 	}
@@ -1151,6 +1161,19 @@ func TestContentMappersValidation(t *testing.T) {
 						return d.Code() == test.expectedCode
 					})
 					assert.Assert(t, diagnostic != nil, "expected diagnostic %d, got errors: %v", test.expectedCode, parsed.Errors)
+					switch test.name {
+					case "built-in extension":
+						assert.Equal(t, len(parsed.ContentMappers()), 1)
+						assert.Equal(t, len(parsed.ContentMappers()[0].Extensions), 0)
+						assert.Equal(t, len(parsed.ContentMapperExtensions()), 0)
+					case "duplicate extension across mappers":
+						assert.Equal(t, len(parsed.ContentMappers()), 2)
+						assert.DeepEqual(t, parsed.ContentMappers()[0].Extensions, []string{".vue"})
+						assert.Equal(t, len(parsed.ContentMappers()[1].Extensions), 0)
+						assert.DeepEqual(t, parsed.ContentMapperExtensions(), []string{".vue"})
+					case "missing extensions", "extensions is not an array", "extensions contains a non-string", "package is not a string", "missing package":
+						assert.Equal(t, len(parsed.ContentMappers()), 0)
+					}
 
 					// With the jsonSourceFile API the diagnostic is located at the offending tsconfig syntax.
 					if apiName == "jsonSourceFile api" {

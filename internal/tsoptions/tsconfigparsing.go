@@ -1349,6 +1349,7 @@ func parseJsonConfigFileContentWorker(
 	contentMapperExtensions := make([]string, 0, totalContentMapperExtensions)
 	nativeExtensions := core.Flatten(tspath.AllSupportedExtensionsWithJson)
 	for j, mapper := range contentMappers {
+		validExtensions := make([]string, 0, len(mapper.Extensions))
 		for _, ext := range mapper.Extensions {
 			extNode := getContentMapperExtensionSyntax(contentMapperSourceFile, contentMapperIndices[j], ext)
 			switch {
@@ -1362,9 +1363,11 @@ func parseJsonConfigFileContentWorker(
 				} else {
 					seenContentMapperExtensions[ext] = struct{}{}
 					contentMapperExtensions = append(contentMapperExtensions, ext)
+					validExtensions = append(validExtensions, ext)
 				}
 			}
 		}
+		mapper.Extensions = validExtensions
 	}
 	if len(contentMappers) > 0 && !(parsedConfig.options != nil && parsedConfig.options.LoadExternalPlugins.IsTrue()) {
 		errors = append(errors, setContentMapperDiagnosticLocation(ast.NewCompilerDiagnostic(diagnostics.Content_mappers_require_the_loadExternalPlugins_command_line_flag_to_be_enabled), contentMapperSourceFile, getContentMappersKeySyntax(contentMapperSourceFile)))
