@@ -1,0 +1,95 @@
+typePredicateRecursionPreservesFiniteNesting.ts(22,7): error TS2322: Type '() => this is Guard<Right.L2> & Right.L2' is not assignable to type '() => this is Guard<Left.L2> & Left.L2'.
+  Type predicate 'this is Guard<L2> & L2' is not assignable to 'this is Guard<L2> & L2'.
+    Type 'Guard<Right.L2> & Right.L2' is not assignable to type 'Guard<Left.L2> & Left.L2'.
+      Type 'Guard<L2> & L2' is not assignable to type 'Guard<L2>'.
+        Types of property 'guard' are incompatible.
+          Type '() => this is Guard<Right.L2> & Right.L2' is not assignable to type '() => this is Guard<Left.L2> & Left.L2'.
+            Type predicate 'this is Guard<L2> & L2' is not assignable to 'this is Guard<L2> & L2'.
+              Type 'Guard<Right.L2> & Right.L2' is not assignable to type 'Guard<Left.L2> & Left.L2'.
+                Type 'Guard<L2> & L2' is not assignable to type 'L2'.
+                  Types of property 'next' are incompatible.
+                    Type 'Guard<Right.L3>' is not assignable to type 'Guard<Left.L3>'.
+                      Type 'Right.L3' is not assignable to type 'Left.L3'.
+                        Types of property 'next' are incompatible.
+                          Type 'Guard<Right.L4>' is not assignable to type 'Guard<Left.L4>'.
+                            Type 'Right.L4' is not assignable to type 'Left.L4'.
+                              Types of property 'next' are incompatible.
+                                Type 'Guard<Right.Leaf>' is not assignable to type 'Guard<Left.Leaf>'.
+                                  Type 'Right.Leaf' is not assignable to type 'Left.Leaf'.
+                                    Types of property 'id' are incompatible.
+                                      Type 'number' is not assignable to type 'string'.
+typePredicateRecursionPreservesFiniteNesting.ts(23,7): error TS2322: Type 'Guard<Right.L2>' is not assignable to type 'Guard<Left.L2>'.
+  Type 'Right.L2' is not assignable to type 'Left.L2'.
+    Types of property 'next' are incompatible.
+      Type 'Guard<Right.L3>' is not assignable to type 'Guard<Left.L3>'.
+        Type 'Right.L3' is not assignable to type 'Left.L3'.
+          Types of property 'next' are incompatible.
+            Type 'Guard<Right.L4>' is not assignable to type 'Guard<Left.L4>'.
+              Type 'Right.L4' is not assignable to type 'Left.L4'.
+                Types of property 'next' are incompatible.
+                  Type 'Guard<Right.Leaf>' is not assignable to type 'Guard<Left.Leaf>'.
+                    Type 'Right.Leaf' is not assignable to type 'Left.Leaf'.
+                      Types of property 'id' are incompatible.
+                        Type 'number' is not assignable to type 'string'.
+
+
+==== typePredicateRecursionPreservesFiniteNesting.ts (2 errors) ====
+    interface Guard<T> {
+        guard(): this is this & T;
+    }
+    
+    namespace Left {
+        export interface L2 { next: Guard<L3>; }
+        export interface L3 { next: Guard<L4>; }
+        export interface L4 { next: Guard<Leaf>; }
+        export interface Leaf { id: string; }
+    }
+    
+    namespace Right {
+        export interface L2 { next: Guard<L3>; }
+        export interface L3 { next: Guard<L4>; }
+        export interface L4 { next: Guard<Leaf>; }
+        export interface Leaf { id: number; }
+    }
+    
+    declare const left: Guard<Left.L2>;
+    declare const right: Guard<Right.L2>;
+    
+    const predicateComparison: typeof left.guard = right.guard;
+          ~~~~~~~~~~~~~~~~~~~
+!!! error TS2322: Type '() => this is Guard<Right.L2> & Right.L2' is not assignable to type '() => this is Guard<Left.L2> & Left.L2'.
+!!! error TS2322:   Type predicate 'this is Guard<L2> & L2' is not assignable to 'this is Guard<L2> & L2'.
+!!! error TS2322:     Type 'Guard<Right.L2> & Right.L2' is not assignable to type 'Guard<Left.L2> & Left.L2'.
+!!! error TS2322:       Type 'Guard<L2> & L2' is not assignable to type 'Guard<L2>'.
+!!! error TS2322:         Types of property 'guard' are incompatible.
+!!! error TS2322:           Type '() => this is Guard<Right.L2> & Right.L2' is not assignable to type '() => this is Guard<Left.L2> & Left.L2'.
+!!! error TS2322:             Type predicate 'this is Guard<L2> & L2' is not assignable to 'this is Guard<L2> & L2'.
+!!! error TS2322:               Type 'Guard<Right.L2> & Right.L2' is not assignable to type 'Guard<Left.L2> & Left.L2'.
+!!! error TS2322:                 Type 'Guard<L2> & L2' is not assignable to type 'L2'.
+!!! error TS2322:                   Types of property 'next' are incompatible.
+!!! error TS2322:                     Type 'Guard<Right.L3>' is not assignable to type 'Guard<Left.L3>'.
+!!! error TS2322:                       Type 'Right.L3' is not assignable to type 'Left.L3'.
+!!! error TS2322:                         Types of property 'next' are incompatible.
+!!! error TS2322:                           Type 'Guard<Right.L4>' is not assignable to type 'Guard<Left.L4>'.
+!!! error TS2322:                             Type 'Right.L4' is not assignable to type 'Left.L4'.
+!!! error TS2322:                               Types of property 'next' are incompatible.
+!!! error TS2322:                                 Type 'Guard<Right.Leaf>' is not assignable to type 'Guard<Left.Leaf>'.
+!!! error TS2322:                                   Type 'Right.Leaf' is not assignable to type 'Left.Leaf'.
+!!! error TS2322:                                     Types of property 'id' are incompatible.
+!!! error TS2322:                                       Type 'number' is not assignable to type 'string'.
+    const ordinaryComparison: Guard<Left.L2> = right;
+          ~~~~~~~~~~~~~~~~~~
+!!! error TS2322: Type 'Guard<Right.L2>' is not assignable to type 'Guard<Left.L2>'.
+!!! error TS2322:   Type 'Right.L2' is not assignable to type 'Left.L2'.
+!!! error TS2322:     Types of property 'next' are incompatible.
+!!! error TS2322:       Type 'Guard<Right.L3>' is not assignable to type 'Guard<Left.L3>'.
+!!! error TS2322:         Type 'Right.L3' is not assignable to type 'Left.L3'.
+!!! error TS2322:           Types of property 'next' are incompatible.
+!!! error TS2322:             Type 'Guard<Right.L4>' is not assignable to type 'Guard<Left.L4>'.
+!!! error TS2322:               Type 'Right.L4' is not assignable to type 'Left.L4'.
+!!! error TS2322:                 Types of property 'next' are incompatible.
+!!! error TS2322:                   Type 'Guard<Right.Leaf>' is not assignable to type 'Guard<Left.Leaf>'.
+!!! error TS2322:                     Type 'Right.Leaf' is not assignable to type 'Left.Leaf'.
+!!! error TS2322:                       Types of property 'id' are incompatible.
+!!! error TS2322:                         Type 'number' is not assignable to type 'string'.
+    
