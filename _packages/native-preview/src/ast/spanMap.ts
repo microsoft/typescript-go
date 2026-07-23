@@ -132,19 +132,6 @@ export class SpanMap {
         });
     }
 
-    /**
-     * Maps the inclusive start of an original range through every matching segment. Verbatim segments preserve
-     * the offset within the segment; atoms map to their generated start.
-     *
-     * ```text
-     * original:       [---------)
-     *                    ^ start
-     *
-     * generated:  [---------)   [---------)
-     *                ^             ^
-     *              result        result
-     * ```
-     */
     /** Maps one range through an ordered segment index in the direction selected by `reverse`. */
     private mapRange(range: ReadonlyTextRange, segments: readonly SpanMapSegment[], reverse: boolean): MappedRange {
         const start = range.pos;

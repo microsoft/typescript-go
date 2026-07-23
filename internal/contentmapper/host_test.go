@@ -6,6 +6,7 @@ import (
 	"io"
 	"net"
 	"slices"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -25,7 +26,7 @@ type fakeMapper struct{}
 func (fakeMapper) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
 	case contentmapper.MethodInitialize:
-		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8}, nil
+		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8, DiagnosticSource: "vue"}, nil
 	case contentmapper.MethodTransform:
 		var p contentmapper.TransformParams
 		if err := json.Unmarshal(params, &p); err != nil {
@@ -47,7 +48,6 @@ func (fakeMapper) HandleRequest(ctx context.Context, method string, params json.
 				Start:       0,
 				Length:      min(3, len(p.Content)),
 				Code:        9999,
-				Source:      "vue",
 			}},
 		}, nil
 	default:
@@ -57,6 +57,7 @@ func (fakeMapper) HandleRequest(ctx context.Context, method string, params json.
 
 type unicodeMapper struct {
 	encoding contentmapper.PositionEncoding
+	source   *string
 }
 
 func (m unicodeMapper) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
@@ -70,7 +71,11 @@ func (m unicodeMapper) HandleRequest(ctx context.Context, method string, params 
 		if !offered && (m.encoding == contentmapper.PositionEncodingUTF8 || m.encoding == contentmapper.PositionEncodingUTF16) {
 			return nil, fmt.Errorf("position encoding %q was not offered", m.encoding)
 		}
-		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: m.encoding}, nil
+		source := "mapper"
+		if m.source != nil {
+			source = *m.source
+		}
+		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: m.encoding, DiagnosticSource: source}, nil
 	case contentmapper.MethodTransform:
 		var p contentmapper.TransformParams
 		if err := json.Unmarshal(params, &p); err != nil {
@@ -99,7 +104,6 @@ func (m unicodeMapper) HandleRequest(ctx context.Context, method string, params 
 				MessageText: "after non-ASCII character",
 				Start:       emojiLength,
 				Length:      textLength - emojiLength,
-				Source:      "mapper",
 			}},
 		}, nil
 	default:
@@ -118,14 +122,13 @@ type invalidDiagnosticMapper struct {
 func (m invalidDiagnosticMapper) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
 	case contentmapper.MethodInitialize:
-		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: m.encoding}, nil
+		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: m.encoding, DiagnosticSource: "mapper"}, nil
 	case contentmapper.MethodTransform:
 		return contentmapper.TransformResult{
 			Text: "",
 			Diagnostics: []contentmapper.Diagnostic{{
 				MessageText: "invalid boundary",
 				Start:       1,
-				Source:      "mapper",
 			}},
 		}, nil
 	default:
@@ -184,6 +187,7 @@ func TestRunnerTransform(t *testing.T) {
 	assert.Assert(t, result.Mappings != nil)
 	assert.Equal(t, len(result.Diagnostics), 1)
 	assert.Equal(t, result.Diagnostics[0].Code(), int32(9999))
+	assert.Equal(t, result.Diagnostics[0].Source(), "vue")
 }
 
 func TestRunnerPositionEncodings(t *testing.T) {
@@ -224,6 +228,27 @@ func TestRunnerRejectsUnsupportedPositionEncoding(t *testing.T) {
 	mapper := &contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "invalid", Exec: []string{"mapper"}}}
 	_, err := r.Transform(mapper, contentmapper.Request{FileName: "/a.vue", Content: "x"})
 	assert.ErrorContains(t, err, "unsupported position encoding")
+}
+
+func TestRunnerRejectsInvalidDiagnosticSource(t *testing.T) {
+	t.Parallel()
+	for _, source := range []string{"", " ", "ts", "TS", "d.ts", "json", "typescript", "TypeScript", "tsc", "TSC"} {
+		t.Run(source, func(t *testing.T) {
+			t.Parallel()
+			handler := unicodeMapper{encoding: contentmapper.PositionEncodingUTF8, source: &source}
+			r := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: handler}, locale.Default)
+			defer r.Close()
+			mapper := &contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "invalid", Exec: []string{"mapper"}}}
+			_, err := r.Transform(mapper, contentmapper.Request{FileName: "/a.vue", Content: "x"})
+			if strings.TrimSpace(source) == "" {
+				assert.ErrorContains(t, err, "diagnostic source must not be empty")
+			} else if strings.EqualFold(source, "typescript") || strings.EqualFold(source, "tsc") {
+				assert.ErrorContains(t, err, "is reserved by TypeScript")
+			} else {
+				assert.ErrorContains(t, err, "conflicts with a built-in file extension")
+			}
+		})
+	}
 }
 
 func TestRunnerRejectsPositionsInsideUnicodeCharacters(t *testing.T) {
@@ -317,7 +342,7 @@ func (m *recordingMapper) HandleRequest(ctx context.Context, method string, para
 		m.mu.Lock()
 		m.receivedLocale = p.Locale
 		m.mu.Unlock()
-		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8}, nil
+		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8, DiagnosticSource: "mapper"}, nil
 	case contentmapper.MethodTransform:
 		var p contentmapper.TransformParams
 		if err := json.Unmarshal(params, &p); err != nil {

@@ -81,6 +81,7 @@ func (lispHandler) HandleRequest(ctx context.Context, method string, params json
 		return contentmapper.InitializeResult{
 			ProtocolVersion:  contentmapper.ProtocolVersion,
 			PositionEncoding: contentmapper.PositionEncodingUTF8,
+			DiagnosticSource: "lisp",
 		}, nil
 	case contentmapper.MethodTransform:
 		var p contentmapper.TransformParams
@@ -115,6 +116,7 @@ func (h duplicateHandler) HandleRequest(ctx context.Context, method string, para
 		return contentmapper.InitializeResult{
 			ProtocolVersion:  contentmapper.ProtocolVersion,
 			PositionEncoding: contentmapper.PositionEncodingUTF8,
+			DiagnosticSource: "mapper",
 		}, nil
 	case contentmapper.MethodTransform:
 		var p contentmapper.TransformParams
@@ -156,6 +158,7 @@ func (Handler) HandleRequest(ctx context.Context, method string, params json.Val
 		return contentmapper.InitializeResult{
 			ProtocolVersion:  contentmapper.ProtocolVersion,
 			PositionEncoding: contentmapper.PositionEncodingUTF8,
+			DiagnosticSource: diagnosticSource,
 		}, nil
 	case contentmapper.MethodTransform:
 		var p contentmapper.TransformParams
@@ -245,7 +248,6 @@ func transform(content string, options *collections.OrderedMap[string, json.Valu
 				Start:       tokenStart,
 				Length:      lineEnd - tokenStart,
 				Code:        unclosedInterpolationCode,
-				Source:      diagnosticSource,
 			})
 			pos = lineEnd
 			continue
@@ -290,7 +292,7 @@ type verbatimHandler struct{ noNotifications }
 func (verbatimHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
 	case contentmapper.MethodInitialize:
-		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8}, nil
+		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8, DiagnosticSource: "mapper"}, nil
 	case contentmapper.MethodTransform:
 		var p contentmapper.TransformParams
 		if err := json.Unmarshal(params, &p); err != nil {
@@ -318,7 +320,7 @@ type failingHandler struct{ noNotifications }
 func (failingHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
 	case contentmapper.MethodInitialize:
-		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8}, nil
+		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8, DiagnosticSource: "mapper"}, nil
 	case contentmapper.MethodTransform:
 		return nil, errors.New("content mapper failed to transform the file")
 	default:
@@ -337,7 +339,7 @@ type synthesizingHandler struct{ noNotifications }
 func (synthesizingHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
 	case contentmapper.MethodInitialize:
-		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8}, nil
+		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8, DiagnosticSource: "mapper"}, nil
 	case contentmapper.MethodTransform:
 		mappings, err := spanmap.New(nil).Marshal()
 		if err != nil {
@@ -358,7 +360,7 @@ type componentHandler struct{ noNotifications }
 func (componentHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
 	case contentmapper.MethodInitialize:
-		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8}, nil
+		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8, DiagnosticSource: "mapper"}, nil
 	case contentmapper.MethodTransform:
 		var p contentmapper.TransformParams
 		if err := json.Unmarshal(params, &p); err != nil {

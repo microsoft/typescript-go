@@ -163,10 +163,6 @@
         "category": "Error",
         "code": 100027
     },
-    "The content mapper '{0}' produced position mappings that do not cover the entire transformed output (near output offset {1}).": {
-        "category": "Error",
-        "code": 100028
-    },
     "The content mapper '{0}' produced a position mapping that points outside the original content (original offset {1}).": {
         "category": "Error",
         "code": 100029

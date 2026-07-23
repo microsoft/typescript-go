@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"slices"
+	"strings"
 	"sync"
 	"unicode/utf8"
 
@@ -16,6 +18,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/spanmap"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 // ProtocolVersion is the content mapper protocol version this host speaks.
@@ -40,6 +43,8 @@ type InitializeResult struct {
 	ProtocolVersion int `json:"protocolVersion"`
 	// PositionEncoding selects the coordinate space for all mappings and diagnostics.
 	PositionEncoding PositionEncoding `json:"positionEncoding"`
+	// DiagnosticSource is the prefix used for every mapper-authored diagnostic code.
+	DiagnosticSource string `json:"diagnosticSource"`
 }
 
 // PositionEncoding is the coordinate space a mapper uses for mappings and diagnostics.
@@ -75,15 +80,14 @@ type TransformResult struct {
 type Diagnostic struct {
 	MessageText string `json:"messageText"`
 	// Start and Length locate the diagnostic in the original content using the selected position encoding.
-	Start  int    `json:"start"`
-	Length int    `json:"length"`
-	Code   int32  `json:"code,omitempty"`
-	Source string `json:"source,omitempty"`
+	Start  int   `json:"start"`
+	Length int   `json:"length"`
+	Code   int32 `json:"code,omitempty"`
 }
 
 // dialFunc establishes a running connection to a mapper. In production it spawns the mapper's process;
 // tests substitute an in-memory connection. It returns the connection and a closer that tears it down.
-type dialFunc func(ctx context.Context, mapper *Mapper) (ipc.Conn, io.Closer, PositionEncoding, error)
+type dialFunc func(ctx context.Context, mapper *Mapper) (ipc.Conn, io.Closer, PositionEncoding, string, error)
 
 // host manages one child process per mapper identity. It is the production implementation of Host.
 type host struct {
@@ -103,6 +107,7 @@ type mapperConn struct {
 	// try (and fail) to spawn a broken mapper.
 	err              error
 	positionEncoding PositionEncoding
+	diagnosticSource string
 	// refs is the number of active Acquire calls retaining this identity.
 	refs int
 }
@@ -128,22 +133,22 @@ func (f SpawnerFunc) Spawn(command []string, dir string) (io.ReadWriteCloser, er
 // on SIGINT, or a build/watch session ending) tears every mapper process down, so owners of a session
 // context need not close the host explicitly. Close does the same synchronously.
 func NewHost(ctx context.Context, spawner Spawner, diagnosticLocale locale.Locale) Host {
-	return newWithDial(ctx, func(ctx context.Context, mapper *Mapper) (ipc.Conn, io.Closer, PositionEncoding, error) {
+	return newWithDial(ctx, func(ctx context.Context, mapper *Mapper) (ipc.Conn, io.Closer, PositionEncoding, string, error) {
 		if len(mapper.Exec) == 0 {
-			return nil, nil, "", fmt.Errorf("content mapper %q declares no command to run", mapper.Package)
+			return nil, nil, "", "", fmt.Errorf("content mapper %q declares no command to run", mapper.Package)
 		}
 		rwc, err := spawner.Spawn(mapper.Exec, mapper.PackageDirectory)
 		if err != nil {
-			return nil, nil, "", err
+			return nil, nil, "", "", err
 		}
 		conn := ipc.NewAsyncConn(rwc, rejectHandler{})
 		go func() { _ = conn.Run(ctx) }()
-		positionEncoding, err := handshake(ctx, conn, diagnosticLocale)
+		positionEncoding, diagnosticSource, err := handshake(ctx, conn, diagnosticLocale)
 		if err != nil {
 			_ = rwc.Close()
-			return nil, nil, "", fmt.Errorf("content mapper %q failed to initialize: %w", mapper.Package, err)
+			return nil, nil, "", "", fmt.Errorf("content mapper %q failed to initialize: %w", mapper.Package, err)
 		}
-		return conn, rwc, positionEncoding, nil
+		return conn, rwc, positionEncoding, diagnosticSource, nil
 	})
 }
 
@@ -182,7 +187,7 @@ func (h *host) Acquire(mappers []*Mapper) func() {
 // mapper receives the subset of the project's compiler options it declared in initialize (an empty
 // object if it declared none) and the project's tsconfig file name.
 func (h *host) Transform(mapper *Mapper, request Request) (Result, error) {
-	conn, positionEncoding, err := h.connFor(mapper)
+	conn, positionEncoding, diagnosticSource, err := h.connFor(mapper)
 	if err != nil {
 		return Result{}, err
 	}
@@ -199,7 +204,7 @@ func (h *host) Transform(mapper *Mapper, request Request) (Result, error) {
 	if err != nil {
 		return Result{}, err
 	}
-	return decodeTransformResult(raw, request.Content, positionEncoding)
+	return decodeTransformResult(raw, request.Content, positionEncoding, diagnosticSource)
 }
 
 // Close shuts down every mapper process. It is safe to call more than once and is invoked automatically
@@ -227,11 +232,11 @@ func (h *host) Close() error {
 
 // connFor returns the connection for a mapper's identity, spawning its process on first use. Mappers
 // sharing an identity share a single process.
-func (h *host) connFor(mapper *Mapper) (ipc.Conn, PositionEncoding, error) {
+func (h *host) connFor(mapper *Mapper) (ipc.Conn, PositionEncoding, string, error) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 	if h.conns == nil {
-		return nil, "", errors.New("content mapper host is closed")
+		return nil, "", "", errors.New("content mapper host is closed")
 	}
 	identity := mapper.Identity()
 	entry := h.conns[identity]
@@ -240,14 +245,15 @@ func (h *host) connFor(mapper *Mapper) (ipc.Conn, PositionEncoding, error) {
 		h.conns[identity] = entry
 	}
 	if entry.conn != nil || entry.err != nil {
-		return entry.conn, entry.positionEncoding, entry.err
+		return entry.conn, entry.positionEncoding, entry.diagnosticSource, entry.err
 	}
-	conn, closer, positionEncoding, err := h.dial(h.ctx, mapper)
+	conn, closer, positionEncoding, diagnosticSource, err := h.dial(h.ctx, mapper)
 	entry.conn = conn
 	entry.closer = closer
 	entry.err = err
 	entry.positionEncoding = positionEncoding
-	return conn, positionEncoding, err
+	entry.diagnosticSource = diagnosticSource
+	return conn, positionEncoding, diagnosticSource, err
 }
 
 func (h *host) release(identities []string) {
@@ -274,29 +280,41 @@ func (h *host) release(identities []string) {
 	}
 }
 
-func handshake(ctx context.Context, conn ipc.Conn, diagnosticLocale locale.Locale) (PositionEncoding, error) {
+func handshake(ctx context.Context, conn ipc.Conn, diagnosticLocale locale.Locale) (PositionEncoding, string, error) {
 	raw, err := conn.Call(ctx, MethodInitialize, InitializeParams{
 		ProtocolVersion:   ProtocolVersion,
 		Locale:            diagnosticLocale.String(),
 		PositionEncodings: []PositionEncoding{PositionEncodingUTF8, PositionEncodingUTF16},
 	})
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	var res InitializeResult
 	if err := json.Unmarshal(raw, &res); err != nil {
-		return "", err
+		return "", "", err
 	}
 	if res.ProtocolVersion != ProtocolVersion {
-		return "", fmt.Errorf("unsupported protocol version %d (expected %d)", res.ProtocolVersion, ProtocolVersion)
+		return "", "", fmt.Errorf("unsupported protocol version %d (expected %d)", res.ProtocolVersion, ProtocolVersion)
 	}
 	if res.PositionEncoding != PositionEncodingUTF8 && res.PositionEncoding != PositionEncodingUTF16 {
-		return "", fmt.Errorf("unsupported position encoding %q", res.PositionEncoding)
+		return "", "", fmt.Errorf("unsupported position encoding %q", res.PositionEncoding)
 	}
-	return res.PositionEncoding, nil
+	if strings.TrimSpace(res.DiagnosticSource) == "" {
+		return "", "", errors.New("diagnostic source must not be empty")
+	}
+	if strings.EqualFold(res.DiagnosticSource, "typescript") || strings.EqualFold(res.DiagnosticSource, "tsc") {
+		return "", "", fmt.Errorf("diagnostic source %q is reserved by TypeScript", res.DiagnosticSource)
+	}
+	nativeExtensions := core.Flatten(tspath.AllSupportedExtensionsWithJson)
+	if slices.ContainsFunc(nativeExtensions, func(extension string) bool {
+		return strings.EqualFold(res.DiagnosticSource, strings.TrimPrefix(extension, "."))
+	}) {
+		return "", "", fmt.Errorf("diagnostic source %q conflicts with a built-in file extension", res.DiagnosticSource)
+	}
+	return res.PositionEncoding, res.DiagnosticSource, nil
 }
 
-func decodeTransformResult(raw json.Value, originalText string, positionEncoding PositionEncoding) (Result, error) {
+func decodeTransformResult(raw json.Value, originalText string, positionEncoding PositionEncoding, diagnosticSource string) (Result, error) {
 	var res TransformResult
 	if err := json.Unmarshal(raw, &res); err != nil {
 		return Result{}, err
@@ -349,7 +367,7 @@ func decodeTransformResult(raw json.Value, originalText string, positionEncoding
 		result.Diagnostics = append(result.Diagnostics, ast.NewExternalDiagnostic(
 			nil,
 			core.NewTextRange(start, end),
-			d.Source,
+			diagnosticSource,
 			diagnostics.CategoryError,
 			d.Code,
 			d.MessageText,

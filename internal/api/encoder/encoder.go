@@ -166,7 +166,7 @@ const (
 //
 // Span maps are msgpack arrays of tuples in UTF-16 coordinates:
 //
-//	[generatedStart: uint, generatedLength: uint, originalStart: uint, originalLength: uint, kind: uint]
+//	[generatedStart: uint, generatedLength: uint, originalStart: uint, originalLength: uint, kind: uint, purpose?: uint]
 //
 // An offset of 0xFFFFFFFF indicates no data (empty array).
 //

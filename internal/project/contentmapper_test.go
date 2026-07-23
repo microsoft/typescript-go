@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"slices"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -206,6 +207,47 @@ func TestContentMapperInProject(t *testing.T) {
 		rebuiltBox := ls.GetProgram().GetSourceFile("/home/project/app.box")
 		assert.Assert(t, rebuiltBox == boxFile, "expected the unchanged content-mapped file to be reused from the parse cache, not re-transformed")
 	})
+}
+
+func TestContentMappersInParallelProjectReferences(t *testing.T) {
+	t.Parallel()
+	files := map[string]any{
+		"/home/project/tsconfig.json": `{
+			"files": ["src/index.d.ts"],
+			"references": [{ "path": "./a" }, { "path": "./b" }]
+		}`,
+		"/home/project/src/index.d.ts": "export {};",
+		"/home/project/a/tsconfig.json": `{
+			"compilerOptions": { "composite": true },
+			"files": ["../src/index.d.ts"],
+			"contentMappers": [{ "package": "mapper", "extensions": [".vue"] }]
+		}`,
+		"/home/project/b/tsconfig.json": `{
+			"compilerOptions": { "composite": true },
+			"files": ["../src/index.d.ts"],
+			"contentMappers": [{ "package": "mapper", "extensions": [".svelte"] }]
+		}`,
+		"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.TransformingMapper),
+	}
+	init, utils := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
+		CurrentDirectory:    "/home/project",
+		DefaultLibraryPath:  bundled.LibPath(),
+		TypingsLocation:     projecttestutil.TestTypingsLocation,
+		PositionEncoding:    lsproto.PositionEncodingKindUTF8,
+		LoadExternalPlugins: true,
+	}, nil)
+	init.Spawner = contentmappertest.NewSpawner()
+	session := project.NewSession(init)
+	defer session.Close()
+
+	uri := lsproto.DocumentUri("file:///home/project/src/index.d.ts")
+	session.DidOpenFile(context.Background(), uri, 1, files["/home/project/src/index.d.ts"].(string), lsproto.LanguageKindTypeScript)
+	session.WaitForBackgroundTasks()
+	calls := utils.Client().RegisterContentMapperExtensionsCalls()
+	assert.Assert(t, len(calls) > 0)
+	extensions := slices.Clone(calls[len(calls)-1].Extensions)
+	slices.Sort(extensions)
+	assert.DeepEqual(t, extensions, []string{".svelte", ".vue"})
 }
 
 func TestContentMapperOpenFileExcludedByConfigChange(t *testing.T) {

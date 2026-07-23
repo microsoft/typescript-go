@@ -5,6 +5,7 @@ import (
 	"maps"
 	"slices"
 	"strings"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -36,6 +37,7 @@ type configFileRegistryBuilder struct {
 	configs                     *dirty.SyncMap[tspath.Path, *configFileEntry]
 	configFileNames             *dirty.Map[tspath.Path, *configFileNames]
 	customConfigFileNameChanged bool
+	contentMappersMu            sync.Mutex
 	allConfiguredContentMappers *configuredContentMappers
 }
 
@@ -98,6 +100,8 @@ func (c *configFileRegistryBuilder) Finalize() *ConfigFileRegistry {
 }
 
 func (c *configFileRegistryBuilder) contentMappers() *configuredContentMappers {
+	c.contentMappersMu.Lock()
+	defer c.contentMappersMu.Unlock()
 	if c.allConfiguredContentMappers == nil {
 		var commandLines []*tsoptions.ParsedCommandLine
 		c.configs.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *configFileEntry]) bool {
@@ -109,6 +113,12 @@ func (c *configFileRegistryBuilder) contentMappers() *configuredContentMappers {
 		c.allConfiguredContentMappers = collectConfiguredContentMappers(commandLines)
 	}
 	return c.allConfiguredContentMappers
+}
+
+func (c *configFileRegistryBuilder) invalidateContentMappers() {
+	c.contentMappersMu.Lock()
+	c.allConfiguredContentMappers = nil
+	c.contentMappersMu.Unlock()
 }
 
 func (c *configFileRegistryBuilder) findOrAcquireConfigForFile(
@@ -134,7 +144,7 @@ func (c *configFileRegistryBuilder) findOrAcquireConfigForFile(
 // reloadIfNeeded updates the command line of the config file entry based on its
 // pending reload state. This function should only be called from within the
 // Change() method of a dirty map entry.
-func (c *configFileRegistryBuilder) reloadIfNeeded(entry *configFileEntry, fileName string, path tspath.Path, logger *logging.LogTree) {
+func (c *configFileRegistryBuilder) reloadIfNeeded(entry *configFileEntry, fileName string, path tspath.Path, logger *logging.LogTree) bool {
 	oldCommandLine := entry.commandLine
 	switch entry.pendingReload {
 	case PendingReloadFileNames:
@@ -153,12 +163,10 @@ func (c *configFileRegistryBuilder) reloadIfNeeded(entry *configFileEntry, fileN
 		c.updateRootFilesWatch(fileName, entry)
 		logger.Log("Finished loading config file")
 	default:
-		return
+		return false
 	}
 	entry.pendingReload = PendingReloadNone
-	if oldCommandLine != entry.commandLine {
-		c.allConfiguredContentMappers = nil
-	}
+	return oldCommandLine != entry.commandLine
 }
 
 func (c *configFileRegistryBuilder) updateExtendingConfigs(extendingConfigPath tspath.Path, newCommandLine *tsoptions.ParsedCommandLine, oldCommandLine *tsoptions.ParsedCommandLine) {
@@ -274,6 +282,7 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 func (c *configFileRegistryBuilder) acquireConfigForProject(fileName string, path tspath.Path, project *Project, logger *logging.LogTree) *tsoptions.ParsedCommandLine {
 	entry, _ := c.configs.LoadOrStore(path, newConfigFileEntry(c.hasRelativePatternCapability, fileName))
 	var needsRetainProject bool
+	var contentMappersChanged bool
 	entry.ChangeIf(
 		func(config *configFileEntry) bool {
 			_, alreadyRetaining := config.retainingProjects[project.configFilePath]
@@ -287,9 +296,12 @@ func (c *configFileRegistryBuilder) acquireConfigForProject(fileName string, pat
 				}
 				config.retainingProjects[project.configFilePath] = struct{}{}
 			}
-			c.reloadIfNeeded(config, fileName, path, logger)
+			contentMappersChanged = c.reloadIfNeeded(config, fileName, path, logger)
 		},
 	)
+	if contentMappersChanged {
+		c.invalidateContentMappers()
+	}
 	return entry.Value().commandLine
 }
 
@@ -300,6 +312,7 @@ func (c *configFileRegistryBuilder) acquireConfigForProject(fileName string, pat
 func (c *configFileRegistryBuilder) acquireConfigForFile(configFileName string, configFilePath tspath.Path, filePath tspath.Path, logger *logging.LogTree) *tsoptions.ParsedCommandLine {
 	entry, _ := c.configs.LoadOrStore(configFilePath, newConfigFileEntry(c.hasRelativePatternCapability, configFileName))
 	var needsRetainOpenFile bool
+	var contentMappersChanged bool
 	entry.ChangeIf(
 		func(config *configFileEntry) bool {
 			if c.isOpenFile(filePath) {
@@ -315,9 +328,12 @@ func (c *configFileRegistryBuilder) acquireConfigForFile(configFileName string, 
 				}
 				config.retainingOpenFiles[filePath] = struct{}{}
 			}
-			c.reloadIfNeeded(config, configFileName, configFilePath, logger)
+			contentMappersChanged = c.reloadIfNeeded(config, configFileName, configFilePath, logger)
 		},
 	)
+	if contentMappersChanged {
+		c.invalidateContentMappers()
+	}
 	return entry.Value().commandLine
 }
 
@@ -760,6 +776,6 @@ func (c *configFileRegistryBuilder) Cleanup() {
 		return true
 	})
 	if changed {
-		c.allConfiguredContentMappers = nil
+		c.invalidateContentMappers()
 	}
 }
