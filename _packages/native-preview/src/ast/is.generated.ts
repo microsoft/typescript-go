@@ -246,6 +246,7 @@ import type {
     PrefixUnaryOperator,
     PrivateIdentifier,
     PrivateKeyword,
+    PrivateNameTypeNode,
     PropertyAccessExpression,
     PropertyAssignment,
     PropertyDeclaration,
@@ -776,6 +777,10 @@ export function isExpressionWithTypeArguments(node: Node): node is ExpressionWit
 
 export function isLiteralTypeNode(node: Node): node is LiteralTypeNode {
     return node.kind === SyntaxKind.LiteralType;
+}
+
+export function isPrivateNameTypeNode(node: Node): node is PrivateNameTypeNode {
+    return node.kind === SyntaxKind.PrivateNameType;
 }
 
 export function isThisTypeNode(node: Node): node is ThisTypeNode {

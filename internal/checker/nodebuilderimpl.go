@@ -3272,6 +3272,18 @@ func (b *NodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 		}
 		expandingEnum = true
 	}
+	if t.flags&TypeFlagsPrivateNameType != 0 {
+		if b.ctx.internalFlags&nodebuilder.InternalFlagsResolvePrivateNameTypes != 0 {
+			return b.f.NewKeywordTypeNode(ast.KindNeverKeyword)
+		}
+		declaration := t.symbol.ValueDeclaration
+		if declaration == nil || declaration.Name() == nil || !ast.IsPrivateIdentifier(declaration.Name()) {
+			return nil
+		}
+		name := declaration.Name().Text()
+		b.ctx.approximateLength += len(name)
+		return b.f.NewPrivateNameTypeNode(b.f.NewPrivateIdentifier(name))
+	}
 	if t.flags&TypeFlagsStringLiteral != 0 {
 		b.ctx.approximateLength += len(t.AsLiteralType().value.(string)) + 2
 		lit := b.newStringLiteral(t.AsLiteralType().value.(string))
@@ -3485,8 +3497,14 @@ func (b *NodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 		return b.symbolToTypeNode(t.AsStringMappingType().symbol, ast.SymbolFlagsType, b.f.NewNodeList([]*ast.Node{typeNode}))
 	}
 	if t.flags&TypeFlagsIndexedAccess != 0 {
-		objectTypeNode := b.typeToTypeNode(t.AsIndexedAccessType().objectType)
-		indexTypeNode := b.typeToTypeNode(t.AsIndexedAccessType().indexType)
+		indexedAccess := t.AsIndexedAccessType()
+		if b.ctx.internalFlags&nodebuilder.InternalFlagsResolvePrivateNameTypes != 0 {
+			if resolvedType := b.ch.resolveIndexedAccessType(indexedAccess); resolvedType != nil && resolvedType != t {
+				return b.typeToTypeNode(resolvedType)
+			}
+		}
+		objectTypeNode := b.typeToTypeNode(indexedAccess.objectType)
+		indexTypeNode := b.typeToTypeNode(indexedAccess.indexType)
 		b.ctx.approximateLength += 2
 		return b.f.NewIndexedAccessTypeNode(objectTypeNode, indexTypeNode)
 	}

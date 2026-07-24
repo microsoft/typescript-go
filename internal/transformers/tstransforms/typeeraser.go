@@ -92,6 +92,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		ast.KindIndexedAccessType,
 		ast.KindMappedType,
 		ast.KindLiteralType,
+		ast.KindPrivateNameType,
 		// TypeScript index signatures are elided.
 		ast.KindIndexSignature:
 		return nil

@@ -609,6 +609,8 @@ func (s *inlayHintState) getInlayHintLabelParts(node *ast.Node, idToSymbol map[*
 			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "; }"})
 		case ast.KindLiteralType:
 			visitForDisplayParts(node.AsLiteralTypeNode().Literal)
+		case ast.KindPrivateNameType:
+			visitForDisplayParts(node.AsPrivateNameTypeNode().Name())
 		case ast.KindFunctionType:
 			visitParametersAndTypeParameters(node)
 			parts = append(parts, &lsproto.InlayHintLabelPart{Value: " => "})

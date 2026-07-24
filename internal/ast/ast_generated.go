@@ -52,6 +52,7 @@ type NodeFactory struct {
 	parenthesizedExpressionArena       core.Arena[ParenthesizedExpression]
 	parenthesizedTypeNodeArena         core.Arena[ParenthesizedTypeNode]
 	prefixUnaryExpressionArena         core.Arena[PrefixUnaryExpression]
+	privateNameTypeNodeArena           core.Arena[PrivateNameTypeNode]
 	propertyAccessExpressionArena      core.Arena[PropertyAccessExpression]
 	propertyAssignmentArena            core.Arena[PropertyAssignment]
 	propertySignatureDeclarationArena  core.Arena[PropertySignatureDeclaration]
@@ -363,6 +364,7 @@ type (
 	TypeReferenceNodeNode             = Node
 	ExpressionWithTypeArgumentsNode   = Node
 	LiteralTypeNodeNode               = Node
+	PrivateNameTypeNodeNode           = Node
 	ThisTypeNodeNode                  = Node
 	TypePredicateNodeNode             = Node
 	ImportAttributeNode               = Node
@@ -5513,6 +5515,48 @@ func IsLiteralTypeNode(node *Node) bool {
 }
 
 // ──────────────────────────────────────────────────────────────────────
+// PrivateNameTypeNode
+// ──────────────────────────────────────────────────────────────────────
+
+type PrivateNameTypeNode struct {
+	TypeNodeBase
+	name *PrivateIdentifierNode
+}
+
+func (f *NodeFactory) NewPrivateNameTypeNode(name *PrivateIdentifierNode) *Node {
+	data := f.privateNameTypeNodeArena.New()
+	data.name = name
+	return f.newNode(KindPrivateNameType, data)
+}
+
+func (f *NodeFactory) UpdatePrivateNameTypeNode(node *PrivateNameTypeNode, name *PrivateIdentifierNode) *Node {
+	if name != node.name {
+		return updateNode(f.NewPrivateNameTypeNode(name), node.AsNode(), f.hooks)
+	}
+	return node.AsNode()
+}
+
+func (node *PrivateNameTypeNode) ForEachChild(v Visitor) bool {
+	return visit(v, node.name)
+}
+
+func (node *PrivateNameTypeNode) VisitEachChild(v *NodeVisitor) *Node {
+	return v.Factory.UpdatePrivateNameTypeNode(node, v.visitNode(node.name))
+}
+
+func (node *PrivateNameTypeNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewPrivateNameTypeNode(node.name), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func (node *PrivateNameTypeNode) Name() *DeclarationName {
+	return node.name
+}
+
+func IsPrivateNameTypeNode(node *Node) bool {
+	return node.Kind == KindPrivateNameType
+}
+
+// ──────────────────────────────────────────────────────────────────────
 // ThisTypeNode
 // ──────────────────────────────────────────────────────────────────────
 
@@ -8873,6 +8917,8 @@ func (n *Node) ForEachChild(v Visitor) bool {
 		return n.data.(*ExpressionWithTypeArguments).ForEachChild(v)
 	case KindLiteralType:
 		return n.data.(*LiteralTypeNode).ForEachChild(v)
+	case KindPrivateNameType:
+		return n.data.(*PrivateNameTypeNode).ForEachChild(v)
 	case KindTypePredicate:
 		return n.data.(*TypePredicateNode).ForEachChild(v)
 	case KindImportAttribute:
@@ -9472,6 +9518,10 @@ func (n *Node) AsExpressionWithTypeArguments() *ExpressionWithTypeArguments {
 
 func (n *Node) AsLiteralTypeNode() *LiteralTypeNode {
 	return n.data.(*LiteralTypeNode)
+}
+
+func (n *Node) AsPrivateNameTypeNode() *PrivateNameTypeNode {
+	return n.data.(*PrivateNameTypeNode)
 }
 
 func (n *Node) AsThisTypeNode() *ThisTypeNode {

@@ -254,6 +254,7 @@
             "TemplateLiteralType",
             "TemplateLiteralTypeSpan",
             "ImportType",
+            "PrivateNameType",
             {
                 "comment": "Binding patterns"
             },
@@ -494,7 +495,7 @@
             },
             {
                 "name": "LastTypeNode",
-                "value": "ImportType"
+                "value": "PrivateNameType"
             },
             {
                 "name": "FirstPunctuation",
@@ -3636,6 +3637,20 @@
                     {
                         "name": "Literal",
                         "type": "Node"
+                    }
+                ],
+                "arena": true
+            },
+            "PrivateNameTypeNode": {
+                "kind": "PrivateNameType",
+                "extends": [
+                    "TypeNodeBase"
+                ],
+                "members": [
+                    {
+                        "name": "name",
+                        "type": "PrivateIdentifier",
+                        "private": true
                     }
                 ],
                 "arena": true

@@ -617,6 +617,7 @@ type Checker struct {
 	evaluate                                    evaluator.Evaluator
 	stringLiteralTypes                          map[string]*Type
 	numberLiteralTypes                          map[jsnum.Number]*Type
+	privateNameTypes                            map[*ast.Symbol]*Type
 	nanType                                     *Type
 	bigintLiteralTypes                          map[jsnum.PseudoBigInt]*Type
 	enumLiteralTypes                            map[EnumLiteralKey]*Type
@@ -930,6 +931,7 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.evaluate = evaluator.NewEvaluator(c.evaluateEntity, ast.OEKParentheses)
 	c.stringLiteralTypes = make(map[string]*Type)
 	c.numberLiteralTypes = make(map[jsnum.Number]*Type)
+	c.privateNameTypes = make(map[*ast.Symbol]*Type)
 	c.bigintLiteralTypes = make(map[jsnum.PseudoBigInt]*Type)
 	c.enumLiteralTypes = make(map[EnumLiteralKey]*Type)
 	c.enumNaNLiteralTypes = make(map[*ast.Symbol]*Type)
@@ -2313,6 +2315,8 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 		c.checkTemplateLiteralType(node)
 	case ast.KindImportType:
 		c.checkImportType(node)
+	case ast.KindPrivateNameType:
+		c.checkPrivateNameType(node)
 	case ast.KindNamedTupleMember:
 		c.checkNamedTupleMember(node)
 	case ast.KindIndexedAccessType:
@@ -3326,6 +3330,15 @@ func (c *Checker) checkImportType(node *ast.Node) {
 		c.getResolutionModeOverride(attributes.AsImportAttributes(), true /*reportErrors*/)
 	}
 	c.checkTypeReferenceOrImport(node)
+}
+
+func (c *Checker) checkPrivateNameType(node *ast.Node) {
+	name := node.AsPrivateNameTypeNode().Name()
+	if getContainingClassExcludingClassDecorators(name) == nil {
+		c.grammarErrorOnNode(name, diagnostics.Private_identifiers_are_not_allowed_outside_class_bodies)
+	} else if c.isErrorType(c.getTypeFromPrivateNameTypeNode(node)) {
+		c.grammarErrorOnNode(name, diagnostics.Cannot_find_name_0, name.Text())
+	}
 }
 
 func (c *Checker) getResolutionModeOverride(node *ast.ImportAttributes, reportErrors bool) core.ResolutionMode {
@@ -8232,6 +8245,9 @@ func (c *Checker) checkIndexedAccessIndexType(t *Type, accessNode *ast.Node) *Ty
 	}
 	hasNumberIndexInfo := c.getIndexInfoOfType(objectType, c.numberType) != nil
 	if everyType(indexType, func(t *Type) bool {
+		if t.flags&TypeFlagsPrivateNameType != 0 {
+			return c.getPropertyOfType(c.getApparentType(objectType), getPropertyNameFromType(t)) != nil
+		}
 		return c.isTypeAssignableTo(t, objectIndexType) || hasNumberIndexInfo && c.isApplicableIndexType(t, c.numberType)
 	}) {
 		if accessNode.Kind == ast.KindElementAccessExpression && ast.IsAssignmentTarget(accessNode) && objectType.objectFlags&ObjectFlagsMapped != 0 && getMappedTypeModifiers(objectType)&MappedTypeModifiersIncludeReadonly != 0 {
@@ -20807,7 +20823,8 @@ func isThislessVariableLikeDeclaration(node *ast.Node) bool {
 func isThislessType(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindAnyKeyword, ast.KindUnknownKeyword, ast.KindStringKeyword, ast.KindNumberKeyword, ast.KindBigIntKeyword, ast.KindBooleanKeyword,
-		ast.KindSymbolKeyword, ast.KindObjectKeyword, ast.KindVoidKeyword, ast.KindUndefinedKeyword, ast.KindNeverKeyword, ast.KindLiteralType:
+		ast.KindSymbolKeyword, ast.KindObjectKeyword, ast.KindVoidKeyword, ast.KindUndefinedKeyword, ast.KindNeverKeyword, ast.KindLiteralType,
+		ast.KindPrivateNameType:
 		return true
 	case ast.KindArrayType:
 		return isThislessType(node.AsArrayTypeNode().ElementType)
@@ -22833,6 +22850,8 @@ func (c *Checker) getTypeFromTypeNodeWorker(node *ast.Node) *Type {
 		return c.getTypeFromThisTypeNode(node)
 	case ast.KindLiteralType:
 		return c.getTypeFromLiteralTypeNode(node)
+	case ast.KindPrivateNameType:
+		return c.getTypeFromPrivateNameTypeNode(node)
 	case ast.KindTypeReference, ast.KindExpressionWithTypeArguments:
 		return c.getTypeFromTypeReference(node)
 	case ast.KindTypePredicate:
@@ -22910,6 +22929,14 @@ func (c *Checker) getTypeFromLiteralTypeNode(node *ast.Node) *Type {
 	return links.resolvedType
 }
 
+func (c *Checker) getTypeFromPrivateNameTypeNode(node *ast.Node) *Type {
+	links := c.typeNodeLinks.Get(node)
+	if links.resolvedType == nil {
+		links.resolvedType = c.getPrivateNameType(node.AsPrivateNameTypeNode().Name())
+	}
+	return links.resolvedType
+}
+
 func (c *Checker) getTypeFromTypeLiteralOrFunctionOrConstructorTypeNode(node *ast.Node) *Type {
 	links := c.typeNodeLinks.Get(node)
 	if links.resolvedType == nil {
@@ -22929,12 +22956,38 @@ func (c *Checker) getTypeFromTypeLiteralOrFunctionOrConstructorTypeNode(node *as
 func (c *Checker) getTypeFromIndexedAccessTypeNode(node *ast.Node) *Type {
 	links := c.typeNodeLinks.Get(node)
 	if links.resolvedType == nil {
-		objectType := c.getTypeFromTypeNode(node.AsIndexedAccessTypeNode().ObjectType)
-		indexType := c.getTypeFromTypeNode(node.AsIndexedAccessTypeNode().IndexType)
-		potentialAlias := c.getAliasForTypeNode(node)
-		links.resolvedType = c.getIndexedAccessTypeEx(objectType, indexType, AccessFlagsNone, node, potentialAlias)
+		indexedAccess := node.AsIndexedAccessTypeNode()
+		objectType := c.getTypeFromTypeNode(indexedAccess.ObjectType)
+		indexType := c.getTypeFromTypeNode(indexedAccess.IndexType)
+		if ast.IsPrivateNameTypeNode(indexedAccess.IndexType) && c.isErrorType(indexType) {
+			links.resolvedType = c.errorType
+		} else {
+			potentialAlias := c.getAliasForTypeNode(node)
+			links.resolvedType = c.getIndexedAccessTypeEx(objectType, indexType, AccessFlagsNone, node, potentialAlias)
+		}
 	}
 	return links.resolvedType
+}
+
+func (c *Checker) resolveIndexedAccessTypeNodeForDeclarationEmit(node *ast.Node) *Type {
+	indexTypeNode := node.AsIndexedAccessTypeNode().IndexType
+	indexLinks := c.typeNodeLinks.TryGet(indexTypeNode)
+	var indexType *Type
+	if indexLinks != nil {
+		indexType = indexLinks.resolvedType
+	}
+	if indexType == nil {
+		indexType = c.getTypeFromTypeNode(indexTypeNode)
+	}
+	if !c.maybeTypeOfKind(indexType, TypeFlagsPrivateNameType) {
+		return nil
+	}
+
+	links := c.typeNodeLinks.TryGet(node)
+	if links != nil && links.resolvedType != nil {
+		return links.resolvedType
+	}
+	return c.getTypeFromIndexedAccessTypeNode(node)
 }
 
 func (c *Checker) getTypeFromTypeOperatorNode(node *ast.Node) *Type {
@@ -25040,6 +25093,13 @@ func (c *Checker) newUniqueESSymbolType(symbol *ast.Symbol, name string) *Type {
 	return t
 }
 
+func (c *Checker) newPrivateNameType(symbol *ast.Symbol) *Type {
+	data := &PrivateNameType{}
+	t := c.newType(TypeFlagsPrivateNameType, ObjectFlagsNone, data)
+	t.symbol = symbol
+	return t
+}
+
 func (c *Checker) newObjectType(objectFlags ObjectFlags, symbol *ast.Symbol) *Type {
 	var data TypeData
 	switch {
@@ -25289,6 +25349,44 @@ func (c *Checker) getStringLiteralType(value string) *Type {
 		c.stringLiteralTypes[value] = t
 	}
 	return t
+}
+
+func (c *Checker) getPrivateNameType(node *ast.Node) *Type {
+	symbol := c.getSymbolForPrivateIdentifierExpression(node)
+	if symbol == nil || symbol.ValueDeclaration == nil {
+		return c.errorType
+	}
+	if ast.IsPrivateIdentifierClassElementDeclaration(symbol.ValueDeclaration) {
+		t := c.privateNameTypes[symbol]
+		if t == nil {
+			t = c.newPrivateNameType(symbol)
+			c.privateNameTypes[symbol] = t
+		}
+		c.markPropertyAsReferenced(symbol, nil /*nodeForCheckWriteOnly*/, false /*isSelfTypeAccess*/)
+		return t
+	}
+	return c.errorType
+}
+
+func (c *Checker) resolveIndexedAccessType(t *IndexedAccessType) *Type {
+	indexType := t.indexType
+	if !c.maybeTypeOfKind(indexType, TypeFlagsPrivateNameType) {
+		return nil
+	}
+	objectType := t.objectType
+	apparentObjectType := c.getReducedApparentType(objectType)
+	if indexType.flags&TypeFlagsUnion == 0 {
+		return c.getPropertyTypeForIndexType(objectType, apparentObjectType, indexType, indexType, nil /*accessNode*/, AccessFlagsNone)
+	}
+	propertyTypes := make([]*Type, 0, len(indexType.Types()))
+	for _, constituent := range indexType.Types() {
+		propertyType := c.getPropertyTypeForIndexType(objectType, apparentObjectType, constituent, indexType, nil /*accessNode*/, AccessFlagsNone)
+		if propertyType == nil {
+			return nil
+		}
+		propertyTypes = append(propertyTypes, propertyType)
+	}
+	return c.getUnionType(propertyTypes)
 }
 
 func (c *Checker) getNumberLiteralType(value jsnum.Number) *Type {
@@ -27014,6 +27112,24 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 			default:
 				return propType
 			}
+		}
+		if indexType.flags&TypeFlagsPrivateNameType != 0 {
+			if objectType.flags&(TypeFlagsAny|TypeFlagsNever) != 0 {
+				return objectType
+			}
+			if accessNode != nil {
+				indexNode := getIndexNodeForAccessExpression(accessNode)
+				if ast.IsPrivateNameTypeNode(indexNode) {
+					name := indexNode.AsPrivateNameTypeNode().Name()
+					if c.checkPrivateIdentifierPropertyAccess(objectType, name, indexType.symbol) {
+						return nil
+					}
+					c.error(name, diagnostics.Property_0_does_not_exist_on_type_1, name.Text(), c.TypeToString(objectType))
+				} else {
+					c.error(indexNode, diagnostics.Property_0_does_not_exist_on_type_1, c.TypeToString(indexType), c.TypeToString(objectType))
+				}
+			}
+			return nil
 		}
 		if everyType(objectType, isTupleType) && isNumericLiteralName(propName) {
 			index := jsnum.FromString(propName)
@@ -31700,6 +31816,9 @@ func (c *Checker) getIndexSignaturesAtLocation(node *ast.Node) []*ast.Node {
 func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast.Symbol {
 	if ast.IsDeclarationName(name) {
 		return c.getSymbolOfNode(name.Parent)
+	}
+	if ast.IsPrivateIdentifier(name) && ast.IsPrivateNameTypeNode(name.Parent) {
+		return c.getSymbolForPrivateIdentifierExpression(name)
 	}
 	if name.Parent.Kind == ast.KindExportAssignment && ast.IsEntityNameExpression(name) {
 		// Even an entity name expression that doesn't resolve as an entityname may still typecheck as a property access expression

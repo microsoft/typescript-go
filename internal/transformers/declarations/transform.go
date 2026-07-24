@@ -220,7 +220,8 @@ const declarationEmitNodeBuilderFlags = nodebuilder.FlagsMultilineObjectLiterals
 	nodebuilder.FlagsGenerateNamesForShadowedTypeParams |
 	nodebuilder.FlagsNoTruncation
 
-const declarationEmitInternalNodeBuilderFlags = nodebuilder.InternalFlagsAllowUnresolvedNames
+const declarationEmitInternalNodeBuilderFlags = nodebuilder.InternalFlagsAllowUnresolvedNames |
+	nodebuilder.InternalFlagsResolvePrivateNameTypes
 
 // functions as both `visitDeclarationStatements` and `transformRoot`, utilitzing SyntaxList nodes
 func (tx *DeclarationTransformer) visit(node *ast.Node) *ast.Node {
@@ -656,6 +657,10 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 		result = tx.transformTypeReference(input.AsTypeReferenceNode())
 	case ast.KindConditionalType:
 		result = tx.transformConditionalTypeNode(input.AsConditionalTypeNode())
+	case ast.KindIndexedAccessType:
+		result = tx.transformIndexedAccessTypeNode(input.AsIndexedAccessTypeNode())
+	case ast.KindPrivateNameType:
+		result = tx.Factory().NewKeywordTypeNode(ast.KindNeverKeyword)
 	case ast.KindFunctionType:
 		result = tx.transformFunctionTypeNode(input.AsFunctionTypeNode())
 	case ast.KindConstructorType:
@@ -804,6 +809,21 @@ func (tx *DeclarationTransformer) transformConditionalTypeNode(input *ast.Condit
 		trueType,
 		falseType,
 	)
+}
+
+func (tx *DeclarationTransformer) transformIndexedAccessTypeNode(input *ast.IndexedAccessTypeNode) *ast.Node {
+	result := tx.resolver.ResolveIndexedAccessTypeNode(
+		tx.EmitContext(),
+		input,
+		tx.enclosingDeclaration,
+		declarationEmitNodeBuilderFlags,
+		declarationEmitInternalNodeBuilderFlags,
+		tx.tracker,
+	)
+	if result == nil {
+		return tx.Visitor().VisitEachChild(input.AsNode())
+	}
+	return result
 }
 
 func (tx *DeclarationTransformer) transformTypeReference(input *ast.TypeReferenceNode) *ast.Node {
