@@ -290,16 +290,17 @@ func createExternalHelpersImportDeclarationIfNeeded(emitContext *printer.EmitCon
 				slices.SortFunc(helperNames, stringutil.CompareStringsCaseSensitive)
 				// Alias the imports if the names are used somewhere in the file.
 				// NOTE: We don't need to care about global import collisions as this is a module.
+				parseNode := emitContext.MostOriginal(sourceFile.AsNode())
+				parseSourceFile := parseNode.AsSourceFile()
 
 				importSpecifiers := core.Map(helperNames, func(name string) *ast.ImportSpecifierNode {
-					if printer.IsFileLevelUniqueName(sourceFile, name, nil /*hasGlobalName*/) {
+					if printer.IsFileLevelUniqueName(parseSourceFile, name, nil /*hasGlobalName*/) {
 						return emitContext.Factory.NewImportSpecifier(false /*isTypeOnly*/, nil /*propertyName*/, emitContext.Factory.NewIdentifier(name))
 					} else {
 						return emitContext.Factory.NewImportSpecifier(false /*isTypeOnly*/, emitContext.Factory.NewIdentifier(name), emitContext.Factory.NewUnscopedHelperName(name))
 					}
 				})
 				namedBindings := emitContext.Factory.NewNamedImports(emitContext.Factory.NewNodeList(importSpecifiers))
-				parseNode := emitContext.MostOriginal(sourceFile.AsNode())
 				emitContext.AddEmitFlags(parseNode, printer.EFExternalHelpers)
 
 				externalHelpersImportDeclaration := emitContext.Factory.NewImportDeclaration(
