@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"os/signal"
 	"strings"
 	"syscall"
 
@@ -50,7 +49,7 @@ func runAPI(args []string) int {
 
 	s := api.NewStdioServer(options)
 
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	ctx, stop := notifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
 	if err := s.Run(ctx); err != nil {

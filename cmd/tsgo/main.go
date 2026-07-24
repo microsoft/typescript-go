@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 	"os/signal"
+	"runtime"
 	"syscall"
 
 	"github.com/microsoft/typescript-go/internal/core"
@@ -25,8 +26,15 @@ func runMain() int {
 			return runAPI(args[1:])
 		}
 	}
-	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	ctx, stop := notifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 	result := execute.CommandLine(ctx, newSystem(), args, nil)
 	return int(result.Status)
+}
+
+func notifyContext(parent context.Context, signals ...os.Signal) (context.Context, context.CancelFunc) {
+	if runtime.GOOS == "wasip1" {
+		return context.WithCancel(parent)
+	}
+	return signal.NotifyContext(parent, signals...)
 }
