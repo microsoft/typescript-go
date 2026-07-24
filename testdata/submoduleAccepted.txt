@@ -342,9 +342,6 @@ compiler/inferTypePredicates.errors.txt.diff
 compiler/inheritedConstructorWithRestParams2.errors.txt.diff
 compiler/intTypeCheck.errors.txt.diff
 compiler/invariantGenericErrorElaboration.errors.txt.diff
-compiler/checkingObjectWithThisInNamePositionNoCrash.errors.txt.diff
-compiler/checkingObjectWithThisInNamePositionNoCrash.js.diff
-compiler/checkingObjectWithThisInNamePositionNoCrash.types.diff
 
 ## different error order ##
 compiler/arrayIterationLibES5TargetDifferent(nolib=true,target=es2015).errors.txt.diff
@@ -355,7 +352,6 @@ compiler/assignmentToInstantiationExpression.js.diff
 compiler/javascriptThisAssignmentInStaticBlock.js.diff
 compiler/asyncArrowInClassES5(target=es2015).js.diff
 compiler/augmentedTypesVar.js.diff
-compiler/constructorWithIncompleteTypeAnnotation.js.diff
 compiler/declarationEmitClassAccessorsJs1.js.diff
 compiler/declarationEmitClassSetAccessorParamNameInJs.js.diff
 compiler/declarationEmitClassSetAccessorParamNameInJs2.js.diff
@@ -394,6 +390,7 @@ compiler/declarationEmitLateBoundJSAssignments.js.diff
 compiler/declarationEmitLateBoundJSAssignments.symbols.diff
 compiler/declarationEmitLateBoundJSAssignments.types.diff
 compiler/declarationEmitMethodDeclaration.js.diff
+compiler/noImplicitThisBigThis.js.diff
 
 ## type/symbol differences of no consequence ##
 compiler/exportDefaultWithJSDoc1.types.diff
@@ -424,6 +421,11 @@ compiler/declarationEmitHigherOrderRetainedGenerics.types.diff
 compiler/declarationEmitMappedTypeDistributivityPreservesConstraints.js.diff
 compiler/declarationEmitMappedTypeDistributivityPreservesConstraints.types.diff
 compiler/declarationEmitMappedTypePreservesTypeParameterConstraint.types.diff
+compiler/anonClassDeclarationEmitIsAnon.types.diff
+compiler/baseConstraintOfDecorator.types.diff
+compiler/baseExpressionTypeParameters.types.diff
+compiler/declarationEmitGenericTypeParamerSerialization3.types.diff
+compiler/declarationEmitLocalClassDeclarationMixin.types.diff
 
 ## better error spans/suggestions ##
 compiler/awaitInNonAsyncFunction.errors.txt.diff
@@ -433,7 +435,6 @@ compiler/classWithDuplicateIdentifier.errors.txt.diff
 compiler/classWithDuplicateIdentifier.symbols.diff
 compiler/classWithDuplicateIdentifier.types.diff
 compiler/commonMissingSemicolons.errors.txt.diff
-compiler/constructorWithIncompleteTypeAnnotation.errors.txt.diff
 compiler/duplicateClassElements.errors.txt.diff
 compiler/duplicateClassElements.symbols.diff
 compiler/duplicateClassElements.types.diff
@@ -625,6 +626,10 @@ conformance/ES5For-of36(target=es2015).errors.txt.diff
 conformance/ES5For-of37(target=es2015).errors.txt.diff
 conformance/forAwaitPerIterationBindingDownlevel(target=es2015).errors.txt.diff
 conformance/restParameterInDownlevelGenerator(target=es2015).errors.txt.diff
+compiler/deprecatedCompilerOptions1.errors.txt.diff
+compiler/deprecatedCompilerOptions3.errors.txt.diff
+compiler/deprecatedCompilerOptions4.errors.txt.diff
+compiler/deprecatedCompilerOptions5.errors.txt.diff
 
 ## Corsa reports errors both sides of an import circularity
 compiler/recursiveExportAssignmentAndFindAliasedType1.errors.txt.diff
@@ -785,9 +790,6 @@ compiler/mixinPrivateAndProtected.errors.txt.diff
 conformance/mixinAccessors3.errors.txt.diff
 conformance/typeArgumentInferenceWithClassExpression2.errors.txt.diff
 
-## Different parse error recovery in heavily malformed code produces additional errors and different inferred types
-compiler/reachabilityChecksNoCrash1.errors.txt.diff
-
 ## One error instead of 3 emitted for `<T>(arg) => expr` in JSX-syntax files
 conformance/nodeModulesForbidenSyntax(module=node16).errors.txt.diff
 conformance/nodeModulesForbidenSyntax(module=node18).errors.txt.diff
@@ -870,9 +872,6 @@ compiler/unusedTypeParameters8.errors.txt.diff
 conformance/numericNamedPropertyDuplicates.errors.txt.diff
 conformance/numericStringNamedPropertyEquivalence.errors.txt.diff
 conformance/objectTypeWithDuplicateNumericProperty.errors.txt.diff
-
-## Removes spurious TS2304/TS2693 errors when TS7061 already covers the issue
-conformance/mappedTypeProperties.errors.txt.diff
 
 ## Correct TS2322 errors assigning class prototype to unrelated function type
 conformance/typesWithPrivateConstructor.errors.txt.diff
@@ -1205,10 +1204,6 @@ conformance/defaultExportsCannotMerge04(target=es2015).js.diff
 ## Declaration emit changes how numeric-string-keyed properties are represented
 compiler/declarationEmitPropertyNumericStringKey.js.diff
 
-## `typeof` references resolved to concrete types in declaration emit (concrete types are equivalent to what `typeof` resolves to)
-## `typeof a` rest parameters and symbol references resolved to tuple/symbol types instead of typeof
-compiler/declarationEmitTypeofRest.js.diff
-
 ## Namespace-qualified names simplified to unqualified where context allows (unqualified names are correct when already in scope; simplification reduces noise)
 ## `me.Things<me.Props>` → `Things<Props>` when namespace context makes qualification unnecessary
 compiler/defaultDeclarationEmitShadowedNamedCorrectly.js.diff
@@ -1408,3 +1403,74 @@ conformance/callbackTagVariadicType.js.diff
 # definiteAssignment shorthand in object literal loses optional modifier
 ## https://github.com/microsoft/typescript-go/issues/3563
 conformance/definiteAssignmentAssertionsWithObjectShortHand.js.diff
+
+# Const arrow functions are now emitted as such, not function declarations
+conformance/checkJsdocSatisfiesTag15.js.diff
+
+# JS declarations respect EOPT
+conformance/jsDeclarationsOptionalTypeLiteralProps1.js.diff
+conformance/jsDeclarationsOptionalTypeLiteralProps2.js.diff
+
+# Expando object emitted as object instead of namespace
+conformance/typeFromPropertyAssignment39.js.diff
+
+# Better `typeof` usage for function expressions
+## https://github.com/microsoft/typescript-go/pull/4507
+compiler/declarationEmitPartialNodeReuseTypeOf.js.diff
+compiler/declarationEmitPartialNodeReuseTypeReferences.js.diff
+compiler/declarationEmitPartialReuseComputedProperty.js.diff
+compiler/declarationEmitScopeConsistency.js.diff
+compiler/declFileTypeofFunction.types.diff
+compiler/functionExpressionReturningItself.types.diff
+compiler/recursiveLetConst.types.diff
+conformance/functionImplementations.types.diff
+conformance/noInferRedeclaration.js.diff
+
+# Better isolatedDeclarations error issued on cast initializer before required parameter
+compiler/isolatedDeclarationsAddUndefined.errors.txt.diff
+
+# Fixed bogus circularity error caused by reporting missing `this.` member in a return expression
+compiler/checkingObjectWithThisInNamePositionNoCrash.errors.txt.diff
+compiler/accessorInferredReturnTypeErrorInReturnStatement.errors.txt.diff
+conformance/thisInObjectLiterals.errors.txt.diff
+
+# Better circularity handling in computed name checking
+compiler/blockScopedBindingUsedBeforeDef.errors.txt.diff
+
+# Minor differences in related spans or error locations for circular mapped types
+compiler/incorrectRecursiveMappedTypeConstraint.errors.txt.diff
+compiler/typeParameterWithInvalidConstraintType.errors.txt.diff
+conformance/recursiveMappedTypes.errors.txt.diff
+
+# Slight difference in checking parse errors
+compiler/reachabilityChecksNoCrash1.errors.txt.diff
+
+# Reduction in follow-on errors after erroneous use of `in` in computed name
+conformance/mappedTypeProperties.errors.txt.diff
+
+# Vastly different parsing
+conformance/jsdocDisallowedInTypescript.errors.txt.diff
+
+# Differing/better spans/related info for some errors
+compiler/constructorWithIncompleteTypeAnnotation.errors.txt.diff
+
+## checkchildren: dispatch methods now always check their child nodes ##
+# The checker methods dispatched from checkSourceElementWorker/checkExpressionWorker
+# (checkReturnStatement, checkYieldExpression, checkExportAssignment, checkTypePredicate,
+# checkAssertion) now always check their child nodes, even when an early return fires for a
+# grammar error or a misplaced construct (e.g. `yield`/`return` outside a function, `export =`
+# in a namespace). This keeps diagnostics stable regardless of traversal order and removes the
+# emit-resolver "pre-emit/post-emit diagnostic counts do not match" instability. The TypeScript
+# submodule skips these children on error paths (surfacing the diagnostics only lazily via the
+# emit resolver, if at all), so we now report some additional, correct diagnostics up front.
+compiler/multiLinePropertyAccessAndArrowFunctionIndent1.errors.txt.diff
+compiler/parseErrorIncorrectReturnToken.errors.txt.diff
+conformance/parserErrorRecovery_ModuleElement1.errors.txt.diff
+conformance/parserExportAssignment5.errors.txt.diff
+conformance/parserExportAssignment9.errors.txt.diff
+conformance/parserStatementIsNotAMemberVariableDeclaration1(alwaysstrict=true).errors.txt.diff
+conformance/YieldExpression12_es6.errors.txt.diff
+conformance/YieldExpression14_es6.errors.txt.diff
+conformance/YieldExpression15_es6.errors.txt.diff
+conformance/YieldExpression17_es6.errors.txt.diff
+conformance/YieldExpression2_es6.errors.txt.diff

@@ -1,8 +1,17 @@
+import type { CheckFlags } from "#enums/checkFlags";
 import type { CompletionItemKind } from "#enums/completionItemKind";
+import type { ModuleKind } from "#enums/moduleKind";
+import type {
+    __String,
+    Path,
+} from "../ast/index.ts";
+import type { CompilerOptions } from "./compilerOptions.ts";
 import {
     documentURIToFileName,
     fileNameToDocumentURI,
 } from "./path.ts";
+
+export type { CompilerOptions } from "./compilerOptions.ts";
 
 /**
  * A document identifier that can be either a file name (path string) or a document URI object.
@@ -25,6 +34,20 @@ export interface DocumentPosition {
     /** The character offset within the document */
     position: number;
 }
+
+export interface TextEdit {
+    pos: number;
+    end: number;
+    newText: string;
+}
+
+export interface ImportSymbolActionRequest {
+    kind: "importSymbol";
+    symbol: number;
+    isValidTypeOnlyUseSite?: boolean;
+}
+
+export type ImportAdderActionRequest = ImportSymbolActionRequest;
 
 /**
  * Resolves a DocumentIdentifier to a file name.
@@ -58,9 +81,19 @@ export interface InitializeResponse {
     currentDirectory: string;
 }
 
+export interface ProjectReference {
+    /** A normalized path on disk */
+    path: string;
+    /** The path as the user originally wrote it */
+    originalPath?: string;
+    /** True if it is intended that this reference form a circularity */
+    circular?: boolean;
+}
+
 export interface ConfigResponse {
     options: Record<string, unknown>;
     fileNames: string[];
+    projectReferences?: ProjectReference[];
 }
 
 export interface LSPUpdateSnapshotParams {
@@ -113,6 +146,21 @@ export interface UpdateSnapshotParams extends LSPUpdateSnapshotParams {
 }
 
 /**
+ * Parameters for updateTemporarySnapshot. Unlike {@link UpdateSnapshotParams}, this
+ * only overrides a single file's content: it does not open or close projects/files
+ * and does not advance the session's latest snapshot. The resulting snapshot is only
+ * for the caller's own queries and must be released when done.
+ */
+export interface UpdateTemporarySnapshotParams {
+    /** The current client snapshot on which to layer the temporary update. */
+    snapshot: number;
+    /** The file whose content is temporarily overridden. */
+    file: DocumentIdentifier;
+    /** The temporary content for the file. */
+    newText: string;
+}
+
+/**
  * Builds the wire request for updateSnapshot, applying the deprecated `openProject`
  * compatibility shim: a single `openProject` is folded into `openProjects` and is
  * never sent on the wire.
@@ -161,9 +209,9 @@ export interface UpdateSnapshotResponse {
 }
 
 export interface ProjectResponse {
-    id: string;
+    id: Path;
     configFileName: string;
-    compilerOptions: Record<string, unknown>;
+    compilerOptions: CompilerOptions;
     rootFiles: string[];
 }
 
@@ -172,11 +220,25 @@ export interface SourceFileResponse {
     data: string;
 }
 
+export interface SourceFileMetadata {
+    isDefaultLibrary: boolean;
+    isFromExternalLibrary: boolean;
+    packageJsonType: string;
+    packageJsonDirectory: string;
+    impliedNodeFormat: ModuleKind;
+}
+
 export interface SymbolResponse {
     id: number;
-    name: string;
+    /**
+     * The project the symbol was first observed in. Used as the default project for
+     * follow-up lookups that need a project context (e.g. members/exports), since symbols
+     * are shared snapshot-wide and such lookups can vary by project.
+     */
+    project: Path;
+    name: __String;
     flags: number;
-    checkFlags: number;
+    checkFlags: CheckFlags;
     declarations?: string[];
     valueDeclaration?: string;
     parent?: number;
