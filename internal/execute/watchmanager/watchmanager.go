@@ -306,17 +306,53 @@ func (wm *WatchManager) createDirWatches(updates []dirWatchUpdate) error {
 	return nil
 }
 
-func IsDirCoveredByWatch(dirs map[string]bool, dir string, opts tspath.ComparePathsOptions) bool {
-	for wdir, recursive := range dirs {
-		if recursive {
-			if tspath.ContainsPath(wdir, dir, opts) {
-				return true
-			}
-		} else if tspath.ComparePaths(dir, wdir, opts) == 0 {
+// DirWatchSet accumulates the set of directories that should be watched while
+// answering coverage queries efficiently. A directory is "covered" when it is
+// already present in the set, or when it is contained within a recursive watch
+// directory already in the set.
+type DirWatchSet struct {
+	opts      tspath.ComparePathsOptions
+	dirs      map[string]bool
+	present   map[string]struct{}
+	recursive []string
+}
+
+func NewDirWatchSet(opts tspath.ComparePathsOptions) *DirWatchSet {
+	return &DirWatchSet{
+		opts:    opts,
+		dirs:    make(map[string]bool),
+		present: make(map[string]struct{}),
+	}
+}
+
+func (s *DirWatchSet) canonical(dir string) string {
+	return tspath.GetCanonicalFileName(dir, s.opts.UseCaseSensitiveFileNames)
+}
+
+func (s *DirWatchSet) Set(dir string, recursive bool) {
+	existing, has := s.dirs[dir]
+	newRecursive := existing || recursive
+	s.dirs[dir] = newRecursive
+	s.present[s.canonical(dir)] = struct{}{}
+	if newRecursive && (!has || !existing) {
+		s.recursive = append(s.recursive, dir)
+	}
+}
+
+func (s *DirWatchSet) Covered(dir string) bool {
+	if _, has := s.present[s.canonical(dir)]; has {
+		return true
+	}
+	for _, wdir := range s.recursive {
+		if tspath.ContainsPath(wdir, dir, s.opts) {
 			return true
 		}
 	}
 	return false
+}
+
+func (s *DirWatchSet) Dirs() map[string]bool {
+	return s.dirs
 }
 
 func (wm *WatchManager) IsPathUnderWatch(path string, opts tspath.ComparePathsOptions) bool {
