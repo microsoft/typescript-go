@@ -485,6 +485,27 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	ast.SetExternalModuleIndicator(result, p.opts.ExternalModuleIndicatorOptions)
 }
 
+func init() {
+	ast.SetCollectIdentifiersForSourceFile(collectIdentifiersForSourceFile)
+}
+
+func collectIdentifiersForSourceFile(sourceFile *ast.SourceFile) collections.Set[string] {
+	var identifiers collections.Set[string]
+	scanner := scanner.NewScanner()
+	scanner.SetText(sourceFile.Text())
+	scanner.SetLanguageVariant(sourceFile.LanguageVariant)
+	for token := scanner.Scan(); token != ast.KindEndOfFile; token = scanner.Scan() {
+		if token >= ast.KindIdentifier ||
+			token == ast.KindStringLiteral ||
+			token == ast.KindNumericLiteral ||
+			token == ast.KindBigIntLiteral ||
+			token == ast.KindNoSubstitutionTemplateLiteral {
+			identifiers.Add(scanner.TokenValue())
+		}
+	}
+	return identifiers
+}
+
 func (p *Parser) createJSDocCache() map[*ast.Node][]*ast.Node {
 	if len(p.jsdocInfos) == 0 {
 		return nil
