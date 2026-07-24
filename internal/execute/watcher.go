@@ -185,12 +185,22 @@ func (w *Watcher) computeDesiredWatches(seenFilePaths []string) map[string]bool 
 	resolvedDirs := w.wm.ResolveDesiredDirs(desiredDirs)
 
 	opts := w.comparePathsOptions()
+	toAddDirs := make(map[tspath.Path]string) // canonicalized dir → original dir
 	for _, filePath := range seenFilePaths {
 		dir := tspath.GetDirectoryPath(filePath)
-		if !watchmanager.IsDirCoveredByWatch(resolvedDirs, dir, opts) {
-			if watchmanager.CanWatchDirectory(dir) {
-				resolvedDirs[dir] = false
+		canonicalDir := tspath.ToPath(dir, cwd, opts.UseCaseSensitiveFileNames)
+		if _, has := toAddDirs[canonicalDir]; !has {
+			if !watchmanager.IsDirCoveredByWatch(resolvedDirs, dir, opts) && watchmanager.CanWatchDirectory(dir) {
+				toAddDirs[canonicalDir] = dir
+			} else {
+				// Cache the IsDirCoveredByWatch call, but don't add the dir
+				toAddDirs[canonicalDir] = ""
 			}
+		}
+	}
+	for _, dir := range toAddDirs {
+		if dir != "" {
+			resolvedDirs[dir] = false
 		}
 	}
 
