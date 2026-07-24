@@ -179,7 +179,6 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 					"maximumHoverLength": 100,
 					"allowRenameOfImportPath": true
 				}
-
 			}`,
 			expected: UserPreferences{
 				DisableSuggestions:      core.TSTrue,
