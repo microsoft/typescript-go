@@ -1121,7 +1121,7 @@ func (c *Checker) resolveReverseMappedTypeMembers(t *Type) {
 		checkFlags := ast.CheckFlagsReverseMapped | core.IfElse(readonlyMask && c.isReadonlySymbol(prop), ast.CheckFlagsReadonly, 0)
 		inferredProp := c.newSymbolEx(ast.SymbolFlagsProperty|prop.Flags&optionalMask, prop.Name, checkFlags)
 		inferredProp.Declarations = prop.Declarations
-		c.valueSymbolLinks.Get(inferredProp).nameType = c.valueSymbolLinks.Get(prop).nameType
+		c.getValueSymbolLinks(inferredProp).nameType = c.getValueSymbolLinks(prop).nameType
 		links := c.ReverseMappedSymbolLinks.Get(inferredProp)
 		links.propertyType = c.getTypeOfSymbol(prop)
 		constraintTarget := r.constraintType.AsIndexType().target
@@ -1143,7 +1143,7 @@ func (c *Checker) resolveReverseMappedTypeMembers(t *Type) {
 }
 
 func (c *Checker) getTypeOfReverseMappedSymbol(symbol *ast.Symbol) *Type {
-	links := c.valueSymbolLinks.Get(symbol)
+	links := c.getValueSymbolLinks(symbol)
 	if links.resolvedType == nil {
 		reverseLinks := c.ReverseMappedSymbolLinks.Get(symbol)
 		links.resolvedType = core.OrElse(c.inferReverseMappedType(reverseLinks.propertyType, reverseLinks.mappedType, reverseLinks.constraintType), c.unknownType)
@@ -1234,7 +1234,7 @@ func (c *Checker) createEmptyObjectTypeFromStringLiteral(t *Type) *Type {
 		}
 		name := getStringLiteralValue(t)
 		literalProp := c.newSymbol(ast.SymbolFlagsProperty, name)
-		c.valueSymbolLinks.Get(literalProp).resolvedType = c.anyType
+		c.getValueSymbolLinks(literalProp).resolvedType = c.anyType
 		if t.symbol != nil {
 			literalProp.Declarations = t.symbol.Declarations
 			literalProp.ValueDeclaration = t.symbol.ValueDeclaration

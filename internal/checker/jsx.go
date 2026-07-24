@@ -746,7 +746,7 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 				if member.ValueDeclaration != nil {
 					attributeSymbol.ValueDeclaration = member.ValueDeclaration
 				}
-				links := c.valueSymbolLinks.Get(attributeSymbol)
+				links := c.getValueSymbolLinks(attributeSymbol)
 				links.resolvedType = exprType
 				links.target = member
 				attributesTable[attributeSymbol.Name] = attributeSymbol
@@ -838,7 +838,7 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 			}
 			// If there are children in the body of JSX element, create dummy attribute "children" with the union of children types so that it will pass the attribute checking process
 			childrenPropSymbol := c.newSymbol(ast.SymbolFlagsProperty, jsxChildrenPropertyName)
-			links := c.valueSymbolLinks.Get(childrenPropSymbol)
+			links := c.getValueSymbolLinks(childrenPropSymbol)
 			switch {
 			case len(childTypes) == 1:
 				links.resolvedType = childTypes[0]
@@ -1183,7 +1183,7 @@ func (c *Checker) createSignatureForJSXIntrinsic(node *ast.Node, result *Type) *
 	// returnNode := typeSymbol && c.nodeBuilder.symbolToEntityName(typeSymbol, ast.SymbolFlagsType, node)
 	// declaration := factory.createFunctionTypeNode(nil, []ParameterDeclaration{factory.createParameterDeclaration(nil, nil /*dotDotDotToken*/, "props", nil /*questionToken*/, c.nodeBuilder.typeToTypeNode(result, node))}, ifElse(returnNode != nil, factory.createTypeReferenceNode(returnNode, nil /*typeArguments*/), factory.createKeywordTypeNode(ast.KindAnyKeyword)))
 	parameterSymbol := c.newSymbol(ast.SymbolFlagsFunctionScopedVariable, "props")
-	c.valueSymbolLinks.Get(parameterSymbol).resolvedType = result
+	c.getValueSymbolLinks(parameterSymbol).resolvedType = result
 	return c.newSignature(SignatureFlagsNone, nil, nil, nil, []*ast.Symbol{parameterSymbol}, elementType, nil, 1)
 }
 

@@ -79,10 +79,10 @@ func (c *Checker) GetUnionType(types []*Type) *Type {
 }
 
 func (c *Checker) GetNameTypeOfSymbol(symbol *ast.Symbol) *Type {
-	if !c.valueSymbolLinks.Has(symbol) {
-		return nil
+	if links := c.tryGetValueSymbolLinks(symbol); links != nil {
+		return links.nameType
 	}
-	return c.valueSymbolLinks.TryGet(symbol).nameType
+	return nil
 }
 
 func IsTypeUsableAsPropertyName(t *Type) bool {
