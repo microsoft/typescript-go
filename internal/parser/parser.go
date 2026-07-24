@@ -84,7 +84,6 @@ type Parser struct {
 	hasDeprecatedTag            bool
 	hasParseError               bool
 
-	identifiers                map[string]string
 	identifierCount            int
 	notParenthesizedArrow      collections.Set[int]
 	nodeSliceArena             core.Arena[*ast.Node]
@@ -473,7 +472,6 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.LanguageVariant = p.languageVariant
 	result.ScriptKind = p.scriptKind
 	result.Flags |= p.sourceFlags
-	result.Identifiers = p.identifiers
 	result.NodeCount = p.factory.NodeCount()
 	result.TextCount = p.factory.TextCount()
 	result.IdentifierCount = p.identifierCount
@@ -5904,15 +5902,7 @@ func (p *Parser) createIdentifierWithDiagnostic(isIdentifier bool, diagnosticMes
 }
 
 func (p *Parser) internIdentifier(text string) string {
-	if identifier, ok := p.identifiers[text]; ok {
-		return identifier
-	}
-	identifier := text
-	if p.identifiers == nil {
-		p.identifiers = make(map[string]string)
-	}
-	p.identifiers[identifier] = identifier
-	return identifier
+	return text
 }
 
 func (p *Parser) newNodeList(loc core.TextRange, nodes []*ast.Node) *ast.NodeList {

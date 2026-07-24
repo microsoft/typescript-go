@@ -8,6 +8,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
@@ -652,8 +653,23 @@ func IsFileLevelUniqueName(sourceFile *ast.SourceFile, name string, hasGlobalNam
 	if hasGlobalName != nil && hasGlobalName(name) {
 		return false
 	}
-	_, ok := sourceFile.Identifiers[name]
-	return !ok
+	identifiers := sourceFile.GetIdentifiers(func(sourceFile *ast.SourceFile) collections.Set[string] {
+		var identifiers collections.Set[string]
+		scanner := scanner.NewScanner()
+		scanner.SetText(sourceFile.Text())
+		scanner.SetLanguageVariant(sourceFile.LanguageVariant)
+		for token := scanner.Scan(); token != ast.KindEndOfFile; token = scanner.Scan() {
+			if token >= ast.KindIdentifier ||
+				token == ast.KindStringLiteral ||
+				token == ast.KindNumericLiteral ||
+				token == ast.KindBigIntLiteral ||
+				token == ast.KindNoSubstitutionTemplateLiteral {
+				identifiers.Add(scanner.TokenValue())
+			}
+		}
+		return identifiers
+	})
+	return !identifiers.Has(name)
 }
 
 func hasLeadingHash(text string) bool {

@@ -2487,7 +2487,6 @@ type SourceFile struct {
 	IsDeclarationFile           bool
 	ContainsNonASCII            bool
 	UsesUriStyleNodeCoreModules core.Tristate
-	Identifiers                 map[string]string
 	IdentifierCount             int
 	imports                     []*LiteralLikeNode // []LiteralLikeNode
 	ModuleAugmentations         []*ModuleName      // []ModuleName
@@ -2496,6 +2495,8 @@ type SourceFile struct {
 	jsdocCache                  map[*Node][]*Node
 	jsdocMu                     sync.RWMutex
 	hasLazyJSDoc                bool
+	identifiersOnce             sync.Once
+	identifiers                 collections.Set[string]
 	ReparsedClones              []*Node
 	Pragmas                     []Pragma
 	ReferencedFiles             []*FileReference
@@ -2563,6 +2564,13 @@ func (node *SourceFile) ParseOptions() SourceFileParseOptions {
 
 func (node *SourceFile) Text() string {
 	return node.text
+}
+
+func (file *SourceFile) GetIdentifiers(compute func(*SourceFile) collections.Set[string]) collections.Set[string] {
+	file.identifiersOnce.Do(func() {
+		file.identifiers = compute(file)
+	})
+	return file.identifiers
 }
 
 func (node *SourceFile) FileName() string {
@@ -2663,7 +2671,6 @@ func (node *SourceFile) copyFrom(other *SourceFile) {
 	node.IsDeclarationFile = other.IsDeclarationFile
 	node.ContainsNonASCII = other.ContainsNonASCII
 	node.UsesUriStyleNodeCoreModules = other.UsesUriStyleNodeCoreModules
-	node.Identifiers = other.Identifiers
 	node.imports = other.imports
 	node.ModuleAugmentations = other.ModuleAugmentations
 	node.AmbientModuleNames = other.AmbientModuleNames
