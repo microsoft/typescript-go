@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"reflect"
+	"slices"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -73,9 +74,11 @@ type Watcher struct {
 
 	sourceFileCache *collections.SyncMap[tspath.Path, *cachedSourceFile]
 
-	wm           *watchmanager.WatchManager
-	seenFiles    *collections.Set[tspath.Path] // all build dependencies (for event filtering)
-	configMtimes map[string]time.Time
+	wm            *watchmanager.WatchManager
+	seenFiles     *collections.Set[tspath.Path] // all build dependencies (for event filtering)
+	configMtimes  map[string]time.Time
+	watchSetDirty bool
+	programReady  bool
 }
 
 var _ tsc.Watcher = (*Watcher)(nil)
@@ -130,6 +133,7 @@ func (w *Watcher) start(ctx context.Context) {
 	}
 
 	w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.Starting_compilation_in_watch_mode))
+	w.watchSetDirty = true
 	if err := w.doBuild(); err != nil {
 		w.wm.ForceOverflow()
 	}
@@ -225,6 +229,21 @@ func (w *Watcher) DoCycle() {
 		// Filter fswatch events against known dependencies
 		if w.isRelevantChange(changedPaths) {
 			w.evictChangedSourceFiles(changedPaths)
+			for eventPath := range changedPaths {
+				if w.sys.FS().DirectoryExists(eventPath) {
+					w.watchSetDirty = true
+					break
+				}
+				if w.config.ConfigFile != nil && w.config.PossiblyMatchesFileName(eventPath) {
+					caseSensitive := w.sys.FS().UseCaseSensitiveFileNames()
+					cwd := w.sys.GetCurrentDirectory()
+					p := tspath.ToPath(eventPath, cwd, caseSensitive)
+					if !w.seenFiles.Has(p) {
+						w.watchSetDirty = true
+						break
+					}
+				}
+			}
 		} else {
 			if w.wm.DebugLog != nil {
 				fmt.Fprintf(w.wm.DebugLog, "[watch] DoCycle: %d event(s) not relevant to compilation, skipping rebuild\n", len(changedPaths))
@@ -237,6 +256,7 @@ func (w *Watcher) DoCycle() {
 	} else if overflow {
 		// Overflow: evict the entire source file cache to force re-build
 		w.sourceFileCache = &collections.SyncMap[tspath.Path, *cachedSourceFile]{}
+		w.watchSetDirty = true
 	} else if !hasEvents && !w.configModified {
 		// No events and no config change
 		if w.wm.DebugLog != nil {
@@ -282,6 +302,52 @@ func (w *Watcher) isRelevantChange(changedPaths map[string]fswatch.EventKind) bo
 func (w *Watcher) doBuild() error {
 	if w.configModified {
 		w.sourceFileCache = &collections.SyncMap[tspath.Path, *cachedSourceFile]{}
+		w.watchSetDirty = true
+	}
+
+	if w.watchSetDirty {
+		if w.config.ConfigFile != nil && len(w.config.WildcardDirectories()) > 0 {
+			newConfig := w.config.ReloadFileNamesOfParsedCommandLine(w.sys.FS())
+			if !slices.Equal(w.config.FileNames(), newConfig.FileNames()) {
+				w.config = newConfig
+			} else {
+				w.watchSetDirty = false
+				w.config = newConfig
+			}
+		} else if !w.configModified {
+			w.watchSetDirty = false
+		}
+	}
+
+	if w.program != nil && w.programReady && !w.configModified && !w.watchSetDirty {
+		cached := cachedvfs.From(w.sys.FS())
+		innerHost := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), cached, w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
+		host := &watchCompilerHost{CompilerHost: innerHost, cache: w.sourceFileCache}
+
+		if w.tryUpdateProgram(host) {
+			result := w.compileAndEmit()
+			cached.DisableAndClearCache()
+
+			w.configMtimes = make(map[string]time.Time, len(w.configFilePaths))
+			for _, cfgPath := range w.configFilePaths {
+				if s := w.sys.FS().Stat(cfgPath); s != nil {
+					w.configMtimes[cfgPath] = s.ModTime()
+				}
+			}
+			w.configModified = false
+
+			errorCount := len(result.Diagnostics)
+			if errorCount == 1 {
+				w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.Found_1_error_Watching_for_file_changes))
+			} else {
+				w.reportWatchStatus(ast.NewCompilerDiagnostic(diagnostics.Found_0_errors_Watching_for_file_changes, errorCount))
+			}
+			if w.testing != nil {
+				w.testing.OnProgram(w.program)
+			}
+			return nil
+		}
+		cached.DisableAndClearCache()
 	}
 
 	cached := cachedvfs.From(w.sys.FS())
@@ -289,13 +355,11 @@ func (w *Watcher) doBuild() error {
 	innerHost := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), tfs, w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
 	host := &watchCompilerHost{CompilerHost: innerHost, cache: w.sourceFileCache}
 
-	var wildcardDirs map[string]bool
 	if w.config.ConfigFile != nil {
-		wildcardDirs = w.config.WildcardDirectories()
-		for dir := range wildcardDirs {
+		for dir := range w.config.WildcardDirectories() {
 			tfs.SeenFiles.Add(dir)
 		}
-		if len(wildcardDirs) > 0 {
+		if !w.watchSetDirty && len(w.config.WildcardDirectories()) > 0 {
 			w.config = w.config.ReloadFileNamesOfParsedCommandLine(w.sys.FS())
 		}
 	}
@@ -307,6 +371,7 @@ func (w *Watcher) doBuild() error {
 		Config: w.config,
 		Host:   host,
 	}), w.program, nil, w.testing != nil)
+	w.programReady = true
 
 	result := w.compileAndEmit()
 	cached.DisableAndClearCache()
@@ -330,6 +395,7 @@ func (w *Watcher) doBuild() error {
 		fmt.Fprintf(w.sys.Writer(), "%v\n", err)
 		return err
 	}
+	w.watchSetDirty = false
 	w.configModified = false
 
 	programFiles := w.program.GetProgram().FilesByPath()
@@ -351,6 +417,51 @@ func (w *Watcher) doBuild() error {
 		w.testing.OnProgram(w.program)
 	}
 	return nil
+}
+
+func (w *Watcher) tryUpdateProgram(host *watchCompilerHost) bool {
+	oldProgram := w.program.GetProgram()
+
+	var changedPath tspath.Path
+	var changedCount int
+	for path := range oldProgram.FilesByPath() {
+		if _, ok := w.sourceFileCache.Load(path); !ok {
+			changedPath = path
+			changedCount++
+			if changedCount > 1 {
+				return false
+			}
+		}
+	}
+	if changedCount == 0 {
+		return false
+	}
+
+	if oldFile := oldProgram.FilesByPath()[changedPath]; oldFile != nil {
+		if newFile := host.GetSourceFile(oldFile.ParseOptions()); newFile != nil {
+			if !equalJSXImplicitImport(oldProgram.Options(), oldFile, newFile) {
+				return false
+			}
+		}
+	}
+
+	newProgram, _, reused := oldProgram.UpdateProgram(changedPath, host, nil)
+	if reused {
+		w.program = incremental.NewProgram(newProgram, w.program, nil, w.testing != nil)
+	}
+	return reused
+}
+
+func equalJSXImplicitImport(options *core.CompilerOptions, oldFile *ast.SourceFile, newFile *ast.SourceFile) bool {
+	isJSX := func(file *ast.SourceFile) bool {
+		return file.ScriptKind == core.ScriptKindJSX || file.ScriptKind == core.ScriptKindTSX
+	}
+	if !isJSX(oldFile) && !isJSX(newFile) {
+		return true
+	}
+	oldImport := ast.GetJSXRuntimeImport(ast.GetJSXImplicitImportBase(options, oldFile), options)
+	newImport := ast.GetJSXRuntimeImport(ast.GetJSXImplicitImportBase(options, newFile), options)
+	return oldImport == newImport
 }
 
 func (w *Watcher) evictChangedSourceFiles(changedPaths map[string]fswatch.EventKind) {
