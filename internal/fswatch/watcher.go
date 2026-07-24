@@ -186,7 +186,7 @@ func AllWatchers() []Watcher {
 	}
 }
 
-// Inotify returns the inotify watcher (Linux).
+// Inotify returns the inotify watcher (Linux and Android).
 func Inotify() Watcher { return inotifyWatcher }
 
 // FSEvents returns the FSEvents watcher (macOS).
@@ -208,6 +208,8 @@ func Default() Watcher {
 		if Fanotify().Available() {
 			return Fanotify()
 		}
+		return Inotify()
+	case "android":
 		return Inotify()
 	case "darwin":
 		if FSEvents().Available() {
