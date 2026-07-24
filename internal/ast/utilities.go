@@ -1154,20 +1154,56 @@ func IsFunctionExpressionOrArrowFunction(node *Node) bool {
 
 // Warning: This has the same semantics as the forEach family of functions in that traversal terminates
 // in the event that 'visitor' returns true.
-func ForEachReturnStatement(body *Node, visitor func(stmt *Node) bool) bool {
-	var traverse func(*Node) bool
-	traverse = func(node *Node) bool {
-		switch node.Kind {
-		case KindReturnStatement:
-			return visitor(node)
-		case KindCaseBlock, KindBlock, KindIfStatement, KindDoStatement, KindWhileStatement, KindForStatement, KindForInStatement,
-			KindForOfStatement, KindWithStatement, KindSwitchStatement, KindCaseClause, KindDefaultClause, KindLabeledStatement,
-			KindTryStatement, KindCatchClause:
-			return node.ForEachChild(traverse)
-		}
+func ForEachReturnStatement(node *Node, visitor func(stmt *Node) bool) bool {
+	if node == nil {
 		return false
 	}
-	return traverse(body)
+	switch node.Kind {
+	case KindReturnStatement:
+		return visitor(node)
+	case KindBlock:
+		return forEachReturnStatementInNodeList(node.AsBlock().Statements, visitor)
+	case KindIfStatement:
+		s := node.AsIfStatement()
+		return ForEachReturnStatement(s.ThenStatement, visitor) || ForEachReturnStatement(s.ElseStatement, visitor)
+	case KindDoStatement:
+		return ForEachReturnStatement(node.AsDoStatement().Statement, visitor)
+	case KindWhileStatement:
+		return ForEachReturnStatement(node.AsWhileStatement().Statement, visitor)
+	case KindForStatement:
+		return ForEachReturnStatement(node.AsForStatement().Statement, visitor)
+	case KindForInStatement, KindForOfStatement:
+		return ForEachReturnStatement(node.AsForInOrOfStatement().Statement, visitor)
+	case KindWithStatement:
+		return ForEachReturnStatement(node.AsWithStatement().Statement, visitor)
+	case KindSwitchStatement:
+		return ForEachReturnStatement(node.AsSwitchStatement().CaseBlock, visitor)
+	case KindCaseBlock:
+		return forEachReturnStatementInNodeList(node.AsCaseBlock().Clauses, visitor)
+	case KindCaseClause, KindDefaultClause:
+		return forEachReturnStatementInNodeList(node.AsCaseOrDefaultClause().Statements, visitor)
+	case KindLabeledStatement:
+		return ForEachReturnStatement(node.AsLabeledStatement().Statement, visitor)
+	case KindTryStatement:
+		s := node.AsTryStatement()
+		return ForEachReturnStatement(s.TryBlock, visitor) ||
+			ForEachReturnStatement(s.CatchClause, visitor) ||
+			ForEachReturnStatement(s.FinallyBlock, visitor)
+	case KindCatchClause:
+		return ForEachReturnStatement(node.AsCatchClause().Block, visitor)
+	}
+	return false
+}
+
+func forEachReturnStatementInNodeList(list *NodeList, visitor func(stmt *Node) bool) bool {
+	if list != nil {
+		for _, n := range list.Nodes {
+			if ForEachReturnStatement(n, visitor) {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func GetRootDeclaration(node *Node) *Node {
