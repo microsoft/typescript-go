@@ -1,0 +1,64 @@
+variadicTupleRelationPositionMapping.ts(13,3): error TS2344: Type '[...A, boolean, boolean, boolean, boolean]' does not satisfy the constraint '[...A, boolean]'.
+  Target allows only 2 element(s) but source may have more.
+variadicTupleRelationPositionMapping.ts(30,31): error TS2344: Type '[...A, boolean, boolean, ...B, boolean]' does not satisfy the constraint '[...A, boolean, ...B, boolean]'.
+  Target allows only 4 element(s) but source may have more.
+variadicTupleRelationPositionMapping.ts(44,3): error TS2344: Type '[...T, boolean]' does not satisfy the constraint '[boolean, ...T, boolean]'.
+  Source has 2 element(s) but target requires 3.
+
+
+==== variadicTupleRelationPositionMapping.ts (3 errors) ====
+    type TrailingElement<
+      A extends unknown[],
+      Result extends [...A, boolean],
+    > = Result;
+    
+    type MatchingTrailingElement<A extends unknown[]> = TrailingElement<
+      A,
+      [...A, boolean]
+    >;
+    
+    type ExcessTrailingElements<A extends unknown[]> = TrailingElement<
+      A,
+      [...A, boolean, boolean, boolean, boolean]
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2344: Type '[...A, boolean, boolean, boolean, boolean]' does not satisfy the constraint '[...A, boolean]'.
+!!! error TS2344:   Target allows only 2 element(s) but source may have more.
+    >;
+    
+    type TwoVariadicElements<
+      A extends unknown[],
+      B extends unknown[],
+      Result extends [...A, boolean, ...B, boolean],
+    > = Result;
+    
+    type MatchingTwoVariadicElements<
+      A extends unknown[],
+      B extends unknown[],
+    > = TwoVariadicElements<A, B, [...A, boolean, ...B, boolean]>;
+    
+    type ExcessMiddleElement<
+      A extends unknown[],
+      B extends unknown[],
+    > = TwoVariadicElements<A, B, [...A, boolean, boolean, ...B, boolean]>;
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2344: Type '[...A, boolean, boolean, ...B, boolean]' does not satisfy the constraint '[...A, boolean, ...B, boolean]'.
+!!! error TS2344:   Target allows only 4 element(s) but source may have more.
+    
+    type FixedPrefixAndSuffix<
+      T extends unknown[],
+      Result extends [boolean, ...T, boolean],
+    > = Result;
+    
+    type MatchingFixedPrefixAndSuffix<T extends unknown[]> = FixedPrefixAndSuffix<
+      T,
+      [boolean, ...T, boolean]
+    >;
+    
+    type MissingFixedPrefix<T extends unknown[]> = FixedPrefixAndSuffix<
+      T,
+      [...T, boolean]
+      ~~~~~~~~~~~~~~~
+!!! error TS2344: Type '[...T, boolean]' does not satisfy the constraint '[boolean, ...T, boolean]'.
+!!! error TS2344:   Source has 2 element(s) but target requires 3.
+    >;
+    
