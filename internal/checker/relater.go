@@ -4115,7 +4115,7 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 			} else {
 				sourceRest = true
 			}
-			targetHasRestElement := target.TargetTupleType().combinedFlags&ElementFlagsVariable != 0
+			targetHasVariableElement := target.TargetTupleType().combinedFlags&ElementFlagsVariable != 0
 			var sourceMinLength int
 			if isTupleType(source) {
 				sourceMinLength = source.TargetTupleType().minLength
@@ -4129,13 +4129,13 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 				}
 				return TernaryFalse
 			}
-			if !targetHasRestElement && targetArity < sourceMinLength {
+			if !targetHasVariableElement && targetArity < sourceMinLength {
 				if reportErrors {
 					r.reportError(diagnostics.Source_has_0_element_s_but_target_allows_only_1, sourceMinLength, targetArity)
 				}
 				return TernaryFalse
 			}
-			if !targetHasRestElement && (sourceRest || targetArity < sourceArity) {
+			if !targetHasVariableElement && (sourceRest || targetArity < sourceArity) {
 				if reportErrors {
 					if sourceMinLength < targetMinLength {
 						r.reportError(diagnostics.Target_requires_0_element_s_but_source_may_have_fewer, targetMinLength)
@@ -4147,8 +4147,8 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 			}
 			sourceTypeArguments := r.c.getTypeArguments(source)
 			targetTypeArguments := r.c.getTypeArguments(target)
-			targetStartCount := getStartElementCount(target.TargetTupleType(), ElementFlagsNonRest)
-			targetEndCount := getEndElementCount(target.TargetTupleType(), ElementFlagsNonRest)
+			targetStartCount := getStartElementCount(target.TargetTupleType(), ElementFlagsFixed)
+			targetEndCount := getEndElementCount(target.TargetTupleType(), ElementFlagsFixed)
 			canExcludeDiscriminants := excludedProperties.Len() != 0
 			for sourcePosition := range sourceArity {
 				var sourceFlags ElementFlags
@@ -4159,18 +4159,23 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 				}
 				sourcePositionFromEnd := sourceArity - 1 - sourcePosition
 				var targetPosition int
-				if targetHasRestElement && sourcePosition >= targetStartCount {
-					targetPosition = targetArity - 1 - min(sourcePositionFromEnd, targetEndCount)
+				if targetHasVariableElement && sourcePosition >= targetStartCount {
+					if sourcePositionFromEnd < targetEndCount && sourceFlags&ElementFlagsVariadic == 0 {
+						targetPosition = targetArity - 1 - sourcePositionFromEnd
+					} else {
+						targetPosition = min(sourcePosition, targetArity-1-targetEndCount)
+					}
 				} else {
 					targetPosition = sourcePosition
 				}
-				targetFlags := ElementFlagsNone
-				if targetPosition >= 0 {
-					targetFlags = target.TargetTupleType().elementInfos[targetPosition].flags
-				}
+				targetFlags := target.TargetTupleType().elementInfos[targetPosition].flags
 				if targetFlags&ElementFlagsVariadic != 0 && sourceFlags&ElementFlagsVariadic == 0 {
 					if reportErrors {
-						r.reportError(diagnostics.Source_provides_no_match_for_variadic_element_at_position_0_in_target, targetPosition)
+						if sourcePosition > targetStartCount {
+							r.reportError(diagnostics.Target_allows_only_0_element_s_but_source_may_have_more, targetArity)
+						} else {
+							r.reportError(diagnostics.Source_provides_no_match_for_variadic_element_at_position_0_in_target, targetPosition)
+						}
 					}
 					return TernaryFalse
 				}
@@ -4206,7 +4211,8 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 				related := r.isRelatedToEx(sourceType, targetCheckType, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
 				if related == TernaryFalse {
 					if reportErrors && (targetArity > 1 || sourceArity > 1) {
-						if targetHasRestElement && sourcePosition >= targetStartCount && sourcePositionFromEnd >= targetEndCount && targetStartCount != sourceArity-targetEndCount-1 {
+						targetMiddleLength := targetArity - targetEndCount - targetStartCount
+						if targetHasVariableElement && targetMiddleLength == 1 && sourcePosition >= targetStartCount && sourcePositionFromEnd >= targetEndCount && targetStartCount != sourceArity-targetEndCount-1 {
 							r.reportError(diagnostics.Type_at_positions_0_through_1_in_source_is_not_compatible_with_type_at_position_2_in_target, targetStartCount, sourceArity-targetEndCount-1, targetPosition)
 						} else {
 							r.reportError(diagnostics.Type_at_position_0_in_source_is_not_compatible_with_type_at_position_1_in_target, sourcePosition, targetPosition)

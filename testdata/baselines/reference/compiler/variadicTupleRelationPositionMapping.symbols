@@ -1,0 +1,130 @@
+//// [tests/cases/compiler/variadicTupleRelationPositionMapping.ts] ////
+
+=== variadicTupleRelationPositionMapping.ts ===
+type TrailingElement<
+>TrailingElement : Symbol(TrailingElement, Decl(variadicTupleRelationPositionMapping.ts, 0, 0))
+
+  A extends unknown[],
+>A : Symbol(A, Decl(variadicTupleRelationPositionMapping.ts, 0, 21))
+
+  Result extends [...A, boolean],
+>Result : Symbol(Result, Decl(variadicTupleRelationPositionMapping.ts, 1, 22))
+>A : Symbol(A, Decl(variadicTupleRelationPositionMapping.ts, 0, 21))
+
+> = Result;
+>Result : Symbol(Result, Decl(variadicTupleRelationPositionMapping.ts, 1, 22))
+
+type MatchingTrailingElement<A extends unknown[]> = TrailingElement<
+>MatchingTrailingElement : Symbol(MatchingTrailingElement, Decl(variadicTupleRelationPositionMapping.ts, 3, 11))
+>A : Symbol(A, Decl(variadicTupleRelationPositionMapping.ts, 5, 29))
+>TrailingElement : Symbol(TrailingElement, Decl(variadicTupleRelationPositionMapping.ts, 0, 0))
+
+  A,
+>A : Symbol(A, Decl(variadicTupleRelationPositionMapping.ts, 5, 29))
+
+  [...A, boolean]
+>A : Symbol(A, Decl(variadicTupleRelationPositionMapping.ts, 5, 29))
+
+>;
+
+type ExcessTrailingElements<A extends unknown[]> = TrailingElement<
+>ExcessTrailingElements : Symbol(ExcessTrailingElements, Decl(variadicTupleRelationPositionMapping.ts, 8, 2))
+>A : Symbol(A, Decl(variadicTupleRelationPositionMapping.ts, 10, 28))
+>TrailingElement : Symbol(TrailingElement, Decl(variadicTupleRelationPositionMapping.ts, 0, 0))
+
+  A,
+>A : Symbol(A, Decl(variadicTupleRelationPositionMapping.ts, 10, 28))
+
+  [...A, boolean, boolean, boolean, boolean]
+>A : Symbol(A, Decl(variadicTupleRelationPositionMapping.ts, 10, 28))
+
+>;
+
+type TwoVariadicElements<
+>TwoVariadicElements : Symbol(TwoVariadicElements, Decl(variadicTupleRelationPositionMapping.ts, 13, 2))
+
+  A extends unknown[],
+>A : Symbol(A, Decl(variadicTupleRelationPositionMapping.ts, 15, 25))
+
+  B extends unknown[],
+>B : Symbol(B, Decl(variadicTupleRelationPositionMapping.ts, 16, 22))
+
+  Result extends [...A, boolean, ...B, boolean],
+>Result : Symbol(Result, Decl(variadicTupleRelationPositionMapping.ts, 17, 22))
+>A : Symbol(A, Decl(variadicTupleRelationPositionMapping.ts, 15, 25))
+>B : Symbol(B, Decl(variadicTupleRelationPositionMapping.ts, 16, 22))
+
+> = Result;
+>Result : Symbol(Result, Decl(variadicTupleRelationPositionMapping.ts, 17, 22))
+
+type MatchingTwoVariadicElements<
+>MatchingTwoVariadicElements : Symbol(MatchingTwoVariadicElements, Decl(variadicTupleRelationPositionMapping.ts, 19, 11))
+
+  A extends unknown[],
+>A : Symbol(A, Decl(variadicTupleRelationPositionMapping.ts, 21, 33))
+
+  B extends unknown[],
+>B : Symbol(B, Decl(variadicTupleRelationPositionMapping.ts, 22, 22))
+
+> = TwoVariadicElements<A, B, [...A, boolean, ...B, boolean]>;
+>TwoVariadicElements : Symbol(TwoVariadicElements, Decl(variadicTupleRelationPositionMapping.ts, 13, 2))
+>A : Symbol(A, Decl(variadicTupleRelationPositionMapping.ts, 21, 33))
+>B : Symbol(B, Decl(variadicTupleRelationPositionMapping.ts, 22, 22))
+>A : Symbol(A, Decl(variadicTupleRelationPositionMapping.ts, 21, 33))
+>B : Symbol(B, Decl(variadicTupleRelationPositionMapping.ts, 22, 22))
+
+type ExcessMiddleElement<
+>ExcessMiddleElement : Symbol(ExcessMiddleElement, Decl(variadicTupleRelationPositionMapping.ts, 24, 62))
+
+  A extends unknown[],
+>A : Symbol(A, Decl(variadicTupleRelationPositionMapping.ts, 26, 25))
+
+  B extends unknown[],
+>B : Symbol(B, Decl(variadicTupleRelationPositionMapping.ts, 27, 22))
+
+> = TwoVariadicElements<A, B, [...A, boolean, boolean, ...B, boolean]>;
+>TwoVariadicElements : Symbol(TwoVariadicElements, Decl(variadicTupleRelationPositionMapping.ts, 13, 2))
+>A : Symbol(A, Decl(variadicTupleRelationPositionMapping.ts, 26, 25))
+>B : Symbol(B, Decl(variadicTupleRelationPositionMapping.ts, 27, 22))
+>A : Symbol(A, Decl(variadicTupleRelationPositionMapping.ts, 26, 25))
+>B : Symbol(B, Decl(variadicTupleRelationPositionMapping.ts, 27, 22))
+
+type FixedPrefixAndSuffix<
+>FixedPrefixAndSuffix : Symbol(FixedPrefixAndSuffix, Decl(variadicTupleRelationPositionMapping.ts, 29, 71))
+
+  T extends unknown[],
+>T : Symbol(T, Decl(variadicTupleRelationPositionMapping.ts, 31, 26))
+
+  Result extends [boolean, ...T, boolean],
+>Result : Symbol(Result, Decl(variadicTupleRelationPositionMapping.ts, 32, 22))
+>T : Symbol(T, Decl(variadicTupleRelationPositionMapping.ts, 31, 26))
+
+> = Result;
+>Result : Symbol(Result, Decl(variadicTupleRelationPositionMapping.ts, 32, 22))
+
+type MatchingFixedPrefixAndSuffix<T extends unknown[]> = FixedPrefixAndSuffix<
+>MatchingFixedPrefixAndSuffix : Symbol(MatchingFixedPrefixAndSuffix, Decl(variadicTupleRelationPositionMapping.ts, 34, 11))
+>T : Symbol(T, Decl(variadicTupleRelationPositionMapping.ts, 36, 34))
+>FixedPrefixAndSuffix : Symbol(FixedPrefixAndSuffix, Decl(variadicTupleRelationPositionMapping.ts, 29, 71))
+
+  T,
+>T : Symbol(T, Decl(variadicTupleRelationPositionMapping.ts, 36, 34))
+
+  [boolean, ...T, boolean]
+>T : Symbol(T, Decl(variadicTupleRelationPositionMapping.ts, 36, 34))
+
+>;
+
+type MissingFixedPrefix<T extends unknown[]> = FixedPrefixAndSuffix<
+>MissingFixedPrefix : Symbol(MissingFixedPrefix, Decl(variadicTupleRelationPositionMapping.ts, 39, 2))
+>T : Symbol(T, Decl(variadicTupleRelationPositionMapping.ts, 41, 24))
+>FixedPrefixAndSuffix : Symbol(FixedPrefixAndSuffix, Decl(variadicTupleRelationPositionMapping.ts, 29, 71))
+
+  T,
+>T : Symbol(T, Decl(variadicTupleRelationPositionMapping.ts, 41, 24))
+
+  [...T, boolean]
+>T : Symbol(T, Decl(variadicTupleRelationPositionMapping.ts, 41, 24))
+
+>;
+
