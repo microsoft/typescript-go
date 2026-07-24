@@ -130,9 +130,13 @@ func (t *BuildTask) report(orchestrator *Orchestrator, configPath tspath.Path, b
 }
 
 func (t *BuildTask) buildProject(ctx context.Context, orchestrator *Orchestrator, path tspath.Path) {
-	// Wait on upstream tasks to complete
-	if !t.waitOnUpstream(ctx) {
-		// We were cancelled while waiting, just set the status and unblockDownstream
+	// Honor cancellation before doing any work. waitOnUpstream only observes the
+	// context while it has upstream tasks to wait on, so a task with no upstream
+	// (e.g. a root project that is already up to date) would otherwise take the
+	// no-build success path and swallow an interrupt that arrived before we started.
+	if ctx.Err() != nil || !t.waitOnUpstream(ctx) {
+		// Canceled before starting or while waiting on upstream: set the status and
+		// unblockDownstream without building.
 		t.result.exitStatus = tsc.ExitStatusCanceled
 	} else if t.pending.Load() {
 		t.status = t.getUpToDateStatus(orchestrator, path)
@@ -739,7 +743,7 @@ func (t *BuildTask) updateTimeStamps(orchestrator *Orchestrator, emittedFiles []
 	updateTimeStamp(t.resolved.GetBuildInfoFileName())
 }
 
-func (t *BuildTask) cleanProject(orchestrator *Orchestrator, path tspath.Path) {
+func (t *BuildTask) cleanProject(ctx context.Context, orchestrator *Orchestrator, path tspath.Path) {
 	if t.resolved == nil {
 		t.reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.File_0_not_found, t.config))
 		t.result.exitStatus = tsc.ExitStatusDiagnosticsPresent_OutputsSkipped
@@ -748,7 +752,17 @@ func (t *BuildTask) cleanProject(orchestrator *Orchestrator, path tspath.Path) {
 
 	inputs := collections.NewSetFromItems(core.Map(t.resolved.FileNames(), orchestrator.toPath)...)
 	for outputFile := range t.resolved.GetOutputFileNames() {
+		// Stop deleting outputs if we were canceled. Report cancellation so the CLI
+		// can re-raise the signal rather than exiting with success mid-clean.
+		if ctx.Err() != nil {
+			t.result.exitStatus = tsc.ExitStatusCanceled
+			return
+		}
 		t.cleanProjectOutput(orchestrator, outputFile, inputs)
+	}
+	if ctx.Err() != nil {
+		t.result.exitStatus = tsc.ExitStatusCanceled
+		return
 	}
 	t.cleanProjectOutput(orchestrator, t.resolved.GetBuildInfoFileName(), inputs)
 }

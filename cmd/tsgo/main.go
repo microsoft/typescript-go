@@ -52,13 +52,13 @@ func runMain() int {
 	if result.Status == tsc.ExitStatusCanceled {
 		// A signal canceled the run. Re-raise it so we terminate via the signal itself,
 		// yielding the conventional exit code (130 for SIGINT, 143 for SIGTERM) and the
-		// terminal reset an unhandled signal would produce.
+		// terminal reset an unhandled signal would produce. On platforms that cannot
+		// re-deliver the signal (e.g. Windows), reRaiseSignal returns 0 and we exit with
+		// the numeric status instead.
 		select {
 		case sig := <-canceledBy:
-			if s, ok := sig.(syscall.Signal); ok {
-				signal.Reset(s)
-				_ = syscall.Kill(os.Getpid(), s)
-				return 128 + int(s) // fallback in case the signal doesn't land promptly
+			if signo := reRaiseSignal(sig); signo != 0 {
+				return 128 + signo // fallback in case the signal doesn't land promptly
 			}
 		default:
 		}
