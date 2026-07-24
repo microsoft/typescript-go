@@ -171,7 +171,7 @@ func getConstructor(classDeclaration *ast.Node) *ast.Node {
 
 func getMissingMembers(typeChecker *checker.Checker, classDeclaration *ast.Node, implementedTypes []*checker.Type) []*ast.Symbol {
 	inheritedMembers := getInheritedMembers(typeChecker, classDeclaration)
-	seenMembers := make(map[string]*ast.Symbol)
+	seenMembers := make(map[ast.SymbolNameKey]*ast.Symbol)
 
 	var classMembers ast.SymbolTable
 	if classDeclaration.Symbol() != nil {

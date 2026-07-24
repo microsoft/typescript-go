@@ -951,14 +951,14 @@ func getJSDocOrTag(c *checker.Checker, node *ast.Node) *ast.Node {
 				// This correctly handles intersection constructor types from mixins
 				// (e.g., typeof MixinClass & T) by preserving the full intersection.
 				staticBaseType := c.GetApparentType(c.GetBaseConstructorTypeOfClass(classType))
-				if prop := c.GetPropertyOfType(staticBaseType, symbol.Name); prop != nil && prop.ValueDeclaration != nil {
+				if prop := c.GetPropertyOfType(staticBaseType, ast.UnescapeLeadingUnderscores(symbol.Name)); prop != nil && prop.ValueDeclaration != nil {
 					if jsDoc := getJSDocOrTag(c, prop.ValueDeclaration); jsDoc != nil {
 						return jsDoc
 					}
 				}
 			} else {
 				for _, baseType := range c.GetBaseTypes(classType) {
-					if prop := c.GetPropertyOfType(baseType, symbol.Name); prop != nil && prop.ValueDeclaration != nil {
+					if prop := c.GetPropertyOfType(baseType, ast.UnescapeLeadingUnderscores(symbol.Name)); prop != nil && prop.ValueDeclaration != nil {
 						if jsDoc := getJSDocOrTag(c, prop.ValueDeclaration); jsDoc != nil {
 							return jsDoc
 						}

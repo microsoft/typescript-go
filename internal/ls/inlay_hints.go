@@ -866,7 +866,7 @@ func (s *inlayHintState) getParameterIdentifierInfoAtPosition(signature *checker
 	if pos == paramCount {
 		return &parameterInfo{
 			parameter:       restId,
-			name:            restParameter.Name,
+			name:            ast.UnescapeLeadingUnderscores(restParameter.Name),
 			isRestParameter: true,
 		}
 	}

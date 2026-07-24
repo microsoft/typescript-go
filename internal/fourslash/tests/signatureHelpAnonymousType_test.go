@@ -17,3 +17,14 @@ comparers.push((a,/**/ b) => true);`
 	defer done()
 	f.VerifyBaselineSignatureHelp(t)
 }
+
+func TestSignatureHelpLeadingUnderscores(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `function __foo(value: number) {}
+
+__foo(/*1*/);`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineSignatureHelp(t)
+}

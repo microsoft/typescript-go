@@ -296,10 +296,10 @@ func (l *LanguageService) createSignatureHelpItems(ctx context.Context, candidat
 	var callTargetDisplayParts strings.Builder
 	// A contextual signature for an anonymous inline function type (e.g. a callback
 	// argument) has a synthetic symbol whose name is an internal marker such as
-	// "\xFEtype". There is no meaningful name to show, so render the signature with
+	// "__type". There is no meaningful name to show, so render the signature with
 	// no prefix (as we already do when there is no call target symbol) rather than
 	// leaking the internal name.
-	if callTargetSymbol != nil && !strings.HasPrefix(callTargetSymbol.Name, ast.InternalSymbolNamePrefix) {
+	if callTargetSymbol != nil && callTargetSymbol.Name != ast.InternalSymbolNameType {
 		if useFullPrefix {
 			callTargetDisplayParts.WriteString(c.SymbolToStringEx(callTargetSymbol, sourceFile.AsNode(), ast.SymbolFlagsNone, checker.SymbolFormatFlagsUseAliasDefinedOutsideCurrentScope))
 		} else {

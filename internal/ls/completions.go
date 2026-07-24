@@ -768,7 +768,7 @@ func (l *LanguageService) getCompletionData(
 				moduleSymbol := firstAccessibleSymbol.Parent
 				if moduleSymbol == nil ||
 					!checker.IsExternalModuleSymbol(moduleSymbol) ||
-					typeChecker.TryGetMemberInModuleExportsAndProperties(firstAccessibleSymbol.Name, moduleSymbol) != firstAccessibleSymbol {
+					typeChecker.TryGetMemberInModuleExportsAndProperties(ast.UnescapeLeadingUnderscores(firstAccessibleSymbol.Name), moduleSymbol) != firstAccessibleSymbol {
 					symbolToOriginInfoMap[len(symbols)-1] = &symbolOriginInfo{kind: getNullableSymbolOriginInfoKind(symbolOriginInfoKindSymbolMember, insertQuestionDot)}
 				} else {
 					// !!! auto-import symbol
@@ -868,7 +868,7 @@ func (l *LanguageService) getCompletionData(
 							panic("getExporsOfModule() should all be defined")
 						}
 						isValidValueAccess := func(s *ast.Symbol) bool {
-							return typeChecker.IsValidPropertyAccess(valueAccessNode, s.Name)
+							return typeChecker.IsValidPropertyAccess(valueAccessNode, ast.UnescapeLeadingUnderscores(s.Name))
 						}
 						isValidTypeAccess := func(s *ast.Symbol) bool {
 							return symbolCanBeReferencedAtTypeLocation(s, typeChecker, collections.Set[ast.SymbolId]{})
@@ -976,14 +976,16 @@ func (l *LanguageService) getCompletionData(
 		members := getPropertiesForCompletion(containerExpectedType, typeChecker)
 		existingMembers := getPropertiesForCompletion(containerActualType, typeChecker)
 
-		existingMemberNames := collections.Set[string]{}
+		existingMemberNames := collections.Set[ast.SymbolNameKey]{}
 		for _, member := range existingMembers {
 			existingMemberNames.Add(member.Name)
 		}
 
 		symbols = append(
 			symbols,
-			core.Filter(members, func(member *ast.Symbol) bool { return !existingMemberNames.Has(member.Name) })...,
+			core.Filter(members, func(member *ast.Symbol) bool {
+				return !existingMemberNames.Has(member.Name)
+			})...,
 		)
 
 		completionKind = CompletionKindObjectPropertyDeclaration
@@ -1098,7 +1100,7 @@ func (l *LanguageService) getCompletionData(
 				objectLikeContainer.Kind == ast.KindObjectLiteralExpression
 			for _, member := range filteredMembers {
 				symbolId := ast.GetSymbolId(member)
-				if spreadMemberNames.Has(member.Name) {
+				if spreadMemberNames.Has(ast.UnescapeLeadingUnderscores(member.Name)) {
 					symbolToSortTextMap[symbolId] = SortTextMemberDeclaredBySpreadAssignment
 				}
 				if member.Flags&ast.SymbolFlagsOptional != 0 {
@@ -1245,7 +1247,7 @@ func (l *LanguageService) getCompletionData(
 			existing.Add(element.PropertyNameOrName().Text())
 		}
 		uniques := core.Filter(exports, func(symbol *ast.Symbol) bool {
-			return ast.SymbolName(symbol) != ast.InternalSymbolNameDefault && !existing.Has(ast.SymbolName(symbol))
+			return ast.SymbolName(symbol) != ast.UnescapeLeadingUnderscores(ast.InternalSymbolNameDefault) && !existing.Has(ast.SymbolName(symbol))
 		})
 
 		symbols = append(symbols, uniques...)
@@ -3720,7 +3722,7 @@ func getConstraintOfTypeArgumentProperty(node *ast.Node, typeChecker *checker.Ch
 		// Try to get the reparsed node first - we may be in JSDoc.
 		reparsed := ast.GetReparsedNodeForNode(node)
 		if symbol := reparsed.Symbol(); symbol != nil {
-			return typeChecker.GetTypeOfPropertyOfContextualType(t, symbol.Name)
+			return typeChecker.GetTypeOfPropertyOfContextualType(t, ast.UnescapeLeadingUnderscores(symbol.Name))
 		}
 
 		// In some cases, we won't have a corresponding symbol
@@ -3947,7 +3949,7 @@ func filterObjectMembersList(
 	}
 
 	filteredSymbols := core.Filter(contextualMemberSymbols, func(m *ast.Symbol) bool {
-		return !existingMemberNames.Has(m.Name)
+		return !existingMemberNames.Has(ast.UnescapeLeadingUnderscores(m.Name))
 	})
 
 	return filteredSymbols, membersDeclaredBySpreadAssignment
@@ -3970,7 +3972,7 @@ func setMemberDeclaredBySpreadAssignment(declaration *ast.Node, members *collect
 		properties = t.AsStructuredType().Properties()
 	}
 	for _, property := range properties {
-		members.Add(property.Name)
+		members.Add(ast.UnescapeLeadingUnderscores(property.Name))
 	}
 }
 
@@ -4139,7 +4141,7 @@ func filterClassMembersList(
 
 		existingName := ast.GetPropertyNameForPropertyNameNode(member.Name())
 		if existingName != "" {
-			existingMemberNames.Add(existingName)
+			existingMemberNames.Add(ast.UnescapeLeadingUnderscores(existingName))
 		}
 	}
 
@@ -4237,7 +4239,9 @@ func filterJsxAttributes(
 		}
 	}
 
-	return core.Filter(symbols, func(a *ast.Symbol) bool { return !existingNames.Has(a.Name) }),
+	return core.Filter(symbols, func(a *ast.Symbol) bool {
+			return !existingNames.Has(ast.UnescapeLeadingUnderscores(a.Name))
+		}),
 		&membersDeclaredBySpreadAssignment
 }
 

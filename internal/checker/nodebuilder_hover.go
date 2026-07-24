@@ -60,7 +60,7 @@ func (b *NodeBuilderImpl) expandEnumDecl(symbol *ast.Symbol) *ast.Node {
 			b.ctx.expansionTruncated = true
 			members = append(members, b.f.NewEnumMember(b.f.NewStringLiteral(fmt.Sprintf(" ... %d more ... ", len(memberProps)-i-1), 0), nil))
 			last := memberProps[len(memberProps)-1]
-			members = append(members, b.f.NewEnumMember(b.f.NewIdentifier(last.Name), b.enumMemberInitializer(last)))
+			members = append(members, b.f.NewEnumMember(b.f.NewIdentifier(ast.UnescapeLeadingUnderscores(last.Name)), b.enumMemberInitializer(last)))
 			break
 		}
 		memberDecl := core.Find(p.Declarations, ast.IsEnumMember)
@@ -74,7 +74,7 @@ func (b *NodeBuilderImpl) expandEnumDecl(symbol *ast.Symbol) *ast.Node {
 		if initializer != nil {
 			b.ctx.approximateLength += 5 // " = " + value estimate
 		}
-		members = append(members, b.f.NewEnumMember(b.f.NewIdentifier(p.Name), initializer))
+		members = append(members, b.f.NewEnumMember(b.f.NewIdentifier(ast.UnescapeLeadingUnderscores(p.Name)), initializer))
 	}
 
 	constModifier := ast.ModifierFlagsNone
@@ -417,7 +417,7 @@ func (b *NodeBuilderImpl) expandModuleDecl(symbol *ast.Symbol) *ast.Node {
 		if !b.isNamespaceMember(sym) {
 			continue
 		}
-		if !scanner.IsIdentifierText(sym.Name, core.LanguageVariantStandard) {
+		if !scanner.IsIdentifierText(ast.UnescapeLeadingUnderscores(sym.Name), core.LanguageVariantStandard) {
 			continue
 		}
 		members = append(members, sym)
@@ -459,21 +459,21 @@ func (b *NodeBuilderImpl) expandModuleDecl(symbol *ast.Symbol) *ast.Node {
 						b.ctx.approximateLength += len(target.Name) + 5
 						localStmt := b.f.NewVariableStatement(nil,
 							b.f.NewVariableDeclarationList(b.f.NewNodeList([]*ast.Node{
-								b.f.NewVariableDeclaration(b.f.NewIdentifier(target.Name), nil, b.serializeTypeForDeclaration(nil, localType, target, true), nil),
+								b.f.NewVariableDeclaration(b.f.NewIdentifier(ast.UnescapeLeadingUnderscores(target.Name)), nil, b.serializeTypeForDeclaration(nil, localType, target, true), nil),
 							}), ast.NodeFlagsLet))
 						bodyStmts = append(bodyStmts, hoverStatement{node: localStmt, isLocal: true})
 					}
 				}
-				targetName := target.Name
+				targetName := ast.UnescapeLeadingUnderscores(target.Name)
 				b.ctx.approximateLength += 16 + len(m.Name)
 				var propertyName *ast.Node
-				if m.Name != targetName {
+				if m.Name != target.Name {
 					propertyName = b.f.NewIdentifier(targetName)
 				}
 				stmt := b.f.NewExportDeclaration(
 					nil, false,
 					b.f.NewNamedExports(b.f.NewNodeList([]*ast.Node{
-						b.f.NewExportSpecifier(false, propertyName, b.f.NewIdentifier(m.Name)),
+						b.f.NewExportSpecifier(false, propertyName, b.f.NewIdentifier(ast.UnescapeLeadingUnderscores(m.Name))),
 					})),
 					nil, nil,
 				)
@@ -491,7 +491,7 @@ func (b *NodeBuilderImpl) expandModuleDecl(symbol *ast.Symbol) *ast.Node {
 			for _, sig := range sigs {
 				b.ctx.approximateLength++
 				decl := b.signatureToSignatureDeclarationHelper(sig, ast.KindFunctionDeclaration, &SignatureToSignatureDeclarationOptions{
-					name: b.f.NewIdentifier(m.Name),
+					name: b.f.NewIdentifier(ast.UnescapeLeadingUnderscores(m.Name)),
 				})
 				bodyStmts = append(bodyStmts, hoverStatement{node: decl})
 			}
@@ -499,13 +499,13 @@ func (b *NodeBuilderImpl) expandModuleDecl(symbol *ast.Symbol) *ast.Node {
 			merged := b.ch.getMergedSymbol(resolved)
 			hasModuleExports := merged.Flags&(ast.SymbolFlagsValueModule|ast.SymbolFlagsNamespaceModule) != 0 && merged.Exports != nil && len(merged.Exports) != 0
 			if !hasModuleExports {
-				bodyStmts = append(bodyStmts, hoverStatement{node: b.f.NewModuleDeclaration(nil, ast.KindNamespaceKeyword, b.f.NewIdentifier(m.Name), b.f.NewModuleBlock(b.f.NewNodeList(nil)))})
+				bodyStmts = append(bodyStmts, hoverStatement{node: b.f.NewModuleDeclaration(nil, ast.KindNamespaceKeyword, b.f.NewIdentifier(ast.UnescapeLeadingUnderscores(m.Name)), b.f.NewModuleBlock(b.f.NewNodeList(nil)))})
 			}
 			continue
 		}
 
 		// Handle remaining member kinds (type alias, enum, class, interface, namespace, variable)
-		if node := b.serializeNamespaceMember(resolved, m.Name); node != nil {
+		if node := b.serializeNamespaceMember(resolved, ast.UnescapeLeadingUnderscores(m.Name)); node != nil {
 			bodyStmts = append(bodyStmts, hoverStatement{node: node})
 		}
 	}
@@ -565,12 +565,12 @@ func (b *NodeBuilderImpl) filterInheritedProperties(t *Type, baseTypes []*Type, 
 		return properties
 	}
 	// Build a lookup from property name to symbol for parent-identity comparison.
-	propsByName := make(map[string]*ast.Symbol, len(properties))
+	propsByName := make(map[ast.SymbolNameKey]*ast.Symbol, len(properties))
 	for _, p := range properties {
 		propsByName[p.Name] = p
 	}
 	// Collect names of properties inherited unchanged from base types.
-	var inherited collections.Set[string]
+	var inherited collections.Set[ast.SymbolNameKey]
 	for _, base := range baseTypes {
 		baseWithThis := b.ch.getTypeWithThisArgument(base, b.ch.getTargetType(t).AsInterfaceType().thisType, false)
 		for _, prop := range b.ch.getPropertiesOfType(baseWithThis) {

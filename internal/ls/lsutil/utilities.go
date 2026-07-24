@@ -114,7 +114,7 @@ func GetQuotePreference(sourceFile *ast.SourceFile, preferences UserPreferences)
 }
 
 func ModuleSymbolToValidIdentifier(moduleSymbol *ast.Symbol, forceCapitalize bool) string {
-	return ModuleSpecifierToValidIdentifier(stringutil.StripQuotes(moduleSymbol.Name), forceCapitalize)
+	return ModuleSpecifierToValidIdentifier(stringutil.StripQuotes(ast.UnescapeLeadingUnderscores(moduleSymbol.Name)), forceCapitalize)
 }
 
 func ModuleSpecifierToValidIdentifier(moduleSpecifier string, forceCapitalize bool) string {

@@ -392,7 +392,7 @@ func skipPastExportOrImportSpecifierOrUnion(symbol *ast.Symbol, node *ast.Node, 
 			panic(fmt.Sprintf("Unexpected symbol at %s: %s", node.Kind.String(), symbol.Name))
 		}
 		if decl.Parent.Kind == ast.KindTypeLiteral && decl.Parent.Parent.Kind == ast.KindUnionType {
-			return checker.GetPropertyOfType(checker.GetTypeFromTypeNode(decl.Parent.Parent), symbol.Name)
+			return checker.GetPropertyOfType(checker.GetTypeFromTypeNode(decl.Parent.Parent), ast.UnescapeLeadingUnderscores(symbol.Name))
 		}
 		return nil
 	})
@@ -2500,7 +2500,7 @@ func (state *refState) forEachRelatedSymbol(
 			}
 			// Add symbol of properties/methods of the same name in base classes and implemented interfaces definitions
 			if rootSymbol.Parent != nil && rootSymbol.Parent.Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsInterface) != 0 && allowBaseTypes(rootSymbol) {
-				result := getPropertySymbolsFromBaseTypes(rootSymbol.Parent, rootSymbol.Name, state.checker, func(base *ast.Symbol) *ast.Symbol {
+				result := getPropertySymbolsFromBaseTypes(rootSymbol.Parent, ast.UnescapeLeadingUnderscores(rootSymbol.Name), state.checker, func(base *ast.Symbol) *ast.Symbol {
 					return cbSymbol(sym, rootSymbol, base)
 				})
 				if result != nil {
@@ -2567,7 +2567,10 @@ func (state *refState) forEachRelatedSymbol(
 	}
 
 	if symbol.ValueDeclaration != nil && ast.IsParameterPropertyDeclaration(symbol.ValueDeclaration, symbol.ValueDeclaration.Parent) {
-		paramProp1, paramProp2 := state.checker.GetSymbolsOfParameterPropertyDeclaration(symbol.ValueDeclaration, symbol.Name)
+		paramProp1, paramProp2 := state.checker.GetSymbolsOfParameterPropertyDeclaration(
+			symbol.ValueDeclaration,
+			ast.UnescapeLeadingUnderscores(symbol.Name),
+		)
 		debug.Assert(
 			paramProp1.Flags&ast.SymbolFlagsFunctionScopedVariable != 0 && paramProp2.Flags&ast.SymbolFlagsClassMember != 0,
 			"GetSymbolsOfParameterPropertyDeclaration must return (parameter, member) pair",

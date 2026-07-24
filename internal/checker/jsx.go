@@ -220,7 +220,7 @@ func (c *Checker) getContextualTypeForJsxAttribute(attribute *ast.Node, contextF
 		if attributesType == nil || IsTypeAny(attributesType) {
 			return nil
 		}
-		return c.getTypeOfPropertyOfContextualType(attributesType, attribute.Name().Text())
+		return c.getTypeOfPropertyOfContextualType(attributesType, ast.EscapeLeadingUnderscores(attribute.Name().Text()))
 	}
 	return c.getContextualType(attribute.Parent, contextFlags)
 }
@@ -306,9 +306,9 @@ func (c *Checker) elaborateJsxComponents(node *ast.Node, source *Type, target *T
 		containingElement := node.Parent.Parent // Containing JSXElement
 		childrenPropName := c.getJsxElementChildrenPropertyName(c.getJsxNamespaceAt(node))
 		if childrenPropName == ast.InternalSymbolNameMissing {
-			childrenPropName = "children"
+			childrenPropName = ast.EscapeLeadingUnderscores("children")
 		}
-		childrenNameType := c.getStringLiteralType(childrenPropName)
+		childrenNameType := c.getStringLiteralType(ast.UnescapeLeadingUnderscores(childrenPropName))
 		childrenTargetType := c.getIndexedAccessType(target, childrenNameType)
 		validChildren := ast.GetSemanticJsxChildren(containingElement.Children().Nodes)
 		if len(validChildren) == 0 {
@@ -522,7 +522,7 @@ func (c *Checker) getJSXFragmentType(node *ast.Node) *Type {
 		links.jsxFragmentType = c.errorType
 		return links.jsxFragmentType
 	}
-	if jsxFactorySymbol.Name == ReactNames.Fragment {
+	if jsxFactorySymbol.Name == ast.EscapeLeadingUnderscores(ReactNames.Fragment) {
 		links.jsxFragmentType = c.getTypeOfSymbol(jsxFactorySymbol)
 		return links.jsxFragmentType
 	}
@@ -753,7 +753,7 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 				if allAttributesTable != nil {
 					allAttributesTable[attributeSymbol.Name] = attributeSymbol
 				}
-				if attributeDecl.Name().Text() == jsxChildrenPropertyName {
+				if ast.EscapeLeadingUnderscores(attributeDecl.Name().Text()) == jsxChildrenPropertyName {
 					explicitlySpecifyChildrenAttribute = true
 				}
 				if contextualType != nil {
@@ -828,7 +828,7 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 			// This is because children element will overwrite the value from attributes.
 			// Note: we will not warn "children" attribute overwritten if "children" attribute is specified in object spread.
 			if explicitlySpecifyChildrenAttribute {
-				c.error(attributeParent, diagnostics.X_0_are_specified_twice_The_attribute_named_0_will_be_overwritten, jsxChildrenPropertyName)
+				c.error(attributeParent, diagnostics.X_0_are_specified_twice_The_attribute_named_0_will_be_overwritten, ast.UnescapeLeadingUnderscores(jsxChildrenPropertyName))
 			}
 			var childrenContextualType *Type
 			if ast.IsJsxOpeningElement(openingLikeElement) {
@@ -848,7 +848,7 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 				links.resolvedType = c.createArrayType(c.getUnionType(childTypes))
 			}
 			// Fake up a property declaration for the children
-			childrenPropSymbol.ValueDeclaration = c.factory.NewPropertySignatureDeclaration(nil, c.factory.NewIdentifier(jsxChildrenPropertyName), nil /*postfixToken*/, nil /*type*/, nil /*initializer*/)
+			childrenPropSymbol.ValueDeclaration = c.factory.NewPropertySignatureDeclaration(nil, c.factory.NewIdentifier(ast.UnescapeLeadingUnderscores(jsxChildrenPropertyName)), nil /*postfixToken*/, nil /*type*/, nil /*initializer*/)
 			childrenPropSymbol.ValueDeclaration.Parent = attributeParent
 			childrenPropSymbol.ValueDeclaration.AsPropertySignatureDeclaration().Symbol = childrenPropSymbol
 			childPropMap := make(ast.SymbolTable)
@@ -954,10 +954,10 @@ func (c *Checker) getJsxPropsTypeFromClassType(sig *Signature, context *ast.Node
 	case "":
 		attributesType = c.getReturnTypeOfSignature(sig)
 	default:
-		attributesType = c.getJsxPropsTypeForSignatureFromMember(sig, forcedLookupLocation)
+		attributesType = c.getJsxPropsTypeForSignatureFromMember(sig, ast.UnescapeLeadingUnderscores(forcedLookupLocation))
 		if attributesType == nil && len(context.Attributes().Properties()) != 0 {
 			// There is no property named 'props' on this instance type
-			c.error(context, diagnostics.JSX_element_class_does_not_support_attributes_because_it_does_not_have_a_0_property, forcedLookupLocation)
+			c.error(context, diagnostics.JSX_element_class_does_not_support_attributes_because_it_does_not_have_a_0_property, ast.UnescapeLeadingUnderscores(forcedLookupLocation))
 		}
 	}
 	if attributesType == nil {
@@ -1004,7 +1004,7 @@ func (c *Checker) getJsxPropsTypeForSignatureFromMember(sig *Signature, forcedLo
 			if IsTypeAny(instance) {
 				return instance
 			}
-			propType := c.getTypeOfPropertyOfType(instance, forcedLookupLocation)
+			propType := c.getTypeOfPropertyOfType(instance, ast.EscapeLeadingUnderscores(forcedLookupLocation))
 			if propType == nil {
 				return nil
 			}
@@ -1017,7 +1017,7 @@ func (c *Checker) getJsxPropsTypeForSignatureFromMember(sig *Signature, forcedLo
 	if IsTypeAny(instanceType) {
 		return instanceType
 	}
-	return c.getTypeOfPropertyOfType(instanceType, forcedLookupLocation)
+	return c.getTypeOfPropertyOfType(instanceType, ast.EscapeLeadingUnderscores(forcedLookupLocation))
 }
 
 func (c *Checker) getJsxManagedAttributesFromLocatedAttributes(context *ast.Node, ns *ast.Symbol, attributesType *Type) *Type {
@@ -1075,14 +1075,14 @@ func (c *Checker) getJsxElementTypeSymbol(jsxNamespace *ast.Symbol) *ast.Symbol 
 // or "" if it has 0 properties (which means every
 //
 //	non-intrinsic elements' attributes type is the element instance type)
-func (c *Checker) getJsxElementPropertiesName(jsxNamespace *ast.Symbol) string {
+func (c *Checker) getJsxElementPropertiesName(jsxNamespace *ast.Symbol) ast.SymbolNameKey {
 	return c.getNameFromJsxElementAttributesContainer(JsxNames.ElementAttributesPropertyNameContainer, jsxNamespace)
 }
 
-func (c *Checker) getJsxElementChildrenPropertyName(jsxNamespace *ast.Symbol) string {
+func (c *Checker) getJsxElementChildrenPropertyName(jsxNamespace *ast.Symbol) ast.SymbolNameKey {
 	if c.compilerOptions.Jsx == core.JsxEmitReactJSX || c.compilerOptions.Jsx == core.JsxEmitReactJSXDev {
 		// In these JsxEmit modes the children property is fixed to 'children'
-		return "children"
+		return ast.EscapeLeadingUnderscores("children")
 	}
 	return c.getNameFromJsxElementAttributesContainer(JsxNames.ElementChildrenAttributeNameContainer, jsxNamespace)
 }
@@ -1093,7 +1093,7 @@ func (c *Checker) getJsxElementChildrenPropertyName(jsxNamespace *ast.Symbol) st
 // @param nameOfAttribPropContainer a string of value JsxNames.ElementAttributesPropertyNameContainer or JsxNames.ElementChildrenAttributeNameContainer
 //
 //	if other string is given or the container doesn't exist, return undefined.
-func (c *Checker) getNameFromJsxElementAttributesContainer(nameOfAttribPropContainer string, jsxNamespace *ast.Symbol) string {
+func (c *Checker) getNameFromJsxElementAttributesContainer(nameOfAttribPropContainer string, jsxNamespace *ast.Symbol) ast.SymbolNameKey {
 	// JSX.ElementAttributesProperty | JSX.ElementChildrenAttribute [symbol]
 	if jsxNamespace != nil {
 		jsxElementAttribPropInterfaceSym := c.getSymbol(jsxNamespace.Exports, nameOfAttribPropContainer, ast.SymbolFlagsType)
@@ -1145,7 +1145,7 @@ func (c *Checker) getIntrinsicAttributesTypeFromStringLiteralType(t *Type, locat
 	intrinsicElementsType := c.getJsxType(JsxNames.IntrinsicElements, location)
 	if !c.isErrorType(intrinsicElementsType) {
 		stringLiteralTypeName := getStringLiteralValue(t)
-		intrinsicProp := c.getPropertyOfType(intrinsicElementsType, stringLiteralTypeName)
+		intrinsicProp := c.getPropertyOfType(intrinsicElementsType, ast.EscapeLeadingUnderscores(stringLiteralTypeName))
 		if intrinsicProp != nil {
 			return c.getTypeOfSymbol(intrinsicProp)
 		}
@@ -1202,7 +1202,7 @@ func (c *Checker) getIntrinsicAttributesTypeFromJsxOpeningLikeElement(node *ast.
 		return links.resolvedJsxElementAttributesType
 	}
 	if links.jsxFlags&JsxFlagsIntrinsicIndexedElement != 0 {
-		indexInfo := c.getApplicableIndexInfoForName(c.getJsxType(JsxNames.IntrinsicElements, node), node.TagName().Text())
+		indexInfo := c.getApplicableIndexInfoForName(c.getJsxType(JsxNames.IntrinsicElements, node), ast.EscapeLeadingUnderscores(node.TagName().Text()))
 		if indexInfo != nil {
 			links.resolvedJsxElementAttributesType = indexInfo.valueType
 			return links.resolvedJsxElementAttributesType
@@ -1229,7 +1229,7 @@ func (c *Checker) getIntrinsicTagSymbol(node *ast.Node) *ast.Symbol {
 			panic("Invalid tag name")
 		}
 		propName := tagName.Text()
-		intrinsicProp := c.getPropertyOfType(intrinsicElementsType, propName)
+		intrinsicProp := c.getPropertyOfType(intrinsicElementsType, ast.EscapeLeadingUnderscores(propName))
 		if intrinsicProp != nil {
 			c.jsxElementLinks.Get(node).jsxFlags |= JsxFlagsIntrinsicNamedElement
 			links.resolvedSymbol = intrinsicProp
