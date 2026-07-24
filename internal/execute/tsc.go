@@ -55,15 +55,15 @@ func CommandLine(ctx context.Context, sys tsc.System, commandLineArgs []string, 
 		case "-b", "--b", "-build", "--build":
 			return tscBuildCompilation(ctx, sys, tsoptions.ParseBuildCommandLine(commandLineArgs, sys), testing)
 			// case "-f":
-			// 	return fmtMain(sys, commandLineArgs[1], commandLineArgs[1])
+			// 	return fmtMain(ctx, sys, commandLineArgs[1], commandLineArgs[1])
 		}
 	}
 
 	return tscCompilation(ctx, sys, tsoptions.ParseCommandLine(commandLineArgs, sys), testing)
 }
 
-func fmtMain(sys tsc.System, input, output string) tsc.ExitStatus {
-	ctx := format.WithFormatCodeSettings(context.Background(), lsutil.GetDefaultFormatCodeSettings(), "\n")
+func fmtMain(ctx context.Context, sys tsc.System, input, output string) tsc.ExitStatus {
+	ctx = format.WithFormatCodeSettings(ctx, lsutil.GetDefaultFormatCodeSettings(), "\n")
 	input = string(tspath.ToPath(input, sys.GetCurrentDirectory(), sys.FS().UseCaseSensitiveFileNames()))
 	output = string(tspath.ToPath(output, sys.GetCurrentDirectory(), sys.FS().UseCaseSensitiveFileNames()))
 	fileContent, ok := sys.FS().ReadFile(input)
@@ -243,6 +243,7 @@ func tscCompilation(ctx context.Context, sys tsc.System, commandLine *tsoptions.
 		return tsc.CommandLineResult{Status: tsc.ExitStatusSuccess, Watcher: watcher}
 	} else if configForCompilation.CompilerOptions().IsIncremental() {
 		return performIncrementalCompilation(
+			ctx,
 			sys,
 			configForCompilation,
 			reportDiagnostic,
@@ -253,6 +254,7 @@ func tscCompilation(ctx context.Context, sys tsc.System, commandLine *tsoptions.
 		)
 	}
 	return performCompilation(
+		ctx,
 		sys,
 		configForCompilation,
 		reportDiagnostic,
@@ -282,6 +284,7 @@ func getTraceFromSys(sys tsc.System, locale locale.Locale, testing tsc.CommandLi
 }
 
 func performIncrementalCompilation(
+	ctx context.Context,
 	sys tsc.System,
 	config *tsoptions.ParsedCommandLine,
 	reportDiagnostic tsc.DiagnosticReporter,
@@ -307,7 +310,7 @@ func performIncrementalCompilation(
 	changesComputeStart := sys.Now()
 	incrementalProgram := incremental.NewProgram(program, oldProgram, incremental.CreateHost(host), testing != nil)
 	compileTimes.ChangesComputeTime = sys.Now().Sub(changesComputeStart)
-	result, _ := tsc.EmitAndReportStatistics(tsc.EmitInput{
+	result, _ := tsc.EmitAndReportStatistics(ctx, tsc.EmitInput{
 		Sys:                sys,
 		ProgramLike:        incrementalProgram,
 		Program:            incrementalProgram.GetProgram(),
@@ -331,6 +334,7 @@ func performIncrementalCompilation(
 }
 
 func performCompilation(
+	ctx context.Context,
 	sys tsc.System,
 	config *tsoptions.ParsedCommandLine,
 	reportDiagnostic tsc.DiagnosticReporter,
@@ -350,7 +354,7 @@ func performCompilation(
 		Tracing: tr,
 	})
 	compileTimes.ParseTime = sys.Now().Sub(parseStart)
-	result, _ := tsc.EmitAndReportStatistics(tsc.EmitInput{
+	result, _ := tsc.EmitAndReportStatistics(ctx, tsc.EmitInput{
 		Sys:                sys,
 		ProgramLike:        program,
 		Program:            program,

@@ -368,7 +368,8 @@ func (w *Watcher) evictChangedSourceFiles(changedPaths map[string]fswatch.EventK
 }
 
 func (w *Watcher) compileAndEmit() tsc.CompileAndEmitResult {
-	return tsc.EmitFilesAndReportErrors(tsc.EmitInput{
+	// TODO: propagate a proper context here to better support cancellation
+	return tsc.EmitFilesAndReportErrors(context.Background(), tsc.EmitInput{
 		Sys:                w.sys,
 		ProgramLike:        w.program,
 		Program:            w.program.GetProgram(),

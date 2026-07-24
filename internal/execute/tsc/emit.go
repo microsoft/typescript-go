@@ -42,11 +42,11 @@ type EmitInput struct {
 	Tracing            *tracing.Tracing
 }
 
-func EmitAndReportStatistics(input EmitInput) (CompileAndEmitResult, *Statistics) {
+func EmitAndReportStatistics(ctx context.Context, input EmitInput) (CompileAndEmitResult, *Statistics) {
 	var statistics *Statistics
-	result := EmitFilesAndReportErrors(input)
-	if result.Status != ExitStatusSuccess {
-		// compile exited early
+	result := EmitFilesAndReportErrors(ctx, input)
+	if result.Status != ExitStatusSuccess || result.EmitResult == nil {
+		// compile exited early (e.g. errors or cancellation); EmitResult may be nil
 		return result, nil
 	}
 	result.times.totalTime = input.Sys.SinceStart()
@@ -70,9 +70,8 @@ func EmitAndReportStatistics(input EmitInput) (CompileAndEmitResult, *Statistics
 	return result, statistics
 }
 
-func EmitFilesAndReportErrors(input EmitInput) (result CompileAndEmitResult) {
+func EmitFilesAndReportErrors(ctx context.Context, input EmitInput) (result CompileAndEmitResult) {
 	result.times = input.CompileTimes
-	ctx := context.Background()
 
 	allDiagnostics := compiler.GetDiagnosticsOfAnyProgram(
 		ctx,
@@ -102,6 +101,13 @@ func EmitFilesAndReportErrors(input EmitInput) (result CompileAndEmitResult) {
 		},
 	)
 
+	// On cancellation the diagnostics above are incomplete; abort rather than emit
+	// or report them as a complete result.
+	if ctx.Err() != nil {
+		result.Status = ExitStatusCanceled
+		return result
+	}
+
 	emitResult := &compiler.EmitResult{EmitSkipped: true, Diagnostics: []*ast.Diagnostic{}}
 	if !input.ProgramLike.Options().ListFilesOnly.IsTrue() {
 		emitStart := input.Sys.Now()
@@ -109,6 +115,13 @@ func EmitFilesAndReportErrors(input EmitInput) (result CompileAndEmitResult) {
 			WriteFile: input.WriteFile,
 		})
 		result.times.emitTime = input.Sys.Now().Sub(emitStart)
+		// Emit returns nil if it was canceled partway through (e.g. cancellation
+		// during the internal no-emit-on-error recheck). Abort rather than report a
+		// nil result as success.
+		if ctx.Err() != nil {
+			result.Status = ExitStatusCanceled
+			return result
+		}
 	}
 	if emitResult != nil {
 		allDiagnostics = append(allDiagnostics, emitResult.Diagnostics...)

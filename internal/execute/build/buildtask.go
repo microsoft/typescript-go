@@ -1,6 +1,7 @@
 package build
 
 import (
+	"context"
 	"fmt"
 	"slices"
 	"strings"
@@ -73,10 +74,18 @@ type BuildTask struct {
 	dirty              bool
 }
 
-func (t *BuildTask) waitOnUpstream() {
+// Returns true when upstream is done, false when cancelled
+func (t *BuildTask) waitOnUpstream(ctx context.Context) bool {
 	for _, upstream := range t.upStream {
-		<-upstream.task.done
+		select {
+		case <-upstream.task.done:
+		case <-ctx.Done():
+			// Canceled while waiting: stop blocking. buildProject observes the
+			// cancellation and completes this task without building.
+			return false
+		}
 	}
+	return true
 }
 
 func (t *BuildTask) unblockDownstream() {
@@ -120,15 +129,21 @@ func (t *BuildTask) report(orchestrator *Orchestrator, configPath tspath.Path, b
 	close(t.reportDone)
 }
 
-func (t *BuildTask) buildProject(orchestrator *Orchestrator, path tspath.Path) {
-	// Wait on upstream tasks to complete
-	t.waitOnUpstream()
-	if t.pending.Load() {
+func (t *BuildTask) buildProject(ctx context.Context, orchestrator *Orchestrator, path tspath.Path) {
+	// Honor cancellation before doing any work. waitOnUpstream only observes the
+	// context while it has upstream tasks to wait on, so a task with no upstream
+	// (e.g. a root project that is already up to date) would otherwise take the
+	// no-build success path and swallow an interrupt that arrived before we started.
+	if ctx.Err() != nil || !t.waitOnUpstream(ctx) {
+		// Canceled before starting or while waiting on upstream: set the status and
+		// unblockDownstream without building.
+		t.result.exitStatus = tsc.ExitStatusCanceled
+	} else if t.pending.Load() {
 		t.status = t.getUpToDateStatus(orchestrator, path)
 		t.reportUpToDateStatus(orchestrator)
 		if !t.handleStatusThatDoesntRequireBuild(orchestrator) {
-			t.compileAndEmit(orchestrator, path)
-			t.updateDownstream(orchestrator, path)
+			t.compileAndEmit(ctx, orchestrator, path)
+			t.updateDownstream(ctx, orchestrator, path)
 		} else {
 			if t.resolved != nil {
 				for _, diagnostic := range t.resolved.GetConfigFileParsingDiagnostics() {
@@ -151,7 +166,16 @@ func (t *BuildTask) buildProject(orchestrator *Orchestrator, path tspath.Path) {
 	t.unblockDownstream()
 }
 
-func (t *BuildTask) updateDownstream(orchestrator *Orchestrator, path tspath.Path) {
+func (t *BuildTask) updateDownstream(ctx context.Context, orchestrator *Orchestrator, path tspath.Path) {
+	// Skip notifying downstream if we are canceled. Canceled builds may have partial results
+	// which could be otherwise handled improperly by downstream tasks.
+	//
+	// In one-shot `tsc -b`, downStream is empty so the body below is a no-op.
+	// In watch mode, downStream is populated and this runs on subsequent rebuild cycles.
+	// Once DoCycle threads a cancelable context, the early-return here becomes load-bearing.
+	if ctx.Err() != nil {
+		return
+	}
 	if t.isInitialCycle {
 		return
 	}
@@ -187,7 +211,7 @@ func (t *BuildTask) updateDownstream(orchestrator *Orchestrator, path tspath.Pat
 	}
 }
 
-func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path) {
+func (t *BuildTask) compileAndEmit(ctx context.Context, orchestrator *Orchestrator, path tspath.Path) {
 	t.errors = nil
 	if orchestrator.opts.Command.BuildOptions.Verbose.IsTrue() {
 		t.result.reportStatus(ast.NewCompilerDiagnostic(diagnostics.Building_project_0, orchestrator.relativeFileName(t.config)))
@@ -216,7 +240,7 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 	t.result.program = incremental.NewProgram(program, oldProgram, orchestrator.host, orchestrator.opts.Testing != nil)
 	compileTimes.ChangesComputeTime = orchestrator.opts.Sys.Now().Sub(changesComputeStart)
 
-	result, statistics := tsc.EmitAndReportStatistics(tsc.EmitInput{
+	result, statistics := tsc.EmitAndReportStatistics(ctx, tsc.EmitInput{
 		Sys:                orchestrator.opts.Sys,
 		ProgramLike:        t.result.program,
 		Program:            program,
@@ -233,6 +257,11 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 	})
 	t.result.exitStatus = result.Status
 	t.result.statistics = statistics
+	if result.Status == tsc.ExitStatusCanceled {
+		// Canceled: the result is incomplete (EmitResult is nil). Leave the task
+		// partial on purpose. Only ExitStatusCanceled propagates.
+		return
+	}
 	t.packageJsons = t.result.program.PackageJsonLookupPaths()
 	if (!program.Options().NoEmitOnError.IsTrue() || len(result.Diagnostics) == 0) &&
 		(len(result.EmitResult.EmittedFiles) > 0 || t.status.kind != upToDateStatusTypeOutOfDateBuildInfoWithErrors) {
@@ -714,7 +743,7 @@ func (t *BuildTask) updateTimeStamps(orchestrator *Orchestrator, emittedFiles []
 	updateTimeStamp(t.resolved.GetBuildInfoFileName())
 }
 
-func (t *BuildTask) cleanProject(orchestrator *Orchestrator, path tspath.Path) {
+func (t *BuildTask) cleanProject(ctx context.Context, orchestrator *Orchestrator, path tspath.Path) {
 	if t.resolved == nil {
 		t.reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.File_0_not_found, t.config))
 		t.result.exitStatus = tsc.ExitStatusDiagnosticsPresent_OutputsSkipped
@@ -723,7 +752,17 @@ func (t *BuildTask) cleanProject(orchestrator *Orchestrator, path tspath.Path) {
 
 	inputs := collections.NewSetFromItems(core.Map(t.resolved.FileNames(), orchestrator.toPath)...)
 	for outputFile := range t.resolved.GetOutputFileNames() {
+		// Stop deleting outputs if we were canceled. Report cancellation so the CLI
+		// can re-raise the signal rather than exiting with success mid-clean.
+		if ctx.Err() != nil {
+			t.result.exitStatus = tsc.ExitStatusCanceled
+			return
+		}
 		t.cleanProjectOutput(orchestrator, outputFile, inputs)
+	}
+	if ctx.Err() != nil {
+		t.result.exitStatus = tsc.ExitStatusCanceled
+		return
 	}
 	t.cleanProjectOutput(orchestrator, t.resolved.GetBuildInfoFileName(), inputs)
 }
