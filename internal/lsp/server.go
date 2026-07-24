@@ -314,9 +314,9 @@ const (
 	contentMapperImplementationRegistrationID    = "content-mapper-implementation"
 	contentMapperReferencesRegistrationID        = "content-mapper-references"
 	contentMapperDocumentHighlightRegistrationID = "content-mapper-document-highlight"
-	contentMapperCompletionRegistrationID         = "content-mapper-completion"
-	contentMapperRenameRegistrationID             = "content-mapper-rename"
-	contentMapperSemanticTokensRegistrationID     = "content-mapper-semantic-tokens"
+	contentMapperCompletionRegistrationID        = "content-mapper-completion"
+	contentMapperRenameRegistrationID            = "content-mapper-rename"
+	contentMapperSemanticTokensRegistrationID    = "content-mapper-semantic-tokens"
 )
 
 func (s *Server) supportsContentMapperRegistration(id string) bool {

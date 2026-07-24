@@ -49,6 +49,13 @@ describe("SpanMap", () => {
         assert.deepEqual(map.originalToGeneratedPositions(15, SpanMapPurpose.All), []);
     });
 
+    test("maps the end of the final segment but not interior gap boundaries", () => {
+        assert.deepEqual(map.generatedToOriginalPosition(18), { position: 34, fidelity: SpanMapFidelity.Exact });
+        assert.deepEqual(map.originalToGeneratedPositions(34, SpanMapPurpose.All), [{ position: 18, fidelity: SpanMapFidelity.Exact }]);
+        assert.deepEqual(map.generatedToOriginalPosition(6), { position: 14, fidelity: SpanMapFidelity.None });
+        assert.deepEqual(map.originalToGeneratedPositions(14, SpanMapPurpose.All), []);
+    });
+
     test("sorts generated and original indexes independently", () => {
         const reordered = new SpanMap([
             { generatedStart: 0, generatedEnd: 2, originalStart: 10, originalEnd: 12, kind: SpanMapKind.Verbatim },
@@ -80,6 +87,10 @@ describe("SpanMap", () => {
         assert.deepEqual(duplicates.originalToGeneratedPositions(11, SpanMapPurpose.Navigation), [
             { position: 1, fidelity: SpanMapFidelity.Exact },
             { position: 20, fidelity: SpanMapFidelity.Atom },
+        ]);
+        assert.deepEqual(duplicates.originalToGeneratedPositions(13, SpanMapPurpose.Semantic), [
+            { position: 13, fidelity: SpanMapFidelity.Exact },
+            { position: 17, fidelity: SpanMapFidelity.Exact },
         ]);
     });
 

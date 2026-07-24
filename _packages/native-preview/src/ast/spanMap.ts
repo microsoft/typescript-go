@@ -265,7 +265,13 @@ function originalSegmentsAt(segments: readonly NormalizedSpanMapSegment[], posit
         else high = middle;
     }
     let index = low < segments.length && segments[low].originalStart === position ? low : low - 1;
-    if (index < 0 || !(segments[index].originalStart === position || position < segments[index].originalEnd)) return undefined;
+    if (
+        index < 0 || !(
+            segments[index].originalStart === position
+            || position < segments[index].originalEnd
+            || index === segments.length - 1 && position === segments[index].originalEnd
+        )
+    ) return undefined;
     while (index > 0 && sameOriginalRange(segments[index - 1], segments[index])) index--;
     let end = index + 1;
     while (end < segments.length && sameOriginalRange(segments[end], segments[index])) end++;
@@ -296,7 +302,7 @@ function segmentIndexAt(segments: readonly SpanMapSegment[], position: number, r
     const previous = low - 1;
     if (previous >= 0) {
         const end = reverse ? segments[previous].originalEnd : segments[previous].generatedEnd;
-        if (position < end) return [previous, true];
+        if (position < end || previous === segments.length - 1 && position === end) return [previous, true];
     }
     return [previous, false];
 }

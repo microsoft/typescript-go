@@ -76,6 +76,13 @@ export const title = "Profile";
 
 	caps := &lsproto.ClientCapabilities{TextDocument: &lsproto.TextDocumentClientCapabilities{
 		Synchronization: &lsproto.TextDocumentSyncClientCapabilities{DynamicRegistration: new(true)},
+		SemanticTokens: &lsproto.SemanticTokensClientCapabilities{
+			DynamicRegistration: new(true),
+			Requests:            &lsproto.ClientSemanticTokensRequestOptions{},
+			TokenTypes:          []string{},
+			TokenModifiers:      []string{},
+			Formats:             []lsproto.TokenFormat{lsproto.TokenFormatRelative},
+		},
 	}}
 	initMsg, _, ok := lsptestutil.SendRequest(t, client, lsproto.InitializeInfo, &lsproto.InitializeParams{
 		Capabilities: caps,
@@ -99,9 +106,9 @@ export const title = "Profile";
 	registered := append([]*lsproto.Registration(nil), registrations...)
 	mu.Unlock()
 	assert.Assert(t, len(registered) > 0, "expected dynamic registrations")
-	var foundDidOpen bool
+	var foundDidOpen, foundSemanticTokens bool
 	for _, registration := range registered {
-		if registration.Id != "content-mapper-did-open" && registration.Id != "content-mapper-did-change" && registration.Id != "content-mapper-did-close" {
+		if registration.Id != "content-mapper-did-open" && registration.Id != "content-mapper-did-change" && registration.Id != "content-mapper-did-close" && registration.Id != "content-mapper-semantic-tokens" {
 			assert.Assert(t, !strings.HasPrefix(registration.Id, "content-mapper-"), "unexpected unsupported content mapper registration %q", registration.Id)
 		}
 		if registration.Id == "content-mapper-did-open" {
@@ -111,8 +118,16 @@ export const title = "Profile";
 			assert.Assert(t, selector != nil && len(*selector) == 1)
 			assert.Equal(t, *(*selector)[0].Pattern.Pattern.Pattern, "**/*.vue")
 		}
+		if registration.Id == "content-mapper-semantic-tokens" {
+			foundSemanticTokens = true
+			assert.Assert(t, registration.RegisterOptions != nil && registration.RegisterOptions.TextDocumentSemanticTokens != nil)
+			selector := registration.RegisterOptions.TextDocumentSemanticTokens.DocumentSelector.DocumentSelector
+			assert.Assert(t, selector != nil && len(*selector) == 1)
+			assert.Equal(t, *(*selector)[0].Pattern.Pattern.Pattern, "**/*.vue")
+		}
 	}
 	assert.Assert(t, foundDidOpen, "expected didOpen registration for .vue")
+	assert.Assert(t, foundSemanticTokens, "expected semantic tokens registration for .vue")
 
 	lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
 		TextDocument: &lsproto.TextDocumentItem{Uri: uri, LanguageId: "vue", Version: 1, Text: component},
@@ -168,16 +183,20 @@ export const title = "Profile";
 	unregistered := append([]*lsproto.Unregistration(nil), unregistrations...)
 	mu.Unlock()
 	assert.Assert(t, len(unregistered) > 0, "expected dynamic unregistration")
-	var foundDidClose bool
+	var foundDidClose, foundSemanticTokensUnregistration bool
 	for _, unregistration := range unregistered {
-		if unregistration.Id != "content-mapper-did-open" && unregistration.Id != "content-mapper-did-change" && unregistration.Id != "content-mapper-did-close" {
+		if unregistration.Id != "content-mapper-did-open" && unregistration.Id != "content-mapper-did-change" && unregistration.Id != "content-mapper-did-close" && unregistration.Id != "content-mapper-semantic-tokens" {
 			assert.Assert(t, !strings.HasPrefix(unregistration.Id, "content-mapper-"), "unexpected unsupported content mapper unregistration %q", unregistration.Id)
 		}
 		if unregistration.Id == "content-mapper-did-close" {
 			foundDidClose = true
 		}
+		if unregistration.Id == "content-mapper-semantic-tokens" {
+			foundSemanticTokensUnregistration = true
+		}
 	}
 	assert.Assert(t, foundDidClose, "expected didClose unregistration")
+	assert.Assert(t, foundSemanticTokensUnregistration, "expected semantic tokens unregistration")
 
 	lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidCloseInfo, &lsproto.DidCloseTextDocumentParams{
 		TextDocument: lsproto.TextDocumentIdentifier{Uri: uri},

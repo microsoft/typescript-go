@@ -195,5 +195,4 @@ func TestParsedCommandLine(t *testing.T) {
 			assert.Assert(t, !parsedCommandLine.PossiblyMatchesFileName("/dev/other/new.box"))
 		})
 	})
-
 }
