@@ -185,7 +185,7 @@ func (p *Program) getSemanticDiagnosticsOfFile(file *ast.SourceFile) []*ast.Diag
 func (p *Program) GetDeclarationDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
 	p.panicIfNoProgram("GetDeclarationDiagnostics")
 	result := emitFiles(ctx, p, compiler.EmitOptions{
-		TargetSourceFile: file,
+		TargetSourceFiles: core.SingleElementSlice(file),
 	}, true)
 	if result != nil {
 		return result.Diagnostics
@@ -203,18 +203,21 @@ func (p *Program) GetSuggestionDiagnostics(ctx context.Context, file *ast.Source
 func (p *Program) Emit(ctx context.Context, options compiler.EmitOptions) *compiler.EmitResult {
 	p.panicIfNoProgram("Emit")
 
-	var emitBuildInfo func() *compiler.EmitResult
-	if p.Options().NoEmit.IsTrue() {
-		emitBuildInfo = func() *compiler.EmitResult {
-			return p.emitBuildInfo(ctx, options)
+	var result *compiler.EmitResult
+	if !options.ForceEmit && options.EmitOnly != compiler.EmitOnlyForcedDts {
+		var emitBuildInfo func() *compiler.EmitResult
+		if p.Options().NoEmit.IsTrue() {
+			emitBuildInfo = func() *compiler.EmitResult {
+				return p.emitBuildInfo(ctx, options)
+			}
+		}
+		result = compiler.HandleNoEmitOptions(ctx, p, options.TargetSourceFiles, emitBuildInfo)
+		if ctx.Err() != nil {
+			return nil
 		}
 	}
-	result := compiler.HandleNoEmitOptions(ctx, p, options.TargetSourceFile, emitBuildInfo)
-	if ctx.Err() != nil {
-		return nil
-	}
 	if result != nil {
-		if options.TargetSourceFile != nil || p.Options().NoEmit.IsTrue() {
+		if options.TargetSourceFiles != nil || p.Options().NoEmit.IsTrue() {
 			return result
 		}
 
