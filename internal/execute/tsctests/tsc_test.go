@@ -1349,6 +1349,38 @@ func TestTscIncremental(t *testing.T) {
 	}
 	testCases := []*tscInput{
 		{
+			subScenario: "incremental signature propagation through reexports",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"incremental": true,
+							"noEmit": true,
+							"module": "esnext",
+						},
+					}`),
+				"/home/src/workspaces/project/hub.ts":      `export const value = 1;`,
+				"/home/src/workspaces/project/reexport.ts": `export { value } from "./hub";`,
+				"/home/src/workspaces/project/importer.ts": stringtestutil.Dedent(`
+					import { value } from "./reexport";
+					console.log(value);`),
+			},
+			edits: []*tscEdit{
+				{
+					caption: "append ordinary comment",
+					edit: func(sys *TestSys) {
+						sys.appendFile("/home/src/workspaces/project/hub.ts", "\n// comment")
+					},
+				},
+				{
+					caption: "change exported value",
+					edit: func(sys *TestSys) {
+						sys.replaceFileText("/home/src/workspaces/project/hub.ts", "value = 1", "value = 'one'")
+					},
+				},
+			},
+		},
+		{
 			subScenario: "serializing error chain",
 			files: FileMap{
 				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
