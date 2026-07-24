@@ -53,8 +53,8 @@ Definitions:
 
 ## Other Notes
 
-Long-term, we expect that this repo and its contents will be merged into `microsoft/TypeScript`.
-As a result, the repo and issue tracker for typescript-go will eventually be closed, so treat discussions/issues accordingly.
+In the long term, we expect this repository and its content to be integrated into `microsoft/TypeScript`.
+Consequently, the typescript-go repository and issue tracker will eventually be closed; therefore, please handle discussions and issues with this in mind.
 
 For a list of intentional changes with respect to TypeScript 6.0, see CHANGES.md.
 
