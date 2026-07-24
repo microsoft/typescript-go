@@ -11,6 +11,7 @@ import (
 	"sync/atomic"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -462,6 +463,73 @@ func TestContentMapperInferredProjectUsesSessionMappers(t *testing.T) {
 	assert.Assert(t, boxFile != nil, "expected loose app.box in the inferred project")
 	assert.Assert(t, boxFile.ContentMapper() != "", "expected loose app.box to use the session mapper union")
 	assert.Assert(t, !strings.Contains(boxFile.Text(), "#{target}"), "expected loose app.box to be transformed: %q", boxFile.Text())
+}
+
+func TestContentMapperInferredProjectSurvivesTypingsInstall(t *testing.T) {
+	t.Parallel()
+	// A loose foreign file lands in the inferred project with the session's content mapper
+	// union. When ATA finishes installing typings, the inferred program rebuilds with the
+	// typings-augmented command line; if that command line drops the content mappers, the
+	// foreign root file is parsed as plain TypeScript with an unknown script kind and the
+	// server panics.
+	files := map[string]any{
+		"/home/configured/tsconfig.json": `{
+			"compilerOptions": { "target": "es2020", "module": "esnext", "moduleResolution": "bundler" },
+			"contentMappers": [ { "package": "mapper", "extensions": [".box"] } ]
+		}`,
+		"/home/configured/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.TransformingMapper),
+		"/home/configured/main.ts":                          "export const main = true;\n",
+		"/home/loose/app.box":                               "export const version = #{target};\n",
+		"/home/package.json":                                `{"name":"loose","dependencies":{"jquery":"^3.1.0"}}`,
+	}
+	init, utils := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
+		CurrentDirectory:    "/home",
+		DefaultLibraryPath:  bundled.LibPath(),
+		TypingsLocation:     projecttestutil.TestTypingsLocation,
+		PositionEncoding:    lsproto.PositionEncodingKindUTF8,
+		LoggingEnabled:      true,
+		LoadExternalPlugins: true,
+	}, &projecttestutil.TypingsInstallerOptions{
+		PackageToFile: map[string]string{
+			"jquery": `declare const $: { x: number }`,
+		},
+	})
+	init.Spawner = contentmappertest.NewSpawner()
+	session := project.NewSession(init)
+	defer session.Close()
+
+	ctx := context.Background()
+	configuredURI := lsproto.DocumentUri("file:///home/configured/main.ts")
+	session.DidOpenFile(ctx, configuredURI, 1, files["/home/configured/main.ts"].(string), lsproto.LanguageKindTypeScript)
+	_, err := session.GetLanguageService(ctx, configuredURI)
+	assert.NilError(t, err)
+
+	boxURI := lsproto.DocumentUri("file:///home/loose/app.box")
+	session.DidOpenFile(ctx, boxURI, 1, files["/home/loose/app.box"].(string), lsproto.LanguageKind("box"))
+	_, err = session.GetLanguageService(ctx, boxURI)
+	assert.NilError(t, err)
+	assert.Equal(t, session.Snapshot().GetDefaultProject(boxURI).Kind, project.KindInferred)
+
+	// Let ATA install the typings in the background.
+	session.WaitForBackgroundTasks()
+	assert.Assert(t, len(utils.NpmExecutor().NpmInstallCalls()) > 0, "expected ATA to install typings")
+
+	// Applying the typings change rebuilds the inferred program with the typings-augmented
+	// command line. The content mappers must survive that rebuild.
+	languageService, err := session.GetLanguageService(ctx, boxURI)
+	assert.NilError(t, err)
+	boxFile := languageService.GetProgram().GetSourceFile("/home/loose/app.box")
+	assert.Assert(t, boxFile != nil, "expected loose app.box in the inferred project after typings install")
+	assert.Assert(t, boxFile.ContentMapper() != "", "expected loose app.box to keep its content mapper after typings install")
+	assert.Assert(t, !strings.Contains(boxFile.Text(), "#{target}"), "expected loose app.box to be transformed after typings install: %q", boxFile.Text())
+	var typingsFile *ast.SourceFile
+	for _, file := range languageService.GetProgram().SourceFiles() {
+		if strings.HasSuffix(file.FileName(), "@types/jquery/index.d.ts") {
+			typingsFile = file
+			break
+		}
+	}
+	assert.Assert(t, typingsFile != nil, "expected installed typings in the inferred program (the typings-augmented rebuild did not happen)")
 }
 
 func TestDiscoverContentMapperExtensions(t *testing.T) {
