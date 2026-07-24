@@ -268,10 +268,14 @@ func (s *Session) Config() lsutil.UserPreferences {
 }
 
 func (s *Session) backgroundContext() context.Context {
+	return s.withCurrentLocale(s.backgroundCtx)
+}
+
+func (s *Session) withCurrentLocale(ctx context.Context) context.Context {
 	if s.client == nil {
-		return s.backgroundCtx
+		return ctx
 	}
-	return locale.WithLocale(s.backgroundCtx, s.client.GetLocale())
+	return locale.WithLocale(ctx, s.client.GetLocale())
 }
 
 // Trace implements module.ResolutionHost
@@ -1693,6 +1697,7 @@ func (s *Session) publishProjectDiagnostics(ctx context.Context, configFilePath 
 	if s.Config().EnableValidation.IsFalse() {
 		diagnostics = nil
 	}
+	ctx = s.withCurrentLocale(ctx)
 	lspDiagnostics := make([]*lsproto.Diagnostic, 0, len(diagnostics))
 	for _, diag := range diagnostics {
 		lspDiagnostics = append(lspDiagnostics, lsconv.DiagnosticToLSPPush(ctx, converters, diag))
