@@ -880,14 +880,6 @@ export class Program {
      * This can return the project's root tsconfig file or one of its extended config files.
      */
     async getConfigSourceFile(file: DocumentIdentifier): Promise<SourceFile | undefined> {
-        const fileName = resolveFileName(file);
-        const path = this.toPath(fileName);
-
-        const retained = this.sourceFileCache.getRetained(path, this.snapshotId, this.project.id);
-        if (retained) {
-            return retained;
-        }
-
         const binaryData = await this.client.apiRequestBinary("getConfigSourceFile", {
             snapshot: this.snapshotId,
             project: this.project.id,
@@ -897,12 +889,7 @@ export class Program {
             return undefined;
         }
 
-        const view = new DataView(binaryData.buffer, binaryData.byteOffset, binaryData.byteLength);
-        const contentHash = readSourceFileHash(view);
-        const parseOptionsKey = readParseOptionsKey(view);
-
-        const sourceFile = new RemoteSourceFile(binaryData, this.decoder) as unknown as SourceFile;
-        return this.sourceFileCache.set(path, sourceFile, parseOptionsKey, contentHash, this.snapshotId, this.project.id);
+        return new RemoteSourceFile(binaryData, this.decoder) as unknown as SourceFile;
     }
 
     /**

@@ -188,12 +188,16 @@ describe("Snapshot", () => {
     });
 
     test("project exposes parsedCommandLine", async () => {
-        const api = spawnAPI();
+        const api = spawnAPI({
+            ...defaultFiles,
+            "/tsconfig.json": JSON.stringify({ compileOnSave: true }),
+        });
         try {
             const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
             const project = snapshot.getProject("/tsconfig.json")!;
             assert.deepEqual(project.parsedCommandLine.fileNames, ["/src/index.ts", "/src/foo.ts"]);
             assert.deepEqual(project.parsedCommandLine.options, { configFilePath: "/tsconfig.json" });
+            assert.equal(project.parsedCommandLine.compileOnSave, true);
             assert.deepEqual(project.rootFiles, project.parsedCommandLine.fileNames);
             assert.deepEqual(project.compilerOptions, project.parsedCommandLine.options);
         }
@@ -5128,8 +5132,9 @@ describe("Program - diagnostics", () => {
     });
 
     test("getConfigFileNames and getConfigSourceFile", async () => {
-        const api = spawnAPI({
-            "/tsconfig.base.json": `{ "compilerOptions": { "strict": true } }`,
+        const baseConfigText = `{ "compilerOptions": { "strict": true } }`;
+        const { api, fs } = spawnAPIWithFS({
+            "/tsconfig.base.json": baseConfigText,
             "/tsconfig.json": `{ "extends": "./tsconfig.base.json", "files": ["./src/index.ts"] }`,
             "/src/index.ts": `export const x = 1;`,
         });
@@ -5142,10 +5147,13 @@ describe("Program - diagnostics", () => {
             const rootConfig = await project.program.getConfigSourceFile("/tsconfig.json");
             assert.ok(rootConfig);
             assert.equal(rootConfig.fileName, "/tsconfig.json");
+            assert.equal(await project.program.getSourceFile("/tsconfig.json"), undefined);
 
+            fs.writeFile!("/tsconfig.base.json", `{ "compilerOptions": { "strict": false } }`);
             const extendedConfig = await project.program.getConfigSourceFile("/tsconfig.base.json");
             assert.ok(extendedConfig);
             assert.equal(extendedConfig.fileName, "/tsconfig.base.json");
+            assert.equal(extendedConfig.getFullText(), baseConfigText);
 
             const nonConfig = await project.program.getConfigSourceFile("/src/index.ts");
             assert.equal(nonConfig, undefined);

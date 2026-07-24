@@ -1126,16 +1126,7 @@ func (s *Session) handleParseConfigFile(ctx context.Context, params *ParseConfig
 		nil, /*extraFileExtensions*/
 		nil, /*extendedConfigCache*/
 	)
-	rawConfig, _ := parsedCommandLine.Raw.(*collections.OrderedMap[string, any])
-
-	compileOnSave := parsedCommandLine.CompileOnSave
-	if compileOnSave == nil && rawConfig != nil {
-		if value, ok := rawConfig.GetOrZero("compileOnSave").(bool); ok {
-			compileOnSave = &value
-		}
-	}
-
-	return NewConfigFileResponse(parsedCommandLine, compileOnSave), nil
+	return NewConfigFileResponse(parsedCommandLine), nil
 }
 
 // handleGetSourceFile returns a source file from a project within a snapshot.
@@ -1205,7 +1196,7 @@ func (s *Session) handleGetConfigSourceFile(ctx context.Context, params *GetSour
 			continue
 		}
 
-		configFileContent, ok := s.projectSession.FS().ReadFile(configFileName)
+		configFileContent, ok := sd.snapshot.ReadFile(configFileName)
 		if !ok {
 			return s.encodeSourceFileResponse(nil)
 		}

@@ -6,6 +6,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
@@ -544,9 +545,17 @@ type ProjectResponse struct {
 	CompilerOptions   *core.CompilerOptions `json:"compilerOptions"`
 }
 
-func NewConfigFileResponse(parsedCommandLine *tsoptions.ParsedCommandLine, compileOnSave *bool) *ConfigFileResponse {
+func NewConfigFileResponse(parsedCommandLine *tsoptions.ParsedCommandLine) *ConfigFileResponse {
 	if parsedCommandLine == nil {
 		return nil
+	}
+	compileOnSave := parsedCommandLine.CompileOnSave
+	if compileOnSave == nil {
+		if rawConfig, ok := parsedCommandLine.Raw.(*collections.OrderedMap[string, any]); ok {
+			if value, ok := rawConfig.GetOrZero("compileOnSave").(bool); ok {
+				compileOnSave = &value
+			}
+		}
 	}
 	compilerOptions := parsedCommandLine.CompilerOptions()
 	return &ConfigFileResponse{
@@ -565,7 +574,7 @@ func NewProjectResponse(p *project.Project) *ProjectResponse {
 	return &ProjectResponse{
 		Id:                ProjectHandle(p),
 		ConfigFileName:    p.Name(),
-		ParsedCommandLine: NewConfigFileResponse(p.CommandLine, p.CommandLine.CompileOnSave),
+		ParsedCommandLine: NewConfigFileResponse(p.CommandLine),
 		RootFiles:         p.CommandLine.FileNames(),
 		CompilerOptions:   p.CommandLine.CompilerOptions(),
 	}
