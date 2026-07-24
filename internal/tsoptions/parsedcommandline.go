@@ -25,6 +25,23 @@ const (
 	recursiveFileGlobPattern = "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json}"
 )
 
+// fileGlobPatterns returns the include file glob patterns for this command line, augmenting the
+// built-in patterns with the extensions registered by its content mappers so that created
+// content-mapped files are recognized as possible root files.
+func (p *ParsedCommandLine) fileGlobPatterns() (fileGlob string, recursiveFileGlob string) {
+	mapperExtensions := p.ContentMapperExtensions()
+	if len(mapperExtensions) == 0 {
+		return fileGlobPattern, recursiveFileGlobPattern
+	}
+	extensions := make([]string, 0, 9+len(mapperExtensions))
+	extensions = append(extensions, "js", "jsx", "mjs", "cjs", "ts", "tsx", "mts", "cts", "json")
+	for _, extension := range mapperExtensions {
+		extensions = append(extensions, strings.TrimPrefix(extension, "."))
+	}
+	fileGlob = "*.{" + strings.Join(extensions, ",") + "}"
+	return fileGlob, "**/" + fileGlob
+}
+
 type ParsedCommandLine struct {
 	ParsedConfig *ParsedOptions `json:"parsedConfig"`
 
@@ -246,9 +263,10 @@ func (p *ParsedCommandLine) WildcardDirectoryGlobs() []*glob.Glob {
 
 	p.includeGlobsOnce.Do(func() {
 		if p.includeGlobs == nil {
+			fileGlob, recursiveFileGlob := p.fileGlobPatterns()
 			globs := make([]*glob.Glob, 0, len(wildcardDirectories))
 			for dir, recursive := range wildcardDirectories {
-				if parsed, err := glob.Parse(fmt.Sprintf("%s/%s", tspath.NormalizePath(dir), core.IfElse(recursive, recursiveFileGlobPattern, fileGlobPattern))); err == nil {
+				if parsed, err := glob.Parse(fmt.Sprintf("%s/%s", tspath.NormalizePath(dir), core.IfElse(recursive, recursiveFileGlob, fileGlob))); err == nil {
 					globs = append(globs, parsed)
 				}
 			}
