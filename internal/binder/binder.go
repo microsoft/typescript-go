@@ -1889,6 +1889,17 @@ func (b *Binder) bindForStatement(node *ast.Node) {
 	preIncrementorLabel := b.createBranchLabel()
 	postLoopLabel := b.createBranchLabel()
 	b.bind(stmt.Initializer)
+	if b.currentFlow == b.unreachableFlow {
+		// If the initializer makes flow unreachable (e.g. a throwing IIFE), bail out early
+		// to avoid creating a disconnected cycle in the flow graph. We still bind children to ensure
+		// AST completion, but bind them with isolated break/continue targets so they don't leak outward.
+		dummyBreakTarget := b.createBranchLabel()
+		dummyContinueTarget := b.createBranchLabel()
+		b.bind(stmt.Condition)
+		b.bindIterativeStatement(stmt.Statement, dummyBreakTarget, dummyContinueTarget)
+		b.bind(stmt.Incrementor)
+		return
+	}
 	b.addAntecedent(preLoopLabel, b.currentFlow)
 	b.currentFlow = preLoopLabel
 	b.bindCondition(stmt.Condition, preBodyLabel, postLoopLabel)
