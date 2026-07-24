@@ -189,6 +189,85 @@ func runWithCancellation(t *testing.T, sys *TestSys, args []string, midCheck boo
 	}
 }
 
+// runPreCanceled runs the command line on an existing sys under a context that is
+// already canceled before the run starts, guarded by a timeout so a regression that
+// ignores cancellation fails loudly instead of hanging.
+func runPreCanceled(t *testing.T, sys *TestSys, args []string) tsc.CommandLineResult {
+	t.Helper()
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	resultCh := make(chan tsc.CommandLineResult, 1)
+	go func() {
+		resultCh <- execute.CommandLine(ctx, sys, args, sys)
+	}()
+	select {
+	case result := <-resultCh:
+		return result
+	case <-time.After(30 * time.Second):
+		t.Fatal("run did not abort after cancellation")
+		return tsc.CommandLineResult{}
+	}
+}
+
+// TestTscBuildCancellationUpToDate verifies that an interrupt is honored even when a
+// `tsc -b` build has nothing to do. A root project that is already up to date has no
+// upstream to wait on, so the no-build path must still observe a pre-canceled context
+// and report ExitStatusCanceled rather than swallowing the interrupt as success.
+func TestTscBuildCancellationUpToDate(t *testing.T) {
+	t.Parallel()
+	files := FileMap{
+		"/home/src/workspaces/project/tsconfig.json": `{ "compilerOptions": { "composite": true } }`,
+		"/home/src/workspaces/project/a.ts":          "export const a = 1;\n",
+	}
+	sys := newTestSys(&tscInput{
+		commandLineArgs: []string{"-b"},
+		files:           files,
+	}, false)
+
+	// First build to success so the project is up to date on the next run.
+	if result := execute.CommandLine(context.Background(), sys, []string{"-b"}, sys); result.Status != tsc.ExitStatusSuccess {
+		t.Fatalf("initial build status = %v, want ExitStatusSuccess", result.Status)
+	}
+
+	// A second, pre-canceled build has nothing to build; it must still report canceled.
+	result := runPreCanceled(t, sys, []string{"-b"})
+	if result.Status != tsc.ExitStatusCanceled {
+		t.Errorf("status = %v, want ExitStatusCanceled", result.Status)
+	}
+}
+
+// TestTscCleanCancellation verifies that `tsc -b --clean` interrupted before it runs
+// does not delete outputs and reports ExitStatusCanceled instead of success.
+func TestTscCleanCancellation(t *testing.T) {
+	t.Parallel()
+	const outFile = "/home/src/workspaces/project/a.js"
+	files := FileMap{
+		"/home/src/workspaces/project/tsconfig.json": `{ "compilerOptions": { "composite": true } }`,
+		"/home/src/workspaces/project/a.ts":          "export const a = 1;\n",
+	}
+	sys := newTestSys(&tscInput{
+		commandLineArgs: []string{"-b"},
+		files:           files,
+	}, false)
+
+	// Build first so there is an output for clean to (potentially) delete.
+	if result := execute.CommandLine(context.Background(), sys, []string{"-b"}, sys); result.Status != tsc.ExitStatusSuccess {
+		t.Fatalf("initial build status = %v, want ExitStatusSuccess", result.Status)
+	}
+	if !sys.FS().FileExists(outFile) {
+		t.Fatalf("expected %s to exist after build", outFile)
+	}
+
+	// A pre-canceled clean must abort before deleting outputs and report canceled.
+	result := runPreCanceled(t, sys, []string{"-b", "--clean"})
+	if result.Status != tsc.ExitStatusCanceled {
+		t.Errorf("status = %v, want ExitStatusCanceled", result.Status)
+	}
+	if !sys.FS().FileExists(outFile) {
+		t.Errorf("expected %s to survive a canceled clean", outFile)
+	}
+}
+
 // TestTscCancellationSweep steps the cancellation point across the whole compile by
 // increasing the poll threshold one step at a time, walking past the check phase and
 // into emit. This covers windows a single fixed threshold would miss -- the

@@ -677,7 +677,7 @@ func (o *Orchestrator) buildOrCleanProject(ctx context.Context, task *BuildTask,
 	if !o.opts.Command.BuildOptions.Clean.IsTrue() {
 		task.buildProject(ctx, o, path)
 	} else {
-		task.cleanProject(o, path)
+		task.cleanProject(ctx, o, path)
 	}
 	task.report(o, path, buildResult)
 }
