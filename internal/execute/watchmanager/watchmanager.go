@@ -42,6 +42,9 @@ type WatchManager struct {
 	warnWriter io.Writer
 	dirExists  func(string) bool
 
+	fallbackBackend func() WatchBackend
+	triedFallback   bool
+
 	changedMu       sync.Mutex
 	changedPaths    map[string]fswatch.EventKind
 	changedOverflow bool
@@ -66,6 +69,14 @@ func (wm *WatchManager) EnsureDefaultBackend() {
 		wm.backend = &FSWatchBackend{Inner: fsw}
 		if wm.DebugLog != nil {
 			fmt.Fprintf(wm.DebugLog, "[watch] using %s backend\n", fsw.Name())
+		}
+		if fsw.Name() == "fanotify" {
+			wm.fallbackBackend = func() WatchBackend {
+				if in := fswatch.Inotify(); in.Available() {
+					return &FSWatchBackend{Inner: in}
+				}
+				return nil
+			}
 		}
 	}
 }
@@ -273,7 +284,33 @@ func (wm *WatchManager) ReconcileWatches(desiredDirs map[string]bool) error {
 		},
 	)
 	additions = append(additions, changes...)
-	return wm.createDirWatches(additions)
+	err := wm.createDirWatches(additions)
+	if err != nil && wm.tryFallbackBackend(err) {
+		return wm.ReconcileWatches(desiredDirs)
+	}
+	return err
+}
+
+func (wm *WatchManager) tryFallbackBackend(err error) bool {
+	if wm.triedFallback || wm.fallbackBackend == nil || !errors.Is(err, fswatch.ErrFilesystemUnsupported) {
+		return false
+	}
+	wm.triedFallback = true
+	fallback := wm.fallbackBackend()
+	if fallback == nil {
+		return false
+	}
+	if wm.DebugLog != nil {
+		fmt.Fprintf(wm.DebugLog, "[watch] backend unsupported on filesystem (%v); falling back to inotify\n", err)
+	}
+	for dir, wd := range wm.watchedDirs {
+		if wd.closer != nil {
+			wd.closer.Close()
+		}
+		delete(wm.watchedDirs, dir)
+	}
+	wm.backend = fallback
+	return true
 }
 
 func (wm *WatchManager) createDirWatches(updates []dirWatchUpdate) error {

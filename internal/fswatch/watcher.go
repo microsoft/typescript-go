@@ -40,6 +40,15 @@ var ErrWatchTerminated = errors.New("fswatch: watch terminated")
 // available on the current platform.
 var ErrUnavailable = errors.New("fswatch: watcher not available on this platform")
 
+// ErrFilesystemUnsupported indicates that the active watcher backend cannot
+// operate on the target filesystem, even though the backend is available on
+// the current platform. This happens, for example, with the fanotify backend
+// on filesystems that do not implement name_to_handle_at (such as some Docker
+// bind mounts backed by virtiofs, gRPC FUSE, or overlayfs). Callers may use
+// [errors.Is] to detect this condition and fall back to another backend such
+// as inotify.
+var ErrFilesystemUnsupported = errors.New("fswatch: watcher backend unsupported on this filesystem")
+
 // Watcher represents a filesystem watching implementation.
 // Use one of the constructor functions ([Inotify], [FSEvents], [Kqueue],
 // [Windows]) to obtain a value, or [Default] for the platform default.
