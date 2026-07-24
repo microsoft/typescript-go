@@ -67,28 +67,29 @@ const (
 	// the connection itself and is not recorded.
 	MethodResetServerTiming Method = "resetServerTiming"
 
-	MethodInitialize               Method = "initialize"
-	MethodUpdateSnapshot           Method = "updateSnapshot"
-	MethodUpdateTemporarySnapshot  Method = "updateTemporarySnapshot"
-	MethodParseConfigFile          Method = "parseConfigFile"
-	MethodGetDefaultProjectForFile Method = "getDefaultProjectForFile"
-	MethodGetSymbolAtPosition      Method = "getSymbolAtPosition"
-	MethodGetSymbolsAtPositions    Method = "getSymbolsAtPositions"
-	MethodGetSymbolAtLocation      Method = "getSymbolAtLocation"
-	MethodGetSymbolsAtLocations    Method = "getSymbolsAtLocations"
-	MethodGetTypeOfSymbol          Method = "getTypeOfSymbol"
-	MethodGetTypesOfSymbols        Method = "getTypesOfSymbols"
-	MethodGetDeclaredTypeOfSymbol  Method = "getDeclaredTypeOfSymbol"
-	MethodGetSourceFile            Method = "getSourceFile"
-	MethodGetSourceFileNames       Method = "getSourceFileNames"
-	MethodGetSourceFileMetadata    Method = "getSourceFileMetadata"
-	MethodResolveName              Method = "resolveName"
-	MethodGetSignaturesOfType      Method = "getSignaturesOfType"
-	MethodGetResolvedSignature     Method = "getResolvedSignature"
-	MethodGetTypeAtLocation        Method = "getTypeAtLocation"
-	MethodGetTypeAtLocations       Method = "getTypeAtLocations"
-	MethodGetTypeAtPosition        Method = "getTypeAtPosition"
-	MethodGetTypesAtPositions      Method = "getTypesAtPositions"
+	MethodInitialize                Method = "initialize"
+	MethodUpdateSnapshot            Method = "updateSnapshot"
+	MethodUpdateTemporarySnapshot   Method = "updateTemporarySnapshot"
+	MethodParseConfigFile           Method = "parseConfigFile"
+	MethodGetDefaultProjectForFile  Method = "getDefaultProjectForFile"
+	MethodGetSymbolAtPosition       Method = "getSymbolAtPosition"
+	MethodGetSymbolsAtPositions     Method = "getSymbolsAtPositions"
+	MethodGetSymbolAtLocation       Method = "getSymbolAtLocation"
+	MethodGetSymbolsAtLocations     Method = "getSymbolsAtLocations"
+	MethodGetTypeOfSymbol           Method = "getTypeOfSymbol"
+	MethodGetTypesOfSymbols         Method = "getTypesOfSymbols"
+	MethodGetDeclaredTypeOfSymbol   Method = "getDeclaredTypeOfSymbol"
+	MethodGetNonMissingTypeOfSymbol Method = "getNonMissingTypeOfSymbol"
+	MethodGetSourceFile             Method = "getSourceFile"
+	MethodGetSourceFileNames        Method = "getSourceFileNames"
+	MethodGetSourceFileMetadata     Method = "getSourceFileMetadata"
+	MethodResolveName               Method = "resolveName"
+	MethodGetSignaturesOfType       Method = "getSignaturesOfType"
+	MethodGetResolvedSignature      Method = "getResolvedSignature"
+	MethodGetTypeAtLocation         Method = "getTypeAtLocation"
+	MethodGetTypeAtLocations        Method = "getTypeAtLocations"
+	MethodGetTypeAtPosition         Method = "getTypeAtPosition"
+	MethodGetTypesAtPositions       Method = "getTypesAtPositions"
 
 	// Symbol sub-property methods
 	MethodGetParentOfSymbol       Method = "getParentOfSymbol"
@@ -377,29 +378,30 @@ type UpdateSnapshotResponse struct {
 }
 
 var unmarshalers = map[Method]func([]byte) (any, error){
-	MethodRelease:                  unmarshallerFor[ReleaseParams],
-	MethodInitialize:               noParams,
-	MethodUpdateSnapshot:           unmarshallerFor[UpdateSnapshotParams],
-	MethodUpdateTemporarySnapshot:  unmarshallerFor[UpdateTemporarySnapshotParams],
-	MethodParseConfigFile:          unmarshallerFor[ParseConfigFileParams],
-	MethodGetDefaultProjectForFile: unmarshallerFor[GetDefaultProjectForFileParams],
-	MethodGetSourceFile:            unmarshallerFor[GetSourceFileParams],
-	MethodGetSourceFileNames:       unmarshallerFor[GetSourceFileNamesParams],
-	MethodGetSourceFileMetadata:    unmarshallerFor[GetSourceFileParams],
-	MethodGetSymbolAtPosition:      unmarshallerFor[GetSymbolAtPositionParams],
-	MethodGetSymbolsAtPositions:    unmarshallerFor[GetSymbolsAtPositionsParams],
-	MethodGetSymbolAtLocation:      unmarshallerFor[GetSymbolAtLocationParams],
-	MethodGetSymbolsAtLocations:    unmarshallerFor[GetSymbolsAtLocationsParams],
-	MethodGetTypeOfSymbol:          unmarshallerFor[GetTypeOfSymbolParams],
-	MethodGetTypesOfSymbols:        unmarshallerFor[GetTypesOfSymbolsParams],
-	MethodGetDeclaredTypeOfSymbol:  unmarshallerFor[GetTypeOfSymbolParams],
-	MethodResolveName:              unmarshallerFor[ResolveNameParams],
-	MethodGetSignaturesOfType:      unmarshallerFor[GetSignaturesOfTypeParams],
-	MethodGetResolvedSignature:     unmarshallerFor[GetResolvedSignatureParams],
-	MethodGetTypeAtLocation:        unmarshallerFor[GetTypeAtLocationParams],
-	MethodGetTypeAtLocations:       unmarshallerFor[GetTypeAtLocationsParams],
-	MethodGetTypeAtPosition:        unmarshallerFor[GetTypeAtPositionParams],
-	MethodGetTypesAtPositions:      unmarshallerFor[GetTypesAtPositionsParams],
+	MethodRelease:                   unmarshallerFor[ReleaseParams],
+	MethodInitialize:                noParams,
+	MethodUpdateSnapshot:            unmarshallerFor[UpdateSnapshotParams],
+	MethodUpdateTemporarySnapshot:   unmarshallerFor[UpdateTemporarySnapshotParams],
+	MethodParseConfigFile:           unmarshallerFor[ParseConfigFileParams],
+	MethodGetDefaultProjectForFile:  unmarshallerFor[GetDefaultProjectForFileParams],
+	MethodGetSourceFile:             unmarshallerFor[GetSourceFileParams],
+	MethodGetSourceFileNames:        unmarshallerFor[GetSourceFileNamesParams],
+	MethodGetSourceFileMetadata:     unmarshallerFor[GetSourceFileParams],
+	MethodGetSymbolAtPosition:       unmarshallerFor[GetSymbolAtPositionParams],
+	MethodGetSymbolsAtPositions:     unmarshallerFor[GetSymbolsAtPositionsParams],
+	MethodGetSymbolAtLocation:       unmarshallerFor[GetSymbolAtLocationParams],
+	MethodGetSymbolsAtLocations:     unmarshallerFor[GetSymbolsAtLocationsParams],
+	MethodGetTypeOfSymbol:           unmarshallerFor[GetTypeOfSymbolParams],
+	MethodGetTypesOfSymbols:         unmarshallerFor[GetTypesOfSymbolsParams],
+	MethodGetDeclaredTypeOfSymbol:   unmarshallerFor[GetTypeOfSymbolParams],
+	MethodGetNonMissingTypeOfSymbol: unmarshallerFor[GetTypeOfSymbolParams],
+	MethodResolveName:               unmarshallerFor[ResolveNameParams],
+	MethodGetSignaturesOfType:       unmarshallerFor[GetSignaturesOfTypeParams],
+	MethodGetResolvedSignature:      unmarshallerFor[GetResolvedSignatureParams],
+	MethodGetTypeAtLocation:         unmarshallerFor[GetTypeAtLocationParams],
+	MethodGetTypeAtLocations:        unmarshallerFor[GetTypeAtLocationsParams],
+	MethodGetTypeAtPosition:         unmarshallerFor[GetTypeAtPositionParams],
+	MethodGetTypesAtPositions:       unmarshallerFor[GetTypesAtPositionsParams],
 
 	MethodGetParentOfSymbol:       unmarshallerFor[GetSymbolPropertyParams],
 	MethodGetMembersOfSymbol:      unmarshallerFor[GetSymbolPropertyParams],
