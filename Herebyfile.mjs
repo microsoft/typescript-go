@@ -1483,7 +1483,7 @@ const mainNativePreviewPackage = {
  * @typedef {{ name: string; sourceDir: string }} VsixExtensionPackage
  * @typedef {{ vscodeTarget: string; sourceDir: string; extensionDir: string; vsixPath: string; vsixManifestPath: string; vsixSignaturePath: string }} VsixExtension
  * @typedef {{ GOOS: string; GOARCH: string }} GoDistTarget
- * @typedef {{ os: OS; arch: Arch; cert?: Cert; vsix?: boolean; alpine?: boolean }} Platform
+ * @typedef {{ os: OS; arch: Arch; cert?: Cert; vsix?: boolean; alpine?: boolean; cc?: string}} Platform
  */
 void 0;
 
@@ -1492,6 +1492,8 @@ const vsixExtensionPackages = [
     ...(produceNativePreviewVsix ? [{ name: "native-preview", sourceDir: extensionDir }] : []),
     ...(produceTypeScriptNightlyVsix ? [{ name: "vscode-typescript-nightly", sourceDir: nightlyExtensionDir }] : []),
 ];
+
+const ANDROID_API_LEVEL = 24;
 
 /**
  * npm package platforms supported by the native release.
@@ -1524,14 +1526,14 @@ const platforms = [
     { os: "openbsd", arch: "arm64" },
     { os: "openbsd", arch: "x64" },
     { os: "sunos", arch: "x64" },
+    { os: "android", arch: "arm64", cc: `aarch64-linux-android${ANDROID_API_LEVEL}-clang` },
+    { os: "android", arch: "arm", cc: `armv7a-linux-androideabi${ANDROID_API_LEVEL}-clang` },
+    { os: "android", arch: "ia32", cc: `i686-linux-android${ANDROID_API_LEVEL}-clang` },
+    { os: "android", arch: "x64", cc: `x86_64-linux-android${ANDROID_API_LEVEL}-clang` },
     // Wasm?
 ];
 
 const ignoredGoTargets = new Map([
-    ["android/386", "Android is not a Node runtime target TypeScript supports"],
-    ["android/amd64", "Android is not a Node runtime target TypeScript supports"],
-    ["android/arm", "Android is not a Node runtime target TypeScript supports"],
-    ["android/arm64", "Android is not a Node runtime target TypeScript supports"],
     ["freebsd/386", "FreeBSD is experimental in Node and limited here to mainstream 64-bit x64/arm64"],
     ["freebsd/arm", "FreeBSD is experimental in Node and limited here to mainstream 64-bit x64/arm64"],
     ["linux/386", "ia32 means 32-bit x86, which TypeScript does not support for native packages"],
@@ -1606,7 +1608,7 @@ const getPlatforms = memoize(() => {
         assert.equal(supportedPlatforms.length, 1, "No supported platforms found");
     }
 
-    return supportedPlatforms.map(({ os, arch, cert = "LinuxSign", vsix, alpine }) => {
+    return supportedPlatforms.map(({ os, arch, cert = "LinuxSign", vsix, alpine, cc }) => {
         const packageBaseName = publishAsTypescript ? "typescript" : "native-preview";
         const npmDirName = `${packageBaseName}-${os}-${arch}`;
         const npmDir = path.join(builtNpm, npmDirName);
@@ -1640,17 +1642,29 @@ const getPlatforms = memoize(() => {
             );
         }
 
+        /** @type {typeof process.env} */
+        const env = {};
+
+        env.CGO_ENABLED = cc ? "1" : "0";
+        if (cc !== undefined) {
+            env.CC = cc;
+        }
+        if (arch === "arm" || arch === "arm64") {
+            env.GOARM = "6";
+        }
+        env.GOOS = nodeToGOOS(os);
+        env.GOARCH = nodeToGOARCH(arch, os);
+
         return {
             nodeOs: os,
             nodeArch: arch,
-            goos: nodeToGOOS(os),
-            goarch: nodeToGOARCH(arch, os),
             npmPackageName,
             npmDirName,
             npmDir,
             npmTarball,
             extensions,
             cert,
+            env,
         };
     });
 });
@@ -1897,7 +1911,7 @@ async function runBuildNativePreviewPackages() {
 
     const extraFlags = getReleaseBuildFlags(options.setPrerelease || nativePreviewReleaseVersion ? getVersion() : undefined);
 
-    const platformBuilders = platforms.map(({ npmDir, npmPackageName, nodeOs, nodeArch, goos, goarch }) => async () => {
+    const platformBuilders = platforms.map(({ npmDir, npmPackageName, nodeOs, nodeArch, env }) => async () => {
         const packageJson = {
             ...inputPackageJson,
             bin: undefined,
@@ -1931,7 +1945,7 @@ async function runBuildNativePreviewPackages() {
         const exeName = nativePreviewExeName(nodeOs);
         await buildTsgo({
             out: publishAsTypescript ? path.join(out, exeName) : out,
-            env: { GOOS: goos, GOARCH: goarch, GOARM: "6", CGO_ENABLED: "0" },
+            env,
             extraFlags,
         });
     });
