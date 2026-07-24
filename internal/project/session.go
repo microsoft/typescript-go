@@ -268,6 +268,9 @@ func (s *Session) Config() lsutil.UserPreferences {
 }
 
 func (s *Session) backgroundContext() context.Context {
+	if s.client == nil {
+		return s.backgroundCtx
+	}
 	return locale.WithLocale(s.backgroundCtx, s.client.GetLocale())
 }
 
