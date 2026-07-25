@@ -139,13 +139,87 @@ function generateHeader(w: CodeWriter) {
 
 // ── Generate struct definitions ────────────────────────────────────────────
 
+/**
+ * Bases that must be "hoisted" so each Go struct stores them exactly once.
+ *
+ * A Go embedded base is real storage, not interface inheritance. When a node lists a
+ * base directly *and* also inherits it through a composite base (e.g. FunctionDeclaration
+ * lists DeclarationBase while FunctionLikeBase also embeds it), the struct ends up with
+ * two copies. Go resolves promoted selectors to the shallowest one, so the duplicate
+ * compiles and "works" while wasting memory and leaving a zero-valued shadow copy that
+ * any explicitly-qualified access would silently read.
+ *
+ * These bases are therefore stripped from every composite base struct and embedded
+ * directly in each concrete node instead: exactly one copy, always at depth 1. Depth 1
+ * also keeps their accessors (DeclarationData, etc.) shallower than NodeDefault's
+ * nil-returning fallbacks, which is what makes the selectors unambiguous.
+ *
+ * This is a Go-only concern. The schema in ast.json is left alone so that the generated
+ * TypeScript, where `extends` is structural and duplication is free, is unaffected.
+ */
+const hoistedBases = new Set<string>();
+
+function inheritsBase(key: string, target: string): boolean {
+    for (const ext of api.getBase(key)?.extendsKeys ?? []) {
+        if (ext === target || inheritsBase(ext, target)) return true;
+    }
+    return false;
+}
+
+/** Computes the Go embeddings for a struct, ensuring each base is stored exactly once. */
+function goEmbeddings(extendsKeys: string[], concrete: boolean): string[] {
+    // Composite bases never store a hoisted base; concrete nodes keep the ones they list.
+    const kept = extendsKeys.filter(key => !hoistedBases.has(key) || concrete);
+    if (!concrete) return kept;
+
+    // Re-attach any hoisted base the node only inherited indirectly.
+    const missing = [...hoistedBases].filter(base => !kept.includes(base) && extendsKeys.some(key => key === base || inheritsBase(key, base)));
+    return [...missing, ...kept];
+}
+
+/** Counts how many copies of each base a node's Go struct would store as currently configured. */
+function countStoredCopies(node: NodeType): Map<string, number> {
+    const copies = new Map<string, number>();
+    const walk = (keys: string[]) => {
+        for (const ext of keys) {
+            copies.set(ext, (copies.get(ext) ?? 0) + 1);
+            walk(goEmbeddings(api.getBase(ext)?.extendsKeys ?? [], /*concrete*/ false));
+        }
+    };
+    walk(goEmbeddings(node.extendsKeys, /*concrete*/ true));
+    return copies;
+}
+
+function computeHoistedBases(): void {
+    // Hoisting a base can resolve duplicates of everything nested inside it, so hoist the
+    // outermost offenders first and re-measure, rather than hoisting the whole cascade.
+    for (;;) {
+        const duplicated = new Set<string>();
+        for (const node of api.nodes()) {
+            for (const [base, count] of countStoredCopies(node)) {
+                if (count > 1) duplicated.add(base);
+            }
+        }
+        if (duplicated.size === 0) return;
+
+        // Keep only offenders that aren't already contained in another offender.
+        const roots = [...duplicated].filter(base => ![...duplicated].some(other => other !== base && inheritsBase(other, base)));
+        if (roots.length === 0) {
+            throw new Error(`Unable to resolve duplicated embedded bases: ${[...duplicated].sort().join(", ")}`);
+        }
+        for (const base of roots) hoistedBases.add(base);
+    }
+}
+
+computeHoistedBases();
+
 function generateStructDef(w: CodeWriter, node: NodeType) {
     const structName = node.name;
     w.write(`type ${structName} struct {`);
     w.push();
 
     // Embeddings from extends (each maps to a Go struct via convention)
-    for (const ext of node.extendsKeys) {
+    for (const ext of goEmbeddings(node.extendsKeys, /*concrete*/ true)) {
         w.write(ext);
     }
 
@@ -232,7 +306,7 @@ function generateBaseStructDefs(w: CodeWriter) {
 
         const structName = base.key;
 
-        const goExts = base.extendsKeys;
+        const goExts = goEmbeddings(base.extendsKeys, /*concrete*/ false);
 
         w.write(`type ${structName} struct {`);
         w.push();
