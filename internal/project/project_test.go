@@ -411,6 +411,40 @@ func TestPushDiagnostics(t *testing.T) {
 		assert.Equal(t, len(lastTsconfigCall.Params.Diagnostics), 0, "expected no diagnostics after removing baseUrl option")
 	})
 
+	t.Run("updates diagnostics when an open config file is saved", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/src/tsconfig.json": `{"compilerOptions": {"target": "es2020"}}`,
+			"/src/index.ts":      "export const x = 1;",
+		}
+		session, utils := projecttestutil.Setup(files)
+		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		// Edit the config file in the editor and save it. No other request follows, so the
+		// save is what has to get the new diagnostics published.
+		newContent := `{"compilerOptions": {"target": "es5"}}`
+		session.DidOpenFile(context.Background(), "file:///src/tsconfig.json", 1, files["/src/tsconfig.json"].(string), lsproto.LanguageKindJSON)
+		session.DidChangeFile(context.Background(), "file:///src/tsconfig.json", 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+			{WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{Text: newContent}},
+		})
+		assert.NilError(t, utils.FS().WriteFile("/src/tsconfig.json", newContent))
+		session.DidSaveFile(context.Background(), "file:///src/tsconfig.json")
+		session.WaitForBackgroundTasks()
+
+		calls := utils.Client().PublishDiagnosticsCalls()
+		tsconfigCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", 0)
+		assert.Assert(t, len(tsconfigCalls) > 0, "expected PublishDiagnostics call for tsconfig.json")
+		lastTsconfigCall := tsconfigCalls[len(tsconfigCalls)-1]
+
+		expectedMessage := "Option 'target=ES5' has been removed."
+		assert.Assert(t, slices.ContainsFunc(lastTsconfigCall.Params.Diagnostics, func(diag *lsproto.Diagnostic) bool {
+			return strings.Contains(diag.Message.AsString(), expectedMessage)
+		}), "expected removed target diagnostic on tsconfig.json, got: %v", lastTsconfigCall.Params.Diagnostics)
+	})
+
 	t.Run("does not publish for inferred projects", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{

@@ -268,6 +268,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			logger.Logf("Reason: DidOpenFile - %s", change.fileChanges.Opened)
 		case UpdateReasonDidCloseFile:
 			logger.Logf("Reason: DidCloseFile - %v", change.fileChanges.Closed)
+		case UpdateReasonDidSaveConfigFile:
+			logger.Logf("Reason: DidSaveConfigFile - %v", change.fileChanges.Changed)
 		case UpdateReasonDidChangeCompilerOptionsForInferredProjects:
 			logger.Logf("Reason: DidChangeCompilerOptionsForInferredProjects")
 		case UpdateReasonRequestedLanguageServicePendingChanges:

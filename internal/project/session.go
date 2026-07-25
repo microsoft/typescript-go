@@ -44,6 +44,7 @@ const (
 	UpdateReasonRequestedLoadProjectTree
 	UpdateReasonRequestedLanguageServiceWithAutoImports
 	UpdateReasonIdleCleanDiskCache
+	UpdateReasonDidSaveConfigFile
 )
 
 // watchRequestTimeout is the maximum time to wait for the client to respond to
@@ -360,11 +361,32 @@ func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, ve
 func (s *Session) DidSaveFile(ctx context.Context, uri lsproto.DocumentUri) {
 	s.scheduleIdleCacheClean()
 	s.pendingFileChangesMu.Lock()
-	defer s.pendingFileChangesMu.Unlock()
 	s.pendingFileChanges = append(s.pendingFileChanges, FileChange{
 		Kind: FileChangeKindSave,
 		URI:  uri,
 	})
+	s.pendingFileChangesMu.Unlock()
+
+	if s.isConfigFile(uri) {
+		// Diagnostics for config files are only pushed as part of a snapshot update.
+		// Editing a config file usually isn't followed by any request that would flush
+		// the pending changes, so schedule an update to get its diagnostics republished.
+		s.ScheduleSnapshotUpdate(UpdateReasonDidSaveConfigFile)
+	}
+}
+
+// isConfigFile returns true if the given file is a config file known to the current
+// snapshot, or is named like one.
+func (s *Session) isConfigFile(uri lsproto.DocumentUri) bool {
+	fileName := uri.FileName()
+	baseName := tspath.GetBaseFileName(fileName)
+	snapshot := s.Snapshot()
+	if baseName == "tsconfig.json" || baseName == "jsconfig.json" ||
+		(snapshot.ConfigFileRegistry.customConfigFileName != "" && baseName == snapshot.ConfigFileRegistry.customConfigFileName) {
+		return true
+	}
+	// Configs pulled in by `extends` or project references can be named anything.
+	return snapshot.ConfigFileRegistry.GetConfig(snapshot.toPath(fileName)) != nil
 }
 
 func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.FileEvent) {
