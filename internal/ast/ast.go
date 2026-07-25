@@ -7,7 +7,6 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -2517,7 +2516,6 @@ type SourceFile struct {
 	BindSuggestionDiagnostics []*Diagnostic
 	EndFlowNode               *FlowNode
 	SymbolCount               int
-	ClassifiableNames         collections.Set[string]
 	PatternAmbientModules     []*PatternAmbientModule
 	GlobalExports             SymbolTable
 
