@@ -54,7 +54,7 @@ func getInferReturnTypeCodeActions(ctx context.Context, refactorContext *Refacto
 		return nil, nil
 	}
 
-	token := astnav.GetTokenAtPosition(refactorContext.SourceFile, int(refactorContext.Range.Pos()))
+	token := astnav.GetTouchingPropertyName(refactorContext.SourceFile, int(refactorContext.Range.Pos()))
 
 	declaration := findConvertibleAncestor(token)
 	if declaration == nil || !hasBody(declaration) || declaration.Type() != nil {

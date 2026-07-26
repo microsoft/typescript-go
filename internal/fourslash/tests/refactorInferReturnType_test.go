@@ -326,6 +326,32 @@ func TestRefactorInferReturnType_available_typePredicate(t *testing.T) {
 	})
 }
 
+func TestRefactorInferReturnType_notAvailable_cursorOnLeadingTrivia(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+
+	const content = `/*marker*/
+function hello() {
+    return 42;
+}`
+	f, done := fourslash.NewFourslash(t, nil, content)
+	defer done()
+	f.GoToMarker(t, "marker")
+	f.VerifyRefactorNotAvailable(t, inferReturnTypeTitle)
+}
+
+func TestRefactorInferReturnType_notAvailable_cursorOnLeadingTriviaBeforeArrow(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+
+	const content = `/*marker*/
+const f = (x: number) => x * 2;`
+	f, done := fourslash.NewFourslash(t, nil, content)
+	defer done()
+	f.GoToMarker(t, "marker")
+	f.VerifyRefactorNotAvailable(t, inferReturnTypeTitle)
+}
+
 // --- Not available cases ---
 
 func TestRefactorInferReturnType_notAvailable_withReturnType(t *testing.T) {
