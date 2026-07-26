@@ -575,3 +575,41 @@ func TestRefactorInferReturnType_notAvailable_assertionSignature(t *testing.T) {
 	f.GoToMarker(t, "marker")
 	f.VerifyRefactorNotAvailable(t, inferReturnTypeTitle)
 }
+
+// --- Disabled action tests (requires DisabledSupport client capability) ---
+
+func TestRefactorInferReturnType_disabled_withCapability(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+
+	// Case: function already has an explicit return type — not applicable.
+	const content = `function isString/*marker*/(x: any): x is string {
+    return typeof x === "string";
+}`
+	ptrTrue := true
+	capabilities := &lsproto.ClientCapabilities{
+		TextDocument: &lsproto.TextDocumentClientCapabilities{
+			CodeAction: &lsproto.CodeActionClientCapabilities{
+				DisabledSupport: &ptrTrue,
+			},
+		},
+	}
+	f, done := fourslash.NewFourslash(t, capabilities, content)
+	defer done()
+	f.GoToMarker(t, "marker")
+	f.VerifyRefactorDisabled(t, inferReturnTypeTitle)
+}
+
+func TestRefactorInferReturnType_disabled_withoutCapability(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+
+	// Without DisabledSupport capability, disabled action should NOT be returned at all.
+	const content = `function isString/*marker*/(x: any): x is string {
+    return typeof x === "string";
+}`
+	f, done := fourslash.NewFourslash(t, nil, content)
+	defer done()
+	f.GoToMarker(t, "marker")
+	f.VerifyRefactorNotAvailable(t, inferReturnTypeTitle)
+}

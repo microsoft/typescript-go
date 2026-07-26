@@ -55,7 +55,8 @@ func getInferReturnTypeCodeActions(ctx context.Context, refactorContext *Refacto
 	}
 
 	title := diagnostics.Infer_function_return_type.Localize(locale.FromContext(ctx))
-	showNotApplicable := refactorContext.LS.UserPreferences().ProvideRefactorNotApplicableReason.IsTrue()
+	showNotApplicable := refactorContext.LS.UserPreferences().ProvideRefactorNotApplicableReason.IsTrue() &&
+		lsproto.GetClientCapabilities(ctx).TextDocument.CodeAction.DisabledSupport
 
 	token := astnav.GetTouchingPropertyName(refactorContext.SourceFile, int(refactorContext.Range.Pos()))
 

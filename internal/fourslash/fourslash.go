@@ -2075,6 +2075,55 @@ func (f *FourslashTest) VerifyRefactorNotAvailable(t *testing.T, title string) {
 	}
 }
 
+// getRefactorActionsIncludingDisabled returns all refactoring code actions at the current cursor position,
+// including disabled ones. This is used to test the DisabledSupport client capability.
+func (f *FourslashTest) getRefactorActionsIncludingDisabled(t *testing.T) []*lsproto.CodeAction {
+	t.Helper()
+
+	params := &lsproto.CodeActionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Range: lsproto.Range{
+			Start: f.currentCaretPosition,
+			End:   f.currentCaretPosition,
+		},
+		Context: &lsproto.CodeActionContext{
+			Diagnostics: []*lsproto.Diagnostic{},
+		},
+	}
+
+	result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
+
+	var actions []*lsproto.CodeAction
+	if result.CommandOrCodeActionArray != nil {
+		for _, item := range *result.CommandOrCodeActionArray {
+			if item.CodeAction != nil && item.CodeAction.Kind != nil &&
+				isRefactoringKind(*item.CodeAction.Kind) {
+				actions = append(actions, item.CodeAction)
+			}
+		}
+	}
+
+	return actions
+}
+
+// VerifyRefactorDisabled verifies that a refactoring code action with the given title IS returned
+// but with its Disabled field set (i.e. the action is not applicable).
+func (f *FourslashTest) VerifyRefactorDisabled(t *testing.T, title string) {
+	t.Helper()
+	actions := f.getRefactorActionsIncludingDisabled(t)
+	for _, action := range actions {
+		if action.Title == title {
+			if action.Disabled == nil {
+				t.Fatalf("Expected refactoring %q to be disabled, but it was enabled", title)
+			}
+			return
+		}
+	}
+	t.Fatalf("Expected refactoring %q to be present (disabled), but it was not found. Got: %v", title, actionTitles(actions))
+}
+
 // VerifyRefactorWithOnlyAvailable verifies that a refactoring action with the given title IS available
 // when the given Only filter is sent in the request context.
 func (f *FourslashTest) VerifyRefactorWithOnlyAvailable(t *testing.T, title string, only []lsproto.CodeActionKind) {
