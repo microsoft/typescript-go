@@ -214,7 +214,7 @@ func wantsRefactors(only *[]lsproto.CodeActionKind) bool {
 	}
 
 	for _, kind := range *only {
-		if codeActionKindContains(kind, lsproto.CodeActionKindRefactor) {
+		if codeActionKindContains(lsproto.CodeActionKindRefactor, kind) {
 			return true
 		}
 	}
