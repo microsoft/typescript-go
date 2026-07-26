@@ -174,7 +174,35 @@ function verifyNoDuplicateBases(): void {
     }
 }
 
+/**
+ * Verifies that the inheritance path containing NodeBase is embedded first.
+ *
+ * NodeDefault.AsNode relies on the embedded Node being at offset zero in every concrete
+ * node struct. It is not enough for NodeBase to be reachable exactly once: any base stored
+ * before that path shifts Node away from the start of the struct.
+ */
+function verifyNodeBaseAtOffsetZero(): void {
+    const containsNodeBase = (key: string): boolean => {
+        if (key === "NodeBase") return true;
+        return api.getBase(key)?.extendsKeys.some(containsNodeBase) ?? false;
+    };
+    const problems: string[] = [];
+    const check = (name: string, extendsKeys: string[]) => {
+        const nodeBaseIndex = extendsKeys.findIndex(containsNodeBase);
+        if (nodeBaseIndex > 0) {
+            problems.push(`${name} embeds ${extendsKeys[nodeBaseIndex]} after ${extendsKeys.slice(0, nodeBaseIndex).join(", ")}`);
+        }
+    };
+    for (const base of api.bases()) check(base.key, base.extendsKeys);
+    for (const node of api.nodes()) check(node.name, node.extendsKeys);
+
+    if (problems.length > 0) {
+        throw new Error(`ast.json does not embed NodeBase at offset zero:\n  ${problems.sort().join("\n  ")}`);
+    }
+}
+
 verifyNoDuplicateBases();
+verifyNodeBaseAtOffsetZero();
 
 function generateStructDef(w: CodeWriter, node: NodeType) {
     const structName = node.name;

@@ -1053,8 +1053,8 @@
         },
         "LiteralExpressionBase": {
             "extends": [
-                "LiteralLikeNodeBase",
-                "PrimaryExpressionBase"
+                "PrimaryExpressionBase",
+                "LiteralLikeNodeBase"
             ],
             "brand": "_literalExpressionBrand"
         },
@@ -1105,6 +1105,7 @@
         },
         "AccessorDeclarationBase": {
             "extends": [
+                "NodeBase",
                 "DeclarationBase",
                 "NamedMemberBase",
                 "FunctionLikeWithBodyBase",
@@ -1112,14 +1113,13 @@
                 "TypeElementBase",
                 "ClassElementBase",
                 "ObjectLiteralElementBase",
-                "CompositeBase",
-                "NodeBase"
+                "CompositeBase"
             ]
         },
         "FunctionOrConstructorTypeNodeBase": {
             "extends": [
-                "DeclarationBase",
                 "TypeNodeBase",
+                "DeclarationBase",
                 "ModifiersBase",
                 "FunctionLikeBase"
             ]
@@ -1825,8 +1825,8 @@
             },
             "FunctionDeclaration": {
                 "extends": [
-                    "DeclarationBase",
                     "StatementBase",
+                    "DeclarationBase",
                     "ExportableBase",
                     "ModifiersBase",
                     "FunctionLikeWithBodyBase",
@@ -1882,8 +1882,8 @@
             },
             "ClassDeclaration": {
                 "extends": [
-                    "DeclarationBase",
                     "StatementBase",
+                    "DeclarationBase",
                     "ClassLikeBase"
                 ],
                 "members": [
@@ -1911,8 +1911,8 @@
             },
             "ClassExpression": {
                 "extends": [
-                    "DeclarationBase",
                     "PrimaryExpressionBase",
+                    "DeclarationBase",
                     "ClassLikeBase"
                 ],
                 "members": [
@@ -1961,8 +1961,8 @@
             },
             "InterfaceDeclaration": {
                 "extends": [
-                    "DeclarationBase",
                     "StatementBase",
+                    "DeclarationBase",
                     "ExportableBase",
                     "ModifiersBase",
                     "TypeSyntaxBase"
@@ -2003,8 +2003,8 @@
                     "JSTypeAliasDeclaration"
                 ],
                 "extends": [
-                    "DeclarationBase",
                     "StatementBase",
+                    "DeclarationBase",
                     "ExportableBase",
                     "ModifiersBase",
                     "LocalsContainerBase",
@@ -2035,8 +2035,8 @@
             },
             "EnumMember": {
                 "extends": [
-                    "DeclarationBase",
                     "NodeBase",
+                    "DeclarationBase",
                     "NamedMemberBase",
                     "CompositeBase"
                 ],
@@ -2054,8 +2054,8 @@
             },
             "EnumDeclaration": {
                 "extends": [
-                    "DeclarationBase",
                     "StatementBase",
+                    "DeclarationBase",
                     "ExportableBase",
                     "ModifiersBase",
                     "CompositeBase"
@@ -2178,8 +2178,8 @@
             },
             "ExportAssignment": {
                 "extends": [
-                    "DeclarationBase",
                     "StatementBase",
+                    "DeclarationBase",
                     "ModifiersBase",
                     "CompositeBase"
                 ],
@@ -2204,8 +2204,8 @@
             },
             "NamespaceExportDeclaration": {
                 "extends": [
-                    "DeclarationBase",
                     "StatementBase",
+                    "DeclarationBase",
                     "ModifiersBase",
                     "TypeSyntaxBase"
                 ],
@@ -2481,8 +2481,8 @@
             "MethodSignatureDeclaration": {
                 "kind": "MethodSignature",
                 "extends": [
-                    "DeclarationBase",
                     "NodeBase",
+                    "DeclarationBase",
                     "NamedMemberBase",
                     "FunctionLikeBase",
                     "TypeElementBase",
@@ -2518,8 +2518,8 @@
             },
             "MethodDeclaration": {
                 "extends": [
-                    "DeclarationBase",
                     "NodeBase",
+                    "DeclarationBase",
                     "NamedMemberBase",
                     "FunctionLikeWithBodyBase",
                     "FlowNodeBase",
@@ -2574,8 +2574,8 @@
             "PropertySignatureDeclaration": {
                 "kind": "PropertySignature",
                 "extends": [
-                    "DeclarationBase",
                     "NodeBase",
+                    "DeclarationBase",
                     "NamedMemberBase",
                     "TypeElementBase",
                     "TypeSyntaxBase"
@@ -2606,8 +2606,8 @@
             },
             "PropertyDeclaration": {
                 "extends": [
-                    "DeclarationBase",
                     "NodeBase",
+                    "DeclarationBase",
                     "NamedMemberBase",
                     "ClassElementBase",
                     "CompositeBase"
@@ -3335,8 +3335,8 @@
             },
             "PropertyAssignment": {
                 "extends": [
-                    "DeclarationBase",
                     "NodeBase",
+                    "DeclarationBase",
                     "NamedMemberBase",
                     "ObjectLiteralElementBase",
                     "CompositeBase"
@@ -3367,8 +3367,8 @@
             },
             "ShorthandPropertyAssignment": {
                 "extends": [
-                    "DeclarationBase",
                     "NodeBase",
+                    "DeclarationBase",
                     "NamedMemberBase",
                     "ObjectLiteralElementBase",
                     "CompositeBase"
@@ -4197,8 +4197,8 @@
             },
             "JsxSpreadAttribute": {
                 "extends": [
-                    "ObjectLiteralElementBase",
-                    "NodeBase"
+                    "NodeBase",
+                    "ObjectLiteralElementBase"
                 ],
                 "members": [
                     {
@@ -4728,8 +4728,8 @@
             },
             "JSDocSignature": {
                 "extends": [
-                    "DeclarationBase",
                     "JSDocTypeBase",
+                    "DeclarationBase",
                     "FunctionLikeBase"
                 ],
                 "members": [
@@ -4782,8 +4782,8 @@
             },
             "ModuleDeclaration": {
                 "extends": [
-                    "DeclarationBase",
                     "StatementBase",
+                    "DeclarationBase",
                     "ExportableBase",
                     "ModifiersBase",
                     "LocalsContainerBase",
@@ -4816,8 +4816,8 @@
             },
             "ImportEqualsDeclaration": {
                 "extends": [
-                    "DeclarationBase",
                     "StatementBase",
+                    "DeclarationBase",
                     "ExportableBase",
                     "ModifiersBase",
                     "CompositeBase"
@@ -4844,8 +4844,8 @@
             },
             "ExportDeclaration": {
                 "extends": [
-                    "DeclarationBase",
                     "StatementBase",
+                    "DeclarationBase",
                     "ModifiersBase",
                     "CompositeBase"
                 ],
