@@ -128,7 +128,7 @@ func getInferredReturnTypeNode(ch *checker.Checker, declaration *ast.Node, sourc
 			if enclosingDecl == nil {
 				enclosingDecl = sourceFile.AsNode()
 			}
-			return ch.TypePredicateToTypePredicateNode(typePredicate, enclosingDecl, nodebuilder.FlagsNoTruncation, idToSymbol)
+			return ch.TypePredicateToTypePredicateNodeEx(typePredicate, enclosingDecl, nodebuilder.FlagsNoTruncation, nodebuilder.InternalFlagsAllowUnresolvedNames, idToSymbol)
 		}
 	}
 
