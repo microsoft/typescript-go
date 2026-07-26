@@ -2119,7 +2119,7 @@ func (f *FourslashTest) updateTextRangeForTextEdits(textRange core.TextRange, ed
 // applyEditsToContent applies text edits to a content string without mutating the file.
 func (f *FourslashTest) applyEditsToContent(content string, edits []*lsproto.TextEdit) string {
 	script := f.getScriptInfo(f.activeFilename)
-	slices.SortFunc(edits, func(a, b *lsproto.TextEdit) int {
+	slices.SortStableFunc(edits, func(a, b *lsproto.TextEdit) int {
 		aStart := f.converters.LineAndCharacterToPosition(script, a.Range.Start)
 		bStart := f.converters.LineAndCharacterToPosition(script, b.Range.Start)
 		return int(aStart) - int(bStart)
