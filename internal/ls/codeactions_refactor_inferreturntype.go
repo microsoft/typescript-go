@@ -58,6 +58,7 @@ func getInferReturnTypeCodeActions(ctx context.Context, refactorContext *Refacto
 	}
 
 	token := astnav.GetTokenAtPosition(refactorContext.SourceFile, int(refactorContext.Range.Pos()))
+
 	declaration := findConvertibleAncestor(token)
 	if declaration == nil || !hasBody(declaration) || declaration.Type() != nil {
 		return nil, nil
@@ -70,14 +71,18 @@ func getInferReturnTypeCodeActions(ctx context.Context, refactorContext *Refacto
 
 	formatOptions := refactorContext.LS.FormatOptions()
 	changeTracker := change.NewTracker(ctx, refactorContext.Program.Options(), formatOptions, refactorContext.LS.converters)
-
 	idToSymbol := make(map[*ast.IdentifierNode]*ast.Symbol)
+
 	typeNode := ch.TypeToTypeNode(returnType, declaration, nodebuilder.FlagsNoTruncation, idToSymbol)
 	if typeNode == nil {
 		return nil, nil
 	}
 
+	if ast.IsArrowFunction(declaration) {
+		changeTracker.ParenthesizeArrowParameters(refactorContext.SourceFile, declaration)
+	}
 	changeTracker.TryInsertTypeAnnotation(refactorContext.SourceFile, declaration, typeNode)
+
 	changes := changeTracker.GetChanges()
 	if len(changes) == 0 {
 		return nil, nil

@@ -53,7 +53,7 @@ func TestRefactorInferReturnType_available_arrowFunction_parenLess(t *testing.T)
 	f.GoToMarker(t, "marker")
 	f.VerifyRefactor(t, fourslash.VerifyRefactorOptions{
 		Title:          inferReturnTypeTitle,
-		NewFileContent: `const f = (x: number): number => x * 2;`,
+		NewFileContent: `const f = (x): number => x * 2;`,
 	})
 }
 
