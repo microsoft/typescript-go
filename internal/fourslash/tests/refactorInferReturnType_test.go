@@ -352,6 +352,28 @@ const f = (x: number) => x * 2;`
 	f.VerifyRefactorNotAvailable(t, inferReturnTypeTitle)
 }
 
+func TestRefactorInferReturnType_notAvailable_caretOnVariableName(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+
+	const content = `const /*marker*/f = () => 1;`
+	f, done := fourslash.NewFourslash(t, nil, content)
+	defer done()
+	f.GoToMarker(t, "marker")
+	f.VerifyRefactorNotAvailable(t, inferReturnTypeTitle)
+}
+
+func TestRefactorInferReturnType_notAvailable_caretOnEquals(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+
+	const content = `const f =/*marker*/ () => 1;`
+	f, done := fourslash.NewFourslash(t, nil, content)
+	defer done()
+	f.GoToMarker(t, "marker")
+	f.VerifyRefactorNotAvailable(t, inferReturnTypeTitle)
+}
+
 // --- Not available cases ---
 
 func TestRefactorInferReturnType_notAvailable_withReturnType(t *testing.T) {

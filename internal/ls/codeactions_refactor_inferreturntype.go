@@ -157,18 +157,6 @@ func findConvertibleAncestor(node *ast.Node) *ast.Node {
 			return node
 		}
 
-		if ast.IsVariableDeclaration(node) {
-			if init := node.AsVariableDeclaration().Initializer; init != nil && convertibleDeclaration(init) {
-				return init
-			}
-		}
-
-		if ast.IsPropertyDeclaration(node) {
-			if init := node.AsPropertyDeclaration().Initializer; init != nil && convertibleDeclaration(init) {
-				return init
-			}
-		}
-
 		node = node.Parent
 	}
 
