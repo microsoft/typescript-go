@@ -76,13 +76,17 @@ type Parser struct {
 	jsDiagnostics    []*ast.Diagnostic
 	jsdocDiagnostics []*ast.Diagnostic
 
-	token                       ast.Kind
-	sourceFlags                 ast.NodeFlags
-	contextFlags                ast.NodeFlags
-	parsingContexts             ParsingContexts
-	statementHasAwaitIdentifier bool
-	hasDeprecatedTag            bool
-	hasParseError               bool
+	token                        ast.Kind
+	sourceFlags                  ast.NodeFlags
+	contextFlags                 ast.NodeFlags
+	parsingContexts              ParsingContexts
+	statementHasAwaitIdentifier  bool
+	hasDeprecatedTag             bool
+	hasParseError                bool
+	parenthesizedExpressionDepth int
+	parenthesizedTypeDepth       int
+	parenthesesScanEnd           int
+	parenthesesCanFlatten        bool
 
 	identifiers                map[string]string
 	identifierCount            int
@@ -178,7 +182,7 @@ func (p *Parser) parseJSONText() *ast.SourceFile {
 				if p.lookAhead(func(p *Parser) bool {
 					return p.nextToken() == ast.KindNumericLiteral && p.nextToken() != ast.KindColonToken
 				}) {
-					expression = p.parsePrefixUnaryExpression()
+					expression = p.parseSimpleUnaryExpression()
 				} else {
 					expression = p.parseObjectLiteralExpression()
 				}
@@ -3665,11 +3669,34 @@ func (p *Parser) parseTupleElementType() *ast.TypeNode {
 }
 
 func (p *Parser) parseParenthesizedType() *ast.Node {
-	pos := p.nodePos()
-	p.parseExpected(ast.KindOpenParenToken)
+	p.parenthesizedTypeDepth++
+	defer func() {
+		p.parenthesizedTypeDepth--
+	}()
+
+	if p.parenthesizedTypeDepth < maxParenthesisRecursionDepth || !p.shouldFlattenParentheses() {
+		pos := p.nodePos()
+		p.parseExpected(ast.KindOpenParenToken)
+		typeNode := p.parseType()
+		p.parseExpected(ast.KindCloseParenToken)
+		return p.finishNode(p.factory.NewParenthesizedTypeNode(typeNode), pos)
+	}
+
+	positions := make([]int, 0, 4)
+	for {
+		positions = append(positions, p.nodePos())
+		p.parseExpected(ast.KindOpenParenToken)
+		if p.token != ast.KindOpenParenToken || p.isStartOfFunctionTypeOrConstructorType() {
+			break
+		}
+	}
+
 	typeNode := p.parseType()
-	p.parseExpected(ast.KindCloseParenToken)
-	return p.finishNode(p.factory.NewParenthesizedTypeNode(typeNode), pos)
+	for i := len(positions) - 1; i >= 0; i-- {
+		p.parseExpected(ast.KindCloseParenToken)
+		typeNode = p.finishNode(p.factory.NewParenthesizedTypeNode(typeNode), positions[i])
+	}
+	return typeNode
 }
 
 func (p *Parser) parseAssertsTypePredicate() *ast.TypeNode {
@@ -5063,58 +5090,77 @@ func (p *Parser) parseJsxClosingFragment(inExpressionContext bool) *ast.Node {
 }
 
 func (p *Parser) parseSimpleUnaryExpression() *ast.Expression {
-	switch p.token {
-	case ast.KindPlusToken, ast.KindMinusToken, ast.KindTildeToken, ast.KindExclamationToken:
-		return p.parsePrefixUnaryExpression()
-	case ast.KindDeleteKeyword:
-		return p.parseDeleteExpression()
-	case ast.KindTypeOfKeyword:
-		return p.parseTypeOfExpression()
-	case ast.KindVoidKeyword:
-		return p.parseVoidExpression()
-	case ast.KindLessThanToken:
-		// Just like in parseUpdateExpression, we need to avoid parsing type assertions when
-		// in JSX and we see an expression like "+ <foo> bar".
-		if p.languageVariant == core.LanguageVariantJSX {
-			return p.parseJsxElementOrSelfClosingElementOrFragment(true /*inExpressionContext*/, -1 /*topInvalidNodePosition*/, nil /*openingTag*/, true /*mustBeUnary*/)
-		}
-		// // This is modified UnaryExpression grammar in TypeScript
-		// //  UnaryExpression (modified):
-		// //      < type > UnaryExpression
-		return p.parseTypeAssertion()
-	case ast.KindAwaitKeyword:
-		if p.isAwaitExpression() {
-			return p.parseAwaitExpression()
-		}
-		fallthrough
-	default:
-		return p.parseUpdateExpression()
+	type unaryExpressionFrame struct {
+		kind     ast.Kind
+		pos      int
+		operator ast.Kind
+		typeNode *ast.TypeNode
 	}
-}
 
-func (p *Parser) parsePrefixUnaryExpression() *ast.Node {
-	pos := p.nodePos()
-	operator := p.token
-	p.nextToken()
-	return p.finishNode(p.factory.NewPrefixUnaryExpression(operator, p.parseSimpleUnaryExpression()), pos)
-}
+	frames := make([]unaryExpressionFrame, 0, 4)
+	var expression *ast.Expression
+	for expression == nil {
+		pos := p.nodePos()
+		switch p.token {
+		case ast.KindPlusToken, ast.KindMinusToken, ast.KindTildeToken, ast.KindExclamationToken:
+			frames = append(frames, unaryExpressionFrame{
+				kind:     ast.KindPrefixUnaryExpression,
+				pos:      pos,
+				operator: p.token,
+			})
+			p.nextToken()
+		case ast.KindDeleteKeyword:
+			frames = append(frames, unaryExpressionFrame{kind: ast.KindDeleteExpression, pos: pos})
+			p.nextToken()
+		case ast.KindTypeOfKeyword:
+			frames = append(frames, unaryExpressionFrame{kind: ast.KindTypeOfExpression, pos: pos})
+			p.nextToken()
+		case ast.KindVoidKeyword:
+			frames = append(frames, unaryExpressionFrame{kind: ast.KindVoidExpression, pos: pos})
+			p.nextToken()
+		case ast.KindLessThanToken:
+			// Just like in parseUpdateExpression, we need to avoid parsing type assertions when
+			// in JSX and we see an expression like "+ <foo> bar".
+			if p.languageVariant == core.LanguageVariantJSX {
+				expression = p.parseJsxElementOrSelfClosingElementOrFragment(true /*inExpressionContext*/, -1 /*topInvalidNodePosition*/, nil /*openingTag*/, true /*mustBeUnary*/)
+				break
+			}
+			p.parseExpected(ast.KindLessThanToken)
+			typeNode := p.parseType()
+			p.parseExpected(ast.KindGreaterThanToken)
+			frames = append(frames, unaryExpressionFrame{kind: ast.KindTypeAssertionExpression, pos: pos, typeNode: typeNode})
+		case ast.KindAwaitKeyword:
+			if p.isAwaitExpression() {
+				frames = append(frames, unaryExpressionFrame{kind: ast.KindAwaitExpression, pos: pos})
+				p.nextToken()
+			} else {
+				expression = p.parseUpdateExpression()
+			}
+		default:
+			expression = p.parseUpdateExpression()
+		}
+	}
 
-func (p *Parser) parseDeleteExpression() *ast.Node {
-	pos := p.nodePos()
-	p.nextToken()
-	return p.finishNode(p.factory.NewDeleteExpression(p.parseSimpleUnaryExpression()), pos)
-}
-
-func (p *Parser) parseTypeOfExpression() *ast.Node {
-	pos := p.nodePos()
-	p.nextToken()
-	return p.finishNode(p.factory.NewTypeOfExpression(p.parseSimpleUnaryExpression()), pos)
-}
-
-func (p *Parser) parseVoidExpression() *ast.Node {
-	pos := p.nodePos()
-	p.nextToken()
-	return p.finishNode(p.factory.NewVoidExpression(p.parseSimpleUnaryExpression()), pos)
+	for i := len(frames) - 1; i >= 0; i-- {
+		frame := frames[i]
+		switch frame.kind {
+		case ast.KindPrefixUnaryExpression:
+			expression = p.finishNode(p.factory.NewPrefixUnaryExpression(frame.operator, expression), frame.pos)
+		case ast.KindDeleteExpression:
+			expression = p.finishNode(p.factory.NewDeleteExpression(expression), frame.pos)
+		case ast.KindTypeOfExpression:
+			expression = p.finishNode(p.factory.NewTypeOfExpression(expression), frame.pos)
+		case ast.KindVoidExpression:
+			expression = p.finishNode(p.factory.NewVoidExpression(expression), frame.pos)
+		case ast.KindAwaitExpression:
+			expression = p.finishNode(p.factory.NewAwaitExpression(expression), frame.pos)
+		case ast.KindTypeAssertionExpression:
+			expression = p.finishNode(p.factory.NewTypeAssertion(frame.typeNode, expression), frame.pos)
+		default:
+			panic("unexpected unary expression frame")
+		}
+	}
+	return expression
 }
 
 func (p *Parser) isAwaitExpression() bool {
@@ -5126,22 +5172,6 @@ func (p *Parser) isAwaitExpression() bool {
 		return p.lookAhead((*Parser).nextTokenIsIdentifierOrKeywordOrLiteralOnSameLine)
 	}
 	return false
-}
-
-func (p *Parser) parseAwaitExpression() *ast.Node {
-	pos := p.nodePos()
-	p.nextToken()
-	return p.finishNode(p.factory.NewAwaitExpression(p.parseSimpleUnaryExpression()), pos)
-}
-
-func (p *Parser) parseTypeAssertion() *ast.Node {
-	debug.Assert(p.languageVariant != core.LanguageVariantJSX, "Type assertions should never be parsed in JSX; they should be parsed as comparisons or JSX elements/fragments.")
-	pos := p.nodePos()
-	p.parseExpected(ast.KindLessThanToken)
-	typeNode := p.parseType()
-	p.parseExpected(ast.KindGreaterThanToken)
-	expression := p.parseSimpleUnaryExpression()
-	return p.finishNode(p.factory.NewTypeAssertion(typeNode, expression), pos)
 }
 
 func (p *Parser) parseLeftHandSideExpressionOrHigher() *ast.Expression {
@@ -5607,14 +5637,135 @@ func (p *Parser) parsePrimaryExpression() *ast.Expression {
 }
 
 func (p *Parser) parseParenthesizedExpression() *ast.Expression {
-	pos := p.nodePos()
-	jsdoc := p.jsdocScannerInfo()
-	p.parseExpected(ast.KindOpenParenToken)
+	p.parenthesizedExpressionDepth++
+	defer func() {
+		p.parenthesizedExpressionDepth--
+	}()
+
+	if p.parenthesizedExpressionDepth < maxParenthesisRecursionDepth || !p.shouldFlattenParentheses() {
+		pos := p.nodePos()
+		jsdoc := p.jsdocScannerInfo()
+		p.parseExpected(ast.KindOpenParenToken)
+		expression := p.parseExpressionAllowIn()
+		p.parseExpected(ast.KindCloseParenToken)
+		result := p.finishNode(p.factory.NewParenthesizedExpression(expression), pos)
+		p.withJSDoc(result, jsdoc)
+		return result
+	}
+
+	type parenthesizedExpressionFrame struct {
+		pos   int
+		jsdoc jsdocScannerInfo
+	}
+
+	frames := make([]parenthesizedExpressionFrame, 0, 4)
+	for {
+		frames = append(frames, parenthesizedExpressionFrame{
+			pos:   p.nodePos(),
+			jsdoc: p.jsdocScannerInfo(),
+		})
+		p.parseExpected(ast.KindOpenParenToken)
+		if p.token != ast.KindOpenParenToken || p.isParenthesizedArrowFunctionExpression() != core.TSFalse {
+			break
+		}
+	}
+
 	expression := p.parseExpressionAllowIn()
-	p.parseExpected(ast.KindCloseParenToken)
-	result := p.finishNode(p.factory.NewParenthesizedExpression(expression), pos)
-	p.withJSDoc(result, jsdoc)
-	return result
+	for i := len(frames) - 1; i >= 0; i-- {
+		p.parseExpected(ast.KindCloseParenToken)
+		expression = p.finishNode(p.factory.NewParenthesizedExpression(expression), frames[i].pos)
+		p.withJSDoc(expression, frames[i].jsdoc)
+	}
+	return expression
+}
+
+const maxParenthesisRecursionDepth = 256
+
+// Deeply nested malformed parentheses all recover at the same token. Once the
+// nesting reaches a bounded depth, scan for that recovery point so the remaining
+// frames can be represented explicitly instead of on the goroutine stack.
+func (p *Parser) shouldFlattenParentheses() bool {
+	start := p.scanner.TokenStart()
+	if start < p.parenthesesScanEnd {
+		return p.parenthesesCanFlatten
+	}
+
+	state := p.mark()
+	braceDepth := 0
+	bracketDepth := 0
+	canUseRecoveryDelimiters := p.languageVariant != core.LanguageVariantJSX
+	previousToken := ast.KindUnknown
+	for {
+		switch p.token {
+		case ast.KindCloseParenToken:
+			p.parenthesesScanEnd = p.scanner.TokenStart() + 1
+			p.parenthesesCanFlatten = false
+			p.rewind(state)
+			return false
+		case ast.KindEndOfFile:
+			p.parenthesesScanEnd = p.scanner.TokenStart() + 1
+			p.parenthesesCanFlatten = true
+			p.rewind(state)
+			return true
+		case ast.KindSemicolonToken:
+			if braceDepth == 0 && bracketDepth == 0 && canUseRecoveryDelimiters {
+				p.parenthesesScanEnd = p.scanner.TokenStart() + 1
+				p.parenthesesCanFlatten = true
+				p.rewind(state)
+				return true
+			}
+		case ast.KindSlashToken, ast.KindSlashEqualsToken:
+			if tokenPrecedesRegularExpression(previousToken) {
+				p.reScanSlashToken()
+			} else {
+				// The scanner cannot determine whether this is division or a regular expression
+				// without parser context. Continue to EOF, but don't trust delimiters that could
+				// be part of a regular expression.
+				canUseRecoveryDelimiters = false
+			}
+		case ast.KindOpenBraceToken:
+			braceDepth++
+		case ast.KindCloseBraceToken:
+			if braceDepth == 0 && canUseRecoveryDelimiters {
+				p.parenthesesScanEnd = p.scanner.TokenStart() + 1
+				p.parenthesesCanFlatten = true
+				p.rewind(state)
+				return true
+			}
+			if braceDepth > 0 {
+				braceDepth--
+			}
+		case ast.KindOpenBracketToken:
+			bracketDepth++
+		case ast.KindCloseBracketToken:
+			if bracketDepth == 0 && canUseRecoveryDelimiters {
+				p.parenthesesScanEnd = p.scanner.TokenStart() + 1
+				p.parenthesesCanFlatten = true
+				p.rewind(state)
+				return true
+			}
+			if bracketDepth > 0 {
+				bracketDepth--
+			}
+		}
+		previousToken = p.token
+		p.nextToken()
+	}
+}
+
+func tokenPrecedesRegularExpression(token ast.Kind) bool {
+	if ast.GetBinaryOperatorPrecedence(token) != ast.OperatorPrecedenceInvalid {
+		return true
+	}
+	switch token {
+	case ast.KindOpenParenToken, ast.KindOpenBracketToken, ast.KindCommaToken, ast.KindColonToken,
+		ast.KindQuestionToken, ast.KindEqualsGreaterThanToken, ast.KindEqualsToken,
+		ast.KindExclamationToken, ast.KindTildeToken, ast.KindDeleteKeyword, ast.KindTypeOfKeyword,
+		ast.KindVoidKeyword, ast.KindReturnKeyword, ast.KindThrowKeyword, ast.KindCaseKeyword,
+		ast.KindYieldKeyword, ast.KindAwaitKeyword:
+		return true
+	}
+	return ast.IsAssignmentOperator(token)
 }
 
 func (p *Parser) parseArrayLiteralExpression() *ast.Expression {

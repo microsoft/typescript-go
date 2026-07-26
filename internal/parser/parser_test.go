@@ -4,7 +4,9 @@ import (
 	"io/fs"
 	"iter"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime/debug"
 	"strings"
 	"testing"
 
@@ -39,6 +41,179 @@ func BenchmarkParse(b *testing.B) {
 				parser.ParseSourceFile(opts, sourceText, scriptKind)
 			}
 		})
+	}
+}
+
+func TestDeeplyNestedParserConstructs(t *testing.T) {
+	t.Parallel()
+
+	const depth = 16_000
+	tests := []struct {
+		name               string
+		sourceText         string
+		expectedStatements int
+	}{
+		{
+			name:               "expression",
+			sourceText:         strings.Repeat("(", depth) + "x" + strings.Repeat(")", depth) + ";",
+			expectedStatements: 1,
+		},
+		{
+			name:               "unterminated expression",
+			sourceText:         strings.Repeat("(", depth) + "x;",
+			expectedStatements: 1,
+		},
+		{
+			name:               "unterminated expression with trailing statement",
+			sourceText:         strings.Repeat("(", depth) + "x; y;",
+			expectedStatements: 2,
+		},
+		{
+			name:               "unterminated expression with close paren in comment",
+			sourceText:         strings.Repeat("(", depth) + "x; // )",
+			expectedStatements: 1,
+		},
+		{
+			name:               "unterminated expression before later parens",
+			sourceText:         strings.Repeat("(", depth) + "x; f();",
+			expectedStatements: 2,
+		},
+		{
+			name:               "unterminated expression before close paren string",
+			sourceText:         strings.Repeat("(", depth) + `x; ")";`,
+			expectedStatements: 2,
+		},
+		{
+			name:               "unterminated array expression",
+			sourceText:         strings.Repeat("(", depth) + "[x",
+			expectedStatements: 1,
+		},
+		{
+			name:               "unterminated object expression",
+			sourceText:         strings.Repeat("(", depth) + "{a: x",
+			expectedStatements: 1,
+		},
+		{
+			name:               "unterminated division expression",
+			sourceText:         strings.Repeat("(", depth) + "x / y;",
+			expectedStatements: 1,
+		},
+		{
+			name:               "unterminated regular expression",
+			sourceText:         strings.Repeat("(", depth) + `x === /[)]/;`,
+			expectedStatements: 1,
+		},
+		{
+			name:               "type",
+			sourceText:         "type T = " + strings.Repeat("(", depth) + "string" + strings.Repeat(")", depth) + ";",
+			expectedStatements: 1,
+		},
+		{
+			name:               "unterminated type",
+			sourceText:         "type T = " + strings.Repeat("(", depth) + "string;",
+			expectedStatements: 1,
+		},
+		{
+			name:               "prefix unary expression",
+			sourceText:         strings.Repeat("!", depth) + "x;",
+			expectedStatements: 1,
+		},
+		{
+			name:               "type assertion expression",
+			sourceText:         strings.Repeat("<T>", depth) + "x;",
+			expectedStatements: 1,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			opts := ast.SourceFileParseOptions{
+				FileName: "/index.ts",
+				Path:     "/index.ts",
+			}
+			file := parser.ParseSourceFile(opts, test.sourceText, core.ScriptKindTS)
+			assert.Equal(t, len(file.Statements.Nodes), test.expectedStatements)
+		})
+	}
+}
+
+func TestDeeplyNestedParserStackBound(t *testing.T) {
+	t.Parallel()
+
+	const depth = 16_000
+	tests := []string{
+		"expression",
+		"comment",
+		"laterParens",
+		"string",
+		"array",
+		"object",
+		"division",
+		"regularExpression",
+		"type",
+		"prefixUnary",
+		"delete",
+		"typeof",
+		"void",
+		"await",
+		"typeAssertion",
+	}
+
+	if testName := os.Getenv("TSGO_DEEP_PARSER_STACK_CHILD"); testName != "" {
+		debug.SetMaxStack(512 << 10)
+		opts := ast.SourceFileParseOptions{
+			FileName: "/index.ts",
+			Path:     "/index.ts",
+		}
+		parser.ParseSourceFile(opts, deeplyNestedParserSource(testName, depth), core.ScriptKindTS)
+		return
+	}
+
+	for _, testName := range tests {
+		cmd := exec.Command(os.Args[0], "-test.run=^TestDeeplyNestedParserStackBound$")
+		cmd.Env = append(os.Environ(), "TSGO_DEEP_PARSER_STACK_CHILD="+testName)
+		output, err := cmd.CombinedOutput()
+		if err != nil {
+			t.Errorf("%s exceeded the parser stack bound: %v\n%s", testName, err, output)
+		}
+	}
+}
+
+func deeplyNestedParserSource(testName string, depth int) string {
+	switch testName {
+	case "expression":
+		return strings.Repeat("(", depth) + "x;"
+	case "comment":
+		return strings.Repeat("(", depth) + "x; // )"
+	case "laterParens":
+		return strings.Repeat("(", depth) + "x; f();"
+	case "string":
+		return strings.Repeat("(", depth) + `x; ")";`
+	case "array":
+		return strings.Repeat("(", depth) + "[x"
+	case "object":
+		return strings.Repeat("(", depth) + "{a: x"
+	case "division":
+		return strings.Repeat("(", depth) + "x / y;"
+	case "regularExpression":
+		return strings.Repeat("(", depth) + `x === /[)]/;`
+	case "type":
+		return "type T = " + strings.Repeat("(", depth) + "string;"
+	case "prefixUnary":
+		return strings.Repeat("!~+-", depth/4) + "x;"
+	case "delete":
+		return strings.Repeat("delete ", depth) + "x;"
+	case "typeof":
+		return strings.Repeat("typeof ", depth) + "x;"
+	case "void":
+		return strings.Repeat("void ", depth) + "x;"
+	case "await":
+		return "async function f() { return " + strings.Repeat("await ", depth) + "x; }"
+	case "typeAssertion":
+		return strings.Repeat("<T>", depth) + "x;"
+	default:
+		panic("unknown deeply nested parser test")
 	}
 }
 
