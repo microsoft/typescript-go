@@ -1983,6 +1983,11 @@ func (f *FourslashTest) getAllQuickFixActions(t *testing.T, errorCode ...int) []
 // getRefactorActions gets all refactoring code actions at the current cursor position.
 func (f *FourslashTest) getRefactorActions(t *testing.T) []*lsproto.CodeAction {
 	t.Helper()
+	return f.getRefactorActionsWithOnly(t, nil)
+}
+
+func (f *FourslashTest) getRefactorActionsWithOnly(t *testing.T, only *[]lsproto.CodeActionKind) []*lsproto.CodeAction {
+	t.Helper()
 
 	params := &lsproto.CodeActionParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
@@ -1994,6 +1999,7 @@ func (f *FourslashTest) getRefactorActions(t *testing.T) []*lsproto.CodeAction {
 		},
 		Context: &lsproto.CodeActionContext{
 			Diagnostics: []*lsproto.Diagnostic{},
+			Only:        only,
 		},
 	}
 
@@ -2065,6 +2071,31 @@ func (f *FourslashTest) VerifyRefactorNotAvailable(t *testing.T, title string) {
 	for _, action := range actions {
 		if action.Title == title {
 			t.Fatalf("Expected refactoring %q to not be available, but it was", title)
+		}
+	}
+}
+
+// VerifyRefactorWithOnlyAvailable verifies that a refactoring action with the given title IS available
+// when the given Only filter is sent in the request context.
+func (f *FourslashTest) VerifyRefactorWithOnlyAvailable(t *testing.T, title string, only []lsproto.CodeActionKind) {
+	t.Helper()
+	actions := f.getRefactorActionsWithOnly(t, &only)
+	for _, action := range actions {
+		if action.Title == title {
+			return
+		}
+	}
+	t.Fatalf("Expected refactoring %q to be available with Only=%v, but it was not (got: %v)", title, only, actionTitles(actions))
+}
+
+// VerifyRefactorWithOnlyNotAvailable verifies that a refactoring action with the given title is NOT available
+// when the given Only filter is sent in the request context.
+func (f *FourslashTest) VerifyRefactorWithOnlyNotAvailable(t *testing.T, title string, only []lsproto.CodeActionKind) {
+	t.Helper()
+	actions := f.getRefactorActionsWithOnly(t, &only)
+	for _, action := range actions {
+		if action.Title == title {
+			t.Fatalf("Expected refactoring %q to not be available with Only=%v, but it was", title, only)
 		}
 	}
 }

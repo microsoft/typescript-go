@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -372,6 +373,45 @@ func TestRefactorInferReturnType_notAvailable_caretOnEquals(t *testing.T) {
 	defer done()
 	f.GoToMarker(t, "marker")
 	f.VerifyRefactorNotAvailable(t, inferReturnTypeTitle)
+}
+
+func TestRefactorInferReturnType_only_exactKind(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+
+	const content = `function simple/*marker*/() {
+    return 42;
+}`
+	f, done := fourslash.NewFourslash(t, nil, content)
+	defer done()
+	f.GoToMarker(t, "marker")
+	f.VerifyRefactorWithOnlyAvailable(t, inferReturnTypeTitle, []lsproto.CodeActionKind{"refactor.rewrite.function.returnType"})
+}
+
+func TestRefactorInferReturnType_only_rewriteKind(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+
+	const content = `function simple/*marker*/() {
+    return 42;
+}`
+	f, done := fourslash.NewFourslash(t, nil, content)
+	defer done()
+	f.GoToMarker(t, "marker")
+	f.VerifyRefactorWithOnlyAvailable(t, inferReturnTypeTitle, []lsproto.CodeActionKind{"refactor.rewrite"})
+}
+
+func TestRefactorInferReturnType_only_extractKind(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+
+	const content = `function simple/*marker*/() {
+    return 42;
+}`
+	f, done := fourslash.NewFourslash(t, nil, content)
+	defer done()
+	f.GoToMarker(t, "marker")
+	f.VerifyRefactorWithOnlyNotAvailable(t, inferReturnTypeTitle, []lsproto.CodeActionKind{"refactor.extract"})
 }
 
 // --- Not available cases ---
