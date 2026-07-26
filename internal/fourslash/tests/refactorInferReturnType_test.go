@@ -291,6 +291,24 @@ func TestRefactorInferReturnType_available_parameterDeclaration(t *testing.T) {
 	})
 }
 
+func TestRefactorInferReturnType_available_typePredicate(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+
+	const content = `function isString/*marker*/(x: unknown) {
+    return typeof x === "string";
+}`
+	f, done := fourslash.NewFourslash(t, nil, content)
+	defer done()
+	f.GoToMarker(t, "marker")
+	f.VerifyRefactor(t, fourslash.VerifyRefactorOptions{
+		Title:          inferReturnTypeTitle,
+		NewFileContent: `function isString(x: unknown): x is string {
+    return typeof x === "string";
+}`,
+	})
+}
+
 // --- Not available cases ---
 
 func TestRefactorInferReturnType_notAvailable_withReturnType(t *testing.T) {

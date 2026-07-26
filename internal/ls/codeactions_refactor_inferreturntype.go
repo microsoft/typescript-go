@@ -64,19 +64,13 @@ func getInferReturnTypeCodeActions(ctx context.Context, refactorContext *Refacto
 		return nil, nil
 	}
 
-	returnType := getInferredReturnType(ch, declaration)
-	if returnType == nil {
+	typeNode := getInferredReturnTypeNode(ch, declaration, refactorContext.SourceFile)
+	if typeNode == nil {
 		return nil, nil
 	}
 
 	formatOptions := refactorContext.LS.FormatOptions()
 	changeTracker := change.NewTracker(ctx, refactorContext.Program.Options(), formatOptions, refactorContext.LS.converters)
-	idToSymbol := make(map[*ast.IdentifierNode]*ast.Symbol)
-
-	typeNode := ch.TypeToTypeNode(returnType, declaration, nodebuilder.FlagsNoTruncation, idToSymbol)
-	if typeNode == nil {
-		return nil, nil
-	}
 
 	if ast.IsArrowFunction(declaration) {
 		changeTracker.ParenthesizeArrowParameters(refactorContext.SourceFile, declaration)
@@ -99,9 +93,11 @@ func getInferReturnTypeCodeActions(ctx context.Context, refactorContext *Refacto
 	return actions, nil
 }
 
-// getInferredReturnType analyzes a function-like declaration and returns its
-// inferred return type, handling overloads and type predicates.
-func getInferredReturnType(ch *checker.Checker, declaration *ast.Node) *checker.Type {
+// getInferredReturnTypeNode analyzes a function-like declaration and returns its
+// inferred return type node, handling overloads and type predicates.
+func getInferredReturnTypeNode(ch *checker.Checker, declaration *ast.Node, sourceFile *ast.SourceFile) *ast.Node {
+	idToSymbol := make(map[*ast.IdentifierNode]*ast.Symbol)
+
 	// Handle overloaded function implementations: union return types of all signatures.
 	if ch.GetEmitResolver().IsImplementationOfOverload(declaration) {
 		fnType := ch.GetTypeAtLocation(declaration)
@@ -117,24 +113,28 @@ func getInferredReturnType(ch *checker.Checker, declaration *ast.Node) *checker.
 				}
 
 				if len(returnTypes) > 0 {
-					return ch.GetUnionType(returnTypes)
+					return ch.TypeToTypeNode(ch.GetUnionType(returnTypes), declaration, nodebuilder.FlagsNoTruncation, idToSymbol)
 				}
 			}
 		}
 	}
 
-	// Check for type predicate (e.g., `x is T`)
+	// Check for type predicate (e.g., `x is T`): build the predicate node directly.
 	signature := ch.GetSignatureFromDeclaration(declaration)
 	if signature != nil {
 		typePredicate := ch.GetTypePredicateOfSignature(signature)
 		if typePredicate != nil && typePredicate.Type() != nil {
-			return typePredicate.Type()
+			enclosingDecl := ast.FindAncestor(declaration, ast.IsDeclaration)
+			if enclosingDecl == nil {
+				enclosingDecl = sourceFile.AsNode()
+			}
+			return ch.TypePredicateToTypePredicateNode(typePredicate, enclosingDecl, nodebuilder.FlagsNoTruncation, idToSymbol)
 		}
 	}
 
-	// Normal case: get the return type of the signature
+	// Normal case: get the return type of the signature.
 	if signature != nil {
-		return ch.GetReturnTypeOfSignature(signature)
+		return ch.TypeToTypeNode(ch.GetReturnTypeOfSignature(signature), declaration, nodebuilder.FlagsNoTruncation, idToSymbol)
 	}
 
 	return nil
