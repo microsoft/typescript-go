@@ -21,18 +21,40 @@ func TestRefactorInferReturnType_available(t *testing.T) {
 	f, done := fourslash.NewFourslash(t, nil, content)
 	defer done()
 	f.GoToMarker(t, "marker")
-	f.VerifyRefactorAvailable(t, inferReturnTypeTitle)
+	f.VerifyRefactor(t, fourslash.VerifyRefactorOptions{
+		Title:          inferReturnTypeTitle,
+		NewFileContent: `function simple(): number {
+    return 42;
+}`,
+	})
 }
 
 func TestRefactorInferReturnType_available_arrowFunction(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 
-	const content = `const arrow/*marker*/ = (x: number) => x * 2;`
+	const content = `const arrow = /*marker*/(x: number) => x * 2;`
 	f, done := fourslash.NewFourslash(t, nil, content)
 	defer done()
 	f.GoToMarker(t, "marker")
-	f.VerifyRefactorAvailable(t, inferReturnTypeTitle)
+	f.VerifyRefactor(t, fourslash.VerifyRefactorOptions{
+		Title:          inferReturnTypeTitle,
+		NewFileContent: `const arrow = (x: number): number => x * 2;`,
+	})
+}
+
+func TestRefactorInferReturnType_available_arrowFunction_parenLess(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+
+	const content = `const f = /*marker*/x => x * 2;`
+	f, done := fourslash.NewFourslash(t, nil, content)
+	defer done()
+	f.GoToMarker(t, "marker")
+	f.VerifyRefactor(t, fourslash.VerifyRefactorOptions{
+		Title:          inferReturnTypeTitle,
+		NewFileContent: `const f = (x: number): number => x * 2;`,
+	})
 }
 
 func TestRefactorInferReturnType_available_methodDeclaration(t *testing.T) {
@@ -47,7 +69,14 @@ func TestRefactorInferReturnType_available_methodDeclaration(t *testing.T) {
 	f, done := fourslash.NewFourslash(t, nil, content)
 	defer done()
 	f.GoToMarker(t, "marker")
-	f.VerifyRefactorAvailable(t, inferReturnTypeTitle)
+	f.VerifyRefactor(t, fourslash.VerifyRefactorOptions{
+		Title:          inferReturnTypeTitle,
+		NewFileContent: `class MyClass {
+    myMethod(): number {
+        return 42;
+    }
+}`,
+	})
 }
 
 func TestRefactorInferReturnType_available_overloads(t *testing.T) {
@@ -62,7 +91,14 @@ function overload/*3*/(x: any) {
 	f, done := fourslash.NewFourslash(t, nil, content)
 	defer done()
 	f.GoToMarker(t, "3")
-	f.VerifyRefactorAvailable(t, inferReturnTypeTitle)
+	f.VerifyRefactor(t, fourslash.VerifyRefactorOptions{
+		Title:          inferReturnTypeTitle,
+		NewFileContent: `function overload(x: number): number;
+function overload(x: string): string;
+function overload(x: any): string | number {
+    return x;
+}`,
+	})
 }
 
 func TestRefactorInferReturnType_available_asyncFunction(t *testing.T) {
@@ -75,7 +111,12 @@ func TestRefactorInferReturnType_available_asyncFunction(t *testing.T) {
 	f, done := fourslash.NewFourslash(t, nil, content)
 	defer done()
 	f.GoToMarker(t, "marker")
-	f.VerifyRefactorAvailable(t, inferReturnTypeTitle)
+	f.VerifyRefactor(t, fourslash.VerifyRefactorOptions{
+		Title:          inferReturnTypeTitle,
+		NewFileContent: `async function asyncFunc(): Promise<number> {
+    return 42;
+}`,
+	})
 }
 
 func TestRefactorInferReturnType_available_generatorFunction(t *testing.T) {
@@ -89,7 +130,13 @@ func TestRefactorInferReturnType_available_generatorFunction(t *testing.T) {
 	f, done := fourslash.NewFourslash(t, nil, content)
 	defer done()
 	f.GoToMarker(t, "marker")
-	f.VerifyRefactorAvailable(t, inferReturnTypeTitle)
+	f.VerifyRefactor(t, fourslash.VerifyRefactorOptions{
+		Title:          inferReturnTypeTitle,
+		NewFileContent: `function* generator(): Generator<1 | 2, void, unknown> {
+    yield 1;
+    yield 2;
+}`,
+	})
 }
 
 func TestRefactorInferReturnType_available_genericFunction(t *testing.T) {
@@ -102,7 +149,12 @@ func TestRefactorInferReturnType_available_genericFunction(t *testing.T) {
 	f, done := fourslash.NewFourslash(t, nil, content)
 	defer done()
 	f.GoToMarker(t, "marker")
-	f.VerifyRefactorAvailable(t, inferReturnTypeTitle)
+	f.VerifyRefactor(t, fourslash.VerifyRefactorOptions{
+		Title:          inferReturnTypeTitle,
+		NewFileContent: `function generic<T>(x: T): T {
+    return x;
+}`,
+	})
 }
 
 func TestRefactorInferReturnType_available_methodExpression(t *testing.T) {
@@ -117,7 +169,14 @@ func TestRefactorInferReturnType_available_methodExpression(t *testing.T) {
 	f, done := fourslash.NewFourslash(t, nil, content)
 	defer done()
 	f.GoToMarker(t, "marker")
-	f.VerifyRefactorAvailable(t, inferReturnTypeTitle)
+	f.VerifyRefactor(t, fourslash.VerifyRefactorOptions{
+		Title:          inferReturnTypeTitle,
+		NewFileContent: `const obj = {
+    myMethod(): number {
+        return 42;
+    }
+};`,
+	})
 }
 
 func TestRefactorInferReturnType_available_unionReturn(t *testing.T) {
@@ -130,7 +189,12 @@ func TestRefactorInferReturnType_available_unionReturn(t *testing.T) {
 	f, done := fourslash.NewFourslash(t, nil, content)
 	defer done()
 	f.GoToMarker(t, "marker")
-	f.VerifyRefactorAvailable(t, inferReturnTypeTitle)
+	f.VerifyRefactor(t, fourslash.VerifyRefactorOptions{
+		Title:          inferReturnTypeTitle,
+		NewFileContent: `function union(flag: boolean): "hello" | 42 {
+    return flag ? 42 : "hello";
+}`,
+	})
 }
 
 func TestRefactorInferReturnType_available_complexReturn(t *testing.T) {
@@ -143,7 +207,16 @@ func TestRefactorInferReturnType_available_complexReturn(t *testing.T) {
 	f, done := fourslash.NewFourslash(t, nil, content)
 	defer done()
 	f.GoToMarker(t, "marker")
-	f.VerifyRefactorAvailable(t, inferReturnTypeTitle)
+	f.VerifyRefactor(t, fourslash.VerifyRefactorOptions{
+		Title:          inferReturnTypeTitle,
+		NewFileContent: `function complex(): {
+    a: number;
+    b: string;
+    c: number[];
+} {
+    return { a: 1, b: "hello", c: [1, 2, 3] };
+}`,
+	})
 }
 
 func TestRefactorInferReturnType_available_voidReturn(t *testing.T) {
@@ -156,7 +229,12 @@ func TestRefactorInferReturnType_available_voidReturn(t *testing.T) {
 	f, done := fourslash.NewFourslash(t, nil, content)
 	defer done()
 	f.GoToMarker(t, "marker")
-	f.VerifyRefactorAvailable(t, inferReturnTypeTitle)
+	f.VerifyRefactor(t, fourslash.VerifyRefactorOptions{
+		Title:          inferReturnTypeTitle,
+		NewFileContent: `function voidFunc(): void {
+    console.log("hello");
+}`,
+	})
 }
 
 func TestRefactorInferReturnType_available_exportedFunction(t *testing.T) {
@@ -169,7 +247,12 @@ func TestRefactorInferReturnType_available_exportedFunction(t *testing.T) {
 	f, done := fourslash.NewFourslash(t, nil, content)
 	defer done()
 	f.GoToMarker(t, "marker")
-	f.VerifyRefactorAvailable(t, inferReturnTypeTitle)
+	f.VerifyRefactor(t, fourslash.VerifyRefactorOptions{
+		Title:          inferReturnTypeTitle,
+		NewFileContent: `export function(): number {
+    return 42;
+}`,
+	})
 }
 
 func TestRefactorInferReturnType_available_defaultExportedFunction(t *testing.T) {
@@ -182,7 +265,30 @@ func TestRefactorInferReturnType_available_defaultExportedFunction(t *testing.T)
 	f, done := fourslash.NewFourslash(t, nil, content)
 	defer done()
 	f.GoToMarker(t, "marker")
-	f.VerifyRefactorAvailable(t, inferReturnTypeTitle)
+	f.VerifyRefactor(t, fourslash.VerifyRefactorOptions{
+		Title:          inferReturnTypeTitle,
+		NewFileContent: `export default function(): number {
+    return 42;
+}`,
+	})
+}
+
+func TestRefactorInferReturnType_available_parameterDeclaration(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+
+	const content = `function func(x/*marker*/) {
+    return x;
+}`
+	f, done := fourslash.NewFourslash(t, nil, content)
+	defer done()
+	f.GoToMarker(t, "marker")
+	f.VerifyRefactor(t, fourslash.VerifyRefactorOptions{
+		Title:          inferReturnTypeTitle,
+		NewFileContent: `function func(x): any {
+    return x;
+}`,
+	})
 }
 
 // --- Not available cases ---
@@ -276,19 +382,6 @@ func TestRefactorInferReturnType_notAvailable_letVariable(t *testing.T) {
 	defer done()
 	f.GoToMarker(t, "marker")
 	f.VerifyRefactorNotAvailable(t, inferReturnTypeTitle)
-}
-
-func TestRefactorInferReturnType_available_parameterDeclaration(t *testing.T) {
-	t.Parallel()
-	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-
-	const content = `function func(x/*marker*/) {
-    return x;
-}`
-	f, done := fourslash.NewFourslash(t, nil, content)
-	defer done()
-	f.GoToMarker(t, "marker")
-	f.VerifyRefactorAvailable(t, inferReturnTypeTitle)
 }
 
 func TestRefactorInferReturnType_notAvailable_typePredicate(t *testing.T) {

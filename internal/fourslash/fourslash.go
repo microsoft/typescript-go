@@ -2012,17 +2012,50 @@ func (f *FourslashTest) getRefactorActions(t *testing.T) []*lsproto.CodeAction {
 	return actions
 }
 
+// VerifyRefactorOptions contains options for VerifyRefactor.
+type VerifyRefactorOptions struct {
+	Title          string
+	NewFileContent string
+}
+
+// VerifyRefactor verifies that a refactoring code action matching the given title is available,
+// and optionally verifies the file content after applying the edit.
+func (f *FourslashTest) VerifyRefactor(t *testing.T, options VerifyRefactorOptions) {
+	t.Helper()
+	actions := f.getRefactorActions(t)
+
+	var matchingAction *lsproto.CodeAction
+	for _, action := range actions {
+		if action.Title == options.Title {
+			matchingAction = action
+			break
+		}
+	}
+	if matchingAction == nil {
+		t.Fatalf("Expected refactoring %q to be available, but it was not. Got: %v", options.Title, actionTitles(actions))
+	}
+
+	if options.NewFileContent != "" {
+		actual := f.getScriptInfo(f.activeFilename).content
+		if matchingAction.Edit != nil && matchingAction.Edit.Changes != nil {
+			expectedURI := lsconv.FileNameToDocumentURI(f.activeFilename)
+
+			for uri, edits := range *matchingAction.Edit.Changes {
+				if uri != expectedURI {
+					t.Fatalf("Refactoring returned edits for unexpected URI %q (expected %q)", uri, expectedURI)
+				}
+
+				actual = f.applyEditsToContent(actual, edits)
+			}
+		}
+		assert.Equal(t, options.NewFileContent, actual, "File content after applying refactoring did not match expected content.")
+	}
+}
+
 // VerifyRefactorAvailable verifies that a refactoring code action with the given title is available.
 func (f *FourslashTest) VerifyRefactorAvailable(t *testing.T, title string) {
 	t.Helper()
-	actions := f.getRefactorActions(t)
-	for _, action := range actions {
-		if action.Title == title {
-			return
-		}
-	}
-
-	t.Fatalf("Expected refactoring %q to be available, but it was not. Got: %v", title, actionTitles(actions))
+	f.VerifyRefactor(t, VerifyRefactorOptions{Title: title})
 }
 
 // VerifyRefactorNotAvailable verifies that a refactoring code action with the given title is NOT available.
