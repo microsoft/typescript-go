@@ -2009,7 +2009,7 @@ func (f *FourslashTest) getRefactorActionsWithOnly(t *testing.T, only *[]lsproto
 	if result.CommandOrCodeActionArray != nil {
 		for _, item := range *result.CommandOrCodeActionArray {
 			if item.CodeAction != nil && item.CodeAction.Kind != nil &&
-				isRefactoringKind(*item.CodeAction.Kind) {
+				isRefactoringKind(*item.CodeAction.Kind) && item.CodeAction.Disabled == nil {
 				actions = append(actions, item.CodeAction)
 			}
 		}

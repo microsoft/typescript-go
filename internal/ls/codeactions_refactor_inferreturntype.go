@@ -54,10 +54,18 @@ func getInferReturnTypeCodeActions(ctx context.Context, refactorContext *Refacto
 		return nil, nil
 	}
 
+	title := diagnostics.Infer_function_return_type.Localize(locale.FromContext(ctx))
+	showNotApplicable := refactorContext.LS.UserPreferences().ProvideRefactorNotApplicableReason.IsTrue()
+
 	token := astnav.GetTouchingPropertyName(refactorContext.SourceFile, int(refactorContext.Range.Pos()))
 
 	declaration := findConvertibleAncestor(token)
 	if declaration == nil || !hasBody(declaration) || declaration.Type() != nil {
+		if showNotApplicable {
+			reason := diagnostics.Return_type_must_be_inferred_from_a_function.Localize(locale.FromContext(ctx))
+			return []*CodeAction{{Description: title, Kind: inferReturnTypeRefactorKind, DisabledReason: reason}}, nil
+		}
+
 		return nil, nil
 	}
 
@@ -66,6 +74,11 @@ func getInferReturnTypeCodeActions(ctx context.Context, refactorContext *Refacto
 
 	typeNode := getInferredReturnTypeNode(ch, declaration, refactorContext.SourceFile)
 	if typeNode == nil {
+		if showNotApplicable {
+			reason := diagnostics.Could_not_determine_function_return_type.Localize(locale.FromContext(ctx))
+			return []*CodeAction{{Description: title, Kind: inferReturnTypeRefactorKind, DisabledReason: reason}}, nil
+		}
+
 		return nil, nil
 	}
 
@@ -81,8 +94,6 @@ func getInferReturnTypeCodeActions(ctx context.Context, refactorContext *Refacto
 	if len(changes) == 0 {
 		return nil, nil
 	}
-
-	title := diagnostics.Infer_function_return_type.Localize(locale.FromContext(ctx))
 
 	actions := []*CodeAction{{
 		Description: title,

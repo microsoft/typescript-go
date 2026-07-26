@@ -42,6 +42,7 @@ type CodeAction struct {
 	FixID             string
 	FixAllDescription string
 	Kind              lsproto.CodeActionKind
+	DisabledReason    string
 }
 
 // Compare defines a total ordering for CodeAction values, comparing description
@@ -251,16 +252,22 @@ func convertRefactorToLSPCodeAction(action *CodeAction, uri lsproto.DocumentUri)
 		kind = lsproto.CodeActionKindRefactorRewrite
 	}
 
-	changes := map[lsproto.DocumentUri][]*lsproto.TextEdit{
-		uri: action.Changes,
+	lspAction := &lsproto.CodeAction{
+		Title: action.Description,
+		Kind:  &kind,
+	}
+
+	if action.DisabledReason != "" {
+		lspAction.Disabled = &lsproto.CodeActionDisabled{Reason: action.DisabledReason}
+	} else {
+		changes := map[lsproto.DocumentUri][]*lsproto.TextEdit{
+			uri: action.Changes,
+		}
+		lspAction.Edit = &lsproto.WorkspaceEdit{Changes: &changes}
 	}
 
 	return lsproto.CommandOrCodeAction{
-		CodeAction: &lsproto.CodeAction{
-			Title: action.Description,
-			Kind:  &kind,
-			Edit:  &lsproto.WorkspaceEdit{Changes: &changes},
-		},
+		CodeAction: lspAction,
 	}
 }
 
