@@ -191,6 +191,10 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 
 		for _, provider := range refactorProviders {
 			for _, action := range provider.RefactorActions {
+				if !refactorActionMatchesOnly(action, params.Context.Only) {
+					continue
+				}
+
 				providerActions, err := action.GetActions(ctx, refactorContext, action.ID)
 				if err != nil {
 					return lsproto.CodeActionResponse{}, err
@@ -216,6 +220,24 @@ func wantsRefactors(only *[]lsproto.CodeActionKind) bool {
 	for _, kind := range *only {
 		if codeActionKindContains(lsproto.CodeActionKindRefactor, kind) {
 			return true
+		}
+	}
+
+	return false
+}
+
+// refactorActionMatchesOnly returns true if the action's Kinds match any of the requested Only kinds.
+// If Only is nil/empty, all actions match.
+func refactorActionMatchesOnly(action RefactorAction, only *[]lsproto.CodeActionKind) bool {
+	if only == nil || len(*only) == 0 {
+		return true
+	}
+
+	for _, requestedKind := range *only {
+		for _, actionKind := range action.Kinds {
+			if codeActionKindContains(requestedKind, actionKind) {
+				return true
+			}
 		}
 	}
 
