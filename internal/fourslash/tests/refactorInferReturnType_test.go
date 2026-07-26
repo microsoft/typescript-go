@@ -401,6 +401,19 @@ func TestRefactorInferReturnType_only_rewriteKind(t *testing.T) {
 	f.VerifyRefactorWithOnlyAvailable(t, inferReturnTypeTitle, []lsproto.CodeActionKind{"refactor.rewrite"})
 }
 
+func TestRefactorInferReturnType_only_emptyKind(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+
+	const content = `function simple/*marker*/() {
+    return 42;
+}`
+	f, done := fourslash.NewFourslash(t, nil, content)
+	defer done()
+	f.GoToMarker(t, "marker")
+	f.VerifyRefactorWithOnlyAvailable(t, inferReturnTypeTitle, []lsproto.CodeActionKind{""})
+}
+
 func TestRefactorInferReturnType_only_extractKind(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
