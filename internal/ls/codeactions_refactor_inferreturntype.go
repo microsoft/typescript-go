@@ -113,7 +113,7 @@ func getInferredReturnTypeNode(ch *checker.Checker, declaration *ast.Node, sourc
 				}
 
 				if len(returnTypes) > 0 {
-					return ch.TypeToTypeNode(ch.GetUnionType(returnTypes), declaration, nodebuilder.FlagsNoTruncation, idToSymbol)
+					return ch.TypeToTypeNodeEx(ch.GetUnionType(returnTypes), declaration, nodebuilder.FlagsNoTruncation, nodebuilder.InternalFlagsAllowUnresolvedNames, idToSymbol)
 				}
 			}
 		}
@@ -134,7 +134,7 @@ func getInferredReturnTypeNode(ch *checker.Checker, declaration *ast.Node, sourc
 
 	// Normal case: get the return type of the signature.
 	if signature != nil {
-		return ch.TypeToTypeNode(ch.GetReturnTypeOfSignature(signature), declaration, nodebuilder.FlagsNoTruncation, idToSymbol)
+		return ch.TypeToTypeNodeEx(ch.GetReturnTypeOfSignature(signature), declaration, nodebuilder.FlagsNoTruncation, nodebuilder.InternalFlagsAllowUnresolvedNames, idToSymbol)
 	}
 
 	return nil

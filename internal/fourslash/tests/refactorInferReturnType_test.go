@@ -273,6 +273,23 @@ func TestRefactorInferReturnType_available_defaultExportedFunction(t *testing.T)
 	})
 }
 
+func TestRefactorInferReturnType_available_computedProperty(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+
+	const content = `const key = "foo";
+function withComputed/*marker*/() {
+    return { [key]: 42 };
+}`
+	f, done := fourslash.NewFourslash(t, nil, content)
+	defer done()
+	f.GoToMarker(t, "marker")
+	f.VerifyRefactor(t, fourslash.VerifyRefactorOptions{
+		Title:          inferReturnTypeTitle,
+		NewFileContent: "const key = \"foo\";\nfunction withComputed(): {\n    foo: number;\n} {\n    return { [key]: 42 };\n}",
+	})
+}
+
 func TestRefactorInferReturnType_available_parameterDeclaration(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
