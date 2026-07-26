@@ -1980,6 +1980,78 @@ func (f *FourslashTest) getAllQuickFixActions(t *testing.T, errorCode ...int) []
 	return actions
 }
 
+// getRefactorActions gets all refactoring code actions at the current cursor position.
+func (f *FourslashTest) getRefactorActions(t *testing.T) []*lsproto.CodeAction {
+	t.Helper()
+
+	params := &lsproto.CodeActionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Range: lsproto.Range{
+			Start: f.currentCaretPosition,
+			End:   f.currentCaretPosition,
+		},
+		Context: &lsproto.CodeActionContext{
+			Diagnostics: []*lsproto.Diagnostic{},
+		},
+	}
+
+	result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
+
+	var actions []*lsproto.CodeAction
+	if result.CommandOrCodeActionArray != nil {
+		for _, item := range *result.CommandOrCodeActionArray {
+			if item.CodeAction != nil && item.CodeAction.Kind != nil &&
+				isRefactoringKind(*item.CodeAction.Kind) {
+				actions = append(actions, item.CodeAction)
+			}
+		}
+	}
+
+	return actions
+}
+
+// VerifyRefactorAvailable verifies that a refactoring code action with the given title is available.
+func (f *FourslashTest) VerifyRefactorAvailable(t *testing.T, title string) {
+	t.Helper()
+	actions := f.getRefactorActions(t)
+	for _, action := range actions {
+		if action.Title == title {
+			return
+		}
+	}
+
+	t.Fatalf("Expected refactoring %q to be available, but it was not. Got: %v", title, actionTitles(actions))
+}
+
+// VerifyRefactorNotAvailable verifies that a refactoring code action with the given title is NOT available.
+func (f *FourslashTest) VerifyRefactorNotAvailable(t *testing.T, title string) {
+	t.Helper()
+	actions := f.getRefactorActions(t)
+	for _, action := range actions {
+		if action.Title == title {
+			t.Fatalf("Expected refactoring %q to not be available, but it was", title)
+		}
+	}
+}
+
+func actionTitles(actions []*lsproto.CodeAction) []string {
+	titles := make([]string, len(actions))
+	for i, a := range actions {
+		titles[i] = a.Title
+	}
+	return titles
+}
+
+// isRefactoringKind checks if the given kind is a refactoring kind.
+// Matches "refactor" and any subkind like "refactor.rewrite", "refactor.extract", etc.
+func isRefactoringKind(kind lsproto.CodeActionKind) bool {
+	return kind == lsproto.CodeActionKindRefactor ||
+		string(kind) == "refactor" ||
+		strings.HasPrefix(string(kind), string(lsproto.CodeActionKindRefactor)+".")
+}
+
 func (f *FourslashTest) updateTextRangeForTextEdits(textRange core.TextRange, edits []*lsproto.TextEdit) core.TextRange {
 	script := f.getScriptInfo(f.activeFilename)
 	spans := make([]textEditSpan, 0, len(edits))
