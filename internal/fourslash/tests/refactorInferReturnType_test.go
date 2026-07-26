@@ -380,6 +380,34 @@ func TestRefactorInferReturnType_notAvailable_arrowFunctionExpression(t *testing
 	f.VerifyRefactorNotAvailable(t, inferReturnTypeTitle)
 }
 
+func TestRefactorInferReturnType_notAvailable_cursorInsideFunctionBody(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+
+	const content = `function outer() {
+    const inner/*marker*/ = 42;
+    return inner;
+}`
+	f, done := fourslash.NewFourslash(t, nil, content)
+	defer done()
+	f.GoToMarker(t, "marker")
+	f.VerifyRefactorNotAvailable(t, inferReturnTypeTitle)
+}
+
+func TestRefactorInferReturnType_notAvailable_cursorInsideArrowBody(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+
+	const content = `const fn = () => {
+    const x/*marker*/ = 42;
+    return x;
+};`
+	f, done := fourslash.NewFourslash(t, nil, content)
+	defer done()
+	f.GoToMarker(t, "marker")
+	f.VerifyRefactorNotAvailable(t, inferReturnTypeTitle)
+}
+
 func TestRefactorInferReturnType_notAvailable_constVariable(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")

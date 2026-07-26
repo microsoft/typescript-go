@@ -143,6 +143,16 @@ func getInferredReturnTypeNode(ch *checker.Checker, declaration *ast.Node, sourc
 // findConvertibleAncestor walks up from node to find the nearest convertible declaration.
 func findConvertibleAncestor(node *ast.Node) *ast.Node {
 	for node != nil {
+		if ast.IsBlock(node) {
+			return nil
+		}
+
+		if node.Parent != nil && ast.IsArrowFunction(node.Parent) {
+			if node.Kind == ast.KindEqualsGreaterThanToken || node.Parent.AsArrowFunction().Body == node {
+				return nil
+			}
+		}
+
 		if convertibleDeclaration(node) {
 			return node
 		}
@@ -158,8 +168,10 @@ func findConvertibleAncestor(node *ast.Node) *ast.Node {
 				return init
 			}
 		}
+
 		node = node.Parent
 	}
+
 	return nil
 }
 
