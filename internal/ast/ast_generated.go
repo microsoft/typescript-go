@@ -116,10 +116,13 @@ type TypeNodeBase struct {
 }
 
 type NodeWithTypeArgumentsBase struct {
+	TypeNodeBase
 	TypeArguments *TypeList // Optional
 }
 
-type JSDocTypeBase struct{}
+type JSDocTypeBase struct {
+	TypeNodeBase
+}
 
 type DeclarationBase struct {
 	Symbol *Symbol
@@ -207,6 +210,7 @@ type NamedMemberBase struct {
 type ObjectLiteralElementBase struct{}
 
 type AccessorDeclarationBase struct {
+	DeclarationBase
 	NamedMemberBase
 	FunctionLikeWithBodyBase
 	FlowNodeBase
@@ -218,11 +222,14 @@ type AccessorDeclarationBase struct {
 }
 
 type FunctionOrConstructorTypeNodeBase struct {
+	DeclarationBase
+	TypeNodeBase
 	ModifiersBase
 	FunctionLikeBase
 }
 
 type UnionOrIntersectionTypeNodeBase struct {
+	TypeNodeBase
 	Types *TypeList
 }
 
@@ -3089,7 +3096,6 @@ func IsConstructorDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type GetAccessorDeclaration struct {
-	DeclarationBase
 	AccessorDeclarationBase
 }
 
@@ -3143,7 +3149,6 @@ func IsGetAccessorDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type SetAccessorDeclaration struct {
-	DeclarationBase
 	AccessorDeclarationBase
 }
 
@@ -5121,7 +5126,6 @@ func IsKeywordTypeNode(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type UnionTypeNode struct {
-	TypeNodeBase
 	UnionOrIntersectionTypeNodeBase
 }
 
@@ -5159,7 +5163,6 @@ func IsUnionTypeNode(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type IntersectionTypeNode struct {
-	TypeNodeBase
 	UnionOrIntersectionTypeNodeBase
 }
 
@@ -5401,7 +5404,6 @@ func IsIndexedAccessTypeNode(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type TypeReferenceNode struct {
-	TypeNodeBase
 	NodeWithTypeArgumentsBase
 	TypeName *EntityName
 }
@@ -5680,7 +5682,6 @@ func IsImportAttributes(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type TypeQueryNode struct {
-	TypeNodeBase
 	NodeWithTypeArgumentsBase
 	ExprName *EntityName
 }
@@ -6018,8 +6019,6 @@ func IsParenthesizedTypeNode(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type FunctionTypeNode struct {
-	DeclarationBase
-	TypeNodeBase
 	FunctionOrConstructorTypeNodeBase
 }
 
@@ -6059,8 +6058,6 @@ func IsFunctionTypeNode(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type ConstructorTypeNode struct {
-	DeclarationBase
-	TypeNodeBase
 	FunctionOrConstructorTypeNodeBase
 }
 
@@ -6951,7 +6948,6 @@ func IsJSDocTypeExpression(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type JSDocNonNullableType struct {
-	TypeNodeBase
 	JSDocTypeBase
 	Type *TypeNode
 }
@@ -6990,7 +6986,6 @@ func IsJSDocNonNullableType(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type JSDocNullableType struct {
-	TypeNodeBase
 	JSDocTypeBase
 	Type *TypeNode
 }
@@ -7029,7 +7024,6 @@ func IsJSDocNullableType(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type JSDocAllType struct {
-	TypeNodeBase
 	JSDocTypeBase
 }
 
@@ -7051,7 +7045,6 @@ func IsJSDocAllType(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type JSDocVariadicType struct {
-	TypeNodeBase
 	JSDocTypeBase
 	Type *TypeNode
 }
@@ -7090,7 +7083,6 @@ func IsJSDocVariadicType(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type JSDocOptionalType struct {
-	TypeNodeBase
 	JSDocTypeBase
 	Type *TypeNode
 }
@@ -7947,7 +7939,6 @@ func IsJSDocTypedefTag(node *Node) bool {
 
 type JSDocSignature struct {
 	DeclarationBase
-	TypeNodeBase
 	JSDocTypeBase
 	FunctionLikeBase
 }
@@ -8193,7 +8184,6 @@ func IsExportDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type ImportTypeNode struct {
-	TypeNodeBase
 	NodeWithTypeArgumentsBase
 	IsTypeOf   bool
 	Argument   *TypeNode
@@ -8596,7 +8586,6 @@ func IsSyntheticReferenceExpression(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type JSDocTypeLiteral struct {
-	TypeNodeBase
 	JSDocTypeBase
 	DeclarationBase
 	JSDocPropertyTags []*Node // Optional

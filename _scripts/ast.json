@@ -955,8 +955,8 @@
             "extends": []
         },
         "FunctionLikeBase": {
+            "brand": "_declarationBrand",
             "extends": [
-                "DeclarationBase",
                 "LocalsContainerBase"
             ],
             "fields": {
@@ -1011,8 +1011,8 @@
             "brand": "_functionLikeDeclarationBrand"
         },
         "ClassLikeBase": {
+            "brand": "_declarationBrand",
             "extends": [
-                "DeclarationBase",
                 "ExportableBase",
                 "ModifiersBase",
                 "LocalsContainerBase",
@@ -1080,8 +1080,8 @@
             "extends": []
         },
         "NamedMemberBase": {
+            "brand": "_declarationBrand",
             "extends": [
-                "DeclarationBase",
                 "ModifiersBase"
             ],
             "fields": {
@@ -1105,6 +1105,7 @@
         },
         "AccessorDeclarationBase": {
             "extends": [
+                "DeclarationBase",
                 "NamedMemberBase",
                 "FunctionLikeWithBodyBase",
                 "FlowNodeBase",
@@ -1117,6 +1118,7 @@
         },
         "FunctionOrConstructorTypeNodeBase": {
             "extends": [
+                "DeclarationBase",
                 "TypeNodeBase",
                 "ModifiersBase",
                 "FunctionLikeBase"
@@ -1909,6 +1911,7 @@
             },
             "ClassExpression": {
                 "extends": [
+                    "DeclarationBase",
                     "PrimaryExpressionBase",
                     "ClassLikeBase"
                 ],
@@ -2032,6 +2035,7 @@
             },
             "EnumMember": {
                 "extends": [
+                    "DeclarationBase",
                     "NodeBase",
                     "NamedMemberBase",
                     "CompositeBase"
@@ -2477,6 +2481,7 @@
             "MethodSignatureDeclaration": {
                 "kind": "MethodSignature",
                 "extends": [
+                    "DeclarationBase",
                     "NodeBase",
                     "NamedMemberBase",
                     "FunctionLikeBase",
@@ -2513,6 +2518,7 @@
             },
             "MethodDeclaration": {
                 "extends": [
+                    "DeclarationBase",
                     "NodeBase",
                     "NamedMemberBase",
                     "FunctionLikeWithBodyBase",
@@ -2568,6 +2574,7 @@
             "PropertySignatureDeclaration": {
                 "kind": "PropertySignature",
                 "extends": [
+                    "DeclarationBase",
                     "NodeBase",
                     "NamedMemberBase",
                     "TypeElementBase",
@@ -2599,6 +2606,7 @@
             },
             "PropertyDeclaration": {
                 "extends": [
+                    "DeclarationBase",
                     "NodeBase",
                     "NamedMemberBase",
                     "ClassElementBase",
@@ -3327,6 +3335,7 @@
             },
             "PropertyAssignment": {
                 "extends": [
+                    "DeclarationBase",
                     "NodeBase",
                     "NamedMemberBase",
                     "ObjectLiteralElementBase",
@@ -3358,6 +3367,7 @@
             },
             "ShorthandPropertyAssignment": {
                 "extends": [
+                    "DeclarationBase",
                     "NodeBase",
                     "NamedMemberBase",
                     "ObjectLiteralElementBase",
@@ -3478,7 +3488,6 @@
             "UnionTypeNode": {
                 "kind": "UnionType",
                 "extends": [
-                    "TypeNodeBase",
                     "UnionOrIntersectionTypeNodeBase"
                 ],
                 "members": [
@@ -3492,7 +3501,6 @@
             "IntersectionTypeNode": {
                 "kind": "IntersectionType",
                 "extends": [
-                    "TypeNodeBase",
                     "UnionOrIntersectionTypeNodeBase"
                 ],
                 "members": [
@@ -3872,7 +3880,6 @@
             "FunctionTypeNode": {
                 "kind": "FunctionType",
                 "extends": [
-                    "TypeNodeBase",
                     "FunctionOrConstructorTypeNodeBase"
                 ],
                 "members": [
@@ -3894,7 +3901,6 @@
             "ConstructorTypeNode": {
                 "kind": "ConstructorType",
                 "extends": [
-                    "TypeNodeBase",
                     "FunctionOrConstructorTypeNodeBase"
                 ],
                 "members": [
@@ -4722,6 +4728,7 @@
             },
             "JSDocSignature": {
                 "extends": [
+                    "DeclarationBase",
                     "JSDocTypeBase",
                     "FunctionLikeBase"
                 ],
@@ -5090,7 +5097,10 @@
                 "members": [
                     {
                         "name": "Kind",
-                        "type": ["SyntaxKind.JSDocParameterTag", "SyntaxKind.JSDocPropertyTag"],
+                        "type": [
+                            "SyntaxKind.JSDocParameterTag",
+                            "SyntaxKind.JSDocPropertyTag"
+                        ],
                         "inherited": true
                     },
                     {
