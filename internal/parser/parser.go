@@ -55,6 +55,23 @@ type JSDocInfo struct {
 	jsDocs []*ast.Node
 }
 
+type lookaheadKind uint8
+
+const (
+	lookaheadKindDeclarationStart lookaheadKind = iota
+	lookaheadKindTypeMemberStart
+	lookaheadKindClassMemberStart
+	lookaheadKindFunctionTypeStart
+	lookaheadKindParenthesizedTypeStart
+	lookaheadKindJSDocWhitespaceEOF
+)
+
+type lookaheadCacheKey struct {
+	kind         lookaheadKind
+	pos          int
+	contextFlags ast.NodeFlags
+}
+
 type jsdocScannerInfo uint8
 
 const (
@@ -87,6 +104,8 @@ type Parser struct {
 	parenthesizedTypeDepth       int
 	parenthesesScanEnd           int
 	parenthesesCanFlatten        bool
+	scanWork                     *int
+	lookaheadCache               map[lookaheadCacheKey]bool
 
 	identifiers                map[string]string
 	identifierCount            int
@@ -179,7 +198,7 @@ func (p *Parser) parseJSONText() *ast.SourceFile {
 			case ast.KindTrueKeyword, ast.KindFalseKeyword, ast.KindNullKeyword:
 				expression = p.parseTokenNode()
 			case ast.KindMinusToken:
-				if p.lookAhead(func(p *Parser) bool {
+				if p.fixedLookAhead(func(p *Parser) bool {
 					return p.nextToken() == ast.KindNumericLiteral && p.nextToken() != ast.KindColonToken
 				}) {
 					expression = p.parseSimpleUnaryExpression()
@@ -187,7 +206,7 @@ func (p *Parser) parseJSONText() *ast.SourceFile {
 					expression = p.parseObjectLiteralExpression()
 				}
 			case ast.KindNumericLiteral, ast.KindStringLiteral:
-				if p.lookAhead(func(p *Parser) bool { return p.nextToken() != ast.KindColonToken }) {
+				if p.fixedLookAhead(func(p *Parser) bool { return p.nextToken() != ast.KindColonToken }) {
 					expression = p.parseLiteralExpression(false /*intern*/)
 					break
 				}
@@ -377,36 +396,80 @@ func (p *Parser) rewind(state ParserState) {
 	p.hasParseError = state.hasParseError
 }
 
-func (p *Parser) lookAhead(callback func(p *Parser) bool) bool {
+func (p *Parser) fixedLookAhead(callback func(p *Parser) bool) bool {
+	// Callbacks used here must inspect a fixed number of tokens. Input-sized scans
+	// must use memoizedLookAhead or their own suffix cache.
 	state := p.mark()
 	result := callback(p)
 	p.rewind(state)
 	return result
 }
 
+func (p *Parser) memoizedLookAhead(kind lookaheadKind, callback func(p *Parser) bool) bool {
+	key := p.lookaheadCacheKey(kind)
+	if result, ok := p.lookaheadCache[key]; ok {
+		return result
+	}
+
+	start := p.scanner.TokenStart()
+	state := p.mark()
+	result := callback(p)
+	end := p.scanner.TokenEnd()
+	p.rewind(state)
+	if end-start >= minMemoizedLookaheadBytes {
+		if p.lookaheadCache == nil {
+			p.lookaheadCache = make(map[lookaheadCacheKey]bool)
+		}
+		p.lookaheadCache[key] = result
+	}
+	return result
+}
+
+const minMemoizedLookaheadBytes = 64
+
 func (p *Parser) nextToken() ast.Kind {
+	start := p.scanner.TokenEnd()
 	// if the keyword had an escape
 	if ast.IsKeyword(p.token) && (p.scanner.HasUnicodeEscape() || p.scanner.HasExtendedUnicodeEscape()) {
 		// issue a parse error for the escape
 		p.parseErrorAtCurrentToken(diagnostics.Keywords_cannot_contain_escape_characters)
 	}
 	p.token = p.scanner.Scan()
+	p.recordScanWork(start)
 	return p.token
 }
 
 func (p *Parser) nextTokenWithoutCheck() ast.Kind {
+	start := p.scanner.TokenEnd()
 	p.token = p.scanner.Scan()
+	p.recordScanWork(start)
 	return p.token
 }
 
 func (p *Parser) nextTokenJSDoc() ast.Kind {
+	start := p.scanner.TokenEnd()
 	p.token = p.scanner.ScanJSDocToken()
+	p.recordScanWork(start)
 	return p.token
 }
 
 func (p *Parser) nextJSDocCommentTextToken(inBackticks bool) ast.Kind {
+	start := p.scanner.TokenEnd()
 	p.token = p.scanner.ScanJSDocCommentTextToken(inBackticks)
+	p.recordScanWork(start)
 	return p.token
+}
+
+func (p *Parser) recordScanWork(start int) {
+	if p.scanWork == nil {
+		return
+	}
+	end := p.scanner.TokenEnd()
+	if end > start {
+		*p.scanWork += end - start
+	} else {
+		(*p.scanWork)++
+	}
 }
 
 func (p *Parser) nodePos() int {
@@ -839,13 +902,13 @@ func (p *Parser) isListElement(parsingContext ParsingContext, inErrorRecovery bo
 	case PCSwitchClauses:
 		return p.token == ast.KindCaseKeyword || p.token == ast.KindDefaultKeyword
 	case PCTypeMembers:
-		return p.lookAhead((*Parser).scanTypeMemberStart)
+		return p.memoizedLookAhead(lookaheadKindTypeMemberStart, (*Parser).scanTypeMemberStart)
 	case PCClassMembers:
 		// We allow semicolons as class elements (as specified by ES6) as long as we're
 		// not in error recovery.  If we're in error recovery, we don't want an errant
 		// semicolon to be treated as a class member (since they're almost always used
 		// for statements.
-		return p.lookAhead((*Parser).scanClassMemberStart) || p.token == ast.KindSemicolonToken && !inErrorRecovery
+		return p.memoizedLookAhead(lookaheadKindClassMemberStart, (*Parser).scanClassMemberStart) || p.token == ast.KindSemicolonToken && !inErrorRecovery
 	case PCEnumMembers:
 		// Include open bracket computed properties. This technically also lets in indexers,
 		// which would be a candidate for improved error reporting.
@@ -901,7 +964,7 @@ func (p *Parser) isListElement(parsingContext ParsingContext, inErrorRecovery bo
 	case PCImportOrExportSpecifiers:
 		// bail out if the next token is [FromKeyword StringLiteral].
 		// That means we're in something like `import { from "mod"`. Stop here can give better error message.
-		if p.token == ast.KindFromKeyword && p.lookAhead((*Parser).nextTokenIsTokenStringLiteral) {
+		if p.token == ast.KindFromKeyword && p.fixedLookAhead((*Parser).nextTokenIsTokenStringLiteral) {
 			return false
 		}
 		if p.token == ast.KindStringLiteral {
@@ -959,7 +1022,7 @@ func (p *Parser) isListTerminator(kind ParsingContext) bool {
 	case PCJsxAttributes:
 		return p.token == ast.KindGreaterThanToken || p.token == ast.KindSlashToken
 	case PCJsxChildren:
-		return p.token == ast.KindLessThanToken && p.lookAhead((*Parser).nextTokenIsSlash)
+		return p.token == ast.KindLessThanToken && p.fixedLookAhead((*Parser).nextTokenIsSlash)
 	}
 	return false
 }
@@ -1202,7 +1265,7 @@ func isDeclareModifier(modifier *ast.Node) bool {
 func (p *Parser) isLetDeclaration() bool {
 	// In ES6 'let' always starts a lexical declaration if followed by an identifier or {
 	// or [.
-	return p.lookAhead((*Parser).nextTokenIsBindingIdentifierOrStartOfDestructuring)
+	return p.fixedLookAhead((*Parser).nextTokenIsBindingIdentifierOrStartOfDestructuring)
 }
 
 func (p *Parser) nextTokenIsBindingIdentifierOrStartOfDestructuring() bool {
@@ -1303,9 +1366,9 @@ func (p *Parser) parseForOrForInOrForOfStatement() *ast.Node {
 	var initializer *ast.ForInitializer
 	if p.token != ast.KindSemicolonToken {
 		if p.token == ast.KindVarKeyword || p.token == ast.KindLetKeyword || p.token == ast.KindConstKeyword ||
-			p.token == ast.KindUsingKeyword && p.lookAhead((*Parser).nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLineDisallowOf) ||
+			p.token == ast.KindUsingKeyword && p.fixedLookAhead((*Parser).nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLineDisallowOf) ||
 			// this one is meant to allow of
-			p.token == ast.KindAwaitKeyword && p.lookAhead((*Parser).nextIsUsingKeywordThenBindingIdentifierOrStartOfObjectDestructuringOnSameLine) {
+			p.token == ast.KindAwaitKeyword && p.fixedLookAhead((*Parser).nextIsUsingKeywordThenBindingIdentifierOrStartOfObjectDestructuringOnSameLine) {
 			initializer = p.parseVariableDeclarationList(true /*inForStatementInitializer*/)
 		} else {
 			initializer = doInContext(p, ast.NodeFlagsDisallowInContext, true, (*Parser).parseExpression)
@@ -1588,7 +1651,7 @@ func (p *Parser) parseVariableDeclarationList(inForStatementInitializer bool) *a
 	// this context.
 	// The checker will then give an error that there is an empty declaration list.
 	var declarations *ast.NodeList
-	if p.token == ast.KindOfKeyword && p.lookAhead((*Parser).nextIsIdentifierAndCloseParen) {
+	if p.token == ast.KindOfKeyword && p.fixedLookAhead((*Parser).nextIsIdentifierAndCloseParen) {
 		declarations = p.createMissingList()
 	} else {
 		saveContextFlags := p.contextFlags
@@ -1812,7 +1875,7 @@ func (p *Parser) parseNameOfClassDeclarationOrExpression() *ast.Node {
 }
 
 func (p *Parser) isImplementsClause() bool {
-	return p.token == ast.KindImplementsKeyword && p.lookAhead((*Parser).nextTokenIsIdentifierOrKeyword)
+	return p.token == ast.KindImplementsKeyword && p.fixedLookAhead((*Parser).nextTokenIsIdentifierOrKeyword)
 }
 
 func isExportModifier(modifier *ast.Node) bool {
@@ -1860,7 +1923,7 @@ func (p *Parser) parseClassElement() *ast.Node {
 		return result
 	}
 	modifiers := p.parseModifiersEx(true /*allowDecorators*/, true /*permitConstAsModifier*/, true /*stopOnStartOfClassStaticBlock*/)
-	if p.token == ast.KindStaticKeyword && p.lookAhead((*Parser).nextTokenIsOpenBrace) {
+	if p.token == ast.KindStaticKeyword && p.fixedLookAhead((*Parser).nextTokenIsOpenBrace) {
 		return p.parseClassStaticBlockDeclaration(pos, jsdoc, modifiers)
 	}
 	if p.parseContextualModifier(ast.KindGetKeyword) {
@@ -1924,7 +1987,7 @@ func (p *Parser) parseClassStaticBlockBody() *ast.Node {
 
 func (p *Parser) tryParseConstructorDeclaration(pos int, jsdoc jsdocScannerInfo, modifiers *ast.ModifierList) *ast.Node {
 	state := p.mark()
-	if p.token == ast.KindConstructorKeyword || p.token == ast.KindStringLiteral && p.scanner.TokenValue() == "constructor" && p.lookAhead((*Parser).nextTokenIsOpenParen) {
+	if p.token == ast.KindConstructorKeyword || p.token == ast.KindStringLiteral && p.scanner.TokenValue() == "constructor" && p.fixedLookAhead((*Parser).nextTokenIsOpenParen) {
 		p.nextToken()
 		typeParameters := p.parseTypeParameters()
 		parameters := p.parseParameters(ParseFlagsNone)
@@ -2107,7 +2170,7 @@ func (p *Parser) parseTypeAliasDeclaration(pos int, jsdoc jsdocScannerInfo, modi
 	typeParameters := p.parseTypeParameters()
 	p.parseExpected(ast.KindEqualsToken)
 	var typeNode *ast.TypeNode
-	if p.token == ast.KindIntrinsicKeyword && p.lookAhead((*Parser).nextIsNotDot) {
+	if p.token == ast.KindIntrinsicKeyword && p.fixedLookAhead((*Parser).nextIsNotDot) {
 		typeNode = p.parseKeywordTypeNode()
 	} else {
 		typeNode = p.parseType()
@@ -2246,7 +2309,7 @@ func (p *Parser) parseImportDeclarationOrImportEqualsDeclaration(pos int, jsdoc 
 	}
 	phaseModifier := ast.KindUnknown
 	if identifier != nil && identifier.Text() == "type" &&
-		(p.token != ast.KindFromKeyword || p.isIdentifier() && p.lookAhead((*Parser).nextTokenIsFromKeywordOrEqualsToken)) &&
+		(p.token != ast.KindFromKeyword || p.isIdentifier() && p.fixedLookAhead((*Parser).nextTokenIsFromKeywordOrEqualsToken)) &&
 		(p.isIdentifier() || p.tokenAfterImportDefinitelyProducesImportDeclaration()) {
 		phaseModifier = ast.KindTypeKeyword
 		identifier = nil
@@ -2256,7 +2319,7 @@ func (p *Parser) parseImportDeclarationOrImportEqualsDeclaration(pos int, jsdoc 
 	} else if identifier != nil && identifier.Text() == "defer" {
 		var shouldParseAsDeferModifier bool
 		if p.token == ast.KindFromKeyword {
-			shouldParseAsDeferModifier = !p.lookAhead((*Parser).nextTokenIsTokenStringLiteral)
+			shouldParseAsDeferModifier = !p.fixedLookAhead((*Parser).nextTokenIsTokenStringLiteral)
 		} else {
 			shouldParseAsDeferModifier = p.token != ast.KindCommaToken && p.token != ast.KindEqualsToken
 		}
@@ -2309,7 +2372,7 @@ func (p *Parser) parseImportEqualsDeclaration(pos int, jsdoc jsdocScannerInfo, m
 }
 
 func (p *Parser) parseModuleReference() *ast.Node {
-	if p.token == ast.KindRequireKeyword && p.lookAhead((*Parser).nextTokenIsOpenParen) {
+	if p.token == ast.KindRequireKeyword && p.fixedLookAhead((*Parser).nextTokenIsOpenParen) {
 		return p.parseExternalModuleReference()
 	}
 	return p.parseEntityName(false /*allowReservedWords*/, nil /*diagnosticMessage*/)
@@ -2730,7 +2793,7 @@ func (p *Parser) parsePostfixTypeOrHigher() *ast.Node {
 			typeNode = p.finishNode(p.factory.NewJSDocNonNullableType(typeNode), pos)
 		case ast.KindQuestionToken:
 			// If next token is start of a type we have a conditional type
-			if p.lookAhead((*Parser).nextIsStartOfType) {
+			if p.fixedLookAhead((*Parser).nextIsStartOfType) {
 				return typeNode
 			}
 			p.nextToken()
@@ -2771,13 +2834,17 @@ func (p *Parser) parseNonArrayType() *ast.Node {
 		return p.parseTypeReference()
 	case ast.KindAsteriskEqualsToken:
 		// If there is '*=', treat it as * followed by postfix =
+		start := p.scanner.TokenStart()
 		p.scanner.ReScanAsteriskEqualsToken()
+		p.recordScanWork(start)
 		fallthrough
 	case ast.KindAsteriskToken:
 		return p.parseJSDocAllType()
 	case ast.KindQuestionQuestionToken:
 		// If there is '??', treat it as prefix-'?' in JSDoc type.
+		start := p.scanner.TokenStart()
 		p.scanner.ReScanQuestionToken()
+		p.recordScanWork(start)
 		fallthrough
 	case ast.KindQuestionToken:
 		return p.parseJSDocNullableType()
@@ -2787,7 +2854,7 @@ func (p *Parser) parseNonArrayType() *ast.Node {
 		ast.KindFalseKeyword, ast.KindNullKeyword:
 		return p.parseLiteralTypeNode(false /*negative*/)
 	case ast.KindMinusToken:
-		if p.lookAhead((*Parser).nextTokenIsNumericOrBigIntLiteral) {
+		if p.fixedLookAhead((*Parser).nextTokenIsNumericOrBigIntLiteral) {
 			return p.parseLiteralTypeNode(true /*negative*/)
 		}
 		return p.parseTypeReference()
@@ -2800,12 +2867,12 @@ func (p *Parser) parseNonArrayType() *ast.Node {
 		}
 		return thisKeyword
 	case ast.KindTypeOfKeyword:
-		if p.lookAhead((*Parser).nextIsStartOfTypeOfImportType) {
+		if p.fixedLookAhead((*Parser).nextIsStartOfTypeOfImportType) {
 			return p.parseImportType()
 		}
 		return p.parseTypeQuery()
 	case ast.KindOpenBraceToken:
-		if p.lookAhead((*Parser).nextIsStartOfMappedType) {
+		if p.fixedLookAhead((*Parser).nextIsStartOfMappedType) {
 			return p.parseMappedType()
 		}
 		return p.parseTypeLiteral()
@@ -2816,7 +2883,7 @@ func (p *Parser) parseNonArrayType() *ast.Node {
 	case ast.KindImportKeyword:
 		return p.parseImportType()
 	case ast.KindAssertsKeyword:
-		if p.lookAhead((*Parser).nextTokenIsIdentifierOrKeywordOnSameLine) {
+		if p.fixedLookAhead((*Parser).nextTokenIsIdentifierOrKeywordOnSameLine) {
 			return p.parseAssertsTypePredicate()
 		}
 		return p.parseTypeReference()
@@ -2946,7 +3013,7 @@ func (p *Parser) parseRightSideOfDot(allowIdentifierNames bool, allowPrivateIden
 	// the code would be implicitly: "name.identifierOrKeyword; identifierNameOrKeyword".
 	// In the first case though, ASI will not take effect because there is not a
 	// line terminator after the identifier or keyword.
-	if p.hasPrecedingLineBreak() && tokenIsIdentifierOrKeyword(p.token) && p.lookAhead((*Parser).nextTokenIsIdentifierOrKeywordOnSameLine) {
+	if p.hasPrecedingLineBreak() && tokenIsIdentifierOrKeyword(p.token) && p.fixedLookAhead((*Parser).nextTokenIsIdentifierOrKeywordOnSameLine) {
 		// Report that we need an identifier.  However, report it right after the dot,
 		// and not on the next token.  This is because the next token might actually
 		// be an identifier and the error would be quite confusing.
@@ -2994,22 +3061,30 @@ func (p *Parser) parsePrivateIdentifier() *ast.Node {
 }
 
 func (p *Parser) reScanLessThanToken() ast.Kind {
+	start := p.scanner.TokenStart()
 	p.token = p.scanner.ReScanLessThanToken()
+	p.recordScanWork(start)
 	return p.token
 }
 
 func (p *Parser) reScanGreaterThanToken() ast.Kind {
+	start := p.scanner.TokenStart()
 	p.token = p.scanner.ReScanGreaterThanToken()
+	p.recordScanWork(start)
 	return p.token
 }
 
 func (p *Parser) reScanSlashToken() ast.Kind {
+	start := p.scanner.TokenStart()
 	p.token = p.scanner.ReScanSlashToken()
+	p.recordScanWork(start)
 	return p.token
 }
 
 func (p *Parser) reScanTemplateToken(isTaggedTemplate bool) ast.Kind {
+	start := p.scanner.TokenStart()
 	p.token = p.scanner.ReScanTemplateToken(isTaggedTemplate)
+	p.recordScanWork(start)
 	return p.token
 }
 
@@ -3183,7 +3258,7 @@ func (p *Parser) parseTypeMember() *ast.Node {
 	if p.token == ast.KindOpenParenToken || p.token == ast.KindLessThanToken {
 		return p.parseSignatureMember(ast.KindCallSignature)
 	}
-	if p.token == ast.KindNewKeyword && p.lookAhead((*Parser).nextTokenIsOpenParenOrLessThan) {
+	if p.token == ast.KindNewKeyword && p.fixedLookAhead((*Parser).nextTokenIsOpenParenOrLessThan) {
 		return p.parseSignatureMember(ast.KindConstructSignature)
 	}
 	pos := p.nodePos()
@@ -3517,7 +3592,7 @@ func (p *Parser) parseFunctionBlock(flags ParseFlags, diagnosticMessage *diagnos
 }
 
 func (p *Parser) isIndexSignature() bool {
-	return p.token == ast.KindOpenBracketToken && p.lookAhead((*Parser).nextIsUnambiguouslyIndexSignature)
+	return p.token == ast.KindOpenBracketToken && p.fixedLookAhead((*Parser).nextIsUnambiguouslyIndexSignature)
 }
 
 func (p *Parser) nextIsUnambiguouslyIndexSignature() bool {
@@ -3626,7 +3701,7 @@ func (p *Parser) parseTupleType() *ast.Node {
 }
 
 func (p *Parser) parseTupleElementNameOrTupleElementType() *ast.Node {
-	if p.lookAhead((*Parser).scanStartOfNamedTupleElement) {
+	if p.fixedLookAhead((*Parser).scanStartOfNamedTupleElement) {
 		pos := p.nodePos()
 		jsdoc := p.jsdocScannerInfo()
 		dotDotDotToken := p.parseOptionalToken(ast.KindDotDotDotToken)
@@ -3801,9 +3876,9 @@ func (p *Parser) parseFunctionOrConstructorTypeToError(isInUnionType bool, parse
 
 func (p *Parser) isStartOfFunctionTypeOrConstructorType() bool {
 	return p.token == ast.KindLessThanToken ||
-		p.token == ast.KindOpenParenToken && p.lookAhead((*Parser).nextIsUnambiguouslyStartOfFunctionType) ||
+		p.token == ast.KindOpenParenToken && p.memoizedLookAhead(lookaheadKindFunctionTypeStart, (*Parser).nextIsUnambiguouslyStartOfFunctionType) ||
 		p.token == ast.KindNewKeyword ||
-		p.token == ast.KindAbstractKeyword && p.lookAhead((*Parser).nextTokenIsNewKeyword)
+		p.token == ast.KindAbstractKeyword && p.fixedLookAhead((*Parser).nextTokenIsNewKeyword)
 }
 
 func (p *Parser) parseFunctionOrConstructorType() *ast.TypeNode {
@@ -3955,12 +4030,12 @@ func (p *Parser) tryParseModifier(hasSeenStaticModifier bool, permitConstAsModif
 	if p.token == ast.KindConstKeyword && permitConstAsModifier {
 		// We need to ensure that any subsequent modifiers appear on the same line
 		// so that when 'const' is a standalone declaration, we don't issue an error.
-		if !p.lookAhead((*Parser).nextTokenIsOnSameLineAndCanFollowModifier) {
+		if !p.fixedLookAhead((*Parser).nextTokenIsOnSameLineAndCanFollowModifier) {
 			return nil
 		} else {
 			p.nextToken()
 		}
-	} else if stopOnStartOfClassStaticBlock && p.token == ast.KindStaticKeyword && p.lookAhead((*Parser).nextTokenIsOpenBrace) {
+	} else if stopOnStartOfClassStaticBlock && p.token == ast.KindStaticKeyword && p.fixedLookAhead((*Parser).nextTokenIsOpenBrace) {
 		return nil
 	} else if hasSeenStaticModifier && p.token == ast.KindStaticKeyword {
 		return nil
@@ -3998,10 +4073,10 @@ func (p *Parser) nextTokenCanFollowModifier() bool {
 	case ast.KindExportKeyword:
 		p.nextToken()
 		if p.token == ast.KindDefaultKeyword {
-			return p.lookAhead((*Parser).nextTokenCanFollowDefaultKeyword)
+			return p.fixedLookAhead((*Parser).nextTokenCanFollowDefaultKeyword)
 		}
 		if p.token == ast.KindTypeKeyword {
-			return p.lookAhead((*Parser).nextTokenCanFollowExportModifier)
+			return p.fixedLookAhead((*Parser).nextTokenCanFollowExportModifier)
 		}
 		return p.canFollowExportModifier()
 	case ast.KindDefaultKeyword:
@@ -4022,9 +4097,9 @@ func (p *Parser) nextTokenCanFollowDefaultKeyword() bool {
 	case ast.KindClassKeyword, ast.KindFunctionKeyword, ast.KindInterfaceKeyword, ast.KindAtToken:
 		return true
 	case ast.KindAbstractKeyword:
-		return p.lookAhead((*Parser).nextTokenIsClassKeywordOnSameLine)
+		return p.fixedLookAhead((*Parser).nextTokenIsClassKeywordOnSameLine)
 	case ast.KindAsyncKeyword:
-		return p.lookAhead((*Parser).nextTokenIsFunctionKeywordOnSameLine)
+		return p.fixedLookAhead((*Parser).nextTokenIsFunctionKeywordOnSameLine)
 	}
 	return false
 }
@@ -4202,7 +4277,7 @@ func (p *Parser) isYieldExpression() bool {
 		// for now we just check if the next token is an identifier.  More heuristics
 		// can be added here later as necessary.  We just need to make sure that we
 		// don't accidentally consume something legal.
-		return p.lookAhead((*Parser).nextTokenIsIdentifierOrKeywordOrLiteralOnSameLine)
+		return p.fixedLookAhead((*Parser).nextTokenIsIdentifierOrKeywordOrLiteralOnSameLine)
 	}
 	return false
 }
@@ -4284,7 +4359,7 @@ func (p *Parser) nextIsParenthesizedArrowFunctionExpression() core.Tristate {
 		// Check for "(xxx yyy", where xxx is a modifier and yyy is an identifier. This
 		// isn't actually allowed, but we want to treat it as a lambda so we can provide
 		// a good error message.
-		if ast.IsModifierKind(second) && second != ast.KindAsyncKeyword && p.lookAhead((*Parser).nextTokenIsIdentifier) {
+		if ast.IsModifierKind(second) && second != ast.KindAsyncKeyword && p.fixedLookAhead((*Parser).nextTokenIsIdentifier) {
 			if p.nextToken() == ast.KindAsKeyword {
 				// https://github.com/microsoft/TypeScript/issues/44466
 				return core.TSFalse
@@ -4325,7 +4400,7 @@ func (p *Parser) nextIsParenthesizedArrowFunctionExpression() core.Tristate {
 		}
 		// JSX overrides
 		if p.languageVariant == core.LanguageVariantJSX {
-			isArrowFunctionInJsx := p.lookAhead(func(p *Parser) bool {
+			isArrowFunctionInJsx := p.fixedLookAhead(func(p *Parser) bool {
 				p.parseOptional(ast.KindConstKeyword)
 				third := p.nextToken()
 				if third == ast.KindExtendsKeyword {
@@ -4539,8 +4614,8 @@ func (p *Parser) parsePossibleParenthesizedArrowFunctionExpression(allowReturnTy
 }
 
 func (p *Parser) tryParseAsyncSimpleArrowFunctionExpression(allowReturnTypeInArrowFunction bool) *ast.Node {
-	// We do a check here so that we won't be doing unnecessarily call to "lookAhead"
-	if p.token == ast.KindAsyncKeyword && p.lookAhead((*Parser).nextIsUnParenthesizedAsyncArrowFunction) {
+	// Check the fixed token prefix before parsing the arrow function.
+	if p.token == ast.KindAsyncKeyword && p.fixedLookAhead((*Parser).nextIsUnParenthesizedAsyncArrowFunction) {
 		pos := p.nodePos()
 		jsdoc := p.jsdocScannerInfo()
 		asyncModifier := p.parseModifiersForArrowFunction()
@@ -4561,11 +4636,11 @@ func (p *Parser) nextIsUnParenthesizedAsyncArrowFunction() bool {
 		if p.hasPrecedingLineBreak() || p.token == ast.KindEqualsGreaterThanToken {
 			return false
 		}
-		// Check for un-parenthesized AsyncArrowFunction
-		expr := p.parseBinaryExpressionOrHigher(ast.OperatorPrecedenceLowest)
-		if !p.hasPrecedingLineBreak() && expr.Kind == ast.KindIdentifier && p.token == ast.KindEqualsGreaterThanToken {
-			return true
+		if !p.isIdentifier() {
+			return false
 		}
+		p.nextToken()
+		return !p.hasPrecedingLineBreak() && p.token == ast.KindEqualsGreaterThanToken
 	}
 	return false
 }
@@ -4752,7 +4827,7 @@ func (p *Parser) parseUpdateExpression() *ast.Expression {
 		operator := p.token
 		p.nextToken()
 		return p.finishNode(p.factory.NewPrefixUnaryExpression(operator, p.parseLeftHandSideExpressionOrHigher()), pos)
-	} else if p.languageVariant == core.LanguageVariantJSX && p.token == ast.KindLessThanToken && p.lookAhead((*Parser).nextTokenIsIdentifierOrKeywordOrGreaterThan) {
+	} else if p.languageVariant == core.LanguageVariantJSX && p.token == ast.KindLessThanToken && p.fixedLookAhead((*Parser).nextTokenIsIdentifierOrKeywordOrGreaterThan) {
 		// JSXElement is part of primaryExpression
 		return p.parseJsxElementOrSelfClosingElementOrFragment(true /*inExpressionContext*/, -1 /*topInvalidNodePosition*/, nil /*openingTag*/, false /*mustBeUnary*/)
 	}
@@ -4851,7 +4926,9 @@ func (p *Parser) parseJsxChildren(openingTag *ast.Expression) *ast.NodeList {
 	p.parsingContexts |= 1 << PCJsxChildren
 	var list []*ast.Node
 	for {
+		start := p.scanner.TokenStart()
 		currentToken := p.scanner.ReScanJsxToken(true /*allowMultilineJsxText*/)
+		p.recordScanWork(start)
 		child := p.parseJsxChild(openingTag, currentToken)
 		if child == nil {
 			break
@@ -4928,17 +5005,23 @@ func (p *Parser) parseJsxExpression(inExpressionContext bool) *ast.Node {
 }
 
 func (p *Parser) scanJsxText() ast.Kind {
+	start := p.scanner.TokenEnd()
 	p.token = p.scanner.ScanJsxToken()
+	p.recordScanWork(start)
 	return p.token
 }
 
 func (p *Parser) scanJsxIdentifier() ast.Kind {
+	start := p.scanner.TokenEnd()
 	p.token = p.scanner.ScanJsxIdentifier()
+	p.recordScanWork(start)
 	return p.token
 }
 
 func (p *Parser) scanJsxAttributeValue() ast.Kind {
+	start := p.scanner.TokenEnd()
 	p.token = p.scanner.ScanJsxAttributeValue()
+	p.recordScanWork(start)
 	return p.token
 }
 
@@ -5169,7 +5252,7 @@ func (p *Parser) isAwaitExpression() bool {
 			return true
 		}
 		// here we are using similar heuristics as 'isYieldExpression'
-		return p.lookAhead((*Parser).nextTokenIsIdentifierOrKeywordOrLiteralOnSameLine)
+		return p.fixedLookAhead((*Parser).nextTokenIsIdentifierOrKeywordOrLiteralOnSameLine)
 	}
 	return false
 }
@@ -5209,7 +5292,7 @@ func (p *Parser) parseLeftHandSideExpressionOrHigher() *ast.Expression {
 	pos := p.nodePos()
 	var expression *ast.Expression
 	if p.token == ast.KindImportKeyword {
-		if p.lookAhead((*Parser).nextTokenIsOpenParenOrLessThan) {
+		if p.fixedLookAhead((*Parser).nextTokenIsOpenParenOrLessThan) {
 			// We don't want to eagerly consume all import keyword as import call expression so we look ahead to find "("
 			// For example:
 			//      var foo3 = require("subfolder
@@ -5217,7 +5300,7 @@ func (p *Parser) parseLeftHandSideExpressionOrHigher() *ast.Expression {
 			// We want this import to be a statement rather than import call expression
 			p.sourceFlags |= ast.NodeFlagsPossiblyContainsDynamicImport
 			expression = p.parseKeywordExpression()
-		} else if p.lookAhead((*Parser).nextTokenIsDot) {
+		} else if p.fixedLookAhead((*Parser).nextTokenIsDot) {
 			// This is an 'import.*' metaproperty (i.e. 'import.meta')
 			p.nextToken() // advance past the 'import'
 			p.nextToken() // advance past the dot
@@ -5421,7 +5504,7 @@ func (p *Parser) parseMemberExpressionRest(pos int, expression *ast.Expression, 
 }
 
 func (p *Parser) isStartOfOptionalPropertyOrElementAccessChain() bool {
-	return p.token == ast.KindQuestionDotToken && p.lookAhead((*Parser).nextTokenIsIdentifierOrKeywordOrOpenBracketOrTemplate)
+	return p.token == ast.KindQuestionDotToken && p.fixedLookAhead((*Parser).nextTokenIsIdentifierOrKeywordOrOpenBracketOrTemplate)
 }
 
 func (p *Parser) nextTokenIsIdentifierOrKeywordOrOpenBracketOrTemplate() bool {
@@ -5612,7 +5695,7 @@ func (p *Parser) parsePrimaryExpression() *ast.Expression {
 		// Async arrow functions are parsed earlier in parseAssignmentExpressionOrHigher.
 		// If we encounter `async [no LineTerminator here] function` then this is an async
 		// function; otherwise, its an identifier.
-		if !p.lookAhead((*Parser).nextTokenIsFunctionKeywordOnSameLine) {
+		if !p.fixedLookAhead((*Parser).nextTokenIsFunctionKeywordOnSameLine) {
 			break
 		}
 		return p.parseFunctionExpression()
@@ -6237,7 +6320,7 @@ func (p *Parser) isStartOfStatement() bool {
 		ast.KindReadonlyKeyword:
 		// When these don't start a declaration, they may be the start of a class member if an identifier
 		// immediately follows. Otherwise they're an identifier in an expression statement.
-		return p.isStartOfDeclaration() || !p.lookAhead((*Parser).nextTokenIsIdentifierOrKeywordOnSameLine)
+		return p.isStartOfDeclaration() || !p.fixedLookAhead((*Parser).nextTokenIsIdentifierOrKeywordOnSameLine)
 
 	default:
 		return p.isStartOfExpression()
@@ -6245,19 +6328,51 @@ func (p *Parser) isStartOfStatement() bool {
 }
 
 func (p *Parser) isStartOfDeclaration() bool {
-	return p.lookAhead((*Parser).scanStartOfDeclaration)
+	key := p.lookaheadCacheKey(lookaheadKindDeclarationStart)
+	if result, ok := p.lookaheadCache[key]; ok {
+		return result
+	}
+
+	state := p.mark()
+	result, scannedPrefixes := p.scanStartOfDeclaration(nil)
+	p.rewind(state)
+
+	if scannedPrefixes >= 4 {
+		if p.lookaheadCache == nil {
+			p.lookaheadCache = make(map[lookaheadCacheKey]bool, scannedPrefixes)
+		}
+		state = p.mark()
+		p.scanStartOfDeclaration(&result)
+		p.rewind(state)
+	}
+	return result
 }
 
-func (p *Parser) scanStartOfDeclaration() bool {
+func (p *Parser) lookaheadCacheKey(kind lookaheadKind) lookaheadCacheKey {
+	return lookaheadCacheKey{
+		kind:         kind,
+		pos:          p.scanner.TokenStart(),
+		contextFlags: p.contextFlags,
+	}
+}
+
+func (p *Parser) scanStartOfDeclaration(cacheResult *bool) (bool, int) {
+	scannedPrefixes := 0
+	cache := func() {
+		scannedPrefixes++
+		if cacheResult != nil {
+			p.lookaheadCache[p.lookaheadCacheKey(lookaheadKindDeclarationStart)] = *cacheResult
+		}
+	}
 	for {
 		switch p.token {
 		case ast.KindVarKeyword, ast.KindLetKeyword, ast.KindConstKeyword, ast.KindFunctionKeyword, ast.KindClassKeyword,
 			ast.KindEnumKeyword:
-			return true
+			return true, scannedPrefixes
 		case ast.KindUsingKeyword:
-			return p.isUsingDeclaration()
+			return p.isUsingDeclaration(), scannedPrefixes
 		case ast.KindAwaitKeyword:
-			return p.isAwaitUsingDeclaration()
+			return p.isAwaitUsingDeclaration(), scannedPrefixes
 		// 'declare', 'module', 'namespace', 'interface'* and 'type' are all legal JavaScript identifiers;
 		// however, an identifier cannot be followed by another identifier on the same line. This is what we
 		// count on to parse out the respective declarations. For instance, we exploit this to say that
@@ -6280,45 +6395,48 @@ func (p *Parser) scanStartOfDeclaration() bool {
 		//
 		// could be legal, it would add complexity for very little gain.
 		case ast.KindInterfaceKeyword, ast.KindTypeKeyword, ast.KindDeferKeyword:
-			return p.nextTokenIsIdentifierOnSameLine()
+			return p.nextTokenIsIdentifierOnSameLine(), scannedPrefixes
 		case ast.KindModuleKeyword, ast.KindNamespaceKeyword:
-			return p.nextTokenIsIdentifierOrStringLiteralOnSameLine()
+			return p.nextTokenIsIdentifierOrStringLiteralOnSameLine(), scannedPrefixes
 		case ast.KindAbstractKeyword, ast.KindAccessorKeyword, ast.KindAsyncKeyword, ast.KindDeclareKeyword, ast.KindPrivateKeyword,
 			ast.KindProtectedKeyword, ast.KindPublicKeyword, ast.KindReadonlyKeyword:
+			cache()
 			previousToken := p.token
 			p.nextToken()
 			// ASI takes effect for this modifier.
 			if p.hasPrecedingLineBreak() {
-				return false
+				return false, scannedPrefixes
 			}
 			if previousToken == ast.KindDeclareKeyword && p.token == ast.KindTypeKeyword {
 				// If we see 'declare type', then commit to parsing a type alias. parseTypeAliasDeclaration will
 				// report Line_break_not_permitted_here if needed.
-				return true
+				return true, scannedPrefixes
 			}
 			continue
 		case ast.KindGlobalKeyword:
 			p.nextToken()
-			return p.token == ast.KindOpenBraceToken || p.token == ast.KindIdentifier || p.token == ast.KindExportKeyword
+			return p.token == ast.KindOpenBraceToken || p.token == ast.KindIdentifier || p.token == ast.KindExportKeyword, scannedPrefixes
 		case ast.KindImportKeyword:
 			p.nextToken()
-			return p.token == ast.KindDeferKeyword || p.token == ast.KindStringLiteral || p.token == ast.KindAsteriskToken || p.token == ast.KindOpenBraceToken || tokenIsIdentifierOrKeyword(p.token)
+			return p.token == ast.KindDeferKeyword || p.token == ast.KindStringLiteral || p.token == ast.KindAsteriskToken || p.token == ast.KindOpenBraceToken || tokenIsIdentifierOrKeyword(p.token), scannedPrefixes
 		case ast.KindExportKeyword:
+			cache()
 			p.nextToken()
 			if p.token == ast.KindEqualsToken || p.token == ast.KindAsteriskToken || p.token == ast.KindOpenBraceToken ||
 				p.token == ast.KindDefaultKeyword || p.token == ast.KindAsKeyword || p.token == ast.KindAtToken {
-				return true
+				return true, scannedPrefixes
 			}
 			if p.token == ast.KindTypeKeyword {
 				p.nextToken()
-				return p.token == ast.KindAsteriskToken || p.token == ast.KindOpenBraceToken || p.isIdentifier() && !p.hasPrecedingLineBreak()
+				return p.token == ast.KindAsteriskToken || p.token == ast.KindOpenBraceToken || p.isIdentifier() && !p.hasPrecedingLineBreak(), scannedPrefixes
 			}
 			continue
 		case ast.KindStaticKeyword:
+			cache()
 			p.nextToken()
 			continue
 		}
-		return false
+		return false, scannedPrefixes
 	}
 }
 
@@ -6372,11 +6490,11 @@ func (p *Parser) isStartOfType(inStartOfParameter bool) bool {
 	case ast.KindFunctionKeyword:
 		return !inStartOfParameter
 	case ast.KindMinusToken:
-		return !inStartOfParameter && p.lookAhead((*Parser).nextTokenIsNumericOrBigIntLiteral)
+		return !inStartOfParameter && p.fixedLookAhead((*Parser).nextTokenIsNumericOrBigIntLiteral)
 	case ast.KindOpenParenToken:
 		// Only consider '(' the start of a type if followed by ')', '...', an identifier, a modifier,
 		// or something that starts a type. We don't want to consider things like '(1)' a type.
-		return !inStartOfParameter && p.lookAhead((*Parser).nextIsParenthesizedOrFunctionType)
+		return !inStartOfParameter && p.isParenthesizedOrFunctionTypeStart()
 	}
 	return p.isIdentifier()
 }
@@ -6386,9 +6504,41 @@ func (p *Parser) nextTokenIsNumericOrBigIntLiteral() bool {
 	return p.token == ast.KindNumericLiteral || p.token == ast.KindBigIntLiteral
 }
 
-func (p *Parser) nextIsParenthesizedOrFunctionType() bool {
-	p.nextToken()
-	return p.token == ast.KindCloseParenToken || p.isStartOfParameter(false /*isJSDocParameter*/) || p.isStartOfType(false /*inStartOfParameter*/)
+func (p *Parser) isParenthesizedOrFunctionTypeStart() bool {
+	key := p.lookaheadCacheKey(lookaheadKindParenthesizedTypeStart)
+	if result, ok := p.lookaheadCache[key]; ok {
+		return result
+	}
+
+	state := p.mark()
+	var result bool
+	scannedPrefixes := 0
+	for {
+		scannedPrefixes++
+		p.nextToken()
+		if p.token == ast.KindCloseParenToken || p.isStartOfParameter(false /*isJSDocParameter*/) {
+			result = true
+			break
+		}
+		if p.token != ast.KindOpenParenToken {
+			result = p.isStartOfType(false /*inStartOfParameter*/)
+			break
+		}
+	}
+	p.rewind(state)
+
+	if scannedPrefixes >= 4 {
+		if p.lookaheadCache == nil {
+			p.lookaheadCache = make(map[lookaheadCacheKey]bool, scannedPrefixes)
+		}
+		state = p.mark()
+		for range scannedPrefixes {
+			p.lookaheadCache[p.lookaheadCacheKey(lookaheadKindParenthesizedTypeStart)] = result
+			p.nextToken()
+		}
+		p.rewind(state)
+	}
+	return result
 }
 
 func (p *Parser) isStartOfParameter(isJSDocParameter bool) bool {
@@ -6404,7 +6554,7 @@ func (p *Parser) isBindingIdentifierOrPrivateIdentifierOrPattern() bool {
 }
 
 func (p *Parser) isNextTokenOpenParenOrLessThanOrDot() bool {
-	return p.lookAhead((*Parser).nextTokenIsOpenParenOrLessThanOrDot)
+	return p.fixedLookAhead((*Parser).nextTokenIsOpenParenOrLessThanOrDot)
 }
 
 func (p *Parser) nextTokenIsOpenParenOrLessThanOrDot() bool {
@@ -6457,7 +6607,7 @@ func (p *Parser) isBinaryOperator() bool {
 }
 
 func (p *Parser) isValidHeritageClauseObjectLiteral() bool {
-	return p.lookAhead((*Parser).nextIsValidHeritageClauseObjectLiteral)
+	return p.fixedLookAhead((*Parser).nextIsValidHeritageClauseObjectLiteral)
 }
 
 func (p *Parser) nextIsValidHeritageClauseObjectLiteral() bool {
@@ -6480,7 +6630,7 @@ func (p *Parser) isHeritageClause() bool {
 }
 
 func (p *Parser) isHeritageClauseExtendsOrImplementsKeyword() bool {
-	return p.isHeritageClause() && p.lookAhead((*Parser).nextIsStartOfExpression)
+	return p.isHeritageClause() && p.fixedLookAhead((*Parser).nextIsStartOfExpression)
 }
 
 func (p *Parser) nextIsStartOfExpression() bool {
@@ -6492,7 +6642,7 @@ func (p *Parser) isUsingDeclaration() bool {
 	// 'using' always starts a lexical declaration if followed by an identifier. We also eagerly parse
 	// |ObjectBindingPattern| so that we can report a grammar error during check. We don't parse out
 	// |ArrayBindingPattern| since it potentially conflicts with element access (i.e., `using[x]`).
-	return p.lookAhead(func(p *Parser) bool {
+	return p.fixedLookAhead(func(p *Parser) bool {
 		return p.nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLine( /*disallowOf*/ false)
 	})
 }
@@ -6505,7 +6655,7 @@ func (p *Parser) nextTokenIsEqualsOrSemicolonOrColonToken() bool {
 func (p *Parser) nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLine(disallowOf bool) bool {
 	p.nextToken()
 	if disallowOf && p.token == ast.KindOfKeyword {
-		return p.lookAhead((*Parser).nextTokenIsEqualsOrSemicolonOrColonToken)
+		return p.fixedLookAhead((*Parser).nextTokenIsEqualsOrSemicolonOrColonToken)
 	}
 	return (p.isBindingIdentifier() || p.token == ast.KindOpenBraceToken) && !p.hasPrecedingLineBreak()
 }
@@ -6515,7 +6665,7 @@ func (p *Parser) nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLineDis
 }
 
 func (p *Parser) isAwaitUsingDeclaration() bool {
-	return p.lookAhead((*Parser).nextIsUsingKeywordThenBindingIdentifierOrStartOfObjectDestructuringOnSameLine)
+	return p.fixedLookAhead((*Parser).nextIsUsingKeywordThenBindingIdentifierOrStartOfObjectDestructuringOnSameLine)
 }
 
 func (p *Parser) nextIsUsingKeywordThenBindingIdentifierOrStartOfObjectDestructuringOnSameLine() bool {

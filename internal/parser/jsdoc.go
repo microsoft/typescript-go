@@ -404,7 +404,7 @@ func removeTrailingWhitespace(comments []string) []string {
 }
 
 func (p *Parser) isNextNonwhitespaceTokenEndOfFile() bool {
-	// We must use infinite lookahead, as there could be any number of newlines :(
+	// This may scan the rest of the comment, so callers memoize the result by position.
 	for {
 		p.nextTokenJSDoc()
 		if p.token == ast.KindEndOfFile {
@@ -418,7 +418,7 @@ func (p *Parser) isNextNonwhitespaceTokenEndOfFile() bool {
 
 func (p *Parser) skipWhitespace() {
 	if p.token == ast.KindWhitespaceTrivia || p.token == ast.KindNewLineTrivia {
-		if p.lookAhead((*Parser).isNextNonwhitespaceTokenEndOfFile) {
+		if p.memoizedLookAhead(lookaheadKindJSDocWhitespaceEOF, (*Parser).isNextNonwhitespaceTokenEndOfFile) {
 			return
 			// Don't skip whitespace prior to EoF (or end of comment) - that shouldn't be included in any node's range
 		}
@@ -430,7 +430,7 @@ func (p *Parser) skipWhitespace() {
 
 func (p *Parser) skipWhitespaceOrAsterisk() string {
 	if p.token == ast.KindWhitespaceTrivia || p.token == ast.KindNewLineTrivia {
-		if p.lookAhead((*Parser).isNextNonwhitespaceTokenEndOfFile) {
+		if p.memoizedLookAhead(lookaheadKindJSDocWhitespaceEOF, (*Parser).isNextNonwhitespaceTokenEndOfFile) {
 			return ""
 			// Don't skip whitespace prior to EoF (or end of comment) - that shouldn't be included in any node's range
 		}
@@ -753,7 +753,9 @@ func (p *Parser) parseJSDocLinkName() *ast.Node {
 			name = p.finishNode(p.factory.NewQualifiedName(name, right), pos)
 		}
 		for p.token == ast.KindPrivateIdentifier {
+			start := p.scanner.TokenStart()
 			p.scanner.ReScanHashToken()
+			p.recordScanWork(start)
 			p.nextTokenJSDoc()
 			name = p.finishNode(p.factory.NewQualifiedName(name, p.parseIdentifier()), pos)
 		}
@@ -838,7 +840,7 @@ func (p *Parser) parseParameterOrPropertyTag(start int, tagName *ast.IdentifierN
 	name, isBracketed := p.parseBracketNameInPropertyAndParamTag(target)
 	indentText := p.skipWhitespaceOrAsterisk()
 
-	if isNameFirst && p.lookAhead(func(p *Parser) bool { _, ok := p.parseJSDocLinkPrefix(); return !ok }) {
+	if isNameFirst && p.fixedLookAhead(func(p *Parser) bool { _, ok := p.parseJSDocLinkPrefix(); return !ok }) {
 		typeExpression = p.tryParseTypeExpression()
 	}
 
@@ -906,7 +908,7 @@ func (p *Parser) parseTypeTag(previousTags []*ast.Node, start int, tagName *ast.
 
 func (p *Parser) parseSeeTag(start int, tagName *ast.IdentifierNode, indent int, indentText string) *ast.Node {
 	hasNameReference := p.isIdentifier() && !strings.HasPrefix(p.sourceText[p.scanner.TokenEnd():], "://") ||
-		p.token == ast.KindOpenBraceToken && p.lookAhead((*Parser).nextTokenIsIdentifierOrKeyword)
+		p.token == ast.KindOpenBraceToken && p.fixedLookAhead((*Parser).nextTokenIsIdentifierOrKeyword)
 	var nameExpression *ast.Node
 	if hasNameReference {
 		nameExpression = p.parseJSDocNameReference()
