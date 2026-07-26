@@ -50,9 +50,6 @@ func convertibleDeclaration(node *ast.Node) bool {
 
 // getInferReturnTypeCodeActions provides the "Infer Return Type" refactoring action.
 func getInferReturnTypeCodeActions(ctx context.Context, refactorContext *RefactorContext, refactorID string) ([]*CodeAction, error) {
-	ch, done := refactorContext.Program.GetTypeCheckerForFile(ctx, refactorContext.SourceFile)
-	defer done()
-
 	if ast.IsInJSFile(refactorContext.SourceFile.AsNode()) {
 		return nil, nil
 	}
@@ -63,6 +60,9 @@ func getInferReturnTypeCodeActions(ctx context.Context, refactorContext *Refacto
 	if declaration == nil || !hasBody(declaration) || declaration.Type() != nil {
 		return nil, nil
 	}
+
+	ch, done := refactorContext.Program.GetTypeCheckerForFile(ctx, refactorContext.SourceFile)
+	defer done()
 
 	typeNode := getInferredReturnTypeNode(ch, declaration, refactorContext.SourceFile)
 	if typeNode == nil {
