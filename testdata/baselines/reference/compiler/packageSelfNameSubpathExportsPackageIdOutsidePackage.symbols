@@ -1,0 +1,61 @@
+//// [tests/cases/compiler/packageSelfNameSubpathExportsPackageIdOutsidePackage.ts] ////
+
+=== /very/long/package/dist/get.d.ts ===
+export declare function get(object: any, path: string, defaultValue?: any): any;
+>get : Symbol(get, Decl(get.d.ts, 0, 0))
+>object : Symbol(object, Decl(get.d.ts, 0, 28))
+>path : Symbol(path, Decl(get.d.ts, 0, 40))
+>defaultValue : Symbol(defaultValue, Decl(get.d.ts, 0, 54))
+
+=== /very/long/package/dist/set.d.ts ===
+export declare function set<T>(object: T, path: string, value: any): T;
+>set : Symbol(set, Decl(set.d.ts, 0, 0))
+>T : Symbol(T, Decl(set.d.ts, 0, 28))
+>object : Symbol(object, Decl(set.d.ts, 0, 31))
+>T : Symbol(T, Decl(set.d.ts, 0, 28))
+>path : Symbol(path, Decl(set.d.ts, 0, 41))
+>value : Symbol(value, Decl(set.d.ts, 0, 55))
+>T : Symbol(T, Decl(set.d.ts, 0, 28))
+
+=== /src/get.ts ===
+export function get(object: any, path: string, defaultValue?: any): any {
+>get : Symbol(get, Decl(get.ts, 0, 0))
+>object : Symbol(object, Decl(get.ts, 0, 20))
+>path : Symbol(path, Decl(get.ts, 0, 32))
+>defaultValue : Symbol(defaultValue, Decl(get.ts, 0, 46))
+
+    return defaultValue;
+>defaultValue : Symbol(defaultValue, Decl(get.ts, 0, 46))
+}
+
+=== /src/set.ts ===
+export function set<T>(object: T, path: string, value: any): T {
+>get : Symbol(get, Decl(get.ts, 0, 0))
+>object : Symbol(object, Decl(get.ts, 0, 20))
+>path : Symbol(path, Decl(get.ts, 0, 32))
+>defaultValue : Symbol(defaultValue, Decl(get.ts, 0, 46))
+
+    return object;
+>defaultValue : Symbol(defaultValue, Decl(get.ts, 0, 46))
+}
+
+=== /very/long/package/main.ts ===
+import { get } from "self/get";
+>get : Symbol(get, Decl(main.ts, 0, 8))
+
+import { set } from "self/set";
+>set : Symbol(set, Decl(main.ts, 1, 8))
+
+declare const obj: { a: { b: number } };
+>obj : Symbol(obj, Decl(main.ts, 3, 13))
+>a : Symbol(a, Decl(main.ts, 3, 20))
+>b : Symbol(b, Decl(main.ts, 3, 25))
+
+get(obj, "a.b");
+>get : Symbol(get, Decl(main.ts, 0, 8))
+>obj : Symbol(obj, Decl(main.ts, 3, 13))
+
+set(obj, "a.b");
+>set : Symbol(set, Decl(main.ts, 1, 8))
+>obj : Symbol(obj, Decl(main.ts, 3, 13))
+

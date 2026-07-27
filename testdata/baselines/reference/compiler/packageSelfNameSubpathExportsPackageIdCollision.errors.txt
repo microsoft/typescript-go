@@ -1,0 +1,43 @@
+error TS5055: Cannot write file '/dist/get.d.ts' because it would overwrite input file.
+  Adding a tsconfig.json file will help organize projects that contain both TypeScript and JavaScript files. Learn more at https://aka.ms/tsconfig.
+/main.ts(2,10): error TS2305: Module '"self/get"' has no exported member 'set'.
+
+
+!!! error TS5055: Cannot write file '/dist/get.d.ts' because it would overwrite input file.
+!!! error TS5055:   Adding a tsconfig.json file will help organize projects that contain both TypeScript and JavaScript files. Learn more at https://aka.ms/tsconfig.
+==== /dist/get.d.ts (0 errors) ====
+    export declare function get(object: any, path: string, defaultValue?: any): any;
+    
+==== /dist/set.d.ts (0 errors) ====
+    export declare function set<T>(object: T, path: string, value: any): T;
+    
+==== /get.ts (0 errors) ====
+    export function get(object: any, path: string, defaultValue?: any): any {
+        return defaultValue;
+    }
+    
+==== /set.ts (0 errors) ====
+    export function set<T>(object: T, path: string, value: any): T {
+        return object;
+    }
+    
+==== /main.ts (1 errors) ====
+    import { get } from "self/get";
+    import { set } from "self/set";
+             ~~~
+!!! error TS2305: Module '"self/get"' has no exported member 'set'.
+    
+    declare const obj: { a: { b: number } };
+    get(obj, "a.b");
+    set(obj, "a.b");
+    
+==== /package.json (0 errors) ====
+    {
+        "name": "self",
+        "version": "1.0.0",
+        "exports": {
+            "./get": "./dist/get.d.ts",
+            "./set": "./dist/set.d.ts"
+        }
+    }
+    
