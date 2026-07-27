@@ -227,8 +227,11 @@ func (p *Parser) parseJSONText() *ast.SourceFile {
 }
 
 func getErrorSpanForNode(sourceText string, node *ast.Node) core.TextRange {
-	pos := scanner.SkipTrivia(sourceText, node.Pos())
-	return core.NewTextRange(min(pos, node.End()), max(pos, node.End()))
+	pos := node.Pos()
+	if !ast.NodeIsMissing(node) {
+		pos = scanner.SkipTrivia(sourceText, pos)
+	}
+	return core.NewTextRange(pos, node.End())
 }
 
 func (p *Parser) validateJsonValue(sourceFile *ast.SourceFile, valueExpression *ast.Expression) {
