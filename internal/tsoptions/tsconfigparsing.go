@@ -261,7 +261,13 @@ func parseOwnConfigOfJsonSourceFile(
 			onPropertySet,
 		},
 	)
-	errors = append(errors, err...)
+	for _, diagnostic := range err {
+		if !slices.ContainsFunc(sourceFile.Diagnostics(), func(parseDiagnostic *ast.Diagnostic) bool {
+			return parseDiagnostic.Code() == diagnostic.Code() && parseDiagnostic.Pos() == diagnostic.Pos()
+		}) {
+			errors = append(errors, diagnostic)
+		}
+	}
 	// if len(rootCompilerOptions) != 0  && json != nil && json.CompilerOptions != nil {
 	//    errors = append(errors, ast.NewDiagnostic(sourceFile, rootCompilerOptions[0], diagnostics.X_0_should_be_set_inside_the_compilerOptions_object_of_the_config_json_file))
 	// }
