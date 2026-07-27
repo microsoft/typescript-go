@@ -235,6 +235,8 @@ func parseOwnConfigOfJsonSourceFile(
 							propertyAssignment.Name(),
 							sourceFile,
 							nil, /*alternateMode*/
+							nil, /*unknownDidYouMeanDiagnostic*/
+							nil, /*optionsNameMap*/
 						))
 					}
 				} else {
@@ -647,12 +649,7 @@ func convertOptionsFromJson[O optionParser](optionsNameMap CommandLineOptionName
 			continue
 		}
 		if opt == nil {
-			possibleOption := optionsNameMap.GetSpellingSuggestion(key)
-			if possibleOption != nil {
-				errors = append(errors, CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(nil, nil, result.UnknownDidYouMeanDiagnostic(), key, possibleOption.Name))
-			} else {
-				errors = append(errors, createUnknownOptionError(key, result.UnknownOptionDiagnostic(), "", nil, nil, nil))
-			}
+			errors = append(errors, createUnknownOptionError(key, result.UnknownOptionDiagnostic(), "", nil, nil, nil, result.UnknownDidYouMeanDiagnostic(), optionsNameMap))
 			continue
 		}
 
