@@ -141,15 +141,6 @@ function generateHeader(w: CodeWriter) {
 
 /**
  * Verifies that nothing inherits a base along more than one path.
- *
- * A Go embedded base is real storage, not interface inheritance, so a base reached twice
- * is stored twice. Go resolves promoted selectors to the shallowest copy, which means the
- * duplicate compiles and "works" while wasting memory and leaving a zero-valued shadow
- * copy that any explicitly-qualified access would silently read.
- *
- * Fix violations in ast.json rather than here. If the redundant `extends` edge exists only
- * to brand the generated TypeScript interface, drop the edge and give the base a `brand`
- * instead: that keeps the interface identical without contributing Go storage.
  */
 function verifyNoDuplicateBases(): void {
     const problems: string[] = [];
@@ -176,10 +167,6 @@ function verifyNoDuplicateBases(): void {
 
 /**
  * Verifies that the inheritance path containing NodeBase is embedded first.
- *
- * NodeDefault.AsNode relies on the embedded Node being at offset zero in every concrete
- * node struct. It is not enough for NodeBase to be reachable exactly once: any base stored
- * before that path shifts Node away from the start of the struct.
  */
 function verifyNodeBaseAtOffsetZero(): void {
     const containsNodeBase = (key: string): boolean => {
