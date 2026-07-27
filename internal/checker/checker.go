@@ -7300,7 +7300,7 @@ func (c *Checker) checkUnusedTypeParameters(node *ast.Node) {
 	} else {
 		for _, typeParameter := range typeParameterList.Nodes {
 			if c.isUnreferencedTypeParameter(typeParameter) {
-				c.reportUnused(node, UnusedKindParameter, NewDiagnosticForNode(typeParameter, diagnostics.X_0_is_declared_but_never_used, typeParameter.Name().Text()))
+				c.reportUnused(node, UnusedKindParameter, NewDiagnosticForNode(typeParameter, diagnostics.X_0_is_declared_but_its_value_is_never_read, typeParameter.Name().Text()))
 			}
 		}
 	}

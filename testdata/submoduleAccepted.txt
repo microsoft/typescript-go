@@ -500,14 +500,9 @@ compiler/unusedTypeParameterInLambda3.errors.txt.diff
 compiler/unusedTypeParameterInInterface1.errors.txt.diff
 compiler/unusedTypeParameterInInterface2.errors.txt.diff
 compiler/unusedTypeParameters1.errors.txt.diff
-compiler/unusedTypeParameters2.errors.txt.diff
-compiler/unusedTypeParameters3.errors.txt.diff
-compiler/unusedTypeParameters4.errors.txt.diff
-compiler/unusedTypeParameters5.errors.txt.diff
 compiler/unusedTypeParameters10.errors.txt.diff
 compiler/unusedTypeParameters_infer.errors.txt.diff
 compiler/unusedTypeParameters_templateTag.errors.txt.diff
-compiler/unusedTypeParametersWithUnderscore.errors.txt.diff
 compiler/unusedTypeParametersCheckedByNoUnusedParameters.errors.txt.diff
 compiler/noUnusedLocals_typeParameterMergedWithParameter.errors.txt.diff
 compiler/unusedIdentifiersConsolidated1.errors.txt.diff
