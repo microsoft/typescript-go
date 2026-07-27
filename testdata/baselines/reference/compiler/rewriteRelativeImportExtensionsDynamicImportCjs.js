@@ -33,7 +33,7 @@ var __rewriteRelativeImportExtension = (this && this.__rewriteRelativeImportExte
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const specifier_cjs_1 = require("./specifier.cjs");
-import(__rewriteRelativeImportExtension(getSpecifier()));
+import(__rewriteRelativeImportExtension((0, specifier_cjs_1.getSpecifier)()));
 //// [target.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
