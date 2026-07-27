@@ -236,13 +236,19 @@ func (b *NodeBuilderImpl) checkTypeExpandability(t *Type) {
 	}
 	// Push t onto the type stack so shouldExpandType's cycle detection works correctly.
 	b.ctx.typeStack = append(b.ctx.typeStack, t)
+	defer func() {
+		b.ctx.typeStack = b.ctx.typeStack[:len(b.ctx.typeStack)-1]
+	}()
+	// If t is an ancestor in the current expansion, return early to avoid unbounded recursion.
+	if b.isTypeOnStack(t) {
+		return
+	}
 	if t.alias != nil {
 		b.shouldExpandType(t, true)
 	}
 	if !b.ctx.canIncreaseExpansionDepth {
 		b.shouldExpandType(t, false)
 	}
-	b.ctx.typeStack = b.ctx.typeStack[:len(b.ctx.typeStack)-1]
 	if b.ctx.canIncreaseExpansionDepth {
 		return
 	}
@@ -497,7 +503,7 @@ func (b *NodeBuilderImpl) canReuseExistingJSTypeNode(existing *ast.TypeNode, t *
 }
 
 func (b *NodeBuilderImpl) tryGetResolvedSymbolFromTypeNode(node *ast.Node) *ast.Symbol {
-	if node == nil {
+	if node == nil || node.Parent == nil {
 		return nil
 	}
 	b.ch.getTypeFromTypeNode(node)
@@ -2154,7 +2160,15 @@ func (b *NodeBuilderImpl) indexInfoToIndexSignatureDeclarationHelper(indexInfo *
 }
 
 func hasTypeAnnotation(declaration *ast.Declaration) bool {
-	return declaration != nil && declaration.Type() != nil
+	if declaration == nil || declaration.Type() == nil {
+		return false
+	}
+	// Type alias declarations have a .Type() that is their type definition, not a type annotation on a value.
+	// Exclude them so callers don't mistake them for annotated value declarations.
+	if ast.IsTypeAliasDeclaration(declaration) || ast.IsJSTypeAliasDeclaration(declaration) {
+		return false
+	}
+	return true
 }
 
 /**
@@ -2857,6 +2871,9 @@ func (b *NodeBuilderImpl) createAnonymousTypeNodeEx(t *Type, forceClassExpansion
 
 func (b *NodeBuilderImpl) getTypeFromTypeNode(node *ast.TypeNode, noMappedTypes bool) *Type {
 	// !!! noMappedTypes optional param support
+	if node.Parent == nil {
+		return b.ch.errorType
+	}
 	t := b.ch.getTypeFromTypeNode(node)
 	if b.ctx.mapper == nil {
 		return t
