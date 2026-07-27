@@ -2378,6 +2378,16 @@ type PatternAmbientModule struct {
 	Symbol  *Symbol
 }
 
+// AttributedAmbientModule records an ambient module declaration keyed on import
+// attributes, e.g. `declare module "*" with { type: "text" } { ... }`
+// (proposal: microsoft/TypeScript#46135). Unlike a plain ambient/pattern module,
+// it is only consulted when an import specifies matching attributes.
+type AttributedAmbientModule struct {
+	Pattern    core.Pattern
+	Attributes *Node // ImportAttributes node from the `with { ... }` clause
+	Symbol     *Symbol
+}
+
 type CommentDirectiveKind int32
 
 const (
@@ -2519,6 +2529,7 @@ type SourceFile struct {
 	SymbolCount               int
 	ClassifiableNames         collections.Set[string]
 	PatternAmbientModules     []*PatternAmbientModule
+	AttributedAmbientModules  []*AttributedAmbientModule
 	GlobalExports             SymbolTable
 
 	// Fields set by ECMALineMap
