@@ -485,30 +485,6 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	ast.SetExternalModuleIndicator(result, p.opts.ExternalModuleIndicatorOptions)
 }
 
-func init() {
-	ast.SetCollectIdentifiersForSourceFile(collectIdentifiersForSourceFile)
-}
-
-func collectIdentifiersForSourceFile(sourceFile *ast.SourceFile) collections.Set[string] {
-	var identifiers collections.Set[string]
-	var collect func(*ast.Node) bool
-	collect = func(node *ast.Node) bool {
-		switch node.Kind {
-		case ast.KindIdentifier,
-			ast.KindPrivateIdentifier,
-			ast.KindStringLiteral,
-			ast.KindNumericLiteral,
-			ast.KindBigIntLiteral,
-			ast.KindNoSubstitutionTemplateLiteral:
-			identifiers.Add(node.Text())
-		}
-		node.ForEachChild(collect)
-		return false
-	}
-	collect(sourceFile.AsNode())
-	return identifiers
-}
-
 func (p *Parser) createJSDocCache() map[*ast.Node][]*ast.Node {
 	if len(p.jsdocInfos) == 0 {
 		return nil

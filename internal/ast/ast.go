@@ -18,18 +18,9 @@ import (
 // It is set by the parser package via init().
 var parseJSDocForNode func(*SourceFile, *Node) []*Node
 
-// collectIdentifiersForSourceFile is the package-level function for lazily collecting identifiers.
-// It is set by the parser package via init().
-var collectIdentifiersForSourceFile func(*SourceFile) collections.Set[string]
-
 // SetParseJSDocForNode registers the lazy JSDoc parse function. Called from parser's init().
 func SetParseJSDocForNode(fn func(*SourceFile, *Node) []*Node) {
 	parseJSDocForNode = fn
-}
-
-// SetCollectIdentifiersForSourceFile registers the lazy identifier collection function. Called from parser's init().
-func SetCollectIdentifiersForSourceFile(fn func(*SourceFile) collections.Set[string]) {
-	collectIdentifiersForSourceFile = fn
 }
 
 // Visitor
@@ -2580,6 +2571,26 @@ func (file *SourceFile) HasIdentifier(name string) bool {
 		file.identifiers = collectIdentifiersForSourceFile(file)
 	})
 	return file.identifiers.Has(name)
+}
+
+func collectIdentifiersForSourceFile(sourceFile *SourceFile) collections.Set[string] {
+	var identifiers collections.Set[string]
+	var collect func(*Node) bool
+	collect = func(node *Node) bool {
+		switch node.Kind {
+		case KindIdentifier,
+			KindPrivateIdentifier,
+			KindStringLiteral,
+			KindNumericLiteral,
+			KindBigIntLiteral,
+			KindNoSubstitutionTemplateLiteral:
+			identifiers.Add(node.Text())
+		}
+		node.ForEachChild(collect)
+		return false
+	}
+	collect(sourceFile.AsNode())
+	return identifiers
 }
 
 func (node *SourceFile) FileName() string {
