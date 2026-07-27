@@ -1,4 +1,4 @@
-//// [tests/cases/compiler/lazySourceFileIdentifiers.ts] ////
+//// [tests/cases/compiler/importHelpersWithOriginalSourceFileCollision.ts] ////
 
 //// [index.ts]
 declare const dec: ClassDecorator;
