@@ -1,9 +1,13 @@
 error TS5055: Cannot write file '/dist/get.d.ts' because it would overwrite input file.
   Adding a tsconfig.json file will help organize projects that contain both TypeScript and JavaScript files. Learn more at https://aka.ms/tsconfig.
-/main.ts(2,10): error TS2305: Module '"self/get"' has no exported member 'set'.
+error TS5055: Cannot write file '/dist/set.d.ts' because it would overwrite input file.
+  Adding a tsconfig.json file will help organize projects that contain both TypeScript and JavaScript files. Learn more at https://aka.ms/tsconfig.
+/main.ts(6,1): error TS2554: Expected 3 arguments, but got 2.
 
 
 !!! error TS5055: Cannot write file '/dist/get.d.ts' because it would overwrite input file.
+!!! error TS5055:   Adding a tsconfig.json file will help organize projects that contain both TypeScript and JavaScript files. Learn more at https://aka.ms/tsconfig.
+!!! error TS5055: Cannot write file '/dist/set.d.ts' because it would overwrite input file.
 !!! error TS5055:   Adding a tsconfig.json file will help organize projects that contain both TypeScript and JavaScript files. Learn more at https://aka.ms/tsconfig.
 ==== /dist/get.d.ts (0 errors) ====
     export declare function get(object: any, path: string, defaultValue?: any): any;
@@ -24,12 +28,13 @@ error TS5055: Cannot write file '/dist/get.d.ts' because it would overwrite inpu
 ==== /main.ts (1 errors) ====
     import { get } from "self/get";
     import { set } from "self/set";
-             ~~~
-!!! error TS2305: Module '"self/get"' has no exported member 'set'.
     
     declare const obj: { a: { b: number } };
     get(obj, "a.b");
     set(obj, "a.b");
+    ~~~
+!!! error TS2554: Expected 3 arguments, but got 2.
+!!! related TS6210 /set.ts:1:49: An argument for 'value' was not provided.
     
 ==== /package.json (0 errors) ====
     {

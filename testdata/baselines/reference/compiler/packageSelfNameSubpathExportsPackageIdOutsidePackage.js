@@ -42,6 +42,13 @@ exports.get = get;
 function get(object, path, defaultValue) {
     return defaultValue;
 }
+//// [set.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.set = set;
+function set(object, path, value) {
+    return object;
+}
 //// [main.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });

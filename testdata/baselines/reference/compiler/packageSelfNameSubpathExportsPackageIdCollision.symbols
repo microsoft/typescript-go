@@ -30,13 +30,16 @@ export function get(object: any, path: string, defaultValue?: any): any {
 
 === /set.ts ===
 export function set<T>(object: T, path: string, value: any): T {
->get : Symbol(get, Decl(get.ts, 0, 0))
->object : Symbol(object, Decl(get.ts, 0, 20))
->path : Symbol(path, Decl(get.ts, 0, 32))
->defaultValue : Symbol(defaultValue, Decl(get.ts, 0, 46))
+>set : Symbol(set, Decl(set.ts, 0, 0))
+>T : Symbol(T, Decl(set.ts, 0, 20))
+>object : Symbol(object, Decl(set.ts, 0, 23))
+>T : Symbol(T, Decl(set.ts, 0, 20))
+>path : Symbol(path, Decl(set.ts, 0, 33))
+>value : Symbol(value, Decl(set.ts, 0, 47))
+>T : Symbol(T, Decl(set.ts, 0, 20))
 
     return object;
->defaultValue : Symbol(defaultValue, Decl(get.ts, 0, 46))
+>object : Symbol(object, Decl(set.ts, 0, 23))
 }
 
 === /main.ts ===

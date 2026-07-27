@@ -1810,9 +1810,16 @@ func (r *resolutionState) getPackageId(resolvedFileName string, packageInfo *pac
 		packageJsonContent := packageInfo.Contents
 		if name, ok := packageJsonContent.Name.GetValue(); ok {
 			if version, ok := packageJsonContent.Version.GetValue(); ok {
+				if !tspath.ContainsPath(packageInfo.PackageDirectory, resolvedFileName, tspath.ComparePathsOptions{
+					UseCaseSensitiveFileNames: r.resolver.host.FS().UseCaseSensitiveFileNames(),
+					CurrentDirectory:          r.resolver.host.GetCurrentDirectory(),
+				}) {
+					return PackageId{}
+				}
+				packageDirectory := tspath.RemoveTrailingDirectorySeparator(packageInfo.PackageDirectory)
 				var subModuleName string
-				if len(resolvedFileName) > len(packageInfo.PackageDirectory) {
-					subModuleName = resolvedFileName[len(packageInfo.PackageDirectory)+1:]
+				if len(resolvedFileName) > len(packageDirectory) {
+					subModuleName = resolvedFileName[len(packageDirectory)+1:]
 				}
 				return PackageId{
 					Name:             name,

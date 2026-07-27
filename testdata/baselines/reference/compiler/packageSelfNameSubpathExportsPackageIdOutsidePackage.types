@@ -27,13 +27,13 @@ export function get(object: any, path: string, defaultValue?: any): any {
 
 === /src/set.ts ===
 export function set<T>(object: T, path: string, value: any): T {
->get : (object: any, path: string, defaultValue?: any) => any
->object : any
+>set : <T>(object: T, path: string, value: any) => T
+>object : T
 >path : string
->defaultValue : any
+>value : any
 
     return object;
->defaultValue : any
+>object : T
 }
 
 === /very/long/package/main.ts ===
@@ -41,7 +41,7 @@ import { get } from "self/get";
 >get : (object: any, path: string, defaultValue?: any) => any
 
 import { set } from "self/set";
->set : any
+>set : <T>(object: T, path: string, value: any) => T
 
 declare const obj: { a: { b: number } };
 >obj : { a: { b: number; }; }
@@ -55,8 +55,8 @@ get(obj, "a.b");
 >"a.b" : "a.b"
 
 set(obj, "a.b");
->set(obj, "a.b") : any
->set : any
+>set(obj, "a.b") : { a: { b: number; }; }
+>set : <T>(object: T, path: string, value: any) => T
 >obj : { a: { b: number; }; }
 >"a.b" : "a.b"
 

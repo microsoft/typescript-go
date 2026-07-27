@@ -5,7 +5,7 @@ Found 'package.json' at '/package.json'.
 Using 'exports' subpath './get' with target './dist/get.d.ts'.
 File '/get.ts' exists - use it as a name resolution result.
 'package.json' does not have a 'peerDependencies' field.
-======== Module name 'self/get' was successfully resolved to '/get.ts' with Package ID 'self/et.ts@1.0.0'. ========
+======== Module name 'self/get' was successfully resolved to '/get.ts' with Package ID 'self/get.ts@1.0.0'. ========
 ======== Resolving module 'self/set' from '/main.ts'. ========
 Module resolution kind is not specified, using 'NodeNext'.
 Resolving in CJS mode with conditions 'require', 'types', 'node'.
@@ -13,4 +13,4 @@ File '/package.json' exists according to earlier cached lookups.
 Using 'exports' subpath './set' with target './dist/set.d.ts'.
 File '/set.ts' exists - use it as a name resolution result.
 'package.json' does not have a 'peerDependencies' field.
-======== Module name 'self/set' was successfully resolved to '/set.ts' with Package ID 'self/et.ts@1.0.0'. ========
+======== Module name 'self/set' was successfully resolved to '/set.ts' with Package ID 'self/set.ts@1.0.0'. ========
