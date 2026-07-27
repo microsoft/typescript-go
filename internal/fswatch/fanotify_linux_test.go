@@ -144,6 +144,23 @@ func TestLinuxFanotifyMaybeWrapUnsupportedFilesystem(t *testing.T) {
 	}
 }
 
+func TestLinuxFanotifyMarkENODEVTagged(t *testing.T) {
+	t.Parallel()
+
+	// On NTFS mounted via fuseblk, fanotify_mark itself fails with ENODEV
+	// ("no such device") — the bare errno, with no name_to_handle_at wrapping
+	// (issue #63678). markDir passes that straight to
+	// maybeWrapUnsupportedFilesystem, so it must be tagged and drive the inotify
+	// fallback just like the EOPNOTSUPP case.
+	err := maybeWrapUnsupportedFilesystem(unix.ENODEV)
+	if !errors.Is(err, ErrFilesystemUnsupported) {
+		t.Errorf("bare ENODEV from fanotify_mark should be tagged ErrFilesystemUnsupported")
+	}
+	if !errors.Is(err, unix.ENODEV) {
+		t.Errorf("tagged error should still unwrap to ENODEV")
+	}
+}
+
 func TestLinuxFanotifyUnsupportedTagSurvivesDirWatchError(t *testing.T) {
 	t.Parallel()
 

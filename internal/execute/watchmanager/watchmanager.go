@@ -13,8 +13,9 @@ import (
 )
 
 type watchedDir struct {
-	closer    io.Closer
-	recursive bool
+	closer       io.Closer
+	recursive    bool
+	usesFallback bool
 }
 
 type dirWatchUpdate struct {
@@ -42,8 +43,8 @@ type WatchManager struct {
 	warnWriter io.Writer
 	dirExists  func(string) bool
 
-	fallbackBackend func() WatchBackend
-	triedFallback   bool
+	secondaryFactory func() WatchBackend
+	secondary        WatchBackend
 
 	changedMu       sync.Mutex
 	changedPaths    map[string]fswatch.EventKind
@@ -71,7 +72,7 @@ func (wm *WatchManager) EnsureDefaultBackend() {
 			fmt.Fprintf(wm.DebugLog, "[watch] using %s backend\n", fsw.Name())
 		}
 		if fsw.Name() == "fanotify" {
-			wm.fallbackBackend = func() WatchBackend {
+			wm.secondaryFactory = func() WatchBackend {
 				if in := fswatch.Inotify(); in.Available() {
 					return &FSWatchBackend{Inner: in}
 				}
@@ -79,6 +80,13 @@ func (wm *WatchManager) EnsureDefaultBackend() {
 			}
 		}
 	}
+}
+
+func (wm *WatchManager) secondaryBackend() WatchBackend {
+	if wm.secondary == nil && wm.secondaryFactory != nil {
+		wm.secondary = wm.secondaryFactory()
+	}
+	return wm.secondary
 }
 
 func (wm *WatchManager) Lock() { wm.mu.Lock() }
@@ -188,21 +196,6 @@ func (wm *WatchManager) CloseAllWatches() {
 	}
 }
 
-func (wm *WatchManager) createDirWatch(dir string, recursive bool) error {
-	entry := &watchedDir{recursive: recursive}
-	request := wm.createDirWatchRequest(dir, entry)
-	watch, err := wm.backend.WatchDirectory(request.Dir, request.Callback, request.Recursive, request.Ignore)
-	if err != nil {
-		if wm.DebugLog != nil {
-			fmt.Fprintf(wm.DebugLog, "[watch] failed to watch directory %s: %v\n", dir, err)
-		}
-		return fmt.Errorf("failed to watch directory %s: %w", dir, err)
-	}
-	entry.closer = watch
-	wm.watchedDirs[dir] = entry
-	return nil
-}
-
 func (wm *WatchManager) createDirWatchRequest(dir string, entry *watchedDir) WatchDirectoryRequest {
 	return WatchDirectoryRequest{
 		Dir:       dir,
@@ -284,33 +277,7 @@ func (wm *WatchManager) ReconcileWatches(desiredDirs map[string]bool) error {
 		},
 	)
 	additions = append(additions, changes...)
-	err := wm.createDirWatches(additions)
-	if err != nil && wm.tryFallbackBackend(err) {
-		return wm.ReconcileWatches(desiredDirs)
-	}
-	return err
-}
-
-func (wm *WatchManager) tryFallbackBackend(err error) bool {
-	if wm.triedFallback || wm.fallbackBackend == nil || !errors.Is(err, fswatch.ErrFilesystemUnsupported) {
-		return false
-	}
-	wm.triedFallback = true
-	fallback := wm.fallbackBackend()
-	if fallback == nil {
-		return false
-	}
-	if wm.DebugLog != nil {
-		fmt.Fprintf(wm.DebugLog, "[watch] backend unsupported on filesystem (%v); falling back to inotify\n", err)
-	}
-	for dir, wd := range wm.watchedDirs {
-		if wd.closer != nil {
-			wd.closer.Close()
-		}
-		delete(wm.watchedDirs, dir)
-	}
-	wm.backend = fallback
-	return true
+	return wm.createDirWatches(additions)
 }
 
 func (wm *WatchManager) createDirWatches(updates []dirWatchUpdate) error {
@@ -325,20 +292,48 @@ func (wm *WatchManager) createDirWatches(updates []dirWatchUpdate) error {
 		requests[i] = wm.createDirWatchRequest(update.dir, entry)
 	}
 	closers, err := wm.backend.WatchDirectories(requests)
-	if err != nil {
+	if err == nil {
 		for i, update := range updates {
+			entries[i].closer = closers[i]
+			wm.watchedDirs[update.dir] = entries[i]
+		}
+		return nil
+	}
+	if errors.Is(err, fswatch.ErrFilesystemUnsupported) && wm.secondaryBackend() != nil {
+		return wm.createDirWatchesRouted(updates)
+	}
+	if wm.DebugLog != nil {
+		for _, update := range updates {
+			fmt.Fprintf(wm.DebugLog, "[watch] failed to watch directory %s: %v\n", update.dir, err)
+		}
+	}
+	return err
+}
+
+func (wm *WatchManager) createDirWatchesRouted(updates []dirWatchUpdate) error {
+	secondary := wm.secondaryBackend()
+	for _, update := range updates {
+		entry := &watchedDir{recursive: update.recursive}
+		req := wm.createDirWatchRequest(update.dir, entry)
+
+		closer, err := wm.backend.WatchDirectory(req.Dir, req.Callback, req.Recursive, req.Ignore)
+		if errors.Is(err, fswatch.ErrFilesystemUnsupported) {
+			closer, err = secondary.WatchDirectory(req.Dir, req.Callback, req.Recursive, req.Ignore)
+			if err == nil {
+				entry.usesFallback = true
+				if wm.DebugLog != nil {
+					fmt.Fprintf(wm.DebugLog, "[watch] %s unsupported by primary backend; using secondary (inotify)\n", update.dir)
+				}
+			}
+		}
+		if err != nil {
 			if wm.DebugLog != nil {
 				fmt.Fprintf(wm.DebugLog, "[watch] failed to watch directory %s: %v\n", update.dir, err)
 			}
-			if i < len(closers) && closers[i] != nil {
-				closers[i].Close()
-			}
+			return fmt.Errorf("failed to watch directory %s: %w", update.dir, err)
 		}
-		return err
-	}
-	for i, update := range updates {
-		entries[i].closer = closers[i]
-		wm.watchedDirs[update.dir] = entries[i]
+		entry.closer = closer
+		wm.watchedDirs[update.dir] = entry
 	}
 	return nil
 }
