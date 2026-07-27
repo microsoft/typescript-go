@@ -246,7 +246,7 @@ func parseOwnConfigOfJsonSourceFile(
 				if keyText == "excludes" {
 					propertySetErrors = append(propertySetErrors, CreateDiagnosticForNodeInSourceFile(sourceFile, propertyAssignment.Name(), diagnostics.Unknown_option_excludes_Did_you_mean_exclude))
 				}
-				if core.Find(OptionsDeclarations, func(option *CommandLineOption) bool { return option.Name == keyText }) != nil {
+				if core.Find(optionsForCompiler, func(option *CommandLineOption) bool { return option.Name == keyText }) != nil {
 					rootCompilerOptions = append(rootCompilerOptions, propertyAssignment.Name())
 				}
 			}
