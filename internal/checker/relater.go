@@ -3725,23 +3725,57 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			return TernaryMaybe
 		}
 		if target.flags&TypeFlagsConditional != 0 {
+			sourceConditional := source.AsConditionalType()
+			targetConditional := target.AsConditionalType()
+			if sourceConditional.root.node == targetConditional.root.node &&
+				r.isRelatedTo(sourceConditional.checkType, targetConditional.checkType, RecursionFlagsBoth, false) != TernaryFalse &&
+				r.isRelatedTo(targetConditional.checkType, sourceConditional.checkType, RecursionFlagsBoth, false) != TernaryFalse &&
+				r.isRelatedTo(sourceConditional.extendsType, targetConditional.extendsType, RecursionFlagsBoth, false) != TernaryFalse &&
+				r.isRelatedTo(targetConditional.extendsType, sourceConditional.extendsType, RecursionFlagsBoth, false) != TernaryFalse {
+				return TernaryTrue
+			}
+			sourceCheckType := sourceConditional.checkType
+			sourceExtendsType := sourceConditional.extendsType
+			sourceTrueType := r.c.getTrueTypeFromConditionalType(source)
+			sourceFalseType := r.c.getFalseTypeFromConditionalType(source)
+			if source.alias != nil && target.alias != nil &&
+				source.alias.symbol == target.alias.symbol &&
+				len(source.alias.typeArguments) == len(target.alias.typeArguments) {
+				aliasMapper := newTypeMapper(source.alias.typeArguments, target.alias.typeArguments)
+				sourceCheckType = r.c.instantiateType(sourceCheckType, aliasMapper)
+				sourceExtendsType = r.c.instantiateType(sourceExtendsType, aliasMapper)
+				sourceTrueType = r.c.instantiateType(sourceTrueType, aliasMapper)
+				sourceFalseType = r.c.instantiateType(sourceFalseType, aliasMapper)
+			}
+			if sourceConditional.root.node == targetConditional.root.node &&
+				len(sourceConditional.root.outerTypeParameters) != 0 &&
+				len(sourceConditional.root.outerTypeParameters) == len(targetConditional.root.outerTypeParameters) {
+				outerMapper := newTypeMapper(sourceConditional.root.outerTypeParameters, targetConditional.root.outerTypeParameters)
+				sourceCheckType = r.c.instantiateType(sourceCheckType, outerMapper)
+				sourceExtendsType = r.c.instantiateType(sourceExtendsType, outerMapper)
+				sourceTrueType = r.c.instantiateType(sourceTrueType, outerMapper)
+				sourceFalseType = r.c.instantiateType(sourceFalseType, outerMapper)
+			}
 			// Two conditional types 'T1 extends U1 ? X1 : Y1' and 'T2 extends U2 ? X2 : Y2' are related if
 			// one of T1 and T2 is related to the other, U1 and U2 are identical types, X1 is related to X2,
 			// and Y1 is related to Y2.
-			sourceParams := source.AsConditionalType().root.inferTypeParameters
-			sourceExtends := source.AsConditionalType().extendsType
+			sourceParams := sourceConditional.root.inferTypeParameters
+			sourceExtends := sourceExtendsType
 			var mapper *TypeMapper
 			if len(sourceParams) != 0 {
 				// If the source has infer type parameters, we instantiate them in the context of the target
 				ctx := r.c.newInferenceContext(sourceParams, nil /*signature*/, InferenceFlagsNone, r.isRelatedToWorker)
-				r.c.inferTypes(ctx.inferences, target.AsConditionalType().extendsType, sourceExtends, InferencePriorityNoConstraints|InferencePriorityAlwaysStrict, false)
+				r.c.inferTypes(ctx.inferences, targetConditional.extendsType, sourceExtends, InferencePriorityNoConstraints|InferencePriorityAlwaysStrict, false)
 				sourceExtends = r.c.instantiateType(sourceExtends, ctx.mapper)
+				sourceCheckType = r.c.instantiateType(sourceCheckType, ctx.mapper)
+				sourceTrueType = r.c.instantiateType(sourceTrueType, ctx.mapper)
+				sourceFalseType = r.c.instantiateType(sourceFalseType, ctx.mapper)
 				mapper = ctx.mapper
 			}
-			if r.c.isTypeIdenticalTo(sourceExtends, target.AsConditionalType().extendsType) && (r.isRelatedTo(source.AsConditionalType().checkType, target.AsConditionalType().checkType, RecursionFlagsBoth, false) != 0 || r.isRelatedTo(target.AsConditionalType().checkType, source.AsConditionalType().checkType, RecursionFlagsBoth, false) != 0) {
-				result = r.isRelatedTo(r.c.instantiateType(r.c.getTrueTypeFromConditionalType(source), mapper), r.c.getTrueTypeFromConditionalType(target), RecursionFlagsBoth, reportErrors)
+			if r.c.isTypeIdenticalTo(sourceExtends, targetConditional.extendsType) && (r.isRelatedTo(sourceCheckType, targetConditional.checkType, RecursionFlagsBoth, false) != 0 || r.isRelatedTo(targetConditional.checkType, sourceCheckType, RecursionFlagsBoth, false) != 0) {
+				result = r.isRelatedTo(r.c.instantiateType(sourceTrueType, mapper), r.c.getTrueTypeFromConditionalType(target), RecursionFlagsBoth, reportErrors)
 				if result != TernaryFalse {
-					result &= r.isRelatedTo(r.c.getFalseTypeFromConditionalType(source), r.c.getFalseTypeFromConditionalType(target), RecursionFlagsBoth, reportErrors)
+					result &= r.isRelatedTo(sourceFalseType, r.c.getFalseTypeFromConditionalType(target), RecursionFlagsBoth, reportErrors)
 				}
 				if result != TernaryFalse {
 					return result

@@ -1,0 +1,64 @@
+//// [tests/cases/compiler/issue4581.ts] ////
+
+=== Table.ts ===
+import { MaterialReactTable, type MRT_TableOptions } from "./mrt";
+>MaterialReactTable : Symbol(MaterialReactTable, Decl(Table.ts, 0, 8))
+>MRT_TableOptions : Symbol(MRT_TableOptions, Decl(Table.ts, 0, 28))
+
+interface TableProps<T> extends MRT_TableOptions<T> {}
+>TableProps : Symbol(TableProps, Decl(Table.ts, 0, 66))
+>T : Symbol(T, Decl(Table.ts, 2, 21))
+>MRT_TableOptions : Symbol(MRT_TableOptions, Decl(Table.ts, 0, 28))
+>T : Symbol(T, Decl(Table.ts, 2, 21))
+
+export const Table = <T,>({ defaultColumn, ...props }: TableProps<T>) =>
+>Table : Symbol(Table, Decl(Table.ts, 4, 12))
+>T : Symbol(T, Decl(Table.ts, 4, 22))
+>defaultColumn : Symbol(defaultColumn, Decl(Table.ts, 4, 27))
+>props : Symbol(props, Decl(Table.ts, 4, 42))
+>TableProps : Symbol(TableProps, Decl(Table.ts, 0, 66))
+>T : Symbol(T, Decl(Table.ts, 4, 22))
+
+  MaterialReactTable({ defaultColumn, ...props });
+>MaterialReactTable : Symbol(MaterialReactTable, Decl(Table.ts, 0, 8))
+>defaultColumn : Symbol(defaultColumn, Decl(Table.ts, 5, 22))
+>props : Symbol(props, Decl(Table.ts, 4, 42))
+
+=== mrt.d.ts ===
+type Key<T, Done = false> = Done extends true ? never : unknown extends T ? string : T extends (T extends {} ? T : never) ? never : string;
+>Key : Symbol(Key, Decl(mrt.d.ts, 0, 0))
+>T : Symbol(T, Decl(mrt.d.ts, 0, 9))
+>Done : Symbol(Done, Decl(mrt.d.ts, 0, 11))
+>Done : Symbol(Done, Decl(mrt.d.ts, 0, 11))
+>T : Symbol(T, Decl(mrt.d.ts, 0, 9))
+>T : Symbol(T, Decl(mrt.d.ts, 0, 9))
+>T : Symbol(T, Decl(mrt.d.ts, 0, 9))
+>T : Symbol(T, Decl(mrt.d.ts, 0, 9))
+
+export type MRT_TableOptions<T> = { defaultColumn: (value: T) => void } & {
+>MRT_TableOptions : Symbol(MRT_TableOptions, Decl(mrt.d.ts, 0, 139))
+>T : Symbol(T, Decl(mrt.d.ts, 2, 29))
+>defaultColumn : Symbol(defaultColumn, Decl(mrt.d.ts, 2, 35))
+>value : Symbol(value, Decl(mrt.d.ts, 2, 52))
+>T : Symbol(T, Decl(mrt.d.ts, 2, 29))
+
+  defaultColumn: { Cell: <Done = false>(options: MRT_TableOptions<T>) => Key<T, Done> };
+>defaultColumn : Symbol(defaultColumn, Decl(mrt.d.ts, 2, 75))
+>Cell : Symbol(Cell, Decl(mrt.d.ts, 3, 18))
+>Done : Symbol(Done, Decl(mrt.d.ts, 3, 26))
+>options : Symbol(options, Decl(mrt.d.ts, 3, 40))
+>MRT_TableOptions : Symbol(MRT_TableOptions, Decl(mrt.d.ts, 0, 139))
+>T : Symbol(T, Decl(mrt.d.ts, 2, 29))
+>Key : Symbol(Key, Decl(mrt.d.ts, 0, 0))
+>T : Symbol(T, Decl(mrt.d.ts, 2, 29))
+>Done : Symbol(Done, Decl(mrt.d.ts, 3, 26))
+
+};
+
+export declare function MaterialReactTable<T>(props: MRT_TableOptions<T>): void;
+>MaterialReactTable : Symbol(MaterialReactTable, Decl(mrt.d.ts, 4, 2))
+>T : Symbol(T, Decl(mrt.d.ts, 6, 43))
+>props : Symbol(props, Decl(mrt.d.ts, 6, 46))
+>MRT_TableOptions : Symbol(MRT_TableOptions, Decl(mrt.d.ts, 0, 139))
+>T : Symbol(T, Decl(mrt.d.ts, 6, 43))
+
