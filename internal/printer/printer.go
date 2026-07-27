@@ -6080,12 +6080,10 @@ func (p *Printer) generateName(name *ast.MemberName) {
 
 // Returns a value indicating whether a name is unique globally or within the current file.
 func (p *Printer) isFileLevelUniqueNameInCurrentFile(name string, _ bool) bool {
-	if p.currentSourceFile != nil {
-		sourceFile := p.emitContext.MostOriginal(p.currentSourceFile.AsNode()).AsSourceFile()
-		return IsFileLevelUniqueName(sourceFile, name, p.HasGlobalName)
-	} else {
+	if p.currentSourceFile == nil {
 		return true
 	}
+	return p.emitContext.IsFileLevelUniqueName(p.currentSourceFile, name, p.HasGlobalName)
 }
 
 //
