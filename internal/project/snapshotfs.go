@@ -602,10 +602,7 @@ func (s *snapshotFSBuilder) isRelevantFileName(uri lsproto.DocumentUri) bool {
 	if i < 0 {
 		return false
 	}
-	if isRelevantExtension(string(path)[i:]) {
-		return true
-	}
-	return false
+	return isRelevantExtension(string(path)[i:])
 }
 
 // isRelevantExtension returns true if the given extension is a known TypeScript
