@@ -1921,7 +1921,6 @@ func (node *ExportSpecifier) computeSubtreeFacts() SubtreeFacts {
 
 // NamedMemberBase
 
-func (node *NamedMemberBase) DeclarationData() *DeclarationBase    { return &node.DeclarationBase }
 func (node *NamedMemberBase) Modifiers() *ModifierList             { return node.modifiers }
 func (node *NamedMemberBase) setModifiers(modifiers *ModifierList) { node.modifiers = modifiers }
 func (node *NamedMemberBase) Name() *DeclarationName               { return node.name }
@@ -2261,10 +2260,6 @@ func (node *ImportAttributesNode) GetResolutionModeOverride( /* !!! grammarError
 
 // FunctionOrConstructorTypeNodeBase
 
-func (node *FunctionOrConstructorTypeNodeBase) DeclarationData() *DeclarationBase {
-	return node.FunctionLikeBase.DeclarationData()
-}
-
 func (node *TemplateLiteralLikeNodeBase) LiteralLikeData() *LiteralLikeNodeBase {
 	return &node.LiteralLikeNodeBase
 }
@@ -2487,7 +2482,6 @@ type SourceFile struct {
 	IsDeclarationFile           bool
 	ContainsNonASCII            bool
 	UsesUriStyleNodeCoreModules core.Tristate
-	Identifiers                 map[string]string
 	IdentifierCount             int
 	imports                     []*LiteralLikeNode // []LiteralLikeNode
 	ModuleAugmentations         []*ModuleName      // []ModuleName
@@ -2496,6 +2490,8 @@ type SourceFile struct {
 	jsdocCache                  map[*Node][]*Node
 	jsdocMu                     sync.RWMutex
 	hasLazyJSDoc                bool
+	identifiersOnce             sync.Once
+	identifiers                 collections.Set[string]
 	ReparsedClones              []*Node
 	Pragmas                     []Pragma
 	ReferencedFiles             []*FileReference
@@ -2563,6 +2559,33 @@ func (node *SourceFile) ParseOptions() SourceFileParseOptions {
 
 func (node *SourceFile) Text() string {
 	return node.text
+}
+
+func (file *SourceFile) HasIdentifier(name string) bool {
+	file.identifiersOnce.Do(func() {
+		file.identifiers = collectIdentifiersForSourceFile(file)
+	})
+	return file.identifiers.Has(name)
+}
+
+func collectIdentifiersForSourceFile(sourceFile *SourceFile) collections.Set[string] {
+	var identifiers collections.Set[string]
+	var collect func(*Node) bool
+	collect = func(node *Node) bool {
+		switch node.Kind {
+		case KindIdentifier,
+			KindPrivateIdentifier,
+			KindStringLiteral,
+			KindNumericLiteral,
+			KindBigIntLiteral,
+			KindNoSubstitutionTemplateLiteral:
+			identifiers.Add(node.Text())
+		}
+		node.ForEachChild(collect)
+		return false
+	}
+	collect(sourceFile.AsNode())
+	return identifiers
 }
 
 func (node *SourceFile) FileName() string {
@@ -2663,7 +2686,6 @@ func (node *SourceFile) copyFrom(other *SourceFile) {
 	node.IsDeclarationFile = other.IsDeclarationFile
 	node.ContainsNonASCII = other.ContainsNonASCII
 	node.UsesUriStyleNodeCoreModules = other.UsesUriStyleNodeCoreModules
-	node.Identifiers = other.Identifiers
 	node.imports = other.imports
 	node.ModuleAugmentations = other.ModuleAugmentations
 	node.AmbientModuleNames = other.AmbientModuleNames
