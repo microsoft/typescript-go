@@ -142,6 +142,11 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 			} else {
 				t.snapshot.addFileToAffectedFilesPendingEmit(file.Path(), GetFileEmitKind(t.snapshot.options))
 				signature = version
+				if !file.IsDeclarationFile && !t.snapshot.options.GetEmitDeclarations() {
+					if dtsSignature := t.snapshot.computeDtsSignatureOfFile(context.Background(), t.program, file); dtsSignature != "" {
+						signature = dtsSignature
+					}
+				}
 			}
 			t.snapshot.fileInfos.Store(file.Path(), &FileInfo{
 				version:            version,

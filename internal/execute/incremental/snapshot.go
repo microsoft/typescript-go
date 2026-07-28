@@ -1,6 +1,7 @@
 package incremental
 
 import (
+	"context"
 	"encoding/hex"
 	"fmt"
 	"strings"
@@ -394,6 +395,22 @@ func (s *snapshot) computeSignatureWithDiagnostics(file *ast.SourceFile, text st
 		diagnosticToStringBuilder(diag, file, &builder)
 	}
 	return s.computeHash(builder.String())
+}
+
+func (s *snapshot) computeDtsSignatureOfFile(ctx context.Context, program *compiler.Program, file *ast.SourceFile) string {
+	var signature string
+	program.Emit(ctx, compiler.EmitOptions{
+		TargetSourceFiles: core.SingleElementSlice(file),
+		EmitOnly:          compiler.EmitOnlyForcedDts,
+		WriteFile: func(fileName string, text string, data *compiler.WriteFileData) error {
+			if !tspath.IsDeclarationFileName(fileName) {
+				panic("File extension for signature expected to be dts, got : " + fileName)
+			}
+			signature = s.computeSignatureWithDiagnostics(file, text, data)
+			return nil
+		},
+	})
+	return signature
 }
 
 func diagnosticToStringBuilder(diagnostic *ast.Diagnostic, file *ast.SourceFile, builder *strings.Builder) {

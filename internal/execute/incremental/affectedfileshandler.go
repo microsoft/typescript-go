@@ -10,7 +10,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
-	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -67,19 +66,7 @@ func (h *affectedFilesHandler) removeDiagnosticsOfLibraryFiles() {
 }
 
 func (h *affectedFilesHandler) computeDtsSignature(file *ast.SourceFile) string {
-	var signature string
-	h.program.program.Emit(h.ctx, compiler.EmitOptions{
-		TargetSourceFiles: core.SingleElementSlice(file),
-		EmitOnly:          compiler.EmitOnlyForcedDts,
-		WriteFile: func(fileName string, text string, data *compiler.WriteFileData) error {
-			if !tspath.IsDeclarationFileName(fileName) {
-				panic("File extension for signature expected to be dts, got : " + fileName)
-			}
-			signature = h.program.snapshot.computeSignatureWithDiagnostics(file, text, data)
-			return nil
-		},
-	})
-	return signature
+	return h.program.snapshot.computeDtsSignatureOfFile(h.ctx, h.program.program, file)
 }
 
 func (h *affectedFilesHandler) updateShapeSignature(file *ast.SourceFile, useFileVersionAsSignature bool) bool {
@@ -101,8 +88,13 @@ func (h *affectedFilesHandler) updateShapeSignature(file *ast.SourceFile, useFil
 	}
 	// Default is to use file version as signature
 	if update.signature == "" {
-		update.signature = info.version
-		update.kind = SignatureUpdateKindUsedVersion
+		if useFileVersionAsSignature && prevSignature != "" && prevSignature != info.version {
+			update.signature = prevSignature
+			update.kind = SignatureUpdateKindComputedDts
+		} else {
+			update.signature = info.version
+			update.kind = SignatureUpdateKindUsedVersion
+		}
 	}
 	return update.signature != prevSignature
 }

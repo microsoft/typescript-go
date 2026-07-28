@@ -73,7 +73,6 @@ Directory watches::
   /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
-*refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
 *refresh*    /home/src/workspaces/project/index.ts
 Signatures::
 (computed .d.ts) /home/src/workspaces/project/index.ts

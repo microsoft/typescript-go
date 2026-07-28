@@ -426,4 +426,4 @@ SemanticDiagnostics::
 Signatures::
 (used version)   /home/src/workspaces/project/node_modules/dep-a/index.d.ts
 (computed .d.ts) /home/src/workspaces/project/src/middle.ts
-(stored at emit) /home/src/workspaces/project/src/consumer.ts
+(computed .d.ts) /home/src/workspaces/project/src/consumer.ts

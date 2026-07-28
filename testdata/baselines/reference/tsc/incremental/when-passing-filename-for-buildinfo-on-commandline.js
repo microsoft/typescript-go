@@ -53,7 +53,7 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 //// [/home/src/workspaces/project/.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","errors":true,"root":[2],"fileNames":["lib.d.ts","./src/main.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"28e8748a7acd58f4f59388926e914f86-export const x = 10;"],"options":{"module":1,"target":1,"tsBuildInfoFile":"./.tsbuildinfo"},"semanticDiagnosticsPerFile":[1,2]}
+{"version":"FakeTSVersion","errors":true,"root":[2],"fileNames":["lib.d.ts","./src/main.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"28e8748a7acd58f4f59388926e914f86-export const x = 10;","signature":"f9b4154a9a5944099ecf197d4519d083-export declare const x = 10;\n","impliedNodeFormat":1}],"options":{"module":1,"target":1,"tsBuildInfoFile":"./.tsbuildinfo"},"semanticDiagnosticsPerFile":[1,2]}
 //// [/home/src/workspaces/project/.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -86,8 +86,13 @@ declare const console: { log(msg: any): void; };
     {
       "fileName": "./src/main.ts",
       "version": "28e8748a7acd58f4f59388926e914f86-export const x = 10;",
-      "signature": "28e8748a7acd58f4f59388926e914f86-export const x = 10;",
-      "impliedNodeFormat": "CommonJS"
+      "signature": "f9b4154a9a5944099ecf197d4519d083-export declare const x = 10;\n",
+      "impliedNodeFormat": "CommonJS",
+      "original": {
+        "version": "28e8748a7acd58f4f59388926e914f86-export const x = 10;",
+        "signature": "f9b4154a9a5944099ecf197d4519d083-export declare const x = 10;\n",
+        "impliedNodeFormat": 1
+      }
     }
   ],
   "options": {
@@ -99,7 +104,7 @@ declare const console: { log(msg: any): void; };
     "lib.d.ts",
     "./src/main.ts"
   ],
-  "size": 1037
+  "size": 1149
 }
 //// [/home/src/workspaces/project/src/main.js] *new* 
 "use strict";
