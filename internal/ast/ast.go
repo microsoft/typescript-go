@@ -2511,7 +2511,6 @@ type SourceFile struct {
 	bindOnce                  sync.Once
 	bindDiagnostics           []*Diagnostic
 	BindSuggestionDiagnostics []*Diagnostic
-	EndFlowNode               *FlowNode
 	SymbolCount               int
 	PatternAmbientModules     []*PatternAmbientModule
 	GlobalExports             SymbolTable

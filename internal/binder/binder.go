@@ -1560,7 +1560,6 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		}
 		if node.Kind == ast.KindSourceFile {
 			node.Flags |= b.emitFlags
-			node.AsSourceFile().EndFlowNode = b.currentFlow
 		}
 		if b.currentReturnTarget != nil {
 			b.addAntecedent(b.currentReturnTarget, b.currentFlow)
