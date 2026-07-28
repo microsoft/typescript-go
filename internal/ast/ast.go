@@ -2507,13 +2507,12 @@ type SourceFile struct {
 
 	// Fields set by binder
 
-	isBound                   atomic.Bool
-	bindOnce                  sync.Once
-	bindDiagnostics           []*Diagnostic
-	BindSuggestionDiagnostics []*Diagnostic
-	SymbolCount               int
-	PatternAmbientModules     []*PatternAmbientModule
-	GlobalExports             SymbolTable
+	isBound               atomic.Bool
+	bindOnce              sync.Once
+	bindDiagnostics       []*Diagnostic
+	SymbolCount           int
+	PatternAmbientModules []*PatternAmbientModule
+	GlobalExports         SymbolTable
 
 	// Fields set by ECMALineMap
 

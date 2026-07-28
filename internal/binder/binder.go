@@ -2705,21 +2705,6 @@ func (b *Binder) errorOnFirstToken(node *ast.Node, message *diagnostics.Message,
 	b.addDiagnostic(ast.NewDiagnostic(b.file, span, message, args...))
 }
 
-func (b *Binder) errorOrSuggestionOnNode(isError bool, node *ast.Node, message *diagnostics.Message) {
-	b.errorOrSuggestionOnRange(isError, node, node, message)
-}
-
-func (b *Binder) errorOrSuggestionOnRange(isError bool, startNode *ast.Node, endNode *ast.Node, message *diagnostics.Message) {
-	textRange := core.NewTextRange(scanner.GetRangeOfTokenAtPosition(b.file, startNode.Pos()).Pos(), endNode.End())
-	diagnostic := ast.NewDiagnostic(b.file, textRange, message)
-	if isError {
-		b.addDiagnostic(diagnostic)
-	} else {
-		diagnostic.SetCategory(diagnostics.CategorySuggestion)
-		b.file.BindSuggestionDiagnostics = append(b.file.BindSuggestionDiagnostics, diagnostic)
-	}
-}
-
 // Inside the binder, we may create a diagnostic for an as-yet unbound node (with potentially no parent pointers, implying no accessible source file)
 // If so, the node _must_ be in the current file (as that's the only way anything could have traversed to it to yield it as the error node)
 // This version of `createDiagnosticForNode` uses the binder's context to account for this, and always yields correct diagnostics even in these situations.
