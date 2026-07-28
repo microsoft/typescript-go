@@ -3738,7 +3738,8 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 				sourceExtends = r.c.instantiateType(sourceExtends, ctx.mapper)
 				mapper = ctx.mapper
 			}
-			if r.c.isTypeIdenticalTo(sourceExtends, target.AsConditionalType().extendsType) && (r.isRelatedTo(source.AsConditionalType().checkType, target.AsConditionalType().checkType, RecursionFlagsBoth, false) != 0 || r.isRelatedTo(target.AsConditionalType().checkType, source.AsConditionalType().checkType, RecursionFlagsBoth, false) != 0) {
+			targetExtends := target.AsConditionalType().extendsType
+			if (r.c.isTypeIdenticalTo(sourceExtends, targetExtends) || r.c.isTypeIdenticalTo(targetExtends, sourceExtends)) && (r.isRelatedTo(source.AsConditionalType().checkType, target.AsConditionalType().checkType, RecursionFlagsBoth, false) != 0 || r.isRelatedTo(target.AsConditionalType().checkType, source.AsConditionalType().checkType, RecursionFlagsBoth, false) != 0) {
 				result = r.isRelatedTo(r.c.instantiateType(r.c.getTrueTypeFromConditionalType(source), mapper), r.c.getTrueTypeFromConditionalType(target), RecursionFlagsBoth, reportErrors)
 				if result != TernaryFalse {
 					result &= r.isRelatedTo(r.c.getFalseTypeFromConditionalType(source), r.c.getFalseTypeFromConditionalType(target), RecursionFlagsBoth, reportErrors)
