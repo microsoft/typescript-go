@@ -4535,10 +4535,13 @@ func (p *Parser) nextIsUnParenthesizedAsyncArrowFunction() bool {
 			return false
 		}
 		// Check for un-parenthesized AsyncArrowFunction
-		expr := p.parseBinaryExpressionOrHigher(ast.OperatorPrecedenceLowest)
-		if !p.hasPrecedingLineBreak() && expr.Kind == ast.KindIdentifier && p.token == ast.KindEqualsGreaterThanToken {
-			return true
+		// !!! In Strada, this speculatively parses a full binary expression and tests whether it came back as a bare
+		// Identifier followed by "=>", allocating nodes it then discards (for `async function () {}`, an entire function body).
+		if !p.isIdentifier() {
+			return false
 		}
+		p.nextTokenWithoutCheck()
+		return !p.hasPrecedingLineBreak() && p.token == ast.KindEqualsGreaterThanToken
 	}
 	return false
 }
