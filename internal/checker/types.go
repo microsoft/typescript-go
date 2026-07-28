@@ -450,14 +450,14 @@ const (
 	TypeFlagsTemplateLiteral TypeFlags = 1 << 22 // Template literal type
 	TypeFlagsStringMapping   TypeFlags = 1 << 23 // Uppercase/Lowercase type
 	TypeFlagsSubstitution    TypeFlags = 1 << 24 // Type parameter substitution
-	TypeFlagsIndexedAccess   TypeFlags = 1 << 25 // T[K]
-	TypeFlagsConditional     TypeFlags = 1 << 26 // T extends U ? X : Y
-	TypeFlagsUnion           TypeFlags = 1 << 27 // Union (T | U)
-	TypeFlagsIntersection    TypeFlags = 1 << 28 // Intersection (T & U)
-	TypeFlagsReserved1       TypeFlags = 1 << 29 // Used by union/intersection type construction
-	TypeFlagsReserved2       TypeFlags = 1 << 30 // Used by union/intersection type construction
-	TypeFlagsReserved3       TypeFlags = 1 << 31
-	TypeFlagsNegated         TypeFlags = 1 << 32 // not T
+	TypeFlagsNegated         TypeFlags = 1 << 25 // not T
+	TypeFlagsIndexedAccess   TypeFlags = 1 << 26 // T[K]
+	TypeFlagsConditional     TypeFlags = 1 << 27 // T extends U ? X : Y
+	TypeFlagsUnion           TypeFlags = 1 << 28 // Union (T | U)
+	TypeFlagsIntersection    TypeFlags = 1 << 29 // Intersection (T & U)
+	TypeFlagsReserved1       TypeFlags = 1 << 30 // Used by union/intersection type construction
+	TypeFlagsReserved2       TypeFlags = 1 << 31 // Used by union/intersection type construction
+	TypeFlagsReserved3       TypeFlags = 1 << 32
 
 	TypeFlagsAnyOrUnknown                  = TypeFlagsAny | TypeFlagsUnknown
 	TypeFlagsNullable                      = TypeFlagsUndefined | TypeFlagsNull
