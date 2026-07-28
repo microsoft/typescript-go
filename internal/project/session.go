@@ -402,7 +402,7 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 					s.snapshotMu.RLock()
 					snapshot := s.snapshot
 					s.snapshotMu.RUnlock()
-					if _, ok := snapshot.fs.diskDirectories[path]; ok {
+					if _, ok := snapshot.fs.diskDirectories[path]; ok || isNodeModulesPath(path) {
 						hasRelevantChange = true
 					}
 				}
