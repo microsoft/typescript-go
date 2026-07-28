@@ -3451,6 +3451,25 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 		if r.c.getIntersectionType([]*Type{source, target.AsNegatedType().baseType}).flags&TypeFlagsNever != 0 {
 			return TernaryTrue
 		}
+		// A fresh object literal type is treated as a closed set of values that have exactly the
+		// declared properties. Such a type is disjoint from T (and thus related to 'not T') precisely
+		// when it is not related to T, since excess property checking prevents its values from
+		// acquiring the extra properties that T might otherwise require. We compare the regular
+		// (non-fresh) form so that the excess property check itself doesn't interfere with the
+		// structural comparison.
+		if isObjectLiteralType(source) {
+			switch r.isRelatedTo(r.c.getRegularTypeOfObjectLiteral(source), target.AsNegatedType().baseType, RecursionFlagsBoth, false /*reportErrors*/) {
+			case TernaryFalse:
+				// The closed object literal is disjoint from T, so it is related to 'not T'.
+				return TernaryTrue
+			case TernaryMaybe:
+				// The comparison was assumed related under recursion; propagate the assumption.
+				return TernaryMaybe
+			default:
+				// The object literal is (possibly) a member of T, so it is not related to 'not T'.
+				return TernaryFalse
+			}
+		}
 		// Otherwise, if the source is a concrete (non-instantiable) type, it overlaps with T and is therefore
 		// not related to 'not T'. We must not fall through to the generic instantiable handling below, which
 		// would relate S to the (permissive) constraint of the negated type and incorrectly report relatedness.
