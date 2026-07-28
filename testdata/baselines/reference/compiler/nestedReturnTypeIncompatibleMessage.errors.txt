@@ -1,0 +1,55 @@
+nestedReturnTypeIncompatibleMessage.ts(5,1): error TS2322: Type 'B' is not assignable to type 'A'.
+  The types returned by 'foo.bar(...)' are incompatible between these types.
+    Type 'number' is not assignable to type 'string'.
+nestedReturnTypeIncompatibleMessage.ts(11,1): error TS2322: Type 'D' is not assignable to type 'C'.
+  The types returned by 'foo.bar.baz(...)' are incompatible between these types.
+    Type 'number' is not assignable to type 'string'.
+nestedReturnTypeIncompatibleMessage.ts(17,1): error TS2322: Type 'F' is not assignable to type 'E'.
+  The types of 'foo.bar.baz' are incompatible between these types.
+    Type 'number' is not assignable to type 'string'.
+nestedReturnTypeIncompatibleMessage.ts(23,1): error TS2322: Type 'H' is not assignable to type 'G'.
+  The types of 'foo.bar().baz' are incompatible between these types.
+    Type 'number' is not assignable to type 'string'.
+
+
+==== nestedReturnTypeIncompatibleMessage.ts (4 errors) ====
+    interface A { foo: { bar(x: string): string } }
+    interface B { foo: { bar(x: string): number } }
+    declare let a: A;
+    declare let b: B;
+    a = b;
+    ~
+!!! error TS2322: Type 'B' is not assignable to type 'A'.
+!!! error TS2322:   The types returned by 'foo.bar(...)' are incompatible between these types.
+!!! error TS2322:     Type 'number' is not assignable to type 'string'.
+    
+    interface C { foo: { bar: { baz(x: string): string } } }
+    interface D { foo: { bar: { baz(x: string): number } } }
+    declare let c: C;
+    declare let d: D;
+    c = d;
+    ~
+!!! error TS2322: Type 'D' is not assignable to type 'C'.
+!!! error TS2322:   The types returned by 'foo.bar.baz(...)' are incompatible between these types.
+!!! error TS2322:     Type 'number' is not assignable to type 'string'.
+    
+    interface E { foo: { bar: { baz: string } } }
+    interface F { foo: { bar: { baz: number } } }
+    declare let e: E;
+    declare let f: F;
+    e = f;
+    ~
+!!! error TS2322: Type 'F' is not assignable to type 'E'.
+!!! error TS2322:   The types of 'foo.bar.baz' are incompatible between these types.
+!!! error TS2322:     Type 'number' is not assignable to type 'string'.
+    
+    interface G { foo: { bar(): { baz: string } } }
+    interface H { foo: { bar(): { baz: number } } }
+    declare let g: G;
+    declare let h: H;
+    g = h;
+    ~
+!!! error TS2322: Type 'H' is not assignable to type 'G'.
+!!! error TS2322:   The types of 'foo.bar().baz' are incompatible between these types.
+!!! error TS2322:     Type 'number' is not assignable to type 'string'.
+    

@@ -4866,7 +4866,11 @@ func (r *Relater) reportError(message *diagnostics.Message, args ...any) {
 			tail := getPropertyNameArg(r.errorChain.next.args[0])
 			arg := addToDottedName(head, tail)
 			r.errorChain = r.errorChain.next.next
-			if message == diagnostics.Types_of_property_0_are_incompatible {
+			// A dotted name that ends in a call or construct signature is reported as a return type
+			// incompatibility, otherwise as a property type incompatibility.
+			if strings.HasSuffix(arg, ")") {
+				message = diagnostics.The_types_returned_by_0_are_incompatible_between_these_types
+			} else {
 				message = diagnostics.The_types_of_0_are_incompatible_between_these_types
 			}
 			r.reportError(message, arg)

@@ -1,0 +1,89 @@
+//// [tests/cases/compiler/nestedReturnTypeIncompatibleMessage.ts] ////
+
+=== nestedReturnTypeIncompatibleMessage.ts ===
+interface A { foo: { bar(x: string): string } }
+>foo : { bar(x: string): string; }
+>bar : (x: string) => string
+>x : string
+
+interface B { foo: { bar(x: string): number } }
+>foo : { bar(x: string): number; }
+>bar : (x: string) => number
+>x : string
+
+declare let a: A;
+>a : A
+
+declare let b: B;
+>b : B
+
+a = b;
+>a = b : B
+>a : A
+>b : B
+
+interface C { foo: { bar: { baz(x: string): string } } }
+>foo : { bar: { baz(x: string): string; }; }
+>bar : { baz(x: string): string; }
+>baz : (x: string) => string
+>x : string
+
+interface D { foo: { bar: { baz(x: string): number } } }
+>foo : { bar: { baz(x: string): number; }; }
+>bar : { baz(x: string): number; }
+>baz : (x: string) => number
+>x : string
+
+declare let c: C;
+>c : C
+
+declare let d: D;
+>d : D
+
+c = d;
+>c = d : D
+>c : C
+>d : D
+
+interface E { foo: { bar: { baz: string } } }
+>foo : { bar: { baz: string; }; }
+>bar : { baz: string; }
+>baz : string
+
+interface F { foo: { bar: { baz: number } } }
+>foo : { bar: { baz: number; }; }
+>bar : { baz: number; }
+>baz : number
+
+declare let e: E;
+>e : E
+
+declare let f: F;
+>f : F
+
+e = f;
+>e = f : F
+>e : E
+>f : F
+
+interface G { foo: { bar(): { baz: string } } }
+>foo : { bar(): { baz: string; }; }
+>bar : () => { baz: string; }
+>baz : string
+
+interface H { foo: { bar(): { baz: number } } }
+>foo : { bar(): { baz: number; }; }
+>bar : () => { baz: number; }
+>baz : number
+
+declare let g: G;
+>g : G
+
+declare let h: H;
+>h : H
+
+g = h;
+>g = h : H
+>g : G
+>h : H
+

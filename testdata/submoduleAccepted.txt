@@ -404,7 +404,6 @@ compiler/checkJsTypeDefNoUnusedLocalMarked.symbols.diff
 compiler/checkJsTypeDefNoUnusedLocalMarked.types.diff
 compiler/circularObjectLiteralAccessors(target=es2015).types.diff
 compiler/circularTypeArgumentsLocalAndOuterNoCrash1.types.diff
-compiler/complexRecursiveCollections.errors.txt.diff
 compiler/contextuallyTypedJsxAttribute2.types.diff
 compiler/declarationEmitEnumReferenceViaImportEquals.symbols.diff
 compiler/declarationEmitEnumReferenceViaImportEquals.types.diff

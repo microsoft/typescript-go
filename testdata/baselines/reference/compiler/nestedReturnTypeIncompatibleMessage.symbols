@@ -1,0 +1,101 @@
+//// [tests/cases/compiler/nestedReturnTypeIncompatibleMessage.ts] ////
+
+=== nestedReturnTypeIncompatibleMessage.ts ===
+interface A { foo: { bar(x: string): string } }
+>A : Symbol(A, Decl(nestedReturnTypeIncompatibleMessage.ts, 0, 0))
+>foo : Symbol(A.foo, Decl(nestedReturnTypeIncompatibleMessage.ts, 0, 13))
+>bar : Symbol(bar, Decl(nestedReturnTypeIncompatibleMessage.ts, 0, 20))
+>x : Symbol(x, Decl(nestedReturnTypeIncompatibleMessage.ts, 0, 25))
+
+interface B { foo: { bar(x: string): number } }
+>B : Symbol(B, Decl(nestedReturnTypeIncompatibleMessage.ts, 0, 47))
+>foo : Symbol(B.foo, Decl(nestedReturnTypeIncompatibleMessage.ts, 1, 13))
+>bar : Symbol(bar, Decl(nestedReturnTypeIncompatibleMessage.ts, 1, 20))
+>x : Symbol(x, Decl(nestedReturnTypeIncompatibleMessage.ts, 1, 25))
+
+declare let a: A;
+>a : Symbol(a, Decl(nestedReturnTypeIncompatibleMessage.ts, 2, 11))
+>A : Symbol(A, Decl(nestedReturnTypeIncompatibleMessage.ts, 0, 0))
+
+declare let b: B;
+>b : Symbol(b, Decl(nestedReturnTypeIncompatibleMessage.ts, 3, 11))
+>B : Symbol(B, Decl(nestedReturnTypeIncompatibleMessage.ts, 0, 47))
+
+a = b;
+>a : Symbol(a, Decl(nestedReturnTypeIncompatibleMessage.ts, 2, 11))
+>b : Symbol(b, Decl(nestedReturnTypeIncompatibleMessage.ts, 3, 11))
+
+interface C { foo: { bar: { baz(x: string): string } } }
+>C : Symbol(C, Decl(nestedReturnTypeIncompatibleMessage.ts, 4, 6))
+>foo : Symbol(C.foo, Decl(nestedReturnTypeIncompatibleMessage.ts, 6, 13))
+>bar : Symbol(bar, Decl(nestedReturnTypeIncompatibleMessage.ts, 6, 20))
+>baz : Symbol(baz, Decl(nestedReturnTypeIncompatibleMessage.ts, 6, 27))
+>x : Symbol(x, Decl(nestedReturnTypeIncompatibleMessage.ts, 6, 32))
+
+interface D { foo: { bar: { baz(x: string): number } } }
+>D : Symbol(D, Decl(nestedReturnTypeIncompatibleMessage.ts, 6, 56))
+>foo : Symbol(D.foo, Decl(nestedReturnTypeIncompatibleMessage.ts, 7, 13))
+>bar : Symbol(bar, Decl(nestedReturnTypeIncompatibleMessage.ts, 7, 20))
+>baz : Symbol(baz, Decl(nestedReturnTypeIncompatibleMessage.ts, 7, 27))
+>x : Symbol(x, Decl(nestedReturnTypeIncompatibleMessage.ts, 7, 32))
+
+declare let c: C;
+>c : Symbol(c, Decl(nestedReturnTypeIncompatibleMessage.ts, 8, 11))
+>C : Symbol(C, Decl(nestedReturnTypeIncompatibleMessage.ts, 4, 6))
+
+declare let d: D;
+>d : Symbol(d, Decl(nestedReturnTypeIncompatibleMessage.ts, 9, 11))
+>D : Symbol(D, Decl(nestedReturnTypeIncompatibleMessage.ts, 6, 56))
+
+c = d;
+>c : Symbol(c, Decl(nestedReturnTypeIncompatibleMessage.ts, 8, 11))
+>d : Symbol(d, Decl(nestedReturnTypeIncompatibleMessage.ts, 9, 11))
+
+interface E { foo: { bar: { baz: string } } }
+>E : Symbol(E, Decl(nestedReturnTypeIncompatibleMessage.ts, 10, 6))
+>foo : Symbol(E.foo, Decl(nestedReturnTypeIncompatibleMessage.ts, 12, 13))
+>bar : Symbol(bar, Decl(nestedReturnTypeIncompatibleMessage.ts, 12, 20))
+>baz : Symbol(baz, Decl(nestedReturnTypeIncompatibleMessage.ts, 12, 27))
+
+interface F { foo: { bar: { baz: number } } }
+>F : Symbol(F, Decl(nestedReturnTypeIncompatibleMessage.ts, 12, 45))
+>foo : Symbol(F.foo, Decl(nestedReturnTypeIncompatibleMessage.ts, 13, 13))
+>bar : Symbol(bar, Decl(nestedReturnTypeIncompatibleMessage.ts, 13, 20))
+>baz : Symbol(baz, Decl(nestedReturnTypeIncompatibleMessage.ts, 13, 27))
+
+declare let e: E;
+>e : Symbol(e, Decl(nestedReturnTypeIncompatibleMessage.ts, 14, 11))
+>E : Symbol(E, Decl(nestedReturnTypeIncompatibleMessage.ts, 10, 6))
+
+declare let f: F;
+>f : Symbol(f, Decl(nestedReturnTypeIncompatibleMessage.ts, 15, 11))
+>F : Symbol(F, Decl(nestedReturnTypeIncompatibleMessage.ts, 12, 45))
+
+e = f;
+>e : Symbol(e, Decl(nestedReturnTypeIncompatibleMessage.ts, 14, 11))
+>f : Symbol(f, Decl(nestedReturnTypeIncompatibleMessage.ts, 15, 11))
+
+interface G { foo: { bar(): { baz: string } } }
+>G : Symbol(G, Decl(nestedReturnTypeIncompatibleMessage.ts, 16, 6))
+>foo : Symbol(G.foo, Decl(nestedReturnTypeIncompatibleMessage.ts, 18, 13))
+>bar : Symbol(bar, Decl(nestedReturnTypeIncompatibleMessage.ts, 18, 20))
+>baz : Symbol(baz, Decl(nestedReturnTypeIncompatibleMessage.ts, 18, 29))
+
+interface H { foo: { bar(): { baz: number } } }
+>H : Symbol(H, Decl(nestedReturnTypeIncompatibleMessage.ts, 18, 47))
+>foo : Symbol(H.foo, Decl(nestedReturnTypeIncompatibleMessage.ts, 19, 13))
+>bar : Symbol(bar, Decl(nestedReturnTypeIncompatibleMessage.ts, 19, 20))
+>baz : Symbol(baz, Decl(nestedReturnTypeIncompatibleMessage.ts, 19, 29))
+
+declare let g: G;
+>g : Symbol(g, Decl(nestedReturnTypeIncompatibleMessage.ts, 20, 11))
+>G : Symbol(G, Decl(nestedReturnTypeIncompatibleMessage.ts, 16, 6))
+
+declare let h: H;
+>h : Symbol(h, Decl(nestedReturnTypeIncompatibleMessage.ts, 21, 11))
+>H : Symbol(H, Decl(nestedReturnTypeIncompatibleMessage.ts, 18, 47))
+
+g = h;
+>g : Symbol(g, Decl(nestedReturnTypeIncompatibleMessage.ts, 20, 11))
+>h : Symbol(h, Decl(nestedReturnTypeIncompatibleMessage.ts, 21, 11))
+
