@@ -477,14 +477,33 @@ func (s *snapshotFSBuilder) invalidateNodeModulesCache() {
 	})
 }
 
-func (s *snapshotFSBuilder) markDirtyFiles(change FileChangeSummary) {
-	for uri := range change.Changed.Keys() {
-		path := s.toPath(uri.FileName())
-		if entry, ok := s.diskFiles.Load(path); ok {
-			entry.Change(func(file *diskFile) {
-				file.needsReload = true
+func (s *snapshotFSBuilder) markDirtyFiles(change FileChangeSummary) FileChangeSummary {
+	if change.Changed.Len() > 0 {
+		var filteredChanged collections.SyncSet[lsproto.DocumentUri]
+		wg := core.NewWorkGroup(false)
+		for uri := range change.Changed.Keys() {
+			path := s.toPath(uri.FileName())
+			if _, ok := s.overlays[path]; ok {
+				filteredChanged.Add(uri)
+				continue
+			}
+			entry, ok := s.diskFiles.Load(path)
+			if !ok {
+				filteredChanged.Add(uri)
+				continue
+			}
+			wg.Queue(func() {
+				if s.reloadEntryIfContentChanged(entry) {
+					filteredChanged.Add(uri)
+				}
 			})
 		}
+		wg.RunAndWait()
+		newChanged := collections.NewSetWithSizeHint[lsproto.DocumentUri](filteredChanged.Size())
+		for uri := range filteredChanged.Keys() {
+			newChanged.Add(uri)
+		}
+		change.Changed = *newChanged
 	}
 	for uri := range change.Deleted.Keys() {
 		path := s.toPath(uri.FileName())
@@ -492,6 +511,41 @@ func (s *snapshotFSBuilder) markDirtyFiles(change FileChangeSummary) {
 			entry.Delete()
 		}
 	}
+	return change
+}
+
+func (s *snapshotFSBuilder) reloadEntryIfContentChanged(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) (changed bool) {
+	file := entry.Value()
+	if file == nil {
+		return true
+	}
+	content, ok := s.fs.ReadFile(file.fileName)
+	changed = true
+	entry.Locked(func(e dirty.Value[*diskFile]) {
+		cur := e.Value()
+		if cur == nil {
+			return
+		}
+		if !ok {
+			e.Delete()
+			return
+		}
+		if content == cur.content {
+			changed = false
+			if !cur.MatchesDiskText() {
+				e.Change(func(file *diskFile) {
+					file.needsReload = false
+				})
+			}
+			return
+		}
+		e.Change(func(file *diskFile) {
+			file.content = content
+			file.hash = xxh3.HashString128(content)
+			file.needsReload = false
+		})
+	})
+	return changed
 }
 
 // expandRealpathAliases adds synthetic URIs to the Changed and Deleted sets for
@@ -548,7 +602,13 @@ func (s *snapshotFSBuilder) isRelevantFileName(uri lsproto.DocumentUri) bool {
 	if i < 0 {
 		return false
 	}
-	switch string(path)[i:] {
+	return isRelevantExtension(string(path)[i:])
+}
+
+// isRelevantExtension returns true if the given extension is a known TypeScript
+// or JavaScript extension that can affect the project.
+func isRelevantExtension(ext string) bool {
+	switch ext {
 	case ".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx", ".mts", ".cts", ".json":
 		return true
 	}

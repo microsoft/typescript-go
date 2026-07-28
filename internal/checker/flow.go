@@ -736,12 +736,13 @@ func (c *Checker) narrowTypeByDiscriminant(t *Type, access *ast.Node, narrowType
 }
 
 func (c *Checker) isMatchingConstructorReference(f *FlowState, expr *ast.Node) bool {
-	if ast.IsAccessExpression(expr) {
-		if accessedName, ok := c.getAccessedPropertyName(expr); ok && accessedName == "constructor" && c.isMatchingReference(f.reference, expr.Expression()) {
-			return true
-		}
+	var name *ast.Node
+	if ast.IsPropertyAccessExpression(expr) {
+		name = expr.AsPropertyAccessExpression().Name()
+	} else if ast.IsElementAccessExpression(expr) && ast.IsStringLiteralLike(expr.AsElementAccessExpression().ArgumentExpression) {
+		name = expr.AsElementAccessExpression().ArgumentExpression
 	}
-	return false
+	return name != nil && name.Text() == "constructor" && c.isMatchingReference(f.reference, expr.Expression())
 }
 
 func (c *Checker) narrowTypeByConstructor(t *Type, operator ast.Kind, identifier *ast.Node, assumeTrue bool) *Type {
@@ -2410,7 +2411,12 @@ func (c *Checker) typeMaybeAssignableTo(source *Type, target *Type) bool {
 	if source.flags&TypeFlagsUnion == 0 {
 		return c.isTypeAssignableTo(source, target)
 	}
-	for _, t := range source.AsUnionType().types {
+	// Quick exit when source union contains the target type
+	if containsType(source.Types(), target) {
+		return true
+	}
+	// Otherwise, check if any constituent type of the source union is assignable to the target type
+	for _, t := range source.Types() {
 		if c.isTypeAssignableTo(t, target) {
 			return true
 		}
