@@ -11,6 +11,8 @@ npm install @typescript/native-preview
 npx tsgo # Use this as you would tsc.
 ```
 
+For TypeScript 7.0 RC and later, the command name is `tsc`.
+
 A preview VS Code extension is [available on the VS Code marketplace](https://marketplace.visualstudio.com/items?itemName=TypeScriptTeam.native-preview).
 
 To use this, set this in your VS Code settings:
@@ -36,7 +38,7 @@ This is still a work in progress and is not yet at full feature parity with Type
 | JSX | done | - |
 | Declaration emit | done | - |
 | Emit (JS output) | done | - |
-| Watch mode | prototype | Watches files and rebuilds, but no incremental rechecking. Not optimized. |
+| Watch mode | done | - |
 | Build mode / project references | done | - |
 | Incremental build | done | - |
 | Language service (LSP) | in progress | Nearly all features implemented. |

@@ -36,6 +36,7 @@ type JsxElementLinks struct {
 	resolvedJsxElementAttributesType *Type       // Resolved element attributes type of a JSX opening-like element
 	jsxNamespace                     *ast.Symbol // Resolved JSX namespace symbol for this node
 	jsxImplicitImportContainer       *ast.Symbol // Resolved module symbol the implicit JSX import of this file should refer to
+	firstJSXTagInFile                *ast.Node   // The first JSX tag in the file
 }
 
 var JsxNames = struct {
@@ -147,7 +148,7 @@ func (c *Checker) checkJsxOpeningLikeElementOrOpeningFragment(node *ast.Node) {
 			}
 			var diags []*ast.Diagnostic
 			if !c.checkTypeRelatedToEx(tagType, elementTypeConstraint, c.assignableRelation, tagName, diagnostics.Its_type_0_is_not_a_valid_JSX_element_type, &diags) {
-				c.diagnostics.Add(ast.NewDiagnosticChain(diags[0], diagnostics.X_0_cannot_be_used_as_a_JSX_component, scanner.GetTextOfNode(tagName)))
+				c.addDiagnostic(ast.NewDiagnosticChain(diags[0], diagnostics.X_0_cannot_be_used_as_a_JSX_component, scanner.GetTextOfNode(tagName)))
 			}
 		} else {
 			c.checkJsxReturnAssignableToAppropriateBound(c.getJsxReferenceKind(node), c.getReturnTypeOfSignature(sig), node)
@@ -189,7 +190,7 @@ func (c *Checker) checkJsxReturnAssignableToAppropriateBound(refKind JsxReferenc
 		c.checkTypeRelatedToEx(elemInstanceType, combined, c.assignableRelation, openingLikeElement.TagName(), diagnostics.Its_element_type_0_is_not_a_valid_JSX_element, &diags)
 	}
 	if len(diags) != 0 {
-		c.diagnostics.Add(ast.NewDiagnosticChain(diags[0], diagnostics.X_0_cannot_be_used_as_a_JSX_component, scanner.GetTextOfNode(openingLikeElement.TagName())))
+		c.addDiagnostic(ast.NewDiagnosticChain(diags[0], diagnostics.X_0_cannot_be_used_as_a_JSX_component, scanner.GetTextOfNode(openingLikeElement.TagName())))
 	}
 }
 
@@ -551,7 +552,10 @@ func (c *Checker) resolveJsxOpeningLikeElement(node *ast.Node, candidatesOutArra
 			typeArguments := node.TypeArguments()
 			if len(typeArguments) != 0 {
 				c.checkSourceElements(typeArguments)
-				c.diagnostics.Add(ast.NewDiagnostic(ast.GetSourceFileOfNode(node), node.TypeArgumentList().Loc, diagnostics.Expected_0_type_arguments_but_got_1, 0, len(typeArguments)))
+				sourceFile := ast.GetSourceFileOfNode(node)
+				typeArgumentList := node.TypeArgumentList()
+				loc := core.NewTextRange(scanner.SkipTrivia(sourceFile.Text(), typeArgumentList.Loc.Pos()), typeArgumentList.Loc.End())
+				c.addDiagnostic(ast.NewDiagnostic(sourceFile, loc, diagnostics.Expected_0_type_arguments_but_got_1, 0, len(typeArguments)))
 			}
 			return fakeSignature
 		}
@@ -1448,29 +1452,39 @@ func markAsSynthetic(node *ast.Node) bool {
 }
 
 func (c *Checker) getJsxNamespaceContainerForImplicitImport(location *ast.Node) *ast.Symbol {
-	var file *ast.SourceFile
-	var links *JsxElementLinks
-	if location != nil {
-		if file = ast.GetSourceFileOfNode(location); file != nil {
-			links = c.jsxElementLinks.Get(file.AsNode())
-		}
-	}
-	if links != nil && links.jsxImplicitImportContainer != nil {
+	file := ast.GetSourceFileOfNode(location)
+	links := c.jsxElementLinks.Get(file.AsNode())
+	if links.jsxImplicitImportContainer != nil {
 		return core.IfElse(links.jsxImplicitImportContainer == c.unknownSymbol, nil, links.jsxImplicitImportContainer)
+	}
+	canonicalErrorTag := links.firstJSXTagInFile
+	if canonicalErrorTag == nil {
+		var visit ast.Visitor
+		visit = func(node *ast.Node) bool {
+			if ast.IsJsxElement(node) || ast.IsJsxSelfClosingElement(node) {
+				links.firstJSXTagInFile = node
+				return true
+			}
+			if ast.IsJsxFragment(node) {
+				links.firstJSXTagInFile = node.AsJsxFragment().OpeningFragment // to match strada, fragments issue errors on the opening fragment instead of the whole tag
+				return true
+			}
+			return node.ForEachChild(visit)
+		}
+		file.ForEachChild(visit)
+		canonicalErrorTag = links.firstJSXTagInFile
 	}
 	moduleReference, specifier := c.getJSXRuntimeImportSpecifier(file)
 	if moduleReference == "" {
 		return nil
 	}
 	errorMessage := diagnostics.This_JSX_tag_requires_the_module_path_0_to_exist_but_none_could_be_found_Make_sure_you_have_types_for_the_appropriate_package_installed
-	mod := c.resolveExternalModule(core.OrElse(specifier, location), moduleReference, errorMessage, location, false)
+	mod := c.resolveExternalModule(core.OrElse(specifier, canonicalErrorTag), moduleReference, errorMessage, canonicalErrorTag, false)
 	var result *ast.Symbol
 	if mod != nil && mod != c.unknownSymbol {
 		result = c.getMergedSymbol(c.resolveSymbol(mod))
 	}
-	if links != nil {
-		links.jsxImplicitImportContainer = core.OrElse(result, c.unknownSymbol)
-	}
+	links.jsxImplicitImportContainer = core.OrElse(result, c.unknownSymbol)
 	return result
 }
 

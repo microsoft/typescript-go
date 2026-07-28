@@ -1,8 +1,9 @@
 parserStatementIsNotAMemberVariableDeclaration1.ts(1,1): error TS1108: A 'return' statement can only be used within a function body.
 parserStatementIsNotAMemberVariableDeclaration1.ts(6,5): error TS1212: Identifier expected. 'private' is a reserved word in strict mode.
+parserStatementIsNotAMemberVariableDeclaration1.ts(6,5): error TS2304: Cannot find name 'private'.
 
 
-==== parserStatementIsNotAMemberVariableDeclaration1.ts (2 errors) ====
+==== parserStatementIsNotAMemberVariableDeclaration1.ts (3 errors) ====
     return {
     ~~~~~~
 !!! error TS1108: A 'return' statement can only be used within a function body.
@@ -13,6 +14,8 @@ parserStatementIsNotAMemberVariableDeclaration1.ts(6,5): error TS1212: Identifie
         private[key] = value;
         ~~~~~~~
 !!! error TS1212: Identifier expected. 'private' is a reserved word in strict mode.
+        ~~~~~~~
+!!! error TS2304: Cannot find name 'private'.
     
       }
     

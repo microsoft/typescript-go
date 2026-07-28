@@ -1,6 +1,7 @@
 package tsctests
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -9,6 +10,30 @@ import (
 
 func TestWatch(t *testing.T) {
 	t.Parallel()
+	bunDependencyTest := func() *tscInput {
+		files := FileMap{}
+		var index strings.Builder
+		var fileNames strings.Builder
+		fileNames.WriteString(`"index.ts"`)
+		for i := range 12 {
+			name := fmt.Sprintf("pkg%d", i)
+			value := fmt.Sprintf("value%d", i)
+			index.WriteString(fmt.Sprintf(`import { %[1]s } from "./node_modules/.bun/%[2]s/index"; %[1]s;`, value, name))
+			index.WriteString("\n")
+			files["/home/src/workspaces/project/node_modules/.bun/"+name+"/index.ts"] = fmt.Sprintf("export const %s = %d;", value, i)
+			fileNames.WriteString(fmt.Sprintf(`, "node_modules/.bun/%s/index.ts"`, name))
+		}
+		files["/home/src/workspaces/project/index.ts"] = index.String()
+		files["/home/src/workspaces/project/tsconfig.json"] = fmt.Sprintf(`{
+	"compilerOptions": {},
+	"files": [%s]
+}`, fileNames.String())
+		return &tscInput{
+			subScenario:     "watch handles many bun dependency files",
+			files:           files,
+			commandLineArgs: []string{"--watch"},
+		}
+	}
 	testCases := []*tscInput{
 		{
 			subScenario: "watch with no tsconfig",
@@ -25,6 +50,7 @@ func TestWatch(t *testing.T) {
 			},
 			commandLineArgs: []string{"--watch", "--incremental"},
 		},
+		bunDependencyTest(),
 		{
 			subScenario: "watch skips build when no files change",
 			files: FileMap{
@@ -290,6 +316,33 @@ func TestWatch(t *testing.T) {
 				},
 			},
 		},
+		// Path resolution: node_modules removed then reinstalled (npm ci after rm -rf)
+		{
+			subScenario: "watch detects node modules reinstalled after deletion",
+			files: FileMap{
+				"/home/src/workspaces/project/index.ts":                        `import { lib } from "mylib";`,
+				"/home/src/workspaces/project/tsconfig.json":                   `{}`,
+				"/home/src/workspaces/project/node_modules/mylib/package.json": `{"name": "mylib", "main": "index.js", "types": "index.d.ts"}`,
+				"/home/src/workspaces/project/node_modules/mylib/index.js":     `exports.lib = "hello";`,
+				"/home/src/workspaces/project/node_modules/mylib/index.d.ts":   `export declare const lib: string;`,
+			},
+			commandLineArgs: []string{"--watch"},
+			edits: []*tscEdit{
+				{
+					caption: "delete node_modules entirely",
+					edit: func(sys *TestSys) {
+						sys.removeNoError("/home/src/workspaces/project/node_modules/mylib/index.d.ts")
+						sys.removeNoError("/home/src/workspaces/project/node_modules/mylib/index.js")
+						sys.removeNoError("/home/src/workspaces/project/node_modules/mylib/package.json")
+					},
+				},
+				newTscEdit("reinstall node_modules", func(sys *TestSys) {
+					sys.writeFileNoError("/home/src/workspaces/project/node_modules/mylib/package.json", `{"name": "mylib", "main": "index.js", "types": "index.d.ts"}`)
+					sys.writeFileNoError("/home/src/workspaces/project/node_modules/mylib/index.js", `exports.lib = "hello";`)
+					sys.writeFileNoError("/home/src/workspaces/project/node_modules/mylib/index.d.ts", `export declare const lib: string;`)
+				}),
+			},
+		},
 		// Config file lifecycle
 		{
 			subScenario: "watch handles tsconfig deleted",
@@ -479,19 +532,50 @@ func TestWatch(t *testing.T) {
 				}),
 			},
 		},
-		// Symlinks
+		// Symlinks — only node_modules symlinks are resolved via Realpath,
+		// matching the TypeScript compiler's behavior (see program.ts:2119).
 		{
-			subScenario: "watch detects change in symlinked file",
+			subScenario: "watch detects change in symlinked node_modules file",
 			files: FileMap{
-				"/home/src/workspaces/project/index.ts":      `import { shared } from "./link";`,
-				"/home/src/workspaces/shared/index.ts":       `export const shared = "v1";`,
-				"/home/src/workspaces/project/link.ts":       vfstest.Symlink("/home/src/workspaces/shared/index.ts"),
-				"/home/src/workspaces/project/tsconfig.json": `{}`,
+				"/home/src/workspaces/project/index.ts":                     `import { shared } from "shared";`,
+				"/home/src/workspaces/shared/index.ts":                      `export const shared = "v1";`,
+				"/home/src/workspaces/project/node_modules/shared/index.ts": vfstest.Symlink("/home/src/workspaces/shared/index.ts"),
+				"/home/src/workspaces/project/tsconfig.json":                `{}`,
 			},
 			commandLineArgs: []string{"--watch"},
 			edits: []*tscEdit{
 				newTscEdit("modify symlink target", func(sys *TestSys) {
 					sys.writeFileNoError("/home/src/workspaces/shared/index.ts", `export const shared = "v2";`)
+				}),
+			},
+		},
+		// Ancestor fallback stability — when a tsconfig include references a
+		// directory that doesn't exist
+		{
+			subScenario: "watch stability with ancestor directory fallback",
+			files: FileMap{
+				"/home/src/workspaces/project/index.ts":      `const x: number = 1;`,
+				"/home/src/workspaces/project/tsconfig.json": `{ "include": ["*.ts", "missing/**/*"] }`,
+			},
+			commandLineArgs: []string{"--watch"},
+			edits: []*tscEdit{
+				newTscEdit("trivial file change", func(sys *TestSys) {
+					sys.writeFileNoError("/home/src/workspaces/project/index.ts", `const x: number = 2;`)
+				}),
+			},
+		},
+		// Ancestor fallback: creating deeply nested directories that didn't
+		// exist at initial build time should trigger a rebuild and re-watch.
+		{
+			subScenario: "watch detects file added in deeply nested non-existent include path",
+			files: FileMap{
+				"/home/src/workspaces/project/index.ts":      `const x: number = 1;`,
+				"/home/src/workspaces/project/tsconfig.json": `{ "include": ["*.ts", "deep/nested/dir/**/*"] }`,
+			},
+			commandLineArgs: []string{"--watch"},
+			edits: []*tscEdit{
+				newTscEdit("create deeply nested file matching include", func(sys *TestSys) {
+					sys.writeFileNoError("/home/src/workspaces/project/deep/nested/dir/added.ts", `export const added = 1;`)
 				}),
 			},
 		},

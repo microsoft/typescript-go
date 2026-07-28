@@ -107,11 +107,11 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 		}
 		// First, infer between identically matching source and target constituents and remove the
 		// matching types.
-		tempSources, tempTargets := c.inferFromMatchingTypes(n, sourceTypes, target.Distributed(), (*Checker).isTypeOrBaseIdenticalTo)
+		tempSources, tempTargets := c.inferFromMatchingTypes(n, sourceTypes, target.Types(), (*Checker).isTypeOrBaseIdenticalTo, false /*sort*/)
 		// Next, infer between closely matching source and target constituents and remove
 		// the matching types. Types closely match when they are instantiations of the same
 		// object type or instantiations of the same type alias.
-		sources, targets := c.inferFromMatchingTypes(n, tempSources, tempTargets, (*Checker).isTypeCloselyMatchedBy)
+		sources, targets := c.inferFromMatchingTypes(n, tempSources, tempTargets, (*Checker).isTypeCloselyMatchedBy, true /*sort*/)
 		if len(targets) == 0 {
 			return
 		}
@@ -139,7 +139,7 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 				sourceTypes = []*Type{source}
 			}
 			// Infer between identically matching source and target constituents and remove the matching types.
-			sources, targets := c.inferFromMatchingTypes(n, sourceTypes, target.Types(), (*Checker).isTypeIdenticalTo)
+			sources, targets := c.inferFromMatchingTypes(n, sourceTypes, target.Types(), (*Checker).isTypeIdenticalTo, false /*sort*/)
 			if len(sources) == 0 || len(targets) == 0 {
 				return
 			}
@@ -367,15 +367,33 @@ func (c *Checker) invokeOnce(n *InferenceState, source *Type, target *Type, acti
 	n.inferencePriority = min(n.inferencePriority, saveInferencePriority)
 }
 
-func (c *Checker) inferFromMatchingTypes(n *InferenceState, sources []*Type, targets []*Type, matches func(c *Checker, s *Type, t *Type) bool) ([]*Type, []*Type) {
+func (c *Checker) inferFromMatchingTypes(n *InferenceState, sources []*Type, targets []*Type, matches func(c *Checker, s *Type, t *Type) bool, sort bool) ([]*Type, []*Type) {
 	var matchedSources []*Type
 	var matchedTargets []*Type
 	for _, t := range targets {
 		for _, s := range sources {
 			if matches(c, s, t) {
-				c.inferFromTypes(n, s, t)
+				if !sort {
+					c.inferFromTypes(n, s, t)
+				}
 				matchedSources = core.AppendIfUnique(matchedSources, s)
 				matchedTargets = core.AppendIfUnique(matchedTargets, t)
+			}
+		}
+	}
+	if sort {
+		// Sort target types by decreasing depth of generic instantiations. Intuitively, a successful
+		// inference from a type argument with deeper nesting is of higher quality because we've stripped
+		// away more layers of type instantiations that otherwise might skew the results. For example,
+		// when inferring from string[] | string[][] to T[] | T[][], the inference of string we make from
+		// relating string[][] to T[][] is of higher quality than the inference of string[] we make relating
+		// string[][] to T[].
+		slices.SortFunc(matchedTargets, compareTypesAndDepth)
+		for _, t := range matchedTargets {
+			for _, s := range matchedSources {
+				if matches(c, s, t) {
+					c.inferFromTypes(n, s, t)
+				}
 			}
 		}
 	}
@@ -386,6 +404,45 @@ func (c *Checker) inferFromMatchingTypes(n *InferenceState, sources []*Type, tar
 		targets = core.Filter(targets, func(t *Type) bool { return !slices.Contains(matchedTargets, t) })
 	}
 	return sources, targets
+}
+
+// Compare two types first by depth and then by the regular type ordering.
+func compareTypesAndDepth(t1, t2 *Type) int {
+	d1 := getTypeDepth(t1, 3)
+	d2 := getTypeDepth(t2, 3)
+	if d1 != d2 {
+		return d2 - d1 // Largest depth sorts first
+	}
+	return CompareTypes(t1, t2)
+}
+
+// Return the depth of the given type up to the given maximum depth. For generic aliased types
+// and type references, the depth is one plus the largest type argument depth. For union and
+// intersection types, the depth is the largest constituent type depth. For all other types,
+// the depth is zero. The maximum depth limits infinite recursion of circular types.
+func getTypeDepth(t *Type, maxDepth int) int {
+	if maxDepth != 0 {
+		if t.alias != nil && len(t.alias.typeArguments) != 0 {
+			return getTypeListDepth(t.alias.typeArguments, maxDepth-1) + 1
+		}
+		if t.objectFlags&ObjectFlagsReference != 0 {
+			if typeArguments := t.checker.getTypeArguments(t); len(typeArguments) != 0 {
+				return getTypeListDepth(typeArguments, maxDepth-1) + 1
+			}
+		}
+		if t.flags&TypeFlagsUnionOrIntersection != 0 {
+			return getTypeListDepth(t.Types(), maxDepth)
+		}
+	}
+	return 0
+}
+
+func getTypeListDepth(types []*Type, maxDepth int) int {
+	depth := 0
+	for _, t := range types {
+		depth = max(depth, getTypeDepth(t, maxDepth))
+	}
+	return depth
 }
 
 func (c *Checker) inferToMultipleTypes(n *InferenceState, source *Type, targets []*Type, targetFlags TypeFlags) {
@@ -1451,9 +1508,9 @@ func (c *Checker) isTypeParameterAtTopLevelInReturnType(signature *Signature, ty
 
 func (c *Checker) getTypeFromInference(inference *InferenceInfo) *Type {
 	switch {
-	case inference.candidates != nil:
+	case len(inference.candidates) != 0:
 		return c.getUnionTypeEx(inference.candidates, UnionReductionSubtype, nil, nil)
-	case inference.contraCandidates != nil:
+	case len(inference.contraCandidates) != 0:
 		return c.getIntersectionType(inference.contraCandidates)
 	}
 	return nil
@@ -1595,7 +1652,7 @@ func hasInferenceCandidates(info *InferenceInfo) bool {
 }
 
 func hasInferenceCandidatesOrDefault(info *InferenceInfo) bool {
-	return info.candidates != nil || info.contraCandidates != nil || hasTypeParameterDefault(info.typeParameter)
+	return hasInferenceCandidates(info) || hasTypeParameterDefault(info.typeParameter)
 }
 
 func hasTypeParameterDefault(tp *Type) bool {

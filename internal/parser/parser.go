@@ -84,7 +84,6 @@ type Parser struct {
 	hasDeprecatedTag            bool
 	hasParseError               bool
 
-	identifiers                map[string]string
 	identifierCount            int
 	notParenthesizedArrow      collections.Set[int]
 	nodeSliceArena             core.Arena[*ast.Node]
@@ -184,7 +183,7 @@ func (p *Parser) parseJSONText() *ast.SourceFile {
 				}
 			case ast.KindNumericLiteral, ast.KindStringLiteral:
 				if p.lookAhead(func(p *Parser) bool { return p.nextToken() != ast.KindColonToken }) {
-					expression = p.parseLiteralExpression(false /*intern*/)
+					expression = p.parseLiteralExpression()
 					break
 				}
 				fallthrough
@@ -470,11 +469,9 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.SetJSDocDiagnostics(attachFileToDiagnostics(p.jsdocDiagnostics, result))
 	result.CommonJSModuleIndicator = p.commonJSModuleIndicator
 	result.IsDeclarationFile = isDeclarationFile
-	result.ContainsNonASCII = p.scanner.ContainsNonASCII()
 	result.LanguageVariant = p.languageVariant
 	result.ScriptKind = p.scriptKind
 	result.Flags |= p.sourceFlags
-	result.Identifiers = p.identifiers
 	result.NodeCount = p.factory.NodeCount()
 	result.TextCount = p.factory.TextCount()
 	result.IdentifierCount = p.identifierCount
@@ -569,12 +566,12 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 				p.nextToken()
 			}
 			if afterAwaitStatement < len(sourceFile.Statements.Nodes) {
-				nonAwaitStatement := sourceFile.Statements.Nodes[afterAwaitStatement]
-				if statement.End() == nonAwaitStatement.Pos() {
+				lastAwaitStatement := sourceFile.Statements.Nodes[afterAwaitStatement-1]
+				if statement.End() == lastAwaitStatement.End() {
 					// done reparsing this section
 					break
 				}
-				if statement.End() > nonAwaitStatement.Pos() {
+				if statement.End() > lastAwaitStatement.End() {
 					// we ate into the next statement, so we must continue reparsing the next span
 					i += 2
 					if i < len(p.possibleAwaitSpans) {
@@ -2181,7 +2178,7 @@ func (p *Parser) parseAmbientExternalModuleDeclaration(pos int, jsdoc jsdocScann
 		keyword = ast.KindGlobalKeyword
 	} else {
 		// parse string literal
-		name = p.parseLiteralExpression(true /*intern*/)
+		name = p.parseLiteralExpression()
 	}
 	var body *ast.Node
 	if p.token == ast.KindOpenBraceToken {
@@ -2326,8 +2323,7 @@ func (p *Parser) parseExternalModuleReference() *ast.Node {
 
 func (p *Parser) parseModuleSpecifier() *ast.Expression {
 	if p.token == ast.KindStringLiteral {
-		result := p.parseLiteralExpression(true /*intern*/)
-		return result
+		return p.parseLiteralExpression()
 	}
 	// We allow arbitrary expressions here, even though the grammar only allows string
 	// literals.  We check to ensure that it is only a string literal later in the grammar
@@ -2491,7 +2487,7 @@ func (p *Parser) parseModuleExportName(disallowKeywords bool) (node *ast.Node, n
 	nameOk = true
 
 	if p.token == ast.KindStringLiteral {
-		return p.parseLiteralExpression(false /*intern*/), nameOk
+		return p.parseLiteralExpression(), nameOk
 	}
 	if disallowKeywords && ast.IsKeyword(p.token) && !p.isIdentifier() {
 		nameOk = false
@@ -2887,7 +2883,7 @@ func (p *Parser) parseLiteralTypeNode(negative bool) *ast.Node {
 	if p.token == ast.KindTrueKeyword || p.token == ast.KindFalseKeyword || p.token == ast.KindNullKeyword {
 		expression = p.parseKeywordExpression()
 	} else {
-		expression = p.parseLiteralExpression(false /*intern*/)
+		expression = p.parseLiteralExpression()
 	}
 	if negative {
 		expression = p.finishNode(p.factory.NewPrefixUnaryExpression(ast.KindMinusToken, expression), pos)
@@ -2987,7 +2983,7 @@ func (p *Parser) parsePrivateIdentifier() *ast.Node {
 	pos := p.nodePos()
 	text := p.scanner.TokenValue()
 	p.nextToken()
-	return p.finishNode(p.factory.NewPrivateIdentifier(p.internIdentifier(text)), pos)
+	return p.finishNode(p.factory.NewPrivateIdentifier(text), pos)
 }
 
 func (p *Parser) reScanLessThanToken() ast.Kind {
@@ -3077,7 +3073,7 @@ func (p *Parser) parseImportAttribute() *ast.Node {
 	if tokenIsIdentifierOrKeyword(p.token) {
 		name = p.parseIdentifierName()
 	} else if p.token == ast.KindStringLiteral {
-		name = p.parseLiteralExpression(false /*intern*/)
+		name = p.parseLiteralExpression()
 	}
 	if name != nil {
 		p.parseExpected(ast.KindColonToken)
@@ -3459,8 +3455,7 @@ func (p *Parser) parsePropertyName() *ast.Node {
 
 func (p *Parser) parsePropertyNameWorker(allowComputedPropertyNames bool) *ast.Node {
 	if p.token == ast.KindStringLiteral || p.token == ast.KindNumericLiteral || p.token == ast.KindBigIntLiteral {
-		literal := p.parseLiteralExpression(true /*intern*/)
-		return literal
+		return p.parseLiteralExpression()
 	}
 	if allowComputedPropertyNames && p.token == ast.KindOpenBracketToken {
 		return p.parseComputedPropertyName()
@@ -4584,11 +4579,12 @@ func (p *Parser) parseBinaryExpressionOrHigher(precedence ast.OperatorPrecedence
 }
 
 func (p *Parser) parseBinaryExpressionRest(precedence ast.OperatorPrecedence, leftOperand *ast.Expression, pos int) *ast.Expression {
+	lastOperand := leftOperand
 	for {
 		// We either have a binary operator here, or we're finished.  We call
 		// reScanGreaterToken so that we merge token sequences like > and = into >=
-		p.reScanGreaterThanToken()
-		newPrecedence := ast.GetBinaryOperatorPrecedence(p.token)
+		operator := p.reScanGreaterThanToken()
+		newPrecedence := ast.GetBinaryOperatorPrecedence(operator)
 		// Check the precedence to see if we should "take" this operator
 		// - For left associative operator (all operator but **), consume the operator,
 		//   recursively call the function below, and parse binaryExpression as a rightOperand
@@ -4611,7 +4607,7 @@ func (p *Parser) parseBinaryExpressionRest(precedence ast.OperatorPrecedence, le
 		//      a ** b - c
 		//             ^token; leftOperand = b. Return b to the caller as a rightOperand
 		var consumeCurrentOperator bool
-		if p.token == ast.KindAsteriskAsteriskToken {
+		if operator == ast.KindAsteriskAsteriskToken {
 			consumeCurrentOperator = newPrecedence >= precedence
 		} else {
 			consumeCurrentOperator = newPrecedence > precedence
@@ -4619,10 +4615,10 @@ func (p *Parser) parseBinaryExpressionRest(precedence ast.OperatorPrecedence, le
 		if !consumeCurrentOperator {
 			break
 		}
-		if p.token == ast.KindInKeyword && p.inDisallowInContext() {
+		if operator == ast.KindInKeyword && p.inDisallowInContext() {
 			break
 		}
-		if p.token == ast.KindAsKeyword || p.token == ast.KindSatisfiesKeyword {
+		if operator == ast.KindAsKeyword || operator == ast.KindSatisfiesKeyword {
 			// Make sure we *do* perform ASI for constructs like this:
 			//    var x = foo
 			//    as (Bar)
@@ -4631,16 +4627,28 @@ func (p *Parser) parseBinaryExpressionRest(precedence ast.OperatorPrecedence, le
 			if p.hasPrecedingLineBreak() {
 				break
 			} else {
-				keywordKind := p.token
 				p.nextToken()
-				if keywordKind == ast.KindSatisfiesKeyword {
+				// When we have 'a ## b as SomeType' or 'a ## b satisfies SomeType', where ## is some binary
+				// operator, we want to stop parsing on any following operator with a higher precedence than ##
+				// because continuing would make it impossible to erase the `as` or `satisfies` without changing
+				// the meaning of the expression. See https://github.com/microsoft/TypeScript/issues/63527.
+				lastPrecedence := ast.OperatorPrecedenceHighest
+				if ast.IsBinaryExpression(lastOperand) {
+					lastPrecedence = ast.GetBinaryOperatorPrecedence(lastOperand.AsBinaryExpression().OperatorToken.Kind)
+				}
+				if operator == ast.KindSatisfiesKeyword {
 					leftOperand = p.makeSatisfiesExpression(leftOperand, p.parseType())
 				} else {
 					leftOperand = p.makeAsExpression(leftOperand, p.parseType())
 				}
+				// Stop if the precedence of the next operator is too high.
+				if ast.GetBinaryOperatorPrecedence(p.reScanGreaterThanToken()) > lastPrecedence {
+					break
+				}
 			}
 		} else {
 			leftOperand = p.makeBinaryExpression(leftOperand, p.parseTokenNode(), p.parseBinaryExpressionOrHigher(newPrecedence), pos)
+			lastOperand = leftOperand
 		}
 	}
 	return leftOperand
@@ -5023,7 +5031,7 @@ func (p *Parser) parseJsxAttributeName() *ast.Node {
 func (p *Parser) parseJsxAttributeValue() *ast.Expression {
 	if p.token == ast.KindEqualsToken {
 		if p.scanJsxAttributeValue() == ast.KindStringLiteral {
-			return p.parseLiteralExpression(false /*intern*/)
+			return p.parseLiteralExpression()
 		}
 		if p.token == ast.KindOpenBraceToken {
 			return p.parseJsxExpression( /*inExpressionContext*/ true)
@@ -5234,8 +5242,14 @@ func (p *Parser) isTemplateStartOfTaggedTemplate() bool {
 
 func (p *Parser) tryParseTypeArgumentsInExpression() *ast.NodeList {
 	// TypeArguments must not be parsed in JavaScript files to avoid ambiguity with binary operators.
+	// Check the cheap preconditions before saving the parser state: unless the current token is `<`
+	// (or `<<`, which reScanLessThanToken would split), there is nothing to speculatively parse and
+	// the mark/rewind would be a no-op.
+	if p.contextFlags&ast.NodeFlagsJavaScriptFile != 0 || (p.token != ast.KindLessThanToken && p.token != ast.KindLessThanLessThanToken) {
+		return nil
+	}
 	state := p.mark()
-	if p.contextFlags&ast.NodeFlagsJavaScriptFile == 0 && p.reScanLessThanToken() == ast.KindLessThanToken {
+	if p.reScanLessThanToken() == ast.KindLessThanToken {
 		p.nextToken()
 		typeArguments := p.parseDelimitedList(PCTypeArguments, (*Parser).parseType)
 		// If it doesn't have the closing `>` then it's definitely not an type argument list.
@@ -5421,21 +5435,11 @@ func (p *Parser) tryReparseOptionalChain(node *ast.Expression) bool {
 }
 
 func (p *Parser) parseElementAccessExpressionRest(pos int, expression *ast.Expression, questionDotToken *ast.Node) *ast.Node {
-	var argumentExpression *ast.Expression
+	argumentExpression := p.createMissingIdentifier()
 	if p.token == ast.KindCloseBracketToken {
 		p.parseErrorAt(p.nodePos(), p.nodePos(), diagnostics.An_element_access_expression_should_take_an_argument)
-		argumentExpression = p.createMissingIdentifier()
 	} else {
-		argument := p.parseExpressionAllowIn()
-		switch argument.Kind {
-		case ast.KindStringLiteral:
-			argument.AsStringLiteral().Text = p.internIdentifier(argument.Text())
-		case ast.KindNoSubstitutionTemplateLiteral:
-			argument.AsNoSubstitutionTemplateLiteral().Text = p.internIdentifier(argument.Text())
-		case ast.KindNumericLiteral:
-			argument.AsNumericLiteral().Text = p.internIdentifier(argument.Text())
-		}
-		argumentExpression = argument
+		argumentExpression = p.parseExpressionAllowIn()
 	}
 	p.parseExpected(ast.KindCloseBracketToken)
 	isOptionalChain := questionDotToken != nil || p.tryReparseOptionalChain(expression)
@@ -5510,7 +5514,7 @@ func (p *Parser) parseTaggedTemplateRest(pos int, tag *ast.Expression, questionD
 	var template *ast.Expression
 	if p.token == ast.KindNoSubstitutionTemplateLiteral {
 		p.reScanTemplateToken(true /*isTaggedTemplate*/)
-		template = p.parseLiteralExpression(false /*intern*/)
+		template = p.parseLiteralExpression()
 	} else {
 		template = p.parseTemplateExpression(true /*isTaggedTemplate*/)
 	}
@@ -5551,7 +5555,7 @@ func (p *Parser) parsePrimaryExpression() *ast.Expression {
 		}
 		fallthrough
 	case ast.KindNumericLiteral, ast.KindBigIntLiteral, ast.KindStringLiteral:
-		return p.parseLiteralExpression(false /*intern*/)
+		return p.parseLiteralExpression()
 	case ast.KindThisKeyword, ast.KindSuperKeyword, ast.KindNullKeyword, ast.KindTrueKeyword, ast.KindFalseKeyword:
 		return p.parseKeywordExpression()
 	case ast.KindOpenParenToken:
@@ -5578,7 +5582,7 @@ func (p *Parser) parsePrimaryExpression() *ast.Expression {
 		return p.parseNewExpressionOrNewDotTarget()
 	case ast.KindSlashToken, ast.KindSlashEqualsToken:
 		if p.reScanSlashToken() == ast.KindRegularExpressionLiteral {
-			return p.parseLiteralExpression(false /*intern*/)
+			return p.parseLiteralExpression()
 		}
 	case ast.KindTemplateHead:
 		return p.parseTemplateExpression(false /*isTaggedTemplate*/)
@@ -5774,12 +5778,9 @@ func (p *Parser) parseKeywordExpression() *ast.Node {
 	return p.finishNode(result, pos)
 }
 
-func (p *Parser) parseLiteralExpression(intern bool) *ast.Node {
+func (p *Parser) parseLiteralExpression() *ast.Node {
 	pos := p.nodePos()
 	text := p.scanner.TokenValue()
-	if intern {
-		text = p.internIdentifier(text)
-	}
 	tokenFlags := p.scanner.TokenFlags()
 	var result *ast.Node
 	switch p.token {
@@ -5848,7 +5849,7 @@ func (p *Parser) createIdentifierWithDiagnostic(isIdentifier bool, diagnosticMes
 		}
 		text := p.scanner.TokenValue()
 		p.nextTokenWithoutCheck()
-		return p.finishNode(p.newIdentifier(p.internIdentifier(text)), pos)
+		return p.finishNode(p.newIdentifier(text), pos)
 	}
 	if p.token == ast.KindPrivateIdentifier {
 		if privateIdentifierDiagnosticMessage != nil {
@@ -5883,18 +5884,6 @@ func (p *Parser) createIdentifierWithDiagnostic(isIdentifier bool, diagnosticMes
 		}
 	}
 	return p.createMissingIdentifier()
-}
-
-func (p *Parser) internIdentifier(text string) string {
-	if identifier, ok := p.identifiers[text]; ok {
-		return identifier
-	}
-	identifier := text
-	if p.identifiers == nil {
-		p.identifiers = make(map[string]string)
-	}
-	p.identifiers[identifier] = identifier
-	return identifier
 }
 
 func (p *Parser) newNodeList(loc core.TextRange, nodes []*ast.Node) *ast.NodeList {

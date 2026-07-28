@@ -197,6 +197,24 @@ func createGetSymbolAccessibilityDiagnosticForNode(node *ast.Node) GetSymbolAcce
 				typeName:          typeName,
 			}
 		}
+	} else if ast.IsCallExpression(node) {
+		// JS object.defineProperty call
+		// unique node selection behavior, inline closure
+		return func(symbolAccessibilityResult printer.SymbolAccessibilityResult) *SymbolAccessibilityDiagnostic {
+			diagnosticMessage := selectDiagnosticBasedOnModuleName(
+				symbolAccessibilityResult,
+				diagnostics.Exported_variable_0_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named,
+				diagnostics.Exported_variable_0_has_or_is_using_name_1_from_private_module_2,
+				diagnostics.Exported_variable_0_has_or_is_using_private_name_1,
+			)
+			errorNode := node.Arguments()[1]
+			typeName := node.Arguments()[1]
+			return &SymbolAccessibilityDiagnostic{
+				errorNode:         errorNode,
+				diagnosticMessage: diagnosticMessage,
+				typeName:          typeName,
+			}
+		}
 	} else {
 		panic("Attempted to set a declaration diagnostic context for unhandled node kind: " + node.Kind.String())
 	}
@@ -395,7 +413,7 @@ func getParameterDeclarationTypeVisibilityDiagnosticMessage(node *ast.Node, symb
 			)
 		}
 
-	case ast.KindFunctionDeclaration, ast.KindFunctionType:
+	case ast.KindFunctionDeclaration, ast.KindFunctionType, ast.KindArrowFunction, ast.KindFunctionExpression:
 		return selectDiagnosticBasedOnModuleName(
 			symbolAccessibilityResult,
 			diagnostics.Parameter_0_of_exported_function_has_or_is_using_name_1_from_external_module_2_but_cannot_be_named,
@@ -409,6 +427,7 @@ func getParameterDeclarationTypeVisibilityDiagnosticMessage(node *ast.Node, symb
 			diagnostics.Parameter_0_of_accessor_has_or_is_using_name_1_from_private_module_2,
 			diagnostics.Parameter_0_of_accessor_has_or_is_using_private_name_1,
 		)
+
 	default:
 		panic("Unknown parent for parameter: " + node.Parent.Kind.String())
 	}
@@ -668,7 +687,7 @@ func createGetIsolatedDeclarationErrors(resolver printer.EmitResolver) func(node
 		}
 		addUndefined := resolver.RequiresAddingImplicitUndefinedUnsafe(node, nil, nil) // skip checker lock - node builder will already have one
 		if !addUndefined && node.Initializer() != nil {
-			return createExpressionError(node)
+			return createExpressionError(node.Initializer())
 		}
 		message := getErrorByDeclarationKind(node.Kind)
 		if addUndefined {

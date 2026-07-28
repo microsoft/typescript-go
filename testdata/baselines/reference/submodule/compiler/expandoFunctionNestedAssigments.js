@@ -98,5 +98,33 @@ for (let f in (Foo.forIn = [])) {
 
 //// [expandoFunctionNestedAssigments.d.ts]
 declare function Foo(): void;
+declare namespace Foo {
+    export var inVariableInit: number;
+    export var bla: {
+        foo: number;
+    };
+    export var baz: number;
+    var _a: number;
+    export { _a as bar };
+    export var fromIf: number;
+    export var inIf: number;
+    export var fromWhileCondition: number;
+    export var fromWhileBody: number;
+    export var fromWhileBodyNested: number;
+    export var fromDoBody: number;
+    export var fromDoBodyNested: number;
+    export var fromDoCondition: number;
+    export var forInit: number;
+    export var forCond: number;
+    export var forIncr: number;
+    export var fromForBody: number;
+    export var fromForBodyNested: number;
+    export var forOf: any[];
+    export var fromForOfBody: number;
+    export var fromForOfBodyNested: number;
+    export var forIn: any[];
+    export var fromForInBody: number;
+    export var fromForInBodyNested: number;
+}
 declare let d: number;
 declare function bar(p?: number): void;
