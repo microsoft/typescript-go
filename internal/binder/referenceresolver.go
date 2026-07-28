@@ -140,8 +140,8 @@ func (r *referenceResolver) getExportSymbolOfValueSymbolIfExported(symbol *ast.S
 		if r.hooks.GetExportSymbolOfValueSymbolIfExported != nil {
 			return r.hooks.GetExportSymbolOfValueSymbolIfExported(symbol)
 		}
-		if symbol.Flags&ast.SymbolFlagsExportValue != 0 && symbol.ExportSymbol != nil {
-			symbol = symbol.ExportSymbol
+		if symbol.Flags&ast.SymbolFlagsExportValue != 0 && symbol.ExportSymbol() != nil {
+			symbol = symbol.ExportSymbol()
 		}
 		return r.getMergedSymbol(symbol)
 	}
@@ -159,7 +159,7 @@ func (r *referenceResolver) GetReferencedExportContainer(node *ast.IdentifierNod
 			// If we reference an exported entity within the same module declaration, then whether
 			// we prefix depends on the kind of entity. SymbolFlags.ExportHasLocal encompasses all the
 			// kinds that we do NOT prefix.
-			exportSymbol := r.getMergedSymbol(symbol.ExportSymbol)
+			exportSymbol := r.getMergedSymbol(symbol.ExportSymbol())
 			if !prefixLocals && exportSymbol.Flags&ast.SymbolFlagsExportHasLocal != 0 && exportSymbol.Flags&ast.SymbolFlagsVariable == 0 {
 				return nil
 			}

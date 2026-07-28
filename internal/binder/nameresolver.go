@@ -106,7 +106,7 @@ loop:
 			if moduleSymbol == nil {
 				break
 			}
-			moduleExports := moduleSymbol.Exports
+			moduleExports := moduleSymbol.Exports()
 			if ast.IsSourceFile(location) || (ast.IsModuleDeclaration(location) && location.Flags&ast.NodeFlagsAmbient != 0 && !ast.IsGlobalScopeAugmentation(location)) {
 				// It's an external module. First see if the module has an export default and if the local
 				// name of that export default matches.
@@ -148,7 +148,7 @@ loop:
 			if enumSymbol == nil {
 				break
 			}
-			result = r.lookup(enumSymbol.Exports, name, meaning&ast.SymbolFlagsEnumMember)
+			result = r.lookup(enumSymbol.Exports(), name, meaning&ast.SymbolFlagsEnumMember)
 			if result != nil {
 				if nameNotFoundMessage != nil && r.CompilerOptions.GetIsolatedModules() && location.Flags&ast.NodeFlagsAmbient == 0 && ast.GetSourceFileOfNode(location) != ast.GetSourceFileOfNode(result.ValueDeclaration) {
 					isolatedModulesLikeFlagName := core.IfElse(r.CompilerOptions.VerbatimModuleSyntax == core.TSTrue, "verbatimModuleSyntax", "isolatedModules")
@@ -168,7 +168,7 @@ loop:
 				}
 			}
 		case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration:
-			result = r.lookup(r.getSymbolOfDeclaration(location).Members, name, meaning&ast.SymbolFlagsType)
+			result = r.lookup(r.getSymbolOfDeclaration(location).Members(), name, meaning&ast.SymbolFlagsType)
 			if result != nil {
 				if !isTypeParameterSymbolDeclaredInContainer(result, location) {
 					// ignore type parameters not declared in this container
@@ -197,7 +197,7 @@ loop:
 			if lastLocation == location.Expression() && ast.IsHeritageClause(location.Parent) && location.Parent.AsHeritageClause().Token == ast.KindExtendsKeyword {
 				container := location.Parent.Parent
 				if ast.IsClassLike(container) {
-					result = r.lookup(r.getSymbolOfDeclaration(container).Members, name, meaning&ast.SymbolFlagsType)
+					result = r.lookup(r.getSymbolOfDeclaration(container).Members(), name, meaning&ast.SymbolFlagsType)
 					if result != nil {
 						if nameNotFoundMessage != nil {
 							r.error(originalLocation, diagnostics.Base_class_expressions_cannot_reference_class_type_parameters)
@@ -217,7 +217,7 @@ loop:
 			grandparent = location.Parent.Parent
 			if ast.IsClassLike(grandparent) || ast.IsInterfaceDeclaration(grandparent) {
 				// A reference to this grandparent's type parameters would be an error
-				result = r.lookup(r.getSymbolOfDeclaration(grandparent).Members, name, meaning&ast.SymbolFlagsType)
+				result = r.lookup(r.getSymbolOfDeclaration(grandparent).Members(), name, meaning&ast.SymbolFlagsType)
 				if result != nil {
 					if nameNotFoundMessage != nil {
 						r.error(originalLocation, diagnostics.A_computed_property_name_cannot_reference_a_type_parameter_from_its_containing_type)

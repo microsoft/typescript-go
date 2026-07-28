@@ -186,8 +186,8 @@ func (l *LanguageService) documentationFromAlias(c *checker.Checker, symbol *ast
 	}
 
 	candidates := []*ast.Symbol{aliasedSymbol}
-	if aliasedSymbol.ExportSymbol != nil {
-		candidates = append(candidates, aliasedSymbol.ExportSymbol)
+	if aliasedSymbol.ExportSymbol() != nil {
+		candidates = append(candidates, aliasedSymbol.ExportSymbol())
 	}
 
 	for _, candidate := range candidates {

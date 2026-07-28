@@ -255,7 +255,7 @@ func isSyntacticDefault(node *ast.Node) bool {
 }
 
 func hasExportAssignmentSymbol(moduleSymbol *ast.Symbol) bool {
-	return moduleSymbol.Exports[ast.InternalSymbolNameExportEquals] != nil
+	return moduleSymbol.Exports()[ast.InternalSymbolNameExportEquals] != nil
 }
 
 func isTypeAlias(node *ast.Node) bool {

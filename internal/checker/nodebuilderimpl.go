@@ -1110,8 +1110,8 @@ func (b *NodeBuilderImpl) getSymbolChain(symbol *ast.Symbol, meaning ast.SymbolF
 				parent := pair.sym
 				parentChain := b.getSymbolChain(parent, getQualifiedLeftMeaning(meaning), false, yieldModuleSymbol)
 				if len(parentChain) > 0 {
-					if parent.Exports != nil {
-						exported, ok := parent.Exports[ast.InternalSymbolNameExportEquals]
+					if parent.Exports() != nil {
+						exported, ok := parent.Exports()[ast.InternalSymbolNameExportEquals]
 						if ok && b.ch.getSymbolIfSameReference(exported, symbol) != nil {
 							// parentChain root _is_ symbol - symbol is a module export=, so it kinda looks like it's own parent
 							// No need to lookup an alias for the symbol in itself

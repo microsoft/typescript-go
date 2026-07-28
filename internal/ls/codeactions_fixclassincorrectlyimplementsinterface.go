@@ -175,7 +175,7 @@ func getMissingMembers(typeChecker *checker.Checker, classDeclaration *ast.Node,
 
 	var classMembers ast.SymbolTable
 	if classDeclaration.Symbol() != nil {
-		classMembers = classDeclaration.Symbol().Members
+		classMembers = classDeclaration.Symbol().Members()
 	}
 
 	var missingMembers []*ast.Symbol

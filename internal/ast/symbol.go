@@ -13,11 +13,64 @@ type Symbol struct {
 	Name             string
 	Declarations     []*Node
 	ValueDeclaration *Node
-	Members          SymbolTable
-	Exports          SymbolTable
 	id               atomic.Uint64
 	Parent           *Symbol
-	ExportSymbol     *Symbol
+	extra            *symbolExtra // Rarely populated, so boxed to keep Symbol small
+}
+
+type symbolExtra struct {
+	members      SymbolTable
+	exports      SymbolTable
+	exportSymbol *Symbol
+}
+
+func (s *Symbol) getExtra() *symbolExtra {
+	if s.extra == nil {
+		s.extra = &symbolExtra{}
+	}
+	return s.extra
+}
+
+func (s *Symbol) Members() SymbolTable {
+	if s.extra != nil {
+		return s.extra.members
+	}
+	return nil
+}
+
+func (s *Symbol) SetMembers(members SymbolTable) {
+	if members == nil && s.extra == nil {
+		return
+	}
+	s.getExtra().members = members
+}
+
+func (s *Symbol) Exports() SymbolTable {
+	if s.extra != nil {
+		return s.extra.exports
+	}
+	return nil
+}
+
+func (s *Symbol) SetExports(exports SymbolTable) {
+	if exports == nil && s.extra == nil {
+		return
+	}
+	s.getExtra().exports = exports
+}
+
+func (s *Symbol) ExportSymbol() *Symbol {
+	if s.extra != nil {
+		return s.extra.exportSymbol
+	}
+	return nil
+}
+
+func (s *Symbol) SetExportSymbol(exportSymbol *Symbol) {
+	if exportSymbol == nil && s.extra == nil {
+		return
+	}
+	s.getExtra().exportSymbol = exportSymbol
 }
 
 func (s *Symbol) IsExternalModule() bool {
@@ -34,8 +87,8 @@ func (s *Symbol) IsStatic() bool {
 
 // See comment on `declareModuleMember` in `binder.go`.
 func (s *Symbol) CombinedLocalAndExportSymbolFlags() SymbolFlags {
-	if s.ExportSymbol != nil {
-		return s.Flags | s.ExportSymbol.Flags
+	if exportSymbol := s.ExportSymbol(); exportSymbol != nil {
+		return s.Flags | exportSymbol.Flags
 	}
 	return s.Flags
 }

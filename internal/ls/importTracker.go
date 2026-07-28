@@ -518,7 +518,7 @@ func getImportOrExportSymbol(node *ast.Node, symbol *ast.Symbol, checker *checke
 
 		parent := node.Parent
 		grandparent := parent.Parent
-		if symbol.ExportSymbol != nil {
+		if symbol.ExportSymbol() != nil {
 			if ast.IsPropertyAccessExpression(parent) {
 				// When accessing an export of a JS module, there's no alias. The symbol will still be flagged as an export even though we're at the use.
 				// So check that we are at the declaration.
@@ -527,7 +527,7 @@ func getImportOrExportSymbol(node *ast.Node, symbol *ast.Symbol, checker *checke
 				}
 				return nil
 			}
-			return exportInfo(symbol.ExportSymbol, getExportKindForDeclaration(parent))
+			return exportInfo(symbol.ExportSymbol(), getExportKindForDeclaration(parent))
 		} else {
 			exportNode := getExportNode(parent, node)
 			switch {

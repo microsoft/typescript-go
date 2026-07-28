@@ -1317,7 +1317,7 @@ func (l *LanguageService) getCompletionData(
 		localSymbol := localsContainer.Symbol()
 		var localExports ast.SymbolTable
 		if localSymbol != nil {
-			localExports = localSymbol.Exports
+			localExports = localSymbol.Exports()
 		}
 		for name, symbol := range localsContainer.Locals() {
 			symbols = append(symbols, symbol)
@@ -2800,7 +2800,7 @@ func symbolCanBeReferencedAtTypeLocation(symbol *ast.Symbol, typeChecker *checke
 	// This code used to just test the result of `skipAlias`, but that would ignore any locally introduced meanings.
 	return nonAliasCanBeReferencedAtTypeLocation(symbol, typeChecker, seenModules) ||
 		nonAliasCanBeReferencedAtTypeLocation(
-			checker.SkipAlias(core.IfElse(symbol.ExportSymbol != nil, symbol.ExportSymbol, symbol), typeChecker),
+			checker.SkipAlias(core.IfElse(symbol.ExportSymbol() != nil, symbol.ExportSymbol(), symbol), typeChecker),
 			typeChecker,
 			seenModules,
 		)
