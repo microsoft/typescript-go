@@ -24,12 +24,9 @@ var [a3, b3] = [[x13, y13], { x: x13, y: y13 }];
 
 //// [declarationEmitDestructuringArrayPattern2.d.ts]
 declare var [x10, [y10, [z10]]]: [number, [string, [boolean]]];
-declare var [x11, y11]: [number, string];
+declare var x11: number, y11: string;
 declare var [a11, b11, c11]: [];
-declare var [a2, [b2, { x12, y12: c2 }]]: [number, [string, {
-    x12: number;
-    y12: true;
-}]];
+declare var a2: number, b2: string, x12: number, c2: boolean;
 declare var [x13, y13]: [number, string];
 declare var [a3, b3]: [(string | number)[], {
     x: number;
