@@ -94,12 +94,12 @@ func (d *FSDiffer) BaselineFSwithDiff(baseline io.Writer) {
 	*d.WrittenFiles = collections.SyncSet[string]{} // Reset written files after baseline
 }
 
-var internalSymbolRegex = regexp.MustCompile(`\x{FFFD}@[^@]+@[0-9]+`)
+var internalSymbolRegex = regexp.MustCompile(`__@[^@]+@[0-9]+`)
 
-// Replaces internal symbol names of shape \uFFFD@symbolName@123 with \uFFFD@symbolName@<symbolId>
-// // to avoid baselining differences in symbol ids, which can change between runs.
+// Replaces internal symbol names of shape __@symbolName@123 with __@symbolName@<symbolId>
+// to avoid baselining differences in symbol ids, which can change between runs.
 func SanitizeInternalSymbolName(s string) string {
-	if !strings.Contains(s, "\uFFFD@") {
+	if !strings.Contains(s, "__@") {
 		return s
 	}
 	return internalSymbolRegex.ReplaceAllStringFunc(s, func(match string) string {

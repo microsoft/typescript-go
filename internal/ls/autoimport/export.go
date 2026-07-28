@@ -19,7 +19,7 @@ type ModuleID string
 
 type ExportID struct {
 	ModuleID   ModuleID
-	ExportName string
+	ExportName ast.SymbolNameKey
 }
 
 type ExportSyntax int
@@ -54,7 +54,7 @@ type Export struct {
 	localName      string
 	// through is the name of the module symbol's export that this export was found on,
 	// either 'export=', InternalSymbolNameExportStar, or empty string.
-	through string
+	through ast.SymbolNameKey
 
 	// Checker-set fields
 
@@ -70,8 +70,12 @@ type Export struct {
 }
 
 func (e *Export) Name() string {
+	return ast.UnescapeLeadingUnderscores(e.NameKey())
+}
+
+func (e *Export) NameKey() ast.SymbolNameKey {
 	if e.localName != "" {
-		return e.localName
+		return ast.EscapeLeadingUnderscores(e.localName)
 	}
 	if e.ExportName == ast.InternalSymbolNameExportEquals {
 		return e.Target.ExportName
@@ -117,13 +121,13 @@ func SymbolToExport(symbol *ast.Symbol, ch *checker.Checker) *Export {
 	moduleFileName := file.FileName()
 	target := ch.GetMergedSymbol(ch.SkipAlias(symbol))
 
-	if export := tryGetModuleExport(ast.InternalSymbolNameDefault, target, moduleSymbol, ch, moduleID, moduleFileName, file); export != nil {
+	if export := tryGetModuleExport(ast.UnescapeLeadingUnderscores(ast.InternalSymbolNameDefault), target, moduleSymbol, ch, moduleID, moduleFileName, file); export != nil {
 		return export
 	}
-	if export := tryGetModuleExport(ast.InternalSymbolNameExportEquals, target, moduleSymbol, ch, moduleID, moduleFileName, file); export != nil {
+	if export := tryGetModuleExport(ast.UnescapeLeadingUnderscores(ast.InternalSymbolNameExportEquals), target, moduleSymbol, ch, moduleID, moduleFileName, file); export != nil {
 		return export
 	}
-	return tryGetModuleExport(symbol.Name, target, moduleSymbol, ch, moduleID, moduleFileName, file)
+	return tryGetModuleExport(ast.UnescapeLeadingUnderscores(symbol.Name), target, moduleSymbol, ch, moduleID, moduleFileName, file)
 }
 
 func tryGetModuleExport(exportName string, target *ast.Symbol, moduleSymbol *ast.Symbol, ch *checker.Checker, moduleID ModuleID, moduleFileName string, file *ast.SourceFile) *Export {

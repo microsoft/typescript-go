@@ -393,7 +393,7 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 			return n.PropertyNameOrName().Text()
 		})...)
 		uniques := core.Filter(exports, func(e *ast.Symbol) bool {
-			return e.Name != ast.InternalSymbolNameDefault && !existing.Has(e.Name)
+			return e.Name != ast.InternalSymbolNameDefault && !existing.Has(ast.UnescapeLeadingUnderscores(e.Name))
 		})
 		return &stringLiteralCompletions{
 			fromProperties: &completionsFromProperties{
@@ -515,7 +515,9 @@ func fromUnionableLiteralType(
 				fromProperties: &completionsFromProperties{
 					symbols: core.Filter(
 						result.symbols,
-						func(s *ast.Symbol) bool { return !slices.Contains(alreadyUsedTypes, s.Name) },
+						func(s *ast.Symbol) bool {
+							return !slices.Contains(alreadyUsedTypes, ast.UnescapeLeadingUnderscores(s.Name))
+						},
 					),
 					hasIndexSignature: result.hasIndexSignature,
 				},
@@ -882,7 +884,7 @@ func getAmbientModuleCompletions(fragment string, fragmentDirectory string, type
 	ambientModules := typeChecker.GetAmbientModules()
 	var nonRelativeModuleNames []string
 	for _, sym := range ambientModules {
-		moduleName := stringutil.StripQuotes(sym.Name)
+		moduleName := stringutil.StripQuotes(ast.UnescapeLeadingUnderscores(sym.Name))
 		if strings.HasPrefix(moduleName, fragment) && !strings.Contains(moduleName, "*") {
 			nonRelativeModuleNames = append(nonRelativeModuleNames, moduleName)
 		}
@@ -1024,7 +1026,7 @@ func getSupportedExtensionsForModuleResolution(options *core.CompilerOptions, ch
 	if checker != nil {
 		ambientModules := checker.GetAmbientModules()
 		for _, module := range ambientModules {
-			name := stringutil.StripQuotes(module.Name)
+			name := stringutil.StripQuotes(ast.UnescapeLeadingUnderscores(module.Name))
 			if !strings.HasPrefix(name, "*.") || strings.Contains(name, "/") {
 				continue
 			}
@@ -2058,7 +2060,7 @@ func (l *LanguageService) stringLiteralCompletionDetails(
 	case completion.fromProperties != nil:
 		properties := completion.fromProperties
 		for _, symbol := range properties.symbols {
-			if symbol.Name == name {
+			if ast.UnescapeLeadingUnderscores(symbol.Name) == name {
 				return l.createCompletionDetailsForSymbol(item, symbol, checker, location, position, docFormat)
 			}
 		}

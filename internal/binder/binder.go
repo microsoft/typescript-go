@@ -73,7 +73,7 @@ type Binder struct {
 	inAssignmentPattern     bool
 	seenParseError          bool
 	symbolCount             int
-	classifiableNames       collections.Set[string]
+	classifiableNames       collections.Set[ast.SymbolNameKey]
 	notConstEnumOnlyModules collections.Set[*ast.Symbol]
 	symbolArena             core.Arena[ast.Symbol]
 	flowNodeArena           core.Arena[ast.FlowNode]
@@ -131,7 +131,7 @@ func bindSourceFile(file *ast.SourceFile) {
 	})
 }
 
-func (b *Binder) newSymbol(flags ast.SymbolFlags, name string) *ast.Symbol {
+func (b *Binder) newSymbol(flags ast.SymbolFlags, name ast.SymbolNameKey) *ast.Symbol {
 	b.symbolCount++
 	result := b.symbolArena.New()
 	result.Flags = flags
@@ -155,7 +155,7 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 	debug.Assert(isComputedName || !ast.HasDynamicName(node))
 	isDefaultExport := ast.HasSyntacticModifier(node, ast.ModifierFlagsDefault) || ast.IsExportSpecifier(node) && ast.ModuleExportNameIsDefault(node.AsExportSpecifier().Name())
 	// The exported symbol for an export default function/class node is always named "default"
-	var name string
+	var name ast.SymbolNameKey
 	switch {
 	case isComputedName:
 		name = ast.InternalSymbolNameComputed
@@ -303,7 +303,7 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 
 // Should not be called on a declaration with a computed property name,
 // unless it is a well known Symbol.
-func (b *Binder) getDeclarationName(node *ast.Node) string {
+func (b *Binder) getDeclarationName(node *ast.Node) ast.SymbolNameKey {
 	if ast.IsExportAssignment(node) {
 		return core.IfElse(node.AsExportAssignment().IsExportEquals, ast.InternalSymbolNameExportEquals, ast.InternalSymbolNameDefault)
 	}
@@ -314,7 +314,7 @@ func (b *Binder) getDeclarationName(node *ast.Node) string {
 			if ast.IsGlobalScopeAugmentation(node) {
 				return ast.InternalSymbolNameGlobal
 			}
-			return "\"" + moduleName + "\""
+			return ast.EscapeLeadingUnderscores("\"" + moduleName + "\"")
 		}
 		if ast.IsPrivateIdentifier(name) {
 			// containingClass exists because private names only allowed inside classes
@@ -326,17 +326,17 @@ func (b *Binder) getDeclarationName(node *ast.Node) string {
 			return GetSymbolNameForPrivateIdentifier(containingClass.Symbol(), name.Text())
 		}
 		if ast.IsPropertyNameLiteral(name) || ast.IsJsxNamespacedName(name) {
-			return name.Text()
+			return ast.EscapeLeadingUnderscores(name.Text())
 		}
 		if ast.IsComputedPropertyName(name) {
 			nameExpression := name.Expression()
 			// treat computed property names where expression is string/numeric literal as just string/numeric literal
 			if ast.IsStringOrNumericLiteralLike(nameExpression) {
-				return nameExpression.Text()
+				return ast.EscapeLeadingUnderscores(nameExpression.Text())
 			}
 			if ast.IsSignedNumericLiteral(nameExpression) {
 				unaryExpression := nameExpression.AsPrefixUnaryExpression()
-				return scanner.TokenToString(unaryExpression.Operator) + unaryExpression.Operand.Text()
+				return ast.EscapeLeadingUnderscores(scanner.TokenToString(unaryExpression.Operator) + unaryExpression.Operand.Text())
 			}
 			panic("Only computed properties with literal names have declaration names")
 		}
@@ -366,13 +366,13 @@ func (b *Binder) getDisplayName(node *ast.Node) string {
 	}
 	name := b.getDeclarationName(node)
 	if name != ast.InternalSymbolNameMissing {
-		return name
+		return ast.UnescapeLeadingUnderscores(name)
 	}
 	return "(Missing)"
 }
 
-func GetSymbolNameForPrivateIdentifier(containingClassSymbol *ast.Symbol, description string) string {
-	return ast.InternalSymbolNamePrefix + "#" + strconv.Itoa(int(ast.GetSymbolId(containingClassSymbol))) + "@" + description
+func GetSymbolNameForPrivateIdentifier(containingClassSymbol *ast.Symbol, description string) ast.SymbolNameKey {
+	return ast.InternalSymbolName("#" + strconv.Itoa(int(ast.GetSymbolId(containingClassSymbol))) + "@" + description)
 }
 
 func (b *Binder) declareModuleMember(node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) *ast.Symbol {
@@ -770,7 +770,7 @@ func (b *Binder) bindSourceFileIfExternalModule() {
 }
 
 func (b *Binder) bindSourceFileAsExternalModule() {
-	b.bindAnonymousDeclaration(b.file.AsNode(), ast.SymbolFlagsValueModule, "\""+tspath.RemoveFileExtension(b.file.FileName())+"\"")
+	b.bindAnonymousDeclaration(b.file.AsNode(), ast.SymbolFlagsValueModule, ast.EscapeLeadingUnderscores("\""+tspath.RemoveFileExtension(b.file.FileName())+"\""))
 }
 
 func (b *Binder) bindModuleDeclaration(node *ast.Node) {
@@ -916,7 +916,7 @@ func (b *Binder) bindFunctionExpression(node *ast.Node) {
 	bindingName := ast.InternalSymbolNameFunction
 	if ast.IsFunctionExpression(node) && node.AsFunctionExpression().Name() != nil {
 		b.checkStrictModeFunctionName(node)
-		bindingName = node.AsFunctionExpression().Name().Text()
+		bindingName = ast.EscapeLeadingUnderscores(node.AsFunctionExpression().Name().Text())
 	}
 	b.bindAnonymousDeclaration(node, ast.SymbolFlagsFunction, bindingName)
 }
@@ -950,7 +950,7 @@ func (b *Binder) bindClassLikeDeclaration(node *ast.Node) {
 	case ast.KindClassExpression:
 		nameText := ast.InternalSymbolNameClass
 		if name != nil {
-			nameText = name.Text()
+			nameText = ast.EscapeLeadingUnderscores(name.Text())
 			b.classifiableNames.Add(nameText)
 		}
 		b.bindAnonymousDeclaration(node, ast.SymbolFlagsClass, nameText)
@@ -965,7 +965,7 @@ func (b *Binder) bindClassLikeDeclaration(node *ast.Node) {
 	// Note: we check for this here because this class may be merging into a module.  The
 	// module might have an exported variable called 'prototype'.  We can't allow that as
 	// that would clash with the built-in 'prototype' for the class.
-	prototypeSymbol := b.newSymbol(ast.SymbolFlagsProperty|ast.SymbolFlagsPrototype, "prototype")
+	prototypeSymbol := b.newSymbol(ast.SymbolFlagsProperty|ast.SymbolFlagsPrototype, ast.EscapeLeadingUnderscores("prototype"))
 	symbolExport := ast.GetExports(symbol)[prototypeSymbol.Name]
 	if symbolExport != nil {
 		b.errorOnNode(symbolExport.Declarations[0], diagnostics.Duplicate_identifier_0, ast.SymbolName(prototypeSymbol))
@@ -1201,7 +1201,7 @@ func (b *Binder) bindParameter(node *ast.Node) {
 	}
 	if ast.IsBindingPattern(decl.Name()) {
 		index := slices.Index(node.Parent.Parameters(), node)
-		b.bindAnonymousDeclaration(node, ast.SymbolFlagsFunctionScopedVariable, "__"+strconv.Itoa(index))
+		b.bindAnonymousDeclaration(node, ast.SymbolFlagsFunctionScopedVariable, ast.InternalSymbolName(strconv.Itoa(index)))
 	} else {
 		b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsParameterExcludes)
 	}
@@ -1233,7 +1233,7 @@ func (b *Binder) getInferTypeContainer(node *ast.Node) *ast.Node {
 	return nil
 }
 
-func (b *Binder) bindAnonymousDeclaration(node *ast.Node, symbolFlags ast.SymbolFlags, name string) {
+func (b *Binder) bindAnonymousDeclaration(node *ast.Node, symbolFlags ast.SymbolFlags, name ast.SymbolNameKey) {
 	symbol := b.newSymbol(symbolFlags, name)
 	if symbolFlags&(ast.SymbolFlagsEnumMember|ast.SymbolFlagsClassMember) != 0 {
 		symbol.Parent = b.container.Symbol()
@@ -1276,27 +1276,28 @@ func (b *Binder) lookupEntity(node *ast.Node, container *ast.Node) *ast.Symbol {
 	if node.Expression().Kind == ast.KindThisKeyword {
 		if _, symbolTable := b.getThisClassAndSymbolTable(); symbolTable != nil {
 			if name := ast.GetElementOrPropertyAccessName(node); name != nil {
-				return symbolTable[name.Text()]
+				return symbolTable[ast.EscapeLeadingUnderscores(name.Text())]
 			}
 		}
 		return nil
 	}
 	if symbol := getInitializerSymbol(b.lookupEntity(node.Expression(), container)); symbol != nil && symbol.Exports != nil {
 		if name := ast.GetElementOrPropertyAccessName(node); name != nil {
-			return symbol.Exports[name.Text()]
+			return symbol.Exports[ast.EscapeLeadingUnderscores(name.Text())]
 		}
 	}
 	return nil
 }
 
 func (b *Binder) lookupName(name string, container *ast.Node) *ast.Symbol {
+	symbolName := ast.EscapeLeadingUnderscores(name)
 	if localsContainer := container.LocalsContainerData(); localsContainer != nil {
-		if local := localsContainer.Locals[name]; local != nil {
+		if local := localsContainer.Locals[symbolName]; local != nil {
 			return core.OrElse(local.ExportSymbol, local)
 		}
 	}
 	if declaration := container.DeclarationData(); declaration != nil && declaration.Symbol != nil {
-		return declaration.Symbol.Exports[name]
+		return declaration.Symbol.Exports[symbolName]
 	}
 	return nil
 }
@@ -1625,20 +1626,21 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 }
 
 func (b *Binder) declareCommonJSVariable(name string) {
+	symbolName := ast.EscapeLeadingUnderscores(name)
 	locals := ast.GetLocals(b.file.AsNode())
-	if locals[name] == nil {
-		symbol := b.newSymbol(ast.SymbolFlagsFunctionScopedVariable|ast.SymbolFlagsModuleExports, name)
+	if locals[symbolName] == nil {
+		symbol := b.newSymbol(ast.SymbolFlagsFunctionScopedVariable|ast.SymbolFlagsModuleExports, symbolName)
 		symbol.Declarations = b.newSingleDeclaration(b.file.AsNode())
 		symbol.ValueDeclaration = symbol.Declarations[0]
 		if name == "module" {
-			exportsProperty := b.newSymbol(ast.SymbolFlagsModuleExports|ast.SymbolFlagsProperty, "exports")
+			exportsProperty := b.newSymbol(ast.SymbolFlagsModuleExports|ast.SymbolFlagsProperty, ast.EscapeLeadingUnderscores("exports"))
 			exportsProperty.Declarations = symbol.Declarations
 			exportsProperty.ValueDeclaration = symbol.ValueDeclaration
 			exportsProperty.Parent = symbol
 			symbol.Members = make(ast.SymbolTable, 1)
-			symbol.Members["exports"] = exportsProperty
+			symbol.Members[ast.EscapeLeadingUnderscores("exports")] = exportsProperty
 		}
-		locals[name] = symbol
+		locals[symbolName] = symbol
 	}
 }
 

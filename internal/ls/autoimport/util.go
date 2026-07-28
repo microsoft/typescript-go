@@ -136,7 +136,7 @@ func getDefaultLikeExportNameFromDeclaration(symbol *ast.Symbol) string {
 			return name.Text()
 		}
 		if symbol.Parent != nil && !checker.IsExternalModuleSymbol(symbol.Parent) {
-			return symbol.Parent.Name
+			return ast.UnescapeLeadingUnderscores(symbol.Parent.Name)
 		}
 	}
 	return ""

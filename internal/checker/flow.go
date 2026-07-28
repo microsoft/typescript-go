@@ -523,7 +523,7 @@ func (c *Checker) narrowTypeByBinaryExpression(f *FlowState, t *Type, expr *ast.
 		if c.containsMissingType(t) && ast.IsAccessExpression(f.reference) && c.isMatchingReference(f.reference.Expression(), target) {
 			leftType := c.getTypeOfExpression(expr.Left)
 			if isTypeUsableAsPropertyName(leftType) {
-				if accessedName, ok := c.getAccessedPropertyName(f.reference); ok && accessedName == getPropertyNameFromType(leftType) {
+				if accessedName, ok := c.getAccessedPropertyName(f.reference); ok && accessedName == ast.UnescapeLeadingUnderscores(getPropertyNameFromType(leftType)) {
 					return c.getTypeWithFacts(t, core.IfElse(assumeTrue, TypeFactsNEUndefined, TypeFactsEQUndefined))
 				}
 			}
@@ -691,7 +691,7 @@ func (c *Checker) narrowTypeByDiscriminantProperty(t *Type, access *ast.Node, op
 	if (operator == ast.KindEqualsEqualsEqualsToken || operator == ast.KindExclamationEqualsEqualsToken) && t.flags&TypeFlagsUnion != 0 {
 		keyPropertyName := c.getKeyPropertyName(t)
 		if keyPropertyName != "" {
-			if accessedName, ok := c.getAccessedPropertyName(access); ok && keyPropertyName == accessedName {
+			if accessedName, ok := c.getAccessedPropertyName(access); ok && ast.UnescapeLeadingUnderscores(keyPropertyName) == accessedName {
 				candidate := c.getConstituentTypeForKeyType(t, c.getTypeOfExpression(value))
 				if candidate != nil {
 					if assumeTrue && operator == ast.KindEqualsEqualsEqualsToken || !assumeTrue && operator == ast.KindExclamationEqualsEqualsToken {
@@ -721,7 +721,7 @@ func (c *Checker) narrowTypeByDiscriminant(t *Type, access *ast.Node, narrowType
 	if removeNullable {
 		nonNullType = c.getTypeWithFacts(t, TypeFactsNEUndefinedOrNull)
 	}
-	propType := c.getTypeOfPropertyOfType(nonNullType, propName)
+	propType := c.getTypeOfPropertyOfType(nonNullType, ast.EscapeLeadingUnderscores(propName))
 	if propType == nil {
 		return t
 	}
@@ -870,7 +870,7 @@ func (c *Checker) getNarrowedTypeWorker(t *Type, candidate *Type, assumeTrue boo
 	}
 	// We first attempt to filter the current type, narrowing constituents as appropriate and removing
 	// constituents that are unrelated to the candidate.
-	var keyPropertyName string
+	var keyPropertyName ast.SymbolNameKey
 	if t.flags&TypeFlagsUnion != 0 {
 		keyPropertyName = c.getKeyPropertyName(t)
 	}
@@ -1009,7 +1009,7 @@ func (c *Checker) narrowTypeByInKeyword(f *FlowState, t *Type, nameType *Type, a
 	return t
 }
 
-func (c *Checker) isTypePresencePossible(t *Type, propName string, assumeTrue bool) bool {
+func (c *Checker) isTypePresencePossible(t *Type, propName ast.SymbolNameKey, assumeTrue bool) bool {
 	prop := c.getPropertyOfType(t, propName)
 	if prop != nil {
 		return prop.Flags&ast.SymbolFlagsOptional != 0 || prop.CheckFlags&ast.CheckFlagsPartial != 0 || assumeTrue
@@ -1211,7 +1211,7 @@ func (c *Checker) narrowTypeBySwitchOptionalChainContainment(t *Type, data *ast.
 func (c *Checker) narrowTypeBySwitchOnDiscriminantProperty(t *Type, access *ast.Node, data *ast.FlowSwitchClauseData) *Type {
 	if data.ClauseStart < data.ClauseEnd && t.flags&TypeFlagsUnion != 0 {
 		accessedName, _ := c.getAccessedPropertyName(access)
-		if accessedName != "" && c.getKeyPropertyName(t) == accessedName {
+		if accessedName != "" && ast.UnescapeLeadingUnderscores(c.getKeyPropertyName(t)) == accessedName {
 			clauseTypes := c.getSwitchClauseTypes(data.SwitchStatement)[data.ClauseStart:data.ClauseEnd]
 			candidate := c.getUnionType(core.Map(clauseTypes, func(s *Type) *Type {
 				result := c.getConstituentTypeForKeyType(t, s)
@@ -1425,7 +1425,7 @@ func (c *Checker) getDiscriminantPropertyAccess(f *FlowState, expr *ast.Node, co
 				if f.declaredType.flags&TypeFlagsUnion != 0 && c.isTypeSubsetOf(computedType, f.declaredType) {
 					t = f.declaredType
 				}
-				if c.isDiscriminantProperty(t, name) {
+				if c.isDiscriminantProperty(t, ast.EscapeLeadingUnderscores(name)) {
 					return access
 				}
 			}
@@ -1762,7 +1762,7 @@ func (c *Checker) tryGetNameFromEntityNameExpression(node *ast.Node) (string, bo
 func tryGetNameFromType(t *Type) (string, bool) {
 	switch {
 	case t.flags&TypeFlagsUniqueESSymbol != 0:
-		return t.AsUniqueESSymbolType().name, true
+		return t.AsUniqueESSymbolType().name.EscapedText(), true
 	case t.flags&TypeFlagsStringOrNumberLiteral != 0:
 		return evaluator.AnyToString(t.AsLiteralType().value), true
 	}
@@ -2084,15 +2084,15 @@ func (c *Checker) getSymbolHasInstanceMethodOfObjectType(t *Type) *Type {
 	return nil
 }
 
-func (c *Checker) getPropertyNameForKnownSymbolName(symbolName string) string {
+func (c *Checker) getPropertyNameForKnownSymbolName(symbolName string) ast.SymbolNameKey {
 	ctorType := c.getGlobalESSymbolConstructorSymbolOrNil()
 	if ctorType != nil {
-		uniqueType := c.getTypeOfPropertyOfType(c.getTypeOfSymbol(ctorType), symbolName)
+		uniqueType := c.getTypeOfPropertyOfType(c.getTypeOfSymbol(ctorType), ast.EscapeLeadingUnderscores(symbolName))
 		if uniqueType != nil && isTypeUsableAsPropertyName(uniqueType) {
 			return getPropertyNameFromType(uniqueType)
 		}
 	}
-	return ast.InternalSymbolNamePrefix + "@" + symbolName
+	return ast.InternalSymbolName("@" + symbolName)
 }
 
 // We require the dotted function name in an assertion expression to be comprised of identifiers
@@ -2119,7 +2119,7 @@ func (c *Checker) getTypeOfDottedName(node *ast.Node, diagnostic *ast.Diagnostic
 						prop = c.getPropertyOfType(t, binder.GetSymbolNameForPrivateIdentifier(t.symbol, name.Text()))
 					}
 				} else {
-					prop = c.getPropertyOfType(t, name.Text())
+					prop = c.getPropertyOfType(t, ast.EscapeLeadingUnderscores(name.Text()))
 				}
 				if prop != nil {
 					return c.getExplicitTypeOfSymbol(prop, diagnostic)
@@ -2441,10 +2441,11 @@ func (c *Checker) getTypePredicateArgument(predicate *TypePredicate, callExpress
 
 func (c *Checker) getFlowTypeInConstructor(symbol *ast.Symbol, constructor *ast.Node) *Type {
 	var accessName *ast.Node
-	if strings.HasPrefix(symbol.Name, ast.InternalSymbolNamePrefix+"#") {
-		accessName = c.factory.NewPrivateIdentifier(symbol.Name[strings.Index(symbol.Name, "@")+1:])
+	name := symbol.Name.EscapedText()
+	if strings.HasPrefix(name, ast.InternalSymbolNamePrefix+"#") {
+		accessName = c.factory.NewPrivateIdentifier(name[strings.Index(name, "@")+1:])
 	} else {
-		accessName = c.factory.NewIdentifier(symbol.Name)
+		accessName = c.factory.NewIdentifier(ast.UnescapeLeadingUnderscores(symbol.Name))
 	}
 	reference := c.factory.NewPropertyAccessExpression(c.factory.NewKeywordExpression(ast.KindThisKeyword), nil, accessName, ast.NodeFlagsNone)
 	reference.Expression().Parent = reference
@@ -2463,10 +2464,11 @@ func (c *Checker) getFlowTypeInConstructor(symbol *ast.Symbol, constructor *ast.
 
 func (c *Checker) getFlowTypeInStaticBlocks(symbol *ast.Symbol, staticBlocks []*ast.Node) *Type {
 	var accessName *ast.Node
-	if strings.HasPrefix(symbol.Name, ast.InternalSymbolNamePrefix+"#") {
-		accessName = c.factory.NewPrivateIdentifier(symbol.Name[strings.Index(symbol.Name, "@")+1:])
+	name := symbol.Name.EscapedText()
+	if strings.HasPrefix(name, ast.InternalSymbolNamePrefix+"#") {
+		accessName = c.factory.NewPrivateIdentifier(name[strings.Index(name, "@")+1:])
 	} else {
-		accessName = c.factory.NewIdentifier(symbol.Name)
+		accessName = c.factory.NewIdentifier(ast.UnescapeLeadingUnderscores(symbol.Name))
 	}
 	for _, staticBlock := range staticBlocks {
 		reference := c.factory.NewPropertyAccessExpression(c.factory.NewKeywordExpression(ast.KindThisKeyword), nil, accessName, ast.NodeFlagsNone)

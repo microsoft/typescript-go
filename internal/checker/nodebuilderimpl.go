@@ -634,7 +634,7 @@ func (b *NodeBuilderImpl) createEntityNameFromSymbolChain(chain []*ast.Symbol, i
 
 // TODO: Audit usages of symbolToEntityNameNode - they should probably all be symbolToName
 func (b *NodeBuilderImpl) symbolToEntityNameNode(symbol *ast.Symbol) *ast.EntityName {
-	identifier := b.newIdentifier(symbol.Name, symbol)
+	identifier := b.newIdentifier(ast.UnescapeLeadingUnderscores(symbol.Name), symbol)
 	if symbol.Parent != nil {
 		return b.f.NewQualifiedName(b.symbolToEntityNameNode(symbol.Parent), identifier)
 	}
@@ -706,7 +706,7 @@ func (b *NodeBuilderImpl) symbolToTypeNode(symbol *ast.Symbol, mask ast.SymbolFl
 				// If ultimately we can only name the symbol with a reference that dives into a `node_modules` folder, we should error
 				// since declaration files with these kinds of references are liable to fail when published :(
 				b.ctx.encounteredError = true
-				b.ctx.tracker.ReportLikelyUnsafeImportRequiredError(oldSpecifier, symbol.Name)
+				b.ctx.tracker.ReportLikelyUnsafeImportRequiredError(oldSpecifier, ast.UnescapeLeadingUnderscores(symbol.Name))
 			}
 		}
 
@@ -779,12 +779,12 @@ func (b *NodeBuilderImpl) createAccessFromSymbolChain(chain []*ast.Symbol, index
 				// avoid exhaustive iteration in the common case
 				res, ok := exports[symbol.Name]
 				if symbol.Name != ast.InternalSymbolNameExportEquals && !isLateBoundName(symbol.Name) && ok && res != nil && b.ch.getSymbolIfSameReference(res, symbol) != nil {
-					symbolName = symbol.Name
+					symbolName = ast.UnescapeLeadingUnderscores(symbol.Name)
 				} else {
 					results := make(map[*ast.Symbol]string, 1)
 					for name, ex := range exports {
 						if b.ch.getSymbolIfSameReference(ex, symbol) != nil && !isLateBoundName(name) && name != ast.InternalSymbolNameExportEquals {
-							results[ex] = name
+							results[ex] = ast.UnescapeLeadingUnderscores(name)
 							// break // must collect all results and sort them - exports are randomly iterated
 						}
 					}
@@ -1021,7 +1021,7 @@ func (b *NodeBuilderImpl) getNameOfSymbolAsWritten(symbol *ast.Symbol) string {
 	if len(name) > 0 {
 		return name
 	}
-	return ast.EscapeInternalSymbolName(symbol.Name)
+	return ast.UnescapeLeadingUnderscores(symbol.Name)
 }
 
 // The full set of type parameters for a generic class or interface type consists of its outer type parameters plus
@@ -1258,13 +1258,13 @@ func (b *NodeBuilderImpl) getSpecifierForModuleSymbol(symbol *ast.Symbol, overri
 	}
 
 	if file == nil {
-		if ast.IsAmbientModuleSymbolName(symbol.Name) {
-			return stringutil.StripQuotes(symbol.Name)
+		if ast.IsAmbientModuleSymbolName(ast.UnescapeLeadingUnderscores(symbol.Name)) {
+			return stringutil.StripQuotes(ast.UnescapeLeadingUnderscores(symbol.Name))
 		}
 	}
 	if b.ctx.enclosingFile == nil {
-		if ast.IsAmbientModuleSymbolName(symbol.Name) {
-			return stringutil.StripQuotes(symbol.Name)
+		if ast.IsAmbientModuleSymbolName(ast.UnescapeLeadingUnderscores(symbol.Name)) {
+			return stringutil.StripQuotes(ast.UnescapeLeadingUnderscores(symbol.Name))
 		}
 		return ast.GetSourceFileOfModule(symbol).FileName()
 	}
@@ -1690,7 +1690,7 @@ func (b *NodeBuilderImpl) symbolToParameterDeclaration(parameterSymbol *ast.Symb
 
 func (b *NodeBuilderImpl) parameterToParameterDeclarationName(parameterSymbol *ast.Symbol, parameterDeclaration *ast.Node) *ast.Node {
 	if parameterDeclaration == nil || parameterDeclaration.Name() == nil {
-		return b.newIdentifier(parameterSymbol.Name, parameterSymbol)
+		return b.newIdentifier(ast.UnescapeLeadingUnderscores(parameterSymbol.Name), parameterSymbol)
 	}
 
 	name := parameterDeclaration.Name()
@@ -1974,7 +1974,7 @@ func (c *Checker) getExpandedParameters(sig *Signature, skipUnionExpanding bool)
 				case flags&ElementFlagsOptional != 0:
 					checkFlags = ast.CheckFlagsOptionalParameter
 				}
-				symbol := c.newSymbolEx(ast.SymbolFlagsFunctionScopedVariable, name, checkFlags)
+				symbol := c.newSymbolEx(ast.SymbolFlagsFunctionScopedVariable, ast.EscapeLeadingUnderscores(name), checkFlags)
 				links := c.valueSymbolLinks.Get(symbol)
 				if flags&ElementFlagsRest != 0 {
 					links.resolvedType = c.createArrayType(t)
@@ -2426,13 +2426,15 @@ func (b *NodeBuilderImpl) getPropertyNameNodeForSymbol(symbol *ast.Symbol) *ast.
 		return fromNameType
 	}
 
-	name := symbol.Name
+	name := symbol.Name.EscapedText()
 	const privateNamePrefix = ast.InternalSymbolNamePrefix + "#"
 	if strings.HasPrefix(name, privateNamePrefix) {
 		// symbol IDs are unstable - replace #nnn# with #private#
 		name = name[len(privateNamePrefix):]
 		name = strings.TrimLeftFunc(name, stringutil.IsDigit)
 		name = "__#private" + name
+	} else {
+		name = ast.UnescapeLeadingUnderscores(symbol.Name)
 	}
 
 	return b.createPropertyNameNodeForIdentifierOrLiteral(name, singleQuote, stringNamed, isMethod, symbol)
@@ -2649,7 +2651,7 @@ func (b *NodeBuilderImpl) createTypeNodesFromResolvedType(resolvedType *Structur
 				continue
 			}
 			if getDeclarationModifierFlagsFromSymbol(propertySymbol)&(ast.ModifierFlagsPrivate|ast.ModifierFlagsProtected) != 0 {
-				b.ctx.tracker.ReportPrivateInBaseOfClassExpression(propertySymbol.Name)
+				b.ctx.tracker.ReportPrivateInBaseOfClassExpression(ast.UnescapeLeadingUnderscores(propertySymbol.Name))
 			}
 			if IsPrivateIdentifierSymbol(propertySymbol) {
 				b.ctx.tracker.ReportPrivateInBaseOfClassExpression(ast.SymbolName(propertySymbol))

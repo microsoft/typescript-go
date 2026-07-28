@@ -356,7 +356,8 @@ func getSearchesFromDirectImports(
 
 	isNameMatch := func(name string) bool {
 		// Use name of "default" even in `export =` case because we may have allowSyntheticDefaultImports
-		return name == exportSymbol.Name || exportKind != ExportKindNamed && name == ast.InternalSymbolNameDefault
+		return name == ast.UnescapeLeadingUnderscores(exportSymbol.Name) ||
+			exportKind != ExportKindNamed && name == ast.UnescapeLeadingUnderscores(ast.InternalSymbolNameDefault)
 	}
 
 	// `import x = require("./x")` or `import * as x from "./x"`.
@@ -384,7 +385,7 @@ func getSearchesFromDirectImports(
 				singleReferences = append(singleReferences, propertyName)
 				// If renaming `{ foo as bar }`, don't touch `bar`, just `foo`.
 				// But do rename `foo` in ` { default as foo }` if that's the original export name.
-				if !isForRename || name.Text() == exportSymbol.Name {
+				if !isForRename || name.Text() == ast.UnescapeLeadingUnderscores(exportSymbol.Name) {
 					// Search locally for `bar`.
 					addSearch(name, checker.GetSymbolAtLocation(name))
 				}
@@ -592,7 +593,9 @@ func getImportOrExportSymbol(node *ast.Node, symbol *ast.Symbol, checker *checke
 		// If `importedName` is undefined, do continue searching as the export is anonymous.
 		// (All imports returned from this function will be ignored anyway if we are in rename and this is a not a named export.)
 		importedName := symbolNameNoDefault(importedSymbol)
-		if importedName == "" || importedName == ast.InternalSymbolNameDefault || importedName == symbol.Name {
+		if importedName == "" ||
+			importedName == ast.UnescapeLeadingUnderscores(ast.InternalSymbolNameDefault) ||
+			importedName == ast.UnescapeLeadingUnderscores(symbol.Name) {
 			return &ImportExportSymbol{
 				kind:   ImpExpKindImport,
 				symbol: importedSymbol,
@@ -700,7 +703,7 @@ func getExportEqualsLocalSymbol(importedSymbol *ast.Symbol, checker *checker.Che
 
 func symbolNameNoDefault(symbol *ast.Symbol) string {
 	if symbol.Name != ast.InternalSymbolNameDefault {
-		return symbol.Name
+		return ast.UnescapeLeadingUnderscores(symbol.Name)
 	}
 	for _, decl := range symbol.Declarations {
 		name := ast.GetNameOfDeclaration(decl)

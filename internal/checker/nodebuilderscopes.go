@@ -33,7 +33,7 @@ func cloneNodeBuilderContext(context *NodeBuilderContext) func() {
 }
 
 type localsRecord struct {
-	name      string
+	name      ast.SymbolNameKey
 	oldSymbol *ast.Symbol
 }
 
@@ -121,19 +121,20 @@ func (b *NodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []
 			if locals == nil {
 				locals = make(ast.SymbolTable)
 			}
-			newLocals := []string{}
+			newLocals := []ast.SymbolNameKey{}
 			oldLocals := []localsRecord{}
 			addAll(func(name string, symbol *ast.Symbol) {
+				symbolName := ast.EscapeLeadingUnderscores(name)
 				// Add cleanup information only if we don't own the fake scope
 				if existingFakeScope != nil {
-					oldSymbol, ok := locals[name]
+					oldSymbol, ok := locals[symbolName]
 					if !ok || oldSymbol == nil {
-						newLocals = append(newLocals, name)
+						newLocals = append(newLocals, symbolName)
 					} else {
-						oldLocals = append(oldLocals, localsRecord{name, oldSymbol})
+						oldLocals = append(oldLocals, localsRecord{symbolName, oldSymbol})
 					}
 				}
-				locals[name] = symbol
+				locals[symbolName] = symbol
 			})
 
 			if existingFakeScope == nil {
@@ -175,7 +176,7 @@ func (b *NodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []
 					if originalParameters != nil && originalParam != param {
 						// Can't reference the expanded parameter name, just the original, unless we've expanded the param list for some reason
 						if originalParam != nil {
-							add(originalParam.Name, originalParam)
+							add(ast.UnescapeLeadingUnderscores(originalParam.Name), originalParam)
 						}
 					} else if !core.Some(param.Declarations, func(d *ast.Node) bool {
 						var bindElement func(e *ast.BindingElement)
@@ -202,7 +203,7 @@ func (b *NodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []
 							}
 							symbol := b.ch.getSymbolOfDeclaration(e.AsNode())
 							if symbol != nil { // omitted expressions are now parsed as nameless binding patterns and also have no symbol
-								add(symbol.Name, symbol)
+								add(ast.UnescapeLeadingUnderscores(symbol.Name), symbol)
 							}
 						}
 						bindElement = bindElementWorker
@@ -214,7 +215,7 @@ func (b *NodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []
 						}
 						return false
 					}) {
-						add(param.Name, param)
+						add(ast.UnescapeLeadingUnderscores(param.Name), param)
 					}
 				}
 			})

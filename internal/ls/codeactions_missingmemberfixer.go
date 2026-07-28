@@ -325,7 +325,7 @@ func (f *missingMemberFixer) createSignatureDeclarationFromSignatures(signatures
 	maxNonRestArgs := len(maxArgsSignature.Parameters()) - core.IfElse(maxArgsSignature.HasRestParameter(), 1, 0)
 	parameterNames := make([]string, 0, len(maxArgsSignature.Parameters()))
 	for _, symbol := range maxArgsSignature.Parameters() {
-		parameterNames = append(parameterNames, symbol.Name)
+		parameterNames = append(parameterNames, ast.UnescapeLeadingUnderscores(symbol.Name))
 	}
 	parameters := createDummyParameters(f.changeTracker.NodeFactory, maxNonRestArgs, parameterNames, nil /*types*/, minArgumentCount, ast.IsInJSFile(enclosingDeclaration))
 
@@ -481,7 +481,7 @@ func createDeclarationName(factory *ast.NodeFactory, typeChecker *checker.Checke
 		return declaration.Name().Clone(factory)
 	}
 	if symbol != nil {
-		return factory.NewIdentifier(symbol.Name)
+		return factory.NewIdentifier(ast.UnescapeLeadingUnderscores(symbol.Name))
 	}
 	return nil
 }

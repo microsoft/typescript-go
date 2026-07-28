@@ -2537,7 +2537,7 @@ func GetNamespaceDeclarationNode(node *Node) *Node {
 }
 
 func ModuleExportNameIsDefault(node *Node) bool {
-	return node.Text() == InternalSymbolNameDefault
+	return EscapeLeadingUnderscores(node.Text()) == InternalSymbolNameDefault
 }
 
 func IsDefaultImport(node *Node /*ImportDeclaration | ImportEqualsDeclaration | ExportDeclaration*/) bool {
@@ -3157,22 +3157,22 @@ func isShorthandPropertyNameUseSite(useSite *Node) bool {
 	return IsIdentifier(useSite) && IsShorthandPropertyAssignment(useSite.Parent) && useSite.Parent.AsShorthandPropertyAssignment().Name() == useSite
 }
 
-func GetPropertyNameForPropertyNameNode(name *Node) string {
+func GetPropertyNameForPropertyNameNode(name *Node) SymbolNameKey {
 	switch name.Kind {
 	case KindIdentifier, KindPrivateIdentifier, KindStringLiteral, KindNoSubstitutionTemplateLiteral,
 		KindNumericLiteral, KindBigIntLiteral, KindJsxNamespacedName:
-		return name.Text()
+		return EscapeLeadingUnderscores(name.Text())
 	case KindComputedPropertyName:
 		nameExpression := name.Expression()
 		if IsStringOrNumericLiteralLike(nameExpression) {
-			return nameExpression.Text()
+			return EscapeLeadingUnderscores(nameExpression.Text())
 		}
 		if IsSignedNumericLiteral(nameExpression) {
 			text := nameExpression.AsPrefixUnaryExpression().Operand.Text()
 			if nameExpression.AsPrefixUnaryExpression().Operator == KindMinusToken {
 				text = "-" + text
 			}
-			return text
+			return EscapeLeadingUnderscores(text)
 		}
 		return InternalSymbolNameMissing
 	}
