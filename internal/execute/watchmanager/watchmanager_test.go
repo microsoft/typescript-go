@@ -71,18 +71,25 @@ func TestDirWatchSetCaseInsensitive(t *testing.T) {
 	assert.Assert(t, set.Covered("/repo/src/nested/deep"), "recursive containment should be case-insensitive")
 }
 
-// TestDirWatchSetPreservesCasing verifies Dirs returns original-cased keys so
-// watch registration uses the real path even on case-insensitive filesystems.
-func TestDirWatchSetPreservesCasing(t *testing.T) {
+// TestDirWatchSetCanonicalDedup verifies that on a case-insensitive filesystem
+// directories that differ only by casing collapse to a single watch entry, while
+// Dirs preserves the original casing of the first-seen path for registration.
+func TestDirWatchSetCanonicalDedup(t *testing.T) {
 	t.Parallel()
 
-	set := NewDirWatchSet(caseInsensitiveOpts)
-	set.Set("/repo/Node_Modules/PkgName", false)
+	insensitive := NewDirWatchSet(caseInsensitiveOpts)
+	insensitive.Set("/repo/Node_Modules/PkgName", false)
+	insensitive.Set("/repo/node_modules/pkgname", false) // same dir, different casing
 
-	_, ok := set.Dirs()["/repo/Node_Modules/PkgName"]
-	assert.Assert(t, ok, "Dirs must preserve original casing for watch registration")
-	_, lowered := set.Dirs()["/repo/node_modules/pkgname"]
-	assert.Assert(t, !lowered, "Dirs must not contain a canonicalized (lowercased) key")
+	dirs := insensitive.Dirs()
+	assert.Equal(t, len(dirs), 1, "differently-cased dirs must collapse to one entry")
+	_, original := dirs["/repo/Node_Modules/PkgName"]
+	assert.Assert(t, original, "Dirs must preserve the original casing of the first-seen path")
+
+	sensitive := NewDirWatchSet(caseSensitiveOpts)
+	sensitive.Set("/repo/Node_Modules/PkgName", false)
+	sensitive.Set("/repo/node_modules/pkgname", false) // distinct dirs when case-sensitive
+	assert.Equal(t, len(sensitive.Dirs()), 2, "case-sensitive FS keeps differently-cased dirs distinct")
 }
 
 // TestDirWatchSetUpgradeToRecursive verifies that upgrading a directory from

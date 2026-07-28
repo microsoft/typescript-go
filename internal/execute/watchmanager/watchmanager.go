@@ -306,22 +306,24 @@ func (wm *WatchManager) createDirWatches(updates []dirWatchUpdate) error {
 	return nil
 }
 
+type dirWatchEntry struct {
+	path      string
+	recursive bool
+}
+
 // DirWatchSet accumulates the set of directories that should be watched while
 // answering coverage queries efficiently. A directory is "covered" when it is
 // already present in the set, or when it is contained within a recursive watch
 // directory already in the set.
 type DirWatchSet struct {
-	opts      tspath.ComparePathsOptions
-	dirs      map[string]bool
-	present   map[string]struct{}
-	recursive []string
+	opts tspath.ComparePathsOptions
+	dirs map[string]dirWatchEntry
 }
 
 func NewDirWatchSet(opts tspath.ComparePathsOptions) *DirWatchSet {
 	return &DirWatchSet{
-		opts:    opts,
-		dirs:    make(map[string]bool),
-		present: make(map[string]struct{}),
+		opts: opts,
+		dirs: make(map[string]dirWatchEntry),
 	}
 }
 
@@ -330,21 +332,24 @@ func (s *DirWatchSet) canonical(dir string) string {
 }
 
 func (s *DirWatchSet) Set(dir string, recursive bool) {
-	existing, has := s.dirs[dir]
-	newRecursive := existing || recursive
-	s.dirs[dir] = newRecursive
-	s.present[s.canonical(dir)] = struct{}{}
-	if newRecursive && (!has || !existing) {
-		s.recursive = append(s.recursive, dir)
+	key := s.canonical(dir)
+	entry, has := s.dirs[key]
+	if !has {
+		entry.path = dir
 	}
+	entry.recursive = entry.recursive || recursive
+	s.dirs[key] = entry
 }
 
 func (s *DirWatchSet) Covered(dir string) bool {
-	if _, has := s.present[s.canonical(dir)]; has {
+	dir = s.canonical(dir)
+	if _, has := s.dirs[dir]; has {
 		return true
 	}
-	for _, wdir := range s.recursive {
-		if tspath.ContainsPath(wdir, dir, s.opts) {
+	rootLength := tspath.GetRootLength(dir)
+	for len(dir) > rootLength {
+		dir = tspath.GetDirectoryPath(dir)
+		if entry, has := s.dirs[dir]; has && entry.recursive {
 			return true
 		}
 	}
@@ -352,7 +357,11 @@ func (s *DirWatchSet) Covered(dir string) bool {
 }
 
 func (s *DirWatchSet) Dirs() map[string]bool {
-	return s.dirs
+	dirs := make(map[string]bool, len(s.dirs))
+	for _, entry := range s.dirs {
+		dirs[entry.path] = entry.recursive
+	}
+	return dirs
 }
 
 func (wm *WatchManager) IsPathUnderWatch(path string, opts tspath.ComparePathsOptions) bool {
