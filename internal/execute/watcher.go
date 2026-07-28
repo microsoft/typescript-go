@@ -338,9 +338,11 @@ func (w *Watcher) doBuild() error {
 		w.watchSetDirty = true
 	}
 
+	reloadedFileNames := false
 	if w.watchSetDirty {
 		if w.config.ConfigFile != nil && len(w.config.WildcardDirectories()) > 0 {
 			newConfig := w.config.ReloadFileNamesOfParsedCommandLine(w.sys.FS())
+			reloadedFileNames = true
 			if !slices.Equal(w.config.FileNames(), newConfig.FileNames()) {
 				w.config = newConfig
 			} else {
@@ -393,7 +395,7 @@ func (w *Watcher) doBuild() error {
 		for dir := range w.config.WildcardDirectories() {
 			tfs.SeenFiles.Add(dir)
 		}
-		if !w.watchSetDirty && len(w.config.WildcardDirectories()) > 0 {
+		if !reloadedFileNames && !w.watchSetDirty && len(w.config.WildcardDirectories()) > 0 {
 			w.config = w.config.ReloadFileNamesOfParsedCommandLine(w.sys.FS())
 		}
 	}
@@ -481,7 +483,7 @@ func (w *Watcher) tryUpdateProgram(host *watchCompilerHost) bool {
 		}
 	}
 
-	newProgram, _, reused := oldProgram.UpdateProgram(changedPath, host, nil)
+	newProgram, _, reused := oldProgram.ReuseProgram(changedPath, host, nil)
 	if reused {
 		w.program = incremental.NewProgram(newProgram, w.program, nil, w.testing != nil)
 	}
