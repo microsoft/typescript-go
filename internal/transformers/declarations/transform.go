@@ -836,14 +836,11 @@ func (tx *DeclarationTransformer) transformVariableDeclaration(input *ast.Variab
 	if tx.state.currentSourceFile.CommonJSModuleIndicator != nil && ast.IsVariableDeclarationInitializedToRequire(input.AsNode()) {
 		return tx.transformCjsRequireVariableDeclaration(input)
 	}
-	if ast.IsBindingPattern(input.Name()) {
-		return tx.recreateBindingPattern(input.Name().AsBindingPattern())
-	}
 	// Variable declaration types also suppress new diagnostic contexts, provided the contexts wouldn't be made for binding pattern types
 	tx.suppressNewDiagnosticContexts = true
 	return tx.Factory().UpdateVariableDeclaration(
 		input,
-		input.Name(),
+		tx.bindingNameVisitor.VisitNode(input.Name()),
 		nil,
 		tx.ensureType(input.AsNode(), false),
 		tx.ensureNoInitializer(input.AsNode()),
