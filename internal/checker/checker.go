@@ -26375,31 +26375,36 @@ func (c *Checker) intersectUnionsOfPrimitiveTypes(types []*Type) ([]*Type, bool)
 // primitive type, and missingType is matched by undefinedType (and vice versa).
 func (c *Checker) eachUnionContains(unionTypes []*Type, t *Type) bool {
 	for _, u := range unionTypes {
-		types := u.Types()
-		if !containsType(types, t) {
-			if t == c.missingType {
-				return containsType(types, c.undefinedType)
-			}
-			if t == c.undefinedType {
-				return containsType(types, c.missingType)
-			}
-			var primitive *Type
-			switch {
-			case t.flags&TypeFlagsStringLiteral != 0:
-				primitive = c.stringType
-			case t.flags&(TypeFlagsEnum|TypeFlagsNumberLiteral) != 0:
-				primitive = c.numberType
-			case t.flags&TypeFlagsBigIntLiteral != 0:
-				primitive = c.bigintType
-			case t.flags&TypeFlagsUniqueESSymbol != 0:
-				primitive = c.esSymbolType
-			}
-			if primitive == nil || !containsType(types, primitive) {
-				return false
-			}
+		if !c.unionContainsType(u, t) {
+			return false
 		}
 	}
 	return true
+}
+
+func (c *Checker) unionContainsType(union *Type, t *Type) bool {
+	types := union.Types()
+	if containsType(types, t) {
+		return true
+	}
+	if t == c.missingType {
+		return containsType(types, c.undefinedType)
+	}
+	if t == c.undefinedType {
+		return containsType(types, c.missingType)
+	}
+	var primitive *Type
+	switch {
+	case t.flags&TypeFlagsStringLiteral != 0:
+		primitive = c.stringType
+	case t.flags&(TypeFlagsEnum|TypeFlagsNumberLiteral) != 0:
+		primitive = c.numberType
+	case t.flags&TypeFlagsBigIntLiteral != 0:
+		primitive = c.bigintType
+	case t.flags&TypeFlagsUniqueESSymbol != 0:
+		primitive = c.esSymbolType
+	}
+	return primitive != nil && containsType(types, primitive)
 }
 
 func (c *Checker) getCrossProductIntersections(types []*Type, flags IntersectionFlags) []*Type {
@@ -26567,7 +26572,25 @@ func (c *Checker) filterType(t *Type, f func(*Type) bool) *Type {
 }
 
 func (c *Checker) removeType(t *Type, targetType *Type) *Type {
-	return c.filterType(t, func(t *Type) bool { return t != targetType })
+	if t.flags&TypeFlagsUnion == 0 {
+		if t == targetType {
+			return c.neverType
+		}
+		return t
+	}
+	if origin := t.AsUnionType().origin; origin != nil && origin.flags&TypeFlagsUnion != 0 && containsType(origin.Types(), targetType) {
+		return c.filterType(t, func(t *Type) bool { return t != targetType })
+	}
+	types := t.Types()
+	if i, ok := slices.BinarySearchFunc(types, targetType, CompareTypes); ok {
+		if len(types) == 2 {
+			return types[1-i]
+		}
+		// Remove the target type from the slice.
+		filtered := append(types[:i:i], types[i+1:]...)
+		return c.getUnionTypeFromSortedList(filtered, t.AsUnionType().objectFlags&(ObjectFlagsPrimitiveUnion|ObjectFlagsContainsIntersections), nil /*alias*/, nil /*origin*/)
+	}
+	return t
 }
 
 func containsType(types []*Type, t *Type) bool {
