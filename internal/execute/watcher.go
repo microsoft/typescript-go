@@ -78,7 +78,19 @@ type Watcher struct {
 	seenFiles     *collections.Set[tspath.Path] // all build dependencies (for event filtering)
 	configMtimes  map[string]time.Time
 	watchSetDirty bool
-	programReady  bool
+	// forceFullRebuild records a reason that requires a full NewProgram rebuild
+	// (e.g. an event overflow, a mid-cycle watch failure, a newly appeared
+	// project file, or a changed non-source dependency). Unlike watchSetDirty,
+	// which is only raised to recheck wildcard roots and may be cleared once the
+	// file set is confirmed unchanged, this flag is preserved until a full
+	// rebuild actually runs so the single-file fast path cannot silently reuse a
+	// stale program.
+	forceFullRebuild bool
+	programReady     bool
+
+	// Test-only observability of which build path was taken.
+	fastPathBuilds int
+	fullBuilds     int
 }
 
 var _ tsc.Watcher = (*Watcher)(nil)
@@ -229,19 +241,35 @@ func (w *Watcher) DoCycle() {
 		// Filter fswatch events against known dependencies
 		if w.isRelevantChange(changedPaths) {
 			w.evictChangedSourceFiles(changedPaths)
+			caseSensitive := w.sys.FS().UseCaseSensitiveFileNames()
+			cwd := w.sys.GetCurrentDirectory()
+			programFiles := w.program.GetProgram().FilesByPath()
 			for eventPath := range changedPaths {
 				if w.sys.FS().DirectoryExists(eventPath) {
+					// A watched directory changed: the wildcard file set may have
+					// changed, so reload file names on the next build.
 					w.watchSetDirty = true
-					break
+					continue
 				}
+				p := tspath.ToPath(eventPath, cwd, caseSensitive)
 				if w.config.ConfigFile != nil && w.config.PossiblyMatchesFileName(eventPath) {
-					caseSensitive := w.sys.FS().UseCaseSensitiveFileNames()
-					cwd := w.sys.GetCurrentDirectory()
-					p := tspath.ToPath(eventPath, cwd, caseSensitive)
 					if !w.seenFiles.Has(p) {
+						// A file that matches the project but was not previously
+						// seen appeared: a structural change that requires a full
+						// rebuild, not the single-file fast path.
 						w.watchSetDirty = true
-						break
+						w.forceFullRebuild = true
+						continue
 					}
+				}
+				if _, isSource := programFiles[p]; !isSource && w.seenFiles.Has(p) {
+					// A non-source build dependency changed. Such dependencies
+					// (e.g. package.json or a previously-missing module path) are
+					// tracked in seenFiles but are not program source files, so a
+					// missing sourceFileCache entry would not account for them.
+					// Module resolution may now differ, so the single-file fast
+					// path is unsafe; force a full rebuild.
+					w.forceFullRebuild = true
 				}
 			}
 		} else {
@@ -254,9 +282,14 @@ func (w *Watcher) DoCycle() {
 			return
 		}
 	} else if overflow {
-		// Overflow: evict the entire source file cache to force re-build
+		// Overflow: evict the entire source file cache and force a full rebuild.
+		// The fast path must not run here: after clearing the cache a one-file
+		// program would present exactly one cache miss and be misread as a
+		// single-file content edit, silently reusing a stale (e.g. unresolved
+		// import) program instead of rediscovering the file graph.
 		w.sourceFileCache = &collections.SyncMap[tspath.Path, *cachedSourceFile]{}
 		w.watchSetDirty = true
+		w.forceFullRebuild = true
 	} else if !hasEvents && !w.configModified {
 		// No events and no config change
 		if w.wm.DebugLog != nil {
@@ -319,12 +352,13 @@ func (w *Watcher) doBuild() error {
 		}
 	}
 
-	if w.program != nil && w.programReady && !w.configModified && !w.watchSetDirty {
+	if w.program != nil && w.programReady && !w.configModified && !w.watchSetDirty && !w.forceFullRebuild {
 		cached := cachedvfs.From(w.sys.FS())
 		innerHost := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), cached, w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing))
 		host := &watchCompilerHost{CompilerHost: innerHost, cache: w.sourceFileCache}
 
 		if w.tryUpdateProgram(host) {
+			w.fastPathBuilds++
 			result := w.compileAndEmit()
 			cached.DisableAndClearCache()
 
@@ -372,6 +406,7 @@ func (w *Watcher) doBuild() error {
 		Host:   host,
 	}), w.program, nil, w.testing != nil)
 	w.programReady = true
+	w.fullBuilds++
 
 	result := w.compileAndEmit()
 	cached.DisableAndClearCache()
@@ -397,6 +432,7 @@ func (w *Watcher) doBuild() error {
 	}
 	w.watchSetDirty = false
 	w.configModified = false
+	w.forceFullRebuild = false
 
 	programFiles := w.program.GetProgram().FilesByPath()
 	w.sourceFileCache.Range(func(path tspath.Path, _ *cachedSourceFile) bool {
@@ -451,6 +487,15 @@ func (w *Watcher) tryUpdateProgram(host *watchCompilerHost) bool {
 	}
 	return reused
 }
+
+// FastPathBuilds reports how many builds reused an existing program via the
+// UpdateProgram single-file fast path. It is intended for tests that need to
+// verify which build path was taken.
+func (w *Watcher) FastPathBuilds() int { return w.fastPathBuilds }
+
+// FullBuilds reports how many builds constructed a full program via NewProgram.
+// It is intended for tests that need to verify which build path was taken.
+func (w *Watcher) FullBuilds() int { return w.fullBuilds }
 
 func equalJSXImplicitImport(options *core.CompilerOptions, oldFile *ast.SourceFile, newFile *ast.SourceFile) bool {
 	isJSX := func(file *ast.SourceFile) bool {
