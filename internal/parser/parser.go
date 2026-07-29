@@ -4535,8 +4535,6 @@ func (p *Parser) nextIsUnParenthesizedAsyncArrowFunction() bool {
 			return false
 		}
 		// Check for un-parenthesized AsyncArrowFunction
-		// !!! In Strada, this speculatively parses a full binary expression and tests whether it came back as a bare
-		// Identifier followed by "=>", allocating nodes it then discards (for `async function () {}`, an entire function body).
 		if !p.isIdentifier() {
 			return false
 		}
