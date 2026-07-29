@@ -306,24 +306,19 @@ func (wm *WatchManager) createDirWatches(updates []dirWatchUpdate) error {
 	return nil
 }
 
-type dirWatchEntry struct {
-	path      string
-	recursive bool
-}
-
 // DirWatchSet accumulates the set of directories that should be watched while
 // answering coverage queries efficiently. A directory is "covered" when it is
 // already present in the set, or when it is contained within a recursive watch
 // directory already in the set.
 type DirWatchSet struct {
 	opts tspath.ComparePathsOptions
-	dirs map[string]dirWatchEntry
+	dirs map[string]bool
 }
 
 func NewDirWatchSet(opts tspath.ComparePathsOptions) *DirWatchSet {
 	return &DirWatchSet{
 		opts: opts,
-		dirs: make(map[string]dirWatchEntry),
+		dirs: make(map[string]bool),
 	}
 }
 
@@ -332,13 +327,8 @@ func (s *DirWatchSet) canonical(dir string) string {
 }
 
 func (s *DirWatchSet) Set(dir string, recursive bool) {
-	key := s.canonical(dir)
-	entry, has := s.dirs[key]
-	if !has {
-		entry.path = dir
-	}
-	entry.recursive = entry.recursive || recursive
-	s.dirs[key] = entry
+	dir = s.canonical(dir)
+	s.dirs[dir] = s.dirs[dir] || recursive
 }
 
 func (s *DirWatchSet) Covered(dir string) bool {
@@ -349,7 +339,7 @@ func (s *DirWatchSet) Covered(dir string) bool {
 	rootLength := tspath.GetRootLength(dir)
 	for len(dir) > rootLength {
 		dir = tspath.GetDirectoryPath(dir)
-		if entry, has := s.dirs[dir]; has && entry.recursive {
+		if s.dirs[dir] {
 			return true
 		}
 	}
@@ -357,11 +347,7 @@ func (s *DirWatchSet) Covered(dir string) bool {
 }
 
 func (s *DirWatchSet) Dirs() map[string]bool {
-	dirs := make(map[string]bool, len(s.dirs))
-	for _, entry := range s.dirs {
-		dirs[entry.path] = entry.recursive
-	}
-	return dirs
+	return s.dirs
 }
 
 func (wm *WatchManager) IsPathUnderWatch(path string, opts tspath.ComparePathsOptions) bool {

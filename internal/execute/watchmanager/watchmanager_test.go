@@ -72,8 +72,8 @@ func TestDirWatchSetCaseInsensitive(t *testing.T) {
 }
 
 // TestDirWatchSetCanonicalDedup verifies that on a case-insensitive filesystem
-// directories that differ only by casing collapse to a single watch entry, while
-// Dirs preserves the original casing of the first-seen path for registration.
+// directories that differ only by casing collapse to a single canonical entry,
+// while a case-sensitive filesystem keeps them distinct.
 func TestDirWatchSetCanonicalDedup(t *testing.T) {
 	t.Parallel()
 
@@ -83,8 +83,8 @@ func TestDirWatchSetCanonicalDedup(t *testing.T) {
 
 	dirs := insensitive.Dirs()
 	assert.Equal(t, len(dirs), 1, "differently-cased dirs must collapse to one entry")
-	_, original := dirs["/repo/Node_Modules/PkgName"]
-	assert.Assert(t, original, "Dirs must preserve the original casing of the first-seen path")
+	_, canonical := dirs["/repo/node_modules/pkgname"]
+	assert.Assert(t, canonical, "Dirs must be keyed by the canonicalized path")
 
 	sensitive := NewDirWatchSet(caseSensitiveOpts)
 	sensitive.Set("/repo/Node_Modules/PkgName", false)
