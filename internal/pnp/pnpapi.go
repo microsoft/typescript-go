@@ -154,7 +154,14 @@ func (p *PnpApi) ResolveToUnqualified(specifier string, parentPath string) (stri
 	dependencyLocator := referenceOrAlias.Locator()
 	dependencyPkg := p.GetPackage(&dependencyLocator)
 
-	return tspath.ResolvePath(p.manifest.dirPath, dependencyPkg.PackageLocation, modulePath), nil
+	resolvedPath := tspath.ResolvePath(p.manifest.dirPath, dependencyPkg.PackageLocation)
+	if modulePath != "" {
+		// ParseBareIdentifier returns modulePath with a leading slash. Keep it
+		// relative to the package location instead of letting ResolvePath treat
+		// it as an absolute path.
+		resolvedPath = tspath.ResolvePath(resolvedPath, "."+modulePath)
+	}
+	return tspath.RemoveTrailingDirectorySeparators(resolvedPath), nil
 }
 
 func (p *PnpApi) findClosestPnpManifest() (*PnpManifestData, error) {

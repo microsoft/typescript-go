@@ -100,6 +100,53 @@ func TestResolveUnqualified(t *testing.T) {
 	}
 }
 
+func TestResolveToUnqualifiedNormalizesPackageLocation(t *testing.T) {
+	t.Parallel()
+
+	manifest, err := parseManifestFromData(`{
+		"dependencyTreeRoots": [{"name": "root", "reference": "workspace:."}],
+		"enableTopLevelFallback": false,
+		"fallbackPool": [],
+		"fallbackExclusionList": [],
+		"packageRegistryData": [
+			["root", [["workspace:.", {
+				"packageLocation": "./",
+				"packageDependencies": [["pkg", "npm:1.0.0"]],
+				"linkType": "SOFT"
+			}]]],
+			["pkg", [["npm:1.0.0", {
+				"packageLocation": "./.yarn/cache/pkg/",
+				"packageDependencies": [],
+				"linkType": "HARD"
+			}]]]
+		]
+	}`, "/path/to/project")
+	if err != nil {
+		t.Fatalf("failed to initialize PnP manifest: %v", err)
+	}
+
+	pnpApi := &PnpApi{manifest: manifest}
+	for _, tc := range []struct {
+		specifier string
+		expected  string
+	}{
+		{specifier: "pkg", expected: "/path/to/project/.yarn/cache/pkg"},
+		{specifier: "pkg/subpath", expected: "/path/to/project/.yarn/cache/pkg/subpath"},
+		{specifier: "pkg/subpath/", expected: "/path/to/project/.yarn/cache/pkg/subpath"},
+	} {
+		t.Run(tc.specifier, func(t *testing.T) {
+			t.Parallel()
+			resolved, resolveErr := pnpApi.ResolveToUnqualified(tc.specifier, "/path/to/project/src/file.ts")
+			if resolveErr != nil {
+				t.Fatalf("expected %q to resolve, got error: %v", tc.specifier, resolveErr.Message)
+			}
+			if resolved != tc.expected {
+				t.Fatalf("expected %q to resolve to %q, got %q", tc.specifier, tc.expected, resolved)
+			}
+		})
+	}
+}
+
 func TestParseSinglePackageName(t *testing.T) {
 	t.Parallel()
 	pnpApi := &PnpApi{}
