@@ -2,6 +2,7 @@ package tsoptions
 
 import (
 	"cmp"
+	"maps"
 	"reflect"
 	"slices"
 	"strings"
@@ -215,6 +216,9 @@ func parseOwnConfigOfJsonSourceFile(
 				unknownNameDiag := extraKeyDiagnostics(parentOption.Name)
 				if parentOption.ElementOptions != nil {
 					possibleOption := parentOption.ElementOptions.Get(keyText)
+					if possibleOption == nil {
+						possibleOption = parentOption.ElementOptions.GetSpellingSuggestion(keyText)
+					}
 					if possibleOption != nil && possibleOption.Name != keyText {
 						propertySetErrors = append(propertySetErrors, CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(
 							sourceFile,
@@ -231,6 +235,8 @@ func parseOwnConfigOfJsonSourceFile(
 							propertyAssignment.Name(),
 							sourceFile,
 							nil, /*alternateMode*/
+							nil, /*unknownDidYouMeanDiagnostic*/
+							nil, /*optionsNameMap*/
 						))
 					}
 				} else {
@@ -246,7 +252,7 @@ func parseOwnConfigOfJsonSourceFile(
 				if keyText == "excludes" {
 					propertySetErrors = append(propertySetErrors, CreateDiagnosticForNodeInSourceFile(sourceFile, propertyAssignment.Name(), diagnostics.Unknown_option_excludes_Did_you_mean_exclude))
 				}
-				if core.Find(OptionsDeclarations, func(option *CommandLineOption) bool { return option.Name == keyText }) != nil {
+				if core.Find(optionsForCompiler, func(option *CommandLineOption) bool { return option.Name == keyText }) != nil {
 					rootCompilerOptions = append(rootCompilerOptions, propertyAssignment.Name())
 				}
 			}
@@ -262,9 +268,14 @@ func parseOwnConfigOfJsonSourceFile(
 		},
 	)
 	errors = append(errors, err...)
-	// if len(rootCompilerOptions) != 0  && json != nil && json.CompilerOptions != nil {
-	//    errors = append(errors, ast.NewDiagnostic(sourceFile, rootCompilerOptions[0], diagnostics.X_0_should_be_set_inside_the_compilerOptions_object_of_the_config_json_file))
-	// }
+	if jsonObject, ok := json.(*collections.OrderedMap[string, any]); len(rootCompilerOptions) != 0 && ok && !jsonObject.Has("compilerOptions") {
+		errors = append(errors, CreateDiagnosticForNodeInSourceFile(
+			sourceFile,
+			rootCompilerOptions[0],
+			diagnostics.X_0_should_be_set_inside_the_compilerOptions_object_of_the_config_json_file,
+			ast.GetTextOfPropertyName(rootCompilerOptions[0]),
+		))
+	}
 	return &parsedTsconfig{
 		raw:     json,
 		options: compilerOptions,
@@ -315,7 +326,7 @@ func convertConfigFileToObject(
 		if tspath.GetBaseFileName(sourceFile.FileName()) == "jsconfig.json" {
 			baseFileName = "jsconfig.json"
 		}
-		errors := []*ast.Diagnostic{ast.NewCompilerDiagnostic(diagnostics.The_root_value_of_a_0_file_must_be_an_object, baseFileName)}
+		errors := []*ast.Diagnostic{CreateDiagnosticForNodeInSourceFile(sourceFile, rootExpression, diagnostics.The_root_value_of_a_0_file_must_be_an_object, baseFileName)}
 		// Last-ditch error recovery. Somewhat useful because the JSON parser will recover from some parse errors by
 		// synthesizing a top-level array literal expression. There's a reasonable chance the first element of that
 		// array is a well-formed configuration object, made into an array element by stray characters.
@@ -597,6 +608,15 @@ func (m CommandLineOptionNameMap) Get(name string) *CommandLineOption {
 	return opt
 }
 
+func (m CommandLineOptionNameMap) GetSpellingSuggestion(name string) *CommandLineOption {
+	return core.GetSpellingSuggestion(
+		name,
+		maps.Values(m),
+		func(option *CommandLineOption) string { return option.Name },
+		func(a *CommandLineOption, b *CommandLineOption) int { return strings.Compare(a.Name, b.Name) },
+	)
+}
+
 func commandLineOptionsToMap(compilerOptions []*CommandLineOption) CommandLineOptionNameMap {
 	result := make(map[string]*CommandLineOption, len(compilerOptions)*2)
 	for i := range compilerOptions {
@@ -634,7 +654,7 @@ func convertOptionsFromJson[O optionParser](optionsNameMap CommandLineOptionName
 			continue
 		}
 		if opt == nil {
-			errors = append(errors, createUnknownOptionError(key, result.UnknownOptionDiagnostic(), "", nil, nil, nil))
+			errors = append(errors, createUnknownOptionError(key, result.UnknownOptionDiagnostic(), "", nil, nil, nil, result.UnknownDidYouMeanDiagnostic(), optionsNameMap))
 			continue
 		}
 
