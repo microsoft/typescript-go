@@ -1744,9 +1744,9 @@ export class Checker {
         return signature.id === (await this.getWellKnownSignatures()).unknown;
     }
 
-    async getExportsOfModule(symbol: Symbol): Promise<readonly Symbol[]>;
-    async getExportsOfModule(symbols: readonly Symbol[]): Promise<readonly (readonly Symbol[])[]>;
-    async getExportsOfModule(symbolOrSymbols: Symbol | readonly Symbol[]): Promise<readonly Symbol[] | readonly (readonly Symbol[])[]> {
+    async getExportsOfModule(symbol: Symbol): Promise<Symbol[]>;
+    async getExportsOfModule(symbols: readonly Symbol[]): Promise<Symbol[][]>;
+    async getExportsOfModule(symbolOrSymbols: Symbol | readonly Symbol[]): Promise<Symbol[] | Symbol[][]> {
         if (Array.isArray(symbolOrSymbols)) {
             const data = await this.client.apiRequest<SymbolResponse[][]>("getExportsOfModules", {
                 snapshot: this.snapshotId,

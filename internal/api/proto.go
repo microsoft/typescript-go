@@ -85,8 +85,8 @@ const (
 	MethodGetSourceFile             Method = "getSourceFile"
 	MethodGetSourceFileNames        Method = "getSourceFileNames"
 	MethodGetSourceFileMetadata     Method = "getSourceFileMetadata"
-	MethodGetConfigFileNames       Method = "getConfigFileNames"
-	MethodGetConfigSourceFile      Method = "getConfigSourceFile"
+	MethodGetConfigFileNames        Method = "getConfigFileNames"
+	MethodGetConfigSourceFile       Method = "getConfigSourceFile"
 	MethodResolveName               Method = "resolveName"
 	MethodGetSignaturesOfType       Method = "getSignaturesOfType"
 	MethodGetResolvedSignature      Method = "getResolvedSignature"
@@ -192,7 +192,7 @@ const (
 	MethodGetConfigFileParsingDiagnostics Method = "getConfigFileParsingDiagnostics"
 
 	// Emitter methods
-	MethodPrintNode Method = "printNode"
+	MethodPrintNode          Method = "printNode"
 	MethodEmit               Method = "emit"
 	MethodEmitToString       Method = "emitToString"
 	MethodGetJavaScriptEmit  Method = "getJavaScriptEmit"
@@ -399,8 +399,8 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetSourceFile:             unmarshallerFor[GetSourceFileParams],
 	MethodGetSourceFileNames:        unmarshallerFor[GetSourceFileNamesParams],
 	MethodGetSourceFileMetadata:     unmarshallerFor[GetSourceFileParams],
-	MethodGetConfigFileNames:       unmarshallerFor[GetProjectDiagnosticsParams],
-	MethodGetConfigSourceFile:      unmarshallerFor[GetSourceFileParams],
+	MethodGetConfigFileNames:        unmarshallerFor[GetProjectDiagnosticsParams],
+	MethodGetConfigSourceFile:       unmarshallerFor[GetSourceFileParams],
 	MethodGetSymbolAtPosition:       unmarshallerFor[GetSymbolAtPositionParams],
 	MethodGetSymbolsAtPositions:     unmarshallerFor[GetSymbolsAtPositionsParams],
 	MethodGetSymbolAtLocation:       unmarshallerFor[GetSymbolAtLocationParams],
@@ -556,11 +556,11 @@ type GetDefaultProjectForFileParams struct {
 }
 
 type ProjectResponse struct {
-	Id              ProjectID             `json:"id"`
-	ConfigFileName  string                `json:"configFileName"`
+	Id                ProjectID             `json:"id"`
+	ConfigFileName    string                `json:"configFileName"`
 	ParsedCommandLine *ConfigFileResponse   `json:"parsedCommandLine"`
-	RootFiles       []string              `json:"rootFiles"`
-	CompilerOptions *core.CompilerOptions `json:"compilerOptions"`
+	RootFiles         []string              `json:"rootFiles"`
+	CompilerOptions   *core.CompilerOptions `json:"compilerOptions"`
 }
 
 func NewConfigFileResponse(parsedCommandLine *tsoptions.ParsedCommandLine) *ConfigFileResponse {
@@ -590,11 +590,11 @@ func NewProjectResponse(p *project.Project) *ProjectResponse {
 		panic("NewProjectResponse called with unloaded project")
 	}
 	return &ProjectResponse{
-		Id:              ProjectHandle(p),
-		ConfigFileName:  p.Name(),
+		Id:                ProjectHandle(p),
+		ConfigFileName:    p.Name(),
 		ParsedCommandLine: NewConfigFileResponse(p.CommandLine),
-		RootFiles:       p.CommandLine.FileNames(),
-		CompilerOptions: p.CommandLine.CompilerOptions(),
+		RootFiles:         p.CommandLine.FileNames(),
+		CompilerOptions:   p.CommandLine.CompilerOptions(),
 	}
 }
 

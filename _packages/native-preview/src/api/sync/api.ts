@@ -1752,9 +1752,9 @@ export class Checker {
         return signature.id === (this.getWellKnownSignatures()).unknown;
     }
 
-    getExportsOfModule(symbol: Symbol): readonly Symbol[];
-    getExportsOfModule(symbols: readonly Symbol[]): readonly (readonly Symbol[])[];
-    getExportsOfModule(symbolOrSymbols: Symbol | readonly Symbol[]): readonly Symbol[] | readonly (readonly Symbol[])[] {
+    getExportsOfModule(symbol: Symbol): Symbol[];
+    getExportsOfModule(symbols: readonly Symbol[]): Symbol[][];
+    getExportsOfModule(symbolOrSymbols: Symbol | readonly Symbol[]): Symbol[] | Symbol[][] {
         if (Array.isArray(symbolOrSymbols)) {
             const data = this.client.apiRequest<SymbolResponse[][]>("getExportsOfModules", {
                 snapshot: this.snapshotId,
