@@ -1723,6 +1723,12 @@ func TestTscIncremental(t *testing.T) {
 						sys.writeFileNoError("/home/src/workspaces/project/constants.ts", "export default 2;")
 					},
 				},
+				{
+					caption: "whitespace only edit of file whose inferred declaration changed",
+					edit: func(sys *TestSys) {
+						sys.appendFile("/home/src/workspaces/project/class1.ts", "\n")
+					},
+				},
 			},
 		},
 		{
@@ -1746,6 +1752,12 @@ func TestTscIncremental(t *testing.T) {
 					caption: "Modify imports used in global file",
 					edit: func(sys *TestSys) {
 						sys.writeFileNoError("/home/src/workspaces/project/constants.ts", "export default 2;")
+					},
+				},
+				{
+					caption: "whitespace only edit of file whose inferred declaration changed",
+					edit: func(sys *TestSys) {
+						sys.appendFile("/home/src/workspaces/project/class1.ts", "\n")
 					},
 				},
 			},

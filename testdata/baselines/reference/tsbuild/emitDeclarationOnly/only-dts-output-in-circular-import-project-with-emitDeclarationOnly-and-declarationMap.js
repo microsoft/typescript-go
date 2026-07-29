@@ -459,6 +459,6 @@ SemanticDiagnostics::
 *not cached* /home/src/workspaces/project/src/index.ts
 Signatures::
 (computed .d.ts) /home/src/workspaces/project/src/c.ts
-(computed .d.ts) /home/src/workspaces/project/src/b.ts
+(stored at emit) /home/src/workspaces/project/src/b.ts
 (computed .d.ts) /home/src/workspaces/project/src/a.ts
 (computed .d.ts) /home/src/workspaces/project/src/index.ts

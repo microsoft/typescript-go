@@ -88,12 +88,16 @@ func (h *affectedFilesHandler) updateShapeSignature(file *ast.SourceFile, useFil
 	}
 	// Default is to use file version as signature
 	if update.signature == "" {
-		if useFileVersionAsSignature && prevSignature != "" && prevSignature != info.version {
-			update.signature = prevSignature
-			update.kind = SignatureUpdateKindComputedDts
-		} else {
+		if useFileVersionAsSignature && !file.IsDeclarationFile &&
+			!h.program.snapshot.options.GetEmitDeclarations() &&
+			prevSignature != "" && prevSignature != info.version {
+			update.signature = h.computeDtsSignature(file)
+		}
+		if update.signature == "" {
 			update.signature = info.version
 			update.kind = SignatureUpdateKindUsedVersion
+		} else {
+			update.kind = SignatureUpdateKindComputedDts
 		}
 	}
 	return update.signature != prevSignature
