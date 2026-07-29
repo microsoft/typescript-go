@@ -130,7 +130,7 @@ func init() {
 
 func newWindowsBackend() *windowsBackend {
 	b := &windowsBackend{}
-	b.watcherBase.init(b)
+	b.init(b)
 	return b
 }
 

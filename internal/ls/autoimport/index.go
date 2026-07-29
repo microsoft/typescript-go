@@ -71,9 +71,9 @@ func (idx *Index[T]) SearchWordPrefix(prefix string) []T {
 
 	// Look up entries that have words starting with this letter
 	var wordStarts []int
-	nameStarts, _ := idx.index[firstRuneUpper]
+	nameStarts := idx.index[firstRuneUpper]
 	if firstRuneUpper != firstRuneLower {
-		wordStarts, _ = idx.index[firstRuneLower]
+		wordStarts = idx.index[firstRuneLower]
 	}
 	count := len(nameStarts) + len(wordStarts)
 	if count == 0 {

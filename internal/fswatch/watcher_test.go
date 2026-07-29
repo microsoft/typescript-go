@@ -1411,7 +1411,7 @@ type countingWatcherImpl struct {
 
 func newCountingWatcherImpl() *countingWatcherImpl {
 	impl := &countingWatcherImpl{}
-	impl.watcherBase.init(impl)
+	impl.init(impl)
 	return impl
 }
 
@@ -2065,7 +2065,7 @@ type failingBackend struct {
 
 func newFailingBackend(err error) *failingBackend {
 	b := &failingBackend{err: err}
-	b.watcherBase.init(b)
+	b.init(b)
 	return b
 }
 

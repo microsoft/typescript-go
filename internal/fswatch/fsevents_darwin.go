@@ -188,7 +188,7 @@ func newFSEventsBackend() *fsEventsBackend {
 	b := &fsEventsBackend{
 		watches: make(map[*dirWatch]*fseventsState),
 	}
-	b.watcherBase.init(b)
+	b.init(b)
 	return b
 }
 

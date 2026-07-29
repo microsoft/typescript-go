@@ -18,10 +18,10 @@ func TestWatch(t *testing.T) {
 		for i := range 12 {
 			name := fmt.Sprintf("pkg%d", i)
 			value := fmt.Sprintf("value%d", i)
-			index.WriteString(fmt.Sprintf(`import { %[1]s } from "./node_modules/.bun/%[2]s/index"; %[1]s;`, value, name))
+			fmt.Fprintf(&index, `import { %[1]s } from "./node_modules/.bun/%[2]s/index"; %[1]s;`, value, name)
 			index.WriteString("\n")
 			files["/home/src/workspaces/project/node_modules/.bun/"+name+"/index.ts"] = fmt.Sprintf("export const %s = %d;", value, i)
-			fileNames.WriteString(fmt.Sprintf(`, "node_modules/.bun/%s/index.ts"`, name))
+			fmt.Fprintf(&fileNames, `, "node_modules/.bun/%s/index.ts"`, name)
 		}
 		files["/home/src/workspaces/project/index.ts"] = index.String()
 		files["/home/src/workspaces/project/tsconfig.json"] = fmt.Sprintf(`{

@@ -210,7 +210,7 @@ func newFanotifyBackend(noRename bool) *fanotifyBackend {
 		watchersTouched: make(map[*dirWatch]struct{}),
 	}
 	b.pipeWriteFD.Store(-1)
-	b.watcherBase.init(b)
+	b.init(b)
 	return b
 }
 

@@ -21,13 +21,13 @@ func applyBulkEdits(text string, edits []core.TextChange) string {
 	b.Grow(len(text))
 	lastEnd := 0
 	for _, e := range edits {
-		start := e.TextRange.Pos()
+		start := e.Pos()
 		if start != lastEnd {
-			b.WriteString(text[lastEnd:e.TextRange.Pos()])
+			b.WriteString(text[lastEnd:e.Pos()])
 		}
 		b.WriteString(e.NewText)
 
-		lastEnd = e.TextRange.End()
+		lastEnd = e.End()
 	}
 	b.WriteString(text[lastEnd:])
 

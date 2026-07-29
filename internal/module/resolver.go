@@ -213,7 +213,7 @@ func (r *Resolver) GetPackageScopeForPath(directory string) *packagejson.InfoCac
 }
 
 func (r *Resolver) PackageJsonCacheEntries(f func(key tspath.Path, value *packagejson.InfoCacheEntry) bool) {
-	r.caches.packageJsonInfoCache.Range(f)
+	r.packageJsonInfoCache.Range(f)
 }
 
 func (r *tracer) traceResolutionUsingProjectReference(redirectedReference ResolvedProjectReference) {
