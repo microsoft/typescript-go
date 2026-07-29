@@ -707,8 +707,22 @@ func (b *ProjectCollectionBuilder) markProjectsAffectedByConfigChanges(
 	// Recompute default projects for open files that now have different config file presence.
 	var hasChanges bool
 	for path := range configChangeResult.affectedFiles {
-		fileName := b.fs.overlays[path].FileName()
-		_ = b.ensureConfiguredProjectAndAncestorsForFile(fileName, path, logger)
+		overlay, ok := b.fs.overlays[path]
+		if !ok {
+			// The config file registry can retain a cached lookup for a file
+			// whose overlay is already gone if an earlier snapshot update was
+			// interrupted (e.g. by a panic recovered at the request boundary)
+			// after the session's overlay map was updated but before the
+			// Closed event reached the registry. The producers of
+			// affectedFiles have already dropped the stale cache entry, and a
+			// file that is no longer open has no default project to
+			// recompute, so skip it.
+			if logger != nil {
+				logger.Logf("Skipping default project recomputation for %s: no overlay (file is no longer open)", path)
+			}
+			continue
+		}
+		_ = b.ensureConfiguredProjectAndAncestorsForFile(overlay.FileName(), path, logger)
 		hasChanges = true
 	}
 
