@@ -309,7 +309,7 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 		return NewProgram(newOpts), newFile, false
 	}
 
-	if !canReplaceFileInProgram(oldFile, newFile) {
+	if !p.canReplaceFileInProgram(oldFile, newFile) {
 		return NewProgram(newOpts), newFile, false
 	}
 	if oldNeedsImportHelpers := p.importHelpersImportSpecifiers[oldFile.Path()] != nil; oldNeedsImportHelpers != p.needsImportHelpersImportSpecifier(newFile) {
@@ -356,11 +356,14 @@ func (p *Program) GetCheckerPool() CheckerPool {
 	return p.checkerPool
 }
 
-func canReplaceFileInProgram(file1 *ast.SourceFile, file2 *ast.SourceFile) bool {
+func (p *Program) canReplaceFileInProgram(file1 *ast.SourceFile, file2 *ast.SourceFile) bool {
 	return file2 != nil &&
 		file1.ParseOptions() == file2.ParseOptions() &&
 		file1.UsesUriStyleNodeCoreModules == file2.UsesUriStyleNodeCoreModules &&
-		slices.EqualFunc(file1.Imports(), file2.Imports(), equalModuleSpecifiers) &&
+		slices.EqualFunc(file1.Imports(), file2.Imports(), func(n1 *ast.Node, n2 *ast.Node) bool {
+			return equalModuleSpecifiers(n1, n2) &&
+				p.GetModeForUsageLocation(file1, n1) == p.GetModeForUsageLocation(file2, n2)
+		}) &&
 		slices.EqualFunc(file1.ModuleAugmentations, file2.ModuleAugmentations, equalModuleAugmentationNames) &&
 		slices.Equal(file1.AmbientModuleNames, file2.AmbientModuleNames) &&
 		slices.EqualFunc(file1.ReferencedFiles, file2.ReferencedFiles, equalFileReferences) &&
