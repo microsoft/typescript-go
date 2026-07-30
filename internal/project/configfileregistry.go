@@ -91,6 +91,14 @@ func (c *ConfigFileRegistry) GetConfig(path tspath.Path) *tsoptions.ParsedComman
 	return nil
 }
 
+func (c *ConfigFileRegistry) isTracked(path tspath.Path) bool {
+	if c == nil {
+		return false
+	}
+	_, ok := c.configs[path]
+	return ok
+}
+
 func (c *ConfigFileRegistry) GetConfigFileName(path tspath.Path) string {
 	if entry, ok := c.configFileNames[path]; ok {
 		return entry.nearestConfigFileName

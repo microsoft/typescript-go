@@ -459,6 +459,108 @@ func TestPushDiagnostics(t *testing.T) {
 		assert.Equal(t, len(lastTsconfigCall.Params.Diagnostics), 0, "expected no diagnostics after removing baseUrl option")
 	})
 
+	t.Run("updates diagnostics when a config file changes on disk with no follow-up request", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/src/tsconfig.json": `{"compilerOptions": {}}`,
+			"/src/index.ts":      "export const x = 1;",
+		}
+		session, utils := projecttestutil.Setup(files)
+		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		callsBeforeChange := len(utils.Client().PublishDiagnosticsCalls())
+
+		// Editors do not attach the language server to JSON documents, so a config file
+		// edit only reaches the session through the file watcher. Config file diagnostics
+		// are pushed, so they must be republished without waiting for a client request.
+		assert.NilError(t, utils.FS().WriteFile("/src/tsconfig.json", `{"compilerOptions": {"target": "nope"}}`))
+		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+			{Uri: "file:///src/tsconfig.json", Type: lsproto.FileChangeTypeChanged},
+		})
+		session.WaitForBackgroundTasks()
+
+		calls := utils.Client().PublishDiagnosticsCalls()
+		tsconfigCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", callsBeforeChange)
+		assert.Assert(t, len(tsconfigCalls) > 0, "expected PublishDiagnostics call for tsconfig.json after watched file change")
+		lastTsconfigCall := tsconfigCalls[len(tsconfigCalls)-1]
+
+		expectedMessage := "Argument for '--target' option must be:"
+		assert.Assert(t, slices.ContainsFunc(lastTsconfigCall.Params.Diagnostics, func(diag *lsproto.Diagnostic) bool {
+			return strings.Contains(diag.Message.AsString(), expectedMessage)
+		}), "expected invalid target diagnostic on tsconfig.json, got: %v", lastTsconfigCall.Params.Diagnostics)
+	})
+
+	t.Run("updates diagnostics when an open config file is saved", func(t *testing.T) {
+		t.Parallel()
+		initialConfig := `{"compilerOptions": {}}`
+		updatedConfig := `{"compilerOptions": {"target": "nope"}}`
+		files := map[string]any{
+			"/src/tsconfig.json": initialConfig,
+			"/src/index.ts":      "export const x = 1;",
+		}
+		session, utils := projecttestutil.Setup(files)
+		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		callsBeforeEdit := len(utils.Client().PublishDiagnosticsCalls())
+
+		// The user opens the config file in the editor, edits it, and saves.
+		session.DidOpenFile(context.Background(), "file:///src/tsconfig.json", 1, initialConfig, lsproto.LanguageKindJSON)
+		session.DidChangeFile(context.Background(), "file:///src/tsconfig.json", 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+			{WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{Text: updatedConfig}},
+		})
+		assert.NilError(t, utils.FS().WriteFile("/src/tsconfig.json", updatedConfig))
+		session.DidSaveFile(context.Background(), "file:///src/tsconfig.json")
+		session.WaitForBackgroundTasks()
+
+		// No language service request is made for a config file, so the save must be
+		// what causes the updated diagnostics to be published.
+		calls := utils.Client().PublishDiagnosticsCalls()
+		tsconfigCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", callsBeforeEdit)
+		assert.Assert(t, len(tsconfigCalls) > 0, "expected PublishDiagnostics call for tsconfig.json after save")
+		lastTsconfigCall := tsconfigCalls[len(tsconfigCalls)-1]
+
+		expectedMessage := "Argument for '--target' option must be:"
+		assert.Assert(t, slices.ContainsFunc(lastTsconfigCall.Params.Diagnostics, func(diag *lsproto.Diagnostic) bool {
+			return strings.Contains(diag.Message.AsString(), expectedMessage)
+		}), "expected invalid target diagnostic on tsconfig.json, got: %v", lastTsconfigCall.Params.Diagnostics)
+	})
+
+	t.Run("updates diagnostics when an open config file is edited without saving", func(t *testing.T) {
+		t.Parallel()
+		initialConfig := `{"compilerOptions": {"target": "nope"}}`
+		updatedConfig := `{"compilerOptions": {}}`
+		files := map[string]any{
+			"/src/tsconfig.json": initialConfig,
+			"/src/index.ts":      "export const x = 1;",
+		}
+		session, utils := projecttestutil.Setup(files)
+		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		assert.NilError(t, err)
+		session.WaitForBackgroundTasks()
+
+		callsBeforeEdit := len(utils.Client().PublishDiagnosticsCalls())
+
+		// Fixing the error in the editor should clear the diagnostic even before saving.
+		session.DidOpenFile(context.Background(), "file:///src/tsconfig.json", 1, initialConfig, lsproto.LanguageKindJSON)
+		session.DidChangeFile(context.Background(), "file:///src/tsconfig.json", 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+			{WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{Text: updatedConfig}},
+		})
+		session.WaitForBackgroundTasks()
+
+		calls := utils.Client().PublishDiagnosticsCalls()
+		tsconfigCalls := filterDiagnosticsByURI(calls, "file:///src/tsconfig.json", callsBeforeEdit)
+		assert.Assert(t, len(tsconfigCalls) > 0, "expected PublishDiagnostics call for tsconfig.json after edit")
+		lastTsconfigCall := tsconfigCalls[len(tsconfigCalls)-1]
+		assert.Equal(t, len(lastTsconfigCall.Params.Diagnostics), 0, "expected no diagnostics after fixing target option")
+	})
+
 	t.Run("does not publish for inferred projects", func(t *testing.T) {
 		t.Parallel()
 		files := map[string]any{
