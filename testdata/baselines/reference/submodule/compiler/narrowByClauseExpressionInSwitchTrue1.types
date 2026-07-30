@@ -56,7 +56,7 @@ function test1(x: AorB) {
 >x : AorB
 
       x;
->x : B & not A
+>x : B
 
       break;
   }
@@ -84,7 +84,7 @@ function test2(x: AorB) {
 >x : AorB
 
       x;
->x : A | (B & not A)
+>x : AorB
 
       break;
   }

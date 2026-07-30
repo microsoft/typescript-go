@@ -553,7 +553,7 @@ const f = (value: Union) => {
 
         value.premium;
 >value.premium : false
->value : { premium: false; } & not never & not ({ premium: true; } & Premium)
+>value : { premium: false; } & not never
 >premium : false
     }
 };

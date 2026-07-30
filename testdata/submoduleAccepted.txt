@@ -1477,7 +1477,6 @@ compiler/controlFlowDestructuringLoop.types.diff
 compiler/controlFlowFavorAssertedTypeThroughTypePredicate.types.diff
 compiler/controlFlowUnionContainingTypeParameter1.types.diff
 compiler/discriminantsAndPrimitives.types.diff
-compiler/discriminantsAndTypePredicates.types.diff
 compiler/distributiveConditionalTypeConstraints.types.diff
 compiler/genericCapturingFunctionNarrowing.types.diff
 compiler/getterSetterSubtypeAssignment.types.diff
@@ -1500,8 +1499,6 @@ compiler/observableInferenceCanBeMade.types.diff
 compiler/quickinfoTypeAtReturnPositionsInaccurate.types.diff
 compiler/recursiveTypeRelations.types.diff
 compiler/spreadBooleanRespectsFreshness.types.diff
-compiler/subtypeReductionUnionConstraints.symbols.diff
-compiler/subtypeReductionUnionConstraints.types.diff
 compiler/typePredicateStructuralMatch.types.diff
 compiler/typePredicateWithThisParameter.types.diff
 compiler/typeVariableTypeGuards.types.diff
@@ -1514,9 +1511,6 @@ conformance/controlFlowElementAccess2.types.diff
 conformance/controlFlowIfStatement.types.diff
 conformance/returnTagTypeGuard.types.diff
 conformance/stringLiteralCheckedInIf02.types.diff
-conformance/stringLiteralTypesAsTags01.types.diff
-conformance/stringLiteralTypesAsTags02.types.diff
-conformance/stringLiteralTypesAsTags03.types.diff
 conformance/symbolType17.types.diff
 conformance/typeGuardFunction.types.diff
 conformance/typeGuardFunctionOfFormThis.symbols.diff

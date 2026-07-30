@@ -1,24 +1,6 @@
 --- old.narrowByClauseExpressionInSwitchTrue1.types
 +++ new.narrowByClauseExpressionInSwitchTrue1.types
-@@= skipped -55, +55 lines =@@
- >x : AorB
-
-       x;
-->x : B
-+>x : B & not A
-
-       break;
-   }
-@@= skipped -28, +28 lines =@@
- >x : AorB
-
-       x;
-->x : AorB
-+>x : A | (B & not A)
-
-       break;
-   }
-@@= skipped -56, +56 lines =@@
+@@= skipped -139, +139 lines =@@
  >RegExp : RegExpConstructor
 
        input;

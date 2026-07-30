@@ -79,7 +79,7 @@ if (isCat(b)) {
 
 } else {
     b; // Dog
->b : Dog & not Cat
+>b : Dog
 }
 
 // A negated type guard `x is not Cat` narrows the *true* branch to `not Cat`.

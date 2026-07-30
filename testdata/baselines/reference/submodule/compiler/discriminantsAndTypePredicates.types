@@ -43,15 +43,15 @@ function foo1(x: A | B): any {
 >x : A
     }
     x;  // B
->x : B & not A
+>x : B
 
     if (isB(x)) {
 >isB(x) : boolean
 >isB : (x: A | B) => x is B
->x : B & not A
+>x : B
 
         return x;  // B
->x : B & not A
+>x : B
     }
     x;  // never
 >x : never

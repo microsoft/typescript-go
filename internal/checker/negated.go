@@ -246,6 +246,11 @@ func (c *Checker) checkForSaturatedNegatedType(typeSet []*Type) bool {
 // is redundant when the combined non-negated part of the intersection is already a subtype of
 // 'not X' (i.e. it is disjoint from X). For example, in 'false & not true' the non-negated part
 // 'false' is a subtype of 'not true', so 'not true' is dropped, leaving just 'false'.
+//
+// A member 'not X' is also redundant when the non-negated part is mutually exclusive with X by
+// virtue of a shared discriminant property (see isDisjointByDiscriminant). For example, given
+// discriminated types 'A = { kind: "a" }' and 'C = { kind: "c" }', the intersection 'C & not A'
+// reduces to 'C' because no value of type C can be an A.
 func (c *Checker) removeNegatedSubtypes(types []*Type) []*Type {
 	if len(types) == 0 {
 		return types
@@ -256,9 +261,45 @@ func (c *Checker) removeNegatedSubtypes(types []*Type) []*Type {
 	}
 	nonNegativePart := c.getIntersectionType(nonNegatedBounds)
 	for i := len(types) - 1; i >= 0; i-- {
-		if types[i].flags&TypeFlagsNegated != 0 && c.isTypeSubtypeOf(nonNegativePart, types[i]) {
+		if types[i].flags&TypeFlagsNegated == 0 {
+			continue
+		}
+		negatedBase := types[i].AsNegatedType().baseType
+		if c.isTypeSubtypeOf(nonNegativePart, types[i]) || c.isDisjointByDiscriminant(nonNegativePart, negatedBase) {
 			types = slices.Delete(types, i, i+1)
 		}
 	}
 	return types
+}
+
+// isDisjointByDiscriminant reports whether types 'a' and 'b' are provably mutually exclusive because
+// they share a discriminant property whose types in 'a' and 'b' have an empty (never) intersection.
+// For example '{ kind: "c" }' and '{ kind: "a" }' are disjoint by their 'kind' property, so
+// 'C & not A' reduces to 'C'.
+//
+// Discriminant properties are located with findDiscriminantProperties over the union 'a | b' -- the
+// same mechanism used for discriminated-union narrowing -- and disjointness of a single discriminant
+// is decided by intersecting the two property types and checking for never. Deciding disjointness by
+// intersecting the property types (rather than comparing them by identity) is important: an enum
+// literal such as 'E.A' (where 'enum E { A = "a" }') is a distinct type from the string literal '"a"'
+// yet is not mutually exclusive with it, so 'E.A & "a"' is not never.
+//
+// Only the (small, literal) discriminant property types are intersected here, never the full input
+// types, so this stays cheap and avoids the circularities a general 'a & b is never' computation
+// would risk during intersection construction.
+func (c *Checker) isDisjointByDiscriminant(a *Type, b *Type) bool {
+	union := c.getUnionType([]*Type{a, b})
+	if union.flags&TypeFlagsUnion == 0 {
+		// 'a' and 'b' collapsed into a single type (e.g. one is a subtype of the other), so there is
+		// no discriminant to distinguish them.
+		return false
+	}
+	for _, prop := range c.findDiscriminantProperties(c.getPropertiesOfType(a), union) {
+		aPropType := c.getTypeOfPropertyOfType(a, prop.Name)
+		bPropType := c.getTypeOfPropertyOfType(b, prop.Name)
+		if aPropType != nil && bPropType != nil && c.getIntersectionType([]*Type{aPropType, bPropType}).flags&TypeFlagsNever != 0 {
+			return true
+		}
+	}
+	return false
 }
