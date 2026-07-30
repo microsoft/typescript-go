@@ -1,0 +1,20 @@
+--- old.distributiveConditionalTypeConstraints.types
++++ new.distributiveConditionalTypeConstraints.types
+@@= skipped -179, +179 lines =@@
+     }
+     else {
+         y;  // T extends C ? number : string
+->y : T extends C ? number : string
++>y : (T extends C ? number : string) & not string
+     }
+     const newY: string | number = y;
+ >newY : string | number
+@@= skipped -25, +25 lines =@@
+     }
+     else {
+         y;  // T extends C ? string : number
+->y : T extends C ? string : number
++>y : (T extends C ? string : number) & not string
+     }
+     const newY: string | number = y;
+ >newY : string | number

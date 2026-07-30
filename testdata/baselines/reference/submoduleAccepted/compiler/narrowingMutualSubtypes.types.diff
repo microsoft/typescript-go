@@ -1,0 +1,76 @@
+--- old.narrowingMutualSubtypes.types
++++ new.narrowingMutualSubtypes.types
+@@= skipped -104, +104 lines =@@
+     }
+     else {
+         x;  // {}
+->x : {}
++>x : never
+     }
+     x;  // {}
+->x : {}
++>x : Record<string, unknown>
+ }
+
+ declare function isObject2(value: unknown): value is {};
+@@= skipped -50, +50 lines =@@
+     }
+     else {
+         x;  // {}
+->x : {}
++>x : never
+     }
+     x;  // {}
+->x : {}
++>x : Record<string, any>
+ }
+
+ declare function isObject4(value: unknown): value is {};
+@@= skipped -142, +142 lines =@@
+         // 'obj' should probably not include an array type here.
+         for (let key in obj) {
+ >key : string
+->obj : any[] | Record<string, any>
++>obj : Record<string, any>[] | Record<string, any>
+
+             if (obj[key] !== undefined) {
+ >obj[key] !== undefined : boolean
+ >obj[key] : any
+->obj : any[] | Record<string, any>
++>obj : Record<string, any>[] | Record<string, any>
+ >key : string
+ >undefined : undefined
+
+@@= skipped -15, +15 lines =@@
+ >console : Console
+ >log : (...data: any[]) => void
+ >obj[key] : any
+->obj : any[] | Record<string, any>
++>obj : Record<string, any>[] | Record<string, any>
+ >key : string
+             }
+         }
+@@= skipped -45, +45 lines =@@
+         // 'obj' should probably not include an array type here.
+         for (let key in obj) {
+ >key : string
+->obj : Record<string, any>
++>obj : Record<string, any> & not any[]
+
+             if (obj[key] !== undefined) {
+ >obj[key] !== undefined : boolean
+ >obj[key] : any
+->obj : Record<string, any>
++>obj : Record<string, any> & not any[]
+ >key : string
+ >undefined : undefined
+
+@@= skipped -15, +15 lines =@@
+ >console : Console
+ >log : (...data: any[]) => void
+ >obj[key] : any
+->obj : Record<string, any>
++>obj : Record<string, any> & not any[]
+ >key : string
+             }
+         }

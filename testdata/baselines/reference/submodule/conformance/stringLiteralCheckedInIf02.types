@@ -36,7 +36,7 @@ function f(foo: T) {
     else { 
         return foo[0];
 >foo[0] : S
->foo : S[]
+>foo : S[] & not "a" & not "b"
 >0 : 0
     }
 }

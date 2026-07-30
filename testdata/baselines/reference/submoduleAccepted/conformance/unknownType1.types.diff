@@ -1,0 +1,20 @@
+--- old.unknownType1.types
++++ new.unknownType1.types
+@@= skipped -201, +201 lines =@@
+ >"string" : "string"
+ >typeof x === "number" : boolean
+ >typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+->x : unknown
++>x : not string
+ >"number" : "number"
+
+         x;  // string | number
+@@= skipped -8, +8 lines =@@
+     }
+     if (x instanceof Error) {
+ >x instanceof Error : boolean
+->x : unknown
++>x : number | not number
+ >Error : ErrorConstructor
+
+         x;  // Error

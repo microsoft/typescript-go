@@ -1,0 +1,19 @@
+--- old.typePredicateStructuralMatch.types
++++ new.typePredicateStructuralMatch.types
+@@= skipped -60, +60 lines =@@
+ >value.data : Results
+ >value : { data: Results; }
+ >data : Results
+->value : Results
++>value : Results & not { data: Results; }
+ }
+
+ function isPlainResponse<T>(value: T | { data: T}): value is T {
+@@= skipped -29, +29 lines =@@
+ >value : Results | { data: Results; }
+ >value : Results
+ >value.data : Results
+->value : { data: Results; }
++>value : { data: Results; } & not Results
+ >data : Results
+ }

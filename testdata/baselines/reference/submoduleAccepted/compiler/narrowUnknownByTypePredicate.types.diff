@@ -1,0 +1,9 @@
+--- old.narrowUnknownByTypePredicate.types
++++ new.narrowUnknownByTypePredicate.types
+@@= skipped -88, +88 lines =@@
+ >value6 : unknown
+
+   value6;
+->value6 : unknown
++>value6 : not A
+ }

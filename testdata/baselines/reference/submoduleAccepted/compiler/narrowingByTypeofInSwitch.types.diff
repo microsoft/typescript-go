@@ -1,6 +1,12 @@
 --- old.narrowingByTypeofInSwitch.types
 +++ new.narrowingByTypeofInSwitch.types
-@@= skipped -870, +870 lines =@@
+@@= skipped -865, +865 lines =@@
+
+         default: const _y: {} = x; return;
+ >_y : {}
+->x : {}
++>x : {} & not number & not false & not true & not symbol & not string
+     }
  }
 
  function narrowingNarrows2(x: true | 3 | 'hello' | undefined) {

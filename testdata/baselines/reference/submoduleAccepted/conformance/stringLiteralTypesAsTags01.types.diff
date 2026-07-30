@@ -1,0 +1,11 @@
+--- old.stringLiteralTypesAsTags01.types
++++ new.stringLiteralTypesAsTags01.types
+@@= skipped -90, +90 lines =@@
+
+     let c = x;
+ >c : A
+->x : A
++>x : A & not B
+ }
+ else {
+     let d = x;

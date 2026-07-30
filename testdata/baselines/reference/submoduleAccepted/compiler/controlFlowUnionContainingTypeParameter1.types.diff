@@ -1,0 +1,27 @@
+--- old.controlFlowUnionContainingTypeParameter1.types
++++ new.controlFlowUnionContainingTypeParameter1.types
+@@= skipped -45, +45 lines =@@
+ >this.f : (v: number) => void
+ >this : this
+ >f : (v: number) => void
+->val : number
++>val : number & not T
+   }
+ }
+
+@@= skipped -43, +43 lines =@@
+       return;
+     }
+     val;
+->val : number
++>val : number & not T
+
+     this.f(val);
+ >this.f(val) : void
+ >this.f : (v: number) => void
+ >this : this
+ >f : (v: number) => void
+->val : number
++>val : number & not T
+   }
+ }

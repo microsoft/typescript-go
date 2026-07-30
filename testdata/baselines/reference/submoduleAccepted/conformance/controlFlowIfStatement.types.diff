@@ -1,0 +1,11 @@
+--- old.controlFlowIfStatement.types
++++ new.controlFlowIfStatement.types
+@@= skipped -109, +109 lines =@@
+     }
+     else {
+         return data;
+->data : T
++>data : T & not string
+     }
+ }
+ function d<T extends string>(data: string | T): never {

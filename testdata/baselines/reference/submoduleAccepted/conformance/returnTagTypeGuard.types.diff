@@ -1,0 +1,11 @@
+--- old.returnTagTypeGuard.types
++++ new.returnTagTypeGuard.types
+@@= skipped -63, +63 lines =@@
+ >chunk : Entry
+ >c : number
+ >chunk.d : string
+->chunk : Group
++>chunk : Group & not Entry
+ >d : string
+
+     return x

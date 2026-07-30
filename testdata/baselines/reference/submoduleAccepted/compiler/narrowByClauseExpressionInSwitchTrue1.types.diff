@@ -1,0 +1,38 @@
+--- old.narrowByClauseExpressionInSwitchTrue1.types
++++ new.narrowByClauseExpressionInSwitchTrue1.types
+@@= skipped -55, +55 lines =@@
+ >x : AorB
+
+       x;
+->x : B
++>x : B & not A
+
+       break;
+   }
+@@= skipped -28, +28 lines =@@
+ >x : AorB
+
+       x;
+->x : AorB
++>x : A | (B & not A)
+
+       break;
+   }
+@@= skipped -56, +56 lines =@@
+ >RegExp : RegExpConstructor
+
+       input;
+->input : RegExp
++>input : RegExp & not string
+
+       break;
+     case isSomeType(input):
+@@= skipped -9, +9 lines =@@
+ >input : string | RegExp | SomeType
+
+       input;
+->input : SomeType
++>input : SomeType & not string
+
+       break;
+   }

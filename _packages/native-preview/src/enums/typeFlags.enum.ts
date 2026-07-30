@@ -69,5 +69,6 @@ export enum TypeFlags {
     IncludesWildcard = IndexedAccess,
     IncludesEmptyObject = Conditional,
     IncludesInstantiable = Substitution,
+    IncludesNegated = Reserved3,
     NotPrimitiveUnion = Any | Unknown | Void | Never | Object | Intersection | IncludesInstantiable,
 }

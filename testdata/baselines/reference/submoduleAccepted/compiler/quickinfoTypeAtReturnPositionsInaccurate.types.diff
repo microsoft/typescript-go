@@ -1,0 +1,41 @@
+--- old.quickinfoTypeAtReturnPositionsInaccurate.types
++++ new.quickinfoTypeAtReturnPositionsInaccurate.types
+@@= skipped -98, +98 lines =@@
+         }
+
+         return entry; // type is Entries[EntryId] - all fine
+->entry : Entries[EntryId]
++>entry : Entries[EntryId] & not Extract<Entries[EntryId], NumClass<any>>
+     }
+ }
+
+@@= skipped -60, +60 lines =@@
+         item.get();
+ >item.get() : string | number
+ >item.get : (() => number) | (() => string)
+->item : NumClass<number> | StrClass<string>
++>item : NumClass<number> | (StrClass<string> & not Extract<Slices[SliceId][SliceKey], NumClass<any>>)
+ >get : (() => number) | (() => string)
+
+         // unfortunately, doesn't work completely.
+@@= skipped -42, +42 lines =@@
+         item.get();
+ >item.get() : string | number
+ >item.get : (() => number) | (() => string)
+->item : NumClass<number> | StrClass<string>
++>item : (NumClass<number> | StrClass<string>) & not Extract<Slices[SliceId][SliceKey], NumClass<any>>
+ >get : (() => number) | (() => string)
+
+         return item; // type is never
+->item : Slices[SliceId][SliceKey]
++>item : Slices[SliceId][SliceKey] & not Extract<Slices[SliceId][SliceKey], NumClass<any>>
+     }
+ }
+
+@@= skipped -35, +35 lines =@@
+ >program.getProgram : () => Program
+ >program : T
+ >getProgram : () => Program
+->program : Program
++>program : Program & not T
+ }

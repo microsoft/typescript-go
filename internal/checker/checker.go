@@ -18252,7 +18252,9 @@ func (c *Checker) widenTypeForVariableLikeDeclaration(t *Type, declaration *ast.
 		if t.flags&TypeFlagsUniqueESSymbol != 0 && (ast.IsBindingElement(declaration) || declaration.Type() == nil) && t.symbol != c.getSymbolOfDeclaration(declaration) {
 			t = c.esSymbolType
 		}
-		return c.getWidenedType(t)
+		// Drop any fresh negated types introduced by control flow narrowing so a CFA-introduced
+		// 'not X' does not leak into an inferred variable, parameter, or property declaration.
+		return c.removeOrRegularizeNegatedTypes(c.getWidenedType(t), true /*removeNegatedTypes*/)
 	}
 	// Rest parameters default to type any[], other parameters default to type any
 	if ast.IsParameterDeclaration(declaration) && declaration.AsParameterDeclaration().DotDotDotToken != nil {
@@ -20597,7 +20599,9 @@ func (c *Checker) checkIfExpressionRefinesParameter(fn *ast.Node, expr *ast.Node
 	falseCondition := &ast.FlowNode{Flags: ast.FlowFlagsFalseCondition, Node: expr, Antecedent: antecedent}
 	falseSubtype := c.getReducedType(c.getFlowTypeOfReferenceEx(param.Name(), initType, trueType, fn, falseCondition))
 	if falseSubtype.flags&TypeFlagsNever != 0 {
-		return trueType
+		// Strip any fresh negated types introduced by control flow narrowing so a CFA-introduced
+		// 'not X' does not leak into the inferred type predicate (and thus into emitted declarations).
+		return c.removeOrRegularizeNegatedTypes(trueType, true /*removeNegatedTypes*/)
 	}
 	return nil
 }
@@ -25525,7 +25529,11 @@ func (c *Checker) getWidenedLiteralLikeTypeForContextualType(t *Type, contextual
 	if !c.isLiteralOfContextualType(t, contextualType) {
 		t = c.getWidenedUniqueESSymbolType(c.getWidenedLiteralType(t))
 	}
-	return c.getRegularTypeOfLiteralType(t)
+	// Fresh negated types introduced by control flow narrowing are widened away (dropped) when a
+	// narrowed value escapes into a location that does not itself want a negation, so that 'not X'
+	// does not leak into an inferred declaration. When the contextual type does mention a negation
+	// (e.g. a 'not string' parameter or property), the fresh negation is preserved.
+	return c.getRegularTypeOfLiteralType(c.removeOrRegularizeNegatedTypes(t, containsFreshNegatedType(t) && !containsNegatedType(contextualType)))
 }
 
 func (c *Checker) isLiteralOfContextualType(candidateType *Type, contextualType *Type) bool {
@@ -25674,6 +25682,11 @@ func (c *Checker) getUnionTypeWorker(types []*Type, unionReduction UnionReductio
 			}
 			return c.unknownType
 		}
+		if includes&TypeFlagsIncludesNegated != 0 && c.checkForSaturatedNegatedType(typeSet) {
+			// A union that contains a type and its complement (e.g. 'T | not T') covers every value,
+			// so it reduces to 'unknown' -- the union converse of 'T & not T' reducing to 'never'.
+			return c.unknownType
+		}
 		if includes&TypeFlagsUndefined != 0 {
 			// If type set contains both undefinedType and missingType, remove missingType
 			if len(typeSet) >= 2 && typeSet[0] == c.undefinedType && typeSet[1] == c.missingType {
@@ -25689,6 +25702,11 @@ func (c *Checker) getUnionTypeWorker(types []*Type, unionReduction UnionReductio
 		}
 		if includes&TypeFlagsIncludesConstrainedTypeVariable != 0 {
 			typeSet = c.removeConstrainedTypeVariables(typeSet)
+		}
+		if includes&TypeFlagsIntersection != 0 {
+			// Cancel complementary 'Base & C' / 'Base & not C' members produced by the true and
+			// false branches of a control-flow narrowing when those branches rejoin.
+			typeSet = c.removeComplementaryFreshNegatedTypes(typeSet)
 		}
 		if unionReduction == UnionReductionSubtype {
 			typeSet = c.removeSubtypes(typeSet, includes&TypeFlagsObject != 0)
@@ -25779,6 +25797,9 @@ func (c *Checker) addTypesToUnion(sourceTypes []*Type) ([]*Type, TypeFlags) {
 		includes |= flags & TypeFlagsIncludesMask
 		if flags&TypeFlagsInstantiable != 0 {
 			includes |= TypeFlagsIncludesInstantiable
+		}
+		if flags&TypeFlagsNegated != 0 {
+			includes |= TypeFlagsIncludesNegated
 		}
 		if flags&TypeFlagsIntersection != 0 && t.objectFlags&ObjectFlagsIsConstrainedTypeVariable != 0 {
 			includes |= TypeFlagsIncludesConstrainedTypeVariable

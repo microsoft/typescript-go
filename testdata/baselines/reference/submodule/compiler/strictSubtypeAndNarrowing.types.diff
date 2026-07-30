@@ -1,6 +1,45 @@
 --- old.strictSubtypeAndNarrowing.types
 +++ new.strictSubtypeAndNarrowing.types
-@@= skipped -450, +450 lines =@@
+@@= skipped -209, +209 lines =@@
+     }
+     else {
+         f;  // C | D
+->f : C | D
++>f : (C | D) & not A
+     }
+     f;  // FnTypes
+->f : FnTypes
++>f : C
+ }
+
+ function checkB(f: FnTypes) {
+@@= skipped -20, +20 lines =@@
+     }
+     else {
+         f;  // C | D
+->f : C | D
++>f : (C | D) & not B
+     }
+     f;  // FnTypes
+->f : FnTypes
++>f : C
+ }
+
+ function checkC(f: FnTypes) {
+@@= skipped -167, +167 lines =@@
+
+     } else {
+         value;
+->value : number | { length: string; } | { a: string; } | null | undefined
++>value : (number | { length: string; } | { a: string; } | null | undefined) & not { length: number; }
+     }
+     value;
+->value : string | number | string[] | { [index: number]: boolean; length: number; } | { length: string; } | { a: string; } | [number, boolean] | null | undefined
++>value : string | string[] | { [index: number]: boolean; length: number; } | [number, boolean] | ((number | { length: string; } | { a: string; } | null | undefined) & not { length: number; })
+ }
+
+ // Repro from comment in #52984
+@@= skipped -54, +54 lines =@@
 
  type Foo = {value: {type: 'A'}; a?: number} | {value: {type: 'B'}; b?: number};
  >Foo : Foo
@@ -66,7 +105,16 @@
 
      return foo;
 ->foo : { value: { type: "A"; }; a?: number; }
-+>foo : { value: { type: 'A'; }; a?: number; }
++>foo : { value: { type: 'A'; }; a?: number; } & not ({ value: { type: 'B'; }; b?: number; } & Readonly<Record<"value", { type: 'B'; } & Readonly<Record<"type", "B">>>>)
  }
 
  // Repro from #53063
+@@= skipped -44, +44 lines =@@
+
+         value.premium;
+ >value.premium : false
+->value : { premium: false; }
++>value : { premium: false; } & not never & not ({ premium: true; } & Premium)
+ >premium : false
+     }
+ };

@@ -1,0 +1,9 @@
+--- old.unreachableSwitchTypeofUnknown.types
++++ new.unreachableSwitchTypeofUnknown.types
+@@= skipped -42, +42 lines =@@
+ >0 : 0
+     }
+     x;
+->x : unknown
++>x : not string & not number & not bigint & not false & not true & not symbol & not undefined
+ }

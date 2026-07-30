@@ -1,0 +1,20 @@
+--- old.controlFlowFavorAssertedTypeThroughTypePredicate.types
++++ new.controlFlowFavorAssertedTypeThroughTypePredicate.types
+@@= skipped -24, +24 lines =@@
+ }
+ // check type after conditional block
+ obj1;
+->obj1 : {}
++>obj1 : Record<string, unknown>
+
+ declare const obj2: {} | undefined;
+ >obj2 : {} | undefined
+@@= skipped -20, +20 lines =@@
+ }
+ // check type after conditional block
+ obj2;
+->obj2 : {} | undefined
++>obj2 : Record<string, unknown> | undefined
+
+ declare function isObject2(value: unknown): value is {};
+ >isObject2 : (value: unknown) => value is {}

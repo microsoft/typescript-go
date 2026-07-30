@@ -1,0 +1,19 @@
+--- old.unionAndIntersectionInference1.types
++++ new.unionAndIntersectionInference1.types
+@@= skipped -96, +96 lines =@@
+
+     } else {
+         value; // value is a
+->value : a
++>value : a & not void
+     }
+ }
+
+@@= skipped -18, +18 lines =@@
+
+       } else {
+           value; // value is void
+->value : void
++>value : void & not a
+       }
+ }

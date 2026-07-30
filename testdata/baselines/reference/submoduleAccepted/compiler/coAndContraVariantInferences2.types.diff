@@ -1,0 +1,10 @@
+--- old.coAndContraVariantInferences2.types
++++ new.coAndContraVariantInferences2.types
+@@= skipped -105, +105 lines =@@
+     }
+     else {
+         arr; // readonly B[]
+->arr : readonly B[]
++>arr : readonly B[] & not readonly C[]
+     }
+ }

@@ -1,0 +1,38 @@
+--- old.discriminantsAndPrimitives.types
++++ new.discriminantsAndPrimitives.types
+@@= skipped -30, +30 lines =@@
+
+         switch(x.kind) {
+ >x.kind : "bar" | "foo"
+->x : Bar | Foo
++>x : (Bar | Foo) & not string
+ >kind : "bar" | "foo"
+
+             case 'foo':
+@@= skipped -8, +8 lines =@@
+
+                 x.name;
+ >x.name : string
+->x : Foo
++>x : Foo & not string
+ >name : string
+         }
+     }
+@@= skipped -46, +46 lines =@@
+
+         switch(x.kind) {
+ >x.kind : "bar" | "foo"
+->x : Bar | Foo
++>x : (Bar | Foo) & not string
+ >kind : "bar" | "foo"
+
+             case 'foo':
+@@= skipped -8, +8 lines =@@
+
+                 x.name;
+ >x.name : string
+->x : Foo
++>x : Foo & not string
+ >name : string
+         }
+     }

@@ -1,0 +1,27 @@
+--- old.inKeywordTypeguard(strict=false).types
++++ new.inKeywordTypeguard(strict=false).types
+@@= skipped -1101, +1101 lines =@@
+ >obj : any[] | Record<string, any>
+ >'length' in obj : boolean
+ >'length' : "length"
+->obj : T
++>obj : T & not any[]
+
+       obj;  // T
+ >obj : T
+     }
+     else {
+       obj;  // T
+->obj : T
++>obj : T & not any[]
+     }
+ }
+
+@@= skipped -27, +27 lines =@@
+     }
+     else {
+       obj;  // T
+->obj : T
++>obj : T & not any[]
+     }
+ }

@@ -1,0 +1,121 @@
+--- old.narrowByBooleanComparison.types
++++ new.narrowByBooleanComparison.types
+@@= skipped -37, +37 lines =@@
+ >true : true
+
+         x;
+->x : B | C
++>x : (B | C) & not A
+     }
+
+     if (isA(x) !== false) {
+ >isA(x) !== false : boolean
+ >isA(x) : boolean
+ >isA : (x: MyUnion) => x is A
+->x : MyUnion
++>x : A | ((B | C) & not A)
+ >false : false
+
+         x;
+@@= skipped -18, +18 lines =@@
+ >isA(x) === false : boolean
+ >isA(x) : boolean
+ >isA : (x: MyUnion) => x is A
+->x : MyUnion
++>x : A | ((B | C) & not A)
+ >false : false
+
+         x;
+->x : B | C
++>x : (B | C) & not A
+     }
+
+     if (isA(x) === true) {
+ >isA(x) === true : boolean
+ >isA(x) : boolean
+ >isA : (x: MyUnion) => x is A
+->x : MyUnion
++>x : A | ((B | C) & not A)
+ >true : true
+
+         x;
+@@= skipped -22, +22 lines =@@
+ >isA(x) != true : boolean
+ >isA(x) : boolean
+ >isA : (x: MyUnion) => x is A
+->x : MyUnion
++>x : A | ((B | C) & not A)
+ >true : true
+
+         x;
+->x : B | C
++>x : (B | C) & not A
+     }
+
+     if (isA(x) == true) {
+ >isA(x) == true : boolean
+ >isA(x) : boolean
+ >isA : (x: MyUnion) => x is A
+->x : MyUnion
++>x : A | ((B | C) & not A)
+ >true : true
+
+         x;
+@@= skipped -23, +23 lines =@@
+ >true : true
+ >isA(x) : boolean
+ >isA : (x: MyUnion) => x is A
+->x : MyUnion
++>x : A | ((B | C) & not A)
+
+         x;
+->x : B | C
++>x : (B | C) & not A
+     }
+
+     if (true === isA(x)) {
+@@= skipped -11, +11 lines =@@
+ >true : true
+ >isA(x) : boolean
+ >isA : (x: MyUnion) => x is A
+->x : MyUnion
++>x : A | ((B | C) & not A)
+
+         x;
+ >x : A
+@@= skipped -41, +41 lines =@@
+ >Array.isArray : (arg: any) => arg is any[]
+ >Array : ArrayConstructor
+ >isArray : (arg: any) => arg is any[]
+->foo : unknown
++>foo : not string
+ >false : false
+
+         throw new Error('Not a string or an array');
+@@= skipped -9, +9 lines =@@
+ >'Not a string or an array' : "Not a string or an array"
+     }
+     foo;
+->foo : string | any[]
++>foo : string | (not string & any[])
+ }
+
+ // https://github.com/microsoft/TypeScript/issues/55395
+@@= skipped -79, +79 lines =@@
+ >false : false
+
+         bin;
+->bin : Entity
++>bin : Entity & not Actor
+
+     } else {
+         bin;
+@@= skipped -19, +19 lines =@@
+ >false : false
+
+         bin;
+->bin : Entity
++>bin : Entity & not Actor
+
+     } else {
+         bin;

@@ -7,10 +7,10 @@ import (
 )
 
 // newNegatedType creates a new negated type 'not baseType'.
-func (c *Checker) newNegatedType(baseType *Type) *Type {
+func (c *Checker) newNegatedType(baseType *Type, flags ObjectFlags) *Type {
 	data := &NegatedType{}
 	data.baseType = baseType
-	return c.newType(TypeFlagsNegated, ObjectFlagsNone, data)
+	return c.newType(TypeFlagsNegated, flags, data)
 }
 
 // getNegatedType constructs the type 'not T', applying the negation identities:
@@ -38,9 +38,168 @@ func (c *Checker) getNegatedType(t *Type) *Type {
 	if cached := c.negatedTypes[t.id]; cached != nil {
 		return cached
 	}
-	result := c.newNegatedType(t)
+	result := c.newNegatedType(t, ObjectFlagsNone)
+	result.AsNegatedType().regularType = result
+	result.AsNegatedType().freshType = c.newNegatedType(t, ObjectFlagsFreshNegated)
+	result.AsNegatedType().freshType.AsNegatedType().regularType = result
+	result.AsNegatedType().freshType.AsNegatedType().freshType = result.AsNegatedType().freshType
 	c.negatedTypes[t.id] = result
 	return result
+}
+
+// getFreshNegatedType is like getNegatedType, but the leaf negated types it constructs are marked
+// fresh (ObjectFlagsFreshNegated). Fresh negated types are those introduced by control flow
+// narrowing (as opposed to written explicitly by the user); they are widened away by getWidenedType
+// when a narrowed type escapes into an inferred declaration, so they never leak into emitted
+// declaration files.
+func (c *Checker) getFreshNegatedType(t *Type) *Type {
+	negated := c.getNegatedType(t)
+	if negated.flags&TypeFlagsNegated == 0 {
+		return negated
+	}
+	return negated.AsNegatedType().freshType
+}
+
+// isFreshNegatedType reports whether t is a fresh negated type introduced by control flow narrowing.
+func isFreshNegatedType(t *Type) bool {
+	return t.flags&TypeFlagsNegated != 0 && t.objectFlags&ObjectFlagsFreshNegated != 0
+}
+
+// containsFreshNegatedType reports whether t is a fresh negated type or (transitively) contains one
+// within a union or intersection. ObjectFlagsFreshNegated is a TypeFlagsNegated-only flag (its bit
+// is reused for other meanings on unions and intersections), so it must never be read directly on a
+// container type; this helper recurses instead.
+func containsFreshNegatedType(t *Type) bool {
+	if isFreshNegatedType(t) {
+		return true
+	}
+	if t.flags&TypeFlagsUnionOrIntersection != 0 {
+		return core.Some(t.Types(), containsFreshNegatedType)
+	}
+	return false
+}
+
+// containsNegatedType reports whether t is a negated type or (transitively) contains one within a
+// union or intersection. It is used to decide whether a location wants a negation (and should
+// therefore preserve a fresh control-flow negation rather than widening it away).
+func containsNegatedType(t *Type) bool {
+	if t == nil {
+		return false
+	}
+	if t.flags&TypeFlagsNegated != 0 {
+		return true
+	}
+	if t.flags&TypeFlagsUnionOrIntersection != 0 {
+		return core.Some(t.Types(), containsNegatedType)
+	}
+	return false
+}
+
+// removeFreshNegatedTypes strips fresh negated types (introduced by control flow narrowing) from t.
+// It is used at inference barriers that do not go through getWidenedType (such as inferred type
+// predicates) so that a CFA-introduced 'not X' never leaks into an inferred declaration.
+func (c *Checker) removeFreshNegatedTypes(t *Type) *Type {
+	if !containsFreshNegatedType(t) {
+		return t
+	}
+	return c.removeFreshNegatedTypesEx(t, false)
+}
+
+func (c *Checker) removeFreshNegatedTypesEx(t *Type, intersectionMember bool) *Type {
+	return c.mapType(t, func(t *Type) *Type {
+		if isFreshNegatedType(t) {
+			if intersectionMember {
+				return c.unknownType
+			}
+			return c.neverType
+		}
+		if t.flags&TypeFlagsIntersection != 0 {
+			return c.getIntersectionType(core.Map(t.Types(), func(t *Type) *Type {
+				return c.removeFreshNegatedTypesEx(t, true)
+			}))
+		}
+		return t
+	})
+}
+
+func (c *Checker) getRegularNegatedTypes(t *Type) *Type {
+	if !containsFreshNegatedType(t) {
+		return t
+	}
+	return c.mapType(t, func(t *Type) *Type {
+		if t.flags&TypeFlagsNegated != 0 {
+			return t.AsNegatedType().regularType
+		}
+		if t.flags&TypeFlagsIntersection != 0 {
+			return c.getIntersectionType(core.Map(t.Types(), c.getRegularNegatedTypes))
+		}
+		return t
+	})
+}
+
+func (c *Checker) removeOrRegularizeNegatedTypes(t *Type, remove bool) *Type {
+	if remove {
+		return c.removeFreshNegatedTypes(t)
+	}
+	return c.getRegularNegatedTypes(t)
+}
+
+// removeComplementaryFreshNegatedTypes cancels complementary members of a union that were produced
+// by the true and false branches of a control-flow narrowing. When both a refined type 'Base & C'
+// and its negated complement 'Base & not C' appear in the union, they cover all of 'Base', so both
+// are replaced by the common supertype 'Base'. For example, when the branches of
+//
+//	if (crate.isPackedTight()) { ... }
+//
+// rejoin, the union '(Crate<any> & {extraContents}) | (Crate<any> & not (Crate<any> & {extraContents}))'
+// simplifies back to just 'Crate<any>'. This is gated on ObjectFlagsFreshNegated so it only affects
+// negations introduced by narrowing, not negations written explicitly by the user.
+//
+// The input slice is assumed to be sorted (per CompareTypes); the result remains sorted.
+func (c *Checker) removeComplementaryFreshNegatedTypes(types []*Type) []*Type {
+	for i := 0; i < len(types); i++ {
+		n := types[i]
+		if n.flags&TypeFlagsIntersection == 0 || !core.Some(n.Types(), isFreshNegatedType) {
+			continue
+		}
+		members := n.Types()
+		for _, m := range members {
+			if !isFreshNegatedType(m) {
+				continue
+			}
+			// 'base' is 'n' with this one negation removed; 'positive' is 'base' with the negation's
+			// base type intersected back in (i.e. the corresponding true-branch member).
+			rest := core.Filter(members, func(other *Type) bool { return other != m })
+			if len(rest) == 0 {
+				continue
+			}
+			base := c.getIntersectionType(rest)
+			positive := c.getIntersectionType([]*Type{base, m.AsNegatedType().baseType})
+			// Find the true-branch counterpart P. Narrowing may have reduced it (e.g. 'Crate<any> &
+			// Crate<Sundries>' to just 'Crate<Sundries>'), so match structurally: any P with
+			// (base & C) <: P <: base satisfies 'P | (base & not C) == base'.
+			j := -1
+			for k, p := range types {
+				if k != i && c.isTypeSubtypeOf(p, base) && c.isTypeSubtypeOf(positive, p) {
+					j = k
+					break
+				}
+			}
+			if j < 0 {
+				continue
+			}
+			lo, hi := i, j
+			if lo > hi {
+				lo, hi = hi, lo
+			}
+			types = slices.Delete(types, hi, hi+1)
+			types = slices.Delete(types, lo, lo+1)
+			types, _ = insertType(types, base)
+			i = -1 // Restart the scan since the set changed.
+			break
+		}
+	}
+	return types
 }
 
 // checkForUnsatisfiedNegatedType returns true if the intersection in typeSet is empty (never)
@@ -57,6 +216,26 @@ func (c *Checker) checkForUnsatisfiedNegatedType(typeSet []*Type) bool {
 	}))
 	for _, nonNegatedType := range nonNegatedSet {
 		if c.isTypeSubtypeOf(nonNegatedType, negatedBounds) {
+			return true
+		}
+	}
+	return false
+}
+
+// checkForSaturatedNegatedType returns true if the union in typeSet covers every value (i.e. is the
+// unknown type) because it contains a type and its complement. This is the union converse of
+// checkForUnsatisfiedNegatedType: when a negated member 'not B' is combined with non-negated members
+// whose union is a supertype of 'B', the non-negated part covers 'B' and 'not B' covers everything
+// else, so the union is unknown. For example, 'T | not T' reduces to unknown, and 'string | not "w"'
+// reduces to unknown because '"w"' is a subtype of 'string'.
+func (c *Checker) checkForSaturatedNegatedType(typeSet []*Type) bool {
+	nonNegatedSet := core.Filter(typeSet, func(t *Type) bool { return t.flags&TypeFlagsNegated == 0 })
+	if len(nonNegatedSet) == 0 {
+		return false
+	}
+	nonNegatedUnion := c.getUnionType(nonNegatedSet)
+	for _, negatedType := range core.Filter(typeSet, isNegatedType) {
+		if c.isTypeSubtypeOf(negatedType.AsNegatedType().baseType, nonNegatedUnion) {
 			return true
 		}
 	}

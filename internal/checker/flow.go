@@ -639,7 +639,32 @@ func (c *Checker) narrowTypeByLiteralExpression(t *Type, literal *ast.LiteralExp
 	if !ok {
 		facts = TypeFactsTypeofNEHostObject
 	}
-	return c.getAdjustedTypeWithFacts(t, facts)
+	result := c.getAdjustedTypeWithFacts(t, facts)
+	if impliedType := c.getImpliedTypeForTypeofNegation(literal.Text()); impliedType != nil {
+		result = c.introduceNegationIntoNarrowedType(result, impliedType)
+	}
+	return result
+}
+
+// getImpliedTypeForTypeofNegation returns the primitive type that a value is known *not* to be in the
+// false branch of a 'typeof x === "..."' check, or nil for typeof names whose negation isn't a simple
+// primitive. It is used to introduce negated types (e.g. 'not string') during control flow narrowing.
+func (c *Checker) getImpliedTypeForTypeofNegation(typeName string) *Type {
+	switch typeName {
+	case "string":
+		return c.stringType
+	case "number":
+		return c.numberType
+	case "bigint":
+		return c.bigintType
+	case "boolean":
+		return c.booleanType
+	case "symbol":
+		return c.esSymbolType
+	case "undefined":
+		return c.undefinedType
+	}
+	return nil
 }
 
 func (c *Checker) narrowTypeByTypeName(t *Type, typeName string) *Type {
@@ -844,12 +869,29 @@ func (c *Checker) getNarrowedType(t *Type, candidate *Type, assumeTrue bool, che
 	return narrowedType
 }
 
+// introduceNegationIntoNarrowedType intersects each constituent of a control-flow-narrowed type with
+// 'not candidate' in the false branch of a narrowing check. The resulting negated intersections are
+// reduced away by getIntersectionType when redundant (e.g. 'number & not string' -> 'number'), so this
+// only meaningfully affects narrowings whose base type overlaps the removed candidate (such as '{}',
+// 'unknown', 'object', or a type parameter). For example, narrowing '{}' in the false branch of
+// 'typeof x === "string"' produces '{} & not string'.
+func (c *Checker) introduceNegationIntoNarrowedType(t *Type, candidate *Type) *Type {
+	if t.flags&TypeFlagsNever != 0 || candidate.flags&TypeFlagsNever != 0 {
+		return t
+	}
+	return c.getIntersectionType([]*Type{t, c.getFreshNegatedType(candidate)})
+}
+
 func (c *Checker) getNarrowedTypeWorker(t *Type, candidate *Type, assumeTrue bool, checkDerived bool) *Type {
 	if !assumeTrue {
 		if t == candidate {
 			return c.neverType
 		}
 		if checkDerived {
+			// 'instanceof' (and other prototype-based) narrowing is nominal, so we deliberately do not
+			// introduce a structural 'not candidate' here. Many class types lack nominal tags and are
+			// structural subtypes of one another (e.g. 'Derived2' structurally extends 'Derived1'), so a
+			// structural negation would unsoundly reduce a nominally-kept constituent to never.
 			return c.filterType(t, func(t *Type) bool {
 				return !c.isTypeDerivedFrom(t, candidate)
 			})
@@ -858,9 +900,9 @@ func (c *Checker) getNarrowedTypeWorker(t *Type, candidate *Type, assumeTrue boo
 			t = c.unknownUnionType
 		}
 		trueType := c.getNarrowedType(t, candidate, true /*assumeTrue*/, false /*checkDerived*/)
-		return c.recombineUnknownType(c.filterType(t, func(t *Type) bool {
+		return c.introduceNegationIntoNarrowedType(c.recombineUnknownType(c.filterType(t, func(t *Type) bool {
 			return !c.isTypeSubsetOf(t, trueType)
-		}))
+		})), candidate)
 	}
 	if t.flags&TypeFlagsAnyOrUnknown != 0 {
 		return candidate
@@ -1150,9 +1192,20 @@ func (c *Checker) narrowTypeBySwitchOnTypeOf(t *Type, data *ast.FlowSwitchClause
 	if hasDefaultClause {
 		// In the default clause we filter constituents down to those that are not-equal to all handled cases.
 		notEqualFacts := c.getNotEqualFactsFromTypeofSwitch(clauseStart, clauseEnd, witnesses)
-		return c.filterType(t, func(t *Type) bool {
+		filtered := c.filterType(t, func(t *Type) bool {
 			return c.getTypeFacts(t, notEqualFacts) == notEqualFacts
 		})
+		// Mirror the false branch of `if (typeof x === "...")`: introduce a fresh `not <primitive>`
+		// for each handled case whose negation is a simple primitive, so that a base type overlapping
+		// those primitives (such as `{}` or a type parameter) records the exclusion.
+		for i, witness := range witnesses {
+			if (i < clauseStart || i >= clauseEnd) && witness != "" {
+				if impliedType := c.getImpliedTypeForTypeofNegation(witness); impliedType != nil {
+					filtered = c.introduceNegationIntoNarrowedType(filtered, impliedType)
+				}
+			}
+		}
+		return filtered
 	}
 	// In the non-default cause we create a union of the type narrowed by each of the listed cases.
 	clauseWitnesses := witnesses[clauseStart:clauseEnd]

@@ -1,0 +1,13 @@
+--- old.typeGuardFunction.types
++++ new.typeGuardFunction.types
+@@= skipped -184, +184 lines =@@
+
+ let union3: boolean | B = isA(union2) || union2;
+ >union3 : boolean | B
+->isA(union2) || union2 : true | B
++>isA(union2) || union2 : true | (B & not A)
+ >isA(union2) : boolean
+ >isA : (p1: any) => p1 is A
+ >union2 : B | C
+->union2 : B
++>union2 : B & not A

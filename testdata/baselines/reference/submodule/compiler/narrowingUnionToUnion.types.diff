@@ -23,7 +23,12 @@
  >value : string
 
              value;  // ""
-@@= skipped -12, +12 lines =@@
+@@= skipped -8, +8 lines =@@
+         }
+         else {
+             value;  // string
+->value : string
++>value : string & not ""
          }
          if (isMaybeEmptyString(value)) {
  >isMaybeEmptyString(value) : boolean
@@ -32,7 +37,16 @@
  >value : string
 
              value;  // ""
-@@= skipped -17, +17 lines =@@
+@@= skipped -12, +12 lines =@@
+         }
+         else {
+             value;  // string
+->value : string
++>value : string & not ""
+         }
+     },
+     (value?: string) => {
+@@= skipped -9, +9 lines =@@
 
          if (isMaybeEmptyString(value)) {
  >isMaybeEmptyString(value) : boolean
@@ -41,7 +55,103 @@
  >value : string | undefined
 
              value;  // "" | undefined
-@@= skipped -291, +291 lines =@@
+@@= skipped -8, +8 lines =@@
+         }
+         else {
+             value;  // string
+->value : string
++>value : string & not ""
+         }
+     },
+     (value: number) => {
+@@= skipped -17, +17 lines =@@
+         }
+         else {
+             value;  // number
+->value : number
++>value : number & not 0
+         }
+         if (isMaybeZero(value)) {
+ >isMaybeZero(value) : boolean
+@@= skipped -12, +12 lines =@@
+         }
+         else {
+             value;  // number
+->value : number
++>value : number & not 0
+         }
+     },
+     (value?: number) => {
+@@= skipped -17, +17 lines =@@
+         }
+         else {
+             value;  // number
+->value : number
++>value : number & not 0
+         }
+     },
+     (value: string[]) => {
+@@= skipped -17, +17 lines =@@
+         }
+         else {
+             value;  // string[]
+->value : string[]
++>value : string[] & not []
+         }
+         if (isMaybeEmptyArray(value)) {
+ >isMaybeEmptyArray(value) : boolean
+@@= skipped -12, +12 lines =@@
+         }
+         else {
+             value;  // string[]
+->value : string[]
++>value : string[] & not []
+         }
+     },
+     (value?: string[]) => {
+@@= skipped -17, +17 lines =@@
+         }
+         else {
+             value;  // string[]
+->value : string[]
++>value : string[] & not []
+         }
+     },
+ ];
+@@= skipped -71, +71 lines =@@
+ >x : unknown
+ >"string" : "string"
+ >x === 0 : boolean
+->x : unknown
++>x : not string
+ >0 : 0
+ }
+
+@@= skipped -29, +29 lines =@@
+ >x : unknown
+ >"string" : "string"
+ >x === 0 : boolean
+->x : unknown
++>x : not string
+ >0 : 0
+
+ 		x;  // string | 0
+->x : string | 0
++>x : unknown
+
+ 		if (x === "hello" || x === 0) {
+ >x === "hello" || x === 0 : boolean
+ >x === "hello" : boolean
+->x : string | 0
++>x : unknown
+ >"hello" : "hello"
+ >x === 0 : boolean
+->x : string | 0
++>x : unknown
+ >0 : 0
+
+ 			x;  // 0 | "hello"
+@@= skipped -91, +91 lines =@@
  >type : "A" | "B"
  >'A' : "A"
  >working.aProp : number

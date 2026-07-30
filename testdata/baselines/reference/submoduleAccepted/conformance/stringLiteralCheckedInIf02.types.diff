@@ -1,0 +1,11 @@
+--- old.stringLiteralCheckedInIf02.types
++++ new.stringLiteralCheckedInIf02.types
+@@= skipped -35, +35 lines =@@
+     else { 
+         return foo[0];
+ >foo[0] : S
+->foo : S[]
++>foo : S[] & not "a" & not "b"
+ >0 : 0
+     }
+ }

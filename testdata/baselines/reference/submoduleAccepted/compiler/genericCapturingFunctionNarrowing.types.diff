@@ -1,0 +1,10 @@
+--- old.genericCapturingFunctionNarrowing.types
++++ new.genericCapturingFunctionNarrowing.types
+@@= skipped -29, +29 lines =@@
+ >console : Console
+ >log : (...data: any[]) => void
+ >thing.bar : string
+->thing : Second
++>thing : Second & not First
+ >bar : string
+     }

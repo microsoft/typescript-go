@@ -1,0 +1,23 @@
+--- old.typeGuardsOnClassProperty.types
++++ new.typeGuardsOnClassProperty.types
+@@= skipped -29, +29 lines =@@
+ >data : string
+ >data.join(" ") : string
+ >data.join : (separator?: string) => string
+->data : string[]
++>data : string[] & not string
+ >join : (separator?: string) => string
+ >" " : " "
+     }
+@@= skipped -21, +21 lines =@@
+ >data : string
+ >this.data.join(" ") : string
+ >this.data.join : (separator?: string) => string
+->this.data : string[]
++>this.data : string[] & not string
+ >this : this
+->data : string[]
++>data : string[] & not string
+ >join : (separator?: string) => string
+ >" " : " "
+     }

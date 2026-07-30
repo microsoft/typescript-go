@@ -1,0 +1,79 @@
+--- old.typeGuardFunctionOfFormThis.types
++++ new.typeGuardFunctionOfFormThis.types
+@@= skipped -57, +57 lines =@@
+ else if (a.isFollower()) {
+ >a.isFollower() : boolean
+ >a.isFollower : () => this is FollowerGuard
+->a : RoyalGuard
++>a : RoyalGuard & not LeadGuard
+ >isFollower : () => this is FollowerGuard
+
+     a.follow();
+ >a.follow() : void
+ >a.follow : () => void
+->a : FollowerGuard
++>a : RoyalGuard & not LeadGuard & FollowerGuard
+ >follow : () => void
+ }
+
+@@= skipped -30, +30 lines =@@
+ else if (b.isFollower()) {
+ >b.isFollower() : boolean
+ >b.isFollower : () => this is FollowerGuard
+->b : GuardInterface
++>b : GuardInterface & not LeadGuard
+ >isFollower : () => this is FollowerGuard
+
+     b.follow();
+ >b.follow() : void
+ >b.follow : () => void
+->b : FollowerGuard
++>b : GuardInterface & not LeadGuard & FollowerGuard
+ >follow : () => void
+ }
+
+@@= skipped -44, +44 lines =@@
+ }
+ else {
+     holder2.a;
+->holder2.a : RoyalGuard
++>holder2.a : RoyalGuard & not LeadGuard
+ >holder2 : { a: RoyalGuard; }
+->a : RoyalGuard
++>a : RoyalGuard & not LeadGuard
+ }
+
+ class ArrowGuard {
+@@= skipped -64, +64 lines =@@
+ else if (guard.isMedic()) {
+ >guard.isMedic() : boolean
+ >guard.isMedic : () => this is ArrowMedic
+->guard : ArrowGuard
++>guard : ArrowGuard & not ArrowElite
+ >isMedic : () => this is ArrowMedic
+
+     guard.heal();
+ >guard.heal() : void
+ >guard.heal : () => void
+->guard : ArrowMedic
++>guard : ArrowGuard & not ArrowElite & ArrowMedic
+ >heal : () => void
+ }
+
+@@= skipped -55, +55 lines =@@
+ else if (crate.isSupplies()) {
+ >crate.isSupplies() : boolean
+ >crate.isSupplies : () => this is Crate<Supplies>
+->crate : Crate<{}>
++>crate : Crate<{}> & not Crate<Sundries>
+ >isSupplies : () => this is Crate<Supplies>
+
+     crate.contents.spoiled = true;
+ >crate.contents.spoiled = true : true
+ >crate.contents.spoiled : boolean
+ >crate.contents : Supplies
+->crate : Crate<Supplies>
++>crate : Crate<{}> & not Crate<Sundries> & Crate<Supplies>
+ >contents : Supplies
+ >spoiled : boolean
+ >true : true

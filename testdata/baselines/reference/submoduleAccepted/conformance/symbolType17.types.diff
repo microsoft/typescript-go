@@ -1,0 +1,9 @@
+--- old.symbolType17.types
++++ new.symbolType17.types
+@@= skipped -20, +20 lines =@@
+ }
+ else {
+     x;
+->x : Foo
++>x : Foo & not symbol
+ }

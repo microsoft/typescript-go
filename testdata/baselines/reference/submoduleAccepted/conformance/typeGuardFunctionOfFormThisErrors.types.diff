@@ -1,0 +1,11 @@
+--- old.typeGuardFunctionOfFormThisErrors.types
++++ new.typeGuardFunctionOfFormThisErrors.types
+@@= skipped -132, +132 lines =@@
+ >c : number | number[]
+
+     holder;
+->holder : { invalidGuard: (c: any) => this is number; }
++>holder : { invalidGuard: (c: any) => this is number; } & not number
+ }
+
+ let detached = a.isFollower;

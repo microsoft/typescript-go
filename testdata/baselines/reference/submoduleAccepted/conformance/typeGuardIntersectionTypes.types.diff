@@ -1,0 +1,46 @@
+--- old.typeGuardIntersectionTypes.types
++++ new.typeGuardIntersectionTypes.types
+@@= skipped -39, +39 lines =@@
+ >obj : Object
+ >isY(obj) : boolean
+ >isY : (obj: any) => obj is Y
+->obj : Object
++>obj : Object & not X
+ >isZ(obj) : boolean
+ >isZ : (obj: any) => obj is Z
+->obj : Object
++>obj : Object & not X & not Y
+
+         obj;
+->obj : X | Y | Z
++>obj : X | (Object & not X & Y) | (Object & not X & not Y & Z)
+     }
+     if (isX(obj) && isY(obj) && isZ(obj)) {
+ >isX(obj) && isY(obj) && isZ(obj) : boolean
+@@= skipped -170, +170 lines =@@
+ >log : (s: string) => void
+ >`manbearpig - ${beast.legs} legs, no wings` : string
+ >beast.legs : number
+->beast : Legged
++>beast : Legged & not Winged
+ >legs : number
+         }
+     }
+@@= skipped -10, +10 lines =@@
+         if (hasWings(beast)) {
+ >hasWings(beast) : boolean
+ >hasWings : (x: Beast) => x is Winged
+->beast : Beast
++>beast : Beast & not Legged
+
+             log(`quetzalcoatl - no legs, wings`)
+ >log(`quetzalcoatl - no legs, wings`) : void
+@@= skipped -34, +34 lines =@@
+     }
+     else {
+         beast;
+->beast : Object
++>beast : (Object & not Winged) | (Winged & not Legged)
+     }
+
+     if (hasLegs(beast) && hasWings(beast)) {

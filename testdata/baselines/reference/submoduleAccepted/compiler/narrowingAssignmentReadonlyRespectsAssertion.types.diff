@@ -1,0 +1,11 @@
+--- old.narrowingAssignmentReadonlyRespectsAssertion.types
++++ new.narrowingAssignmentReadonlyRespectsAssertion.types
+@@= skipped -130, +130 lines =@@
+ >console.log : (...data: any[]) => void
+ >console : Console
+ >log : (...data: any[]) => void
+->val1 : string | number | readonly (string | number)[]
++>val1 : (string | number | readonly (string | number)[]) & not any[]
+       }
+       console.log(val2);
+ >console.log(val2) : void

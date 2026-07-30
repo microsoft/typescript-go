@@ -90,7 +90,7 @@ if (!hasKind(x, "B")) {
 
     let c = x;
 >c : A
->x : A
+>x : A & not B
 }
 else {
     let d = x;

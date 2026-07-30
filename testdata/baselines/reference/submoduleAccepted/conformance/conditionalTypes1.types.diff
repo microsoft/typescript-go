@@ -1,0 +1,11 @@
+--- old.conditionalTypes1.types
++++ new.conditionalTypes1.types
+@@= skipped -420, +420 lines =@@
+ >typeof value === "string" ? "" : false : "" | false
+ >typeof value === "string" : boolean
+ >typeof value : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+->value : T
++>value : T & not number
+ >"string" : "string"
+ >"" : ""
+ >false : false

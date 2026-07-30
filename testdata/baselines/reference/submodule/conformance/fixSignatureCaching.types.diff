@@ -67,7 +67,13 @@
  >maxPhoneWidth || this.maxPhoneWidth : any
  >maxPhoneWidth : any
  >this.maxPhoneWidth : any
-@@= skipped -65, +65 lines =@@
+@@= skipped -60, +60 lines =@@
+ >window : Window & typeof globalThis
+ >'undefined' : "undefined"
+ >window.screen : Screen
+->window : Window & typeof globalThis
++>window : Window & typeof globalThis & not undefined
+ >screen : Screen
 
          MobileDetect.isPhoneSized = function (maxPhoneWidth) {
  >MobileDetect.isPhoneSized = function (maxPhoneWidth) {            return maxPhoneWidth < 0 ? undefined : impl.getDeviceSmallerSide() <= maxPhoneWidth;        } : (maxPhoneWidth: any) => any
@@ -80,7 +86,7 @@
  >function (maxPhoneWidth) {            return maxPhoneWidth < 0 ? undefined : impl.getDeviceSmallerSide() <= maxPhoneWidth;        } : (maxPhoneWidth: any) => any
  >maxPhoneWidth : any
 
-@@= skipped -23, +23 lines =@@
+@@= skipped -28, +28 lines =@@
      } else {
          MobileDetect.isPhoneSized = function () {};
  >MobileDetect.isPhoneSized = function () {} : () => void

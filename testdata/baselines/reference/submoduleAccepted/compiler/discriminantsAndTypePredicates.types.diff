@@ -1,0 +1,21 @@
+--- old.discriminantsAndTypePredicates.types
++++ new.discriminantsAndTypePredicates.types
+@@= skipped -42, +42 lines =@@
+ >x : A
+     }
+     x;  // B
+->x : B
++>x : B & not A
+
+     if (isB(x)) {
+ >isB(x) : boolean
+ >isB : (x: A | B) => x is B
+->x : B
++>x : B & not A
+
+         return x;  // B
+->x : B
++>x : B & not A
+     }
+     x;  // never
+ >x : never

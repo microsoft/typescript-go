@@ -1,0 +1,20 @@
+--- old.literalFreshnessPropagationOnNarrowing.types
++++ new.literalFreshnessPropagationOnNarrowing.types
+@@= skipped -70, +70 lines =@@
+ >elOrA : (string | false)[] | (string | false)
+ >elOrA : (string | false)[]
+ >[elOrA] : (string | false)[]
+->elOrA : string | false
++>elOrA : (string | false) & not any[]
+
+     // Desired: OK
+     // 3.0: Error
+@@= skipped -17, +17 lines =@@
+ >elOrA : (string | false)[] | (string | false)
+ >elOrA : (string | false)[]
+ >[elOrA] : (string | false)[]
+->elOrA : string | false
++>elOrA : (string | false) & not any[]
+ }
+
+ function f3() {

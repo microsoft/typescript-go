@@ -1,0 +1,10 @@
+--- old.typeVariableTypeGuards.types
++++ new.typeVariableTypeGuards.types
+@@= skipped -213, +213 lines =@@
+
+     new a();
+ >new a() : {}
+->a : new () => {}
++>a : (new () => {}) & not string
+   }
+ }
