@@ -586,9 +586,8 @@ func (c *Checker) narrowTypeByEquality(t *Type, operator ast.Kind, value *ast.No
 				return c.nonPrimitiveType
 			}
 		}
-		if !doubleEquals && t.objectFlags&ObjectFlagsPrimitiveUnion != 0 && valueType.flags&TypeFlagsPrimitive != 0 && c.isUniformUnionType(t) {
+		if !doubleEquals && valueType.flags&TypeFlagsPrimitive != 0 && c.isUniformUnionType(t) {
 			regularType := c.getRegularTypeOfLiteralType(valueType)
-
 			if c.unionContainsType(t, regularType, false /*matchSymbol*/) {
 				return regularType
 			}
@@ -1123,7 +1122,7 @@ func (c *Checker) narrowTypeBySwitchOnDiscriminant(t *Type, data *ast.FlowSwitch
 	if discriminantType.flags&TypeFlagsNever != 0 {
 		caseType = c.neverType
 	} else {
-		if t.objectFlags&ObjectFlagsPrimitiveUnion != 0 && discriminantType.flags&TypeFlagsPrimitive != 0 && c.isUniformUnionType(t) {
+		if discriminantType.flags&TypeFlagsPrimitive != 0 && c.isUniformUnionType(t) {
 			regularType := c.getRegularTypeOfLiteralType(discriminantType)
 			if c.unionContainsType(t, regularType, false /*matchSymbol*/) {
 				caseType = regularType

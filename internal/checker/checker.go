@@ -27794,11 +27794,11 @@ func (c *Checker) isUnknownLikeUnionType(t *Type) bool {
 	return false
 }
 
-// Return true the given type is a union type where no two literal type constituents are comparable.
-// Specifically, that means (a) the union doesn't contain literals from different enum types, and
-// (b) the union doesn't contain both enum literals and string or number literals.
+// Return true the given type is a primitive union type where no two literal type constituents are
+// comparable. Specifically, that means (a) the union doesn't contain literals from different enum
+// types, and (b) the union doesn't contain both enum literals and string or number literals.
 func (c *Checker) isUniformUnionType(t *Type) bool {
-	if t.flags&TypeFlagsUnion != 0 {
+	if t.objectFlags&ObjectFlagsPrimitiveUnion != 0 {
 		if t.objectFlags&ObjectFlagsIsUniformEnumComputed == 0 {
 			t.objectFlags |= ObjectFlagsIsUniformEnumComputed | core.IfElse(c.computeIsUniformUnionType(t.Types()), ObjectFlagsIsUniformEnum, ObjectFlagsNone)
 		}
@@ -27811,7 +27811,7 @@ func (c *Checker) computeIsUniformUnionType(types []*Type) bool {
 	var enumSymbol *ast.Symbol
 	var hasStringOrNumberLiteral bool
 	for _, t := range types {
-		if t.flags&TypeFlagsEnumLiteral != 0 {
+		if t.flags&TypeFlagsEnumLike != 0 {
 			if hasStringOrNumberLiteral {
 				return false
 			}
