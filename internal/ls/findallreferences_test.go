@@ -16,22 +16,17 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-// Bug D (withfig): runaway memory in the go-to-implementation worklist.
+// provideSymbolsAndEntries drives go-to-implementation with a breadth-first worklist. Each
+// implementation node is expanded once (seenNodes), but when an interface member has K
+// implementations, every one of those K program-wide searches returns all K implementations.
+// If accumulated results are not deduplicated by node, the intermediate SymbolsAndEntries grow
+// O(K^2), which can exhaust memory on large, deeply-typed programs.
 //
-// provideSymbolsAndEntries' implementations worklist (findallreferences.go) dedups the
-// worklist only by *node* (seenNodes) and does `implementationEntries = core.Concatenate(...)`
-// with NO symbol-level dedup. When an interface member has K implementations, a go-to-
-// implementation query runs ~K full program-wide searches (one per implementation node), and
-// each search returns all K implementations, so `implementationEntries` accumulates O(K^2)
-// references. On a large, deeply-typed file (withfig `wp.ts` + `@withfig/autocomplete-types`)
-// this blows up to many GB and the server is OOM-killed ("connection closed prematurely:
-// undefined").
-//
-// The final LSP response dedups by node, so the blow-up is invisible from the response; this
-// white-box test inspects the pre-dedup `SymbolsAndEntries` that provideSymbolsAndEntries
-// returns. It asserts the accumulated reference count grows *linearly* with K: quadratic
-// (current, buggy) => the count roughly quadruples when K doubles; a correct (symbol-deduped)
-// implementation stays ~linear (roughly doubles). Pre-fix this test FAILS; post-fix it PASSES.
+// The final LSP response is deduplicated by node, so the blow-up is invisible from the
+// response; this white-box test inspects the pre-deduplication SymbolsAndEntries that
+// provideSymbolsAndEntries returns. It asserts the accumulated reference count grows *linearly*
+// with K: quadratic growth roughly quadruples the count when K doubles, while linear growth
+// (node-deduplicated) roughly doubles it.
 func TestImplementationsWorklistDoesNotBlowUp(t *testing.T) {
 	t.Parallel()
 
@@ -82,8 +77,8 @@ func TestImplementationsWorklistDoesNotBlowUp(t *testing.T) {
 	large := measure(2 * k)
 	t.Logf("accumulated references: K=%d -> %d, K=%d -> %d (ratio %.2f)", k, small, 2*k, large, float64(large)/float64(small))
 
-	// Linear growth ~2x when K doubles; the O(K^2) bug grows ~4x. Fail above 3x.
+	// Linear growth ~2x when K doubles; quadratic growth ~4x. Fail above 3x.
 	assert.Assert(t, large <= small*3,
 		"implementations worklist scales superlinearly: K=%d -> %d refs, K=%d -> %d refs (expected ~linear); "+
-			"provideSymbolsAndEntries accumulates duplicate entries without symbol-level dedup", k, small, 2*k, large)
+			"provideSymbolsAndEntries accumulates references without deduplicating by node", k, small, 2*k, large)
 }
