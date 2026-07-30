@@ -1,15 +1,12 @@
 esm.cjs(2,10): error TS1293: ECMAScript module syntax is not allowed in a CommonJS module when 'module' is set to 'preserve'.
-main.cjs(2,9): error TS1293: ECMAScript module syntax is not allowed in a CommonJS module when 'module' is set to 'preserve'.
 
 
 ==== dep.cjs (0 errors) ====
     module.exports.readFile = function () {};
     
-==== main.cjs (1 errors) ====
+==== main.cjs (0 errors) ====
     // CommonJS `require` is not ESM syntax, in destructured or plain form.
     const { readFile } = require("./dep.cjs");
-            ~~~~~~~~
-!!! error TS1293: ECMAScript module syntax is not allowed in a CommonJS module when 'module' is set to 'preserve'.
     const dep = require("./dep.cjs");
     readFile;
     dep;
