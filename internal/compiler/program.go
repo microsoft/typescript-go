@@ -291,6 +291,25 @@ func NewProgram(opts ProgramOptions) *Program {
 // host-side parse caches must release this exact pointer when the old program could not be
 // reused, since it was acquired speculatively before that decision was made.
 func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHost, createCheckerPool func(*Program) CheckerPool) (*Program, *ast.SourceFile, bool) {
+	if result, newFile, reused := p.ReuseProgram(changedFilePath, newHost, createCheckerPool); reused {
+		return result, newFile, true
+	} else {
+		newOpts := p.opts
+		newOpts.Host = newHost
+		if createCheckerPool != nil {
+			newOpts.CreateCheckerPool = createCheckerPool
+		}
+		return NewProgram(newOpts), newFile, false
+	}
+}
+
+// ReuseProgram attempts to produce a new program by replacing only
+// changedFilePath in place, reusing the rest of p. It returns
+// (newProgram, newFile, true) on success, or (nil, newFile, false) when the
+// file cannot be replaced in place. Unlike UpdateProgram, it never constructs a
+// full fallback program, so callers that build their own fallback (e.g. with a
+// different host) do not pay for a discarded program build.
+func (p *Program) ReuseProgram(changedFilePath tspath.Path, newHost CompilerHost, createCheckerPool func(*Program) CheckerPool) (*Program, *ast.SourceFile, bool) {
 	newOpts := p.opts
 	newOpts.Host = newHost
 	if createCheckerPool != nil {
@@ -306,14 +325,14 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 	_, inRedirectFiles := p.redirectFilesByPath[changedFilePath]
 	_, isRedirectTarget := p.redirectTargetsMap[changedFilePath]
 	if inRedirectFiles || isRedirectTarget {
-		return NewProgram(newOpts), newFile, false
+		return nil, newFile, false
 	}
 
-	if !canReplaceFileInProgram(oldFile, newFile) {
-		return NewProgram(newOpts), newFile, false
+	if !p.canReplaceFileInProgram(oldFile, newFile) {
+		return nil, newFile, false
 	}
 	if oldNeedsImportHelpers := p.importHelpersImportSpecifiers[oldFile.Path()] != nil; oldNeedsImportHelpers != p.needsImportHelpersImportSpecifier(newFile) {
-		return NewProgram(newOpts), newFile, false
+		return nil, newFile, false
 	}
 	// TODO: reverify compiler options when config has changed?
 	result := &Program{
@@ -356,11 +375,14 @@ func (p *Program) GetCheckerPool() CheckerPool {
 	return p.checkerPool
 }
 
-func canReplaceFileInProgram(file1 *ast.SourceFile, file2 *ast.SourceFile) bool {
+func (p *Program) canReplaceFileInProgram(file1 *ast.SourceFile, file2 *ast.SourceFile) bool {
 	return file2 != nil &&
 		file1.ParseOptions() == file2.ParseOptions() &&
 		file1.UsesUriStyleNodeCoreModules == file2.UsesUriStyleNodeCoreModules &&
-		slices.EqualFunc(file1.Imports(), file2.Imports(), equalModuleSpecifiers) &&
+		slices.EqualFunc(file1.Imports(), file2.Imports(), func(n1 *ast.Node, n2 *ast.Node) bool {
+			return equalModuleSpecifiers(n1, n2) &&
+				p.GetModeForUsageLocation(file1, n1) == p.GetModeForUsageLocation(file2, n2)
+		}) &&
 		slices.EqualFunc(file1.ModuleAugmentations, file2.ModuleAugmentations, equalModuleAugmentationNames) &&
 		slices.Equal(file1.AmbientModuleNames, file2.AmbientModuleNames) &&
 		slices.EqualFunc(file1.ReferencedFiles, file2.ReferencedFiles, equalFileReferences) &&
@@ -1417,11 +1439,7 @@ func (p *Program) getSuggestionDiagnosticsWithChecker(ctx context.Context, fileC
 		return nil
 	}
 
-	// Checker creation forces binding, so bind suggestion diagnostics will be populated.
-	diags := slices.Clip(sourceFile.BindSuggestionDiagnostics)
-	diags = append(diags, fileChecker.GetSuggestionDiagnostics(ctx, sourceFile)...)
-
-	return diags
+	return fileChecker.GetSuggestionDiagnostics(ctx, sourceFile)
 }
 
 func isCommentOrBlankLine(text string, pos int) bool {
