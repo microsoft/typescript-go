@@ -92,9 +92,6 @@ func (c *ConfigFileRegistry) GetConfig(path tspath.Path) *tsoptions.ParsedComman
 }
 
 func (c *ConfigFileRegistry) isTracked(path tspath.Path) bool {
-	if c == nil {
-		return false
-	}
 	_, ok := c.configs[path]
 	return ok
 }
