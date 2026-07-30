@@ -1,0 +1,15 @@
+b.ts(1,13): error TS18062: 'import.defer' does not support optional invocation.
+b.ts(2,13): error TS18062: 'import.defer' does not support optional invocation.
+
+
+==== x.ts (0 errors) ====
+    export const x = 1;
+==== b.ts (2 errors) ====
+    import.defer?.('./x');
+                ~~
+!!! error TS18062: 'import.defer' does not support optional invocation.
+    import.defer?.<string>('./x');
+                ~~
+!!! error TS18062: 'import.defer' does not support optional invocation.
+    import.defer('./x');
+    

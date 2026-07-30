@@ -3755,6 +3755,7 @@ var Named_imports_are_not_allowed_in_a_deferred_import = &Message{code: 18059, c
 var Deferred_imports_are_only_supported_when_the_module_flag_is_set_to_esnext_or_preserve = &Message{code: 18060, category: CategoryError, key: "Deferred_imports_are_only_supported_when_the_module_flag_is_set_to_esnext_or_preserve_18060", text: "Deferred imports are only supported when the '--module' flag is set to 'esnext' or 'preserve'."}
 
 var X_0_is_not_a_valid_meta_property_for_keyword_import_Did_you_mean_meta_or_defer = &Message{code: 18061, category: CategoryError, key: "_0_is_not_a_valid_meta_property_for_keyword_import_Did_you_mean_meta_or_defer_18061", text: "'{0}' is not a valid meta-property for keyword 'import'. Did you mean 'meta' or 'defer'?"}
+var Import_defer_does_not_support_optional_invocation = &Message{code: 18062, category: CategoryError, key: "Import_defer_does_not_support_optional_invocation_18062", text: "'import.defer' does not support optional invocation."}
 
 var X_nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler = &Message{code: 69010, category: CategoryMessage, key: "nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler_69010", text: "`nodenext` if `module` is `nodenext`; `node16` if `module` is `node16` or `node18`; otherwise, `bundler`."}
 
@@ -8066,6 +8067,8 @@ func keyToMessage(key Key) *Message {
 		return Deferred_imports_are_only_supported_when_the_module_flag_is_set_to_esnext_or_preserve
 	case "_0_is_not_a_valid_meta_property_for_keyword_import_Did_you_mean_meta_or_defer_18061":
 		return X_0_is_not_a_valid_meta_property_for_keyword_import_Did_you_mean_meta_or_defer
+	case "Import_defer_does_not_support_optional_invocation_18062":
+		return Import_defer_does_not_support_optional_invocation
 	case "nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler_69010":
 		return X_nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler
 	case "File_is_a_CommonJS_module_it_may_be_converted_to_an_ES_module_80001":

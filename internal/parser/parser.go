@@ -5188,6 +5188,12 @@ func (p *Parser) parseLeftHandSideExpressionOrHigher() *ast.Expression {
 			p.nextToken() // advance past the dot
 			expression = p.finishNode(p.factory.NewMetaProperty(ast.KindImportKeyword, p.parseIdentifierName()), pos)
 			if expression.Text() == "defer" {
+				if p.token == ast.KindQuestionDotToken && p.lookAhead(func(p *Parser) bool {
+					p.nextToken()
+					return p.token == ast.KindOpenParenToken || p.token == ast.KindLessThanToken
+				}) {
+					p.parseErrorAtCurrentToken(diagnostics.Import_defer_does_not_support_optional_invocation)
+				}
 				if p.token == ast.KindOpenParenToken || p.token == ast.KindLessThanToken {
 					p.sourceFlags |= ast.NodeFlagsPossiblyContainsDynamicImport
 				}
