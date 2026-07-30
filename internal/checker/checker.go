@@ -26375,14 +26375,14 @@ func (c *Checker) intersectUnionsOfPrimitiveTypes(types []*Type) ([]*Type, bool)
 // primitive type, and missingType is matched by undefinedType (and vice versa).
 func (c *Checker) eachUnionContains(unionTypes []*Type, t *Type) bool {
 	for _, u := range unionTypes {
-		if !c.unionContainsType(u, t) {
+		if !c.unionContainsType(u, t, true /*matchSymbol*/) {
 			return false
 		}
 	}
 	return true
 }
 
-func (c *Checker) unionContainsType(union *Type, t *Type) bool {
+func (c *Checker) unionContainsType(union *Type, t *Type, matchSymbol bool) bool {
 	types := union.Types()
 	if containsType(types, t) {
 		return true
@@ -26401,7 +26401,7 @@ func (c *Checker) unionContainsType(union *Type, t *Type) bool {
 		primitive = c.numberType
 	case t.flags&TypeFlagsBigIntLiteral != 0:
 		primitive = c.bigintType
-	case t.flags&TypeFlagsUniqueESSymbol != 0:
+	case t.flags&TypeFlagsUniqueESSymbol != 0 && matchSymbol:
 		primitive = c.esSymbolType
 	}
 	return primitive != nil && containsType(types, primitive)
@@ -27792,6 +27792,43 @@ func (c *Checker) isUnknownLikeUnionType(t *Type) bool {
 		return t.objectFlags&ObjectFlagsIsUnknownLikeUnion != 0
 	}
 	return false
+}
+
+// Return true the given type is a union type where no two literal type constituents are comparable.
+// Specifically, that means (a) the union doesn't contain literals from different enum types, and
+// (b) the union doesn't contain both enum literals and string or number literals.
+func (c *Checker) isUniformUnionType(t *Type) bool {
+	if t.flags&TypeFlagsUnion != 0 {
+		if t.objectFlags&ObjectFlagsIsUniformEnumComputed == 0 {
+			t.objectFlags |= ObjectFlagsIsUniformEnumComputed | core.IfElse(c.computeIsUniformUnionType(t.Types()), ObjectFlagsIsUniformEnum, ObjectFlagsNone)
+		}
+		return t.objectFlags&ObjectFlagsIsUniformEnum != 0
+	}
+	return false
+}
+
+func (c *Checker) computeIsUniformUnionType(types []*Type) bool {
+	var enumSymbol *ast.Symbol
+	var hasStringOrNumberLiteral bool
+	for _, t := range types {
+		if t.flags&TypeFlagsEnumLiteral != 0 {
+			if hasStringOrNumberLiteral {
+				return false
+			}
+			parent := c.getParentOfSymbol(t.symbol)
+			if enumSymbol == nil {
+				enumSymbol = parent
+			} else if enumSymbol != parent {
+				return false
+			}
+		} else if t.flags&TypeFlagsStringOrNumberLiteral != 0 {
+			if enumSymbol != nil {
+				return false
+			}
+			hasStringOrNumberLiteral = true
+		}
+	}
+	return true
 }
 
 func (c *Checker) containsUndefinedType(t *Type) bool {
