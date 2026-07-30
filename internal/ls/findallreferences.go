@@ -647,13 +647,12 @@ func (l *LanguageService) provideSymbolsAndEntries(ctx context.Context, uri lspr
 	var implementationEntries []*SymbolAndEntries
 	var queue []*ReferenceEntry
 	var seenNodes collections.Set[*ast.Node]
-	var recordedNodes collections.Set[*ast.Node]
 	addToQueue := func(symbolAndEntries []*SymbolAndEntries) {
 		for _, s := range symbolAndEntries {
 			var newReferences []*ReferenceEntry
 			for _, ref := range s.references {
-				queue = append(queue, ref)
-				if recordedNodes.AddIfAbsent(ref.node) {
+				if seenNodes.AddIfAbsent(ref.node) {
+					queue = append(queue, ref)
 					newReferences = append(newReferences, ref)
 				}
 			}
@@ -669,8 +668,7 @@ func (l *LanguageService) provideSymbolsAndEntries(ctx context.Context, uri lspr
 
 		entry := queue[0]
 		queue = queue[1:]
-		if entry.node != nil && !seenNodes.Has(entry.node) {
-			seenNodes.Add(entry.node)
+		if entry.node != nil {
 			addToQueue(l.getSymbolAndEntries(ctx, entry.node.Pos(), entry.node, program, isRename, implementations))
 		}
 	}
