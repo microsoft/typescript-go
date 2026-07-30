@@ -100,13 +100,7 @@ func EmitFilesAndReportErrors(input EmitInput) (result CompileAndEmitResult) {
 			diags := input.ProgramLike.GetSemanticDiagnostics(ctx, file)
 			result.times.checkTime = input.Sys.Now().Sub(checkStart)
 			if program, ok := input.ProgramLike.(*incremental.Program); ok {
-				nestedEmitTime := program.TakeNestedEmitTime()
-				if nestedEmitTime > result.times.checkTime {
-					result.times.checkTime = 0
-				} else {
-					result.times.checkTime -= nestedEmitTime
-				}
-				result.times.emitTime += nestedEmitTime
+				result.times.addNestedEmitTime(program.TakeNestedEmitTime())
 			}
 			return diags
 		},
