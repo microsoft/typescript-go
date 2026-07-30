@@ -349,33 +349,23 @@ func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, ve
 	s.cancelWarmAutoImportCache()
 	s.scheduleIdleCacheClean()
 	s.pendingFileChangesMu.Lock()
+	defer s.pendingFileChangesMu.Unlock()
 	s.pendingFileChanges = append(s.pendingFileChanges, FileChange{
 		Kind:    FileChangeKindChange,
 		URI:     uri,
 		Version: version,
 		Changes: changes,
 	})
-	s.pendingFileChangesMu.Unlock()
-	s.handleConfigFileEdit(uri)
 }
 
 func (s *Session) DidSaveFile(ctx context.Context, uri lsproto.DocumentUri) {
 	s.scheduleIdleCacheClean()
 	s.pendingFileChangesMu.Lock()
+	defer s.pendingFileChangesMu.Unlock()
 	s.pendingFileChanges = append(s.pendingFileChanges, FileChange{
 		Kind: FileChangeKindSave,
 		URI:  uri,
 	})
-	s.pendingFileChangesMu.Unlock()
-	s.handleConfigFileEdit(uri)
-}
-
-func (s *Session) handleConfigFileEdit(uri lsproto.DocumentUri) {
-	if !s.Snapshot().ConfigFileRegistry.isTracked(s.toPath(uri.FileName())) {
-		return
-	}
-	s.ScheduleSnapshotUpdate(UpdateReasonDidChangeConfigFile)
-	s.ScheduleDiagnosticsRefresh()
 }
 
 func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.FileEvent) {
