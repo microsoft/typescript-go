@@ -647,6 +647,7 @@ func (l *LanguageService) provideSymbolsAndEntries(ctx context.Context, uri lspr
 	var implementationEntries []*SymbolAndEntries
 	var queue []*ReferenceEntry
 	var seenNodes collections.Set[*ast.Node]
+	var seenDefinitions collections.Set[*ast.Symbol]
 	addToQueue := func(symbolAndEntries []*SymbolAndEntries) {
 		for _, s := range symbolAndEntries {
 			var newReferences []*ReferenceEntry
@@ -656,7 +657,9 @@ func (l *LanguageService) provideSymbolsAndEntries(ctx context.Context, uri lspr
 					newReferences = append(newReferences, ref)
 				}
 			}
-			implementationEntries = append(implementationEntries, &SymbolAndEntries{definition: s.definition, references: newReferences})
+			if len(newReferences) > 0 || s.definition == nil || seenDefinitions.AddIfAbsent(s.definition.symbol) {
+				implementationEntries = append(implementationEntries, &SymbolAndEntries{definition: s.definition, references: newReferences})
+			}
 		}
 	}
 

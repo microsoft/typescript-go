@@ -16,21 +16,25 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-// provideSymbolsAndEntries drives go-to-implementation with a breadth-first worklist. Each
-// implementation node is expanded once (seenNodes), but when an interface member has K
-// implementations, every one of those K program-wide searches returns all K implementations.
-// If accumulated results are not deduplicated by node, the intermediate SymbolsAndEntries grow
-// O(K^2), which can exhaust memory on large, deeply-typed programs.
+// provideSymbolsAndEntries drives go-to-implementation with a breadth-first worklist. When an
+// interface member has K implementations, every one of those K program-wide searches returns
+// all K implementations. Without deduplicating, the retained references, the work queue, and the
+// retained SymbolsAndEntries groups all grow O(K^2), which can exhaust memory on large,
+// deeply-typed programs.
 //
-// The final LSP response is deduplicated by node, so the blow-up is invisible from the
-// response; this white-box test inspects the pre-deduplication SymbolsAndEntries that
-// provideSymbolsAndEntries returns. It asserts the accumulated reference count grows *linearly*
-// with K: quadratic growth roughly quadruples the count when K doubles, while linear growth
-// (node-deduplicated) roughly doubles it.
+// The final LSP response is deduplicated by node, so the blow-up is invisible from the response;
+// this white-box test inspects the pre-deduplication data that provideSymbolsAndEntries returns
+// and asserts that both the accumulated reference count and the group count grow ~linearly with K
+// (quadratic growth roughly quadruples when K doubles; deduplicated growth roughly doubles). The
+// reference count is the faithful proxy for the memory cost (the actual OOM is retained references
+// x per-reference checker state; a minimal repro has tiny per-reference state, so raw bytes are
+// dominated by the inherent O(K^2) search work and do not discriminate). Because each reference
+// node is enqueued at most once, the work queue is bounded by the reference count; the group count
+// separately guards against retaining one group per search result.
 func TestImplementationsWorklistDoesNotBlowUp(t *testing.T) {
 	t.Parallel()
 
-	measure := func(k int) int {
+	measure := func(k int) (refs int, groups int) {
 		var b strings.Builder
 		b.WriteString("interface I { m(): void; }\n")
 		for i := range k {
@@ -65,20 +69,29 @@ func TestImplementationsWorklistDoesNotBlowUp(t *testing.T) {
 
 		data, ok := l.provideSymbolsAndEntries(context.Background(), "file:///repro.ts", pos, false /*isRename*/, true /*implementations*/)
 		assert.Assert(t, ok)
-		total := 0
 		for _, se := range data.SymbolsAndEntries {
-			total += len(se.references)
+			refs += len(se.references)
 		}
-		return total
+		return refs, len(data.SymbolsAndEntries)
 	}
 
 	const k = 40
-	small := measure(k)
-	large := measure(2 * k)
-	t.Logf("accumulated references: K=%d -> %d, K=%d -> %d (ratio %.2f)", k, small, 2*k, large, float64(large)/float64(small))
+	smallRefs, smallGroups := measure(k)
+	largeRefs, largeGroups := measure(2 * k)
+	t.Logf("K=%d -> %d refs / %d groups; K=%d -> %d refs / %d groups (ref ratio %.2f, group ratio %.2f)",
+		k, smallRefs, smallGroups, 2*k, largeRefs, largeGroups,
+		float64(largeRefs)/float64(smallRefs), float64(largeGroups)/float64(smallGroups))
 
-	// Linear growth ~2x when K doubles; quadratic growth ~4x. Fail above 3x.
-	assert.Assert(t, large <= small*3,
-		"implementations worklist scales superlinearly: K=%d -> %d refs, K=%d -> %d refs (expected ~linear); "+
-			"provideSymbolsAndEntries accumulates references without deduplicating by node", k, small, 2*k, large)
+	// Retained references (and, since each is enqueued at most once, the work queue) must grow
+	// ~linearly (~2x when K doubles). The un-deduplicated worklist grows ~4x. Fail above 3x.
+	assert.Assert(t, largeRefs <= smallRefs*3,
+		"implementations worklist references scale superlinearly: K=%d -> %d, K=%d -> %d (expected ~linear); "+
+			"provideSymbolsAndEntries accumulates references without deduplicating by node", k, smallRefs, 2*k, largeRefs)
+
+	// Retained SymbolsAndEntries groups must also grow ~linearly. Appending one group per search
+	// result (K searches, each returning all K implementations) grows ~4x; dropping duplicate
+	// empty groups keeps it bounded by the distinct definitions. Fail above 3x.
+	assert.Assert(t, largeGroups <= smallGroups*3,
+		"implementations worklist groups scale superlinearly: K=%d -> %d, K=%d -> %d (expected ~linear); "+
+			"provideSymbolsAndEntries retains a group per search result without deduplicating by definition", k, smallGroups, 2*k, largeGroups)
 }
