@@ -36,7 +36,7 @@ func getCodeActionsToFixClassIncorrectlyImplementsInterface(context context.Cont
 		return nil, nil
 	}
 
-	implementsTypes := ast.GetImplementsTypeNodes(classDeclaration)
+	implementsTypes := ast.GetImplementsHeritageClauseElements(classDeclaration)
 	locale := locale.FromContext(context)
 
 	typeChecker, done := fixContext.Program.GetTypeCheckerForFile(context, fixContext.SourceFile)
@@ -85,7 +85,7 @@ func getAllCodeActionsToFixClassIncorrectlyImplementsInterface(context context.C
 				continue
 			}
 			if seenClassDeclarations.AddIfAbsent(classDeclaration) {
-				implementsTypes := ast.GetImplementsTypeNodes(classDeclaration)
+				implementsTypes := ast.GetImplementsHeritageClauseElements(classDeclaration)
 				for _, implementedTypeNode := range implementsTypes {
 					addChanges(context, fixContext, changeTracker, importAdder, typeChecker, classDeclaration, implementedTypeNode)
 				}

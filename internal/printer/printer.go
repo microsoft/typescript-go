@@ -2972,10 +2972,6 @@ func (p *Printer) emitExpressionWithTypeArguments(node *ast.ExpressionWithTypeAr
 	p.exitNode(node.AsNode(), state)
 }
 
-func (p *Printer) emitExpressionWithTypeArgumentsNode(node *ast.ExpressionWithTypeArgumentsNode) {
-	p.emitExpressionWithTypeArguments(node.AsExpressionWithTypeArguments())
-}
-
 func (p *Printer) emitAsExpression(node *ast.AsExpression) {
 	state := p.enterNode(node.AsNode())
 	p.emitExpression(node.Expression, ast.OperatorPrecedenceRelational)
@@ -4480,7 +4476,7 @@ func (p *Printer) emitHeritageClause(node *ast.HeritageClause) {
 	p.writeSpace()
 	p.emitToken(node.Token, node.Pos(), WriteKindKeyword, node.AsNode())
 	p.writeSpace()
-	p.emitList((*Printer).emitExpressionWithTypeArgumentsNode, node.AsNode(), node.Types, LFHeritageClauseTypes)
+	p.emitList((*Printer).emitTypeNodeOutsideExtends, node.AsNode(), node.Types, LFHeritageClauseTypes)
 	p.exitNode(node.AsNode(), state)
 }
 

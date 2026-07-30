@@ -1428,18 +1428,20 @@ func IsExpressionWithTypeArgumentsInClassExtendsClause(node *Node) bool {
 }
 
 func TryGetClassExtendingExpressionWithTypeArguments(node *Node) *ClassLikeDeclaration {
-	cls, isImplements := TryGetClassImplementingOrExtendingExpressionWithTypeArguments(node)
+	if !IsExpressionWithTypeArguments(node) {
+		return nil
+	}
+	cls, isImplements := TryGetClassImplementingOrExtendingHeritageClauseElement(node)
 	if cls != nil && !isImplements {
 		return cls
 	}
 	return nil
 }
 
-func TryGetClassImplementingOrExtendingExpressionWithTypeArguments(node *Node) (class *ClassLikeDeclaration, isImplements bool) {
-	if IsExpressionWithTypeArguments(node) {
-		if IsHeritageClause(node.Parent) && IsClassLike(node.Parent.Parent) {
-			return node.Parent.Parent, node.Parent.AsHeritageClause().Token == KindImplementsKeyword
-		}
+func TryGetClassImplementingOrExtendingHeritageClauseElement(node *Node) (class *ClassLikeDeclaration, isImplements bool) {
+	if (IsExpressionWithTypeArguments(node) || IsTypeReferenceNode(node)) &&
+		IsHeritageClause(node.Parent) && IsClassLike(node.Parent.Parent) {
+		return node.Parent.Parent, node.Parent.AsHeritageClause().Token == KindImplementsKeyword
 	}
 	return nil, false
 }
@@ -1713,15 +1715,11 @@ func GetContainingClass(node *Node) *Node {
 	return FindAncestor(node.Parent, IsClassLike)
 }
 
-func GetExtendsHeritageClauseElement(node *Node) *ExpressionWithTypeArgumentsNode {
-	return core.FirstOrNil(GetExtendsHeritageClauseElements(node))
-}
-
-func GetExtendsHeritageClauseElements(node *Node) []*ExpressionWithTypeArgumentsNode {
+func GetExtendsHeritageClauseElements(node *Node) []*Node {
 	return GetHeritageElements(node, KindExtendsKeyword)
 }
 
-func GetImplementsHeritageClauseElements(node *Node) []*ExpressionWithTypeArgumentsNode {
+func GetImplementsHeritageClauseElements(node *Node) []*Node {
 	return GetHeritageElements(node, KindImplementsKeyword)
 }
 
@@ -1731,6 +1729,23 @@ func GetHeritageElements(node *Node, kind Kind) []*Node {
 		return clause.AsHeritageClause().Types.Nodes
 	}
 	return nil
+}
+
+// GetHeritageClauseElementName returns the expression or type name of a heritage clause element.
+func GetHeritageClauseElementName(node *Node) *Node {
+	if IsTypeReferenceNode(node) {
+		return node.AsTypeReferenceNode().TypeName
+	}
+	return node.AsExpressionWithTypeArguments().Expression
+}
+
+func IsNameOfHeritageClauseTypeReference(node *Node) bool {
+	for IsQualifiedName(node.Parent) {
+		node = node.Parent
+	}
+	return IsTypeReferenceNode(node.Parent) &&
+		node.Parent.AsTypeReferenceNode().TypeName == node &&
+		IsHeritageClause(node.Parent.Parent)
 }
 
 func GetHeritageClause(node *Node, kind Kind) *Node {
@@ -3085,10 +3100,6 @@ func GetClassExtendsHeritageElement(node *Node) *ExpressionWithTypeArgumentsNode
 		return heritageElements[0]
 	}
 	return nil
-}
-
-func GetImplementsTypeNodes(node *Node) []*ExpressionWithTypeArgumentsNode {
-	return GetHeritageElements(node, KindImplementsKeyword)
 }
 
 func IsTypeKeywordToken(node *Node) bool {
