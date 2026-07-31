@@ -441,6 +441,9 @@ func (c *Checker) elaborateError(node *ast.Node, source *Type, target *Type, rel
 	if node == nil || c.isOrHasGenericConditional(target) {
 		return false
 	}
+	if c.compilerOptions.NoCheck.IsTrue() {
+		return false
+	}
 	if c.elaborateDidYouMeanToCallOrConstruct(node, source, target, relation, SignatureKindConstruct, headMessage, diagnosticOutput) ||
 		c.elaborateDidYouMeanToCallOrConstruct(node, source, target, relation, SignatureKindCall, headMessage, diagnosticOutput) {
 		return true
@@ -4136,7 +4139,8 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 			} else {
 				sourceRest = true
 			}
-			targetHasRestElement := target.TargetTupleType().combinedFlags&ElementFlagsVariable != 0
+			targetHasRestElement := target.TargetTupleType().combinedFlags&ElementFlagsRest != 0
+			targetHasVariableElement := target.TargetTupleType().combinedFlags&ElementFlagsVariable != 0
 			var sourceMinLength int
 			if isTupleType(source) {
 				sourceMinLength = source.TargetTupleType().minLength
@@ -4150,13 +4154,13 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 				}
 				return TernaryFalse
 			}
-			if !targetHasRestElement && targetArity < sourceMinLength {
+			if !targetHasVariableElement && targetArity < sourceMinLength {
 				if reportErrors {
 					r.reportError(diagnostics.Source_has_0_element_s_but_target_allows_only_1, sourceMinLength, targetArity)
 				}
 				return TernaryFalse
 			}
-			if !targetHasRestElement && (sourceRest || targetArity < sourceArity) {
+			if !targetHasVariableElement && (sourceRest || targetArity < sourceArity) {
 				if reportErrors {
 					if sourceMinLength < targetMinLength {
 						r.reportError(diagnostics.Target_requires_0_element_s_but_source_may_have_fewer, targetMinLength)
@@ -4183,6 +4187,12 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 				if targetHasRestElement && sourcePosition >= targetStartCount {
 					targetPosition = targetArity - 1 - min(sourcePositionFromEnd, targetEndCount)
 				} else {
+					if sourcePosition >= targetArity {
+						if reportErrors {
+							r.reportError(diagnostics.Target_allows_only_0_element_s_but_source_may_have_more, targetArity)
+						}
+						return TernaryFalse
+					}
 					targetPosition = sourcePosition
 				}
 				targetFlags := ElementFlagsNone

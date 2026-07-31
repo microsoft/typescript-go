@@ -228,6 +228,127 @@ export const bar = 2;`,
 		assert.Equal(t, len(stats.ProjectBuckets), 1)
 	})
 
+	t.Run("deleting node_modules leaves the registry prepared for importing", func(t *testing.T) {
+		t.Parallel()
+		fixture := autoimporttestutil.SetupLifecycleSession(t, lifecycleProjectRoot, 1)
+		session := fixture.Session()
+		sessionUtils := fixture.Utils()
+		project := fixture.SingleProject()
+		mainFile := project.File(0)
+		ctx := context.Background()
+
+		preferences := lsutil.NewDefaultUserPreferences()
+		preferences.IncludeCompletionsForModuleExports = core.TSTrue
+		preferences.IncludeCompletionsForImportStatements = core.TSTrue
+
+		// Build auto-imports once so both buckets are clean and prepared.
+		session.DidOpenFile(ctx, mainFile.URI(), 1, mainFile.Content(), lsproto.LanguageKindTypeScript)
+		_, err := session.GetCurrentLanguageServiceWithAutoImports(ctx, mainFile.URI())
+		assert.NilError(t, err)
+
+		snapshot := session.Snapshot()
+		defaultProject := snapshot.GetDefaultProject(mainFile.URI())
+		assert.Assert(t, defaultProject != nil)
+		projectPath := defaultProject.ConfigFilePath()
+		assert.Assert(t, snapshot.AutoImportRegistry().IsPreparedForImportingFile(mainFile.FileName(), projectPath, preferences))
+		assert.Equal(t, len(autoImportStats(t, session).NodeModulesBuckets), 1)
+
+		// Simulate the user deleting node_modules: remove the directory from disk
+		// and notify the session of the deletion, which marks the node_modules
+		// bucket dirty.
+		nodeModulesDir := tspath.CombinePaths(project.Root(), "node_modules")
+		assert.NilError(t, sessionUtils.FS().Remove(nodeModulesDir))
+		session.DidChangeWatchedFiles(ctx, []*lsproto.FileEvent{
+			{Type: lsproto.FileChangeTypeDeleted, Uri: lsconv.FileNameToDocumentURI(nodeModulesDir)},
+		})
+
+		// Re-preparing auto-imports must succeed and leave the registry prepared.
+		// Before the fix, the node_modules bucket's rebuild bailed out with
+		// vfs.ErrNotExist, leaving the stale dirty bucket in place so the registry
+		// reported "needs rebuild" forever (which crashed the request handler).
+		_, err = session.GetCurrentLanguageServiceWithAutoImports(ctx, mainFile.URI())
+		assert.NilError(t, err)
+
+		snapshot = session.Snapshot()
+		assert.Assert(t, snapshot.AutoImportRegistry().IsPreparedForImportingFile(mainFile.FileName(), projectPath, preferences),
+			"registry should be prepared after node_modules is deleted")
+		// The node_modules bucket should be removed entirely, not left behind as an
+		// empty bucket.
+		assert.Equal(t, len(autoImportStats(t, session).NodeModulesBuckets), 0)
+	})
+
+	t.Run("deleting node_modules alongside a package.json change removes the bucket", func(t *testing.T) {
+		t.Parallel()
+		fixture := autoimporttestutil.SetupLifecycleSession(t, lifecycleProjectRoot, 1)
+		session := fixture.Session()
+		sessionUtils := fixture.Utils()
+		project := fixture.SingleProject()
+		mainFile := project.File(0)
+		packageJSON := project.PackageJSONFile()
+		ctx := context.Background()
+
+		preferences := lsutil.NewDefaultUserPreferences()
+		preferences.IncludeCompletionsForModuleExports = core.TSTrue
+		preferences.IncludeCompletionsForImportStatements = core.TSTrue
+
+		session.DidOpenFile(ctx, mainFile.URI(), 1, mainFile.Content(), lsproto.LanguageKindTypeScript)
+		_, err := session.GetCurrentLanguageServiceWithAutoImports(ctx, mainFile.URI())
+		assert.NilError(t, err)
+
+		snapshot := session.Snapshot()
+		defaultProject := snapshot.GetDefaultProject(mainFile.URI())
+		assert.Assert(t, defaultProject != nil)
+		projectPath := defaultProject.ConfigFilePath()
+		assert.Equal(t, len(autoImportStats(t, session).NodeModulesBuckets), 1)
+
+		// In a single changeset, edit package.json AND delete node_modules. The
+		// package.json change must not prevent the now-missing node_modules bucket
+		// from being removed.
+		assert.NilError(t, sessionUtils.FS().WriteFile(packageJSON.FileName(), `{"name": "app", "dependencies": {}}`))
+		nodeModulesDir := tspath.CombinePaths(project.Root(), "node_modules")
+		assert.NilError(t, sessionUtils.FS().Remove(nodeModulesDir))
+		session.DidChangeWatchedFiles(ctx, []*lsproto.FileEvent{
+			{Type: lsproto.FileChangeTypeChanged, Uri: packageJSON.URI()},
+			{Type: lsproto.FileChangeTypeDeleted, Uri: lsconv.FileNameToDocumentURI(nodeModulesDir)},
+		})
+
+		_, err = session.GetCurrentLanguageServiceWithAutoImports(ctx, mainFile.URI())
+		assert.NilError(t, err)
+
+		snapshot = session.Snapshot()
+		assert.Assert(t, snapshot.AutoImportRegistry().IsPreparedForImportingFile(mainFile.FileName(), projectPath, preferences))
+		assert.Equal(t, len(autoImportStats(t, session).NodeModulesBuckets), 0)
+	})
+
+	t.Run("deleting a package directory inside node_modules invalidates the bucket", func(t *testing.T) {
+		t.Parallel()
+		fixture := autoimporttestutil.SetupLifecycleSession(t, lifecycleProjectRoot, 1)
+		session := fixture.Session()
+		sessionUtils := fixture.Utils()
+		project := fixture.SingleProject()
+		mainFile := project.File(0)
+		nodePackage := project.NodeModules()[0]
+		ctx := context.Background()
+
+		session.DidOpenFile(ctx, mainFile.URI(), 1, mainFile.Content(), lsproto.LanguageKindTypeScript)
+		_, err := session.GetCurrentLanguageServiceWithAutoImports(ctx, mainFile.URI())
+		assert.NilError(t, err)
+		assert.Assert(t, singleBucket(t, autoImportStats(t, session).NodeModulesBuckets).ExportCount > 0)
+
+		// Delete just the package directory, leaving node_modules itself in place. The
+		// package's files are read transiently by the registry, so they are never tracked
+		// in diskFiles/diskDirectories; only the directory deletion event is reported, and
+		// it must survive snapshotfs filtering to invalidate the bucket.
+		assert.NilError(t, sessionUtils.FS().Remove(nodePackage.Directory))
+		session.DidChangeWatchedFiles(ctx, []*lsproto.FileEvent{
+			{Type: lsproto.FileChangeTypeDeleted, Uri: lsconv.FileNameToDocumentURI(nodePackage.Directory)},
+		})
+
+		_, err = session.GetCurrentLanguageServiceWithAutoImports(ctx, mainFile.URI())
+		assert.NilError(t, err)
+		assert.Equal(t, singleBucket(t, autoImportStats(t, session).NodeModulesBuckets).ExportCount, 0)
+	})
+
 	t.Run("node_modules bucket dependency selection changes with open files", func(t *testing.T) {
 		t.Parallel()
 		monorepoRoot := "/home/src/monorepo"
@@ -1007,6 +1128,41 @@ const (
 	lifecycleProjectRoot = "/home/src/autoimport-lifecycle"
 	monorepoProjectRoot  = "/home/src/autoimport-monorepo"
 )
+
+func TestUpdateIndexesConcurrentMapSafety(t *testing.T) {
+	t.Parallel()
+	const projectRoot = "/home/src/autoimport-fallback-race"
+	const packageCount = 40
+
+	files := map[string]any{
+		projectRoot + "/tsconfig.json": `{
+			"compilerOptions": { "module": "esnext", "target": "esnext", "strict": true }
+		}`,
+		projectRoot + "/index.ts": "export {};\n",
+	}
+	for i := range packageCount {
+		pkgDir := fmt.Sprintf("%s/node_modules/pkg%d", projectRoot, i)
+		files[pkgDir+"/package.json"] = fmt.Sprintf(`{"name":"pkg%d","version":"1.0.0","main":"index.js"}`, i)
+		files[pkgDir+"/index.js"] = "module.exports = {};\n"
+		typesDir := fmt.Sprintf("%s/node_modules/@types/pkg%d", projectRoot, i)
+		files[typesDir+"/package.json"] = fmt.Sprintf(`{"name":"@types/pkg%d","version":"1.0.0","types":"index.d.ts"}`, i)
+		files[typesDir+"/index.d.ts"] = fmt.Sprintf("export declare const foo%d: number;\n", i)
+	}
+
+	session, _ := projecttestutil.Setup(files)
+	t.Cleanup(session.Close)
+
+	ctx := context.Background()
+	indexURI := lsproto.DocumentUri("file://" + projectRoot + "/index.ts")
+	session.DidOpenFile(ctx, indexURI, 1, "export {};\n", lsproto.LanguageKindTypeScript)
+
+	_, err := session.GetCurrentLanguageServiceWithAutoImports(ctx, indexURI)
+	assert.NilError(t, err)
+
+	stats := autoImportStats(t, session)
+	nodeModulesBucket := singleBucket(t, stats.NodeModulesBuckets)
+	assert.Equal(t, nodeModulesBucket.ExportCount, packageCount)
+}
 
 func autoImportStats(t *testing.T, session *project.Session) *autoimport.CacheStats {
 	t.Helper()

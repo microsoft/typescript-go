@@ -49,6 +49,15 @@ func canProduceDiagnostics(node *ast.Node) bool {
 	/* ast.IsJSDocTypeAlias(node); */
 }
 
+func canReuseModifierNodes(nodes []*ast.Node) bool {
+	for _, node := range nodes {
+		if ast.IsModifier(node) && node.Flags&ast.NodeFlagsReparsed != 0 {
+			return false
+		}
+	}
+	return true
+}
+
 func isDeclarationAndNotVisible(emitContext *printer.EmitContext, resolver printer.EmitResolver, node *ast.Node) bool {
 	node = emitContext.ParseNode(node)
 	switch node.Kind {
@@ -106,7 +115,8 @@ func isEnclosingDeclaration(node *ast.Node) bool {
 		ast.IsInterfaceDeclaration(node) ||
 		ast.IsFunctionLike(node) ||
 		ast.IsIndexSignatureDeclaration(node) ||
-		ast.IsMappedTypeNode(node)
+		ast.IsMappedTypeNode(node) ||
+		ast.IsVariableDeclaration(node)
 }
 
 func isAlwaysType(node *ast.Node) bool {

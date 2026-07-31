@@ -188,11 +188,21 @@ type Node struct {
 // type switches. Either approach is fine. Interface methods are likely more performant, but have higher
 // code size costs because we have hundreds of implementations of the NodeData interface.
 
-func (n *Node) AsNode() *Node                             { return n }
-func (n *Node) Pos() int                                  { return n.Loc.Pos() }
-func (n *Node) End() int                                  { return n.Loc.End() }
-func (n *Node) ForEachChild(v Visitor) bool               { return n.data.ForEachChild(v) }
-func (n *Node) IterChildren() iter.Seq[*Node]             { return n.data.IterChildren() }
+func (n *Node) AsNode() *Node { return n }
+func (n *Node) Pos() int      { return n.Loc.Pos() }
+func (n *Node) End() int      { return n.Loc.End() }
+func (n *Node) IterChildren() iter.Seq[*Node] {
+	// Implemented directly (rather than through the nodeData interface) so that the
+	// returned iterator and the visitor closure it passes to ForEachChild do not
+	// escape: an interface call is opaque to escape analysis. `true` stops a TS
+	// visitor early, whereas `false` stops a Go iterator yield, so the result is
+	// inverted.
+	return func(yield func(*Node) bool) {
+		n.ForEachChild(func(child *Node) bool {
+			return !yield(child)
+		})
+	}
+}
 func (n *Node) Clone(f NodeFactoryCoercible) *Node        { return n.data.Clone(f) }
 func (n *Node) VisitEachChild(v *NodeVisitor) *Node       { return n.data.VisitEachChild(v) }
 func (n *Node) Name() *DeclarationName                    { return n.data.Name() }
@@ -1170,7 +1180,6 @@ func (n *Node) AsFlowReduceLabelData() *FlowReduceLabelData {
 type nodeData interface {
 	AsNode() *Node
 	ForEachChild(v Visitor) bool
-	IterChildren() iter.Seq[*Node]
 	VisitEachChild(v *NodeVisitor) *Node
 	Clone(v NodeFactoryCoercible) *Node
 	Name() *DeclarationName
@@ -1197,21 +1206,8 @@ type NodeDefault struct {
 	Node
 }
 
-func invert(yield func(v *Node) bool) Visitor {
-	return func(n *Node) bool {
-		return !yield(n)
-	}
-}
-
 func (node *NodeDefault) AsNode() *Node               { return &node.Node }
 func (node *NodeDefault) ForEachChild(v Visitor) bool { return false }
-func (node *NodeDefault) forEachChildIter(yield func(v *Node) bool) {
-	node.data.ForEachChild(invert(yield)) // `true` is return early for a ts visitor, `false` is return early for a go iterator yield function
-}
-
-func (node *NodeDefault) IterChildren() iter.Seq[*Node] {
-	return node.forEachChildIter
-}
 
 func (node *NodeDefault) VisitEachChild(v *NodeVisitor) *Node                   { return node.AsNode() }
 func (node *NodeDefault) Clone(v NodeFactoryCoercible) *Node                    { return nil }
@@ -1924,7 +1920,6 @@ func (node *ExportSpecifier) computeSubtreeFacts() SubtreeFacts {
 
 // NamedMemberBase
 
-func (node *NamedMemberBase) DeclarationData() *DeclarationBase    { return &node.DeclarationBase }
 func (node *NamedMemberBase) Modifiers() *ModifierList             { return node.modifiers }
 func (node *NamedMemberBase) setModifiers(modifiers *ModifierList) { node.modifiers = modifiers }
 func (node *NamedMemberBase) Name() *DeclarationName               { return node.name }
@@ -2264,10 +2259,6 @@ func (node *ImportAttributesNode) GetResolutionModeOverride( /* !!! grammarError
 
 // FunctionOrConstructorTypeNodeBase
 
-func (node *FunctionOrConstructorTypeNodeBase) DeclarationData() *DeclarationBase {
-	return node.FunctionLikeBase.DeclarationData()
-}
-
 func (node *TemplateLiteralLikeNodeBase) LiteralLikeData() *LiteralLikeNodeBase {
 	return &node.LiteralLikeNodeBase
 }
@@ -2402,6 +2393,53 @@ type SourceFileMetaData struct {
 	ImpliedNodeFormat    core.ResolutionMode
 }
 
+// SourceFileDataKey identifies lazily-computed data attached to a SourceFile by
+// another package. Prefer regular SourceFile fields for ast-owned data.
+type SourceFileDataKey[T any] struct {
+	key sourceFileDataKey
+	_   [0]T
+}
+
+type sourceFileDataKey uint64
+
+var sourceFileDataKeyCounter atomic.Uint64
+
+type sourceFileDataCell[T any] struct {
+	once  sync.Once
+	value T
+}
+
+func NewSourceFileDataKey[T any]() *SourceFileDataKey[T] {
+	return &SourceFileDataKey[T]{key: sourceFileDataKey(sourceFileDataKeyCounter.Add(1))}
+}
+
+func GetOrComputeSourceFileData[T any](file *SourceFile, key *SourceFileDataKey[T], compute func(*SourceFile) T) T {
+	cell := getSourceFileDataCell(file, key)
+	cell.once.Do(func() {
+		cell.value = compute(file)
+	})
+	return cell.value
+}
+
+func getSourceFileDataCell[T any](file *SourceFile, key *SourceFileDataKey[T]) *sourceFileDataCell[T] {
+	if key == nil || key.key == 0 {
+		panic("invalid SourceFileDataKey; use NewSourceFileDataKey")
+	}
+
+	file.dataMu.Lock()
+	defer file.dataMu.Unlock()
+
+	if file.data == nil {
+		file.data = make(map[sourceFileDataKey]any)
+	}
+	if cell, ok := file.data[key.key]; ok {
+		return cell.(*sourceFileDataCell[T])
+	}
+	cell := &sourceFileDataCell[T]{}
+	file.data[key.key] = cell
+	return cell
+}
+
 type CheckJsDirective struct {
 	Enabled bool
 	Range   CommentRange
@@ -2430,6 +2468,10 @@ type SourceFile struct {
 	Statements     *NodeList  // NodeList[*Statement]
 	EndOfFileToken *TokenNode // TokenNode[*EndOfFileToken]
 
+	// Fields for lazily-computed data owned by packages outside ast.
+	dataMu sync.Mutex
+	data   map[sourceFileDataKey]any
+
 	// Fields set by parser
 	diagnostics                 []*Diagnostic
 	jsDiagnostics               []*Diagnostic
@@ -2437,9 +2479,7 @@ type SourceFile struct {
 	LanguageVariant             core.LanguageVariant
 	ScriptKind                  core.ScriptKind
 	IsDeclarationFile           bool
-	ContainsNonASCII            bool
 	UsesUriStyleNodeCoreModules core.Tristate
-	Identifiers                 map[string]string
 	IdentifierCount             int
 	imports                     []*LiteralLikeNode // []LiteralLikeNode
 	ModuleAugmentations         []*ModuleName      // []ModuleName
@@ -2448,6 +2488,8 @@ type SourceFile struct {
 	jsdocCache                  map[*Node][]*Node
 	jsdocMu                     sync.RWMutex
 	hasLazyJSDoc                bool
+	identifiersOnce             sync.Once
+	identifiers                 collections.Set[string]
 	ReparsedClones              []*Node
 	Pragmas                     []Pragma
 	ReferencedFiles             []*FileReference
@@ -2463,16 +2505,12 @@ type SourceFile struct {
 
 	// Fields set by binder
 
-	isBound                   atomic.Bool
-	bindOnce                  sync.Once
-	bindDiagnostics           []*Diagnostic
-	BindSuggestionDiagnostics []*Diagnostic
-	EndFlowNode               *FlowNode
-	SymbolCount               int
-	ClassifiableNames         collections.Set[string]
-	PatternAmbientModules     []*PatternAmbientModule
-	NestedCJSExports          []*Node
-	GlobalExports             SymbolTable
+	isBound               atomic.Bool
+	bindOnce              sync.Once
+	bindDiagnostics       []*Diagnostic
+	SymbolCount           int
+	PatternAmbientModules []*PatternAmbientModule
+	GlobalExports         SymbolTable
 
 	// Fields set by ECMALineMap
 
@@ -2515,6 +2553,33 @@ func (node *SourceFile) ParseOptions() SourceFileParseOptions {
 
 func (node *SourceFile) Text() string {
 	return node.text
+}
+
+func (file *SourceFile) HasIdentifier(name string) bool {
+	file.identifiersOnce.Do(func() {
+		file.identifiers = collectIdentifiersForSourceFile(file)
+	})
+	return file.identifiers.Has(name)
+}
+
+func collectIdentifiersForSourceFile(sourceFile *SourceFile) collections.Set[string] {
+	var identifiers collections.Set[string]
+	var collect func(*Node) bool
+	collect = func(node *Node) bool {
+		switch node.Kind {
+		case KindIdentifier,
+			KindPrivateIdentifier,
+			KindStringLiteral,
+			KindNumericLiteral,
+			KindBigIntLiteral,
+			KindNoSubstitutionTemplateLiteral:
+			identifiers.Add(node.Text())
+		}
+		node.ForEachChild(collect)
+		return false
+	}
+	collect(sourceFile.AsNode())
+	return identifiers
 }
 
 func (node *SourceFile) FileName() string {
@@ -2613,9 +2678,7 @@ func (node *SourceFile) copyFrom(other *SourceFile) {
 	node.LanguageVariant = other.LanguageVariant
 	node.ScriptKind = other.ScriptKind
 	node.IsDeclarationFile = other.IsDeclarationFile
-	node.ContainsNonASCII = other.ContainsNonASCII
 	node.UsesUriStyleNodeCoreModules = other.UsesUriStyleNodeCoreModules
-	node.Identifiers = other.Identifiers
 	node.imports = other.imports
 	node.ModuleAugmentations = other.ModuleAugmentations
 	node.AmbientModuleNames = other.AmbientModuleNames
@@ -2705,11 +2768,7 @@ func (node *SourceFile) IsBound() bool {
 // GetPositionMap returns the PositionMap for this source file, computing it lazily.
 func (file *SourceFile) GetPositionMap() *PositionMap {
 	file.positionMapOnce.Do(func() {
-		if !file.ContainsNonASCII {
-			file.positionMap = &PositionMap{asciiOnly: true}
-		} else {
-			file.positionMap = ComputePositionMap(file.Text())
-		}
+		file.positionMap = ComputePositionMap(file.Text())
 	})
 	return file.positionMap
 }
