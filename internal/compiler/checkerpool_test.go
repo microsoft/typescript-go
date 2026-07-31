@@ -5,6 +5,45 @@ import (
 	"testing"
 )
 
+func TestGetCheckerAssociationBaseWeight(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name              string
+		isDeclarationFile bool
+		checkerCount      int
+		want              int
+	}{
+		{
+			name:              "two checkers use syntax weight",
+			isDeclarationFile: false,
+			checkerCount:      2,
+			want:              125,
+		},
+		{
+			name:              "four checkers increase source file weight",
+			isDeclarationFile: false,
+			checkerCount:      4,
+			want:              500,
+		},
+		{
+			name:              "declaration file weight is unchanged",
+			isDeclarationFile: true,
+			checkerCount:      4,
+			want:              125,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			if got := getCheckerAssociationBaseWeight(100, 2500, test.isDeclarationFile, test.checkerCount); got != test.want {
+				t.Fatalf("getCheckerAssociationBaseWeight() = %d, want %d", got, test.want)
+			}
+		})
+	}
+}
+
 func TestGetCheckerAssociationWeights(t *testing.T) {
 	t.Parallel()
 
@@ -57,6 +96,19 @@ func TestGetCheckerAssociations(t *testing.T) {
 			3,
 		)
 		want := []int{0, 1, 2, 0, 1, 2}
+		if !slices.Equal(got, want) {
+			t.Fatalf("getCheckerAssociations() = %v, want %v", got, want)
+		}
+	})
+
+	t.Run("uses program order", func(t *testing.T) {
+		t.Parallel()
+		got := getCheckerAssociations(
+			[]int{1, 3, 2},
+			make([][]int, 3),
+			2,
+		)
+		want := []int{0, 1, 0}
 		if !slices.Equal(got, want) {
 			t.Fatalf("getCheckerAssociations() = %v, want %v", got, want)
 		}

@@ -4,7 +4,6 @@ import (
 	"context"
 	"math"
 	"slices"
-	"sort"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -35,7 +34,12 @@ type checkerPool struct {
 
 var _ CheckerPool = (*checkerPool)(nil)
 
-const checkerAssociationTextWeightDivisor = 100
+const (
+	checkerAssociationTextWeightDivisor            = 100
+	checkerAssociationSourceFileWeightMultiplier   = 4
+	checkerAssociationBalancePenaltyMultiplier     = 16
+	checkerAssociationStrongBalanceMinCheckerCount = 4
+)
 
 // getCheckerAssociations partitions the import graph using a weighted adaptation
 // of FENNEL's streaming graph-partitioning objective with gamma = 3/2. Each file
@@ -43,35 +47,24 @@ const checkerAssociationTextWeightDivisor = 100
 // convex load penalty. The published alpha = m*sqrt(k)/n^(3/2) becomes
 // m*sqrt(k)/W^(3/2), where W is total estimated checker work.
 //
-// Processing high-degree files first gives the later placements more locality
-// information than program order, while the hard cap keeps estimated work within
-// 1% of average. Ties are deterministic.
+// Files are processed in stable program order, which avoids clustering semantic
+// roots that happen to have high import degree. With four or more checkers, the
+// stronger balance penalty accounts for demand-driven semantic work that syntax
+// and import weights cannot predict. The hard cap keeps estimated work within 1%
+// of average. Ties are deterministic.
 func getCheckerAssociations(fileWeights []int, adjacentFiles [][]int, checkerCount int) []int {
 	if len(fileWeights) == 0 {
 		return nil
 	}
 
-	fileIndices := make([]int, len(fileWeights))
 	totalWeight := 0
 	maxFileWeight := 0
 	edgeCount := 0
 	for i, weight := range fileWeights {
-		fileIndices[i] = i
 		totalWeight += weight
 		maxFileWeight = max(maxFileWeight, weight)
 		edgeCount += len(adjacentFiles[i])
 	}
-	sort.Slice(fileIndices, func(i, j int) bool {
-		left := fileIndices[i]
-		right := fileIndices[j]
-		if len(adjacentFiles[left]) != len(adjacentFiles[right]) {
-			return len(adjacentFiles[left]) > len(adjacentFiles[right])
-		}
-		if fileWeights[left] != fileWeights[right] {
-			return fileWeights[left] > fileWeights[right]
-		}
-		return left < right
-	})
 
 	associations := make([]int, len(fileWeights))
 	for i := range associations {
@@ -82,9 +75,12 @@ func getCheckerAssociations(fileWeights []int, adjacentFiles [][]int, checkerCou
 	maxCheckerWeight := max(maxFileWeight, averageCheckerWeight+averageCheckerWeight/100)
 	totalWeightFloat := float64(totalWeight)
 	alpha := float64(edgeCount/2) * math.Sqrt(float64(checkerCount)) / (totalWeightFloat * math.Sqrt(totalWeightFloat))
+	if checkerCount >= checkerAssociationStrongBalanceMinCheckerCount {
+		alpha *= checkerAssociationBalancePenaltyMultiplier
+	}
 	neighborCounts := make([]int, checkerCount)
 
-	for _, fileIndex := range fileIndices {
+	for fileIndex := range fileWeights {
 		clear(neighborCounts)
 		for _, adjacentFile := range adjacentFiles[fileIndex] {
 			if checkerIndex := associations[adjacentFile]; checkerIndex >= 0 {
@@ -121,9 +117,17 @@ func getCheckerAssociations(fileWeights []int, adjacentFiles [][]int, checkerCou
 	return associations
 }
 
-// getCheckerAssociationWeights combines local syntax size with dependency
+func getCheckerAssociationBaseWeight(nodeCount int, textLength int, isDeclarationFile bool, checkerCount int) int {
+	weight := max(nodeCount+textLength/checkerAssociationTextWeightDivisor, 1)
+	if checkerCount >= checkerAssociationStrongBalanceMinCheckerCount && !isDeclarationFile {
+		weight *= checkerAssociationSourceFileWeightMultiplier
+	}
+	return weight
+}
+
+// getCheckerAssociationWeights combines local estimated work with dependency
 // fanout. The import unit is normalized so that total import weight equals total
-// syntax weight for the project, avoiding a project-specific tuning constant.
+// base weight for the project, avoiding a project-specific tuning constant.
 func getCheckerAssociationWeights(baseWeights []int, importCounts []int) []int {
 	totalBaseWeight := 0
 	totalImports := 0
@@ -225,7 +229,7 @@ func (p *checkerPool) createCheckers() {
 			baseWeights := make([]int, len(p.program.files))
 			importCounts := make([]int, len(p.program.files))
 			for i, file := range p.program.files {
-				baseWeights[i] = max(file.NodeCount+len(file.Text())/checkerAssociationTextWeightDivisor, 1)
+				baseWeights[i] = getCheckerAssociationBaseWeight(file.NodeCount, len(file.Text()), file.IsDeclarationFile, checkerCount)
 				importCounts[i] = len(file.Imports())
 			}
 			fileWeights := getCheckerAssociationWeights(baseWeights, importCounts)
