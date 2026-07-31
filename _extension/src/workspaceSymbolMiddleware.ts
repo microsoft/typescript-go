@@ -4,7 +4,6 @@ import type { MessageSignature } from "vscode-languageserver-protocol";
 import {
     disabledSchemes,
     isSupportedLanguageMode,
-    readUnifiedConfig,
 } from "./util";
 
 function getDocument(): vscode.TextDocument | undefined {
@@ -26,17 +25,6 @@ export function workspaceSymbolSendRequestMiddleware<P, R>(
 ): Promise<R> {
     const method = typeof type === "string" ? type : type.method;
     if (method !== "workspace/symbol") {
-        return next(type, params, token);
-    }
-
-    const scope = readUnifiedConfig<"allOpenProjects" | "currentProject">(
-        "workspaceSymbols.scope",
-        "typescript",
-        "workspaceSymbols.scope",
-        undefined,
-        "allOpenProjects",
-    );
-    if (scope !== "currentProject") {
         return next(type, params, token);
     }
 

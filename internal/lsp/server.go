@@ -1714,7 +1714,7 @@ func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.Work
 			params.Query,
 		)
 	}
-	if params.TextDocument != nil {
+	if params.TextDocument != nil && s.session.Config().WorkspaceSymbolsScope == lsutil.WorkspaceSymbolsScopeCurrentProject {
 		uri := params.TextDocument.Uri
 		s.session.WithSnapshotForDocument(ctx, uri, func(snapshot *project.Snapshot) {
 			programs := core.Map(snapshot.GetProjectsContainingFile(uri), ls.Project.GetProgram)

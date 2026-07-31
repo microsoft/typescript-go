@@ -59,16 +59,25 @@ func TestWorkspaceSymbolsCurrentProject(t *testing.T) {
 		})
 	}
 
-	_, allProjects, ok := lsptestutil.SendRequest(t, client, lsproto.WorkspaceSymbolInfo, &lsproto.WorkspaceSymbolParams{
-		Query: "from",
-	})
+	workspaceSymbolParams := &lsproto.WorkspaceSymbolParams{
+		Query:        "from",
+		TextDocument: &lsproto.TextDocumentIdentifier{Uri: lsconv.FileNameToDocumentURI("/home/projects/a/index.ts")},
+	}
+	_, allProjects, ok := lsptestutil.SendRequest(t, client, lsproto.WorkspaceSymbolInfo, workspaceSymbolParams)
 	assert.Assert(t, ok)
 	assert.Equal(t, len(*allProjects.SymbolInformations), 2)
 
-	_, currentProject, ok := lsptestutil.SendRequest(t, client, lsproto.WorkspaceSymbolInfo, &lsproto.WorkspaceSymbolParams{
-		Query:        "from",
-		TextDocument: &lsproto.TextDocumentIdentifier{Uri: lsconv.FileNameToDocumentURI("/home/projects/a/index.ts")},
+	lsptestutil.SendNotification(t, client, lsproto.WorkspaceDidChangeConfigurationInfo, &lsproto.DidChangeConfigurationParams{
+		Settings: map[string]any{
+			"js/ts": map[string]any{
+				"workspaceSymbols": map[string]any{
+					"scope": "currentProject",
+				},
+			},
+		},
 	})
+
+	_, currentProject, ok := lsptestutil.SendRequest(t, client, lsproto.WorkspaceSymbolInfo, workspaceSymbolParams)
 	assert.Assert(t, ok)
 	assert.Equal(t, len(*currentProject.SymbolInformations), 1)
 	assert.Equal(t, (*currentProject.SymbolInformations)[0].Name, "fromA")
