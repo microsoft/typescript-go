@@ -1,20 +1,21 @@
 import * as vscode from "vscode";
 import type { CancellationToken } from "vscode";
 import type { MessageSignature } from "vscode-languageserver-protocol";
-import {
-    disabledSchemes,
-    isSupportedLanguageMode,
-} from "./util";
+import { isSupportedLanguageMode } from "./util";
+
+const supportedSchemes = new Set(["file", "untitled"]);
+
+function isSupportedDocument(document: vscode.TextDocument): boolean {
+    return isSupportedLanguageMode(document) && supportedSchemes.has(document.uri.scheme);
+}
 
 function getDocument(): vscode.TextDocument | undefined {
     const activeDocument = vscode.window.activeTextEditor?.document;
-    if (activeDocument && isSupportedLanguageMode(activeDocument) && !disabledSchemes.has(activeDocument.uri.scheme)) {
+    if (activeDocument && isSupportedDocument(activeDocument)) {
         return activeDocument;
     }
 
-    return vscode.workspace.textDocuments.find(
-        document => isSupportedLanguageMode(document) && !disabledSchemes.has(document.uri.scheme),
-    );
+    return vscode.workspace.textDocuments.find(isSupportedDocument);
 }
 
 export function workspaceSymbolSendRequestMiddleware<P, R>(
