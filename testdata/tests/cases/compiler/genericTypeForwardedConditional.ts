@@ -1,19 +1,21 @@
 // repro from #4581
 // @strict: true
 
-// @filename: mrt.d.ts
-type Key<T, Done = false> = Done extends true ? never : unknown extends T ? string : T extends (T extends {} ? T : never) ? never : string;
+type IsTuple<TMaybeTuple> = TMaybeTuple extends any[] ? TMaybeTuple : never;
 
-export type MRT_TableOptions<T> = { defaultColumn: (value: T) => void } & {
-    defaultColumn: { Cell: <Done = false>(options: MRT_TableOptions<T>) => Key<T, Done> };
-};
+type DeepKeys<TObj, TDone = false> = TDone extends true
+    ? never
+    : TObj extends any[] & IsTuple<TObj>
+      ? never
+      : TObj extends object
+        ? keyof TObj | DeepKeysPrefix<TObj, keyof TObj>
+        : never;
 
-export declare function MaterialReactTable<T>(props: MRT_TableOptions<T>): void;
+type DeepKeysPrefix<TParent, TPrefix> = TPrefix extends keyof TParent
+    ? DeepKeys<TParent[TPrefix], true>
+    : never;
 
-// @filename: Table.tsx
-import { MaterialReactTable, type MRT_TableOptions } from "./mrt";
+declare function DataTable<TArg>(props: { accessorKey: DeepKeys<TArg> }): void;
 
-interface TableProps<T> extends MRT_TableOptions<T> {}
-
-export const Table = <T,>({ defaultColumn, ...props }: TableProps<T>) =>
-    MaterialReactTable({ defaultColumn, ...props });
+export const Table = <TRow extends object>(accessorKey: DeepKeys<TRow>) =>
+    DataTable({ accessorKey });

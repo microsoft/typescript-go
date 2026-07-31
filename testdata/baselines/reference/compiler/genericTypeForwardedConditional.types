@@ -1,45 +1,44 @@
 //// [tests/cases/compiler/genericTypeForwardedConditional.ts] ////
 
-=== mrt.d.ts ===
-type Key<T, Done = false> = Done extends true ? never : unknown extends T ? string : T extends (T extends {} ? T : never) ? never : string;
->Key : Key<T, Done>
+=== genericTypeForwardedConditional.ts ===
+// repro from #4581
+
+type IsTuple<TMaybeTuple> = TMaybeTuple extends any[] ? TMaybeTuple : never;
+>IsTuple : IsTuple<TMaybeTuple>
+
+type DeepKeys<TObj, TDone = false> = TDone extends true
+>DeepKeys : DeepKeys<TObj, TDone>
 >false : false
 >true : true
 
-export type MRT_TableOptions<T> = { defaultColumn: (value: T) => void } & {
->MRT_TableOptions : MRT_TableOptions<T>
->defaultColumn : (value: T) => void
->value : T
+    ? never
+    : TObj extends any[] & IsTuple<TObj>
+      ? never
+      : TObj extends object
+        ? keyof TObj | DeepKeysPrefix<TObj, keyof TObj>
+        : never;
 
-    defaultColumn: { Cell: <Done = false>(options: MRT_TableOptions<T>) => Key<T, Done> };
->defaultColumn : { Cell: <Done = false>(options: MRT_TableOptions<T>) => Key<T, Done>; }
->Cell : <Done = false>(options: MRT_TableOptions<T>) => Key<T, Done>
->false : false
->options : MRT_TableOptions<T>
+type DeepKeysPrefix<TParent, TPrefix> = TPrefix extends keyof TParent
+>DeepKeysPrefix : DeepKeysPrefix<TParent, TPrefix>
 
-};
+    ? DeepKeys<TParent[TPrefix], true>
+>true : true
 
-export declare function MaterialReactTable<T>(props: MRT_TableOptions<T>): void;
->MaterialReactTable : <T>(props: MRT_TableOptions<T>) => void
->props : MRT_TableOptions<T>
+    : never;
 
-=== Table.tsx ===
-import { MaterialReactTable, type MRT_TableOptions } from "./mrt";
->MaterialReactTable : <T>(props: MRT_TableOptions<T>) => void
->MRT_TableOptions : any
+declare function DataTable<TArg>(props: { accessorKey: DeepKeys<TArg> }): void;
+>DataTable : <TArg>(props: { accessorKey: DeepKeys<TArg>; }) => void
+>props : { accessorKey: DeepKeys<TArg>; }
+>accessorKey : TArg extends any[] & IsTuple<TArg> ? never : TArg extends object ? keyof TArg | DeepKeysPrefix<TArg, keyof TArg> : never
 
-interface TableProps<T> extends MRT_TableOptions<T> {}
+export const Table = <TRow extends object>(accessorKey: DeepKeys<TRow>) =>
+>Table : <TRow extends object>(accessorKey: DeepKeys<TRow>) => void
+><TRow extends object>(accessorKey: DeepKeys<TRow>) =>    DataTable({ accessorKey }) : <TRow extends object>(accessorKey: DeepKeys<TRow>) => void
+>accessorKey : TRow extends any[] & IsTuple<TRow> ? never : TRow extends object ? keyof TRow | DeepKeysPrefix<TRow, keyof TRow> : never
 
-export const Table = <T,>({ defaultColumn, ...props }: TableProps<T>) =>
->Table : <T>({ defaultColumn, ...props }: TableProps<T>) => void
-><T,>({ defaultColumn, ...props }: TableProps<T>) =>    MaterialReactTable({ defaultColumn, ...props }) : <T>({ defaultColumn, ...props }: TableProps<T>) => void
->defaultColumn : ((value: T) => void) & { Cell: <Done = false>(options: MRT_TableOptions<T>) => import("./mrt").Key<T, Done>; }
->props : {}
-
-    MaterialReactTable({ defaultColumn, ...props });
->MaterialReactTable({ defaultColumn, ...props }) : void
->MaterialReactTable : <T_1>(props: MRT_TableOptions<T_1>) => void
->{ defaultColumn, ...props } : { defaultColumn: ((value: T) => void) & { Cell: <Done = false>(options: MRT_TableOptions<T>) => import("./mrt").Key<T, Done>; }; }
->defaultColumn : ((value: T) => void) & { Cell: <Done = false>(options: MRT_TableOptions<T>) => import("./mrt").Key<T, Done>; }
->props : {}
+    DataTable({ accessorKey });
+>DataTable({ accessorKey }) : void
+>DataTable : <TArg>(props: { accessorKey: DeepKeys<TArg>; }) => void
+>{ accessorKey } : { accessorKey: TRow extends any[] & IsTuple<TRow> ? never : TRow extends object ? keyof TRow | DeepKeysPrefix<TRow, keyof TRow> : never; }
+>accessorKey : TRow extends any[] & IsTuple<TRow> ? never : TRow extends object ? keyof TRow | DeepKeysPrefix<TRow, keyof TRow> : never
 

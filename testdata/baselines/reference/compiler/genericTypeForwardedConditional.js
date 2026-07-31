@@ -1,23 +1,28 @@
 //// [tests/cases/compiler/genericTypeForwardedConditional.ts] ////
 
-//// [mrt.d.ts]
-type Key<T, Done = false> = Done extends true ? never : unknown extends T ? string : T extends (T extends {} ? T : never) ? never : string;
+//// [genericTypeForwardedConditional.ts]
+// repro from #4581
 
-export type MRT_TableOptions<T> = { defaultColumn: (value: T) => void } & {
-    defaultColumn: { Cell: <Done = false>(options: MRT_TableOptions<T>) => Key<T, Done> };
-};
+type IsTuple<TMaybeTuple> = TMaybeTuple extends any[] ? TMaybeTuple : never;
 
-export declare function MaterialReactTable<T>(props: MRT_TableOptions<T>): void;
+type DeepKeys<TObj, TDone = false> = TDone extends true
+    ? never
+    : TObj extends any[] & IsTuple<TObj>
+      ? never
+      : TObj extends object
+        ? keyof TObj | DeepKeysPrefix<TObj, keyof TObj>
+        : never;
 
-//// [Table.tsx]
-import { MaterialReactTable, type MRT_TableOptions } from "./mrt";
+type DeepKeysPrefix<TParent, TPrefix> = TPrefix extends keyof TParent
+    ? DeepKeys<TParent[TPrefix], true>
+    : never;
 
-interface TableProps<T> extends MRT_TableOptions<T> {}
+declare function DataTable<TArg>(props: { accessorKey: DeepKeys<TArg> }): void;
 
-export const Table = <T,>({ defaultColumn, ...props }: TableProps<T>) =>
-    MaterialReactTable({ defaultColumn, ...props });
+export const Table = <TRow extends object>(accessorKey: DeepKeys<TRow>) =>
+    DataTable({ accessorKey });
 
 
-//// [Table.js]
-import { MaterialReactTable } from "./mrt";
-export const Table = ({ defaultColumn, ...props }) => MaterialReactTable({ defaultColumn, ...props });
+//// [genericTypeForwardedConditional.js]
+// repro from #4581
+export const Table = (accessorKey) => DataTable({ accessorKey });

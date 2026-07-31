@@ -1,64 +1,68 @@
 //// [tests/cases/compiler/genericTypeForwardedConditional.ts] ////
 
-=== mrt.d.ts ===
-type Key<T, Done = false> = Done extends true ? never : unknown extends T ? string : T extends (T extends {} ? T : never) ? never : string;
->Key : Symbol(Key, Decl(mrt.d.ts, 0, 0))
->T : Symbol(T, Decl(mrt.d.ts, 0, 9))
->Done : Symbol(Done, Decl(mrt.d.ts, 0, 11))
->Done : Symbol(Done, Decl(mrt.d.ts, 0, 11))
->T : Symbol(T, Decl(mrt.d.ts, 0, 9))
->T : Symbol(T, Decl(mrt.d.ts, 0, 9))
->T : Symbol(T, Decl(mrt.d.ts, 0, 9))
->T : Symbol(T, Decl(mrt.d.ts, 0, 9))
+=== genericTypeForwardedConditional.ts ===
+// repro from #4581
 
-export type MRT_TableOptions<T> = { defaultColumn: (value: T) => void } & {
->MRT_TableOptions : Symbol(MRT_TableOptions, Decl(mrt.d.ts, 0, 139))
->T : Symbol(T, Decl(mrt.d.ts, 2, 29))
->defaultColumn : Symbol(defaultColumn, Decl(mrt.d.ts, 2, 35))
->value : Symbol(value, Decl(mrt.d.ts, 2, 52))
->T : Symbol(T, Decl(mrt.d.ts, 2, 29))
+type IsTuple<TMaybeTuple> = TMaybeTuple extends any[] ? TMaybeTuple : never;
+>IsTuple : Symbol(IsTuple, Decl(genericTypeForwardedConditional.ts, 0, 0))
+>TMaybeTuple : Symbol(TMaybeTuple, Decl(genericTypeForwardedConditional.ts, 2, 13))
+>TMaybeTuple : Symbol(TMaybeTuple, Decl(genericTypeForwardedConditional.ts, 2, 13))
+>TMaybeTuple : Symbol(TMaybeTuple, Decl(genericTypeForwardedConditional.ts, 2, 13))
 
-    defaultColumn: { Cell: <Done = false>(options: MRT_TableOptions<T>) => Key<T, Done> };
->defaultColumn : Symbol(defaultColumn, Decl(mrt.d.ts, 2, 75))
->Cell : Symbol(Cell, Decl(mrt.d.ts, 3, 20))
->Done : Symbol(Done, Decl(mrt.d.ts, 3, 28))
->options : Symbol(options, Decl(mrt.d.ts, 3, 42))
->MRT_TableOptions : Symbol(MRT_TableOptions, Decl(mrt.d.ts, 0, 139))
->T : Symbol(T, Decl(mrt.d.ts, 2, 29))
->Key : Symbol(Key, Decl(mrt.d.ts, 0, 0))
->T : Symbol(T, Decl(mrt.d.ts, 2, 29))
->Done : Symbol(Done, Decl(mrt.d.ts, 3, 28))
+type DeepKeys<TObj, TDone = false> = TDone extends true
+>DeepKeys : Symbol(DeepKeys, Decl(genericTypeForwardedConditional.ts, 2, 76))
+>TObj : Symbol(TObj, Decl(genericTypeForwardedConditional.ts, 4, 14))
+>TDone : Symbol(TDone, Decl(genericTypeForwardedConditional.ts, 4, 19))
+>TDone : Symbol(TDone, Decl(genericTypeForwardedConditional.ts, 4, 19))
 
-};
+    ? never
+    : TObj extends any[] & IsTuple<TObj>
+>TObj : Symbol(TObj, Decl(genericTypeForwardedConditional.ts, 4, 14))
+>IsTuple : Symbol(IsTuple, Decl(genericTypeForwardedConditional.ts, 0, 0))
+>TObj : Symbol(TObj, Decl(genericTypeForwardedConditional.ts, 4, 14))
 
-export declare function MaterialReactTable<T>(props: MRT_TableOptions<T>): void;
->MaterialReactTable : Symbol(MaterialReactTable, Decl(mrt.d.ts, 4, 2))
->T : Symbol(T, Decl(mrt.d.ts, 6, 43))
->props : Symbol(props, Decl(mrt.d.ts, 6, 46))
->MRT_TableOptions : Symbol(MRT_TableOptions, Decl(mrt.d.ts, 0, 139))
->T : Symbol(T, Decl(mrt.d.ts, 6, 43))
+      ? never
+      : TObj extends object
+>TObj : Symbol(TObj, Decl(genericTypeForwardedConditional.ts, 4, 14))
 
-=== Table.tsx ===
-import { MaterialReactTable, type MRT_TableOptions } from "./mrt";
->MaterialReactTable : Symbol(MaterialReactTable, Decl(Table.tsx, 0, 8))
->MRT_TableOptions : Symbol(MRT_TableOptions, Decl(Table.tsx, 0, 28))
+        ? keyof TObj | DeepKeysPrefix<TObj, keyof TObj>
+>TObj : Symbol(TObj, Decl(genericTypeForwardedConditional.ts, 4, 14))
+>DeepKeysPrefix : Symbol(DeepKeysPrefix, Decl(genericTypeForwardedConditional.ts, 10, 16))
+>TObj : Symbol(TObj, Decl(genericTypeForwardedConditional.ts, 4, 14))
+>TObj : Symbol(TObj, Decl(genericTypeForwardedConditional.ts, 4, 14))
 
-interface TableProps<T> extends MRT_TableOptions<T> {}
->TableProps : Symbol(TableProps, Decl(Table.tsx, 0, 66))
->T : Symbol(T, Decl(Table.tsx, 2, 21))
->MRT_TableOptions : Symbol(MRT_TableOptions, Decl(Table.tsx, 0, 28))
->T : Symbol(T, Decl(Table.tsx, 2, 21))
+        : never;
 
-export const Table = <T,>({ defaultColumn, ...props }: TableProps<T>) =>
->Table : Symbol(Table, Decl(Table.tsx, 4, 12))
->T : Symbol(T, Decl(Table.tsx, 4, 22))
->defaultColumn : Symbol(defaultColumn, Decl(Table.tsx, 4, 27))
->props : Symbol(props, Decl(Table.tsx, 4, 42))
->TableProps : Symbol(TableProps, Decl(Table.tsx, 0, 66))
->T : Symbol(T, Decl(Table.tsx, 4, 22))
+type DeepKeysPrefix<TParent, TPrefix> = TPrefix extends keyof TParent
+>DeepKeysPrefix : Symbol(DeepKeysPrefix, Decl(genericTypeForwardedConditional.ts, 10, 16))
+>TParent : Symbol(TParent, Decl(genericTypeForwardedConditional.ts, 12, 20))
+>TPrefix : Symbol(TPrefix, Decl(genericTypeForwardedConditional.ts, 12, 28))
+>TPrefix : Symbol(TPrefix, Decl(genericTypeForwardedConditional.ts, 12, 28))
+>TParent : Symbol(TParent, Decl(genericTypeForwardedConditional.ts, 12, 20))
 
-    MaterialReactTable({ defaultColumn, ...props });
->MaterialReactTable : Symbol(MaterialReactTable, Decl(Table.tsx, 0, 8))
->defaultColumn : Symbol(defaultColumn, Decl(Table.tsx, 5, 24))
->props : Symbol(props, Decl(Table.tsx, 4, 42))
+    ? DeepKeys<TParent[TPrefix], true>
+>DeepKeys : Symbol(DeepKeys, Decl(genericTypeForwardedConditional.ts, 2, 76))
+>TParent : Symbol(TParent, Decl(genericTypeForwardedConditional.ts, 12, 20))
+>TPrefix : Symbol(TPrefix, Decl(genericTypeForwardedConditional.ts, 12, 28))
+
+    : never;
+
+declare function DataTable<TArg>(props: { accessorKey: DeepKeys<TArg> }): void;
+>DataTable : Symbol(DataTable, Decl(genericTypeForwardedConditional.ts, 14, 12))
+>TArg : Symbol(TArg, Decl(genericTypeForwardedConditional.ts, 16, 27))
+>props : Symbol(props, Decl(genericTypeForwardedConditional.ts, 16, 33))
+>accessorKey : Symbol(accessorKey, Decl(genericTypeForwardedConditional.ts, 16, 41))
+>DeepKeys : Symbol(DeepKeys, Decl(genericTypeForwardedConditional.ts, 2, 76))
+>TArg : Symbol(TArg, Decl(genericTypeForwardedConditional.ts, 16, 27))
+
+export const Table = <TRow extends object>(accessorKey: DeepKeys<TRow>) =>
+>Table : Symbol(Table, Decl(genericTypeForwardedConditional.ts, 18, 12))
+>TRow : Symbol(TRow, Decl(genericTypeForwardedConditional.ts, 18, 22))
+>accessorKey : Symbol(accessorKey, Decl(genericTypeForwardedConditional.ts, 18, 43))
+>DeepKeys : Symbol(DeepKeys, Decl(genericTypeForwardedConditional.ts, 2, 76))
+>TRow : Symbol(TRow, Decl(genericTypeForwardedConditional.ts, 18, 22))
+
+    DataTable({ accessorKey });
+>DataTable : Symbol(DataTable, Decl(genericTypeForwardedConditional.ts, 14, 12))
+>accessorKey : Symbol(accessorKey, Decl(genericTypeForwardedConditional.ts, 19, 15))
 
