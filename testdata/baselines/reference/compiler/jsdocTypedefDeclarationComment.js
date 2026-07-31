@@ -3,6 +3,9 @@
 //// [main.js]
 export const value = 0;
 
+/** Use `@typedef` when documenting types. */
+export const documented = 1;
+
 /** Comment on the `Inline` type @typedef {string} Inline */
 
 /**
@@ -17,6 +20,8 @@ export const value = 0;
 
 //// [main.d.ts]
 export declare const value = 0;
+/** Use `@typedef` when documenting types. */
+export declare const documented = 1;
 /**
  * Comment on the `Inline` type
  */

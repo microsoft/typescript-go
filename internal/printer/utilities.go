@@ -862,16 +862,30 @@ func isConvertedJSDocDeclarationComment(text string, comment ast.CommentRange) b
 		return false
 	}
 	commentText := text[comment.Pos():comment.End()]
-	for {
-		at := strings.IndexByte(commentText, '@')
-		if at < 0 {
-			return false
+	inBackticks := false
+	inFencedCodeBlock := false
+	for i := 0; i < len(commentText); {
+		if commentText[i] == '`' {
+			end := i + 1
+			for end < len(commentText) && commentText[end] == '`' {
+				end++
+			}
+			if end-i >= 3 {
+				inFencedCodeBlock = !inFencedCodeBlock
+				inBackticks = false
+			} else if !inFencedCodeBlock && (end-i)%2 == 1 {
+				inBackticks = !inBackticks
+			}
+			i = end
+			continue
 		}
-		commentText = commentText[at+1:]
-		if isJSDocTag(commentText, "typedef") || isJSDocTag(commentText, "callback") {
+		if commentText[i] == '@' && !inBackticks && !inFencedCodeBlock &&
+			(isJSDocTag(commentText[i+1:], "typedef") || isJSDocTag(commentText[i+1:], "callback")) {
 			return true
 		}
+		i++
 	}
+	return false
 }
 
 func isJSDocTag(text string, tag string) bool {

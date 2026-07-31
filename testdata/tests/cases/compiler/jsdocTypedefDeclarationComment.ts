@@ -7,6 +7,9 @@
 
 export const value = 0;
 
+/** Use `@typedef` when documenting types. */
+export const documented = 1;
+
 /** Comment on the `Inline` type @typedef {string} Inline */
 
 /**
