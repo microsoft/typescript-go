@@ -23,6 +23,7 @@ import {
     configurationMiddleware,
     sendNotificationMiddleware,
 } from "./configurationMiddleware";
+import { workspaceSymbolSendRequestMiddleware } from "./workspaceSymbolMiddleware";
 import { registerMultiDocumentHighlightFeature } from "./languageFeatures/documentHighlight";
 import { registerHoverFeature } from "./languageFeatures/hover";
 import { registerOnAutoInsertFeature } from "./languageFeatures/onAutoInsert";
@@ -97,6 +98,7 @@ export class Client implements vscode.Disposable {
                     },
                 },
                 sendNotification: sendNotificationMiddleware,
+                sendRequest: workspaceSymbolSendRequestMiddleware,
                 provideHover: () => undefined,
             },
             diagnosticCollectionName: "typescript-push",
