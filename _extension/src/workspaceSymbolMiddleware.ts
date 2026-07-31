@@ -21,6 +21,10 @@ export function workspaceSymbolSendRequestMiddleware<P, R>(
     next: (type: string | MessageSignature, params?: P, token?: CancellationToken) => Promise<R>,
 ): Promise<R> {
     const method = typeof type === "string" ? type : type.method;
+    if (method !== "workspace/symbol") {
+        return next(type, params, token);
+    }
+
     const scope = readUnifiedConfig<"allOpenProjects" | "currentProject">(
         "workspaceSymbols.scope",
         "typescript",
@@ -28,7 +32,7 @@ export function workspaceSymbolSendRequestMiddleware<P, R>(
         undefined,
         "allOpenProjects",
     );
-    if (method !== "workspace/symbol" || scope !== "currentProject") {
+    if (scope !== "currentProject") {
         return next(type, params, token);
     }
 
