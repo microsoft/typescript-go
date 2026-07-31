@@ -648,14 +648,6 @@ func isImmediatelyInvokedFunctionExpressionOrArrowFunction(node *ast.Expression)
 	return ast.IsFunctionExpression(node) || ast.IsArrowFunction(node)
 }
 
-func IsFileLevelUniqueName(sourceFile *ast.SourceFile, name string, hasGlobalName func(string) bool) bool {
-	if hasGlobalName != nil && hasGlobalName(name) {
-		return false
-	}
-	_, ok := sourceFile.Identifiers[name]
-	return !ok
-}
-
 func hasLeadingHash(text string) bool {
 	return len(text) > 0 && text[0] == '#'
 }
@@ -869,19 +861,32 @@ func isConvertedJSDocDeclarationComment(text string, comment ast.CommentRange) b
 	if !isJSDocLikeText(text, comment) {
 		return false
 	}
-	for line := range strings.Lines(text[comment.Pos():comment.End()]) {
-		line = strings.TrimSpace(line)
-		line = strings.TrimSpace(strings.TrimPrefix(line, "*"))
-		if isJSDocTagLine(line, "typedef") || isJSDocTagLine(line, "callback") {
+	commentText := text[comment.Pos():comment.End()]
+	for {
+		at := strings.IndexByte(commentText, '@')
+		if at < 0 {
+			return false
+		}
+		commentText = commentText[at+1:]
+		if isJSDocTag(commentText, "typedef") || isJSDocTag(commentText, "callback") {
 			return true
 		}
 	}
-	return false
 }
 
-func isJSDocTagLine(line string, tag string) bool {
-	tag = "@" + tag
-	return strings.HasPrefix(line, tag) && (len(line) == len(tag) || line[len(tag)] == ' ' || line[len(tag)] == '\t')
+func isJSDocTag(text string, tag string) bool {
+	if !strings.HasPrefix(text, tag) {
+		return false
+	}
+	if len(text) == len(tag) {
+		return true
+	}
+	switch text[len(tag)] {
+	case ' ', '\t', '\n', '\r', '}', '*':
+		return true
+	default:
+		return false
+	}
 }
 
 func IsPinnedComment(text string, comment ast.CommentRange) bool {

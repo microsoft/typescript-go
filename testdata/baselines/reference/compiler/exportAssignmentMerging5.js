@@ -29,13 +29,13 @@ let v1 = { x: "test" };
 
 
 //// [a.d.ts]
-export type Foo = {
-    x: string;
-};
-declare const _default: {
+declare const _exports: {
     a: number;
     b: string;
 };
-export = _default;
+export = _exports;
+export type Foo = {
+    x: string;
+};
 //// [b.d.ts]
 export {};

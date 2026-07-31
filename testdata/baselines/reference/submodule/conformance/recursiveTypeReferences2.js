@@ -56,9 +56,6 @@ const p = {};
 
 
 //// [bug39372.d.ts]
-/** @typedef {ReadonlyArray<Json>} JsonArray */
-/** @typedef {{ readonly [key: string]: Json }} JsonRecord */
-/** @typedef {boolean | number | string | null | JsonRecord | JsonArray | readonly []} Json */
 type JsonArray = ReadonlyArray<Json>;
 type JsonRecord = {
     readonly [key: string]: Json;

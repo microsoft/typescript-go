@@ -4,6 +4,8 @@
 export const value = 0;
 >value : Symbol(value, Decl(main.js, 0, 12))
 
+/** Comment on the `Inline` type @typedef {string} Inline */
+
 /**
  * Comment on the `Foo` type
  *

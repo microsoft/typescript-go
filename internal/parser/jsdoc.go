@@ -691,6 +691,7 @@ loop:
 	p.jsdocTagCommentsSpace = comments[:0]
 
 	comments = removeLeadingNewlines(comments)
+	comments = removeTrailingWhitespace(comments)
 	if len(comments) > 0 {
 		var commentStart int
 		if linkEnd > -1 {
@@ -1348,7 +1349,6 @@ func (p *Parser) parseJSDocIdentifierName(diagnosticMessage *diagnostics.Message
 	pos := p.scanner.TokenStart()
 	end := p.scanner.TokenEnd()
 	text := p.scanner.TokenValue()
-	p.internIdentifier(text)
 	p.nextTokenJSDoc()
 	return p.finishNodeWithEnd(p.newIdentifier(text), pos, end)
 }

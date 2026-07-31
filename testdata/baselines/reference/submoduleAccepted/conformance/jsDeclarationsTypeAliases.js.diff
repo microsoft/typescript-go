@@ -8,7 +8,16 @@
  export type PropName = string | number | symbol;
  /**
   * Callback
-@@= skipped -17, +18 lines =@@
+@@= skipped -13, +14 lines =@@
+  */
+ export type Identity<T> = (x: T) => T;
+ //// [mixed.d.ts]
++declare const _exports: {
++    doTheThing: typeof doTheThing;
++    ExportedThing: typeof ExportedThing;
++};
++export = _exports;
+ export type SomeType = {
      x: string;
  } | number | LocalThing | ExportedThing;
  /**
@@ -24,11 +33,6 @@
 +declare class ExportedThing {
      z: string;
  }
-+declare const _default: {
-+    doTheThing: typeof doTheThing;
-+    ExportedThing: typeof ExportedThing;
-+};
-+export = _default;
  declare class LocalThing {
      y: string;
  }

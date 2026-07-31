@@ -1,10 +1,9 @@
 --- old.jsDeclarationsTypedefAndImportTypes.js
 +++ new.jsDeclarationsTypedefAndImportTypes.js
-@@= skipped -66, +66 lines =@@
-
+@@= skipped -67, +67 lines =@@
 
  //// [conn.d.ts]
--export = Conn;
+ export = Conn;
 -/**
 - * @typedef {string | number} Whatever
 - */
@@ -18,8 +17,11 @@
 -    export { Whatever };
 -}
 -type Whatever = string | number;
-+export = Conn;
  //// [usage.d.ts]
++declare const _exports: {
++    Wrap: typeof Wrap;
++};
++export = _exports;
  export type Conn = import("./conn");
 -/**
 - * @typedef {import("./conn")} Conn
@@ -37,7 +39,3 @@
 -    /** @type {import("./conn").Whatever} */
 -    another: import("./conn").Whatever;
  }
-+declare const _default: {
-+    Wrap: typeof Wrap;
-+};
-+export = _default;

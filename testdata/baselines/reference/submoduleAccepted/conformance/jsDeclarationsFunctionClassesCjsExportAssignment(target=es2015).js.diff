@@ -1,11 +1,6 @@
 --- old.jsDeclarationsFunctionClassesCjsExportAssignment(target=es2015).js
 +++ new.jsDeclarationsFunctionClassesCjsExportAssignment(target=es2015).js
-@@= skipped -140, +140 lines =@@
-
-
- //// [timer.d.ts]
--export = Timer;
- /**
+@@= skipped -145, +145 lines =@@
   * @param {number} timeout
   */
  declare function Timer(timeout: number): void;
@@ -16,18 +11,15 @@
 -    constructor(timeout: number);
 -    timeout: number;
 -}
-+export = Timer;
  //// [context.d.ts]
--export = Context;
--/**
-- * Imports
+ export = Context;
+ /**
+  * Imports
 - *
 - * @typedef {import("./timer")} Timer
 - * @typedef {import("./hook")} Hook
 - * @typedef {import("./hook").HookHandler} HookHandler
 - */
-+/**
-+ * Imports
 + */
 +export type Timer = import("./timer");
 +/**
@@ -142,9 +134,8 @@
 -    timer: Timer;
 -    hook: Hook;
 -};
-+export = Context;
  //// [hook.d.ts]
--export = Hook;
+ export = Hook;
 -/**
 - * @typedef {(arg: import("./context")) => void} HookHandler
 - */
@@ -167,4 +158,3 @@
 -    export { HookHandler };
 -}
 -type HookHandler = (arg: import("./context")) => void;
-+export = Hook;

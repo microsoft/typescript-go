@@ -119,6 +119,11 @@ export type MixinName<T> = T & {
  */
 export type Identity<T> = (x: T) => T;
 //// [mixed.d.ts]
+declare const _exports: {
+    doTheThing: typeof doTheThing;
+    ExportedThing: typeof ExportedThing;
+};
+export = _exports;
 export type SomeType = {
     x: string;
 } | number | LocalThing | ExportedThing;
@@ -130,11 +135,6 @@ declare function doTheThing(x: number): SomeType;
 declare class ExportedThing {
     z: string;
 }
-declare const _default: {
-    doTheThing: typeof doTheThing;
-    ExportedThing: typeof ExportedThing;
-};
-export = _default;
 declare class LocalThing {
     y: string;
 }

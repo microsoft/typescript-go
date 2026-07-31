@@ -78,8 +78,6 @@ export declare namespace myTypes {
 export declare namespace myTypes {
     export type typeC = myTypes.typeB | Function;
 }
-/** @typedef {string|RegExp|Array<string|RegExp>} myTypes.typeA */
-/** @typedef {myTypes.typeB|Function} myTypes.typeC */
 export { myTypes };
 //// [file2.d.ts]
 import { myTypes } from './file.js';
@@ -92,7 +90,6 @@ declare const testFnTypes: Record<string, any>;
 export declare namespace testFnTypes {
     export type input = boolean | myTypes.typeC;
 }
-/** @typedef {boolean|myTypes.typeC} testFnTypes.input */
 /**
  * @function testFn
  * @description A test function.

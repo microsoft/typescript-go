@@ -62,18 +62,17 @@ const test = (base) => {
 
 
 //// [base.d.ts]
+export = BaseFactory;
 declare class Base {
     constructor();
 }
 declare function BaseFactory(): Base;
 declare namespace BaseFactory {
-    var Base: typeof Base;
+    export { Base };
 }
-export = BaseFactory;
 //// [file.d.ts]
 type BaseFactory = import('./base');
 type BaseFactoryFactory = (factory: import('./base')) => any;
-/** @typedef {import('./base')} BaseFactory */
 /** @enum {import('./base')} */
 declare const couldntThinkOfAny: {};
 /**

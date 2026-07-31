@@ -7,6 +7,8 @@
 
 export const value = 0;
 
+/** Comment on the `Inline` type @typedef {string} Inline */
+
 /**
  * Comment on the `Foo` type
  *

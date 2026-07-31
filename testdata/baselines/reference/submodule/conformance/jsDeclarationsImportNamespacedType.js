@@ -16,7 +16,6 @@ export var dummy = 1
 export declare namespace Dotted {
     export type Name = number;
 }
-/** @typedef {number} Dotted.Name */
 export declare var dummy: number;
 //// [file.d.ts]
 export {};

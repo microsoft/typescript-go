@@ -3,6 +3,8 @@
 //// [main.js]
 export const value = 0;
 
+/** Comment on the `Inline` type @typedef {string} Inline */
+
 /**
  * Comment on the `Foo` type
  *
@@ -15,6 +17,10 @@ export const value = 0;
 
 //// [main.d.ts]
 export declare const value = 0;
+/**
+ * Comment on the `Inline` type
+ */
+export type Inline = string;
 /**
  * Comment on the `Foo` type
  */
