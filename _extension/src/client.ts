@@ -23,7 +23,6 @@ import {
     configurationMiddleware,
     sendNotificationMiddleware,
 } from "./configurationMiddleware";
-import { workspaceSymbolSendRequestMiddleware } from "./workspaceSymbolMiddleware";
 import { registerMultiDocumentHighlightFeature } from "./languageFeatures/documentHighlight";
 import { registerHoverFeature } from "./languageFeatures/hover";
 import { registerOnAutoInsertFeature } from "./languageFeatures/onAutoInsert";
@@ -37,6 +36,7 @@ import {
     readNativePreviewConfig,
 } from "./util";
 import { getLanguageForUri } from "./util";
+import { workspaceSymbolSendRequestMiddleware } from "./workspaceSymbolMiddleware";
 
 export class Client implements vscode.Disposable {
     private outputChannel: vscode.LogOutputChannel;

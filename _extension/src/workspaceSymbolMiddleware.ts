@@ -1,7 +1,11 @@
 import * as vscode from "vscode";
 import type { CancellationToken } from "vscode";
 import type { MessageSignature } from "vscode-languageserver-protocol";
-import { disabledSchemes, isSupportedLanguageMode, readUnifiedConfig } from "./util";
+import {
+    disabledSchemes,
+    isSupportedLanguageMode,
+    readUnifiedConfig,
+} from "./util";
 
 function getDocument(): vscode.TextDocument | undefined {
     const activeDocument = vscode.window.activeTextEditor?.document;
