@@ -95,7 +95,6 @@ type Parser struct {
 	jsdocTagCommentsSpace      []string
 	jsdocTagCommentsPartsSpace []*ast.Node
 	reparseList                []*ast.Node
-	commonJSModuleIndicator    *ast.Node
 
 	currentParent        *ast.Node
 	setParentFromContext ast.Visitor
@@ -467,7 +466,6 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	p.processPragmasIntoFields(result)
 	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
 	result.SetJSDocDiagnostics(attachFileToDiagnostics(p.jsdocDiagnostics, result))
-	result.CommonJSModuleIndicator = p.commonJSModuleIndicator
 	result.IsDeclarationFile = isDeclarationFile
 	result.LanguageVariant = p.languageVariant
 	result.ScriptKind = p.scriptKind
@@ -4535,10 +4533,11 @@ func (p *Parser) nextIsUnParenthesizedAsyncArrowFunction() bool {
 			return false
 		}
 		// Check for un-parenthesized AsyncArrowFunction
-		expr := p.parseBinaryExpressionOrHigher(ast.OperatorPrecedenceLowest)
-		if !p.hasPrecedingLineBreak() && expr.Kind == ast.KindIdentifier && p.token == ast.KindEqualsGreaterThanToken {
-			return true
+		if !p.isIdentifier() {
+			return false
 		}
+		p.nextTokenWithoutCheck()
+		return !p.hasPrecedingLineBreak() && p.token == ast.KindEqualsGreaterThanToken
 	}
 	return false
 }
