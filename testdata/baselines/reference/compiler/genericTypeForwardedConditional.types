@@ -1,0 +1,45 @@
+//// [tests/cases/compiler/genericTypeForwardedConditional.ts] ////
+
+=== mrt.d.ts ===
+type Key<T, Done = false> = Done extends true ? never : unknown extends T ? string : T extends (T extends {} ? T : never) ? never : string;
+>Key : Key<T, Done>
+>false : false
+>true : true
+
+export type MRT_TableOptions<T> = { defaultColumn: (value: T) => void } & {
+>MRT_TableOptions : MRT_TableOptions<T>
+>defaultColumn : (value: T) => void
+>value : T
+
+    defaultColumn: { Cell: <Done = false>(options: MRT_TableOptions<T>) => Key<T, Done> };
+>defaultColumn : { Cell: <Done = false>(options: MRT_TableOptions<T>) => Key<T, Done>; }
+>Cell : <Done = false>(options: MRT_TableOptions<T>) => Key<T, Done>
+>false : false
+>options : MRT_TableOptions<T>
+
+};
+
+export declare function MaterialReactTable<T>(props: MRT_TableOptions<T>): void;
+>MaterialReactTable : <T>(props: MRT_TableOptions<T>) => void
+>props : MRT_TableOptions<T>
+
+=== Table.tsx ===
+import { MaterialReactTable, type MRT_TableOptions } from "./mrt";
+>MaterialReactTable : <T>(props: MRT_TableOptions<T>) => void
+>MRT_TableOptions : any
+
+interface TableProps<T> extends MRT_TableOptions<T> {}
+
+export const Table = <T,>({ defaultColumn, ...props }: TableProps<T>) =>
+>Table : <T>({ defaultColumn, ...props }: TableProps<T>) => void
+><T,>({ defaultColumn, ...props }: TableProps<T>) =>    MaterialReactTable({ defaultColumn, ...props }) : <T>({ defaultColumn, ...props }: TableProps<T>) => void
+>defaultColumn : ((value: T) => void) & { Cell: <Done = false>(options: MRT_TableOptions<T>) => import("./mrt").Key<T, Done>; }
+>props : {}
+
+    MaterialReactTable({ defaultColumn, ...props });
+>MaterialReactTable({ defaultColumn, ...props }) : void
+>MaterialReactTable : <T_1>(props: MRT_TableOptions<T_1>) => void
+>{ defaultColumn, ...props } : { defaultColumn: ((value: T) => void) & { Cell: <Done = false>(options: MRT_TableOptions<T>) => import("./mrt").Key<T, Done>; }; }
+>defaultColumn : ((value: T) => void) & { Cell: <Done = false>(options: MRT_TableOptions<T>) => import("./mrt").Key<T, Done>; }
+>props : {}
+
