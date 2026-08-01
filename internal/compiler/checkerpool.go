@@ -4,6 +4,7 @@ import (
 	"context"
 	"math"
 	"slices"
+	"sort"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -38,6 +39,7 @@ const (
 	checkerAssociationTextWeightDivisor            = 100
 	checkerAssociationSourceFileWeightMultiplier   = 4
 	checkerAssociationBalancePenaltyMultiplier     = 16
+	checkerAssociationSourceFirstPenaltyMultiplier = 12
 	checkerAssociationStrongBalanceMinCheckerCount = 4
 )
 
@@ -47,12 +49,20 @@ const (
 // convex load penalty. The published alpha = m*sqrt(k)/n^(3/2) becomes
 // m*sqrt(k)/W^(3/2), where W is total estimated checker work.
 //
-// Files are processed in stable program order, which avoids clustering semantic
-// roots that happen to have high import degree. With four or more checkers, the
-// stronger balance penalty accounts for demand-driven semantic work that syntax
-// and import weights cannot predict. The hard cap keeps estimated work within 1%
-// of average. Ties are deterministic.
+// Files are normally processed in stable program order. When declaration files
+// account for less than half of one checker's average estimated load, source files
+// are processed first in descending weight order to balance semantic roots without
+// sacrificing meaningful declaration-file locality. The hard cap keeps estimated
+// work within 1% of average. Ties are deterministic.
 func getCheckerAssociations(fileWeights []int, adjacentFiles [][]int, checkerCount int) []int {
+	penaltyMultiplier := 1
+	if checkerCount >= checkerAssociationStrongBalanceMinCheckerCount {
+		penaltyMultiplier = checkerAssociationBalancePenaltyMultiplier
+	}
+	return getCheckerAssociationsInOrder(fileWeights, adjacentFiles, nil, checkerCount, penaltyMultiplier)
+}
+
+func getCheckerAssociationsInOrder(fileWeights []int, adjacentFiles [][]int, fileOrder []int, checkerCount int, penaltyMultiplier int) []int {
 	if len(fileWeights) == 0 {
 		return nil
 	}
@@ -74,13 +84,15 @@ func getCheckerAssociations(fileWeights []int, adjacentFiles [][]int, checkerCou
 	averageCheckerWeight := (totalWeight + checkerCount - 1) / checkerCount
 	maxCheckerWeight := max(maxFileWeight, averageCheckerWeight+averageCheckerWeight/100)
 	totalWeightFloat := float64(totalWeight)
-	alpha := float64(edgeCount/2) * math.Sqrt(float64(checkerCount)) / (totalWeightFloat * math.Sqrt(totalWeightFloat))
-	if checkerCount >= checkerAssociationStrongBalanceMinCheckerCount {
-		alpha *= checkerAssociationBalancePenaltyMultiplier
-	}
+	alpha := float64(penaltyMultiplier) * float64(edgeCount/2) * math.Sqrt(float64(checkerCount)) / (totalWeightFloat * math.Sqrt(totalWeightFloat))
 	neighborCounts := make([]int, checkerCount)
 
-	for fileIndex := range fileWeights {
+	for position := range fileWeights {
+		fileIndex := position
+		if fileOrder != nil {
+			fileIndex = fileOrder[position]
+		}
+
 		clear(neighborCounts)
 		for _, adjacentFile := range adjacentFiles[fileIndex] {
 			if checkerIndex := associations[adjacentFile]; checkerIndex >= 0 {
@@ -117,12 +129,34 @@ func getCheckerAssociations(fileWeights []int, adjacentFiles [][]int, checkerCou
 	return associations
 }
 
-func getCheckerAssociationBaseWeight(nodeCount int, textLength int, isDeclarationFile bool, checkerCount int) int {
-	weight := max(nodeCount+textLength/checkerAssociationTextWeightDivisor, 1)
-	if checkerCount >= checkerAssociationStrongBalanceMinCheckerCount && !isDeclarationFile {
-		weight *= checkerAssociationSourceFileWeightMultiplier
+func getCheckerAssociationOrder(fileWeights []int, isDeclarationFile []bool, sourceFirst bool) []int {
+	if !sourceFirst {
+		return nil
 	}
-	return weight
+	fileOrder := make([]int, len(fileWeights))
+	for i := range fileOrder {
+		fileOrder[i] = i
+	}
+	sort.Slice(fileOrder, func(i, j int) bool {
+		left := fileOrder[i]
+		right := fileOrder[j]
+		if isDeclarationFile[left] != isDeclarationFile[right] {
+			return !isDeclarationFile[left]
+		}
+		if fileWeights[left] != fileWeights[right] {
+			return fileWeights[left] > fileWeights[right]
+		}
+		return left < right
+	})
+	return fileOrder
+}
+
+func getCheckerAssociationBaseWeight(nodeCount int, textLength int) int {
+	return max(nodeCount+textLength/checkerAssociationTextWeightDivisor, 1)
+}
+
+func shouldPrioritizeSourceFiles(totalWeight int, declarationWeight int, checkerCount int) bool {
+	return declarationWeight*checkerCount*2 <= totalWeight
 }
 
 // getCheckerAssociationWeights combines local estimated work with dependency
@@ -228,13 +262,36 @@ func (p *checkerPool) createCheckers() {
 		if checkerCount > 1 {
 			baseWeights := make([]int, len(p.program.files))
 			importCounts := make([]int, len(p.program.files))
+			isDeclarationFile := make([]bool, len(p.program.files))
+			totalBaseWeight := 0
+			declarationBaseWeight := 0
 			for i, file := range p.program.files {
-				baseWeights[i] = getCheckerAssociationBaseWeight(file.NodeCount, len(file.Text()), file.IsDeclarationFile, checkerCount)
+				baseWeight := getCheckerAssociationBaseWeight(file.NodeCount, len(file.Text()))
+				totalBaseWeight += baseWeight
+				if file.IsDeclarationFile {
+					declarationBaseWeight += baseWeight
+				}
+				baseWeights[i] = baseWeight
 				importCounts[i] = len(file.Imports())
+				isDeclarationFile[i] = file.IsDeclarationFile
+			}
+			sourceFirst := shouldPrioritizeSourceFiles(totalBaseWeight, declarationBaseWeight, checkerCount)
+			penaltyMultiplier := checkerAssociationSourceFirstPenaltyMultiplier
+			if !sourceFirst {
+				penaltyMultiplier = 1
+				if checkerCount >= checkerAssociationStrongBalanceMinCheckerCount {
+					penaltyMultiplier = checkerAssociationBalancePenaltyMultiplier
+					for i, declaration := range isDeclarationFile {
+						if !declaration {
+							baseWeights[i] *= checkerAssociationSourceFileWeightMultiplier
+						}
+					}
+				}
 			}
 			fileWeights := getCheckerAssociationWeights(baseWeights, importCounts)
 			adjacentFiles := p.getImportAdjacency()
-			associations = getCheckerAssociations(fileWeights, adjacentFiles, checkerCount)
+			fileOrder := getCheckerAssociationOrder(fileWeights, isDeclarationFile, sourceFirst)
+			associations = getCheckerAssociationsInOrder(fileWeights, adjacentFiles, fileOrder, checkerCount, penaltyMultiplier)
 		}
 		p.fileAssociations = make(map[*ast.SourceFile]*checker.Checker, len(p.program.files))
 		for i, file := range p.program.files {

@@ -7,40 +7,28 @@ import (
 
 func TestGetCheckerAssociationBaseWeight(t *testing.T) {
 	t.Parallel()
-
-	tests := []struct {
-		name              string
-		isDeclarationFile bool
-		checkerCount      int
-		want              int
-	}{
-		{
-			name:              "two checkers use syntax weight",
-			isDeclarationFile: false,
-			checkerCount:      2,
-			want:              125,
-		},
-		{
-			name:              "four checkers increase source file weight",
-			isDeclarationFile: false,
-			checkerCount:      4,
-			want:              500,
-		},
-		{
-			name:              "declaration file weight is unchanged",
-			isDeclarationFile: true,
-			checkerCount:      4,
-			want:              125,
-		},
+	if got := getCheckerAssociationBaseWeight(100, 2500); got != 125 {
+		t.Fatalf("getCheckerAssociationBaseWeight() = %d, want 125", got)
 	}
+}
 
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			t.Parallel()
-			if got := getCheckerAssociationBaseWeight(100, 2500, test.isDeclarationFile, test.checkerCount); got != test.want {
-				t.Fatalf("getCheckerAssociationBaseWeight() = %d, want %d", got, test.want)
-			}
-		})
+func TestShouldPrioritizeSourceFiles(t *testing.T) {
+	t.Parallel()
+	if !shouldPrioritizeSourceFiles(1000, 100, 4) {
+		t.Fatal("shouldPrioritizeSourceFiles() = false, want true")
+	}
+	if shouldPrioritizeSourceFiles(1000, 126, 4) {
+		t.Fatal("shouldPrioritizeSourceFiles() = true, want false")
+	}
+}
+
+func TestGetCheckerAssociationOrder(t *testing.T) {
+	t.Parallel()
+	if got := getCheckerAssociationOrder([]int{5, 10, 7, 2}, []bool{true, false, false, true}, true); !slices.Equal(got, []int{1, 2, 0, 3}) {
+		t.Fatalf("getCheckerAssociationOrder() = %v, want [1 2 0 3]", got)
+	}
+	if got := getCheckerAssociationOrder([]int{5}, []bool{false}, false); got != nil {
+		t.Fatalf("getCheckerAssociationOrder() = %v, want nil", got)
 	}
 }
 
