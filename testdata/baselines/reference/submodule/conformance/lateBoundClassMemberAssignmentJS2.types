@@ -11,7 +11,7 @@ export class MyClass {
     constructor() {
         this[_sym] = "ok";
 >this[_sym] = "ok" : "ok"
->this[_sym] : any
+>this[_sym] : string
 >this : this
 >_sym : "my-fake-sym"
 >"ok" : "ok"
@@ -22,14 +22,14 @@ export class MyClass {
 
         this[_sym] = "yep";
 >this[_sym] = "yep" : "yep"
->this[_sym] : any
+>this[_sym] : string
 >this : this
 >_sym : "my-fake-sym"
 >"yep" : "yep"
 
         const x = this[_sym];
->x : any
->this[_sym] : any
+>x : string
+>this[_sym] : string
 >this : this
 >_sym : "my-fake-sym"
     }

@@ -1,0 +1,39 @@
+//// [tests/cases/compiler/jsClassUniqueSymbolExpando.ts] ////
+
+=== index.js ===
+const key = Symbol("key");
+>key : unique symbol
+>Symbol("key") : unique symbol
+>Symbol : SymbolConstructor
+>"key" : "key"
+
+class Container {
+>Container : Container
+
+    constructor() {
+        this[key] = 1;
+>this[key] = 1 : 1
+>this[key] : number
+>this : this
+>key : unique symbol
+>1 : 1
+    }
+
+    read() {
+>read : () => number
+
+        return this[key];
+>this[key] : number
+>this : this
+>key : unique symbol
+    }
+}
+
+const value = new Container().read();
+>value : number
+>new Container().read() : number
+>new Container().read : () => number
+>new Container() : Container
+>Container : typeof Container
+>read : () => number
+

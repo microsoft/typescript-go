@@ -16053,9 +16053,10 @@ func (c *Checker) getResolvedMembersOrExportsOfSymbol(symbol *ast.Symbol, resolu
 				}
 			}
 		}
-		if isStatic {
-			if assignmentSymbol := symbol.Exports[ast.InternalSymbolNameAssignmentDeclaration]; assignmentSymbol != nil {
-				for _, member := range assignmentSymbol.Declarations {
+		if assignmentSymbol := symbol.Exports[ast.InternalSymbolNameAssignmentDeclaration]; assignmentSymbol != nil {
+			for _, member := range assignmentSymbol.Declarations {
+				isInstanceMember := ast.GetAssignmentDeclarationKind(member) == ast.JSDeclarationKindThisProperty
+				if isStatic == !isInstanceMember {
 					if c.hasLateBindableName(member) {
 						if lateSymbols == nil {
 							lateSymbols = make(ast.SymbolTable)

@@ -1,0 +1,31 @@
+//// [tests/cases/compiler/jsClassUniqueSymbolExpando.ts] ////
+
+=== index.js ===
+const key = Symbol("key");
+>key : Symbol(key, Decl(index.js, 0, 5))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
+
+class Container {
+>Container : Symbol(Container, Decl(index.js, 0, 26))
+
+    constructor() {
+        this[key] = 1;
+>this : Symbol(Container, Decl(index.js, 0, 26))
+>key : Symbol(key, Decl(index.js, 0, 5))
+    }
+
+    read() {
+>read : Symbol(Container.read, Decl(index.js, 5, 5))
+
+        return this[key];
+>this : Symbol(Container, Decl(index.js, 0, 26))
+>key : Symbol(key, Decl(index.js, 0, 5))
+    }
+}
+
+const value = new Container().read();
+>value : Symbol(value, Decl(index.js, 12, 5))
+>new Container().read : Symbol(Container.read, Decl(index.js, 5, 5))
+>Container : Symbol(Container, Decl(index.js, 0, 26))
+>read : Symbol(Container.read, Decl(index.js, 5, 5))
+
