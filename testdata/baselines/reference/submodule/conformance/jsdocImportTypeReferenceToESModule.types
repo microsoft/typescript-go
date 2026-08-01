@@ -8,10 +8,10 @@ export var config: {}
 /** @param {import('./ex')} a */
 function demo(a) {
 >demo : (a: import('./ex')) => void
->a : any
+>a : error
 
     a.config
->a.config : any
+>a.config : error
 >a : any
 >config : any
 }

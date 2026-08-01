@@ -14,10 +14,10 @@ export = config;
 /** @param {import('./ex')} a */
 function demo(a) {
 >demo : (a: import('./ex')) => void
->a : any
+>a : error
 
     a.fix
->a.fix : any
+>a.fix : error
 >a : any
 >fix : any
 }

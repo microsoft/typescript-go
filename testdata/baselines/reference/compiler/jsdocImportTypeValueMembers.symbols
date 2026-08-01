@@ -1,0 +1,55 @@
+//// [tests/cases/compiler/jsdocImportTypeValueMembers.ts] ////
+
+=== index.js ===
+/** @typedef {import("./values").VALUE} VALUE */
+/** @typedef {import("./mixed").idsSymbol} IDsSymbol */
+
+/** @type {VALUE} */
+const value = "value";
+>value : Symbol(value, Decl(index.js, 4, 5))
+
+/** @type {IDsSymbol} */
+const id = require("./mixed").idsSymbol;
+>id : Symbol(id, Decl(index.js, 6, 5))
+>require("./mixed").idsSymbol : Symbol(idsSymbol, Decl(mixed.js, 2, 23))
+>require : Symbol(require)
+>idsSymbol : Symbol(idsSymbol, Decl(mixed.js, 2, 23))
+
+/** @type {typeof import("./values").VALUE} */
+const valueType = "value";
+>valueType : Symbol(valueType, Decl(index.js, 8, 5))
+
+=== values.js ===
+const VALUE = "value";
+>VALUE : Symbol(VALUE, Decl(values.js, 0, 5))
+
+module.exports.VALUE = VALUE;
+>module.exports.VALUE : Symbol(VALUE, Decl(values.js, 0, 22))
+>module.exports : Symbol(exports, Decl(values.js, 0, 0))
+>module : Symbol(module, Decl(values.js, 0, 0))
+>exports : Symbol(exports, Decl(values.js, 0, 0))
+>VALUE : Symbol(VALUE, Decl(values.js, 0, 22))
+>VALUE : Symbol(VALUE, Decl(values.js, 0, 5))
+
+=== mixed.js ===
+class Mixed {}
+>Mixed : Symbol(Mixed, Decl(mixed.js, 0, 0))
+
+const idsSymbol = Symbol("ids");
+>idsSymbol : Symbol(idsSymbol, Decl(mixed.js, 1, 5))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
+
+module.exports = Mixed;
+>module.exports : Symbol(exports, Decl(mixed.js, 0, 0))
+>module : Symbol(module, Decl(mixed.js, 0, 0))
+>exports : Symbol(exports, Decl(mixed.js, 0, 0))
+>Mixed : Symbol(Mixed, Decl(mixed.js, 0, 0))
+
+module.exports.idsSymbol = idsSymbol;
+>module.exports.idsSymbol : Symbol(idsSymbol, Decl(mixed.js, 2, 23))
+>module.exports : Symbol(exports, Decl(mixed.js, 0, 0))
+>module : Symbol(module, Decl(mixed.js, 0, 0))
+>exports : Symbol(exports, Decl(mixed.js, 0, 0))
+>idsSymbol : Symbol(idsSymbol, Decl(mixed.js, 2, 23))
+>idsSymbol : Symbol(idsSymbol, Decl(mixed.js, 1, 5))
+

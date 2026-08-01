@@ -50,10 +50,10 @@ const couldntThinkOfAny = {}
 const test = (base) => {
 >test : (base: InstanceType<BaseFactory["Base"]>) => InstanceType<BaseFactory["Base"]>
 >(base) => {    return base;} : (base: InstanceType<BaseFactory["Base"]>) => InstanceType<BaseFactory["Base"]>
->base : any
+>base : error
 
     return base;
->base : any
+>base : error
 
 };
 

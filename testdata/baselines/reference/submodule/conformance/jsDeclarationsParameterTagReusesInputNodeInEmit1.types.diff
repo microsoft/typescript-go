@@ -5,10 +5,10 @@
  >test : (base: InstanceType<BaseFactory["Base"]>) => InstanceType<BaseFactory["Base"]>
  >(base) => {    return base;} : (base: InstanceType<BaseFactory["Base"]>) => InstanceType<BaseFactory["Base"]>
 ->base : Base
-+>base : any
++>base : error
 
      return base;
 ->base : Base
-+>base : any
++>base : error
 
  };

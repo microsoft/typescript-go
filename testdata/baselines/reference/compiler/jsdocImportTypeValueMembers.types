@@ -1,0 +1,65 @@
+//// [tests/cases/compiler/jsdocImportTypeValueMembers.ts] ////
+
+=== index.js ===
+/** @typedef {import("./values").VALUE} VALUE */
+/** @typedef {import("./mixed").idsSymbol} IDsSymbol */
+
+/** @type {VALUE} */
+const value = "value";
+>value : error
+>"value" : "value"
+
+/** @type {IDsSymbol} */
+const id = require("./mixed").idsSymbol;
+>id : error
+>require("./mixed").idsSymbol : unique symbol
+>require("./mixed") : typeof import("./mixed")
+>require : any
+>"./mixed" : "./mixed"
+>idsSymbol : unique symbol
+
+/** @type {typeof import("./values").VALUE} */
+const valueType = "value";
+>valueType : "value"
+>"value" : "value"
+
+=== values.js ===
+const VALUE = "value";
+>VALUE : "value"
+>"value" : "value"
+
+module.exports.VALUE = VALUE;
+>module.exports.VALUE = VALUE : "value"
+>module.exports.VALUE : "value"
+>module.exports : typeof import("./values")
+>module : { exports: typeof import("./values"); }
+>exports : typeof import("./values")
+>VALUE : "value"
+>VALUE : "value"
+
+=== mixed.js ===
+class Mixed {}
+>Mixed : Mixed
+
+const idsSymbol = Symbol("ids");
+>idsSymbol : unique symbol
+>Symbol("ids") : unique symbol
+>Symbol : SymbolConstructor
+>"ids" : "ids"
+
+module.exports = Mixed;
+>module.exports = Mixed : typeof Mixed
+>module.exports : typeof Mixed
+>module : { exports: typeof Mixed; }
+>exports : typeof Mixed
+>Mixed : typeof Mixed
+
+module.exports.idsSymbol = idsSymbol;
+>module.exports.idsSymbol = idsSymbol : unique symbol
+>module.exports.idsSymbol : unique symbol
+>module.exports : typeof Mixed
+>module : { exports: typeof Mixed; }
+>exports : typeof Mixed
+>idsSymbol : unique symbol
+>idsSymbol : unique symbol
+

@@ -5,6 +5,6 @@
  export default function () {
    return /** @type {import('./GeometryType.js').default} */ ('Point');
 ->('Point') : typeof import("./GeometryType.js").default
-+>('Point') : any
++>('Point') : error
  >'Point' : "Point"
  }

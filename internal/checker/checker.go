@@ -24674,7 +24674,12 @@ func (c *Checker) getTypeFromImportTypeNode(node *ast.Node) *Type {
 			links.resolvedType = c.errorType
 			return links.resolvedType
 		}
-		targetMeaning := core.IfElse(n.IsTypeOf, ast.SymbolFlagsValue, ast.SymbolFlagsType)
+		targetMeaning := ast.SymbolFlagsType
+		if n.IsTypeOf {
+			targetMeaning = ast.SymbolFlagsValue
+		} else if node.Flags&ast.NodeFlagsJSDoc != 0 {
+			targetMeaning = ast.SymbolFlagsValue | ast.SymbolFlagsType
+		}
 		// TODO: Future work: support unions/generics/whatever via a deferred import-type
 		innerModuleSymbol := c.resolveExternalModuleName(node, n.Argument.AsLiteralTypeNode().Literal, false /*ignoreErrors*/)
 		if innerModuleSymbol == nil {
@@ -24682,6 +24687,7 @@ func (c *Checker) getTypeFromImportTypeNode(node *ast.Node) *Type {
 			links.resolvedType = c.errorType
 			return links.resolvedType
 		}
+		isExportEquals := innerModuleSymbol.Exports[ast.InternalSymbolNameExportEquals] != nil
 		moduleSymbol := c.resolveExternalModuleSymbol(innerModuleSymbol, false /*dontResolveAlias*/)
 		if !ast.NodeIsMissing(n.Qualifier) {
 			nameChain := c.getIdentifierChain(n.Qualifier)
@@ -24697,9 +24703,10 @@ func (c *Checker) getTypeFromImportTypeNode(node *ast.Node) *Type {
 				mergedResolvedSymbol := c.getMergedSymbol(c.resolveSymbol(currentNamespace))
 				var symbolFromVariable *ast.Symbol
 				var symbolFromModule *ast.Symbol
-				if n.IsTypeOf {
+				if n.IsTypeOf || ast.IsInJSFile(node) && isExportEquals {
 					symbolFromVariable = c.getPropertyOfTypeEx(c.getTypeOfSymbol(mergedResolvedSymbol), current.Text(), false /*skipObjectFunctionPropertyAugment*/, true /*includeTypeOnlyMembers*/)
-				} else {
+				}
+				if !n.IsTypeOf {
 					symbolFromModule = c.getSymbol(c.getExportsOfSymbol(mergedResolvedSymbol), current.Text(), meaning)
 					if symbolFromModule == nil {
 						// a CommonJS module might have typedefs exported alongside an export=

@@ -7,13 +7,13 @@
 ->demo : (a: { fix: boolean; }) => void
 ->a : { fix: boolean; }
 +>demo : (a: import('./ex')) => void
-+>a : any
++>a : error
 
      a.fix
 ->a.fix : boolean
 ->a : { fix: boolean; }
 ->fix : boolean
-+>a.fix : any
++>a.fix : error
 +>a : any
 +>fix : any
  }

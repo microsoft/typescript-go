@@ -40,14 +40,14 @@ class MW {
    * @param {MC} compiler the compiler
    */
   constructor(compiler) {
->compiler : any
+>compiler : error
 
     this.compiler = compiler;
->this.compiler = compiler : any
+>this.compiler = compiler : error
 >this.compiler : any
 >this : this
 >compiler : any
->compiler : any
+>compiler : error
   }
 }
 

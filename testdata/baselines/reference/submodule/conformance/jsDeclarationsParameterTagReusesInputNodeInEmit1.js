@@ -87,3 +87,44 @@ declare const couldntThinkOfAny: {};
  * @returns {InstanceType<BaseFactory["Base"]>}
  */
 declare const test: (base: InstanceType<BaseFactory["Base"]>) => InstanceType<BaseFactory["Base"]>;
+
+
+//// [DtsFileErrors]
+
+
+out/file.d.ts(1,20): error TS1340: Module './base' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./base')'?
+out/file.d.ts(2,37): error TS1340: Module './base' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./base')'?
+
+
+==== out/base.d.ts (0 errors) ====
+    export = _exports;
+    declare function _exports(): Base;
+    declare class Base {
+        constructor();
+    }
+    declare function BaseFactory(): Base;
+    declare namespace BaseFactory {
+        export { Base };
+    }
+    
+==== out/file.d.ts (2 errors) ====
+    type BaseFactory = import('./base');
+                       ~~~~~~~~~~~~~~~~
+!!! error TS1340: Module './base' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./base')'?
+    type BaseFactoryFactory = (factory: import('./base')) => any;
+                                        ~~~~~~~~~~~~~~~~
+!!! error TS1340: Module './base' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./base')'?
+    /** @typedef {import('./base')} BaseFactory */
+    /**
+     * @callback BaseFactoryFactory
+     * @param {import('./base')} factory
+     */
+    /** @enum {import('./base')} */
+    declare const couldntThinkOfAny: {};
+    /**
+     *
+     * @param {InstanceType<BaseFactory["Base"]>} base
+     * @returns {InstanceType<BaseFactory["Base"]>}
+     */
+    declare const test: (base: InstanceType<BaseFactory["Base"]>) => InstanceType<BaseFactory["Base"]>;
+    

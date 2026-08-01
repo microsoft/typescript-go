@@ -20,15 +20,15 @@
     */
    constructor(compiler) {
 ->compiler : { (): MW; new (): MC; }
-+>compiler : any
++>compiler : error
 
      this.compiler = compiler;
 ->this.compiler = compiler : { (): MW; new (): MC; }
-+>this.compiler = compiler : any
++>this.compiler = compiler : error
  >this.compiler : any
  >this : this
  >compiler : any
 ->compiler : { (): MW; new (): MC; }
-+>compiler : any
++>compiler : error
    }
  }

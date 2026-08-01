@@ -8,5 +8,5 @@ export const FOO = "foo";
 === a.js ===
 /** @type {import('./b').FOO} */
 let x;
->x : any
+>x : error
 

@@ -5,4 +5,4 @@
  /** @type {import('./b').FOO} */
  let x;
 ->x : "foo"
-+>x : any
++>x : error
