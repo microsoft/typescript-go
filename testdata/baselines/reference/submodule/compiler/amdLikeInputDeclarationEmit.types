@@ -62,7 +62,7 @@ define("lib/ExtendedClass", ["deps/BaseClass"],
 >{} : {}
 
     module.exports = ExtendedClass
->module.exports = ExtendedClass : new () => { f: () => "something"; } & import("deps/BaseClass")
+>module.exports = ExtendedClass : any
 >module.exports : any
 >module : {}
 >exports : any

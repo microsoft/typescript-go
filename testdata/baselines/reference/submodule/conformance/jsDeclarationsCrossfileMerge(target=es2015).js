@@ -34,3 +34,28 @@ declare namespace _exports {
     export var memberName: "thing";
 }
 import m = require("./exporter");
+
+
+//// [DtsFileErrors]
+
+
+out/index.d.ts(1,15): error TS2451: Cannot redeclare block-scoped variable '_exports'.
+out/index.d.ts(3,19): error TS2451: Cannot redeclare block-scoped variable '_exports'.
+
+
+==== out/index.d.ts (2 errors) ====
+    declare const _exports: typeof m.default;
+                  ~~~~~~~~
+!!! error TS2451: Cannot redeclare block-scoped variable '_exports'.
+    export = _exports;
+    declare namespace _exports {
+                      ~~~~~~~~
+!!! error TS2451: Cannot redeclare block-scoped variable '_exports'.
+        export var memberName: "thing";
+    }
+    import m = require("./exporter");
+    
+==== out/exporter.d.ts (0 errors) ====
+    declare function validate(): void;
+    export default validate;
+    

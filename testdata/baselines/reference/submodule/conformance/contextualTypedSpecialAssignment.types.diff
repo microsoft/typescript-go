@@ -114,13 +114,15 @@
  >prototype : DoneStatus
  >{    status: "done",    m(n) { }} : { status: "done"; m(n: number): void; }
 
-@@= skipped -32, +32 lines =@@
+@@= skipped -31, +31 lines =@@
+ // module.exports assignment
  /** @type {{ status: 'done', m(n: number): void }} */
  module.exports = {
- >module.exports = {    status: "done",    m(n) { }} : { status: "done"; m(n: number): void; }
+->module.exports = {    status: "done",    m(n) { }} : { status: "done"; m(n: number): void; }
 ->module.exports : { status: "done"; m(n: number): void; }
 ->module : { exports: { status: "done"; m(n: number): void; }; }
 ->exports : { status: "done"; m(n: number): void; }
++>module.exports = {    status: "done",    m(n) { }} : { status: 'done'; m(n: number): void; }
 +>module.exports : { status: 'done'; m(n: number): void; }
 +>module : { exports: { status: 'done'; m(n: number): void; }; }
 +>exports : { status: 'done'; m(n: number): void; }

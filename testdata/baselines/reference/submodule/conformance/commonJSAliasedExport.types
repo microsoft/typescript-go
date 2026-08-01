@@ -2,8 +2,8 @@
 
 === bug43713.js ===
 const { funky } = require('./commonJSAliasedExport');
->funky : any
->require('./commonJSAliasedExport') : (ast: any) => any
+>funky : (declaration: any) => boolean
+>require('./commonJSAliasedExport') : typeof import("./commonJSAliasedExport").donkey
 >require : any
 >'./commonJSAliasedExport' : "./commonJSAliasedExport"
 
@@ -13,8 +13,8 @@ var diddy
 
 var diddy = funky(1)
 >diddy : boolean
->funky(1) : any
->funky : any
+>funky(1) : boolean
+>funky : (declaration: any) => boolean
 >1 : 1
 
 
@@ -33,18 +33,18 @@ function funky(declaration) {
 >false : false
 }
 module.exports = donkey;
->module.exports = donkey : (ast: any) => any
->module.exports : (ast: any) => any
->module : { exports: (ast: any) => any; }
->exports : (ast: any) => any
+>module.exports = donkey : typeof import("./commonJSAliasedExport").donkey
+>module.exports : typeof import("./commonJSAliasedExport").donkey
+>module : { exports: typeof import("./commonJSAliasedExport").donkey; }
+>exports : typeof import("./commonJSAliasedExport").donkey
 >donkey : (ast: any) => any
 
 module.exports.funky = funky;
 >module.exports.funky = funky : (declaration: any) => boolean
->module.exports.funky : any
->module.exports : (ast: any) => any
->module : { exports: (ast: any) => any; }
->exports : (ast: any) => any
->funky : any
+>module.exports.funky : (declaration: any) => boolean
+>module.exports : typeof import("./commonJSAliasedExport").donkey
+>module : { exports: typeof import("./commonJSAliasedExport").donkey; }
+>exports : typeof import("./commonJSAliasedExport").donkey
+>funky : (declaration: any) => boolean
 >funky : (declaration: any) => boolean
 

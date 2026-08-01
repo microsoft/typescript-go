@@ -1,0 +1,19 @@
+--- old.jsDeclarationEmitExportAssignedFunctionWithExtraTypedefsMembers.types
++++ new.jsDeclarationEmitExportAssignedFunctionWithExtraTypedefsMembers.types
+@@= skipped -9, +9 lines =@@
+  * @param {Options} options
+  */
+ module.exports = function loader(options) {}
+->module.exports = function loader(options) {} : (options: Options) => void
+->module.exports : (options: Options) => void
+->module : { exports: (options: Options) => void; }
+->exports : (options: Options) => void
+->function loader(options) {} : (options: Options) => void
+->loader : (options: Options) => void
++>module.exports = function loader(options) {} : typeof loader
++>module.exports : typeof loader
++>module : { exports: typeof loader; }
++>exports : typeof loader
++>function loader(options) {} : typeof loader
++>loader : typeof loader
+ >options : Options

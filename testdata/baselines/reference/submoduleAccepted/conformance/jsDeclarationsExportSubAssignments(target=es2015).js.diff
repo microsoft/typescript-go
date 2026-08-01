@@ -4,17 +4,17 @@
 
  //// [cls.d.ts]
  export = Foo;
-+export { Strings };
+-declare class Foo {
+-}
+ declare namespace Foo {
+     export { Strings };
+ }
+-declare namespace Strings {
+-    let a: string;
+-    let b: string;
 +declare const Strings: {
 +    a: string;
 +    b: string;
 +};
- declare class Foo {
--}
--declare namespace Foo {
--    export { Strings };
--}
--declare namespace Strings {
--    let a: string;
--    let b: string;
++declare class Foo {
  }

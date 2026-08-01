@@ -433,4 +433,4 @@ class SharedClass2 {
 
 #### Mixing module.exports assignments
 
-Corsa does not permit CommonJS modules to mix assignments to the full `module.exports` with assignments to `module.exports.xxx` properties. A CommonJS module must either contain an assignment to `module.exports` or a series of assignments to `module.exports.xxx` properties, but not both.
+Corsa supports mixing assignments to the full `module.exports` with assignments to `module.exports.xxx` properties when the full assignment resolves to a function or class. Mixing these assignments with other target values remains unsupported.

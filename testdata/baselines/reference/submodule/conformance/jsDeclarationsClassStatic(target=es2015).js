@@ -50,7 +50,9 @@ module.exports.Strings = Strings;
 
 //// [source.d.ts]
 export = Handler;
-export { Strings };
+declare namespace Handler {
+    export { Strings };
+}
 declare class Handler {
     static get OPTIONS(): number;
     process(): void;

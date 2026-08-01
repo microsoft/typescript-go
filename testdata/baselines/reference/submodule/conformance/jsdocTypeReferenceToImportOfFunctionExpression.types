@@ -11,12 +11,12 @@ const MW = require("./MW");
 
 /** @class */
 module.exports = function MC() {
->module.exports = function MC() {    /** @type {any} */    var x = {}    return new MW(x);} : () => MW
->module.exports : () => MW
->module : { exports: () => MW; }
->exports : () => MW
->function MC() {    /** @type {any} */    var x = {}    return new MW(x);} : () => MW
->MC : () => MW
+>module.exports = function MC() {    /** @type {any} */    var x = {}    return new MW(x);} : typeof MC
+>module.exports : typeof MC
+>module : { exports: typeof MC; }
+>exports : typeof MC
+>function MC() {    /** @type {any} */    var x = {}    return new MW(x);} : typeof MC
+>MC : typeof MC
 
     /** @type {any} */
     var x = {}

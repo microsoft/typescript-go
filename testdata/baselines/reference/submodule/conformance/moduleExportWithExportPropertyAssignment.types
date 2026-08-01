@@ -3,20 +3,20 @@
 === a.js ===
 /// <reference path='./requires.d.ts' />
 var mod1 = require('./mod1')
->mod1 : () => void
->require('./mod1') : () => void
+>mod1 : typeof mod1
+>require('./mod1') : typeof mod1
 >require : (name: string) => any
 >'./mod1' : "./mod1"
 
 mod1()
 >mod1() : void
->mod1 : () => void
+>mod1 : typeof mod1
 
 mod1.f() // error, not enough arguments
->mod1.f() : any
->mod1.f : any
->mod1 : () => void
->f : any
+>mod1.f() : void
+>mod1.f : (a: number) => void
+>mod1 : typeof mod1
+>f : (a: number) => void
 
 === requires.d.ts ===
 declare var module: { exports: any };
@@ -30,20 +30,20 @@ declare function require(name: string): any;
 === mod1.js ===
 /// <reference path='./requires.d.ts' />
 module.exports = function () { }
->module.exports = function () { } : () => void
->module.exports : () => void
->module : { exports: () => void; }
->exports : () => void
->function () { } : () => void
+>module.exports = function () { } : typeof exports
+>module.exports : typeof exports
+>module : { exports: typeof exports; }
+>exports : typeof exports
+>function () { } : typeof exports
 
 /** @param {number} a */
 module.exports.f = function (a) { }
 >module.exports.f = function (a) { } : (a: number) => void
->module.exports.f : any
->module.exports : () => void
->module : { exports: () => void; }
->exports : () => void
->f : any
+>module.exports.f : (a: number) => void
+>module.exports : typeof exports
+>module : { exports: typeof exports; }
+>exports : typeof exports
+>f : (a: number) => void
 >function (a) { } : (a: number) => void
 >a : number
 

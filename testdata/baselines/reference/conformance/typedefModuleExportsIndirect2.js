@@ -23,7 +23,8 @@ var c;
 
 
 //// [typedefModuleExportsIndirect2.d.ts]
-export = f;
+export = _exports;
+declare function _exports(): void;
 export type C = {
     a: 1;
     m: 1;

@@ -39,7 +39,7 @@ const a = {};
 >{} : {}
 
 module.exports = a;
->module.exports = a : {}
+>module.exports = a : any
 >module.exports : any
 >module : any
 >exports : any

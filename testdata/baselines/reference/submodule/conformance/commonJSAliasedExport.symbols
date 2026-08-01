@@ -34,8 +34,10 @@ module.exports = donkey;
 >donkey : Symbol(donkey, Decl(commonJSAliasedExport.js, 0, 5))
 
 module.exports.funky = funky;
+>module.exports.funky : Symbol(funky, Decl(commonJSAliasedExport.js, 5, 24))
 >module.exports : Symbol(exports, Decl(commonJSAliasedExport.js, 0, 0))
 >module : Symbol(module, Decl(commonJSAliasedExport.js, 0, 0))
 >exports : Symbol(exports, Decl(commonJSAliasedExport.js, 0, 0))
+>funky : Symbol(funky, Decl(commonJSAliasedExport.js, 5, 24))
 >funky : Symbol(funky, Decl(commonJSAliasedExport.js, 0, 29))
 

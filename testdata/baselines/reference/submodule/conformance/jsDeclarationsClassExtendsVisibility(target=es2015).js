@@ -37,7 +37,9 @@ declare class Bar {
 }
 //// [cls.d.ts]
 export = Foo;
-export { Strings };
+declare namespace Foo {
+    export { Strings };
+}
 import Bar = require("./bar");
 declare const Strings: {
     a: string;

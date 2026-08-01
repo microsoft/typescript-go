@@ -1213,6 +1213,34 @@ func (tx *DeclarationTransformer) transformExportAssignment(input *ast.Node, ass
 	}
 	tx.resultHasScopeMarker = true
 	if ast.IsIdentifier(expression) && (ast.IsSourceFile(input.Parent) || ast.IsModuleBlock(input.Parent)) {
+		if isExportEquals && ast.IsSourceFileJS(tx.state.currentSourceFile) {
+			declaration := tx.resolver.GetReferencedValueDeclaration(expression)
+			if declaration != nil && (ast.IsClassDeclaration(declaration) || ast.IsFunctionDeclaration(declaration)) {
+				tx.cjsExportAssignmentName = tx.Factory().NewIdentifier(expression.Text())
+			} else if declaration != nil && ast.IsVariableDeclaration(declaration) {
+				if initializer := declaration.Initializer(); initializer != nil {
+					initializer = ast.SkipOuterExpressions(initializer, ast.OEKExpressionTypePassthrough)
+					if ast.IsClassExpression(initializer) || ast.IsFunctionLike(initializer) {
+						name := tx.getNameOfExportedAssignedExpression(initializer, isExportEquals)
+						var modifiers []*ast.Node
+						if tx.needsDeclare {
+							modifiers = append(modifiers, tx.Factory().NewModifier(ast.KindDeclareKeyword))
+						}
+						var exportedDeclaration *ast.Node
+						if ast.IsClassExpression(initializer) {
+							exportedDeclaration = tx.transformClassExpressionToDeclaration(initializer, name, tx.Factory().NewModifierList(modifiers))
+						} else {
+							exportedDeclaration = tx.transformFunctionLikeToDeclaration(initializer, name, tx.Factory().NewModifierList(modifiers), assignment.Type())
+						}
+						tx.cjsExportAssignmentName = name
+						tx.preserveJsDoc(exportedDeclaration, declaration)
+						exportAssignment := tx.Factory().NewExportAssignment(nil, isExportEquals, nil, name)
+						tx.removeAllComments(exportAssignment)
+						return tx.Factory().NewSyntaxList([]*ast.Node{exportAssignment, exportedDeclaration})
+					}
+				}
+			}
+		}
 		exportAssignment := tx.Factory().NewExportAssignment(nil, isExportEquals, nil, expression)
 		tx.preserveJsDoc(exportAssignment, input)
 		return exportAssignment

@@ -2,34 +2,34 @@
 
 === npm.js ===
 var npm = module.exports = function (tree) {
->npm : (tree: any) => void
->module.exports = function (tree) {} : (tree: any) => void
->module.exports : (tree: any) => void
->module : { exports: (tree: any) => void; }
->exports : (tree: any) => void
->function (tree) {} : (tree: any) => void
+>npm : typeof exports
+>module.exports = function (tree) {} : typeof exports
+>module.exports : typeof exports
+>module : { exports: typeof exports; }
+>exports : typeof exports
+>function (tree) {} : typeof exports
 >tree : any
 }
 module.exports.asReadInstalled = function (tree) {
 >module.exports.asReadInstalled = function (tree) {    npm(tree) // both references should be callable    module.exports(tree)} : (tree: any) => void
->module.exports.asReadInstalled : any
->module.exports : (tree: any) => void
->module : { exports: (tree: any) => void; }
->exports : (tree: any) => void
->asReadInstalled : any
+>module.exports.asReadInstalled : (tree: any) => void
+>module.exports : typeof exports
+>module : { exports: typeof exports; }
+>exports : typeof exports
+>asReadInstalled : (tree: any) => void
 >function (tree) {    npm(tree) // both references should be callable    module.exports(tree)} : (tree: any) => void
 >tree : any
 
     npm(tree) // both references should be callable
 >npm(tree) : void
->npm : (tree: any) => void
+>npm : typeof exports
 >tree : any
 
     module.exports(tree)
 >module.exports(tree) : void
->module.exports : (tree: any) => void
->module : { exports: (tree: any) => void; }
->exports : (tree: any) => void
+>module.exports : typeof exports
+>module : { exports: typeof exports; }
+>exports : typeof exports
 >tree : any
 }
 

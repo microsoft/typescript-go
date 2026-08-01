@@ -1,0 +1,29 @@
+index.js(3,8): error TS2339: Property 'helper' does not exist on type '{ value: number; }'.
+object.js(2,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
+object.js(3,16): error TS2339: Property 'helper' does not exist on type '{ value: number; }'.
+
+
+==== index.js (1 errors) ====
+    require("./uninitialized");
+    const object = require("./object");
+    object.helper();
+           ~~~~~~
+!!! error TS2339: Property 'helper' does not exist on type '{ value: number; }'.
+    
+==== requires.d.ts (0 errors) ====
+    declare var module: { exports: any };
+    declare function require(name: string): any;
+    
+==== uninitialized.js (0 errors) ====
+    var uninitialized;
+    module.exports = uninitialized;
+    
+==== object.js (2 errors) ====
+    const object = { value: 1 };
+    module.exports = object;
+    ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
+    module.exports.helper = function helper() {};
+                   ~~~~~~
+!!! error TS2339: Property 'helper' does not exist on type '{ value: number; }'.
+    

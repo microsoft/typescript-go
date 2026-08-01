@@ -62,7 +62,8 @@ const test = (base) => {
 
 
 //// [base.d.ts]
-export = BaseFactory;
+export = _exports;
+declare function _exports(): Base;
 declare class Base {
     constructor();
 }

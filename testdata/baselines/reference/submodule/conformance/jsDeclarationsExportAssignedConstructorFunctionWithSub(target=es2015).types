@@ -5,11 +5,11 @@
  * @param {number} p
  */
 module.exports = function (p) {
->module.exports = function (p) {    this.t = 12 + p;} : (p: number) => void
->module.exports : (p: number) => void
->module : { exports: (p: number) => void; }
->exports : (p: number) => void
->function (p) {    this.t = 12 + p;} : (p: number) => void
+>module.exports = function (p) {    this.t = 12 + p;} : typeof exports
+>module.exports : typeof exports
+>module : { exports: typeof exports; }
+>exports : typeof exports
+>function (p) {    this.t = 12 + p;} : typeof exports
 >p : number
 
     this.t = 12 + p;
@@ -23,32 +23,32 @@ module.exports = function (p) {
 }
 module.exports.Sub = function() {
 >module.exports.Sub = function() {    this.instance = new module.exports(10);} : () => void
->module.exports.Sub : any
->module.exports : (p: number) => void
->module : { exports: (p: number) => void; }
->exports : (p: number) => void
->Sub : any
+>module.exports.Sub : () => void
+>module.exports : typeof exports
+>module : { exports: typeof exports; }
+>exports : typeof exports
+>Sub : () => void
 >function() {    this.instance = new module.exports(10);} : () => void
 
     this.instance = new module.exports(10);
 >this.instance = new module.exports(10) : any
 >this.instance : any
->this : (p: number) => void
+>this : typeof exports
 >instance : any
 >new module.exports(10) : any
->module.exports : (p: number) => void
->module : { exports: (p: number) => void; }
->exports : (p: number) => void
+>module.exports : typeof exports
+>module : { exports: typeof exports; }
+>exports : typeof exports
 >10 : 10
 }
 module.exports.Sub.prototype = { }
 >module.exports.Sub.prototype = { } : {}
 >module.exports.Sub.prototype : any
->module.exports.Sub : any
->module.exports : (p: number) => void
->module : { exports: (p: number) => void; }
->exports : (p: number) => void
->Sub : any
+>module.exports.Sub : () => void
+>module.exports : typeof exports
+>module : { exports: typeof exports; }
+>exports : typeof exports
+>Sub : () => void
 >prototype : any
 >{ } : {}
 

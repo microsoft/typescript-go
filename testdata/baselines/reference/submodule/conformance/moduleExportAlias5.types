@@ -7,19 +7,19 @@ const webpack = function (){
 >function (){} : { (): void; WebpackOptionsDefaulter: number; }
 }
 exports = module.exports = webpack;
->exports = module.exports = webpack : { (): void; WebpackOptionsDefaulter: number; }
->exports : { (): void; WebpackOptionsDefaulter: number; }
->module.exports = webpack : { (): void; WebpackOptionsDefaulter: number; }
->module.exports : { (): void; WebpackOptionsDefaulter: number; }
->module : { exports: { (): void; WebpackOptionsDefaulter: number; }; }
->exports : { (): void; WebpackOptionsDefaulter: number; }
+>exports = module.exports = webpack : typeof import("./bug24754").webpack
+>exports : typeof import("./bug24754").webpack
+>module.exports = webpack : typeof import("./bug24754").webpack
+>module.exports : typeof import("./bug24754").webpack
+>module : { exports: typeof import("./bug24754").webpack; }
+>exports : typeof import("./bug24754").webpack
 >webpack : { (): void; WebpackOptionsDefaulter: number; }
 
 exports.version = 1001;
 >exports.version = 1001 : 1001
->exports.version : any
->exports : { (): void; WebpackOptionsDefaulter: number; }
->version : any
+>exports.version : 1001
+>exports : typeof import("./bug24754").webpack
+>version : 1001
 >1001 : 1001
 
 webpack.WebpackOptionsDefaulter = 1111;

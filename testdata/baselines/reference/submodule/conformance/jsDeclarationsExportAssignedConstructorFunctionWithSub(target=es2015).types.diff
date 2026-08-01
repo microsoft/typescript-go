@@ -8,12 +8,11 @@
 ->module.exports : { (p: number): void; new (p: number): exports; Sub: typeof Sub; }
 ->module : { exports: { (p: number): void; new (p: number): exports; Sub: typeof Sub; }; }
 ->exports : { (p: number): void; new (p: number): exports; Sub: typeof Sub; }
-->function (p) {    this.t = 12 + p;} : typeof exports
-+>module.exports = function (p) {    this.t = 12 + p;} : (p: number) => void
-+>module.exports : (p: number) => void
-+>module : { exports: (p: number) => void; }
-+>exports : (p: number) => void
-+>function (p) {    this.t = 12 + p;} : (p: number) => void
++>module.exports = function (p) {    this.t = 12 + p;} : typeof exports
++>module.exports : typeof exports
++>module : { exports: typeof exports; }
++>exports : typeof exports
+ >function (p) {    this.t = 12 + p;} : typeof exports
  >p : number
 
      this.t = 12 + p;
@@ -35,11 +34,11 @@
 ->Sub : typeof Sub
 ->function() {    this.instance = new module.exports(10);} : typeof Sub
 +>module.exports.Sub = function() {    this.instance = new module.exports(10);} : () => void
-+>module.exports.Sub : any
-+>module.exports : (p: number) => void
-+>module : { exports: (p: number) => void; }
-+>exports : (p: number) => void
-+>Sub : any
++>module.exports.Sub : () => void
++>module.exports : typeof exports
++>module : { exports: typeof exports; }
++>exports : typeof exports
++>Sub : () => void
 +>function() {    this.instance = new module.exports(10);} : () => void
 
      this.instance = new module.exports(10);
@@ -47,16 +46,16 @@
 +>this.instance = new module.exports(10) : any
  >this.instance : any
 ->this : this
-+>this : (p: number) => void
++>this : typeof exports
  >instance : any
 ->new module.exports(10) : exports
 ->module.exports : { (p: number): void; new (p: number): exports; Sub: typeof Sub; }
 ->module : { exports: { (p: number): void; new (p: number): exports; Sub: typeof Sub; }; }
 ->exports : { (p: number): void; new (p: number): exports; Sub: typeof Sub; }
 +>new module.exports(10) : any
-+>module.exports : (p: number) => void
-+>module : { exports: (p: number) => void; }
-+>exports : (p: number) => void
++>module.exports : typeof exports
++>module : { exports: typeof exports; }
++>exports : typeof exports
  >10 : 10
  }
  module.exports.Sub.prototype = { }
@@ -69,10 +68,10 @@
 ->Sub : typeof Sub
 ->prototype : {}
 +>module.exports.Sub.prototype : any
-+>module.exports.Sub : any
-+>module.exports : (p: number) => void
-+>module : { exports: (p: number) => void; }
-+>exports : (p: number) => void
-+>Sub : any
++>module.exports.Sub : () => void
++>module.exports : typeof exports
++>module : { exports: typeof exports; }
++>exports : typeof exports
++>Sub : () => void
 +>prototype : any
  >{ } : {}

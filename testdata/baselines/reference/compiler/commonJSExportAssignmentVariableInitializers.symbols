@@ -1,0 +1,41 @@
+//// [tests/cases/compiler/commonJSExportAssignmentVariableInitializers.ts] ////
+
+=== index.js ===
+require("./uninitialized");
+>require : Symbol(require)
+
+const object = require("./object");
+>object : Symbol(object, Decl(index.js, 1, 5))
+>require : Symbol(require)
+>"./object" : Symbol("./object", Decl(object.js, 0, 0))
+
+object.helper();
+>object : Symbol(object, Decl(index.js, 1, 5))
+
+=== uninitialized.js ===
+var uninitialized;
+>uninitialized : Symbol(uninitialized, Decl(uninitialized.js, 0, 3))
+
+module.exports = uninitialized;
+>module.exports : Symbol(exports, Decl(uninitialized.js, 0, 0))
+>module : Symbol(module, Decl(uninitialized.js, 0, 0))
+>exports : Symbol(exports, Decl(uninitialized.js, 0, 0))
+>uninitialized : Symbol(uninitialized, Decl(uninitialized.js, 0, 3))
+
+=== object.js ===
+const object = { value: 1 };
+>object : Symbol(object, Decl(object.js, 0, 5))
+>value : Symbol(value, Decl(object.js, 0, 16))
+
+module.exports = object;
+>module.exports : Symbol(exports, Decl(object.js, 0, 0))
+>module : Symbol(module, Decl(object.js, 0, 0))
+>exports : Symbol(exports, Decl(object.js, 0, 0))
+>object : Symbol(object, Decl(object.js, 0, 5))
+
+module.exports.helper = function helper() {};
+>module.exports : Symbol(exports, Decl(object.js, 0, 0))
+>module : Symbol(module, Decl(object.js, 0, 0))
+>exports : Symbol(exports, Decl(object.js, 0, 0))
+>helper : Symbol(helper, Decl(object.js, 2, 23))
+

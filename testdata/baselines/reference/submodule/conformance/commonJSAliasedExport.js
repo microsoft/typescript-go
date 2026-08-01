@@ -34,8 +34,11 @@ var diddy = funky(1);
 
 
 //// [commonJSAliasedExport.d.ts]
-export = donkey;
-export { funky };
+export = _exports;
+declare function _exports(ast: any): any;
+declare namespace _exports {
+    export { funky };
+}
 declare const donkey: (ast: any) => any;
 declare function funky(declaration: any): boolean;
 //// [bug43713.d.ts]

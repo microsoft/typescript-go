@@ -5699,7 +5699,8 @@ func (c *Checker) checkExternalModuleExports(node *ast.Node) {
 		// namespace members and the exported entity also exports type or namespace members.
 		if exportEqualsSymbol != nil && (c.hasExportedMembersOfKind(moduleSymbol, ast.SymbolFlagsValue) || c.hasShadowedNamespace(exportEqualsSymbol)) {
 			declaration := core.OrElse(c.getDeclarationOfAliasSymbol(exportEqualsSymbol), exportEqualsSymbol.ValueDeclaration)
-			if declaration != nil && !isTopLevelInExternalModuleAugmentation(declaration) {
+			if declaration != nil && !isTopLevelInExternalModuleAugmentation(declaration) &&
+				(!ast.IsInJSFile(declaration) || !c.canMergeCommonJSExportEquals(exportEqualsSymbol)) {
 				c.error(declaration, diagnostics.An_export_assignment_cannot_be_used_in_a_module_with_other_exported_elements)
 			}
 		}
@@ -12528,6 +12529,9 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 		}
 		return resultType
 	case ast.KindEqualsToken:
+		if errorNode != nil && ast.GetAssignmentDeclarationKind(errorNode) == ast.JSDeclarationKindModuleExports {
+			return leftType
+		}
 		c.checkAssignmentOperator(left, operator, right, leftType, rightType)
 		return rightType
 	case ast.KindCommaToken:
@@ -15555,12 +15559,100 @@ func (c *Checker) GetAmbientModules() []*ast.Symbol {
 
 func (c *Checker) resolveExternalModuleSymbol(moduleSymbol *ast.Symbol, dontResolveAlias bool) *ast.Symbol {
 	if moduleSymbol != nil {
-		exportEquals := c.resolveSymbolEx(moduleSymbol.Exports[ast.InternalSymbolNameExportEquals], dontResolveAlias)
-		if exportEquals != nil {
-			return c.getMergedSymbol(exportEquals)
+		exportEquals := moduleSymbol.Exports[ast.InternalSymbolNameExportEquals]
+		if exportEquals != nil && exportEquals.ValueDeclaration != nil && ast.IsInJSFile(exportEquals.ValueDeclaration) &&
+			c.hasExportedMembersOfKind(moduleSymbol, ast.SymbolFlagsValue) && !dontResolveAlias && exportEquals.Flags&ast.SymbolFlagsAlias != 0 {
+			exportEquals = c.resolveAlias(exportEquals)
+		} else {
+			exportEquals = c.resolveSymbolEx(exportEquals, dontResolveAlias)
+		}
+		exported := c.getMergedSymbol(c.getCommonJSExportEquals(c.getMergedSymbol(exportEquals), c.getMergedSymbol(moduleSymbol)))
+		if exported != nil {
+			return exported
 		}
 	}
 	return moduleSymbol
+}
+
+func (c *Checker) getCommonJSExportEquals(exported *ast.Symbol, moduleSymbol *ast.Symbol) *ast.Symbol {
+	if moduleSymbol == nil || exported == nil || exported == c.unknownSymbol || exported == moduleSymbol || len(moduleSymbol.Exports) == 1 ||
+		exported.Flags&ast.SymbolFlagsAlias != 0 || exported.ValueDeclaration == nil || !ast.IsInJSFile(exported.ValueDeclaration) {
+		return exported
+	}
+	fromVariableInitializer := false
+	if initializer := getCommonJSExportEqualsInitializer(exported); initializer != nil && initializer.Symbol() != nil {
+		fromVariableInitializer = ast.IsVariableDeclaration(exported.ValueDeclaration)
+		exported = initializer.Symbol()
+	}
+	if exported.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsClass) == 0 {
+		return exported
+	}
+	links := c.moduleSymbolLinks.Get(exported)
+	if links.cjsExportMerged != nil {
+		return links.cjsExportMerged
+	}
+	merged := exported
+	if exported.Flags&ast.SymbolFlagsTransient == 0 {
+		if fromVariableInitializer {
+			merged = c.newSymbol(exported.Flags, ast.InternalSymbolNameExportEquals)
+			merged.Declarations = exported.Declarations[0:len(exported.Declarations):len(exported.Declarations)]
+			merged.Parent = moduleSymbol
+			merged.ValueDeclaration = exported.ValueDeclaration
+			merged.Members = maps.Clone(exported.Members)
+			merged.Exports = maps.Clone(exported.Exports)
+		} else {
+			merged = c.cloneSymbol(exported)
+		}
+	}
+	merged.Flags |= ast.SymbolFlagsValueModule
+	mergedExports := ast.GetExports(merged)
+	for name, symbol := range moduleSymbol.Exports {
+		if name == ast.InternalSymbolNameExportEquals || c.getSymbolFlags(symbol)&ast.SymbolFlagsValue == 0 {
+			continue
+		}
+		if existing := mergedExports[name]; existing != nil {
+			symbol = c.mergeSymbol(existing, symbol, false /*unidirectional*/)
+		}
+		mergedExports[name] = symbol
+	}
+	if merged == exported {
+		// We just mutated a symbol, reset any cached links we may have already set.
+		c.moduleSymbolLinks.Get(merged).resolvedExports = nil
+	}
+	c.moduleSymbolLinks.Get(merged).cjsExportMerged = merged
+	links.cjsExportMerged = merged
+	return links.cjsExportMerged
+}
+
+func (c *Checker) canMergeCommonJSExportEquals(exported *ast.Symbol) bool {
+	if exported == nil {
+		return false
+	}
+	if exported.Flags&ast.SymbolFlagsAlias != 0 {
+		exported = c.resolveAlias(exported)
+	}
+	if exported == nil || exported == c.unknownSymbol {
+		return false
+	}
+	return getCommonJSExportEqualsInitializer(exported) != nil || exported.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsClass) != 0
+}
+
+func getCommonJSExportEqualsInitializer(exported *ast.Symbol) *ast.Node {
+	declaration := exported.ValueDeclaration
+	if declaration == nil {
+		return nil
+	}
+	var initializer *ast.Node
+	switch {
+	case ast.IsBinaryExpression(declaration):
+		initializer = declaration.AsBinaryExpression().Right
+	case ast.IsVariableDeclaration(declaration):
+		initializer = declaration.Initializer()
+	}
+	if initializer != nil && (ast.IsFunctionExpressionOrArrowFunction(initializer) || ast.IsClassExpression(initializer)) {
+		return initializer
+	}
+	return nil
 }
 
 // Resolves the given external module symbol, possibly removing call and construct signatures or creating a

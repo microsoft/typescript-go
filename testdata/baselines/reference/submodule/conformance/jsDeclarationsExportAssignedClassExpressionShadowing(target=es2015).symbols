@@ -29,8 +29,10 @@ module.exports = class Q {
     }
 }
 module.exports.Another = Q;
+>module.exports.Another : Symbol(Another, Decl(index.js, 10, 1))
 >module.exports : Symbol(exports, Decl(index.js, 0, 0))
 >module : Symbol(module, Decl(index.js, 0, 0))
 >exports : Symbol(exports, Decl(index.js, 0, 0))
+>Another : Symbol(Another, Decl(index.js, 10, 1))
 >Q : Symbol(Q, Decl(index.js, 2, 1))
 

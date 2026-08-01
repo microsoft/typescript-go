@@ -1,0 +1,55 @@
+//// [tests/cases/compiler/commonJSExportAssignmentVariableInitializers.ts] ////
+
+=== index.js ===
+require("./uninitialized");
+>require("./uninitialized") : any
+>require : any
+>"./uninitialized" : "./uninitialized"
+
+const object = require("./object");
+>object : { value: number; }
+>require("./object") : { value: number; }
+>require : any
+>"./object" : "./object"
+
+object.helper();
+>object.helper() : any
+>object.helper : any
+>object : { value: number; }
+>helper : any
+
+=== uninitialized.js ===
+var uninitialized;
+>uninitialized : any
+
+module.exports = uninitialized;
+>module.exports = uninitialized : any
+>module.exports : any
+>module : { exports: any; }
+>exports : any
+>uninitialized : undefined
+
+=== object.js ===
+const object = { value: 1 };
+>object : { value: number; }
+>{ value: 1 } : { value: number; }
+>value : number
+>1 : 1
+
+module.exports = object;
+>module.exports = object : { value: number; }
+>module.exports : { value: number; }
+>module : { exports: { value: number; }; }
+>exports : { value: number; }
+>object : { value: number; }
+
+module.exports.helper = function helper() {};
+>module.exports.helper = function helper() {} : () => void
+>module.exports.helper : any
+>module.exports : { value: number; }
+>module : { exports: { value: number; }; }
+>exports : { value: number; }
+>helper : any
+>function helper() {} : () => void
+>helper : () => void
+

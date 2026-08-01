@@ -26,7 +26,7 @@ declare type InitialOptions = {
 === repro.js ===
 /** @type {(x: import("@jest/types").Config.InitialOptions) => void} */
 module.exports = (x) => {};
->module.exports = (x) => {} : (x: { globals?: ConfigGlobals; }) => void
+>module.exports = (x) => {} : (x: import("@jest/types").Config.InitialOptions) => void
 >module.exports : (x: import("@jest/types").Config.InitialOptions) => void
 >module : { exports: (x: import("@jest/types").Config.InitialOptions) => void; }
 >exports : (x: import("@jest/types").Config.InitialOptions) => void

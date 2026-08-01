@@ -39,11 +39,3 @@
  }
 
  /**
-  * @type {MyComponentProps}
-  */
- module.exports = {
-->module.exports = {    color: "red"} : MyComponentProps
-+>module.exports = {    color: "red"} : { color: "red"; }
- >module.exports : MyComponentProps
- >module : { exports: MyComponentProps; }
- >exports : MyComponentProps

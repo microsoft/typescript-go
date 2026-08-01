@@ -23,7 +23,9 @@ module.exports.Strings = Strings;
 
 //// [cls.d.ts]
 export = Foo;
-export { Strings };
+declare namespace Foo {
+    export { Strings };
+}
 declare const Strings: {
     a: string;
     b: string;

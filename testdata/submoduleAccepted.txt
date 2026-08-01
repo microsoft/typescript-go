@@ -222,7 +222,6 @@ conformance/tsxReactEmit8(jsx=react-jsxdev).js.diff
 compiler/allowJsClassThisTypeCrash.symbols.diff
 compiler/amdLikeInputDeclarationEmit.js.diff
 compiler/amdLikeInputDeclarationEmit.symbols.diff
-compiler/amdLikeInputDeclarationEmit.types.diff
 compiler/argumentsObjectCreatesRestForJs.errors.txt.diff
 compiler/argumentsObjectCreatesRestForJs.types.diff
 compiler/argumentsPropertyNameInJsMode2.errors.txt.diff

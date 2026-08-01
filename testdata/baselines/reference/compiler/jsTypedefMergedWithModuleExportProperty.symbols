@@ -13,9 +13,11 @@ module.exports = class ModuleGraphConnection {};
 >ModuleGraphConnection : Symbol(ModuleGraphConnection, Decl(ModuleGraphConnection.js, 2, 16))
 
 module.exports.T = T;
+>module.exports.T : Symbol(T, Decl(ModuleGraphConnection.js, 2, 48), Decl(ModuleGraphConnection.js, 0, 4))
 >module.exports : Symbol(exports, Decl(ModuleGraphConnection.js, 0, 0))
 >module : Symbol(module, Decl(ModuleGraphConnection.js, 0, 0))
 >exports : Symbol(exports, Decl(ModuleGraphConnection.js, 0, 0))
+>T : Symbol(T, Decl(ModuleGraphConnection.js, 2, 48), Decl(ModuleGraphConnection.js, 0, 4))
 >T : Symbol(T, Decl(ModuleGraphConnection.js, 1, 5), Decl(ModuleGraphConnection.js, 0, 4))
 
 === repro.js ===

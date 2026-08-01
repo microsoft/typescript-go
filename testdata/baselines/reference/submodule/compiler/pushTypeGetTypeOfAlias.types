@@ -2,18 +2,18 @@
 
 === bar.js ===
 module.exports = function () {};
->module.exports = function () {} : () => void
->module.exports : () => void
->module : { exports: () => void; }
->exports : () => void
->function () {} : () => void
+>module.exports = function () {} : typeof exports
+>module.exports : typeof exports
+>module : { exports: typeof exports; }
+>exports : typeof exports
+>function () {} : typeof exports
 
 exports.blah = exports.someProp;
 >exports.blah = exports.someProp : any
 >exports.blah : any
->exports : () => void
+>exports : typeof exports
 >blah : any
 >exports.someProp : any
->exports : () => void
+>exports : typeof exports
 >someProp : any
 

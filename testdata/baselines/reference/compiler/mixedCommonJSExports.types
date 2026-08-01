@@ -1,0 +1,144 @@
+//// [tests/cases/compiler/mixedCommonJSExports.ts] ////
+
+=== index.js ===
+const mod = require("./mod");
+>mod : typeof mod
+>require("./mod") : typeof mod
+>require : any
+>"./mod" : "./mod"
+
+const Plugin = require("./plugin");
+>Plugin : typeof Plugin
+>require("./plugin") : typeof Plugin
+>require : any
+>"./plugin" : "./plugin"
+
+const Defined = require("./defined");
+>Defined : typeof Defined
+>require("./defined") : typeof Defined
+>require : any
+>"./defined" : "./defined"
+
+const arrow = require("./arrow");
+>arrow : () => void
+>require("./arrow") : typeof import("./arrow").arrow
+>require : any
+>"./arrow" : "./arrow"
+
+mod();
+>mod() : void
+>mod : typeof mod
+
+mod.helper(1);
+>mod.helper(1) : void
+>mod.helper : (value: number) => void
+>mod : typeof mod
+>helper : (value: number) => void
+>1 : 1
+
+Plugin.helper();
+>Plugin.helper() : void
+>Plugin.helper : () => void
+>Plugin : typeof Plugin
+>helper : () => void
+
+Defined.value.toFixed();
+>Defined.value.toFixed() : string
+>Defined.value.toFixed : (fractionDigits?: number) => string
+>Defined.value : number
+>Defined : typeof Defined
+>value : number
+>toFixed : (fractionDigits?: number) => string
+
+arrow.helper();
+>arrow.helper() : any
+>arrow.helper : any
+>arrow : () => void
+>helper : any
+
+=== mod.js ===
+module.exports = function main() {};
+>module.exports = function main() {} : typeof main
+>module.exports : typeof main
+>module : { exports: typeof main; }
+>exports : typeof main
+>function main() {} : typeof main
+>main : typeof main
+
+/** @param {number} value */
+module.exports.helper = function helper(value) {};
+>module.exports.helper = function helper(value) {} : (value: number) => void
+>module.exports.helper : (value: number) => void
+>module.exports : typeof main
+>module : { exports: typeof main; }
+>exports : typeof main
+>helper : (value: number) => void
+>function helper(value) {} : (value: number) => void
+>helper : (value: number) => void
+>value : number
+
+=== plugin.js ===
+class Plugin {}
+>Plugin : Plugin
+
+module.exports = Plugin;
+>module.exports = Plugin : typeof Plugin
+>module.exports : typeof Plugin
+>module : { exports: typeof Plugin; }
+>exports : typeof Plugin
+>Plugin : typeof Plugin
+
+module.exports.helper = function helper() {};
+>module.exports.helper = function helper() {} : () => void
+>module.exports.helper : () => void
+>module.exports : typeof Plugin
+>module : { exports: typeof Plugin; }
+>exports : typeof Plugin
+>helper : () => void
+>function helper() {} : () => void
+>helper : () => void
+
+=== defined.js ===
+module.exports = class Defined {};
+>module.exports = class Defined {} : typeof import("./defined")
+>module.exports : typeof import("./defined")
+>module : { exports: typeof import("./defined"); }
+>exports : typeof import("./defined")
+>class Defined {} : typeof import("./defined")
+>Defined : typeof Defined
+
+Object.defineProperty(module.exports, "value", { value: 1 });
+>Object.defineProperty(module.exports, "value", { value: 1 }) : typeof import("./defined")
+>Object.defineProperty : <T>(o: T, p: PropertyKey, attributes: PropertyDescriptor & ThisType<any>) => T
+>Object : ObjectConstructor
+>defineProperty : <T>(o: T, p: PropertyKey, attributes: PropertyDescriptor & ThisType<any>) => T
+>module.exports : typeof import("./defined")
+>module : { exports: typeof import("./defined"); }
+>exports : typeof import("./defined")
+>"value" : "value"
+>{ value: 1 } : { value: number; }
+>value : number
+>1 : 1
+
+=== arrow.js ===
+const arrow = () => {};
+>arrow : () => void
+>() => {} : () => void
+
+module.exports = arrow;
+>module.exports = arrow : typeof import("./arrow").arrow
+>module.exports : typeof import("./arrow").arrow
+>module : { exports: typeof import("./arrow").arrow; }
+>exports : typeof import("./arrow").arrow
+>arrow : () => void
+
+module.exports.helper = function helper() {};
+>module.exports.helper = function helper() {} : () => void
+>module.exports.helper : () => void
+>module.exports : typeof import("./arrow").arrow
+>module : { exports: typeof import("./arrow").arrow; }
+>exports : typeof import("./arrow").arrow
+>helper : () => void
+>function helper() {} : () => void
+>helper : () => void
+

@@ -38,7 +38,7 @@
 ->module.exports : { Bar: typeof Bar; Baz: typeof Baz; Quid: 2; Quack?: undefined; } | { Bar: typeof Bar; Baz?: undefined; Quid: 2; Quack: number; }
 ->module : { exports: { Bar: typeof Bar; Baz: typeof Baz; Quid: 2; Quack?: undefined; } | { Bar: typeof Bar; Baz?: undefined; Quid: 2; Quack: number; }; }
 ->exports : { Bar: typeof Bar; Baz: typeof Baz; Quid: 2; Quack?: undefined; } | { Bar: typeof Bar; Baz?: undefined; Quid: 2; Quack: number; }
-+>module.exports = {    Baz: class { }} : { Baz: typeof Baz; }
++>module.exports = {    Baz: class { }} : { Baz: typeof Baz; Quack?: undefined; } | { Baz?: undefined; Quack: number; }
 +>module.exports : { Baz: typeof Baz; Quack?: undefined; } | { Baz?: undefined; Quack: number; }
 +>module : { exports: { Baz: typeof Baz; Quack?: undefined; } | { Baz?: undefined; Quack: number; }; }
 +>exports : { Baz: typeof Baz; Quack?: undefined; } | { Baz?: undefined; Quack: number; }
@@ -63,7 +63,7 @@
 ->module.exports : { Bar: typeof Bar; Baz: typeof Baz; Quid: 2; Quack?: undefined; } | { Bar: typeof Bar; Baz?: undefined; Quid: 2; Quack: number; }
 ->module : { exports: { Bar: typeof Bar; Baz: typeof Baz; Quid: 2; Quack?: undefined; } | { Bar: typeof Bar; Baz?: undefined; Quid: 2; Quack: number; }; }
 ->exports : { Bar: typeof Bar; Baz: typeof Baz; Quid: 2; Quack?: undefined; } | { Bar: typeof Bar; Baz?: undefined; Quid: 2; Quack: number; }
-+>module.exports = {    Quack: 2} : { Quack: number; }
++>module.exports = {    Quack: 2} : { Baz: typeof Baz; Quack?: undefined; } | { Baz?: undefined; Quack: number; }
 +>module.exports : { Baz: typeof Baz; Quack?: undefined; } | { Baz?: undefined; Quack: number; }
 +>module : { exports: { Baz: typeof Baz; Quack?: undefined; } | { Baz?: undefined; Quack: number; }; }
 +>exports : { Baz: typeof Baz; Quack?: undefined; } | { Baz?: undefined; Quack: number; }

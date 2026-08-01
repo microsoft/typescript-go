@@ -14,9 +14,11 @@ module.exports = function (p) {
 >p : Symbol(p, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 3, 27))
 }
 module.exports.Sub = function() {
+>module.exports.Sub : Symbol(Sub, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 5, 1))
 >module.exports : Symbol(exports, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 0, 0))
 >module : Symbol(module, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 0, 0))
 >exports : Symbol(exports, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 0, 0))
+>Sub : Symbol(Sub, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 5, 1))
 
     this.instance = new module.exports(10);
 >this : Symbol(exports, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 3, 16))
@@ -25,7 +27,11 @@ module.exports.Sub = function() {
 >exports : Symbol(exports, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 0, 0))
 }
 module.exports.Sub.prototype = { }
+>module.exports.Sub.prototype : Symbol(Function.prototype, Decl(lib.es5.d.ts, --, --))
+>module.exports.Sub : Symbol(Sub, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 5, 1))
 >module.exports : Symbol(exports, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 0, 0))
 >module : Symbol(module, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 0, 0))
 >exports : Symbol(exports, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 0, 0))
+>Sub : Symbol(Sub, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 5, 1))
+>prototype : Symbol(Function.prototype, Decl(lib.es5.d.ts, --, --))
 

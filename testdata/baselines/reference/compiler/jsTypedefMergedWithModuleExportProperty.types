@@ -17,11 +17,11 @@ module.exports = class ModuleGraphConnection {};
 
 module.exports.T = T;
 >module.exports.T = T : unique symbol
->module.exports.T : any
+>module.exports.T : unique symbol
 >module.exports : typeof ModuleGraphConnection
 >module : { exports: typeof ModuleGraphConnection; }
 >exports : typeof ModuleGraphConnection
->T : any
+>T : unique symbol
 >T : unique symbol
 
 === repro.js ===

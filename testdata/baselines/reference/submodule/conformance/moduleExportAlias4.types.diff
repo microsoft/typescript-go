@@ -11,13 +11,13 @@
 ->module.exports.D = class D { } : typeof wat.D
 ->module.exports.D : typeof wat.D
 +>module.exports.D = class D { } : typeof D
-+>module.exports.D : any
++>module.exports.D : typeof D
  >module.exports : typeof wat
  >module : { exports: typeof wat; }
  >exports : typeof wat
 ->D : typeof wat.D
 ->class D { } : typeof wat.D
 ->D : typeof wat.D
-+>D : any
++>D : typeof D
 +>class D { } : typeof D
 +>D : typeof D
