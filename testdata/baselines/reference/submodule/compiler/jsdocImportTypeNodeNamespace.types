@@ -13,7 +13,7 @@ export default _default;
 === Main.js ===
 export default function () {
   return /** @type {import('./GeometryType.js').default} */ ('Point');
->('Point') : error
+>('Point') : typeof import("./GeometryType.js").default
 >'Point' : "Point"
 }
 

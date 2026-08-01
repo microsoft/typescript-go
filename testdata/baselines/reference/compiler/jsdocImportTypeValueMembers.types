@@ -6,12 +6,12 @@
 
 /** @type {VALUE} */
 const value = "value";
->value : error
+>value : "value"
 >"value" : "value"
 
 /** @type {IDsSymbol} */
 const id = require("./mixed").idsSymbol;
->id : error
+>id : unique symbol
 >require("./mixed").idsSymbol : unique symbol
 >require("./mixed") : typeof import("./mixed")
 >require : any

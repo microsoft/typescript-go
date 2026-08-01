@@ -5,15 +5,7 @@
  /** @param {import('./ex')} a */
  function demo(a) {
 ->demo : (a: { fix: boolean; }) => void
-->a : { fix: boolean; }
 +>demo : (a: import('./ex')) => void
-+>a : error
+ >a : { fix: boolean; }
 
      a.fix
-->a.fix : boolean
-->a : { fix: boolean; }
-->fix : boolean
-+>a.fix : error
-+>a : any
-+>fix : any
- }

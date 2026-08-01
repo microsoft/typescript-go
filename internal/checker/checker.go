@@ -23254,7 +23254,16 @@ func (c *Checker) getTypeReferenceType(node *ast.Node, symbol *ast.Symbol) *Type
 		return c.getRegularTypeOfLiteralType(res)
 	}
 
-	// !!! Resolving values as types for JS
+	if symbol.Flags&ast.SymbolFlagsValue != 0 && node.Flags&ast.NodeFlagsJSDoc != 0 &&
+		(ast.IsTypeReferenceNode(node) || ast.IsImportTypeNode(node)) {
+		valueType := c.getTypeOfSymbol(symbol)
+		if symbol.ValueDeclaration != nil && valueType.symbol != nil && valueType.symbol != symbol &&
+			ast.IsImportTypeNode(node) && !ast.NodeIsMissing(node.AsImportTypeNode().Qualifier) {
+			return c.getTypeReferenceType(node, valueType.symbol)
+		}
+		return valueType
+	}
+
 	return c.errorType
 }
 

@@ -1,0 +1,58 @@
+//// [tests/cases/compiler/jsdocValueReferenceTypes.ts] ////
+
+=== index.js ===
+/** @typedef {import("./keys").idsSymbol} IDsSymbol */
+/** @typedef {keyof import("./serializables")} SerializableKey */
+
+/** @type {Record<IDsSymbol, string[]>} */
+const values = {};
+>values : Symbol(values, Decl(index.js, 4, 5))
+
+values[require("./keys").idsSymbol] = [];
+>values : Symbol(values, Decl(index.js, 4, 5))
+>require("./keys").idsSymbol : Symbol(idsSymbol, Decl(keys.js, 0, 56))
+>require : Symbol(require)
+>idsSymbol : Symbol(idsSymbol, Decl(keys.js, 0, 56))
+
+const serializables = require("./serializables");
+>serializables : Symbol(serializables, Decl(index.js, 7, 5))
+>require : Symbol(require)
+>"./serializables" : Symbol("./serializables", Decl(serializables.js, 0, 0))
+
+/** @param {SerializableKey} key */
+const load = key => serializables[key];
+>load : Symbol(load, Decl(index.js, 9, 5))
+>key : Symbol(key, Decl(index.js, 9, 12))
+>serializables : Symbol(serializables, Decl(index.js, 7, 5))
+>key : Symbol(key, Decl(index.js, 9, 12))
+
+load("a/B");
+>load : Symbol(load, Decl(index.js, 9, 5))
+
+=== keys.js ===
+const idsSymbol = /** @type {symbol} */ (Symbol("ids"));
+>idsSymbol : Symbol(idsSymbol, Decl(keys.js, 0, 5))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
+
+module.exports.idsSymbol = idsSymbol;
+>module.exports.idsSymbol : Symbol(idsSymbol, Decl(keys.js, 0, 56))
+>module.exports : Symbol(exports, Decl(keys.js, 0, 0))
+>module : Symbol(module, Decl(keys.js, 0, 0))
+>exports : Symbol(exports, Decl(keys.js, 0, 0))
+>idsSymbol : Symbol(idsSymbol, Decl(keys.js, 0, 56))
+>idsSymbol : Symbol(idsSymbol, Decl(keys.js, 0, 5))
+
+=== serializables.js ===
+module.exports = {
+>module.exports : Symbol(exports, Decl(serializables.js, 0, 0))
+>module : Symbol(module, Decl(serializables.js, 0, 0))
+>exports : Symbol(exports, Decl(serializables.js, 0, 0))
+
+    "a/B": 1,
+>"a/B" : Symbol("a/B", Decl(serializables.js, 0, 18))
+
+    "c/D": 2,
+>"c/D" : Symbol("c/D", Decl(serializables.js, 1, 13))
+
+};
+

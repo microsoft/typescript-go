@@ -11,6 +11,8 @@ function demo(a) {
 >a : Symbol(a, Decl(test.js, 1, 14))
 
     a.config
+>a.config : Symbol(config, Decl(ex.d.ts, 0, 10))
 >a : Symbol(a, Decl(test.js, 1, 14))
+>config : Symbol(config, Decl(ex.d.ts, 0, 10))
 }
 

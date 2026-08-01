@@ -40,14 +40,14 @@ class MW {
    * @param {MC} compiler the compiler
    */
   constructor(compiler) {
->compiler : error
+>compiler : typeof MC
 
     this.compiler = compiler;
->this.compiler = compiler : error
+>this.compiler = compiler : typeof MC
 >this.compiler : any
 >this : this
 >compiler : any
->compiler : error
+>compiler : typeof MC
   }
 }
 

@@ -1,0 +1,77 @@
+//// [tests/cases/compiler/jsdocValueReferenceTypes.ts] ////
+
+=== index.js ===
+/** @typedef {import("./keys").idsSymbol} IDsSymbol */
+/** @typedef {keyof import("./serializables")} SerializableKey */
+
+/** @type {Record<IDsSymbol, string[]>} */
+const values = {};
+>values : Record<symbol, string[]>
+>{} : {}
+
+values[require("./keys").idsSymbol] = [];
+>values[require("./keys").idsSymbol] = [] : never[]
+>values[require("./keys").idsSymbol] : string[]
+>values : Record<symbol, string[]>
+>require("./keys").idsSymbol : symbol
+>require("./keys") : typeof import("./keys")
+>require : any
+>"./keys" : "./keys"
+>idsSymbol : symbol
+>[] : never[]
+
+const serializables = require("./serializables");
+>serializables : { "a/B": number; "c/D": number; }
+>require("./serializables") : { "a/B": number; "c/D": number; }
+>require : any
+>"./serializables" : "./serializables"
+
+/** @param {SerializableKey} key */
+const load = key => serializables[key];
+>load : (key: SerializableKey) => number
+>key => serializables[key] : (key: SerializableKey) => number
+>key : "a/B" | "c/D"
+>serializables[key] : number
+>serializables : { "a/B": number; "c/D": number; }
+>key : "a/B" | "c/D"
+
+load("a/B");
+>load("a/B") : number
+>load : (key: SerializableKey) => number
+>"a/B" : "a/B"
+
+=== keys.js ===
+const idsSymbol = /** @type {symbol} */ (Symbol("ids"));
+>idsSymbol : symbol
+>(Symbol("ids")) : symbol
+>Symbol("ids") : symbol
+>Symbol : SymbolConstructor
+>"ids" : "ids"
+
+module.exports.idsSymbol = idsSymbol;
+>module.exports.idsSymbol = idsSymbol : symbol
+>module.exports.idsSymbol : symbol
+>module.exports : typeof import("./keys")
+>module : { exports: typeof import("./keys"); }
+>exports : typeof import("./keys")
+>idsSymbol : symbol
+>idsSymbol : symbol
+
+=== serializables.js ===
+module.exports = {
+>module.exports = {    "a/B": 1,    "c/D": 2,} : { "a/B": number; "c/D": number; }
+>module.exports : { "a/B": number; "c/D": number; }
+>module : { exports: { "a/B": number; "c/D": number; }; }
+>exports : { "a/B": number; "c/D": number; }
+>{    "a/B": 1,    "c/D": 2,} : { "a/B": number; "c/D": number; }
+
+    "a/B": 1,
+>"a/B" : number
+>1 : 1
+
+    "c/D": 2,
+>"c/D" : number
+>2 : 2
+
+};
+
