@@ -15579,8 +15579,10 @@ func (c *Checker) getCommonJSExportEquals(exported *ast.Symbol, moduleSymbol *as
 		exported.Flags&ast.SymbolFlagsAlias != 0 || exported.ValueDeclaration == nil || !ast.IsInJSFile(exported.ValueDeclaration) {
 		return exported
 	}
+	fromInitializer := false
 	fromVariableInitializer := false
 	if initializer := getCommonJSExportEqualsInitializer(exported); initializer != nil && initializer.Symbol() != nil {
+		fromInitializer = true
 		fromVariableInitializer = ast.IsVariableDeclaration(exported.ValueDeclaration)
 		exported = initializer.Symbol()
 	}
@@ -15607,7 +15609,7 @@ func (c *Checker) getCommonJSExportEquals(exported *ast.Symbol, moduleSymbol *as
 	merged.Flags |= ast.SymbolFlagsValueModule
 	mergedExports := ast.GetExports(merged)
 	for name, symbol := range moduleSymbol.Exports {
-		if name == ast.InternalSymbolNameExportEquals || c.getSymbolFlags(symbol)&ast.SymbolFlagsValue == 0 {
+		if name == ast.InternalSymbolNameExportEquals || !fromInitializer && c.getSymbolFlags(symbol)&ast.SymbolFlagsValue == 0 {
 			continue
 		}
 		if existing := mergedExports[name]; existing != nil {

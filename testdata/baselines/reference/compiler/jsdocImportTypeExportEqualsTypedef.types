@@ -1,0 +1,16 @@
+//// [tests/cases/compiler/jsdocImportTypeExportEqualsTypedef.ts] ////
+
+=== factory.js ===
+/** @typedef {{ enabled: boolean }} Options */
+/** @returns {void} */
+module.exports = () => {};
+>module.exports = () => {} : typeof exports
+>module.exports : typeof exports
+>module : { exports: typeof exports; }
+>exports : typeof exports
+>() => {} : typeof exports
+
+=== index.d.ts ===
+export type Options = import("./factory").Options;
+>Options : import("./factory").Options
+
