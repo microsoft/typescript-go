@@ -24757,6 +24757,10 @@ func (c *Checker) getIdentifierChain(node *ast.Node) []*ast.Node {
 
 func (c *Checker) resolveImportSymbolType(node *ast.Node, symbol *ast.Symbol, meaning ast.SymbolFlags) *Type {
 	resolvedSymbol := c.resolveSymbol(symbol)
+	if meaning&ast.SymbolFlagsType != 0 && symbol.Name == ast.InternalSymbolNameExportEquals &&
+		symbol.Flags&ast.SymbolFlagsAlias != 0 && len(node.TypeArguments()) != 0 {
+		resolvedSymbol = c.resolveAlias(symbol)
+	}
 	c.symbolNodeLinks.Get(node).resolvedSymbol = resolvedSymbol
 	if meaning == ast.SymbolFlagsValue {
 		// intentionally doesn't use resolved symbol so type is cached as expected on the alias

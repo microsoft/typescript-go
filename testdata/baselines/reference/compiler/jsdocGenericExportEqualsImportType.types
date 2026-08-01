@@ -1,0 +1,46 @@
+//// [tests/cases/compiler/jsdocGenericExportEqualsImportType.ts] ////
+
+=== index.js ===
+const Box = require("./box");
+>Box : typeof Box
+>require("./box") : typeof Box
+>require : any
+>"./box" : "./box"
+
+const value = new Box("value");
+>value : Box<string>
+>new Box("value") : Box<string>
+>Box : typeof Box
+>"value" : "value"
+
+/** @type {import("./box")<string>} */
+const typed = value;
+>typed : Box<string>
+>value : Box<string>
+
+=== box.js ===
+/** @template T */
+class Box {
+>Box : Box<T>
+
+    /** @param {T} value */
+    constructor(value) {
+>value : T
+
+        this.value = value;
+>this.value = value : T
+>this.value : any
+>this : this
+>value : any
+>value : T
+    }
+}
+module.exports = Box;
+>module.exports = Box : typeof Box
+>module.exports : typeof Box
+>module : { exports: typeof Box; }
+>exports : typeof Box
+>Box : typeof Box
+
+/** @typedef {string} Extra */
+

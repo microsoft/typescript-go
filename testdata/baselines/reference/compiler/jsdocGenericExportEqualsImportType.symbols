@@ -1,0 +1,41 @@
+//// [tests/cases/compiler/jsdocGenericExportEqualsImportType.ts] ////
+
+=== index.js ===
+const Box = require("./box");
+>Box : Symbol(Box, Decl(index.js, 0, 5))
+>require : Symbol(require)
+>"./box" : Symbol("./box", Decl(box.js, 0, 0))
+
+const value = new Box("value");
+>value : Symbol(value, Decl(index.js, 1, 5))
+>Box : Symbol(Box, Decl(index.js, 0, 5))
+
+/** @type {import("./box")<string>} */
+const typed = value;
+>typed : Symbol(typed, Decl(index.js, 3, 5))
+>value : Symbol(value, Decl(index.js, 1, 5))
+
+=== box.js ===
+/** @template T */
+class Box {
+>Box : Symbol(Box, Decl(box.js, 0, 0))
+
+    /** @param {T} value */
+    constructor(value) {
+>value : Symbol(value, Decl(box.js, 3, 16))
+
+        this.value = value;
+>this.value : Symbol(Box.value, Decl(box.js, 3, 24))
+>this : Symbol(Box, Decl(box.js, 0, 0))
+>value : Symbol(Box.value, Decl(box.js, 3, 24))
+>value : Symbol(value, Decl(box.js, 3, 16))
+    }
+}
+module.exports = Box;
+>module.exports : Symbol(exports, Decl(box.js, 0, 0))
+>module : Symbol(module, Decl(box.js, 0, 0))
+>exports : Symbol(exports, Decl(box.js, 0, 0))
+>Box : Symbol(Box, Decl(box.js, 0, 0))
+
+/** @typedef {string} Extra */
+
