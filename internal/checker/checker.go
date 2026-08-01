@@ -19917,6 +19917,14 @@ func (c *Checker) getSignaturesOfSymbol(symbol *ast.Symbol) []*Signature {
 				continue
 			}
 		}
+		if ast.IsInJSFile(decl) {
+			if tags := getJSDocOverloadTags(decl); len(tags) != 0 {
+				for _, tag := range tags {
+					result = append(result, c.getSignatureFromJSDocSignature(tag.AsJSDocOverloadTag().TypeExpression))
+				}
+				continue
+			}
+		}
 		// If this is a function or method declaration, get the signature from the @type tag for the sake of optional parameters.
 		// Exclude contextually-typed kinds because we already apply the @type tag to the context, plus applying it here to the initializer would suppress checks that the two are compatible.
 		sig := c.getSignatureOfFullSignatureType(decl)
@@ -19924,6 +19932,99 @@ func (c *Checker) getSignaturesOfSymbol(symbol *ast.Symbol) []*Signature {
 			sig = c.getSignatureFromDeclaration(decl)
 		}
 		result = append(result, sig)
+	}
+	return result
+}
+
+func (c *Checker) getSignatureFromJSDocSignature(declaration *ast.Node) *Signature {
+	links := c.signatureLinks.Get(declaration)
+	if links.resolvedSignature != nil {
+		return links.resolvedSignature
+	}
+	var parameters []*ast.Symbol
+	var parameterDeclarations []*ast.Node
+	var thisParameter *ast.Symbol
+	var flags SignatureFlags
+	minArgumentCount := 0
+	for i, parameter := range declaration.Parameters() {
+		var name string
+		var typeExpression *ast.Node
+		var optional bool
+		switch parameter.Kind {
+		case ast.KindJSDocThisTag:
+			name = ast.InternalSymbolNameThis
+			typeExpression = parameter.TypeExpression()
+		default:
+			jsParameter := parameter.AsJSDocParameterOrPropertyTag()
+			name = scanner.DeclarationNameToString(parameter.Name())
+			typeExpression = jsParameter.TypeExpression
+			optional = jsParameter.IsBracketed
+		}
+		if name == "" {
+			name = strconv.Itoa(i)
+		}
+		parameterType := c.anyType
+		var typeNode *ast.Node
+		if typeExpression != nil {
+			typeNode = typeExpression.Type()
+			parameterType = c.getTypeFromTypeNode(typeNode)
+			optional = optional || typeNode.Kind == ast.KindJSDocOptionalType
+		}
+		isRest := typeNode != nil && typeNode.Kind == ast.KindJSDocVariadicType
+		var dotDotDotToken *ast.Node
+		if isRest {
+			dotDotDotToken = c.factory.NewToken(ast.KindDotDotDotToken)
+		}
+		var questionToken *ast.Node
+		if optional {
+			questionToken = c.factory.NewToken(ast.KindQuestionToken)
+		}
+		parameterDeclaration := c.factory.NewParameterDeclaration(nil, dotDotDotToken, c.factory.NewIdentifier(name), questionToken, nil, nil)
+		parameterDeclaration.Loc = parameter.Loc
+		parameterDeclarations = append(parameterDeclarations, parameterDeclaration)
+		parameterSymbol := c.newSymbol(ast.SymbolFlagsFunctionScopedVariable, name)
+		parameterSymbol.ValueDeclaration = parameterDeclaration
+		parameterSymbol.Declarations = []*ast.Node{parameterDeclaration}
+		parameterDeclaration.DeclarationData().Symbol = parameterSymbol
+		c.valueSymbolLinks.Get(parameterSymbol).resolvedType = parameterType
+		if name == ast.InternalSymbolNameThis {
+			thisParameter = parameterSymbol
+			continue
+		}
+		parameters = append(parameters, parameterSymbol)
+		if isRest {
+			flags |= SignatureFlagsHasRestParameter
+		}
+		if !optional && !isRest {
+			minArgumentCount = len(parameters)
+		}
+	}
+	returnType := c.anyType
+	if returnTag := declaration.Type(); returnTag != nil && returnTag.TypeExpression() != nil {
+		returnType = c.getTypeFromTypeNode(returnTag.TypeExpression().Type())
+	}
+	signatureDeclaration := c.factory.NewFunctionTypeNode(nil, c.factory.NewNodeList(parameterDeclarations), c.factory.NewKeywordTypeNode(ast.KindAnyKeyword))
+	for _, parameter := range parameterDeclarations {
+		parameter.Parent = signatureDeclaration
+	}
+	links.resolvedSignature = c.newSignature(flags, signatureDeclaration, nil /*typeParameters*/, thisParameter, parameters, returnType, nil /*resolvedTypePredicate*/, minArgumentCount)
+	return links.resolvedSignature
+}
+
+func getJSDocOverloadTags(declaration *ast.Node) []*ast.Node {
+	host := declaration
+	if ast.IsFunctionExpressionOrArrowFunction(declaration) && ast.IsVariableDeclaration(declaration.Parent) {
+		host = declaration.Parent.Parent.Parent
+	}
+	var result []*ast.Node
+	for _, jsdoc := range host.JSDoc(nil) {
+		if tags := jsdoc.AsJSDoc().Tags; tags != nil {
+			for _, tag := range tags.Nodes {
+				if ast.IsJSDocOverloadTag(tag) {
+					result = append(result, tag)
+				}
+			}
+		}
 	}
 	return result
 }
