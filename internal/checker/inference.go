@@ -100,32 +100,20 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 	}
 	if target.flags&TypeFlagsUnion != 0 {
 		var sourceTypes []*Type
-		var sourceOrigin *Type
 		if source.flags&TypeFlagsUnion != 0 {
 			sourceTypes = source.Types()
-			sourceOrigin = source.AsUnionType().origin
 		} else {
 			sourceTypes = []*Type{source}
 		}
-		targetTypes := target.Types()
 		// First, infer between identically matching source and target constituents and remove the
 		// matching types.
-		tempSources, tempTargets := c.inferFromMatchingTypes(n, sourceTypes, targetTypes, (*Checker).isTypeOrBaseIdenticalTo, false /*sort*/)
+		tempSources, tempTargets := c.inferFromMatchingTypes(n, sourceTypes, target.Types(), (*Checker).isTypeOrBaseIdenticalTo, false /*sort*/)
 		// Next, infer between closely matching source and target constituents and remove
 		// the matching types. Types closely match when they are instantiations of the same
 		// object type or instantiations of the same type alias.
 		sources, targets := c.inferFromMatchingTypes(n, tempSources, tempTargets, (*Checker).isTypeCloselyMatchedBy, true /*sort*/)
 		if len(targets) == 0 {
 			return
-		}
-		// A union normalized from an intersection retains its pre-distribution origin. When no
-		// constituents match directly, prefer inferences from the non-union intersection factors
-		// that are common to every distributed constituent over branch-specific inferences.
-		if !n.contravariant && n.priority&InferencePriorityPriorityImpliesCombination == 0 && sourceOrigin != nil && sourceOrigin.flags&TypeFlagsIntersection != 0 && len(sources) == len(sourceTypes) && len(targets) == len(targetTypes) {
-			commonSources := core.Filter(sourceOrigin.Types(), func(t *Type) bool { return t.flags&TypeFlagsUnion == 0 })
-			if len(commonSources) != 0 && len(commonSources) != len(sourceOrigin.Types()) {
-				c.inferFromTypes(n, c.getIntersectionType(commonSources), target)
-			}
 		}
 		target = c.getUnionType(targets)
 		if len(sources) == 0 {
