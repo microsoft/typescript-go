@@ -1,0 +1,39 @@
+//// [tests/cases/compiler/genericInferenceFromWrapperUnion.ts] ////
+
+=== genericInferenceFromWrapperUnion.ts ===
+// https://github.com/microsoft/typescript-go/issues/4817
+
+type MaybeRef<T> = T | { value: T };
+>MaybeRef : MaybeRef<T>
+>value : T
+
+declare function f<D>(options: {
+>f : <D>(options: { select?: MaybeRef<(data: string) => D>; }) => D | undefined
+>options : { select?: MaybeRef<(data: string) => D>; }
+
+    select?: MaybeRef<(data: string) => D>;
+>select : MaybeRef<(data: string) => D> | undefined
+>data : string
+
+}): D | undefined;
+
+declare const arg: {
+>arg : { select?: MaybeRef<(data: string) => string>; } & { select: (data: string) => number; }
+
+    select?: MaybeRef<(data: string) => string>;
+>select : MaybeRef<(data: string) => string> | undefined
+>data : string
+
+} & {
+    select: (data: string) => number;
+>select : (data: string) => number
+>data : string
+
+};
+
+const n: number | undefined = f(arg);
+>n : number | undefined
+>f(arg) : string | undefined
+>f : <D>(options: { select?: MaybeRef<(data: string) => D>; }) => D | undefined
+>arg : { select?: MaybeRef<(data: string) => string>; } & { select: (data: string) => number; }
+
