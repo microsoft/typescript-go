@@ -44,3 +44,23 @@ const n: number | undefined = f(arg);
 >f : Symbol(f, Decl(genericInferenceFromWrapperUnion.ts, 2, 36))
 >arg : Symbol(arg, Decl(genericInferenceFromWrapperUnion.ts, 8, 13))
 
+declare const reversedArg: {
+>reversedArg : Symbol(reversedArg, Decl(genericInferenceFromWrapperUnion.ts, 16, 13))
+
+    select: (data: string) => number;
+>select : Symbol(select, Decl(genericInferenceFromWrapperUnion.ts, 16, 28))
+>data : Symbol(data, Decl(genericInferenceFromWrapperUnion.ts, 17, 13))
+
+} & {
+    select?: MaybeRef<(data: string) => string>;
+>select : Symbol(select, Decl(genericInferenceFromWrapperUnion.ts, 18, 5))
+>MaybeRef : Symbol(MaybeRef, Decl(genericInferenceFromWrapperUnion.ts, 0, 0))
+>data : Symbol(data, Decl(genericInferenceFromWrapperUnion.ts, 19, 23))
+
+};
+
+const s: string | undefined = f(reversedArg);
+>s : Symbol(s, Decl(genericInferenceFromWrapperUnion.ts, 22, 5))
+>f : Symbol(f, Decl(genericInferenceFromWrapperUnion.ts, 2, 36))
+>reversedArg : Symbol(reversedArg, Decl(genericInferenceFromWrapperUnion.ts, 16, 13))
+

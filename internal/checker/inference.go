@@ -100,20 +100,39 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 	}
 	if target.flags&TypeFlagsUnion != 0 {
 		var sourceTypes []*Type
+		var sourceOrigin *Type
 		if source.flags&TypeFlagsUnion != 0 {
 			sourceTypes = source.Types()
+			sourceOrigin = source.AsUnionType().origin
 		} else {
 			sourceTypes = []*Type{source}
 		}
+		targetTypes := target.Types()
 		// First, infer between identically matching source and target constituents and remove the
 		// matching types.
-		tempSources, tempTargets := c.inferFromMatchingTypes(n, sourceTypes, target.Types(), (*Checker).isTypeOrBaseIdenticalTo, false /*sort*/)
+		tempSources, tempTargets := c.inferFromMatchingTypes(n, sourceTypes, targetTypes, (*Checker).isTypeOrBaseIdenticalTo, false /*sort*/)
 		// Next, infer between closely matching source and target constituents and remove
 		// the matching types. Types closely match when they are instantiations of the same
 		// object type or instantiations of the same type alias.
 		sources, targets := c.inferFromMatchingTypes(n, tempSources, tempTargets, (*Checker).isTypeCloselyMatchedBy, true /*sort*/)
 		if len(targets) == 0 {
 			return
+		}
+		// A union normalized from an intersection retains its pre-distribution origin. When no
+		// constituents match directly, infer first from intersection factors following the last
+		// union. Those factors provide the final signatures in every distributed constituent and
+		// therefore take precedence over signatures contributed by the union branches.
+		if !n.contravariant && n.priority&InferencePriorityPriorityImpliesCombination == 0 && sourceOrigin != nil && sourceOrigin.flags&TypeFlagsIntersection != 0 && len(sources) == len(sourceTypes) && len(targets) == len(targetTypes) {
+			originTypes := sourceOrigin.Types()
+			trailingStart := 0
+			for i, t := range originTypes {
+				if t.flags&TypeFlagsUnion != 0 {
+					trailingStart = i + 1
+				}
+			}
+			if trailingStart != 0 && trailingStart < len(originTypes) {
+				c.inferFromTypes(n, c.getIntersectionType(originTypes[trailingStart:]), target)
+			}
 		}
 		target = c.getUnionType(targets)
 		if len(sources) == 0 {

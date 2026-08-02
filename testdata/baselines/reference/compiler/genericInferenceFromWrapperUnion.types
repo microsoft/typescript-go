@@ -33,7 +33,27 @@ declare const arg: {
 
 const n: number | undefined = f(arg);
 >n : number | undefined
->f(arg) : string | undefined
+>f(arg) : number | undefined
 >f : <D = string>(options: { select?: MaybeRef<(data: string) => D>; }) => D | undefined
 >arg : { select?: MaybeRef<(data: string) => string>; } & { select: (data: string) => number; }
+
+declare const reversedArg: {
+>reversedArg : { select: (data: string) => number; } & { select?: MaybeRef<(data: string) => string>; }
+
+    select: (data: string) => number;
+>select : (data: string) => number
+>data : string
+
+} & {
+    select?: MaybeRef<(data: string) => string>;
+>select : MaybeRef<(data: string) => string> | undefined
+>data : string
+
+};
+
+const s: string | undefined = f(reversedArg);
+>s : string | undefined
+>f(reversedArg) : string | undefined
+>f : <D = string>(options: { select?: MaybeRef<(data: string) => D>; }) => D | undefined
+>reversedArg : { select: (data: string) => number; } & { select?: MaybeRef<(data: string) => string>; }
 

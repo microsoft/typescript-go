@@ -17,3 +17,11 @@ declare const arg: {
 };
 
 const n: number | undefined = f(arg);
+
+declare const reversedArg: {
+    select: (data: string) => number;
+} & {
+    select?: MaybeRef<(data: string) => string>;
+};
+
+const s: string | undefined = f(reversedArg);
