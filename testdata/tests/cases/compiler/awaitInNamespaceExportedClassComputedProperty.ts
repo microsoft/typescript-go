@@ -28,4 +28,18 @@ async function* agf() {
     export class H { [await x]() {} }
 }
 
+function switchSync() {
+    switch (0) {
+        case 0:
+            export class I { [await x]() {} }
+    }
+}
+
+async function switchAsync() {
+    switch (0) {
+        case 0:
+            export class J { [await x]() {} }
+    }
+}
+
 export {};

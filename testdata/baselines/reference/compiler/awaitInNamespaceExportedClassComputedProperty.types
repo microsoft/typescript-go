@@ -73,5 +73,39 @@ async function* agf() {
 >x : string
 }
 
+function switchSync() {
+>switchSync : () => void
+
+    switch (0) {
+>0 : 0
+
+        case 0:
+>0 : 0
+
+            export class I { [await x]() {} }
+>I : I
+>[await x] : () => void
+>await x : string
+>x : string
+    }
+}
+
+async function switchAsync() {
+>switchAsync : () => Promise<void>
+
+    switch (0) {
+>0 : 0
+
+        case 0:
+>0 : 0
+
+            export class J { [await x]() {} }
+>J : J
+>[await x] : () => void
+>await x : string
+>x : string
+    }
+}
+
 export {};
 

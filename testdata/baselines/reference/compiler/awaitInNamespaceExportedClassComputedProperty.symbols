@@ -65,5 +65,29 @@ async function* agf() {
 >x : Symbol(x, Decl(awaitInNamespaceExportedClassComputedProperty.ts, 0, 13))
 }
 
+function switchSync() {
+>switchSync : Symbol(switchSync, Decl(awaitInNamespaceExportedClassComputedProperty.ts, 25, 1))
+
+    switch (0) {
+        case 0:
+            export class I { [await x]() {} }
+>I : Symbol(I, Decl(awaitInNamespaceExportedClassComputedProperty.ts, 29, 15))
+>[await x] : Symbol(I[await x], Decl(awaitInNamespaceExportedClassComputedProperty.ts, 30, 28))
+>x : Symbol(x, Decl(awaitInNamespaceExportedClassComputedProperty.ts, 0, 13))
+    }
+}
+
+async function switchAsync() {
+>switchAsync : Symbol(switchAsync, Decl(awaitInNamespaceExportedClassComputedProperty.ts, 32, 1))
+
+    switch (0) {
+        case 0:
+            export class J { [await x]() {} }
+>J : Symbol(J, Decl(awaitInNamespaceExportedClassComputedProperty.ts, 36, 15))
+>[await x] : Symbol(J[await x], Decl(awaitInNamespaceExportedClassComputedProperty.ts, 37, 28))
+>x : Symbol(x, Decl(awaitInNamespaceExportedClassComputedProperty.ts, 0, 13))
+    }
+}
+
 export {};
 
