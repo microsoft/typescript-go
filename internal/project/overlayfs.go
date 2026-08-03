@@ -364,7 +364,7 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 				})
 				for _, textChange := range change.Changes {
 					if partialChange := textChange.Partial; partialChange != nil {
-						ranges := converters.FromLSPRange(o, partialChange.Range, spanmap.PurposeAll)
+						ranges := converters.FromLSPRange(o, partialChange.Range, spanmap.FeatureAll)
 						debug.Assert(len(ranges) == 1, "expected exactly one range for partial change")
 						textChange := core.TextChange{TextRange: ranges[0].Span, NewText: partialChange.Text}
 						newContent := textChange.ApplyTo(o.content)

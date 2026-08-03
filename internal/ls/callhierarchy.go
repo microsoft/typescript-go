@@ -507,8 +507,8 @@ func (l *LanguageService) createCallHierarchyItem(program *compiler.Program, nod
 
 	fullStart := scanner.SkipTriviaEx(sourceFile.Text(), node.Pos(), &scanner.SkipTriviaOptions{StopAtComments: true})
 	script := l.getScript(sourceFile.FileName())
-	span, spanFidelity := l.converters.ToLSPRange(script, core.NewTextRange(fullStart, node.End()))
-	selectionSpan, selectionFidelity := l.converters.ToLSPRange(script, core.NewTextRange(namePos, nameEnd))
+	span, spanFidelity := l.converters.ToLSPRangeForFeature(script, core.NewTextRange(fullStart, node.End()), spanmap.FeatureCallHierarchy)
+	selectionSpan, selectionFidelity := l.converters.ToLSPRangeForFeature(script, core.NewTextRange(namePos, nameEnd), spanmap.FeatureCallHierarchy)
 	if !selectionFidelity.IsSingleSegment() {
 		return nil
 	}
@@ -574,7 +574,7 @@ func (l *LanguageService) convertCallSiteGroupToIncomingCall(program *compiler.P
 	fromRanges := make([]lsproto.Range, 0, len(entries))
 	for _, entry := range entries {
 		script := l.getScript(entry.sourceFile.AsSourceFile().FileName())
-		if lspRange, fidelity := l.converters.ToLSPRange(script, entry.textRange); !fidelity.IsNone() {
+		if lspRange, fidelity := l.converters.ToLSPRangeForFeature(script, entry.textRange, spanmap.FeatureCallHierarchy); !fidelity.IsNone() {
 			fromRanges = append(fromRanges, lspRange)
 		}
 	}
@@ -642,7 +642,7 @@ func (l *LanguageService) getIncomingCalls(ctx context.Context, program *compile
 	}
 	locationFile := ast.GetSourceFileOfNode(location)
 	locationStart := scanner.GetTokenPosOfNode(location, locationFile, false /*includeJsDoc*/)
-	if _, fidelity := l.converters.ToLSPPosition(locationFile, core.TextPos(locationStart)); fidelity.IsNone() {
+	if _, fidelity := l.converters.ToLSPPositionForFeature(locationFile, core.TextPos(locationStart), spanmap.FeatureCallHierarchy); fidelity.IsNone() {
 		return lsproto.CallHierarchyIncomingCallsOrNull{}, nil
 	}
 
@@ -944,7 +944,7 @@ func (l *LanguageService) convertCallSiteGroupToOutgoingCall(program *compiler.P
 	fromRanges := make([]lsproto.Range, 0, len(entries))
 	for _, entry := range entries {
 		script := l.getScript(entry.sourceFile.AsSourceFile().FileName())
-		if lspRange, fidelity := l.converters.ToLSPRange(script, entry.textRange); !fidelity.IsNone() {
+		if lspRange, fidelity := l.converters.ToLSPRangeForFeature(script, entry.textRange, spanmap.FeatureCallHierarchy); !fidelity.IsNone() {
 			fromRanges = append(fromRanges, lspRange)
 		}
 	}
@@ -1104,7 +1104,7 @@ func (l *LanguageService) ProvideCallHierarchyOutgoingCalls(
 }
 
 func (l *LanguageService) callHierarchyDeclarations(file *ast.SourceFile, position lsproto.Position, program *compiler.Program, allowSourceFile bool) []*ast.Node {
-	positions := l.converters.FromLSPPosition(file, position, spanmap.PurposeNavigation)
+	positions := l.converters.FromLSPPosition(file, position, spanmap.FeatureCallHierarchy)
 	var declarations []*ast.Node
 	var seen collections.Set[*ast.Node]
 	for _, mapped := range positions {

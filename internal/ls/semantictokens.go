@@ -155,7 +155,7 @@ func (l *LanguageService) ProvideSemanticTokensRange(ctx context.Context, docume
 
 	var tokens []semanticToken
 	var seen collections.Set[semanticToken]
-	for _, mapped := range l.converters.FromLSPRange(file, rng, spanmap.PurposeSemantic) {
+	for _, mapped := range l.converters.FromLSPRange(file, rng, spanmap.FeatureSemanticTokens) {
 		for _, token := range l.collectSemanticTokensInRange(ctx, c, file, program, mapped.Span.Pos(), mapped.Span.End()) {
 			if seen.AddIfAbsent(token) {
 				tokens = append(tokens, token)
@@ -538,7 +538,7 @@ func encodeSemanticTokens(ctx context.Context, tokens []semanticToken, file *ast
 
 		// Semantic tokens must describe one concrete source segment; synthesized and cross-segment
 		// tokens do not identify a coherent token in the original text.
-		lspRange, fidelity := converters.ToLSPRange(file, core.NewTextRange(tokenStart, tokenEnd))
+		lspRange, fidelity := converters.ToLSPRangeForFeature(file, core.NewTextRange(tokenStart, tokenEnd), spanmap.FeatureSemanticTokens)
 		if !fidelity.IsExact() {
 			continue
 		}

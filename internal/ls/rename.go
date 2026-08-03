@@ -47,7 +47,7 @@ func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.Ren
 
 func (l *LanguageService) GetRenameInfo(ctx context.Context, newName string, documentURI lsproto.DocumentUri, position lsproto.Position) RenameInfo {
 	program, sourceFile := l.getProgramAndFile(documentURI)
-	positions := l.converters.FromLSPPosition(sourceFile, position, spanmap.PurposeNavigation)
+	positions := l.converters.FromLSPPosition(sourceFile, position, spanmap.FeatureRename)
 	for _, mapped := range positions {
 		if !mapped.Fidelity.IsExact() {
 			continue

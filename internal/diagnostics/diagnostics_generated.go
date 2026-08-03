@@ -4348,7 +4348,7 @@ var The_content_mapper_0_produced_overlapping_or_out_of_order_position_mappings_
 
 var The_content_mapper_0_produced_overlapping_original_position_mappings_that_are_not_identical_near_original_offset_1 = &Message{code: 100039, category: CategoryError, key: "The_content_mapper_0_produced_overlapping_original_position_mappings_that_are_not_identical_near_ori_100039", text: "The content mapper '{0}' produced overlapping original position mappings that are not identical (near original offset {1})."}
 
-var The_content_mapper_0_produced_invalid_mapping_purposes_near_original_offset_1 = &Message{code: 100040, category: CategoryError, key: "The_content_mapper_0_produced_invalid_mapping_purposes_near_original_offset_1_100040", text: "The content mapper '{0}' produced invalid mapping purposes near original offset {1}."}
+var The_content_mapper_0_produced_invalid_mapping_features_near_original_offset_1 = &Message{code: 100040, category: CategoryError, key: "The_content_mapper_0_produced_invalid_mapping_features_near_original_offset_1_100040", text: "The content mapper '{0}' produced invalid mapping features near original offset {1}."}
 
 var The_content_mapper_0_produced_a_position_mapping_with_an_invalid_kind_near_output_offset_1 = &Message{code: 100041, category: CategoryError, key: "The_content_mapper_0_produced_a_position_mapping_with_an_invalid_kind_near_output_offset_1_100041", text: "The content mapper '{0}' produced a position mapping with an invalid kind (near output offset {1})."}
 
@@ -8716,8 +8716,8 @@ func keyToMessage(key Key) *Message {
 		return The_content_mapper_0_produced_overlapping_or_out_of_order_position_mappings_near_output_offset_1
 	case "The_content_mapper_0_produced_overlapping_original_position_mappings_that_are_not_identical_near_ori_100039":
 		return The_content_mapper_0_produced_overlapping_original_position_mappings_that_are_not_identical_near_original_offset_1
-	case "The_content_mapper_0_produced_invalid_mapping_purposes_near_original_offset_1_100040":
-		return The_content_mapper_0_produced_invalid_mapping_purposes_near_original_offset_1
+	case "The_content_mapper_0_produced_invalid_mapping_features_near_original_offset_1_100040":
+		return The_content_mapper_0_produced_invalid_mapping_features_near_original_offset_1
 	case "The_content_mapper_0_produced_a_position_mapping_with_an_invalid_kind_near_output_offset_1_100041":
 		return The_content_mapper_0_produced_a_position_mapping_with_an_invalid_kind_near_output_offset_1
 	case "The_content_mapper_process_could_not_be_started_or_initialized_100042":

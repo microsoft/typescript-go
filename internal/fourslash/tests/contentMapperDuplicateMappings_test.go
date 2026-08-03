@@ -20,7 +20,7 @@ func TestContentMapperDuplicateMappings(t *testing.T) {
 	f.VerifyBaselineFindAllReferences(t, "query")
 }
 
-func TestContentMapperDisabledPurposes(t *testing.T) {
+func TestContentMapperDisabledFeatures(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	f, done := newContentMapperFourslash(t, `// @Filename: /disabled.dup

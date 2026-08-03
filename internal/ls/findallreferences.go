@@ -170,6 +170,11 @@ func (l *LanguageService) getRangeOfEntry(entry *ReferenceEntry) lsproto.Range {
 	return l.resolveEntry(entry).lspRange.Range
 }
 
+func (l *LanguageService) getRangeOfEntryForFeature(entry *ReferenceEntry, feature spanmap.Feature) (lsproto.Range, bool) {
+	location, ok := l.getLocationOfEntryForFeature(entry, feature)
+	return location.Range, ok
+}
+
 func (l *LanguageService) getFileNameOfEntry(entry *ReferenceEntry) lsproto.DocumentUri {
 	return l.resolveEntry(entry).lspRange.Uri
 }
@@ -177,6 +182,17 @@ func (l *LanguageService) getFileNameOfEntry(entry *ReferenceEntry) lsproto.Docu
 func (l *LanguageService) getLocationOfEntry(entry *ReferenceEntry) (lsproto.Location, bool) {
 	resolved := l.resolveEntry(entry)
 	return *resolved.lspRange, !resolved.unmappable
+}
+
+func (l *LanguageService) getLocationOfEntryForFeature(entry *ReferenceEntry, feature spanmap.Feature) (lsproto.Location, bool) {
+	if entry.textRange == nil {
+		sourceFile := ast.GetSourceFileOfNode(entry.node)
+		textRange := getRangeOfNode(entry.node, sourceFile, nil /*endNode*/)
+		entry.textRange = &textRange
+		entry.fileName = sourceFile.FileName()
+	}
+	location, fidelity := l.getMappedLocationForFeature(entry.fileName, *entry.textRange, feature)
+	return location, fidelity.IsSingleSegment()
 }
 
 func (l *LanguageService) resolveEntry(entry *ReferenceEntry) *ReferenceEntry {
@@ -635,7 +651,13 @@ type SymbolAndEntriesData struct {
 func (l *LanguageService) provideSymbolsAndEntries(ctx context.Context, uri lsproto.DocumentUri, documentPosition lsproto.Position, isRename bool, implementations bool) (SymbolAndEntriesData, bool) {
 	// `findReferencedSymbols` except only computes the information needed to return reference locations
 	program, sourceFile := l.getProgramAndFile(uri)
-	positions := l.converters.FromLSPPosition(sourceFile, documentPosition, spanmap.PurposeNavigation)
+	feature := spanmap.FeatureReferences
+	if implementations {
+		feature = spanmap.FeatureImplementation
+	} else if isRename {
+		feature = spanmap.FeatureRename
+	}
+	positions := l.converters.FromLSPPosition(sourceFile, documentPosition, feature)
 	if len(positions) == 0 {
 		return SymbolAndEntriesData{}, false
 	}
@@ -754,7 +776,7 @@ func (l *LanguageService) symbolAndEntriesToReferences(ctx context.Context, para
 	var locations []lsproto.Location
 	var seenLocations collections.Set[lsproto.Location]
 	for _, symbol := range data.SymbolsAndEntries {
-		symbolLocations := l.convertSymbolAndEntriesToLocations(symbol, params.Context.IncludeDeclaration)
+		symbolLocations := l.convertSymbolAndEntriesToLocations(symbol, params.Context.IncludeDeclaration, spanmap.FeatureReferences)
 		locations = combineLocationArray(locations, &symbolLocations, &seenLocations)
 	}
 	return lsproto.LocationsOrNull{Locations: &locations}, nil
@@ -1006,15 +1028,15 @@ func (l *LanguageService) symbolAndEntriesToImplementations(ctx context.Context,
 	}
 
 	if !options.requireLocationsResult && lsproto.GetClientCapabilities(ctx).TextDocument.Implementation.LinkSupport {
-		links := l.convertEntriesToLocationLinks(entries)
+		links := l.convertEntriesToLocationLinks(entries, spanmap.FeatureImplementation)
 		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{DefinitionLinks: &links}, nil
 	}
-	locations := l.convertEntriesToLocations(entries, nil /*definitionSymbol*/)
+	locations := l.convertEntriesToLocations(entries, nil /*definitionSymbol*/, spanmap.FeatureImplementation)
 	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{Locations: &locations}, nil
 }
 
 // == functions for conversions ==
-func (l *LanguageService) convertSymbolAndEntriesToLocations(s *SymbolAndEntries, includeDeclarations bool) []lsproto.Location {
+func (l *LanguageService) convertSymbolAndEntriesToLocations(s *SymbolAndEntries, includeDeclarations bool, feature spanmap.Feature) []lsproto.Location {
 	references := s.references
 
 	// !!! includeDeclarations
@@ -1028,7 +1050,7 @@ func (l *LanguageService) convertSymbolAndEntriesToLocations(s *SymbolAndEntries
 	if includeDeclarations && s.definition != nil {
 		definitionSymbol = s.definition.symbol
 	}
-	return l.convertEntriesToLocations(references, definitionSymbol)
+	return l.convertEntriesToLocations(references, definitionSymbol, feature)
 }
 
 func isDeclarationOfSymbol(node *ast.Node, target *ast.Symbol) bool {
@@ -1055,19 +1077,19 @@ func isDeclarationOfSymbol(node *ast.Node, target *ast.Symbol) bool {
 	})
 }
 
-func (l *LanguageService) convertEntriesToLocations(entries []*ReferenceEntry, definitionSymbol *ast.Symbol) []lsproto.Location {
+func (l *LanguageService) convertEntriesToLocations(entries []*ReferenceEntry, definitionSymbol *ast.Symbol, feature spanmap.Feature) []lsproto.Location {
 	// A synthesized declaration has no source span, but it still represents the symbol's definition in
 	// that file. Mirror go-to-definition's file-level fallback while continuing to omit synthesized uses.
 	concreteFiles := collections.Set[lsproto.DocumentUri]{}
 	for _, entry := range entries {
-		if location, ok := l.getLocationOfEntry(entry); ok {
+		if location, ok := l.getLocationOfEntryForFeature(entry, feature); ok {
 			concreteFiles.Add(location.Uri)
 		}
 	}
 
 	locations := make([]lsproto.Location, 0, len(entries))
 	for _, entry := range entries {
-		location, ok := l.getLocationOfEntry(entry)
+		location, ok := l.getLocationOfEntryForFeature(entry, feature)
 		if ok {
 			locations = append(locations, location)
 		} else if isDeclarationOfSymbol(entry.node, definitionSymbol) && !concreteFiles.Has(location.Uri) {
@@ -1079,12 +1101,12 @@ func (l *LanguageService) convertEntriesToLocations(entries []*ReferenceEntry, d
 	return locations
 }
 
-func (l *LanguageService) convertEntriesToLocationLinks(entries []*ReferenceEntry) []*lsproto.LocationLink {
+func (l *LanguageService) convertEntriesToLocationLinks(entries []*ReferenceEntry, feature spanmap.Feature) []*lsproto.LocationLink {
 	links := make([]*lsproto.LocationLink, 0, len(entries))
 	for _, entry := range entries {
 
 		// Get the selection range (the actual reference)
-		loc, ok := l.getLocationOfEntry(entry)
+		loc, ok := l.getLocationOfEntryForFeature(entry, feature)
 		if !ok {
 			continue
 		}
@@ -1096,7 +1118,7 @@ func (l *LanguageService) convertEntriesToLocationLinks(entries []*ReferenceEntr
 			// Get the context range (broader scope including declaration context)
 			contextTextRange := toContextRange(entry.textRange, l.program.GetSourceFile(entry.fileName), entry.context)
 			if contextTextRange != nil {
-				contextLocation, fidelity := l.getMappedLocation(entry.fileName, *contextTextRange)
+				contextLocation, fidelity := l.getMappedLocationForFeature(entry.fileName, *contextTextRange, feature)
 				if !fidelity.IsNone() && contextLocation.Uri == loc.Uri {
 					targetRange = contextLocation.Range
 				}

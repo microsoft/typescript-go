@@ -17,7 +17,7 @@ var jsxTagWordPattern = new("[a-zA-Z0-9:\\-\\._$]*")
 
 func (l *LanguageService) ProvideLinkedEditingRange(ctx context.Context, params *lsproto.LinkedEditingRangeParams) (lsproto.LinkedEditingRangeResponse, error) {
 	_, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
-	positions := l.converters.FromLSPPosition(sourceFile, params.Position, spanmap.PurposeAll)
+	positions := l.converters.FromLSPPosition(sourceFile, params.Position, spanmap.FeatureLinkedEditing)
 	if len(positions) != 1 || !positions[0].Fidelity.IsExact() {
 		return lsproto.LinkedEditingRangeResponse{}, nil
 	}
@@ -44,8 +44,8 @@ func (l *LanguageService) ProvideLinkedEditingRange(ctx context.Context, params 
 			return lsproto.LinkedEditingRangeResponse{}, nil
 		}
 
-		openLineChar, openFidelity := l.converters.ToLSPPosition(sourceFile, openPos)
-		closeLineChar, closeFidelity := l.converters.ToLSPPosition(sourceFile, closePos)
+		openLineChar, openFidelity := l.converters.ToLSPPositionForFeature(sourceFile, openPos, spanmap.FeatureLinkedEditing)
+		closeLineChar, closeFidelity := l.converters.ToLSPPositionForFeature(sourceFile, closePos, spanmap.FeatureLinkedEditing)
 		if !openFidelity.IsExact() || !closeFidelity.IsExact() {
 			return lsproto.LinkedEditingRangeResponse{}, nil
 		}
@@ -96,8 +96,8 @@ func (l *LanguageService) ProvideLinkedEditingRange(ctx context.Context, params 
 			return lsproto.LinkedEditingRangeResponse{}, nil
 		}
 
-		openRange, openFidelity := l.converters.ToLSPRange(sourceFile, core.NewTextRange(openTagNameStart, openTagNameEnd))
-		closeRange, closeFidelity := l.converters.ToLSPRange(sourceFile, core.NewTextRange(closeTagNameStart, closeTagNameEnd))
+		openRange, openFidelity := l.converters.ToLSPRangeForFeature(sourceFile, core.NewTextRange(openTagNameStart, openTagNameEnd), spanmap.FeatureLinkedEditing)
+		closeRange, closeFidelity := l.converters.ToLSPRangeForFeature(sourceFile, core.NewTextRange(closeTagNameStart, closeTagNameEnd), spanmap.FeatureLinkedEditing)
 		if !openFidelity.IsExact() || !closeFidelity.IsExact() {
 			return lsproto.LinkedEditingRangeResponse{}, nil
 		}

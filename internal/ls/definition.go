@@ -36,7 +36,7 @@ func (l *LanguageService) provideDefinitionWorker(
 	clientSupportsLink := caps.TextDocument.Definition.LinkSupport
 
 	program, file := l.getProgramAndFile(documentURI)
-	positions := l.converters.FromLSPPosition(file, position, spanmap.PurposeNavigation)
+	positions := l.converters.FromLSPPosition(file, position, spanmap.FeatureDefinition)
 	var results []lsproto.DefinitionResponse
 	for _, mapped := range positions {
 		if mapped.Fidelity.IsSingleSegment() {
@@ -57,7 +57,7 @@ func (l *LanguageService) provideDefinitionAtPosition(ctx context.Context, progr
 
 	originSelectionRange, _ := l.createLspRangeFromNode(node, file)
 	if reference != nil && reference.file != nil {
-		return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, []*ast.Node{}, reference)
+		return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, []*ast.Node{}, reference, spanmap.FeatureDefinition)
 	}
 
 	c, done := program.GetTypeCheckerForFile(ctx, file)
@@ -65,26 +65,26 @@ func (l *LanguageService) provideDefinitionAtPosition(ctx context.Context, progr
 
 	if node.Kind == ast.KindOverrideKeyword {
 		if sym := getSymbolForOverriddenMember(c, node); sym != nil {
-			return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, sym.Declarations, nil /*reference*/)
+			return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, sym.Declarations, nil /*reference*/, spanmap.FeatureDefinition)
 		}
 	}
 
 	if ast.IsJumpStatementTarget(node) {
 		if label := getTargetLabel(node.Parent, node.Text()); label != nil {
-			return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, []*ast.Node{label}, nil /*reference*/)
+			return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, []*ast.Node{label}, nil /*reference*/, spanmap.FeatureDefinition)
 		}
 	}
 
 	if node.Kind == ast.KindCaseKeyword || node.Kind == ast.KindDefaultKeyword && ast.IsDefaultClause(node.Parent) {
 		if stmt := ast.FindAncestor(node.Parent, ast.IsSwitchStatement); stmt != nil {
 			file := ast.GetSourceFileOfNode(stmt)
-			return l.createLocationFromFileAndRange(file, scanner.GetRangeOfTokenAtPosition(file, stmt.Pos()))
+			return l.createLocationFromFileAndRange(file, scanner.GetRangeOfTokenAtPosition(file, stmt.Pos()), spanmap.FeatureDefinition)
 		}
 	}
 
 	if node.Kind == ast.KindReturnKeyword || node.Kind == ast.KindYieldKeyword || node.Kind == ast.KindAwaitKeyword {
 		if fn := ast.FindAncestor(node, ast.IsFunctionLikeDeclaration); fn != nil {
-			return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, []*ast.Node{fn}, nil /*reference*/)
+			return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, []*ast.Node{fn}, nil /*reference*/, spanmap.FeatureDefinition)
 		}
 	}
 
@@ -107,7 +107,7 @@ func (l *LanguageService) provideDefinitionAtPosition(ctx context.Context, progr
 		}
 		declarations = append(declarations, calledDeclaration)
 	}
-	return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, declarations, reference)
+	return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, declarations, reference, spanmap.FeatureDefinition)
 }
 
 func (l *LanguageService) ProvideTypeDefinition(
@@ -119,7 +119,7 @@ func (l *LanguageService) ProvideTypeDefinition(
 	clientSupportsLink := caps.TextDocument.TypeDefinition.LinkSupport
 
 	program, file := l.getProgramAndFile(documentURI)
-	positions := l.converters.FromLSPPosition(file, position, spanmap.PurposeNavigation)
+	positions := l.converters.FromLSPPosition(file, position, spanmap.FeatureTypeDefinition)
 	var results []lsproto.TypeDefinitionResponse
 	for _, mapped := range positions {
 		if mapped.Fidelity.IsSingleSegment() {
@@ -149,10 +149,10 @@ func (l *LanguageService) provideTypeDefinitionAtPosition(ctx context.Context, p
 			declarations = core.Concatenate(getDeclarationsFromType(typeArgument), declarations)
 		}
 		if len(declarations) != 0 {
-			return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, declarations, nil /*reference*/)
+			return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, declarations, nil /*reference*/, spanmap.FeatureTypeDefinition)
 		}
 		if symbol.Flags&ast.SymbolFlagsValue == 0 && symbol.Flags&ast.SymbolFlagsType != 0 {
-			return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, symbol.Declarations, nil /*reference*/)
+			return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, symbol.Declarations, nil /*reference*/, spanmap.FeatureTypeDefinition)
 		}
 	}
 
@@ -215,6 +215,7 @@ func (l *LanguageService) createDefinitionLocations(
 	clientSupportsLink bool,
 	declarations []*ast.Node,
 	reference *refInfo,
+	feature spanmap.Feature,
 ) lsproto.DefinitionResponse {
 	locations := make([]*lsproto.LocationLink, 0)
 	locationRanges := collections.Set[fileRange]{}
@@ -257,7 +258,7 @@ func (l *LanguageService) createDefinitionLocations(
 				enclosingRange := core.NewTextRange(min(nameRange.Pos(), contextRange.Pos()), max(nameRange.End(), contextRange.End()))
 				contextRange = &enclosingRange
 			}
-			targetSelectionLoc, selectionFidelity := l.getMappedLocation(fileName, nameRange)
+			targetSelectionLoc, selectionFidelity := l.getMappedLocationForFeature(fileName, nameRange, feature)
 			if !selectionFidelity.IsSingleSegment() {
 				zeroRange := lsproto.Range{}
 				fileFallbacks = append(fileFallbacks, &lsproto.LocationLink{
@@ -309,8 +310,8 @@ func createLocationsFromLinks(links []*lsproto.LocationLink) lsproto.DefinitionR
 	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{Locations: &locations}
 }
 
-func (l *LanguageService) createLocationFromFileAndRange(file *ast.SourceFile, textRange core.TextRange) lsproto.DefinitionResponse {
-	mappedLocation, fidelity := l.getMappedLocation(file.FileName(), textRange)
+func (l *LanguageService) createLocationFromFileAndRange(file *ast.SourceFile, textRange core.TextRange, feature spanmap.Feature) lsproto.DefinitionResponse {
+	mappedLocation, fidelity := l.getMappedLocationForFeature(file.FileName(), textRange, feature)
 	if fidelity.IsNone() {
 		mappedLocation.Range = lsproto.Range{}
 	}

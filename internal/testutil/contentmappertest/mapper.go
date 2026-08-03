@@ -92,10 +92,10 @@ func (lispHandler) HandleRequest(ctx context.Context, method string, params json
 			return nil, fmt.Errorf("contentmappertest: unsupported Lisp expression %q", p.Content)
 		}
 		mappings, err := spanmap.New([]spanmap.Segment{
-			{GenStart: 0, GenEnd: 3, OrigStart: 1, OrigEnd: 2, Kind: spanmap.KindAlias, Purpose: spanmap.PurposeAll},
-			{GenStart: 4, GenEnd: 5, OrigStart: 3, OrigEnd: 4, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeAll},
-			{GenStart: 7, GenEnd: 8, OrigStart: 5, OrigEnd: 6, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeAll},
-			{GenStart: 10, GenEnd: 16, OrigStart: 7, OrigEnd: 13, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeAll},
+			{GenStart: 0, GenEnd: 3, OrigStart: 1, OrigEnd: 2, Kind: spanmap.KindAlias, Features: spanmap.FeatureAll},
+			{GenStart: 4, GenEnd: 5, OrigStart: 3, OrigEnd: 4, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll},
+			{GenStart: 7, GenEnd: 8, OrigStart: 5, OrigEnd: 6, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll},
+			{GenStart: 10, GenEnd: 16, OrigStart: 7, OrigEnd: 13, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll},
 		}).Marshal()
 		if err != nil {
 			return nil, err
@@ -127,15 +127,15 @@ func (h duplicateHandler) HandleRequest(ctx context.Context, method string, para
 		first := len("export const ")
 		second := first + len(p.Content) + len(" = 1;\n")
 		disabled := strings.Contains(p.FileName, "disabled")
-		semanticPurpose := spanmap.PurposeSemantic
-		navigationPurpose := spanmap.PurposeNavigation
+		semanticFeatures := spanmap.FeatureHover | spanmap.FeatureDefinition | spanmap.FeatureReferences
+		navigationFeatures := spanmap.FeatureDefinition | spanmap.FeatureReferences
 		if disabled {
-			semanticPurpose = spanmap.PurposeNone
-			navigationPurpose = spanmap.PurposeNone
+			semanticFeatures = spanmap.FeatureNone
+			navigationFeatures = spanmap.FeatureNone
 		}
 		mappings, err := spanmap.New([]spanmap.Segment{
-			{GenStart: core.TextPos(first), GenEnd: core.TextPos(first + len(p.Content)), OrigStart: 0, OrigEnd: core.TextPos(len(p.Content)), Kind: spanmap.KindVerbatim, Purpose: semanticPurpose},
-			{GenStart: core.TextPos(second), GenEnd: core.TextPos(second + len(p.Content)), OrigStart: 0, OrigEnd: core.TextPos(len(p.Content)), Kind: spanmap.KindVerbatim, Purpose: navigationPurpose},
+			{GenStart: core.TextPos(first), GenEnd: core.TextPos(first + len(p.Content)), OrigStart: 0, OrigEnd: core.TextPos(len(p.Content)), Kind: spanmap.KindVerbatim, Features: semanticFeatures},
+			{GenStart: core.TextPos(second), GenEnd: core.TextPos(second + len(p.Content)), OrigStart: 0, OrigEnd: core.TextPos(len(p.Content)), Kind: spanmap.KindVerbatim, Features: navigationFeatures},
 		}).Marshal()
 		if err != nil {
 			return nil, err
@@ -206,7 +206,7 @@ func transform(content string, options *collections.OrderedMap[string, json.Valu
 			OrigStart: core.TextPos(from),
 			OrigEnd:   core.TextPos(to),
 			Kind:      spanmap.KindVerbatim,
-			Purpose:   spanmap.PurposeAll,
+			Features:  spanmap.FeatureAll,
 		})
 	}
 
@@ -221,7 +221,7 @@ func transform(content string, options *collections.OrderedMap[string, json.Valu
 			OrigStart: core.TextPos(from),
 			OrigEnd:   core.TextPos(to),
 			Kind:      spanmap.KindAtom,
-			Purpose:   spanmap.PurposeAll,
+			Features:  spanmap.FeatureAll,
 		})
 	}
 
@@ -299,10 +299,10 @@ func (verbatimHandler) HandleRequest(ctx context.Context, method string, params 
 			return nil, err
 		}
 		mappings, err := spanmap.New([]spanmap.Segment{{
-			GenEnd:  core.TextPos(len(p.Content)),
-			OrigEnd: core.TextPos(len(p.Content)),
-			Kind:    spanmap.KindVerbatim,
-			Purpose: spanmap.PurposeAll,
+			GenEnd:   core.TextPos(len(p.Content)),
+			OrigEnd:  core.TextPos(len(p.Content)),
+			Kind:     spanmap.KindVerbatim,
+			Features: spanmap.FeatureAll,
 		}}).Marshal()
 		if err != nil {
 			return nil, err
@@ -396,7 +396,7 @@ func transformComponent(content string) (string, json.Value, error) {
 			OrigStart: core.TextPos(origStart),
 			OrigEnd:   core.TextPos(origEnd),
 			Kind:      kind,
-			Purpose:   spanmap.PurposeAll,
+			Features:  spanmap.FeatureAll,
 		})
 	}
 

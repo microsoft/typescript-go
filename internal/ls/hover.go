@@ -34,7 +34,7 @@ func (l *LanguageService) ProvideHover(ctx context.Context, params *lsproto.Hove
 	}
 
 	program, file := l.getProgramAndFile(params.TextDocument.Uri)
-	positions := l.converters.FromLSPPosition(file, params.Position, spanmap.PurposeSemantic)
+	positions := l.converters.FromLSPPosition(file, params.Position, spanmap.FeatureHover)
 	if len(positions) == 0 || !positions[0].Fidelity.IsSingleSegment() {
 		return lsproto.HoverOrNull{}, nil
 	}
@@ -68,7 +68,7 @@ func (l *LanguageService) ProvideHover(ctx context.Context, params *lsproto.Hove
 	}
 	rangeFile := ast.GetSourceFileOfNode(rangeNode)
 	textRange := getRangeOfNode(rangeNode, rangeFile, nil /*endNode*/)
-	hoverRange, hoverFidelity := l.createLspRangeFromBounds(textRange.Pos(), textRange.End(), rangeFile)
+	hoverRange, hoverFidelity := l.converters.ToLSPRangeForFeature(rangeFile, textRange, spanmap.FeatureHover)
 
 	var content string
 	if contentFormat == lsproto.MarkupKindMarkdown {
@@ -1122,7 +1122,7 @@ func (l *LanguageService) writeNameLink(b *strings.Builder, c *checker.Checker, 
 		declaration := declarations[0]
 		file := ast.GetSourceFileOfNode(declaration)
 		node := core.OrElse(ast.GetNameOfDeclaration(declaration), declaration)
-		loc, fidelity := l.getMappedLocation(file.FileName(), createRangeFromNode(node, file))
+		loc, fidelity := l.getMappedLocationForFeature(file.FileName(), createRangeFromNode(node, file), spanmap.FeatureHover)
 		prefixLen := core.IfElse(strings.HasPrefix(text, "()"), 2, 0)
 		linkText := trimCommentPrefix(text[prefixLen:])
 		if linkText == "" {

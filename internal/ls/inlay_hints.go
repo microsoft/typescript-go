@@ -38,7 +38,7 @@ func (l *LanguageService) ProvideInlayHint(
 	checker, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
 	var result []*lsproto.InlayHint
-	for _, mapped := range l.converters.FromLSPRange(file, params.Range, spanmap.PurposeSemantic) {
+	for _, mapped := range l.converters.FromLSPRange(file, params.Range, spanmap.FeatureInlayHints) {
 		inlayHintState := &inlayHintState{
 			ctx:             ctx,
 			span:            mapped.Span,
@@ -338,7 +338,7 @@ func (s *inlayHintState) typePredicateToInlayHintParts(typePredicate *checker.Ty
 }
 
 func (s *inlayHintState) addTypeHints(hint lsproto.StringOrInlayHintLabelParts, position int) {
-	lspPosition, fidelity := s.converters.ToLSPPosition(s.file, core.TextPos(position))
+	lspPosition, fidelity := s.converters.ToLSPPositionForFeature(s.file, core.TextPos(position), spanmap.FeatureInlayHints)
 	if fidelity.IsNone() {
 		return
 	}
@@ -356,7 +356,7 @@ func (s *inlayHintState) addTypeHints(hint lsproto.StringOrInlayHintLabelParts, 
 }
 
 func (s *inlayHintState) addEnumMemberValueHints(text string, position int) {
-	lspPosition, fidelity := s.converters.ToLSPPosition(s.file, core.TextPos(position))
+	lspPosition, fidelity := s.converters.ToLSPPositionForFeature(s.file, core.TextPos(position), spanmap.FeatureInlayHints)
 	if fidelity.IsNone() {
 		return
 	}
@@ -370,7 +370,7 @@ func (s *inlayHintState) addEnumMemberValueHints(text string, position int) {
 }
 
 func (s *inlayHintState) addParameterHints(text string, parameter *ast.IdentifierNode, position int, isFirstVariadicArgument bool) {
-	lspPosition, fidelity := s.converters.ToLSPPosition(s.file, core.TextPos(position))
+	lspPosition, fidelity := s.converters.ToLSPPositionForFeature(s.file, core.TextPos(position), spanmap.FeatureInlayHints)
 	if fidelity.IsNone() {
 		return
 	}
@@ -790,7 +790,7 @@ func (s *inlayHintState) getNodeDisplayPart(text string, node *ast.Node) *lsprot
 	// The location is an optional go-to target for the name. Only attach it when the name maps back to a
 	// single concrete span in the original text; an approximate or synthesized mapping would point the
 	// user somewhere wrong, so it is better to omit the target than to fabricate one.
-	if lspRange, fidelity := s.converters.ToLSPRange(file, core.NewTextRange(pos, end)); fidelity.IsSingleSegment() {
+	if lspRange, fidelity := s.converters.ToLSPRangeForFeature(file, core.NewTextRange(pos, end), spanmap.FeatureInlayHints); fidelity.IsSingleSegment() {
 		part.Location = &lsproto.Location{
 			Uri:   lsconv.FileNameToDocumentURI(file.FileName()),
 			Range: lspRange,

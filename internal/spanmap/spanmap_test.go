@@ -13,7 +13,7 @@ func TestGeneratedToOriginalSpanVerbatim(t *testing.T) {
 
 	// Generated [0,10) is a verbatim copy of original [100,110).
 	m := spanmap.New([]spanmap.Segment{
-		{GenStart: 0, GenEnd: 10, OrigStart: 100, OrigEnd: 110, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeAll},
+		{GenStart: 0, GenEnd: 10, OrigStart: 100, OrigEnd: 110, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll},
 	})
 
 	got, fidelity := m.GeneratedToOriginalSpan(core.NewTextRange(3, 7))
@@ -27,7 +27,7 @@ func TestGeneratedToOriginalSpanAtom(t *testing.T) {
 
 	// Generated [0,3) is a synthesized gap; [3,14) ("MyComponent") is an atom of the original [60,71).
 	m := spanmap.New([]spanmap.Segment{
-		{GenStart: 3, GenEnd: 14, OrigStart: 60, OrigEnd: 71, Kind: spanmap.KindAtom, Purpose: spanmap.PurposeAll},
+		{GenStart: 3, GenEnd: 14, OrigStart: 60, OrigEnd: 71, Kind: spanmap.KindAtom, Features: spanmap.FeatureAll},
 	})
 
 	// A span inside the atom maps to the whole atom span.
@@ -41,7 +41,7 @@ func TestGeneratedAlias(t *testing.T) {
 	t.Parallel()
 
 	m := spanmap.New([]spanmap.Segment{
-		{GenStart: 3, GenEnd: 6, OrigStart: 10, OrigEnd: 11, Kind: spanmap.KindAlias, Purpose: spanmap.PurposeAll},
+		{GenStart: 3, GenEnd: 6, OrigStart: 10, OrigEnd: 11, Kind: spanmap.KindAlias, Features: spanmap.FeatureAll},
 	})
 
 	got, fidelity := m.GeneratedToOriginalSpan(core.NewTextRange(3, 6))
@@ -66,8 +66,8 @@ func TestGeneratedToOriginalSpanSynthesizedGap(t *testing.T) {
 	// A gap between two verbatim segments is synthesized: it maps to the insertion point (the preceding
 	// segment's original end) with no fidelity.
 	m := spanmap.New([]spanmap.Segment{
-		{GenStart: 0, GenEnd: 10, OrigStart: 100, OrigEnd: 110, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeAll},
-		{GenStart: 20, GenEnd: 30, OrigStart: 200, OrigEnd: 210, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeAll},
+		{GenStart: 0, GenEnd: 10, OrigStart: 100, OrigEnd: 110, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll},
+		{GenStart: 20, GenEnd: 30, OrigStart: 200, OrigEnd: 210, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll},
 	})
 
 	got, fidelity := m.GeneratedToOriginalSpan(core.NewTextRange(12, 15))
@@ -116,8 +116,8 @@ func TestGeneratedToOriginalPosition(t *testing.T) {
 
 	// Generated [0,10) is a verbatim copy of original [100,110); [10,20) is an atom of original [200,210).
 	m := spanmap.New([]spanmap.Segment{
-		{GenStart: 0, GenEnd: 10, OrigStart: 100, OrigEnd: 110, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeAll},
-		{GenStart: 20, GenEnd: 30, OrigStart: 200, OrigEnd: 210, Kind: spanmap.KindAtom, Purpose: spanmap.PurposeAll},
+		{GenStart: 0, GenEnd: 10, OrigStart: 100, OrigEnd: 110, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll},
+		{GenStart: 20, GenEnd: 30, OrigStart: 200, OrigEnd: 210, Kind: spanmap.KindAtom, Features: spanmap.FeatureAll},
 	})
 
 	testCases := []struct {
@@ -158,10 +158,10 @@ func TestOriginalToGeneratedSpanVerbatim(t *testing.T) {
 
 	// Generated [0,10) is a verbatim copy of original [100,110).
 	m := spanmap.New([]spanmap.Segment{
-		{GenStart: 0, GenEnd: 10, OrigStart: 100, OrigEnd: 110, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeAll},
+		{GenStart: 0, GenEnd: 10, OrigStart: 100, OrigEnd: 110, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll},
 	})
 
-	results := m.OriginalToGeneratedSpans(core.NewTextRange(103, 107), spanmap.PurposeAll)
+	results := m.OriginalToGeneratedSpans(core.NewTextRange(103, 107), spanmap.FeatureAll)
 	assert.Equal(t, len(results), 1)
 	assert.Equal(t, results[0].Span.Pos(), 3)
 	assert.Equal(t, results[0].Span.End(), 7)
@@ -173,11 +173,11 @@ func TestOriginalToGeneratedSpanAtom(t *testing.T) {
 
 	// Generated [3,14) is an atom of the original [60,71).
 	m := spanmap.New([]spanmap.Segment{
-		{GenStart: 3, GenEnd: 14, OrigStart: 60, OrigEnd: 71, Kind: spanmap.KindAtom, Purpose: spanmap.PurposeAll},
+		{GenStart: 3, GenEnd: 14, OrigStart: 60, OrigEnd: 71, Kind: spanmap.KindAtom, Features: spanmap.FeatureAll},
 	})
 
 	// A span inside the original atom maps to the whole generated span.
-	results := m.OriginalToGeneratedSpans(core.NewTextRange(63, 67), spanmap.PurposeAll)
+	results := m.OriginalToGeneratedSpans(core.NewTextRange(63, 67), spanmap.FeatureAll)
 	assert.Equal(t, len(results), 1)
 	assert.Equal(t, results[0].Span.Pos(), 3)
 	assert.Equal(t, results[0].Span.End(), 14)
@@ -189,18 +189,18 @@ func TestOriginalToGeneratedSpanGap(t *testing.T) {
 
 	// An original range with no covering segment has no generated counterpart.
 	m := spanmap.New([]spanmap.Segment{
-		{GenStart: 0, GenEnd: 10, OrigStart: 100, OrigEnd: 110, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeAll},
-		{GenStart: 20, GenEnd: 30, OrigStart: 200, OrigEnd: 210, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeAll},
+		{GenStart: 0, GenEnd: 10, OrigStart: 100, OrigEnd: 110, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll},
+		{GenStart: 20, GenEnd: 30, OrigStart: 200, OrigEnd: 210, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll},
 	})
 
-	assert.Equal(t, len(m.OriginalToGeneratedSpans(core.NewTextRange(150, 160), spanmap.PurposeAll)), 0)
+	assert.Equal(t, len(m.OriginalToGeneratedSpans(core.NewTextRange(150, 160), spanmap.FeatureAll)), 0)
 }
 
 func TestOriginalToGeneratedSpanNilIdentity(t *testing.T) {
 	t.Parallel()
 
 	var m *spanmap.SpanMap
-	results := m.OriginalToGeneratedSpans(core.NewTextRange(3, 7), spanmap.PurposeAll)
+	results := m.OriginalToGeneratedSpans(core.NewTextRange(3, 7), spanmap.FeatureAll)
 	assert.Equal(t, len(results), 1)
 	assert.Equal(t, results[0].Span.Pos(), 3)
 	assert.Equal(t, results[0].Span.End(), 7)
@@ -212,8 +212,8 @@ func TestOriginalToGeneratedPositions(t *testing.T) {
 
 	// Original [100,110) is a verbatim copy of generated [0,10); [200,210) is an atom of generated [20,30).
 	m := spanmap.New([]spanmap.Segment{
-		{GenStart: 0, GenEnd: 10, OrigStart: 100, OrigEnd: 110, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeAll},
-		{GenStart: 20, GenEnd: 30, OrigStart: 200, OrigEnd: 210, Kind: spanmap.KindAtom, Purpose: spanmap.PurposeAll},
+		{GenStart: 0, GenEnd: 10, OrigStart: 100, OrigEnd: 110, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll},
+		{GenStart: 20, GenEnd: 30, OrigStart: 200, OrigEnd: 210, Kind: spanmap.KindAtom, Features: spanmap.FeatureAll},
 	})
 
 	testCases := []struct {
@@ -229,8 +229,8 @@ func TestOriginalToGeneratedPositions(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			positions := m.OriginalToGeneratedPositions(tc.pos, spanmap.PurposeAll)
-			spans := m.OriginalToGeneratedSpans(core.NewTextRange(int(tc.pos), int(tc.pos)), spanmap.PurposeAll)
+			positions := m.OriginalToGeneratedPositions(tc.pos, spanmap.FeatureAll)
+			spans := m.OriginalToGeneratedSpans(core.NewTextRange(int(tc.pos), int(tc.pos)), spanmap.FeatureAll)
 			if tc.fidelity.IsNone() {
 				assert.Equal(t, len(positions), 0)
 				assert.Equal(t, len(spans), 0)
@@ -250,24 +250,24 @@ func TestOriginalToGeneratedDuplicateGroup(t *testing.T) {
 	t.Parallel()
 
 	m := spanmap.New([]spanmap.Segment{
-		{GenStart: 0, GenEnd: 3, OrigStart: 10, OrigEnd: 13, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeNavigation},
-		{GenStart: 10, GenEnd: 13, OrigStart: 10, OrigEnd: 13, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeSemantic},
-		{GenStart: 20, GenEnd: 25, OrigStart: 10, OrigEnd: 13, Kind: spanmap.KindAtom, Purpose: spanmap.PurposeNavigation},
+		{GenStart: 0, GenEnd: 3, OrigStart: 10, OrigEnd: 13, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureDefinition},
+		{GenStart: 10, GenEnd: 13, OrigStart: 10, OrigEnd: 13, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureHover},
+		{GenStart: 20, GenEnd: 25, OrigStart: 10, OrigEnd: 13, Kind: spanmap.KindAtom, Features: spanmap.FeatureDefinition},
 	})
 
-	semantic := m.OriginalToGeneratedPositions(11, spanmap.PurposeSemantic)
+	semantic := m.OriginalToGeneratedPositions(11, spanmap.FeatureHover)
 	assert.Equal(t, len(semantic), 1)
 	assert.Equal(t, semantic[0].Position, core.TextPos(11))
 	assert.Equal(t, semantic[0].Fidelity, spanmap.FidelityExact)
 
-	navigation := m.OriginalToGeneratedPositions(11, spanmap.PurposeNavigation)
+	navigation := m.OriginalToGeneratedPositions(11, spanmap.FeatureDefinition)
 	assert.Equal(t, len(navigation), 2)
 	assert.Equal(t, navigation[0].Position, core.TextPos(1))
 	assert.Equal(t, navigation[0].Fidelity, spanmap.FidelityExact)
 	assert.Equal(t, navigation[1].Position, core.TextPos(20))
 	assert.Equal(t, navigation[1].Fidelity, spanmap.FidelityAtom)
 
-	spans := m.OriginalToGeneratedSpans(core.NewTextRange(10, 13), spanmap.PurposeNavigation)
+	spans := m.OriginalToGeneratedSpans(core.NewTextRange(10, 13), spanmap.FeatureDefinition)
 	assert.Equal(t, len(spans), 2)
 	assert.Equal(t, spans[0].Span.Pos(), 0)
 	assert.Equal(t, spans[0].Span.End(), 3)
@@ -279,13 +279,13 @@ func TestOriginalToGeneratedCrossGroupProjections(t *testing.T) {
 	t.Parallel()
 
 	m := spanmap.New([]spanmap.Segment{
-		{GenStart: 0, GenEnd: 2, OrigStart: 0, OrigEnd: 2, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeSemantic},
-		{GenStart: 2, GenEnd: 4, OrigStart: 2, OrigEnd: 4, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeSemantic},
-		{GenStart: 10, GenEnd: 12, OrigStart: 0, OrigEnd: 2, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeSemantic},
-		{GenStart: 12, GenEnd: 14, OrigStart: 2, OrigEnd: 4, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeSemantic},
+		{GenStart: 0, GenEnd: 2, OrigStart: 0, OrigEnd: 2, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureHover},
+		{GenStart: 2, GenEnd: 4, OrigStart: 2, OrigEnd: 4, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureHover},
+		{GenStart: 10, GenEnd: 12, OrigStart: 0, OrigEnd: 2, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureHover},
+		{GenStart: 12, GenEnd: 14, OrigStart: 2, OrigEnd: 4, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureHover},
 	})
 
-	spans := m.OriginalToGeneratedSpans(core.NewTextRange(1, 3), spanmap.PurposeSemantic)
+	spans := m.OriginalToGeneratedSpans(core.NewTextRange(1, 3), spanmap.FeatureHover)
 	assert.Equal(t, len(spans), 2)
 	assert.Equal(t, spans[0].Span, core.NewTextRange(1, 3))
 	assert.Equal(t, spans[1].Span, core.NewTextRange(11, 13))
@@ -294,16 +294,16 @@ func TestOriginalToGeneratedCrossGroupProjections(t *testing.T) {
 	}
 }
 
-func TestOriginalToGeneratedExplicitZeroPurpose(t *testing.T) {
+func TestOriginalToGeneratedExplicitZeroFeatures(t *testing.T) {
 	t.Parallel()
 
 	m := spanmap.New([]spanmap.Segment{
-		{GenStart: 0, GenEnd: 3, OrigStart: 10, OrigEnd: 13, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeNone},
+		{GenStart: 0, GenEnd: 3, OrigStart: 10, OrigEnd: 13, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureNone},
 	})
 
-	assert.Equal(t, len(m.OriginalToGeneratedPositions(11, spanmap.PurposeSemantic)), 0)
-	assert.Equal(t, len(m.OriginalToGeneratedPositions(11, spanmap.PurposeNavigation)), 0)
-	assert.Equal(t, len(m.OriginalToGeneratedSpans(core.NewTextRange(10, 13), spanmap.PurposeSemantic)), 0)
+	assert.Equal(t, len(m.OriginalToGeneratedPositions(11, spanmap.FeatureHover)), 0)
+	assert.Equal(t, len(m.OriginalToGeneratedPositions(11, spanmap.FeatureDefinition)), 0)
+	assert.Equal(t, len(m.OriginalToGeneratedSpans(core.NewTextRange(10, 13), spanmap.FeatureHover)), 0)
 
 	data, err := m.Marshal()
 	assert.NilError(t, err)
@@ -311,12 +311,34 @@ func TestOriginalToGeneratedExplicitZeroPurpose(t *testing.T) {
 	decoded, err := spanmap.Unmarshal(data)
 	assert.NilError(t, err)
 	segments := decoded.Segments()
-	assert.Equal(t, segments[0].Purpose, spanmap.PurposeNone)
+	assert.Equal(t, segments[0].Features, spanmap.FeatureNone)
 
 	legacy, err := spanmap.Unmarshal([]byte("[[0,3,10,3,0]]"))
 	assert.NilError(t, err)
-	assert.Equal(t, legacy.Segments()[0].Purpose, spanmap.PurposeAll)
-	assert.Equal(t, len(legacy.OriginalToGeneratedPositions(11, spanmap.PurposeSemantic)), 1)
+	assert.Equal(t, legacy.Segments()[0].Features, spanmap.FeatureAll)
+	assert.Equal(t, len(legacy.OriginalToGeneratedPositions(11, spanmap.FeatureHover)), 1)
+}
+
+func TestFeatureParticipationInputAndOutput(t *testing.T) {
+	t.Parallel()
+	m := spanmap.New([]spanmap.Segment{
+		{GenStart: 0, GenEnd: 3, OrigStart: 10, OrigEnd: 13, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureHover},
+		{GenStart: 3, GenEnd: 6, OrigStart: 20, OrigEnd: 23, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureCompletion},
+	})
+
+	assert.Equal(t, len(m.OriginalToGeneratedPositions(11, spanmap.FeatureHover)), 1)
+	assert.Equal(t, len(m.OriginalToGeneratedPositions(11, spanmap.FeatureCompletion)), 0)
+
+	mapped, fidelity := m.GeneratedToOriginalSpanForFeature(core.NewTextRange(0, 3), spanmap.FeatureHover)
+	assert.Equal(t, mapped, core.NewTextRange(10, 13))
+	assert.Equal(t, fidelity, spanmap.FidelityExact)
+	_, fidelity = m.GeneratedToOriginalSpanForFeature(core.NewTextRange(0, 3), spanmap.FeatureCompletion)
+	assert.Equal(t, fidelity, spanmap.FidelityNone)
+
+	// Diagnostics and edit safety use unfiltered geometry and cannot be disabled by feature flags.
+	mapped, fidelity = m.GeneratedToOriginalSpan(core.NewTextRange(0, 3))
+	assert.Equal(t, mapped, core.NewTextRange(10, 13))
+	assert.Equal(t, fidelity, spanmap.FidelityExact)
 }
 
 func TestOriginalToGeneratedSpanRoundTrip(t *testing.T) {
@@ -324,14 +346,14 @@ func TestOriginalToGeneratedSpanRoundTrip(t *testing.T) {
 
 	// Original spans are out of order relative to generated spans, exercising the reverse index.
 	m := spanmap.New([]spanmap.Segment{
-		{GenStart: 0, GenEnd: 10, OrigStart: 200, OrigEnd: 210, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeAll},
-		{GenStart: 10, GenEnd: 20, OrigStart: 100, OrigEnd: 110, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeAll},
+		{GenStart: 0, GenEnd: 10, OrigStart: 200, OrigEnd: 210, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll},
+		{GenStart: 10, GenEnd: 20, OrigStart: 100, OrigEnd: 110, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll},
 	})
 
 	for _, r := range []core.TextRange{core.NewTextRange(2, 8), core.NewTextRange(12, 18)} {
 		orig, fidelity := m.GeneratedToOriginalSpan(r)
 		assert.Equal(t, fidelity, spanmap.FidelityExact)
-		back := m.OriginalToGeneratedSpans(orig, spanmap.PurposeAll)
+		back := m.OriginalToGeneratedSpans(orig, spanmap.FeatureAll)
 		assert.Equal(t, len(back), 1)
 		assert.Equal(t, back[0].Fidelity, spanmap.FidelityExact)
 		assert.Equal(t, back[0].Span.Pos(), r.Pos())
@@ -427,7 +449,7 @@ func TestValidate(t *testing.T) {
 	}
 }
 
-func TestValidateOriginalOverlapAndPurposes(t *testing.T) {
+func TestValidateOriginalOverlapAndFeatures(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
@@ -439,8 +461,8 @@ func TestValidateOriginalOverlapAndPurposes(t *testing.T) {
 		{
 			name: "identical duplicate group",
 			segments: []spanmap.Segment{
-				{GenStart: 0, GenEnd: 3, OrigStart: 0, OrigEnd: 3, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeNavigation},
-				{GenStart: 3, GenEnd: 6, OrigStart: 0, OrigEnd: 3, Kind: spanmap.KindVerbatim, Purpose: spanmap.PurposeSemantic},
+				{GenStart: 0, GenEnd: 3, OrigStart: 0, OrigEnd: 3, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureDefinition},
+				{GenStart: 3, GenEnd: 6, OrigStart: 0, OrigEnd: 3, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureHover},
 			},
 			valid: true,
 		},
@@ -461,34 +483,34 @@ func TestValidateOriginalOverlapAndPurposes(t *testing.T) {
 			wantKind: spanmap.MappingErrorKindOriginalOverlap,
 		},
 		{
-			name: "duplicate without explicit purpose is tolerant",
+			name: "duplicate without explicit features is tolerant",
 			segments: []spanmap.Segment{
 				{GenStart: 0, GenEnd: 3, OrigStart: 0, OrigEnd: 3, Kind: spanmap.KindAtom},
-				{GenStart: 3, GenEnd: 6, OrigStart: 0, OrigEnd: 3, Kind: spanmap.KindAtom, Purpose: spanmap.PurposeNavigation},
+				{GenStart: 3, GenEnd: 6, OrigStart: 0, OrigEnd: 3, Kind: spanmap.KindAtom, Features: spanmap.FeatureDefinition},
 			},
 			valid: true,
 		},
 		{
-			name: "duplicate with two semantic members is tolerant",
+			name: "duplicate with shared feature members is tolerant",
 			segments: []spanmap.Segment{
-				{GenStart: 0, GenEnd: 3, OrigStart: 0, OrigEnd: 3, Kind: spanmap.KindAtom, Purpose: spanmap.PurposeSemantic},
-				{GenStart: 3, GenEnd: 6, OrigStart: 0, OrigEnd: 3, Kind: spanmap.KindAtom, Purpose: spanmap.PurposeSemantic | spanmap.PurposeNavigation},
+				{GenStart: 0, GenEnd: 3, OrigStart: 0, OrigEnd: 3, Kind: spanmap.KindAtom, Features: spanmap.FeatureHover},
+				{GenStart: 3, GenEnd: 6, OrigStart: 0, OrigEnd: 3, Kind: spanmap.KindAtom, Features: spanmap.FeatureHover | spanmap.FeatureDefinition},
 			},
 			valid: true,
 		},
 		{
-			name: "purpose on sole cover is valid",
+			name: "features on sole cover are valid",
 			segments: []spanmap.Segment{
-				{GenStart: 0, GenEnd: 3, OrigStart: 0, OrigEnd: 3, Kind: spanmap.KindAtom, Purpose: spanmap.PurposeNavigation},
+				{GenStart: 0, GenEnd: 3, OrigStart: 0, OrigEnd: 3, Kind: spanmap.KindAtom, Features: spanmap.FeatureDefinition},
 			},
 			valid: true,
 		},
 		{
-			name: "unknown purpose flag",
+			name: "unknown feature flag",
 			segments: []spanmap.Segment{
-				{GenStart: 0, GenEnd: 3, OrigStart: 0, OrigEnd: 3, Kind: spanmap.KindAtom, Purpose: 4},
+				{GenStart: 0, GenEnd: 3, OrigStart: 0, OrigEnd: 3, Kind: spanmap.KindAtom, Features: 1 << 22},
 			},
-			wantKind: spanmap.MappingErrorKindPurpose,
+			wantKind: spanmap.MappingErrorKindFeature,
 		},
 	}
 

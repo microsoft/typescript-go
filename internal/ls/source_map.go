@@ -11,9 +11,23 @@ import (
 )
 
 func (l *LanguageService) getMappedLocation(fileName string, fileRange core.TextRange) (lsproto.Location, spanmap.Fidelity) {
+	return l.getMappedLocationWorker(fileName, fileRange, nil)
+}
+
+func (l *LanguageService) getMappedLocationForFeature(fileName string, fileRange core.TextRange, feature spanmap.Feature) (lsproto.Location, spanmap.Fidelity) {
+	return l.getMappedLocationWorker(fileName, fileRange, &feature)
+}
+
+func (l *LanguageService) getMappedLocationWorker(fileName string, fileRange core.TextRange, feature *spanmap.Feature) (lsproto.Location, spanmap.Fidelity) {
 	startPos := l.tryGetSourcePosition(fileName, core.TextPos(fileRange.Pos()))
 	if startPos == nil {
-		lspRange, fidelity := l.createLspRangeFromRange(fileRange, l.getScript(fileName))
+		var lspRange lsproto.Range
+		var fidelity spanmap.Fidelity
+		if feature == nil {
+			lspRange, fidelity = l.createLspRangeFromRange(fileRange, l.getScript(fileName))
+		} else {
+			lspRange, fidelity = l.converters.ToLSPRangeForFeature(l.getScript(fileName), fileRange, *feature)
+		}
 		return lsproto.Location{
 			Uri:   lsconv.FileNameToDocumentURI(fileName),
 			Range: lspRange,
@@ -30,7 +44,13 @@ func (l *LanguageService) getMappedLocation(fileName string, fileRange core.Text
 		}
 	}
 	newRange := core.NewTextRange(startPos.Pos, endPos.Pos)
-	lspRange, fidelity := l.createLspRangeFromRange(newRange, l.getScript(startPos.FileName))
+	var lspRange lsproto.Range
+	var fidelity spanmap.Fidelity
+	if feature == nil {
+		lspRange, fidelity = l.createLspRangeFromRange(newRange, l.getScript(startPos.FileName))
+	} else {
+		lspRange, fidelity = l.converters.ToLSPRangeForFeature(l.getScript(startPos.FileName), newRange, *feature)
+	}
 	return lsproto.Location{
 		Uri:   lsconv.FileNameToDocumentURI(startPos.FileName),
 		Range: lspRange,

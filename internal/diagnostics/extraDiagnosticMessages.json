@@ -207,7 +207,7 @@
         "category": "Error",
         "code": 100039
     },
-    "The content mapper '{0}' produced invalid mapping purposes near original offset {1}.": {
+    "The content mapper '{0}' produced invalid mapping features near original offset {1}.": {
         "category": "Error",
         "code": 100040
     },

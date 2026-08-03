@@ -66,7 +66,7 @@ func (t *Tracker) computeNewText(change *trackerEdit, targetSourceFile *ast.Sour
 		return change.NewText
 	}
 
-	positions := t.converters.FromLSPPosition(sourceFile, change.Range.Start, spanmap.PurposeAll)
+	positions := t.converters.FromLSPPosition(sourceFile, change.Range.Start, spanmap.FeatureAll)
 	var result string
 	found := false
 	// The original range may have multiple verbatim copies; it is safe to lose their identity only when

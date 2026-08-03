@@ -166,7 +166,7 @@ const (
 //
 // Span maps are msgpack arrays of tuples in UTF-16 coordinates:
 //
-//	[generatedStart: uint, generatedLength: uint, originalStart: uint, originalLength: uint, kind: uint, purpose?: uint]
+//	[generatedStart: uint, generatedLength: uint, originalStart: uint, originalLength: uint, kind: uint, features?: uint]
 //
 // An offset of 0xFFFFFFFF indicates no data (empty array).
 //
@@ -777,7 +777,7 @@ func encodeSpanMap(m *spanmap.SpanMap, generatedPositions *ast.PositionMap, orig
 	*buf = msgpackWriteArrayHeader(*buf, len(segments))
 	for _, segment := range segments {
 		tupleLength := 5
-		if segment.Purpose != spanmap.PurposeAll {
+		if segment.Features != spanmap.FeatureAll {
 			tupleLength = 6
 		}
 		*buf = msgpackWriteArrayHeader(*buf, tupleLength)
@@ -791,7 +791,7 @@ func encodeSpanMap(m *spanmap.SpanMap, generatedPositions *ast.PositionMap, orig
 		*buf = msgpackWriteUint(*buf, uint32(originalEnd-originalStart))
 		*buf = msgpackWriteUint(*buf, uint32(segment.Kind))
 		if tupleLength == 6 {
-			*buf = msgpackWriteUint(*buf, uint32(segment.Purpose))
+			*buf = msgpackWriteUint(*buf, uint32(segment.Features))
 		}
 	}
 	return offset

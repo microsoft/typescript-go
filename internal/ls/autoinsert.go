@@ -19,7 +19,7 @@ func (l *LanguageService) ProvideOnAutoInsert(ctx context.Context, params *lspro
 	}
 
 	_, sourceFile := l.getProgramAndFile(params.VSTextDocument.Uri)
-	positions := l.converters.FromLSPPosition(sourceFile, params.VSPosition, spanmap.PurposeAll)
+	positions := l.converters.FromLSPPosition(sourceFile, params.VSPosition, spanmap.FeatureAutoInsert)
 	if len(positions) != 1 || !positions[0].Fidelity.IsExact() {
 		return lsproto.VSOnAutoInsertResponse{}, nil
 	}

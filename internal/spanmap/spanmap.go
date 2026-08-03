@@ -34,22 +34,38 @@ const (
 	KindAlias
 )
 
-// Purpose selects which generated projection should receive an original-to-generated language-service query.
-// It does not affect generated-to-original result mapping.
-type Purpose int32
+// Feature selects which language-service operations may use a segment. Diagnostics are intentionally not
+// represented: generated diagnostics may not opt out of reporting. Text edits additionally require exact
+// verbatim geometry regardless of feature participation.
+type Feature int32
 
 const (
-	// PurposeNone prevents original-to-generated language-service queries from selecting the segment.
-	PurposeNone Purpose = 0
-	// PurposeSemantic selects segments used by type-information features such as hover and completion.
-	PurposeSemantic Purpose = 1 << 0
-	// PurposeNavigation selects segments used by symbol-location features such as definitions and references.
-	PurposeNavigation Purpose = 1 << 1
-	// PurposeAll selects segments for both semantic and navigation queries.
-	PurposeAll Purpose = PurposeSemantic | PurposeNavigation
+	FeatureHover Feature = 1 << iota
+	FeatureSignatureHelp
+	FeatureCompletion
+	FeatureDefinition
+	FeatureTypeDefinition
+	FeatureImplementation
+	FeatureSourceDefinition
+	FeatureReferences
+	FeatureDocumentHighlights
+	FeatureRename
+	FeatureCallHierarchy
+	FeatureCodeActions
+	FeatureFormatting
+	FeatureInlayHints
+	FeatureSemanticTokens
+	FeatureFoldingRanges
+	FeatureSelectionRanges
+	FeatureLinkedEditing
+	FeatureAutoInsert
+	FeatureDocumentSymbols
+	FeatureCodeLens
+	FeatureNone Feature = 0
+	FeatureAll  Feature = (FeatureCodeLens << 1) - 1
 )
 
-const purposeMask = PurposeAll
+const featureMask = FeatureAll
 
 // Fidelity describes how faithfully a mapped span reflects the original.
 type Fidelity int32
@@ -84,14 +100,15 @@ func (f Fidelity) IsNone() bool {
 }
 
 // Segment maps the half-open generated range [GenStart, GenEnd) to the half-open original range
-// [OrigStart, OrigEnd). Purpose is consulted only for original-to-generated queries.
+// [OrigStart, OrigEnd). Features controls language-service participation; diagnostics and exact edit mapping
+// deliberately bypass it.
 type Segment struct {
 	GenStart  core.TextPos
 	GenEnd    core.TextPos
 	OrigStart core.TextPos
 	OrigEnd   core.TextPos
 	Kind      Kind
-	Purpose   Purpose
+	Features  Feature
 }
 
 // MappedPosition is one generated projection of an original position and its mapping fidelity.
@@ -135,8 +152,8 @@ const (
 	MappingErrorKindKind
 	// MappingErrorKindOriginalOverlap means original spans partially overlap or contain one another.
 	MappingErrorKindOriginalOverlap
-	// MappingErrorKindPurpose means a purpose annotation contains unsupported flags.
-	MappingErrorKindPurpose
+	// MappingErrorKindFeature means a feature annotation contains unsupported flags.
+	MappingErrorKindFeature
 )
 
 // MappingError describes a single span map validation failure, including the offsets involved so the mapper's
@@ -161,8 +178,8 @@ func (p *MappingError) Error() string {
 		return fmt.Sprintf("content mapper position mapping has an invalid kind at output offset %d", p.GenPos)
 	case MappingErrorKindOriginalOverlap:
 		return fmt.Sprintf("content mapper position mappings partially overlap in the original content near offset %d", p.OrigPos)
-	case MappingErrorKindPurpose:
-		return fmt.Sprintf("content mapper position mappings have invalid purposes near original offset %d", p.OrigPos)
+	case MappingErrorKindFeature:
+		return fmt.Sprintf("content mapper position mappings have invalid features near original offset %d", p.OrigPos)
 	default:
 		return "content mapper produced an invalid position mapping"
 	}
@@ -198,8 +215,8 @@ func (m *SpanMap) Validate(transformed, original string) *MappingError {
 				return &MappingError{Kind: MappingErrorKindVerbatimMismatch, GenPos: s.GenStart, OrigPos: s.OrigStart}
 			}
 		}
-		if s.Purpose&^purposeMask != 0 {
-			return &MappingError{Kind: MappingErrorKindPurpose, GenPos: s.GenStart, OrigPos: s.OrigStart}
+		if s.Features&^featureMask != 0 {
+			return &MappingError{Kind: MappingErrorKindFeature, GenPos: s.GenStart, OrigPos: s.OrigStart}
 		}
 	}
 	originalSegments := m.origIndex()
@@ -271,6 +288,40 @@ func (m *SpanMap) GeneratedToOriginalSpan(r core.TextRange) (core.TextRange, Fid
 	return core.NewTextRange(int(origStart), int(origEnd)), FidelityApproximate
 }
 
+// GeneratedToOriginalSpanForFeature maps r only when every generated position in the non-empty range is
+// covered by contiguous segments participating in feature. A zero-length range requires its containing
+// segment to participate. Diagnostics and edit write-back intentionally use GeneratedToOriginalSpan instead.
+func (m *SpanMap) GeneratedToOriginalSpanForFeature(r core.TextRange, feature Feature) (core.TextRange, Fidelity) {
+	mapped, fidelity := m.GeneratedToOriginalSpan(r)
+	if m == nil || m.generatedSpanSupportsFeature(r, feature) {
+		return mapped, fidelity
+	}
+	return mapped, FidelityNone
+}
+
+func (m *SpanMap) generatedSpanSupportsFeature(r core.TextRange, feature Feature) bool {
+	start := core.TextPos(r.Pos())
+	end := max(core.TextPos(r.End()), start)
+	if start == end {
+		index, inside := m.segmentIndexAt(start)
+		return inside && supportsFeature(m.segments[index], feature)
+	}
+	index, inside := m.segmentIndexAt(start)
+	if !inside {
+		return false
+	}
+	coveredThrough := start
+	for index < len(m.segments) && coveredThrough < end {
+		segment := m.segments[index]
+		if segment.GenStart > coveredThrough || segment.GenEnd <= coveredThrough || !supportsFeature(segment, feature) {
+			return false
+		}
+		coveredThrough = segment.GenEnd
+		index++
+	}
+	return coveredThrough >= end
+}
+
 // GeneratedToOriginalPosition maps a single generated position to the corresponding original position, along with the
 // fidelity of the result. It is the single-position analog of GeneratedToOriginalSpan: a position in a gap (or in an empty
 // map) is synthesized and maps to the insertion point with FidelityNone. A nil SpanMap maps identically.
@@ -287,6 +338,20 @@ func (m *SpanMap) GeneratedToOriginalPosition(pos core.TextPos) (core.TextPos, F
 		return clamp(seg.OrigStart+(pos-seg.GenStart), seg.OrigStart, seg.OrigEnd), FidelityExact
 	}
 	return seg.OrigStart, FidelityAtom
+}
+
+// GeneratedToOriginalPositionForFeature maps pos only when its generated segment participates in feature.
+// Diagnostics and edit write-back intentionally use GeneratedToOriginalPosition instead.
+func (m *SpanMap) GeneratedToOriginalPositionForFeature(pos core.TextPos, feature Feature) (core.TextPos, Fidelity) {
+	mapped, fidelity := m.GeneratedToOriginalPosition(pos)
+	if m == nil {
+		return mapped, fidelity
+	}
+	index, inside := m.segmentIndexAt(pos)
+	if !inside || !supportsFeature(m.segments[index], feature) {
+		return mapped, FidelityNone
+	}
+	return mapped, fidelity
 }
 
 // AliasForGeneratedSpan returns the alias segment exactly covering r. Partial overlap does not qualify:
@@ -355,9 +420,9 @@ func (m *SpanMap) mapHigh(pos core.TextPos, idx int, in bool) core.TextPos {
 }
 
 // OriginalToGeneratedPositions returns every generated projection of an original position whose segment
-// supports purpose. Results are ordered by generated start. It returns no results for an uncovered position
-// or when all covering segments reject purpose. A nil SpanMap maps identically.
-func (m *SpanMap) OriginalToGeneratedPositions(pos core.TextPos, purpose Purpose) []MappedPosition {
+// participates in feature. Results are ordered by generated start. It returns no results for an uncovered
+// position or when all covering segments reject feature. A nil SpanMap maps identically.
+func (m *SpanMap) OriginalToGeneratedPositions(pos core.TextPos, feature Feature) []MappedPosition {
 	if m == nil {
 		return []MappedPosition{{Position: pos, Fidelity: FidelityExact}}
 	}
@@ -367,7 +432,7 @@ func (m *SpanMap) OriginalToGeneratedPositions(pos core.TextPos, purpose Purpose
 	}
 	results := make([]MappedPosition, 0, len(segments))
 	for _, segment := range segments {
-		if !supportsPurpose(segment, purpose) {
+		if !supportsFeature(segment, feature) {
 			continue
 		}
 		if segment.Kind == KindVerbatim {
@@ -382,7 +447,7 @@ func (m *SpanMap) OriginalToGeneratedPositions(pos core.TextPos, purpose Purpose
 	return results
 }
 
-// OriginalToGeneratedSpans returns every purpose-compatible generated projection of an original range.
+// OriginalToGeneratedSpans returns every feature-compatible generated projection of an original range.
 // A range contained by one duplicate group produces one exact or atom result per matching group member.
 //
 // A range that starts in one group and ends in another can have several possible generated ranges. For
@@ -400,8 +465,8 @@ func (m *SpanMap) OriginalToGeneratedPositions(pos core.TextPos, purpose Purpose
 // belongs with which copy of B. We choose the smallest range around each possible location, producing [1,3)
 // and [11,13). We do not return [1,13), because it contains both smaller candidates and would include code
 // that may be unrelated to the original range. These cross-group results have approximate fidelity.
-// If either boundary is uncovered or disabled for purpose, there are no results. A nil SpanMap maps identically.
-func (m *SpanMap) OriginalToGeneratedSpans(r core.TextRange, purpose Purpose) []MappedSpan {
+// If either boundary is uncovered or disabled for feature, there are no results. A nil SpanMap maps identically.
+func (m *SpanMap) OriginalToGeneratedSpans(r core.TextRange, feature Feature) []MappedSpan {
 	if m == nil {
 		return []MappedSpan{{Span: r, Fidelity: FidelityExact}}
 	}
@@ -418,10 +483,10 @@ func (m *SpanMap) OriginalToGeneratedSpans(r core.TextRange, purpose Purpose) []
 		return nil
 	}
 	if sameOriginalRange(startSegments[0], endSegments[0]) {
-		return originalToGeneratedSpansInGroup(startSegments, start, end, purpose)
+		return originalToGeneratedSpansInGroup(startSegments, start, end, feature)
 	}
-	starts := originalStartProjections(startSegments, start, purpose)
-	ends := originalEndProjections(endSegments, end, purpose)
+	starts := originalStartProjections(startSegments, start, feature)
+	ends := originalEndProjections(endSegments, end, feature)
 	if len(starts) == 0 || len(ends) == 0 {
 		return nil
 	}
@@ -450,10 +515,10 @@ func (m *SpanMap) OriginalToGeneratedSpans(r core.TextRange, purpose Purpose) []
 //	generated:  [---------)   [---------)
 //	               ^             ^
 //	             result        result
-func originalStartProjections(segments []Segment, start core.TextPos, purpose Purpose) []core.TextPos {
+func originalStartProjections(segments []Segment, start core.TextPos, feature Feature) []core.TextPos {
 	results := make([]core.TextPos, 0, len(segments))
 	for _, segment := range segments {
-		if !supportsPurpose(segment, purpose) {
+		if !supportsFeature(segment, feature) {
 			continue
 		}
 		if segment.Kind == KindVerbatim {
@@ -478,10 +543,10 @@ func originalStartProjections(segments []Segment, start core.TextPos, purpose Pu
 //	generated:  [---------)   [---------)
 //	                      ^             ^
 //	                    result        result
-func originalEndProjections(segments []Segment, end core.TextPos, purpose Purpose) []core.TextPos {
+func originalEndProjections(segments []Segment, end core.TextPos, feature Feature) []core.TextPos {
 	results := make([]core.TextPos, 0, len(segments))
 	for _, segment := range segments {
-		if !supportsPurpose(segment, purpose) {
+		if !supportsFeature(segment, feature) {
 			continue
 		}
 		if segment.Kind == KindVerbatim {
@@ -494,10 +559,10 @@ func originalEndProjections(segments []Segment, end core.TextPos, purpose Purpos
 }
 
 // originalToGeneratedSpansInGroup maps a range whose boundaries are known to lie in segments.
-func originalToGeneratedSpansInGroup(segments []Segment, start core.TextPos, end core.TextPos, purpose Purpose) []MappedSpan {
+func originalToGeneratedSpansInGroup(segments []Segment, start core.TextPos, end core.TextPos, feature Feature) []MappedSpan {
 	results := make([]MappedSpan, 0, len(segments))
 	for _, segment := range segments {
-		if !supportsPurpose(segment, purpose) {
+		if !supportsFeature(segment, feature) {
 			continue
 		}
 		if segment.Kind == KindVerbatim {
@@ -558,9 +623,9 @@ func originalSegmentsAt(segments []Segment, pos core.TextPos) ([]Segment, bool) 
 	return segments[start:end], true
 }
 
-// supportsPurpose reports whether segment participates in an original-to-generated query for purpose.
-func supportsPurpose(segment Segment, purpose Purpose) bool {
-	return segment.Purpose&purpose != 0
+// supportsFeature reports whether segment participates in feature.
+func supportsFeature(segment Segment, feature Feature) bool {
+	return segment.Features&feature != 0
 }
 
 // clamp confines v to the inclusive interval [lo, hi].
@@ -569,8 +634,8 @@ func clamp(v, lo, hi core.TextPos) core.TextPos {
 }
 
 // Unmarshal decodes a SpanMap from the JSON tuple form produced by an out-of-process content mapper.
-// Five-element tuples omit purpose and are normalized to PurposeAll; six-element tuples preserve the
-// explicit purpose, including PurposeNone.
+// Five-element tuples omit features and are normalized to FeatureAll; six-element tuples preserve the
+// explicit feature mask, including FeatureNone.
 func Unmarshal(data []byte) (*SpanMap, error) {
 	var tuples [][]int32
 	if err := json.Unmarshal(data, &tuples); err != nil {
@@ -587,17 +652,17 @@ func Unmarshal(data []byte) (*SpanMap, error) {
 			OrigStart: core.TextPos(t[2]),
 			OrigEnd:   core.TextPos(t[2] + t[3]),
 			Kind:      Kind(t[4]),
-			Purpose:   PurposeAll,
+			Features:  FeatureAll,
 		}
 		if len(t) == 6 {
-			segments[i].Purpose = Purpose(t[5])
+			segments[i].Features = Feature(t[5])
 		}
 	}
 	return New(segments), nil
 }
 
-// Marshal encodes a SpanMap into the JSON tuple form. PurposeAll uses the backward-compatible five-element
-// tuple; every other purpose is emitted as a sixth element.
+// Marshal encodes a SpanMap into the JSON tuple form. FeatureAll uses the backward-compatible five-element
+// tuple; every other feature mask is emitted as a sixth element.
 func (m *SpanMap) Marshal() ([]byte, error) {
 	tuples := make([][]int32, len(m.segments))
 	for i, s := range m.segments {
@@ -608,8 +673,8 @@ func (m *SpanMap) Marshal() ([]byte, error) {
 			int32(s.OrigEnd - s.OrigStart),
 			int32(s.Kind),
 		}
-		if s.Purpose != PurposeAll {
-			tuples[i] = append(tuples[i], int32(s.Purpose))
+		if s.Features != FeatureAll {
+			tuples[i] = append(tuples[i], int32(s.Features))
 		}
 	}
 	return json.Marshal(tuples)

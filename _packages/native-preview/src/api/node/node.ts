@@ -6,8 +6,8 @@ import {
     NodeFlags,
     type Path,
     SpanMap,
+    SpanMapFeature,
     SpanMapKind,
-    SpanMapPurpose,
     SyntaxKind,
     TokenFlags,
 } from "../../ast/index.ts";
@@ -259,7 +259,7 @@ export class RemoteSourceFile extends RemoteNode implements SourceFileInfo {
             const originalStart = reader.readUint();
             const originalLength = reader.readUint();
             const kind = reader.readUint();
-            const purpose = tupleLength === 6 ? reader.readUint() as SpanMapPurpose : SpanMapPurpose.All;
+            const features = tupleLength === 6 ? reader.readUint() as SpanMapFeature : SpanMapFeature.All;
             if (kind !== SpanMapKind.Verbatim && kind !== SpanMapKind.Atom && kind !== SpanMapKind.Alias) throw new Error(`Invalid span map kind: ${kind}`);
             segments[i] = {
                 generatedStart,
@@ -267,7 +267,7 @@ export class RemoteSourceFile extends RemoteNode implements SourceFileInfo {
                 originalStart,
                 originalEnd: originalStart + originalLength,
                 kind,
-                purpose,
+                features,
             };
         }
         return this._cachedSpanMap = new SpanMap(segments);

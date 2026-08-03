@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -307,11 +308,11 @@ func (l *LanguageService) newDocumentSymbol(node *ast.Node, name *ast.Node, chil
 	}
 	result.Name = text
 	result.Kind = getSymbolKindFromNode(node)
-	selectionRange, selectionFidelity := l.converters.ToLSPRange(file, core.NewTextRange(nameStartPos, nameEndPos))
+	selectionRange, selectionFidelity := l.converters.ToLSPRangeForFeature(file, core.NewTextRange(nameStartPos, nameEndPos), spanmap.FeatureDocumentSymbols)
 	if !selectionFidelity.IsSingleSegment() {
 		return nil
 	}
-	symbolRange, rangeFidelity := l.converters.ToLSPRange(file, core.NewTextRange(nodeStartPos, node.End()))
+	symbolRange, rangeFidelity := l.converters.ToLSPRangeForFeature(file, core.NewTextRange(nodeStartPos, node.End()), spanmap.FeatureDocumentSymbols)
 	if rangeFidelity.IsNone() {
 		symbolRange = selectionRange
 	}
@@ -574,7 +575,7 @@ func ProvideWorkspaceSymbols(
 		nameNode := ast.GetNameOfDeclaration(node)
 		nameStart := astnav.GetStartOfNode(nameNode, sourceFile, false /*includeJsDoc*/)
 		nameRange := core.NewTextRange(nameStart, nameNode.End())
-		location, fidelity := converters.ToLSPLocation(sourceFile, nameRange)
+		location, fidelity := converters.ToLSPLocationForFeature(sourceFile, nameRange, spanmap.FeatureDocumentSymbols)
 		if !fidelity.IsSingleSegment() {
 			// The name has no counterpart in the original text, so there is nothing to navigate to.
 			continue

@@ -44,7 +44,7 @@ func (l *LanguageService) ProvideCompletion(
 		triggerCharacter = context.TriggerCharacter
 	}
 	ctx = format.WithFormatCodeSettings(ctx, l.FormatOptions(), l.FormatOptions().NewLineCharacter)
-	positions := l.converters.FromLSPPosition(file, LSPPosition, spanmap.PurposeSemantic)
+	positions := l.converters.FromLSPPosition(file, LSPPosition, spanmap.FeatureCompletion)
 	if len(positions) == 0 || !positions[0].Fidelity.IsExact() {
 		// In a content-mapped file the cursor is outside a verbatim span, so any completion committed here
 		// could not be applied to the original text. Offer nothing rather than edits at a bogus location.

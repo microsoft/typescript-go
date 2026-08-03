@@ -44,7 +44,7 @@ func (l *LanguageService) adjustFoldingEnd(ranges []*lsproto.FoldingRange, sourc
 			positions := l.converters.FromLSPPosition(sourceFile, lsproto.Position{
 				Line:      r.EndLine,
 				Character: *r.EndCharacter,
-			}, spanmap.PurposeAll)
+			}, spanmap.FeatureFoldingRanges)
 			if len(positions) == 1 && !positions[0].Fidelity.IsNone() && positions[0].Position > 0 && int(positions[0].Position) <= len(sourceText) {
 				endOffset := positions[0].Position
 				foldEndChar := sourceText[int(endOffset)-1]
@@ -373,7 +373,7 @@ func getOutliningSpanForNode(ctx context.Context, n *ast.Node, sourceFile *ast.S
 		default:
 			// Block was a standalone block.  In this case we want to only collapse
 			// the span of the block, independent of any parent span.
-			textRange, fidelity := l.createLspRangeFromNode(n, sourceFile)
+			textRange, fidelity := l.createLspRangeFromNodeForFeature(n, sourceFile, spanmap.FeatureFoldingRanges)
 			if fidelity.IsNone() {
 				return nil
 			}

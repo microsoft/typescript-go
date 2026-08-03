@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 )
 
 func (l *LanguageService) ProvideCodeLenses(ctx context.Context, documentURI lsproto.DocumentUri) (lsproto.CodeLensResponse, error) {
@@ -140,7 +141,7 @@ func (l *LanguageService) newCodeLensForNode(fileUri lsproto.DocumentUri, file *
 		nodeForRange = nodeName
 	}
 	pos := scanner.SkipTrivia(file.Text(), nodeForRange.Pos())
-	lspRange, fidelity := l.converters.ToLSPRange(file, core.NewTextRange(pos, node.End()))
+	lspRange, fidelity := l.converters.ToLSPRangeForFeature(file, core.NewTextRange(pos, node.End()), spanmap.FeatureCodeLens)
 	if fidelity.IsNone() {
 		return nil
 	}

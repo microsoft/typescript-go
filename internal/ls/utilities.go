@@ -289,6 +289,10 @@ func (l *LanguageService) createLspRangeFromNode(node *ast.Node, file *ast.Sourc
 	return l.createLspRangeFromBounds(scanner.GetTokenPosOfNode(node, file, false /*includeJSDoc*/), node.End(), file)
 }
 
+func (l *LanguageService) createLspRangeFromNodeForFeature(node *ast.Node, file *ast.SourceFile, feature spanmap.Feature) (lsproto.Range, spanmap.Fidelity) {
+	return l.converters.ToLSPRangeForFeature(file, createRangeFromNode(node, file), feature)
+}
+
 func createRangeFromNode(node *ast.Node, file *ast.SourceFile) core.TextRange {
 	return core.NewTextRange(scanner.GetTokenPosOfNode(node, file, false /*includeJSDoc*/), node.End())
 }

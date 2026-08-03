@@ -53,7 +53,7 @@ func (l *LanguageService) ProvideSignatureHelp(
 	context *lsproto.SignatureHelpContext,
 ) (lsproto.SignatureHelpResponse, error) {
 	program, sourceFile := l.getProgramAndFile(documentURI)
-	positions := l.converters.FromLSPPosition(sourceFile, position, spanmap.PurposeSemantic)
+	positions := l.converters.FromLSPPosition(sourceFile, position, spanmap.FeatureSignatureHelp)
 	if len(positions) == 0 || !positions[0].Fidelity.IsSingleSegment() {
 		return lsproto.SignatureHelpOrNull{}, nil
 	}

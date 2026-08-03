@@ -19,7 +19,7 @@ func (l *LanguageService) ProvideSelectionRanges(ctx context.Context, params *ls
 
 	var results []*lsproto.SelectionRange
 	for _, position := range params.Positions {
-		positions := l.converters.FromLSPPosition(sourceFile, position, spanmap.PurposeAll)
+		positions := l.converters.FromLSPPosition(sourceFile, position, spanmap.FeatureSelectionRanges)
 		if len(positions) != 1 || !positions[0].Fidelity.IsSingleSegment() {
 			return lsproto.SelectionRangesOrNull{}, nil
 		}
@@ -180,7 +180,7 @@ func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos 
 			return current
 		}
 
-		lspRange, fidelity := l.converters.ToLSPRange(sourceFile, core.NewTextRange(start, end))
+		lspRange, fidelity := l.converters.ToLSPRangeForFeature(sourceFile, core.NewTextRange(start, end), spanmap.FeatureSelectionRanges)
 		if fidelity.IsNone() {
 			return current
 		}
@@ -244,7 +244,7 @@ func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos 
 		return false
 	}
 
-	fullRange, fidelity := l.converters.ToLSPRange(sourceFile, core.NewTextRange(sourceFile.Pos(), sourceFile.End()))
+	fullRange, fidelity := l.converters.ToLSPRangeForFeature(sourceFile, core.NewTextRange(sourceFile.Pos(), sourceFile.End()), spanmap.FeatureSelectionRanges)
 	if fidelity.IsNone() {
 		return nil
 	}

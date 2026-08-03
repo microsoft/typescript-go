@@ -94,7 +94,7 @@ func (c *testConverters) PositionToLineAndCharacter(script lsconv.Script, positi
 }
 
 func (c *testConverters) LineAndCharacterToPosition(script lsconv.Script, position lsproto.Position) core.TextPos {
-	positions := c.FromLSPPosition(script, position, spanmap.PurposeAll)
+	positions := c.FromLSPPosition(script, position, spanmap.FeatureAll)
 	debug.Assert(len(positions) == 1, "fourslash script must have exactly one position projection")
 	return positions[0].Position
 }
@@ -2596,7 +2596,7 @@ func (f *FourslashTest) VerifyBaselineCodeLens(t *testing.T, preferences *lsutil
 				locations = locs
 			}
 
-			ranges := f.converters.FromLSPRange(f.getScriptInfo(openFile), resolvedCodeLens.Range, spanmap.PurposeAll)
+			ranges := f.converters.FromLSPRange(f.getScriptInfo(openFile), resolvedCodeLens.Range, spanmap.FeatureAll)
 			if len(ranges) != 1 {
 				continue
 			}
@@ -4060,7 +4060,7 @@ func updatePosition(pos int, editStart int, editEnd int, newText string) int {
 }
 
 func (f *FourslashTest) fromLSPRange(script *scriptInfo, r lsproto.Range) core.TextRange {
-	ranges := f.converters.FromLSPRange(script, r, spanmap.PurposeAll)
+	ranges := f.converters.FromLSPRange(script, r, spanmap.FeatureAll)
 	if len(ranges) != 1 {
 		return core.TextRange{}
 	}

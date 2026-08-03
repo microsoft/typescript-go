@@ -39,7 +39,7 @@ func (l *LanguageService) ProvideMultiDocumentHighlights(ctx context.Context, do
 
 func (l *LanguageService) provideDocumentHighlightsWorker(ctx context.Context, documentUri lsproto.DocumentUri, documentPosition lsproto.Position, filesToSearch []lsproto.DocumentUri) (lsproto.MultiDocumentHighlightsOrNull, error) {
 	program, sourceFile := l.getProgramAndFile(documentUri)
-	positions := l.converters.FromLSPPosition(sourceFile, documentPosition, spanmap.PurposeNavigation)
+	positions := l.converters.FromLSPPosition(sourceFile, documentPosition, spanmap.FeatureDocumentHighlights)
 	var results []lsproto.MultiDocumentHighlightsOrNull
 	for _, mapped := range positions {
 		if mapped.Fidelity.IsSingleSegment() {
@@ -62,12 +62,12 @@ func (l *LanguageService) provideDocumentHighlightsAtPosition(ctx context.Contex
 		var highlights []*lsproto.DocumentHighlight
 		kind := lsproto.DocumentHighlightKindRead
 		if openingElement != nil {
-			if lspRange, fidelity := l.createLspRangeFromNode(openingElement, sourceFile); !fidelity.IsNone() {
+			if lspRange, fidelity := l.createLspRangeFromNodeForFeature(openingElement, sourceFile, spanmap.FeatureDocumentHighlights); !fidelity.IsNone() {
 				highlights = append(highlights, &lsproto.DocumentHighlight{Range: lspRange, Kind: &kind})
 			}
 		}
 		if closingElement != nil {
-			if lspRange, fidelity := l.createLspRangeFromNode(closingElement, sourceFile); !fidelity.IsNone() {
+			if lspRange, fidelity := l.createLspRangeFromNodeForFeature(closingElement, sourceFile, spanmap.FeatureDocumentHighlights); !fidelity.IsNone() {
 				highlights = append(highlights, &lsproto.DocumentHighlight{Range: lspRange, Kind: &kind})
 			}
 		}
@@ -147,6 +147,9 @@ func (l *LanguageService) getSemanticDocumentHighlights(ctx context.Context, pos
 	for _, entry := range referenceEntries {
 		for _, ref := range entry.references {
 			fileName, highlight := l.toDocumentHighlight(ref)
+			if highlight == nil {
+				continue
+			}
 			fileHighlights[fileName] = append(fileHighlights[fileName], highlight)
 		}
 	}
@@ -167,9 +170,13 @@ func (l *LanguageService) toDocumentHighlight(entry *ReferenceEntry) (string, *l
 	entry = l.resolveEntry(entry)
 
 	kind := lsproto.DocumentHighlightKindRead
+	lspRange, ok := l.getRangeOfEntryForFeature(entry, spanmap.FeatureDocumentHighlights)
+	if !ok {
+		return entry.fileName, nil
+	}
 	if entry.kind == entryKindRange {
 		return entry.fileName, &lsproto.DocumentHighlight{
-			Range: l.getRangeOfEntry(entry),
+			Range: lspRange,
 			Kind:  &kind,
 		}
 	}
@@ -180,7 +187,7 @@ func (l *LanguageService) toDocumentHighlight(entry *ReferenceEntry) (string, *l
 	}
 
 	dh := &lsproto.DocumentHighlight{
-		Range: l.getRangeOfEntry(entry),
+		Range: lspRange,
 		Kind:  &kind,
 	}
 
@@ -254,7 +261,7 @@ func (l *LanguageService) highlightSpans(nodes []*ast.Node, sourceFile *ast.Sour
 	kind := lsproto.DocumentHighlightKindRead
 	for _, node := range nodes {
 		if node != nil {
-			if lspRange, fidelity := l.createLspRangeFromNode(node, sourceFile); !fidelity.IsNone() {
+			if lspRange, fidelity := l.createLspRangeFromNodeForFeature(node, sourceFile, spanmap.FeatureDocumentHighlights); !fidelity.IsNone() {
 				highlights = append(highlights, &lsproto.DocumentHighlight{Range: lspRange, Kind: &kind})
 			}
 		}
@@ -320,7 +327,7 @@ func (l *LanguageService) getIfElseOccurrences(ifStatement *ast.IfStatement, sou
 			}
 		}
 		// Ordinary case: just highlight the keyword.
-		if lspRange, fidelity := l.createLspRangeFromNode(keywords[i], sourceFile); !fidelity.IsNone() {
+		if lspRange, fidelity := l.createLspRangeFromNodeForFeature(keywords[i], sourceFile, spanmap.FeatureDocumentHighlights); !fidelity.IsNone() {
 			highlights = append(highlights, &lsproto.DocumentHighlight{Range: lspRange, Kind: &kind})
 		}
 	}
