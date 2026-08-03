@@ -1,0 +1,21 @@
+//// [tests/cases/compiler/awaitInNamespaceExportedClassComputedProperty.ts] ////
+
+=== awaitInNamespaceExportedClassComputedProperty.ts ===
+declare const x: string;
+>x : Symbol(x, Decl(awaitInNamespaceExportedClassComputedProperty.ts, 0, 13))
+
+namespace N {
+>N : Symbol(N, Decl(awaitInNamespaceExportedClassComputedProperty.ts, 0, 24))
+
+    class A { [await x]() {} }
+>A : Symbol(A, Decl(awaitInNamespaceExportedClassComputedProperty.ts, 1, 13))
+>[await x] : Symbol(A[await x], Decl(awaitInNamespaceExportedClassComputedProperty.ts, 2, 13))
+>x : Symbol(x, Decl(awaitInNamespaceExportedClassComputedProperty.ts, 0, 13))
+
+    export class B { [await x]() {} }
+>B : Symbol(B, Decl(awaitInNamespaceExportedClassComputedProperty.ts, 2, 30))
+>[await x] : Symbol(B[await x], Decl(awaitInNamespaceExportedClassComputedProperty.ts, 3, 20))
+>x : Symbol(x, Decl(awaitInNamespaceExportedClassComputedProperty.ts, 0, 13))
+}
+export {};
+

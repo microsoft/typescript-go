@@ -1,0 +1,23 @@
+//// [tests/cases/compiler/awaitInNamespaceExportedClassComputedProperty.ts] ////
+
+=== awaitInNamespaceExportedClassComputedProperty.ts ===
+declare const x: string;
+>x : string
+
+namespace N {
+>N : typeof N
+
+    class A { [await x]() {} }
+>A : A
+>[await x] : () => void
+>await x : string
+>x : string
+
+    export class B { [await x]() {} }
+>B : B
+>[await x] : () => void
+>await x : string
+>x : string
+}
+export {};
+
