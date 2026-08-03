@@ -732,6 +732,7 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 		attributesSymbol = attributes.Symbol()
 		attributeParent = attributes
 		contextualType := c.getContextualType(attributes, ContextFlagsNone)
+		c.deferDeprecatedPropertySuggestions(contextualType, attributes)
 		// Create anonymous type from given attributes symbol table.
 		// @param symbol a symbol of JsxAttributes containing attributes corresponding to attributesTable
 		// @param attributesTable a symbol table of attributes property
@@ -755,9 +756,6 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 				}
 				if attributeDecl.Name().Text() == jsxChildrenPropertyName {
 					explicitlySpecifyChildrenAttribute = true
-				}
-				if ast.IsIdentifier(attributeDecl.Name()) {
-					c.checkDeprecatedProperty(attributeDecl.Name(), contextualType)
 				}
 				if contextualType != nil && checkMode&CheckModeInferential != 0 && checkMode&CheckModeSkipContextSensitive == 0 && c.isContextSensitive(attributeDecl) {
 					inferenceContext := c.getInferenceContext(attributes)

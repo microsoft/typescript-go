@@ -893,6 +893,7 @@ type Checker struct {
 	reportedUnreachableNodes                    collections.Set[*ast.Node]
 	nonExistentProperties                       collections.Set[NonExistentPropertyKey]
 	deferredDiagnosticCallbacks                 []func()
+	deferredDeprecatedPropertyContexts          collections.Set[*ast.Node]
 	typeToStringNodebuilder                     *NodeBuilder
 
 	mu     sync.Mutex
@@ -13164,6 +13165,7 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 	spread := c.emptyObjectType
 	c.pushCachedContextualType(node)
 	contextualType := c.getApparentTypeOfContextualType(node, ContextFlagsNone)
+	c.deferDeprecatedPropertySuggestions(contextualType, node)
 	var contextualTypeHasPattern bool
 	if contextualType != nil {
 		if pattern := c.patternForType[contextualType]; pattern != nil && (ast.IsObjectBindingPattern(pattern) || ast.IsObjectLiteralExpression(pattern)) {
@@ -13268,9 +13270,6 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 			if allPropertiesTable != nil {
 				allPropertiesTable[prop.Name] = prop
 			}
-			if ast.IsIdentifier(memberDecl.Name()) {
-				c.checkDeprecatedProperty(memberDecl.Name(), contextualType)
-			}
 			if contextualType != nil && checkMode&CheckModeInferential != 0 && checkMode&CheckModeSkipContextSensitive == 0 && (ast.IsPropertyAssignment(memberDecl) || ast.IsMethodDeclaration(memberDecl)) && c.isContextSensitive(memberDecl) {
 				inferenceContext := c.getInferenceContext(node)
 				// In CheckMode.Inferential we should always have an inference context
@@ -13355,8 +13354,34 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 	return createObjectLiteralType()
 }
 
+func (c *Checker) deferDeprecatedPropertySuggestions(contextualType *Type, contextNode *ast.Node) {
+	if contextualType == nil || !c.deferredDeprecatedPropertyContexts.AddIfAbsent(contextNode) {
+		return
+	}
+	// Overload resolution contextually checks an object literal against multiple candidates.
+	// Wait until the selected signature is cached before reporting its deprecated properties.
+	c.addDeferredDiagnostic(func() {
+		c.checkDeprecatedProperties(contextNode)
+	})
+}
+
+func (c *Checker) checkDeprecatedProperties(contextNode *ast.Node) {
+	var contextualType *Type
+	if ast.IsJsxAttributes(contextNode) {
+		contextualType = c.getContextualType(contextNode, ContextFlagsNone)
+	} else {
+		contextualType = c.getApparentTypeOfContextualType(contextNode, ContextFlagsNone)
+	}
+	for _, property := range contextNode.Properties() {
+		if property.Name() != nil && ast.IsIdentifier(property.Name()) &&
+			(ast.IsJsxAttribute(property) || ast.IsPropertyAssignment(property) || ast.IsShorthandPropertyAssignment(property) || ast.IsObjectLiteralMethod(property)) {
+			c.checkDeprecatedProperty(property.Name(), contextualType)
+		}
+	}
+}
+
 func (c *Checker) checkDeprecatedProperty(name *ast.IdentifierNode, contextualType *Type) {
-	if contextualType == nil || name == nil {
+	if contextualType == nil {
 		return
 	}
 	prop := c.getPropertyOfType(contextualType, name.Text())
@@ -13980,6 +14005,7 @@ func (c *Checker) produceDeferredDiagnostics() {
 		cb()
 	}
 	c.deferredDiagnosticCallbacks = nil
+	c.deferredDeprecatedPropertyContexts.Clear()
 }
 
 func (c *Checker) addDiagnostic(diagnostic *ast.Diagnostic) {
