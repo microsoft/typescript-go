@@ -1,8 +1,15 @@
 awaitInNamespaceExportedClassComputedProperty.ts(3,16): error TS1308: 'await' expressions are only allowed within async functions and at the top levels of modules.
 awaitInNamespaceExportedClassComputedProperty.ts(4,23): error TS1308: 'await' expressions are only allowed within async functions and at the top levels of modules.
+awaitInNamespaceExportedClassComputedProperty.ts(9,5): error TS1184: Modifiers cannot appear here.
+awaitInNamespaceExportedClassComputedProperty.ts(13,5): error TS1184: Modifiers cannot appear here.
+awaitInNamespaceExportedClassComputedProperty.ts(13,23): error TS1308: 'await' expressions are only allowed within async functions and at the top levels of modules.
+awaitInNamespaceExportedClassComputedProperty.ts(17,5): error TS1184: Modifiers cannot appear here.
+awaitInNamespaceExportedClassComputedProperty.ts(21,5): error TS1184: Modifiers cannot appear here.
+awaitInNamespaceExportedClassComputedProperty.ts(21,23): error TS1308: 'await' expressions are only allowed within async functions and at the top levels of modules.
+awaitInNamespaceExportedClassComputedProperty.ts(25,5): error TS1184: Modifiers cannot appear here.
 
 
-==== awaitInNamespaceExportedClassComputedProperty.ts (2 errors) ====
+==== awaitInNamespaceExportedClassComputedProperty.ts (9 errors) ====
     declare const x: string;
     namespace N {
         class A { [await x]() {} }
@@ -15,5 +22,42 @@ awaitInNamespaceExportedClassComputedProperty.ts(4,23): error TS1308: 'await' ex
 !!! related TS1356 awaitInNamespaceExportedClassComputedProperty.ts:4:22: Did you mean to mark this function as 'async'?
     }
     export class C { [await x]() {} }
+    
+    {
+        export class D { [await x]() {} }
+        ~~~~~~
+!!! error TS1184: Modifiers cannot appear here.
+    }
+    
+    function f() {
+        export class E { [await x]() {} }
+        ~~~~~~
+!!! error TS1184: Modifiers cannot appear here.
+                          ~~~~~
+!!! error TS1308: 'await' expressions are only allowed within async functions and at the top levels of modules.
+!!! related TS1356 awaitInNamespaceExportedClassComputedProperty.ts:13:22: Did you mean to mark this function as 'async'?
+    }
+    
+    async function af() {
+        export class F { [await x]() {} }
+        ~~~~~~
+!!! error TS1184: Modifiers cannot appear here.
+    }
+    
+    function* gf() {
+        export class G { [await x]() {} }
+        ~~~~~~
+!!! error TS1184: Modifiers cannot appear here.
+                          ~~~~~
+!!! error TS1308: 'await' expressions are only allowed within async functions and at the top levels of modules.
+!!! related TS1356 awaitInNamespaceExportedClassComputedProperty.ts:21:22: Did you mean to mark this function as 'async'?
+    }
+    
+    async function* agf() {
+        export class H { [await x]() {} }
+        ~~~~~~
+!!! error TS1184: Modifiers cannot appear here.
+    }
+    
     export {};
     

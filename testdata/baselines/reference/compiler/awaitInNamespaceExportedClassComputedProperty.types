@@ -25,5 +25,53 @@ export class C { [await x]() {} }
 >await x : string
 >x : string
 
+{
+    export class D { [await x]() {} }
+>D : D
+>[await x] : () => void
+>await x : string
+>x : string
+}
+
+function f() {
+>f : () => void
+
+    export class E { [await x]() {} }
+>E : E
+>[await x] : () => void
+>await x : string
+>x : string
+}
+
+async function af() {
+>af : () => Promise<void>
+
+    export class F { [await x]() {} }
+>F : F
+>[await x] : () => void
+>await x : string
+>x : string
+}
+
+function* gf() {
+>gf : () => Generator<never, void, unknown>
+
+    export class G { [await x]() {} }
+>G : G
+>[await x] : () => void
+>await x : string
+>x : string
+}
+
+async function* agf() {
+>agf : () => AsyncGenerator<never, void, unknown>
+
+    export class H { [await x]() {} }
+>H : H
+>[await x] : () => void
+>await x : string
+>x : string
+}
+
 export {};
 
