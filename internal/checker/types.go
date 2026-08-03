@@ -394,19 +394,19 @@ type AssertionLinks struct {
 // SourceFile links
 
 type SourceFileLinks struct {
-	typeChecked                  bool
-	unusedChecked                bool
-	deprecatedPropertiesChecked  bool
-	externalHelpersModule        *ast.Symbol
-	requestedExternalEmitHelpers ExternalEmitHelpers
-	deferredNodes                collections.OrderedSet[*ast.Node]
-	identifierCheckNodes         []*ast.Node
-	deprecatedPropertyCheckNodes collections.OrderedSet[*ast.Node]
-	localJsxNamespace            string
-	localJsxFragmentNamespace    string
-	localJsxFactory              *ast.EntityName
-	localJsxFragmentFactory      *ast.EntityName
-	jsxFragmentType              *Type
+	typeChecked                     bool
+	unusedChecked                   bool
+	contextualDeprecationsChecked   bool
+	externalHelpersModule           *ast.Symbol
+	requestedExternalEmitHelpers    ExternalEmitHelpers
+	deferredNodes                   collections.OrderedSet[*ast.Node]
+	identifierCheckNodes            []*ast.Node
+	contextualDeprecationCheckNodes collections.OrderedSet[*ast.Node]
+	localJsxNamespace               string
+	localJsxFragmentNamespace       string
+	localJsxFactory                 *ast.EntityName
+	localJsxFragmentFactory         *ast.EntityName
+	jsxFragmentType                 *Type
 }
 
 // Signature specific links

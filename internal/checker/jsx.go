@@ -732,7 +732,7 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 		attributesSymbol = attributes.Symbol()
 		attributeParent = attributes
 		contextualType := c.getContextualType(attributes, ContextFlagsNone)
-		c.registerForDeprecatedPropertiesCheck(contextualType, attributes)
+		c.registerForContextualDeprecationCheck(contextualType, attributes)
 		// Create anonymous type from given attributes symbol table.
 		// @param symbol a symbol of JsxAttributes containing attributes corresponding to attributesTable
 		// @param attributesTable a symbol table of attributes property

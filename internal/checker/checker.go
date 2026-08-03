@@ -2199,7 +2199,7 @@ func (c *Checker) getSymbol(symbols ast.SymbolTable, name string, meaning ast.Sy
 	return nil
 }
 
-func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFile, checkUnused bool, checkDeprecatedProperties bool) {
+func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFile, checkUnused bool, checkContextualDeprecations bool) {
 	c.ctx = ctx
 	links := c.sourceFileLinks.Get(sourceFile)
 	if !links.typeChecked {
@@ -2229,9 +2229,9 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 		}
 		links.unusedChecked = true
 	}
-	if checkDeprecatedProperties && !links.deprecatedPropertiesChecked {
-		c.checkDeprecatedProperties(&links.deprecatedPropertyCheckNodes)
-		links.deprecatedPropertiesChecked = true
+	if checkContextualDeprecations && !links.contextualDeprecationsChecked {
+		c.checkContextualDeprecations(&links.contextualDeprecationCheckNodes)
+		links.contextualDeprecationsChecked = true
 	}
 	if c.isCanceled() {
 		c.wasCanceled = true
@@ -13177,7 +13177,7 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 	spread := c.emptyObjectType
 	c.pushCachedContextualType(node)
 	contextualType := c.getApparentTypeOfContextualType(node, ContextFlagsNone)
-	c.registerForDeprecatedPropertiesCheck(contextualType, node)
+	c.registerForContextualDeprecationCheck(contextualType, node)
 	var contextualTypeHasPattern bool
 	if contextualType != nil {
 		if pattern := c.patternForType[contextualType]; pattern != nil && (ast.IsObjectBindingPattern(pattern) || ast.IsObjectLiteralExpression(pattern)) {
@@ -13366,15 +13366,15 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 	return createObjectLiteralType()
 }
 
-func (c *Checker) registerForDeprecatedPropertiesCheck(contextualType *Type, contextNode *ast.Node) {
+func (c *Checker) registerForContextualDeprecationCheck(contextualType *Type, contextNode *ast.Node) {
 	if contextualType != nil {
 		sourceFile := ast.GetSourceFileOfNode(contextNode)
 		links := c.sourceFileLinks.Get(sourceFile)
-		links.deprecatedPropertyCheckNodes.Add(contextNode)
+		links.contextualDeprecationCheckNodes.Add(contextNode)
 	}
 }
 
-func (c *Checker) checkDeprecatedProperties(contexts *collections.OrderedSet[*ast.Node]) {
+func (c *Checker) checkContextualDeprecations(contexts *collections.OrderedSet[*ast.Node]) {
 	for contextNode := range contexts.Values() {
 		var contextualType *Type
 		if ast.IsJsxAttributes(contextNode) {
@@ -13992,10 +13992,10 @@ func (c *Checker) GetSuggestionDiagnostics(ctx context.Context, sourceFile *ast.
 	return c.getDiagnostics(ctx, sourceFile, &c.suggestionDiagnostics, true)
 }
 
-func (c *Checker) getDiagnostics(ctx context.Context, sourceFile *ast.SourceFile, collection *ast.DiagnosticsCollection, checkDeprecatedProperties bool) []*ast.Diagnostic {
+func (c *Checker) getDiagnostics(ctx context.Context, sourceFile *ast.SourceFile, collection *ast.DiagnosticsCollection, checkContextualDeprecations bool) []*ast.Diagnostic {
 	c.checkNotCanceled()
 	checkUnused := c.compilerOptions.NoUnusedLocals.IsTrue() || c.compilerOptions.NoUnusedParameters.IsTrue() || collection == &c.suggestionDiagnostics
-	c.checkSourceFile(ctx, sourceFile, checkUnused, checkDeprecatedProperties)
+	c.checkSourceFile(ctx, sourceFile, checkUnused, checkContextualDeprecations)
 	if c.wasCanceled {
 		return nil
 	}
