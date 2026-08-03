@@ -542,6 +542,11 @@ type WideningContext struct {
 	widenedTypes       map[*Type]*Type
 }
 
+type VarianceStackEntry struct {
+	symbol         *ast.Symbol
+	typeParameters []*Type
+}
+
 const maxSerializationLevel = 2
 
 type Program interface {
@@ -787,6 +792,7 @@ type Checker struct {
 	typeResolutions                             []TypeResolution
 	resolutionStart                             int
 	inVarianceComputation                       bool
+	varianceStack                               []VarianceStackEntry
 	apparentArgumentCount                       *int
 	lastGetCombinedNodeFlagsNode                *ast.Node
 	lastGetCombinedNodeFlagsResult              ast.NodeFlags
