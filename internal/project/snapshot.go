@@ -288,6 +288,8 @@ func (s *Snapshot) Clone(
 			logger.Logf("Reason: RequestedLoadProjectTree - %v", getDetails())
 		case UpdateReasonIdleCleanDiskCache:
 			logger.Logf("Reason: IdleCleanDiskCache")
+		case UpdateReasonDidChangeConfigFile:
+			logger.Logf("Reason: DidChangeConfigFile - %v", getDetails())
 		}
 	}
 

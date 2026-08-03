@@ -8793,6 +8793,9 @@ type InitializationOptions struct {
 
 	// LoadExternalPlugins allows configured content mappers to launch external plugin processes. The client should set this only for trusted workspaces. It mirrors the --loadExternalPlugins CLI flag.
 	LoadExternalPlugins *bool `json:"loadExternalPlugins,omitzero"`
+
+	// The level at which we track flaky diagnostics, if at all.
+	TrackFlakyDiagnostics *DiagnosticFlakeLogLevel `json:"trackFlakyDiagnostics,omitzero"`
 }
 
 var _ json.UnmarshalerFrom = (*InitializationOptions)(nil)
@@ -10546,6 +10549,30 @@ func (e LogVerbosity) String() string {
 		return fmt.Sprintf("LogVerbosity(%d)", e)
 	}
 	return _LogVerbosity_name[_LogVerbosity_index[i]:_LogVerbosity_index[i+1]]
+}
+
+// Behavior for tracking and logging flaky diagnostics.
+type DiagnosticFlakeLogLevel int32
+
+const (
+	// All flake logging disabled.
+	DiagnosticFlakeLogLevelOff DiagnosticFlakeLogLevel = 0
+	// Log flaky diagnostics to the error log.
+	DiagnosticFlakeLogLevelLog DiagnosticFlakeLogLevel = 1
+	// Panic on flaky diagnostics.
+	DiagnosticFlakeLogLevelPanic DiagnosticFlakeLogLevel = 2
+)
+
+const _DiagnosticFlakeLogLevel_name = "OffLogPanic"
+
+var _DiagnosticFlakeLogLevel_index = [...]uint16{0, 3, 6, 11}
+
+func (e DiagnosticFlakeLogLevel) String() string {
+	i := int(e) - 0
+	if i < 0 || i >= len(_DiagnosticFlakeLogLevel_index)-1 {
+		return fmt.Sprintf("DiagnosticFlakeLogLevel(%d)", e)
+	}
+	return _DiagnosticFlakeLogLevel_name[_DiagnosticFlakeLogLevel_index[i]:_DiagnosticFlakeLogLevel_index[i+1]]
 }
 
 type VSReferenceKind int32

@@ -74,6 +74,12 @@ const customStructures: Structure[] = [
                 optional: true,
                 documentation: "LoadExternalPlugins allows configured content mappers to launch external plugin processes. The client should set this only for trusted workspaces. It mirrors the --loadExternalPlugins CLI flag.",
             },
+            {
+                name: "trackFlakyDiagnostics",
+                type: { kind: "reference", name: "DiagnosticFlakeLogLevel" },
+                optional: true,
+                documentation: "The level at which we track flaky diagnostics, if at all.",
+            },
         ],
         documentation: "InitializationOptions contains user-provided initialization options.",
     },
@@ -732,6 +738,16 @@ const customEnumerations: Enumeration[] = [
             { name: "Error", value: 5, documentation: "Errors only." },
         ],
         documentation: "Log verbosity level, mirroring the VS Code LogLevel enum values.",
+    },
+    {
+        name: "DiagnosticFlakeLogLevel",
+        type: { kind: "base", name: "integer" },
+        values: [
+            { name: "Off", value: 0, documentation: "All flake logging disabled." },
+            { name: "Log", value: 1, documentation: "Log flaky diagnostics to the error log." },
+            { name: "Panic", value: 2, documentation: "Panic on flaky diagnostics." },
+        ],
+        documentation: "Behavior for tracking and logging flaky diagnostics.",
     },
     {
         name: "VSReferenceKind",

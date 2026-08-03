@@ -208,6 +208,11 @@ export class Client implements vscode.Disposable {
             ?? readNativePreviewConfig<string | undefined>("pprofDir", undefined);
         const pprofArgs = pprofDir ? ["--pprofDir", pprofDir] : [];
 
+        const flakesFlag = vscode.workspace
+            .getConfiguration("js/ts")
+            .get<"panic" | "log" | "never" | "auto">("server.trackFlakyDiagnostics", "auto");
+        const effectiveflakesFlag = flakesFlag === "auto" ? (isInsiders() ? "log" : "never") : flakesFlag;
+
         const goMemLimit = readNativePreviewConfig<string | undefined>("server.goMemLimit", undefined)
             ?? readNativePreviewConfig<string | undefined>("goMemLimit", undefined);
         const env = { ...process.env };
@@ -240,6 +245,7 @@ export class Client implements vscode.Disposable {
         // Refresh options in case they changed between construction and start.
         this.clientOptions.initializationOptions.logVerbosity = this.outputChannel.logLevel;
         this.clientOptions.initializationOptions.loadExternalPlugins = vscode.workspace.isTrusted;
+        this.clientOptions.initializationOptions.trackFlakyDiagnostics = effectiveflakesFlag !== "never" ? (effectiveflakesFlag === "panic" ? 2 : 1) : 0;
 
         this.client = new NativePreviewLanguageClient(
             "js/ts",

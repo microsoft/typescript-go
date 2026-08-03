@@ -219,7 +219,7 @@ func (l *LanguageService) getDocumentationFromDeclaration(c *checker.Checker, sy
 	}
 	isMarkdown := contentFormat == lsproto.MarkupKindMarkdown
 	var b strings.Builder
-	if jsdoc := getJSDocOrTag(c, declaration); jsdoc != nil && !(declaration.Flags&ast.NodeFlagsReparsed == 0 && containsTypedefTag(jsdoc)) {
+	if jsdoc := getJSDocOrTag(c, declaration, &collections.Set[*ast.Symbol]{}); jsdoc != nil && !(declaration.Flags&ast.NodeFlagsReparsed == 0 && containsTypedefTag(jsdoc)) {
 		l.writeComments(&b, c, jsdoc.Comments(), isMarkdown)
 		if jsdoc.Kind == ast.KindJSDoc && !commentOnly {
 			if tags := jsdoc.AsJSDoc().Tags; tags != nil {
@@ -911,7 +911,10 @@ func getJSDoc(node *ast.Node) *ast.Node {
 	return core.LastOrNil(node.JSDoc(nil))
 }
 
-func getJSDocOrTag(c *checker.Checker, node *ast.Node) *ast.Node {
+func getJSDocOrTag(c *checker.Checker, node *ast.Node, seenSymbols *collections.Set[*ast.Symbol]) *ast.Node {
+	if node == nil {
+		return nil
+	}
 	if jsdoc := getJSDoc(node); jsdoc != nil {
 		return jsdoc
 	}
@@ -922,14 +925,14 @@ func getJSDocOrTag(c *checker.Checker, node *ast.Node) *ast.Node {
 			// For binding patterns, match JSDoc @param tags by position rather than by name
 			return getJSDocParameterTagByPosition(c, node)
 		}
-		return getMatchingJSDocTag(c, node.Parent, name.Text(), isMatchingParameterTag)
+		return getMatchingJSDocTag(c, node.Parent, name.Text(), isMatchingParameterTag, seenSymbols)
 	case ast.IsTypeParameterDeclaration(node):
-		return getMatchingJSDocTag(c, node.Parent, node.Name().Text(), isMatchingTemplateTag)
+		return getMatchingJSDocTag(c, node.Parent, node.Name().Text(), isMatchingTemplateTag, seenSymbols)
 	case ast.IsVariableDeclaration(node) && ast.IsVariableDeclarationList(node.Parent) && core.FirstOrNil(node.Parent.AsVariableDeclarationList().Declarations.Nodes) == node:
-		return getJSDocOrTag(c, node.Parent.Parent)
+		return getJSDocOrTag(c, node.Parent.Parent, seenSymbols)
 	case (ast.IsFunctionExpressionOrArrowFunction(node) || ast.IsClassExpression(node)) &&
 		(ast.IsVariableDeclaration(node.Parent) || ast.IsPropertyDeclaration(node.Parent) || ast.IsPropertyAssignment(node.Parent)) && node.Parent.Initializer() == node:
-		return getJSDocOrTag(c, node.Parent)
+		return getJSDocOrTag(c, node.Parent, seenSymbols)
 	case ast.IsBindingElement(node) && ast.IsObjectBindingPattern(node.Parent):
 		if name := node.PropertyNameOrName(); ast.IsIdentifier(name) {
 			if objectType := c.GetTypeAtLocation(node.Parent); objectType != nil {
@@ -947,7 +950,7 @@ func getJSDocOrTag(c *checker.Checker, node *ast.Node) *ast.Node {
 		if ast.IsFunctionDeclaration(node) || ast.IsMethodDeclaration(node) || ast.IsMethodSignatureDeclaration(node) || ast.IsConstructorDeclaration(node) || ast.IsConstructSignatureDeclaration(node) {
 			firstSignature := core.Find(symbol.Declarations, ast.IsFunctionLike)
 			if firstSignature != nil && node != firstSignature {
-				if jsDoc := getJSDocOrTag(c, firstSignature); jsDoc != nil {
+				if jsDoc := getJSDocOrTag(c, firstSignature, seenSymbols); jsDoc != nil {
 					return jsDoc
 				}
 			}
@@ -960,15 +963,15 @@ func getJSDocOrTag(c *checker.Checker, node *ast.Node) *ast.Node {
 				// This correctly handles intersection constructor types from mixins
 				// (e.g., typeof MixinClass & T) by preserving the full intersection.
 				staticBaseType := c.GetApparentType(c.GetBaseConstructorTypeOfClass(classType))
-				if prop := c.GetPropertyOfType(staticBaseType, symbol.Name); prop != nil && prop.ValueDeclaration != nil {
-					if jsDoc := getJSDocOrTag(c, prop.ValueDeclaration); jsDoc != nil {
+				if prop := c.GetPropertyOfType(staticBaseType, symbol.Name); prop != nil && prop.ValueDeclaration != nil && seenSymbols.AddIfAbsent(prop) {
+					if jsDoc := getJSDocOrTag(c, prop.ValueDeclaration, seenSymbols); jsDoc != nil {
 						return jsDoc
 					}
 				}
 			} else {
 				for _, baseType := range c.GetBaseTypes(classType) {
-					if prop := c.GetPropertyOfType(baseType, symbol.Name); prop != nil && prop.ValueDeclaration != nil {
-						if jsDoc := getJSDocOrTag(c, prop.ValueDeclaration); jsDoc != nil {
+					if prop := c.GetPropertyOfType(baseType, symbol.Name); prop != nil && prop.ValueDeclaration != nil && seenSymbols.AddIfAbsent(prop) {
+						if jsDoc := getJSDocOrTag(c, prop.ValueDeclaration, seenSymbols); jsDoc != nil {
 							return jsDoc
 						}
 					}
@@ -979,8 +982,8 @@ func getJSDocOrTag(c *checker.Checker, node *ast.Node) *ast.Node {
 	return nil
 }
 
-func getMatchingJSDocTag(c *checker.Checker, node *ast.Node, name string, match func(*ast.Node, string) bool) *ast.Node {
-	if jsdoc := getJSDocOrTag(c, node); jsdoc != nil && jsdoc.Kind == ast.KindJSDoc {
+func getMatchingJSDocTag(c *checker.Checker, node *ast.Node, name string, match func(*ast.Node, string) bool, seenSymbols *collections.Set[*ast.Symbol]) *ast.Node {
+	if jsdoc := getJSDocOrTag(c, node, seenSymbols); jsdoc != nil && jsdoc.Kind == ast.KindJSDoc {
 		if tags := jsdoc.AsJSDoc().Tags; tags != nil {
 			for _, tag := range tags.Nodes {
 				if match(tag, name) {
@@ -1014,7 +1017,7 @@ func getJSDocParameterTagByPosition(c *checker.Checker, param *ast.Node) *ast.No
 	}
 
 	// Get the JSDoc for the parent function/method
-	jsdoc := getJSDocOrTag(c, parent)
+	jsdoc := getJSDocOrTag(c, parent, &collections.Set[*ast.Symbol]{})
 	if jsdoc == nil || jsdoc.Kind != ast.KindJSDoc {
 		return nil
 	}
