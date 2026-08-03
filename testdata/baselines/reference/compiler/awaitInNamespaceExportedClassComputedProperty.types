@@ -26,7 +26,7 @@ export class C { [await x]() {} }
 >x : string
 
 {
-    export class D { [await x]() {} }
+    class D { [await x]() {} }
 >D : D
 >[await x] : () => void
 >await x : string
@@ -36,7 +36,7 @@ export class C { [await x]() {} }
 function f() {
 >f : () => void
 
-    export class E { [await x]() {} }
+    class E { [await x]() {} }
 >E : E
 >[await x] : () => void
 >await x : string
@@ -46,7 +46,7 @@ function f() {
 async function af() {
 >af : () => Promise<void>
 
-    export class F { [await x]() {} }
+    class F { [await x]() {} }
 >F : F
 >[await x] : () => void
 >await x : string
@@ -56,7 +56,7 @@ async function af() {
 function* gf() {
 >gf : () => Generator<never, void, unknown>
 
-    export class G { [await x]() {} }
+    class G { [await x]() {} }
 >G : G
 >[await x] : () => void
 >await x : string
@@ -66,7 +66,7 @@ function* gf() {
 async function* agf() {
 >agf : () => AsyncGenerator<never, void, unknown>
 
-    export class H { [await x]() {} }
+    class H { [await x]() {} }
 >H : H
 >[await x] : () => void
 >await x : string
@@ -82,7 +82,7 @@ function switchSync() {
         case 0:
 >0 : 0
 
-            export class I { [await x]() {} }
+            class I { [await x]() {} }
 >I : I
 >[await x] : () => void
 >await x : string
@@ -99,7 +99,7 @@ async function switchAsync() {
         case 0:
 >0 : 0
 
-            export class J { [await x]() {} }
+            class J { [await x]() {} }
 >J : J
 >[await x] : () => void
 >await x : string

@@ -9,36 +9,36 @@ namespace N {
 export class C { [await x]() {} }
 
 {
-    export class D { [await x]() {} }
+    class D { [await x]() {} }
 }
 
 function f() {
-    export class E { [await x]() {} }
+    class E { [await x]() {} }
 }
 
 async function af() {
-    export class F { [await x]() {} }
+    class F { [await x]() {} }
 }
 
 function* gf() {
-    export class G { [await x]() {} }
+    class G { [await x]() {} }
 }
 
 async function* agf() {
-    export class H { [await x]() {} }
+    class H { [await x]() {} }
 }
 
 function switchSync() {
     switch (0) {
         case 0:
-            export class I { [await x]() {} }
+            class I { [await x]() {} }
     }
 }
 
 async function switchAsync() {
     switch (0) {
         case 0:
-            export class J { [await x]() {} }
+            class J { [await x]() {} }
     }
 }
 
@@ -60,34 +60,34 @@ export class C {
     [await x]() { }
 }
 {
-    export class D {
+    class D {
         [await x]() { }
     }
 }
 function f() {
-    export class E {
+    class E {
         [await x]() { }
     }
 }
 async function af() {
-    export class F {
+    class F {
         [await x]() { }
     }
 }
 function* gf() {
-    export class G {
+    class G {
         [await x]() { }
     }
 }
 async function* agf() {
-    export class H {
+    class H {
         [await x]() { }
     }
 }
 function switchSync() {
     switch (0) {
         case 0:
-            export class I {
+            class I {
                 [await x]() { }
             }
     }
@@ -95,7 +95,7 @@ function switchSync() {
 async function switchAsync() {
     switch (0) {
         case 0:
-            export class J {
+            class J {
                 [await x]() { }
             }
     }
