@@ -41,6 +41,14 @@ select({ kind: "current", value: deprecatedContainer.[|value|] });
 declare function deprecatedCall(): number;
 select({ kind: "current", value: [|deprecatedCall|]() });
 
+interface DeprecatedAccessorOptions {
+    /** @deprecated */
+    value: number;
+}
+declare function accessor(options: DeprecatedAccessorOptions): void;
+accessor({ get [|value|]() { return 1; } });
+accessor({ set [|value|](_value: number) {} });
+
 interface FirstDeprecatedOptions {
     kind: "first";
     /** @deprecated */
@@ -83,6 +91,18 @@ selectDeprecated({ kind: "second", [|value|]: 1 });`
 			Message: lsproto.StringOrMarkupContent{String: new("'value' is deprecated.")},
 			Tags:    &[]lsproto.DiagnosticTag{lsproto.DiagnosticTagDeprecated},
 			Range:   f.Ranges()[3].LSRange,
+		},
+		{
+			Code:    &lsproto.IntegerOrString{Integer: new(int32(6385))},
+			Message: lsproto.StringOrMarkupContent{String: new("'value' is deprecated.")},
+			Tags:    &[]lsproto.DiagnosticTag{lsproto.DiagnosticTagDeprecated},
+			Range:   f.Ranges()[4].LSRange,
+		},
+		{
+			Code:    &lsproto.IntegerOrString{Integer: new(int32(6385))},
+			Message: lsproto.StringOrMarkupContent{String: new("'value' is deprecated.")},
+			Tags:    &[]lsproto.DiagnosticTag{lsproto.DiagnosticTagDeprecated},
+			Range:   f.Ranges()[5].LSRange,
 		},
 	})
 }

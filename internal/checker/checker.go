@@ -2230,8 +2230,7 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 		links.unusedChecked = true
 	}
 	if checkContextualDeprecations && !links.contextualDeprecationsChecked {
-		c.checkContextualDeprecations(&links.contextualDeprecationCheckNodes)
-		links.contextualDeprecationsChecked = true
+		links.contextualDeprecationsChecked = c.checkContextualDeprecations(&links.contextualDeprecationCheckNodes)
 	}
 	if c.isCanceled() {
 		c.wasCanceled = true
@@ -13374,8 +13373,11 @@ func (c *Checker) registerForContextualDeprecationCheck(contextualType *Type, co
 	}
 }
 
-func (c *Checker) checkContextualDeprecations(contexts *collections.OrderedSet[*ast.Node]) {
+func (c *Checker) checkContextualDeprecations(contexts *collections.OrderedSet[*ast.Node]) bool {
 	for contextNode := range contexts.Values() {
+		if c.isCanceled() {
+			return false
+		}
 		var contextualType *Type
 		if ast.IsJsxAttributes(contextNode) {
 			contextualType = c.getContextualType(contextNode, ContextFlagsNone)
@@ -13383,12 +13385,16 @@ func (c *Checker) checkContextualDeprecations(contexts *collections.OrderedSet[*
 			contextualType = c.getApparentTypeOfContextualType(contextNode, ContextFlagsNone)
 		}
 		for _, property := range contextNode.Properties() {
+			if c.isCanceled() {
+				return false
+			}
 			if property.Name() != nil && ast.IsIdentifier(property.Name()) &&
-				(ast.IsJsxAttribute(property) || ast.IsPropertyAssignment(property) || ast.IsShorthandPropertyAssignment(property) || ast.IsObjectLiteralMethod(property)) {
+				(ast.IsJsxAttribute(property) || ast.IsObjectLiteralElement(property)) {
 				c.checkDeprecatedProperty(property.Name(), contextualType)
 			}
 		}
 	}
+	return true
 }
 
 func (c *Checker) checkDeprecatedProperty(name *ast.IdentifierNode, contextualType *Type) {
