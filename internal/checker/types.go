@@ -396,10 +396,12 @@ type AssertionLinks struct {
 type SourceFileLinks struct {
 	typeChecked                  bool
 	unusedChecked                bool
+	deprecatedPropertiesChecked  bool
 	externalHelpersModule        *ast.Symbol
 	requestedExternalEmitHelpers ExternalEmitHelpers
 	deferredNodes                collections.OrderedSet[*ast.Node]
 	identifierCheckNodes         []*ast.Node
+	deprecatedPropertyCheckNodes collections.OrderedSet[*ast.Node]
 	localJsxNamespace            string
 	localJsxFragmentNamespace    string
 	localJsxFactory              *ast.EntityName

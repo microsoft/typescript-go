@@ -26,6 +26,21 @@ declare function select(options: CurrentOptions): void;
 
 select({ kind: "current", value: 1 });
 
+/** @deprecated */
+declare const deprecatedValue: number;
+select({ kind: "current", value: [|deprecatedValue|] });
+
+interface DeprecatedContainer {
+    /** @deprecated */
+    value: number;
+}
+declare const deprecatedContainer: DeprecatedContainer;
+select({ kind: "current", value: deprecatedContainer.[|value|] });
+
+/** @deprecated */
+declare function deprecatedCall(): number;
+select({ kind: "current", value: [|deprecatedCall|]() });
+
 interface FirstDeprecatedOptions {
     kind: "first";
     /** @deprecated */
@@ -47,9 +62,27 @@ selectDeprecated({ kind: "second", [|value|]: 1 });`
 	f.VerifySuggestionDiagnostics(t, []*lsproto.Diagnostic{
 		{
 			Code:    &lsproto.IntegerOrString{Integer: new(int32(6385))},
-			Message: lsproto.StringOrMarkupContent{String: new("'value' is deprecated.")},
+			Message: lsproto.StringOrMarkupContent{String: new("'deprecatedValue' is deprecated.")},
 			Tags:    &[]lsproto.DiagnosticTag{lsproto.DiagnosticTagDeprecated},
 			Range:   f.Ranges()[0].LSRange,
+		},
+		{
+			Code:    &lsproto.IntegerOrString{Integer: new(int32(6385))},
+			Message: lsproto.StringOrMarkupContent{String: new("'value' is deprecated.")},
+			Tags:    &[]lsproto.DiagnosticTag{lsproto.DiagnosticTagDeprecated},
+			Range:   f.Ranges()[1].LSRange,
+		},
+		{
+			Code:    &lsproto.IntegerOrString{Integer: new(int32(6387))},
+			Message: lsproto.StringOrMarkupContent{String: new("The signature '(): number' of 'deprecatedCall' is deprecated.")},
+			Tags:    &[]lsproto.DiagnosticTag{lsproto.DiagnosticTagDeprecated},
+			Range:   f.Ranges()[2].LSRange,
+		},
+		{
+			Code:    &lsproto.IntegerOrString{Integer: new(int32(6385))},
+			Message: lsproto.StringOrMarkupContent{String: new("'value' is deprecated.")},
+			Tags:    &[]lsproto.DiagnosticTag{lsproto.DiagnosticTagDeprecated},
+			Range:   f.Ranges()[3].LSRange,
 		},
 	})
 }

@@ -48,6 +48,11 @@ const (
 	CheckModeForceTuple CheckMode = 1 << 7
 )
 
+type deprecatedSuggestionKey struct {
+	location *ast.Node
+	code     int32
+}
+
 type TypeSystemEntity any
 
 type TypeSystemPropertyName int32
@@ -893,7 +898,7 @@ type Checker struct {
 	reportedUnreachableNodes                    collections.Set[*ast.Node]
 	nonExistentProperties                       collections.Set[NonExistentPropertyKey]
 	deferredDiagnosticCallbacks                 []func()
-	deferredDeprecatedPropertyContexts          collections.Set[*ast.Node]
+	deprecatedSuggestionKeys                    collections.Set[deprecatedSuggestionKey]
 	typeToStringNodebuilder                     *NodeBuilder
 
 	mu     sync.Mutex
@@ -2194,7 +2199,7 @@ func (c *Checker) getSymbol(symbols ast.SymbolTable, name string, meaning ast.Sy
 	return nil
 }
 
-func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFile, checkUnused bool) {
+func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFile, checkUnused bool, checkDeprecatedProperties bool) {
 	c.ctx = ctx
 	links := c.sourceFileLinks.Get(sourceFile)
 	if !links.typeChecked {
@@ -2223,6 +2228,10 @@ func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFil
 			c.checkUnusedIdentifiers(links.identifierCheckNodes)
 		}
 		links.unusedChecked = true
+	}
+	if checkDeprecatedProperties && !links.deprecatedPropertiesChecked {
+		c.checkDeprecatedProperties(&links.deprecatedPropertyCheckNodes)
+		links.deprecatedPropertiesChecked = true
 	}
 	if c.isCanceled() {
 		c.wasCanceled = true
@@ -8375,6 +8384,9 @@ func (c *Checker) checkDeprecatedSignature(sig *Signature, node *ast.Node) {
 
 func (c *Checker) addDeprecatedSuggestionWithSignature(location *ast.Node, declaration *ast.Node, deprecatedEntity string, signatureString string) *ast.Diagnostic {
 	message := core.IfElse(deprecatedEntity != "", diagnostics.The_signature_0_of_1_is_deprecated, diagnostics.X_0_is_deprecated)
+	if !c.deprecatedSuggestionKeys.AddIfAbsent(deprecatedSuggestionKey{location: location, code: message.Code()}) {
+		return nil
+	}
 	diagnostic := NewDiagnosticForNode(location, message, signatureString, deprecatedEntity)
 	return c.addDeprecatedSuggestionWorker([]*ast.Node{declaration}, diagnostic)
 }
@@ -13165,7 +13177,7 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 	spread := c.emptyObjectType
 	c.pushCachedContextualType(node)
 	contextualType := c.getApparentTypeOfContextualType(node, ContextFlagsNone)
-	c.deferDeprecatedPropertySuggestions(contextualType, node)
+	c.registerForDeprecatedPropertiesCheck(contextualType, node)
 	var contextualTypeHasPattern bool
 	if contextualType != nil {
 		if pattern := c.patternForType[contextualType]; pattern != nil && (ast.IsObjectBindingPattern(pattern) || ast.IsObjectLiteralExpression(pattern)) {
@@ -13354,28 +13366,27 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 	return createObjectLiteralType()
 }
 
-func (c *Checker) deferDeprecatedPropertySuggestions(contextualType *Type, contextNode *ast.Node) {
-	if contextualType == nil || !c.deferredDeprecatedPropertyContexts.AddIfAbsent(contextNode) {
-		return
+func (c *Checker) registerForDeprecatedPropertiesCheck(contextualType *Type, contextNode *ast.Node) {
+	if contextualType != nil {
+		sourceFile := ast.GetSourceFileOfNode(contextNode)
+		links := c.sourceFileLinks.Get(sourceFile)
+		links.deprecatedPropertyCheckNodes.Add(contextNode)
 	}
-	// Overload resolution contextually checks an object literal against multiple candidates.
-	// Wait until the selected signature is cached before reporting its deprecated properties.
-	c.addDeferredDiagnostic(func() {
-		c.checkDeprecatedProperties(contextNode)
-	})
 }
 
-func (c *Checker) checkDeprecatedProperties(contextNode *ast.Node) {
-	var contextualType *Type
-	if ast.IsJsxAttributes(contextNode) {
-		contextualType = c.getContextualType(contextNode, ContextFlagsNone)
-	} else {
-		contextualType = c.getApparentTypeOfContextualType(contextNode, ContextFlagsNone)
-	}
-	for _, property := range contextNode.Properties() {
-		if property.Name() != nil && ast.IsIdentifier(property.Name()) &&
-			(ast.IsJsxAttribute(property) || ast.IsPropertyAssignment(property) || ast.IsShorthandPropertyAssignment(property) || ast.IsObjectLiteralMethod(property)) {
-			c.checkDeprecatedProperty(property.Name(), contextualType)
+func (c *Checker) checkDeprecatedProperties(contexts *collections.OrderedSet[*ast.Node]) {
+	for contextNode := range contexts.Values() {
+		var contextualType *Type
+		if ast.IsJsxAttributes(contextNode) {
+			contextualType = c.getContextualType(contextNode, ContextFlagsNone)
+		} else {
+			contextualType = c.getApparentTypeOfContextualType(contextNode, ContextFlagsNone)
+		}
+		for _, property := range contextNode.Properties() {
+			if property.Name() != nil && ast.IsIdentifier(property.Name()) &&
+				(ast.IsJsxAttribute(property) || ast.IsPropertyAssignment(property) || ast.IsShorthandPropertyAssignment(property) || ast.IsObjectLiteralMethod(property)) {
+				c.checkDeprecatedProperty(property.Name(), contextualType)
+			}
 		}
 	}
 }
@@ -13974,17 +13985,17 @@ func (c *Checker) getCannotFindNameDiagnosticForName(node *ast.Node) *diagnostic
 }
 
 func (c *Checker) GetDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return c.getDiagnostics(ctx, sourceFile, &c.diagnostics)
+	return c.getDiagnostics(ctx, sourceFile, &c.diagnostics, false)
 }
 
 func (c *Checker) GetSuggestionDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return c.getDiagnostics(ctx, sourceFile, &c.suggestionDiagnostics)
+	return c.getDiagnostics(ctx, sourceFile, &c.suggestionDiagnostics, true)
 }
 
-func (c *Checker) getDiagnostics(ctx context.Context, sourceFile *ast.SourceFile, collection *ast.DiagnosticsCollection) []*ast.Diagnostic {
+func (c *Checker) getDiagnostics(ctx context.Context, sourceFile *ast.SourceFile, collection *ast.DiagnosticsCollection, checkDeprecatedProperties bool) []*ast.Diagnostic {
 	c.checkNotCanceled()
 	checkUnused := c.compilerOptions.NoUnusedLocals.IsTrue() || c.compilerOptions.NoUnusedParameters.IsTrue() || collection == &c.suggestionDiagnostics
-	c.checkSourceFile(ctx, sourceFile, checkUnused)
+	c.checkSourceFile(ctx, sourceFile, checkUnused, checkDeprecatedProperties)
 	if c.wasCanceled {
 		return nil
 	}
@@ -14005,7 +14016,6 @@ func (c *Checker) produceDeferredDiagnostics() {
 		cb()
 	}
 	c.deferredDiagnosticCallbacks = nil
-	c.deferredDeprecatedPropertyContexts.Clear()
 }
 
 func (c *Checker) addDiagnostic(diagnostic *ast.Diagnostic) {
@@ -14061,6 +14071,9 @@ func (c *Checker) IsDeprecatedDeclaration(declaration *ast.Node) bool {
 }
 
 func (c *Checker) addDeprecatedSuggestion(location *ast.Node, declarations []*ast.Node, deprecatedEntity string) *ast.Diagnostic {
+	if !c.deprecatedSuggestionKeys.AddIfAbsent(deprecatedSuggestionKey{location: location, code: diagnostics.X_0_is_deprecated.Code()}) {
+		return nil
+	}
 	diagnostic := NewDiagnosticForNode(location, diagnostics.X_0_is_deprecated, deprecatedEntity)
 	return c.addDeprecatedSuggestionWorker(declarations, diagnostic)
 }
