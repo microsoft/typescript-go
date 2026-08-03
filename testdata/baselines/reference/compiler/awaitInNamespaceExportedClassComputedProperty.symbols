@@ -17,5 +17,10 @@ namespace N {
 >[await x] : Symbol(B[await x], Decl(awaitInNamespaceExportedClassComputedProperty.ts, 3, 20))
 >x : Symbol(x, Decl(awaitInNamespaceExportedClassComputedProperty.ts, 0, 13))
 }
+export class C { [await x]() {} }
+>C : Symbol(C, Decl(awaitInNamespaceExportedClassComputedProperty.ts, 4, 1))
+>[await x] : Symbol(C[await x], Decl(awaitInNamespaceExportedClassComputedProperty.ts, 5, 16))
+>x : Symbol(x, Decl(awaitInNamespaceExportedClassComputedProperty.ts, 0, 13))
+
 export {};
 

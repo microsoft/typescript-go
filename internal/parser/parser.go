@@ -1748,7 +1748,7 @@ func (p *Parser) parseClassDeclarationOrExpression(pos int, jsdoc jsdocScannerIn
 	// We don't parse the name here in await context, instead we will report a grammar error in the checker.
 	name := p.parseNameOfClassDeclarationOrExpression()
 	typeParameters := p.parseTypeParameters()
-	if modifiers != nil && core.Some(modifiers.Nodes, isExportModifier) {
+	if modifiers != nil && core.Some(modifiers.Nodes, isExportModifier) && p.parsingContexts == 1<<PCSourceElements {
 		p.setContextFlags(ast.NodeFlagsAwaitContext, true /*value*/)
 	}
 	heritageClauses := p.parseHeritageClauses()

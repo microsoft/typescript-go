@@ -19,5 +19,11 @@ namespace N {
 >await x : string
 >x : string
 }
+export class C { [await x]() {} }
+>C : C
+>[await x] : () => void
+>await x : string
+>x : string
+
 export {};
 

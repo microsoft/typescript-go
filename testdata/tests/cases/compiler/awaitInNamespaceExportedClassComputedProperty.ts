@@ -6,4 +6,5 @@ namespace N {
     class A { [await x]() {} }
     export class B { [await x]() {} }
 }
+export class C { [await x]() {} }
 export {};

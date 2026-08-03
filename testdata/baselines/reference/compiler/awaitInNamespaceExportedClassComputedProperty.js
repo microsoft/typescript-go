@@ -6,6 +6,7 @@ namespace N {
     class A { [await x]() {} }
     export class B { [await x]() {} }
 }
+export class C { [await x]() {} }
 export {};
 
 
@@ -20,4 +21,6 @@ var N;
     }
     N.B = B;
 })(N || (N = {}));
-export {};
+export class C {
+    [await x]() { }
+}
