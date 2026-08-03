@@ -1687,7 +1687,7 @@ func (c *Checker) checkGrammarAwaitOrAwaitUsing(node *ast.Node) bool {
 		}
 		c.error(node, message)
 		hasError = true
-	} else if node.Flags&ast.NodeFlagsAwaitContext == 0 {
+	} else if node.Flags&ast.NodeFlagsAwaitContext == 0 || (!ast.IsInTopLevelContext(node) && (container == nil || !hasAsyncModifier(container))) {
 		if ast.IsInTopLevelContext(node) {
 			sourceFile := ast.GetSourceFileOfNode(node)
 			if !c.hasParseDiagnostics(sourceFile) {

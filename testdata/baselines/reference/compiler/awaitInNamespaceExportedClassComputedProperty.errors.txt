@@ -1,0 +1,21 @@
+awaitInNamespaceExportedClassComputedProperty.ts(6,16): error TS1308: 'await' expressions are only allowed within async functions and at the top levels of modules.
+awaitInNamespaceExportedClassComputedProperty.ts(7,23): error TS1308: 'await' expressions are only allowed within async functions and at the top levels of modules.
+
+
+==== awaitInNamespaceExportedClassComputedProperty.ts (2 errors) ====
+    // Repro for https://github.com/microsoft/TypeScript/issues/63712
+    // await in computed property names inside a namespace's exported class should be an error
+    
+    declare const x: string;
+    namespace N {
+        class A { [await x]() {} }       // TS1308 (correct - always reported)
+                   ~~~~~
+!!! error TS1308: 'await' expressions are only allowed within async functions and at the top levels of modules.
+!!! related TS1356 awaitInNamespaceExportedClassComputedProperty.ts:6:15: Did you mean to mark this function as 'async'?
+        export class B { [await x]() {} } // TS1308 (was missing - this is the bug)
+                          ~~~~~
+!!! error TS1308: 'await' expressions are only allowed within async functions and at the top levels of modules.
+!!! related TS1356 awaitInNamespaceExportedClassComputedProperty.ts:7:22: Did you mean to mark this function as 'async'?
+    }
+    export {};
+    

@@ -1,0 +1,26 @@
+//// [tests/cases/compiler/awaitInNamespaceExportedClassComputedProperty.ts] ////
+
+=== awaitInNamespaceExportedClassComputedProperty.ts ===
+// Repro for https://github.com/microsoft/TypeScript/issues/63712
+// await in computed property names inside a namespace's exported class should be an error
+
+declare const x: string;
+>x : string
+
+namespace N {
+>N : typeof N
+
+    class A { [await x]() {} }       // TS1308 (correct - always reported)
+>A : A
+>[await x] : () => void
+>await x : string
+>x : string
+
+    export class B { [await x]() {} } // TS1308 (was missing - this is the bug)
+>B : B
+>[await x] : () => void
+>await x : string
+>x : string
+}
+export {};
+
