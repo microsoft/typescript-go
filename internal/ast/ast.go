@@ -9,7 +9,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/zeebo/xxh3"
 )
@@ -1921,7 +1920,6 @@ func (node *ExportSpecifier) computeSubtreeFacts() SubtreeFacts {
 
 // NamedMemberBase
 
-func (node *NamedMemberBase) DeclarationData() *DeclarationBase    { return &node.DeclarationBase }
 func (node *NamedMemberBase) Modifiers() *ModifierList             { return node.modifiers }
 func (node *NamedMemberBase) setModifiers(modifiers *ModifierList) { node.modifiers = modifiers }
 func (node *NamedMemberBase) Name() *DeclarationName               { return node.name }
@@ -2261,10 +2259,6 @@ func (node *ImportAttributesNode) GetResolutionModeOverride( /* !!! grammarError
 
 // FunctionOrConstructorTypeNodeBase
 
-func (node *FunctionOrConstructorTypeNodeBase) DeclarationData() *DeclarationBase {
-	return node.FunctionLikeBase.DeclarationData()
-}
-
 func (node *TemplateLiteralLikeNodeBase) LiteralLikeData() *LiteralLikeNodeBase {
 	return &node.LiteralLikeNodeBase
 }
@@ -2485,9 +2479,7 @@ type SourceFile struct {
 	LanguageVariant             core.LanguageVariant
 	ScriptKind                  core.ScriptKind
 	IsDeclarationFile           bool
-	ContainsNonASCII            bool
 	UsesUriStyleNodeCoreModules core.Tristate
-	Identifiers                 map[string]string
 	IdentifierCount             int
 	imports                     []*LiteralLikeNode // []LiteralLikeNode
 	ModuleAugmentations         []*ModuleName      // []ModuleName
@@ -2496,6 +2488,8 @@ type SourceFile struct {
 	jsdocCache                  map[*Node][]*Node
 	jsdocMu                     sync.RWMutex
 	hasLazyJSDoc                bool
+	identifiersOnce             sync.Once
+	identifiers                 collections.Set[string]
 	ReparsedClones              []*Node
 	Pragmas                     []Pragma
 	ReferencedFiles             []*FileReference
@@ -2511,15 +2505,12 @@ type SourceFile struct {
 
 	// Fields set by binder
 
-	isBound                   atomic.Bool
-	bindOnce                  sync.Once
-	bindDiagnostics           []*Diagnostic
-	BindSuggestionDiagnostics []*Diagnostic
-	EndFlowNode               *FlowNode
-	SymbolCount               int
-	ClassifiableNames         collections.Set[string]
-	PatternAmbientModules     []*PatternAmbientModule
-	GlobalExports             SymbolTable
+	isBound               atomic.Bool
+	bindOnce              sync.Once
+	bindDiagnostics       []*Diagnostic
+	SymbolCount           int
+	PatternAmbientModules []*PatternAmbientModule
+	GlobalExports         SymbolTable
 
 	// Fields set by ECMALineMap
 
@@ -2551,7 +2542,6 @@ func (f *NodeFactory) NewSourceFile(opts SourceFileParseOptions, text string, st
 	data.fileName = opts.FileName
 	data.parseOptions = opts
 	data.text = text
-	data.ContainsNonASCII = stringutil.ContainsNonASCII(text)
 	data.Statements = statements
 	data.EndOfFileToken = endOfFileToken
 	return f.newNode(KindSourceFile, data)
@@ -2563,6 +2553,33 @@ func (node *SourceFile) ParseOptions() SourceFileParseOptions {
 
 func (node *SourceFile) Text() string {
 	return node.text
+}
+
+func (file *SourceFile) HasIdentifier(name string) bool {
+	file.identifiersOnce.Do(func() {
+		file.identifiers = collectIdentifiersForSourceFile(file)
+	})
+	return file.identifiers.Has(name)
+}
+
+func collectIdentifiersForSourceFile(sourceFile *SourceFile) collections.Set[string] {
+	var identifiers collections.Set[string]
+	var collect func(*Node) bool
+	collect = func(node *Node) bool {
+		switch node.Kind {
+		case KindIdentifier,
+			KindPrivateIdentifier,
+			KindStringLiteral,
+			KindNumericLiteral,
+			KindBigIntLiteral,
+			KindNoSubstitutionTemplateLiteral:
+			identifiers.Add(node.Text())
+		}
+		node.ForEachChild(collect)
+		return false
+	}
+	collect(sourceFile.AsNode())
+	return identifiers
 }
 
 func (node *SourceFile) FileName() string {
@@ -2661,9 +2678,7 @@ func (node *SourceFile) copyFrom(other *SourceFile) {
 	node.LanguageVariant = other.LanguageVariant
 	node.ScriptKind = other.ScriptKind
 	node.IsDeclarationFile = other.IsDeclarationFile
-	node.ContainsNonASCII = other.ContainsNonASCII
 	node.UsesUriStyleNodeCoreModules = other.UsesUriStyleNodeCoreModules
-	node.Identifiers = other.Identifiers
 	node.imports = other.imports
 	node.ModuleAugmentations = other.ModuleAugmentations
 	node.AmbientModuleNames = other.AmbientModuleNames
@@ -2753,11 +2768,7 @@ func (node *SourceFile) IsBound() bool {
 // GetPositionMap returns the PositionMap for this source file, computing it lazily.
 func (file *SourceFile) GetPositionMap() *PositionMap {
 	file.positionMapOnce.Do(func() {
-		if !file.ContainsNonASCII {
-			file.positionMap = &PositionMap{asciiOnly: true}
-		} else {
-			file.positionMap = ComputePositionMap(file.Text())
-		}
+		file.positionMap = ComputePositionMap(file.Text())
 	})
 	return file.positionMap
 }

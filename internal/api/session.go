@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"slices"
 	"strconv"
@@ -596,6 +597,10 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetSourceFileNames(ctx, parsed.(*GetSourceFileNamesParams))
 	case string(MethodGetSourceFileMetadata):
 		return s.handleGetSourceFileMetadata(ctx, parsed.(*GetSourceFileParams))
+	case string(MethodGetConfigFileNames):
+		return s.handleGetConfigFileNames(ctx, parsed.(*GetProjectDiagnosticsParams))
+	case string(MethodGetConfigSourceFile):
+		return s.handleGetConfigSourceFile(ctx, parsed.(*GetSourceFileParams))
 	case string(MethodGetSymbolAtPosition):
 		return s.handleGetSymbolAtPosition(ctx, parsed.(*GetSymbolAtPositionParams))
 	case string(MethodGetSymbolsAtPositions):
@@ -706,6 +711,14 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleTypeToString(ctx, parsed.(*TypeToTypeNodeParams))
 	case string(MethodPrintNode):
 		return s.handlePrintNode(ctx, parsed.(*PrintNodeParams))
+	case string(MethodEmit):
+		return s.handleEmit(ctx, parsed.(*EmitParams))
+	case string(MethodEmitToString):
+		return s.handleEmitToString(ctx, parsed.(*EmitParams))
+	case string(MethodGetJavaScriptEmit):
+		return s.handleSelectedFilesEmit(ctx, parsed.(*SelectedFilesEmitParams), compiler.EmitOnlyJs)
+	case string(MethodGetDeclarationEmit):
+		return s.handleSelectedFilesEmit(ctx, parsed.(*SelectedFilesEmitParams), compiler.EmitOnlyDts)
 	case string(MethodIsContextSensitive):
 		return s.handleIsContextSensitive(ctx, parsed.(*GetContextualTypeParams))
 	case string(MethodGetReturnTypeOfSignature):
@@ -1122,12 +1135,7 @@ func (s *Session) handleParseConfigFile(ctx context.Context, params *ParseConfig
 		nil, /*extraFileExtensions*/
 		nil, /*extendedConfigCache*/
 	)
-
-	return &ConfigFileResponse{
-		FileNames:         parsedCommandLine.FileNames(),
-		Options:           parsedCommandLine.CompilerOptions(),
-		ProjectReferences: parsedCommandLine.ProjectReferences(),
-	}, nil
+	return NewConfigFileResponse(parsedCommandLine), nil
 }
 
 // handleGetSourceFile returns a source file from a project within a snapshot.
@@ -1142,7 +1150,74 @@ func (s *Session) handleGetSourceFile(ctx context.Context, params *GetSourceFile
 		return nil, err
 	}
 
-	sourceFile := program.GetSourceFile(params.File.ToFileName())
+	return s.encodeSourceFileResponse(program.GetSourceFile(params.File.ToFileName()))
+}
+
+// handleGetConfigFileNames returns tsconfig file names associated with the project's command line.
+func (s *Session) handleGetConfigFileNames(ctx context.Context, params *GetProjectDiagnosticsParams) ([]string, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	commandLine := program.CommandLine()
+	if commandLine == nil || commandLine.ConfigFile == nil || commandLine.ConfigFile.SourceFile == nil {
+		return nil, nil
+	}
+
+	extendedFiles := commandLine.ExtendedSourceFiles()
+	configFiles := make([]string, 0, len(extendedFiles)+1)
+	configFiles = append(configFiles, commandLine.ConfigFile.SourceFile.FileName())
+	configFiles = append(configFiles, extendedFiles...)
+	return configFiles, nil
+}
+
+// handleGetConfigSourceFile returns a tsconfig source file associated with the project's command line.
+func (s *Session) handleGetConfigSourceFile(ctx context.Context, params *GetSourceFileParams) (any, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	commandLine := program.CommandLine()
+	if commandLine == nil || commandLine.ConfigFile == nil || commandLine.ConfigFile.SourceFile == nil {
+		return s.encodeSourceFileResponse(nil)
+	}
+
+	requestedPath := tspath.ToPath(params.File.ToFileName(), program.GetCurrentDirectory(), program.UseCaseSensitiveFileNames())
+	rootConfigSourceFile := commandLine.ConfigFile.SourceFile
+	if rootConfigSourceFile.Path() == requestedPath {
+		return s.encodeSourceFileResponse(rootConfigSourceFile)
+	}
+
+	for _, configFileName := range commandLine.ExtendedSourceFiles() {
+		if tspath.ToPath(configFileName, program.GetCurrentDirectory(), program.UseCaseSensitiveFileNames()) != requestedPath {
+			continue
+		}
+
+		configFileContent, ok := sd.snapshot.ReadFile(configFileName)
+		if !ok {
+			return s.encodeSourceFileResponse(nil)
+		}
+
+		configSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(configFileName, requestedPath, configFileContent)
+		return s.encodeSourceFileResponse(configSourceFile.SourceFile)
+	}
+
+	return s.encodeSourceFileResponse(nil)
+}
+
+func (s *Session) encodeSourceFileResponse(sourceFile *ast.SourceFile) (any, error) {
 	if sourceFile == nil {
 		if s.useBinaryResponses {
 			return RawBinary(nil), nil
@@ -1156,7 +1231,6 @@ func (s *Session) handleGetSourceFile(ctx context.Context, params *GetSourceFile
 		return nil, fmt.Errorf("failed to encode source file: %w", err)
 	}
 
-	// Return raw binary for msgpack protocol, or base64 for JSON
 	if s.useBinaryResponses {
 		return RawBinary(data), nil
 	}
@@ -2292,6 +2366,141 @@ func (s *Session) handlePrintNode(_ context.Context, params *PrintNodeParams) (s
 		TerminateUnterminatedLiterals: params.TerminateUnterminatedLiterals,
 	}, printer.PrintHandlers{}, nil)
 	return p.Emit(node, nil), nil
+}
+
+func (s *Session) handleEmit(ctx context.Context, params *EmitParams) (*EmitResponse, error) {
+	program, options, err := s.getEmitOptions(params)
+	if err != nil {
+		return nil, err
+	}
+	options.WriteFile = func(fileName string, text string, _ *compiler.WriteFileData) error {
+		return s.projectSession.FS().WriteFile(fileName, text)
+	}
+	result, err := emitProgram(ctx, program, options)
+	if err != nil {
+		return nil, err
+	}
+	emittedFiles := slices.Clone(result.EmittedFiles)
+	if emittedFiles == nil {
+		emittedFiles = []string{}
+	}
+	return &EmitResponse{
+		EmitSkipped:  result.EmitSkipped,
+		Diagnostics:  nonNilDiagnostics(result.Diagnostics),
+		EmittedFiles: emittedFiles,
+	}, nil
+}
+
+func (s *Session) handleEmitToString(ctx context.Context, params *EmitParams) (*EmitOutputResponse, error) {
+	program, options, err := s.getEmitOptions(params)
+	if err != nil {
+		return nil, err
+	}
+	return emitToOutput(ctx, program, options)
+}
+
+func (s *Session) handleSelectedFilesEmit(ctx context.Context, params *SelectedFilesEmitParams, emitOnly compiler.EmitOnly) (*EmitOutputResponse, error) {
+	program, err := s.getEmitProgram(params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	if params.Files == nil {
+		return nil, fmt.Errorf("%w: files is required", ErrClientError)
+	}
+	targetSourceFiles := make([]*ast.SourceFile, 0, len(params.Files))
+	for _, file := range params.Files {
+		sourceFile, err := s.resolveOptionalSourceFile(program, &file)
+		if err != nil {
+			return nil, err
+		}
+		targetSourceFiles = append(targetSourceFiles, sourceFile)
+	}
+	return emitToOutput(ctx, program, compiler.EmitOptions{
+		TargetSourceFiles: targetSourceFiles,
+		EmitOnly:          emitOnly,
+		ForceEmit:         true,
+	})
+}
+
+func emitToOutput(ctx context.Context, program *compiler.Program, options compiler.EmitOptions) (*EmitOutputResponse, error) {
+	var mu sync.Mutex
+	outputFiles := make([]*EmitOutputFile, 0)
+	options.WriteFile = func(fileName string, text string, data *compiler.WriteFileData) error {
+		var sourceFileName *string
+		if data.SourceFile != nil {
+			name := data.SourceFile.FileName()
+			sourceFileName = &name
+		}
+		mu.Lock()
+		outputFiles = append(outputFiles, &EmitOutputFile{FileName: fileName, Text: text, SourceFileName: sourceFileName})
+		mu.Unlock()
+		return nil
+	}
+
+	result, err := emitProgram(ctx, program, options)
+	if err != nil {
+		return nil, err
+	}
+	slices.SortFunc(outputFiles, func(a, b *EmitOutputFile) int {
+		return strings.Compare(a.FileName, b.FileName)
+	})
+	return &EmitOutputResponse{
+		EmitSkipped: result.EmitSkipped,
+		Diagnostics: nonNilDiagnostics(result.Diagnostics),
+		OutputFiles: outputFiles,
+	}, nil
+}
+
+func (s *Session) getEmitOptions(params *EmitParams) (*compiler.Program, compiler.EmitOptions, error) {
+	program, err := s.getEmitProgram(params.Snapshot, params.Project)
+	if err != nil {
+		return nil, compiler.EmitOptions{}, err
+	}
+	emitOnly, err := getEmitOnly(params.EmitOnly)
+	if err != nil {
+		return nil, compiler.EmitOptions{}, err
+	}
+	return program, compiler.EmitOptions{
+		EmitOnly: emitOnly,
+	}, nil
+}
+
+func (s *Session) getEmitProgram(snapshot SnapshotID, projectID ProjectID) (*compiler.Program, error) {
+	sd, err := s.getSnapshotData(snapshot)
+	if err != nil {
+		return nil, err
+	}
+	return sd.getProgram(projectID)
+}
+
+func getEmitOnly(value *uint32) (compiler.EmitOnly, error) {
+	if value == nil {
+		return compiler.EmitAll, nil
+	}
+	if *value > uint32(compiler.EmitOnlyDts) {
+		return compiler.EmitAll, fmt.Errorf("%w: invalid emitOnly value: %d", ErrClientError, *value)
+	}
+	emitOnly := compiler.EmitOnly(*value)
+	return emitOnly, nil
+}
+
+func emitProgram(ctx context.Context, program *compiler.Program, options compiler.EmitOptions) (*compiler.EmitResult, error) {
+	result := program.Emit(ctx, options)
+	if result != nil {
+		return result, nil
+	}
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+	return nil, errors.New("compiler emit returned nil result")
+}
+
+func nonNilDiagnostics(diags []*ast.Diagnostic) []*DiagnosticResponse {
+	result := NewDiagnosticResponses(diags)
+	if result == nil {
+		return []*DiagnosticResponse{}
+	}
+	return result
 }
 
 // handleGetIntrinsicType returns an intrinsic type (any, string, number, etc.).
