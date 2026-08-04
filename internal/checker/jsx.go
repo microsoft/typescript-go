@@ -124,6 +124,7 @@ func (c *Checker) checkJsxFragment(node *ast.Node) *Type {
 }
 
 func (c *Checker) checkJsxAttributes(node *ast.Node, checkMode CheckMode) *Type {
+	c.checkNodeDeferred(node)
 	return c.createJsxAttributesTypeFromAttributesProperty(node.Parent, checkMode)
 }
 
@@ -732,7 +733,6 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 		attributesSymbol = attributes.Symbol()
 		attributeParent = attributes
 		contextualType := c.getContextualType(attributes, ContextFlagsNone)
-		c.registerForContextualDeprecationCheck(contextualType, attributes)
 		// Create anonymous type from given attributes symbol table.
 		// @param symbol a symbol of JsxAttributes containing attributes corresponding to attributesTable
 		// @param attributesTable a symbol table of attributes property
