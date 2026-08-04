@@ -14,6 +14,7 @@ import url from "node:url";
 import { parseArgs } from "node:util";
 import pLimit from "p-limit";
 import pc from "picocolors";
+import * as tar from "tar";
 import tmp from "tmp";
 import which from "which";
 
@@ -84,19 +85,21 @@ const { values: rawOptions } = parseArgs({
  */
 const options = /** @type {Options} */ (rawOptions);
 
-// Native release branches can edit these constants to publish a different
-// package flavor. Main's defaults publish @typescript/native-preview.
-const nativePreviewReleaseProfile = /** @type {"native-preview" | "typescript"} */ ("native-preview");
+// Native release branches can edit these constants to publish a fixed stable version.
+// Main publishes prerelease builds of the TypeScript package.
+const nativePreviewReleaseProfile = /** @type {"native-preview" | "typescript"} */ ("typescript");
 const nativePreviewReleaseVersion = /** @type {string | undefined} */ (undefined);
-const produceNativePreviewVsix = /** @type {boolean} */ (true);
+const produceNativePreviewVsix = /** @type {boolean} */ (false);
+const produceTypeScriptNightlyVsix = /** @type {boolean} */ (true);
+const usePublishedPlatformPackagesForVsix = /** @type {boolean} */ (false);
+const produceAnyVsix = produceNativePreviewVsix || produceTypeScriptNightlyVsix;
 const publishAsTypescript = nativePreviewReleaseProfile === "typescript";
 
-if (publishAsTypescript && !nativePreviewReleaseVersion) {
-    throw new Error("Publishing as 'typescript' requires hardcoding nativePreviewReleaseVersion.");
-}
-
-if (options.forRelease && !options.setPrerelease && (!nativePreviewReleaseVersion || produceNativePreviewVsix)) {
+if (options.forRelease && !options.setPrerelease && (!nativePreviewReleaseVersion || produceAnyVsix)) {
     throw new Error("forRelease requires setPrerelease unless nativePreviewReleaseVersion is hardcoded and VSIX production is disabled");
+}
+if (usePublishedPlatformPackagesForVsix && !publishAsTypescript) {
+    throw new Error("usePublishedPlatformPackagesForVsix requires nativePreviewReleaseProfile to be 'typescript'");
 }
 
 const defaultGoBuildTags = [
@@ -324,6 +327,7 @@ export const generateExtension = task({
  *   goFile: string;
  *   outDir: string;
  *   stringEnum?: boolean;
+ *   excludeMembers?: readonly string[];
  *   valueReplacements?: Record<string, string>;
  * }} EnumDef
  */
@@ -331,6 +335,7 @@ export const generateExtension = task({
 /** @type {EnumDef[]} */
 const enumDefs = [
     { name: "SymbolFlags", goPrefix: "SymbolFlags", goFile: "internal/ast/symbolflags.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "CheckFlags", goPrefix: "CheckFlags", goFile: "internal/ast/checkflags.go", outDir: "_packages/native-preview/src/enums" },
     { name: "TypeFlags", goPrefix: "TypeFlags", goFile: "internal/checker/types.go", outDir: "_packages/native-preview/src/enums" },
     { name: "ObjectFlags", goPrefix: "ObjectFlags", goFile: "internal/checker/types.go", outDir: "_packages/native-preview/src/enums" },
     { name: "SignatureFlags", goPrefix: "SignatureFlags", goFile: "internal/checker/types.go", outDir: "_packages/native-preview/src/enums" },
@@ -350,6 +355,7 @@ const enumDefs = [
     { name: "TokenFlags", goPrefix: "TokenFlags", goFile: "internal/ast/tokenflags.go", outDir: "_packages/native-preview/src/enums" },
     { name: "NodeBuilderFlags", goPrefix: "Flags", goFile: "internal/nodebuilder/types.go", outDir: "_packages/native-preview/src/enums" },
     { name: "CompletionItemKind", goPrefix: "CompletionItemKind", goFile: "internal/lsp/lsproto/lsp_generated.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "EmitOnly", goPrefix: "Emit", goFile: "internal/compiler/emitter.go", outDir: "_packages/native-preview/src/enums", excludeMembers: ["OnlyForcedDts"] },
     // String enum: Go stores internal names with a "\xFE" sentinel prefix, but the escaped
     // form sent over the wire uses "__" (see EscapeSymbolName), so map the sentinel accordingly.
     { name: "InternalSymbolName", goPrefix: "InternalSymbolName", goFile: "internal/ast/symbol.go", outDir: "_packages/native-preview/src/enums", stringEnum: true, valueReplacements: { InternalSymbolNamePrefix: "__" } },
@@ -442,7 +448,7 @@ function parseGoEnum(def) {
     const constBlockRegex = /const\s*\(([\s\S]*?)\n\)/g;
 
     for (const match of source.matchAll(constBlockRegex)) {
-        const members = parseGoConstBlock(match[1], def);
+        const members = parseGoConstBlock(match[1], def).filter(member => !def.excludeMembers?.includes(member.name));
         if (members.length > 0) return topoSortMembers(members);
     }
 
@@ -1237,9 +1243,13 @@ function getPublishTag() {
 }
 
 const extensionDir = path.resolve("./_extension");
+const nightlyExtensionDir = path.resolve("./_extension-nightly");
 const builtNpm = path.resolve("./built/npm");
 const builtVsix = path.resolve("./built/vsix");
+const builtPublishedPlatformPackages = path.resolve("./built/published-platform-packages");
 const builtSignTmp = path.resolve("./built/sign-tmp");
+const publishedTypeScriptAliasPackageName = "@typescript/bundled-typescript";
+const releasePackageEnv = { COREPACK_ENABLE_STRICT: "0" };
 
 const getSignTempDir = memoize(async () => {
     const dir = path.resolve(builtSignTmp);
@@ -1480,11 +1490,18 @@ const mainNativePreviewPackage = {
  * @typedef {"x64" | "arm" | "arm64" | "ia32" | "ppc64" | "loong64" | "mips64el" | "riscv64" | "s390x"} Arch
  * @typedef {"Microsoft400" | "LinuxSign" | "MacDeveloperHarden" | "8020" | "VSCodePublisher"} Cert
  * @typedef {`${OS | "alpine"}-${Exclude<Arch, "arm"> | "armhf"}`} VSCodeTarget
- * @typedef {{ vscodeTarget: string; extensionDir: string; vsixPath: string; vsixManifestPath: string; vsixSignaturePath: string }} VsixExtension
+ * @typedef {{ name: string; sourceDir: string }} VsixExtensionPackage
+ * @typedef {{ nodeOs: string; vscodeTarget: string; sourceDir: string; extensionDir: string; vsixPath: string; vsixManifestPath: string; vsixSignaturePath: string }} VsixExtension
  * @typedef {{ GOOS: string; GOARCH: string }} GoDistTarget
  * @typedef {{ os: OS; arch: Arch; cert?: Cert; vsix?: boolean; alpine?: boolean }} Platform
  */
 void 0;
+
+/** @type {VsixExtensionPackage[]} */
+const vsixExtensionPackages = [
+    ...(produceNativePreviewVsix ? [{ name: "native-preview", sourceDir: extensionDir }] : []),
+    ...(produceTypeScriptNightlyVsix ? [{ name: "vscode-typescript-nightly", sourceDir: nightlyExtensionDir }] : []),
+];
 
 /**
  * npm package platforms supported by the native release.
@@ -1589,7 +1606,8 @@ function nodeToGOARCH(arch, os) {
 }
 
 const getPlatforms = memoize(() => {
-    let supportedPlatforms = publishAsTypescript
+    const publishTag = getPublishTag();
+    let supportedPlatforms = publishAsTypescript && publishTag !== "next"
         ? platforms
         : platforms.filter(({ vsix }) => vsix);
 
@@ -1607,26 +1625,30 @@ const getPlatforms = memoize(() => {
 
         /** @type {VsixExtension[]} */
         let extensions = [];
-        if (produceNativePreviewVsix && vsix) {
+        if (produceAnyVsix && vsix) {
             /** @type {string[]} */
             const vscodeTargets = [`${os}-${arch === "arm" ? "armhf" : arch}`];
             if (alpine) {
                 vscodeTargets.push(`alpine-${arch === "arm" ? "armhf" : arch}`);
             }
 
-            extensions = vscodeTargets.map(vscodeTarget => {
-                const extensionDir = path.join(builtVsix, `typescript-native-preview-${vscodeTarget}`);
-                const vsixPath = extensionDir + ".vsix";
-                const vsixManifestPath = extensionDir + ".manifest";
-                const vsixSignaturePath = extensionDir + ".signature.p7s";
-                return {
-                    vscodeTarget,
-                    extensionDir,
-                    vsixPath,
-                    vsixManifestPath,
-                    vsixSignaturePath,
-                };
-            });
+            extensions = vscodeTargets.flatMap(vscodeTarget =>
+                vsixExtensionPackages.map(({ name: packageName, sourceDir }) => {
+                    const extensionDir = path.join(builtVsix, `${packageName}-${vscodeTarget}`);
+                    const vsixPath = extensionDir + ".vsix";
+                    const vsixManifestPath = extensionDir + ".manifest";
+                    const vsixSignaturePath = extensionDir + ".signature.p7s";
+                    return {
+                        nodeOs: os,
+                        vscodeTarget,
+                        sourceDir,
+                        extensionDir,
+                        vsixPath,
+                        vsixManifestPath,
+                        vsixSignaturePath,
+                    };
+                })
+            );
         }
 
         return {
@@ -1789,6 +1811,13 @@ export const buildNativePreviewPackages = task({
 });
 
 async function runBuildNativePreviewPackages() {
+    if (usePublishedPlatformPackagesForVsix) {
+        checkPublishedPlatformPackagesForVsix();
+        await rimraf(builtNpm);
+        console.log("Skipping npm package builds; VSIX packaging will use published platform packages.");
+        return;
+    }
+
     await rimraf(builtNpm);
 
     const platforms = getPlatforms();
@@ -1802,6 +1831,22 @@ async function runBuildNativePreviewPackages() {
     if (publishAsTypescript) {
         inputPackageJson.bin = {
             tsc: "./bin/tsc",
+        };
+        inputPackageJson.description = "TypeScript is a language for application scale JavaScript development";
+        inputPackageJson.homepage = "https://www.typescriptlang.org/";
+        inputPackageJson.keywords = [
+            "TypeScript",
+            "Microsoft",
+            "compiler",
+            "language",
+            "javascript",
+        ];
+        inputPackageJson.bugs = {
+            url: "https://github.com/microsoft/TypeScript/issues",
+        };
+        inputPackageJson.repository = {
+            type: "git",
+            url: "https://github.com/microsoft/TypeScript.git",
         };
         delete inputPackageJson.scripts;
         delete inputPackageJson.devDependencies;
@@ -1833,6 +1878,7 @@ async function runBuildNativePreviewPackages() {
         await fs.promises.rename(path.join(mainPackageDir, "lib", "tsgo.js"), path.join(mainPackageDir, "lib", "tsc.js"));
         await fs.promises.writeFile(path.join(mainPackageDir, "bin", "tsc"), '#!/usr/bin/env node\nimport "../lib/tsc.js";\n');
         await fs.promises.chmod(path.join(mainPackageDir, "bin", "tsc"), 0o755);
+        await fs.promises.copyFile(path.join(inputDir, "typescript-package-readme.md"), path.join(mainPackageDir, "README.md"));
     }
 
     await fs.promises.writeFile(path.join(mainPackageDir, "package.json"), JSON.stringify(mainPackage, undefined, 4));
@@ -1939,6 +1985,11 @@ function nativePreviewExeName(nodeOs) {
 async function runSignNativePreviewPackages() {
     if (!options.forRelease) {
         throw new Error("This task should not be run in non-release builds.");
+    }
+    if (usePublishedPlatformPackagesForVsix) {
+        checkPublishedPlatformPackagesForVsix();
+        console.log("Skipping npm package signing; VSIX packaging will use published platform packages.");
+        return;
     }
 
     const platforms = getPlatforms();
@@ -2059,6 +2110,13 @@ export const packNativePreviewPackages = task({
 });
 
 async function runPackNativePreviewPackages() {
+    if (usePublishedPlatformPackagesForVsix) {
+        checkPublishedPlatformPackagesForVsix();
+        await rimraf(builtNpm);
+        console.log("Skipping npm package packing; VSIX packaging will use published platform packages.");
+        return;
+    }
+
     const platforms = getPlatforms();
     await Promise.all([mainNativePreviewPackage, ...platforms].map(async ({ npmDir, npmTarball }) => {
         const { stdout } = await $pipe`npm pack --json ${npmDir}`;
@@ -2088,23 +2146,132 @@ async function runPackNativePreviewPackages() {
 export const packVsixExtensions = task({
     name: "native-preview:pack-extensions",
     hiddenFromTaskList: true,
-    dependencies: options.forRelease ? undefined : [buildNativePreviewPackages, cleanSignTempDirectory],
+    dependencies: options.forRelease || usePublishedPlatformPackagesForVsix ? undefined : [buildNativePreviewPackages, cleanSignTempDirectory],
     run: runPackVsixExtensions,
 });
+
+/** @type {Map<string, Promise<string>>} */
+const publishedPlatformPackageLibDirs = new Map();
+
+const getPublishedTypeScriptPackageJson = memoize(() => {
+    const candidates = [
+        path.join(extensionDir, "node_modules", publishedTypeScriptAliasPackageName, "package.json"),
+        path.join(__dirname, "node_modules", publishedTypeScriptAliasPackageName, "package.json"),
+    ];
+
+    for (const candidate of candidates) {
+        if (fs.existsSync(candidate)) {
+            const packageJson = JSON.parse(fs.readFileSync(candidate, "utf8"));
+            if (packageJson.name !== "typescript") {
+                throw new Error(`${publishedTypeScriptAliasPackageName} should alias the typescript package, but found ${packageJson.name}.`);
+            }
+            if (!packageJson.version || typeof packageJson.version !== "string") {
+                throw new Error(`${publishedTypeScriptAliasPackageName} package.json did not contain a version.`);
+            }
+            if (!packageJson.optionalDependencies || typeof packageJson.optionalDependencies !== "object") {
+                throw new Error(`${publishedTypeScriptAliasPackageName} package.json did not contain platform optionalDependencies.`);
+            }
+            return packageJson;
+        }
+    }
+
+    throw new Error(`Could not find ${publishedTypeScriptAliasPackageName}; run npm install first.`);
+});
+
+function getPublishedTypeScriptVersion() {
+    const version = getPublishedTypeScriptPackageJson().version;
+    const expectedVersion = getVersion();
+    if (usePublishedPlatformPackagesForVsix && version !== expectedVersion) {
+        throw new Error(`usePublishedPlatformPackagesForVsix requires ${publishedTypeScriptAliasPackageName}'s installed version (${version}) to match release version ${expectedVersion}.`);
+    }
+    return version;
+}
+
+function checkPublishedPlatformPackagesForVsix() {
+    if (!options.forRelease) {
+        throw new Error("usePublishedPlatformPackagesForVsix requires forRelease");
+    }
+    getPublishedTypeScriptVersion();
+}
+
+const getPackageLock = memoize(() => JSON.parse(fs.readFileSync(path.join(__dirname, "package-lock.json"), "utf8")));
+
+/**
+ * @param {string} npmPackageName
+ */
+async function getPublishedPlatformPackageLibDir(npmPackageName) {
+    let promise = publishedPlatformPackageLibDirs.get(npmPackageName);
+    if (!promise) {
+        promise = getPublishedPlatformPackageLibDirWorker(npmPackageName);
+        publishedPlatformPackageLibDirs.set(npmPackageName, promise);
+    }
+    return promise;
+}
+
+/**
+ * @param {string} npmPackageName
+ */
+async function getPublishedPlatformPackageLibDirWorker(npmPackageName) {
+    const dest = path.join(builtPublishedPlatformPackages, "node_modules", ...npmPackageName.split("/"));
+    const lib = path.join(dest, "lib");
+    if (fs.existsSync(lib)) {
+        return lib;
+    }
+
+    await fs.promises.mkdir(dest, { recursive: true });
+
+    const tarballDestination = path.join(builtPublishedPlatformPackages, "tarballs");
+    await fs.promises.mkdir(tarballDestination, { recursive: true });
+
+    const version = getPublishedTypeScriptPackageJson().optionalDependencies[npmPackageName];
+    if (!version || typeof version !== "string") {
+        throw new Error(`${publishedTypeScriptAliasPackageName} does not depend on ${npmPackageName}.`);
+    }
+
+    const lockEntry = getPackageLock().packages[`node_modules/${npmPackageName}`];
+    if (!lockEntry) {
+        throw new Error(`package-lock.json does not contain ${npmPackageName}; run npm install.`);
+    }
+    if (lockEntry.version !== version) {
+        throw new Error(`package-lock.json has ${npmPackageName}@${lockEntry.version}, but ${publishedTypeScriptAliasPackageName} depends on ${version}.`);
+    }
+    if (!lockEntry.resolved || typeof lockEntry.resolved !== "string") {
+        throw new Error(`package-lock.json entry for ${npmPackageName}@${version} does not contain a tarball URL.`);
+    }
+
+    console.log(`Fetching ${npmPackageName}@${version} with npm.`);
+    const { stdout } = await $pipe({ cwd: tarballDestination, env: releasePackageEnv })`npm pack --json ${npmPackageName}@${version}`;
+    const [packed] = JSON.parse(stdout);
+    if (!packed.filename || typeof packed.filename !== "string") {
+        throw new Error(`npm pack ${npmPackageName}@${version} did not return a filename.`);
+    }
+    await tar.x({ file: path.join(tarballDestination, packed.filename), cwd: dest, strip: 1 });
+
+    if (!fs.existsSync(lib)) {
+        throw new Error(`Published platform package ${npmPackageName}@${version} did not contain a lib directory.`);
+    }
+
+    return lib;
+}
 
 async function runPackVsixExtensions() {
     await rimraf(builtVsix);
     await fs.promises.mkdir(builtVsix, { recursive: true });
+    if (usePublishedPlatformPackagesForVsix) {
+        checkPublishedPlatformPackagesForVsix();
+        publishedPlatformPackageLibDirs.clear();
+        await rimraf(builtPublishedPlatformPackages);
+    }
 
     const platforms = getPlatforms();
-    const extensions = platforms.flatMap(({ npmDir, extensions }) => extensions.map(e => ({ npmDir, ...e })));
+    const extensions = platforms.flatMap(({ npmDir, npmPackageName, extensions }) => extensions.map(e => ({ npmDir, npmPackageName, ...e })));
     if (!extensions.length) {
         console.log("No VSIX targets configured; skipping extension packaging.");
         return;
     }
 
     // We don't use vscode:prepublish, as that would run the build for each package below.
-    await $({ cwd: extensionDir })`npm run bundle:release`;
+    await $({ cwd: extensionDir, env: releasePackageEnv })`npm run bundle:release`;
 
     let version = "0.0.0";
     if (options.forRelease) {
@@ -2124,26 +2291,29 @@ async function runPackVsixExtensions() {
 
     console.log("Version:", version);
 
-    await Promise.all(extensions.map(async ({ npmDir, vscodeTarget, extensionDir: thisExtensionDir, vsixPath, vsixManifestPath, vsixSignaturePath }) => {
-        const npmLibDir = path.join(npmDir, "lib");
+    await Promise.all(extensions.map(async ({ npmDir, npmPackageName, nodeOs, vscodeTarget, sourceDir, extensionDir: thisExtensionDir, vsixPath, vsixManifestPath, vsixSignaturePath }) => {
+        const npmLibDir = usePublishedPlatformPackagesForVsix
+            ? await getPublishedPlatformPackageLibDir(npmPackageName)
+            : path.join(npmDir, "lib");
         const extensionLibDir = path.join(thisExtensionDir, "lib");
         await fs.promises.mkdir(extensionLibDir, { recursive: true });
 
-        await cpWithoutNodeModulesOrTsconfig(extensionDir, thisExtensionDir);
+        await cpWithoutNodeModulesOrTsconfig(sourceDir, thisExtensionDir);
         await cpWithoutNodeModulesOrTsconfig(npmLibDir, extensionLibDir);
+        await fs.promises.chmod(path.join(extensionLibDir, nativePreviewExeName(nodeOs)), 0o755);
 
         const packageJsonPath = path.join(thisExtensionDir, "package.json");
         const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
         packageJson.version = version;
-        packageJson.main = "dist/extension.bundle.js";
+        packageJson.bundledTypeScriptVersion = usePublishedPlatformPackagesForVsix ? getPublishedTypeScriptVersion() : getVersion();
         fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, undefined, 4));
 
         await fs.promises.copyFile("NOTICE.txt", path.join(thisExtensionDir, "NOTICE.txt"));
 
-        await $({ cwd: thisExtensionDir })`vsce package ${version} --no-update-package-json --no-dependencies --out ${vsixPath} --target ${vscodeTarget}`;
+        await $({ cwd: thisExtensionDir, env: releasePackageEnv })`vsce package ${version} --no-update-package-json --no-dependencies --out ${vsixPath} --target ${vscodeTarget}`;
 
         if (options.forRelease) {
-            await $({ cwd: thisExtensionDir })`vsce generate-manifest --packagePath ${vsixPath} --out ${vsixManifestPath}`;
+            await $({ cwd: thisExtensionDir, env: releasePackageEnv })`vsce generate-manifest --packagePath ${vsixPath} --out ${vsixManifestPath}`;
             await fs.promises.cp(vsixManifestPath, vsixSignaturePath);
         }
     }));
@@ -2182,7 +2352,7 @@ export const nativePreviewRelease = task({
     name: "native-preview:release",
     hiddenFromTaskList: true,
     run: async () => {
-        if (!options.forRelease || !options.setPrerelease && (!nativePreviewReleaseVersion || produceNativePreviewVsix)) {
+        if (!options.forRelease || !options.setPrerelease && (!nativePreviewReleaseVersion || produceAnyVsix)) {
             throw new Error("native-preview:release requires --forRelease and --setPrerelease flags, unless nativePreviewReleaseVersion is hardcoded and VSIX production is disabled. Example: npx hereby native-preview:release --forRelease --setPrerelease=dev.1.0");
         }
         await runBuildNativePreviewPackages();

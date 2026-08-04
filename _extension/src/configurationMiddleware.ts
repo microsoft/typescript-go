@@ -43,6 +43,7 @@ const configAliases = [
  */
 function getMergedConfiguration(resource: vscode.Uri | undefined): Record<string, any> {
     const configs = configSections.map(section => getInspectedConfiguration(section, resource));
+    const legacyNativePreviewConfig = getInspectedConfiguration("typescript.native-preview", resource);
 
     // Defaults: javascript < typescript < js/ts
     let defaults: Record<string, any> = Object.create(null);
@@ -58,6 +59,20 @@ function getMergedConfiguration(resource: vscode.Uri | undefined): Record<string
         if (configs[i].explicit !== null) {
             applyConfigAliases(configs[i].explicit!);
             explicit = deepMerge(explicit, configs[i].explicit!);
+        }
+    }
+
+    if (explicit.customConfigFileName === undefined) {
+        const legacyCustomConfigFileName = legacyNativePreviewConfig.explicit?.customConfigFileName;
+        if (legacyCustomConfigFileName !== undefined) {
+            explicit.customConfigFileName = legacyCustomConfigFileName;
+        }
+    }
+    if (explicit.trace?.server === undefined) {
+        const legacyTraceServer = legacyNativePreviewConfig.explicit?.trace?.server;
+        if (legacyTraceServer !== undefined) {
+            explicit.trace ??= Object.create(null);
+            explicit.trace.server = legacyTraceServer;
         }
     }
 
@@ -300,6 +315,9 @@ export function sendNotificationMiddleware(
         const settings: Record<string, any> = {};
         for (const section of configSections) {
             settings[section] = merged;
+        }
+        if (params?.settings?.editor !== undefined) {
+            settings.editor = params.settings.editor;
         }
         return next(type, { settings });
     }

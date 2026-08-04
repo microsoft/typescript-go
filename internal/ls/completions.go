@@ -4678,7 +4678,7 @@ func tryGetContainingJsxElement(contextToken *ast.Node, file *ast.SourceFile) *a
 	parent := contextToken.Parent
 	switch contextToken.Kind {
 	case ast.KindGreaterThanToken, ast.KindLessThanSlashToken, ast.KindSlashToken, ast.KindIdentifier,
-		ast.KindPropertyAccessExpression, ast.KindJsxAttributes, ast.KindJsxAttribute, ast.KindJsxSpreadAttribute:
+		ast.KindPropertyAccessExpression, ast.KindJsxNamespacedName, ast.KindJsxAttributes, ast.KindJsxAttribute, ast.KindJsxSpreadAttribute:
 		if parent != nil && (parent.Kind == ast.KindJsxSelfClosingElement || parent.Kind == ast.KindJsxOpeningElement) {
 			if contextToken.Kind == ast.KindGreaterThanToken {
 				precedingToken := astnav.FindPrecedingToken(file, contextToken.Pos())
@@ -4688,6 +4688,9 @@ func tryGetContainingJsxElement(contextToken *ast.Node, file *ast.SourceFile) *a
 				}
 			}
 			return parent
+		} else if parent != nil && ast.IsJsxNamespacedName(parent) &&
+			parent.Parent != nil && (parent.Parent.Kind == ast.KindJsxSelfClosingElement || parent.Parent.Kind == ast.KindJsxOpeningElement) {
+			return parent.Parent
 		} else if parent != nil && parent.Kind == ast.KindJsxAttribute {
 			// Currently we parse JsxOpeningLikeElement as:
 			//      JsxOpeningLikeElement
@@ -5663,7 +5666,7 @@ func (l *LanguageService) createCompletionDetailsForSymbol(
 	position int,
 	docFormat lsproto.MarkupKind,
 ) *lsproto.CompletionItem {
-	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(checker, symbol, location, docFormat, nil)
+	quickInfo, documentation, _, _ := l.getQuickInfoAndDocumentationForSymbol(checker, symbol, location, docFormat, nil, false /*vsCapability*/)
 	return createCompletionDetails(item, quickInfo, documentation, docFormat)
 }
 
