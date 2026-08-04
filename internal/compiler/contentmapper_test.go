@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -24,6 +25,8 @@ type fakeContentMapperHost struct {
 func (fakeContentMapperHost) Acquire(mappers []*contentmapper.Mapper) func() {
 	return func() {}
 }
+
+func (fakeContentMapperHost) SetLocale(locale.Locale) {}
 
 func (r fakeContentMapperHost) Transform(mapper *contentmapper.Mapper, request contentmapper.Request) (contentmapper.Result, error) {
 	return r.transform(request.FileName, request.Content)

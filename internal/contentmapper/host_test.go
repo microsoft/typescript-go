@@ -330,6 +330,20 @@ type recordingMapper struct {
 	receivedLocale string
 }
 
+type blockingMapper struct {
+	recordingMapper
+	started chan struct{}
+	proceed chan struct{}
+}
+
+func (m *blockingMapper) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
+	if method == contentmapper.MethodTransform {
+		close(m.started)
+		<-m.proceed
+	}
+	return m.recordingMapper.HandleRequest(ctx, method, params)
+}
+
 func (m *recordingMapper) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
 	case contentmapper.MethodInitialize:
@@ -389,4 +403,72 @@ func TestRunnerForwardsDeclaredOptions(t *testing.T) {
 	defer mapper.mu.Unlock()
 	assert.Equal(t, mapper.received, fmt.Sprintf(`{"target":%s}`, want))
 	assert.Equal(t, mapper.receivedLocale, "cs-CZ")
+}
+
+func TestHostSetLocaleRestartsMapper(t *testing.T) {
+	t.Parallel()
+	mapper := &recordingMapper{}
+	spawner := &fakeSpawner{handler: mapper}
+	r := contentmapper.NewHost(t.Context(), spawner, locale.Default)
+	defer r.Close()
+
+	definition := &contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "vue", Version: "1.0.0", Exec: []string{"vue-mapper"}}}
+	release := r.Acquire([]*contentmapper.Mapper{definition})
+	defer release()
+
+	_, err := r.Transform(definition, contentmapper.Request{FileName: "/a.vue", Content: "x"})
+	assert.NilError(t, err)
+	assert.Equal(t, spawner.spawns.Load(), int32(1))
+
+	french, ok := locale.Parse("fr")
+	assert.Assert(t, ok)
+	r.SetLocale(french)
+	assert.Equal(t, spawner.closes.Load(), int32(1))
+
+	_, err = r.Transform(definition, contentmapper.Request{FileName: "/a.vue", Content: "x"})
+	assert.NilError(t, err)
+	assert.Equal(t, spawner.spawns.Load(), int32(2))
+	mapper.mu.Lock()
+	defer mapper.mu.Unlock()
+	assert.Equal(t, mapper.receivedLocale, "fr")
+}
+
+func TestHostSetLocaleWaitsForTransform(t *testing.T) {
+	t.Parallel()
+	mapper := &blockingMapper{started: make(chan struct{}), proceed: make(chan struct{})}
+	spawner := &fakeSpawner{handler: mapper}
+	r := contentmapper.NewHost(t.Context(), spawner, locale.Default)
+	defer r.Close()
+	definition := &contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "vue", Version: "1.0.0", Exec: []string{"vue-mapper"}}}
+
+	transformDone := make(chan error)
+	go func() {
+		_, err := r.Transform(definition, contentmapper.Request{FileName: "/a.vue", Content: "x"})
+		transformDone <- err
+	}()
+	<-mapper.started
+
+	french, ok := locale.Parse("fr")
+	assert.Assert(t, ok)
+	setStarted := make(chan struct{})
+	setDone := make(chan struct{})
+	go func() {
+		close(setStarted)
+		r.SetLocale(french)
+		close(setDone)
+	}()
+	<-setStarted
+	setCompleted := false
+	select {
+	case <-setDone:
+		setCompleted = true
+	default:
+		setCompleted = false
+	}
+	assert.Assert(t, !setCompleted, "SetLocale completed while a transform was in flight")
+
+	close(mapper.proceed)
+	assert.NilError(t, <-transformDone)
+	<-setDone
+	assert.Equal(t, spawner.closes.Load(), int32(1))
 }

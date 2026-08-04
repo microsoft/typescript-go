@@ -111,7 +111,11 @@ func (c *compilerHost) GetContentMappedSourceFile(parseOptions ast.SourceFilePar
 	if fh == nil {
 		return nil, nil
 	}
-	key := contentMappedParseCacheKey(parseOptions, fh.Hash(), mapper.TransformIdentity(options))
+	diagnosticLocale := locale.Default
+	if c.builder.client != nil {
+		diagnosticLocale = c.builder.client.GetLocale()
+	}
+	key := contentMappedParseCacheKey(parseOptions, fh.Hash(), mapper.TransformIdentity(options), diagnosticLocale)
 	return c.builder.parseCache.AcquireOrError(key, func() (*ast.SourceFile, error) {
 		file, err := contentmapper.TransformAndParse(parseOptions, fh.Content(), mapper, options, c.builder.contentMapperHost)
 		if err != nil {

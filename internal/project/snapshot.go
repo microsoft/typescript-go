@@ -357,6 +357,9 @@ func (s *Snapshot) Clone(
 	}
 
 	projectCollectionBuilder.DidChangeCustomConfigFileName(logger.Fork("DidChangeCustomConfigFileName"))
+	if change.newConfig != nil {
+		projectCollectionBuilder.DidChangeUserPreferences(s.userPreferences, *change.newConfig, logger.Fork("DidChangeUserPreferences"))
+	}
 
 	if !change.fileChanges.IsEmpty() {
 		projectCollectionBuilder.DidChangeFiles(change.fileChanges, logger.Fork("DidChangeFiles"))

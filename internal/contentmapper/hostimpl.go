@@ -85,7 +85,7 @@ type Diagnostic struct {
 
 // dialFunc establishes a running connection to a mapper. In production it spawns the mapper's process;
 // tests substitute an in-memory connection. It returns the connection and a closer that tears it down.
-type dialFunc func(ctx context.Context, mapper *Mapper) (ipc.Conn, io.Closer, PositionEncoding, string, error)
+type dialFunc func(ctx context.Context, mapper *Mapper, diagnosticLocale locale.Locale) (ipc.Conn, io.Closer, PositionEncoding, string, error)
 
 // host manages one child process per mapper identity. It is the production implementation of Host.
 type host struct {
@@ -93,6 +93,9 @@ type host struct {
 	cancel context.CancelFunc
 	stop   func() bool
 	dial   dialFunc
+
+	lifecycleMu      sync.RWMutex
+	diagnosticLocale locale.Locale
 
 	mu    sync.Mutex
 	conns map[string]*mapperConn
@@ -131,7 +134,7 @@ func (f SpawnerFunc) Spawn(command []string, dir string) (io.ReadWriteCloser, er
 // on SIGINT, or a build/watch session ending) tears every mapper process down, so owners of a session
 // context need not close the host explicitly. Close does the same synchronously.
 func NewHost(ctx context.Context, spawner Spawner, diagnosticLocale locale.Locale) Host {
-	return newWithDial(ctx, func(ctx context.Context, mapper *Mapper) (ipc.Conn, io.Closer, PositionEncoding, string, error) {
+	return newWithDial(ctx, diagnosticLocale, func(ctx context.Context, mapper *Mapper, diagnosticLocale locale.Locale) (ipc.Conn, io.Closer, PositionEncoding, string, error) {
 		if len(mapper.Exec) == 0 {
 			return nil, nil, "", "", fmt.Errorf("content mapper %q declares no command to run", mapper.Package)
 		}
@@ -150,11 +153,37 @@ func NewHost(ctx context.Context, spawner Spawner, diagnosticLocale locale.Local
 	})
 }
 
-func newWithDial(ctx context.Context, dial dialFunc) *host {
+func newWithDial(ctx context.Context, diagnosticLocale locale.Locale, dial dialFunc) *host {
 	hostCtx, cancel := context.WithCancel(ctx)
-	h := &host{ctx: hostCtx, cancel: cancel, dial: dial, conns: make(map[string]*mapperConn)}
+	h := &host{ctx: hostCtx, cancel: cancel, dial: dial, diagnosticLocale: diagnosticLocale, conns: make(map[string]*mapperConn)}
 	h.stop = context.AfterFunc(ctx, func() { _ = h.Close() })
 	return h
+}
+
+func (h *host) SetLocale(diagnosticLocale locale.Locale) {
+	h.lifecycleMu.Lock()
+	defer h.lifecycleMu.Unlock()
+	if h.diagnosticLocale.String() == diagnosticLocale.String() {
+		return
+	}
+	h.diagnosticLocale = diagnosticLocale
+
+	h.mu.Lock()
+	var closers []io.Closer
+	for _, entry := range h.conns {
+		if entry.closer != nil {
+			closers = append(closers, entry.closer)
+		}
+		entry.conn = nil
+		entry.closer = nil
+		entry.err = nil
+		entry.positionEncoding = ""
+		entry.diagnosticSource = ""
+	}
+	h.mu.Unlock()
+	for _, closer := range closers {
+		_ = closer.Close()
+	}
 }
 
 func (h *host) Acquire(mappers []*Mapper) func() {
@@ -185,6 +214,8 @@ func (h *host) Acquire(mappers []*Mapper) func() {
 // mapper receives the subset of the project's compiler options it declared in its manifest (an empty
 // object if it declared none).
 func (h *host) Transform(mapper *Mapper, request Request) (Result, error) {
+	h.lifecycleMu.RLock()
+	defer h.lifecycleMu.RUnlock()
 	conn, positionEncoding, diagnosticSource, err := h.connFor(mapper)
 	if err != nil {
 		return Result{}, NewTransformError(TransformErrorKindInitialize, err)
@@ -211,6 +242,8 @@ func (h *host) Transform(mapper *Mapper, request Request) (Result, error) {
 // Close shuts down every mapper process. It is safe to call more than once and is invoked automatically
 // when the context passed to New is cancelled.
 func (h *host) Close() error {
+	h.lifecycleMu.Lock()
+	defer h.lifecycleMu.Unlock()
 	h.stop()
 	h.cancel()
 	h.mu.Lock()
@@ -248,7 +281,7 @@ func (h *host) connFor(mapper *Mapper) (ipc.Conn, PositionEncoding, string, erro
 	if entry.conn != nil || entry.err != nil {
 		return entry.conn, entry.positionEncoding, entry.diagnosticSource, entry.err
 	}
-	conn, closer, positionEncoding, diagnosticSource, err := h.dial(h.ctx, mapper)
+	conn, closer, positionEncoding, diagnosticSource, err := h.dial(h.ctx, mapper, h.diagnosticLocale)
 	entry.conn = conn
 	entry.closer = closer
 	entry.err = err

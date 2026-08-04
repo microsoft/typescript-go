@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/project/logging"
@@ -685,6 +686,22 @@ func (b *ProjectCollectionBuilder) DidChangeCustomConfigFileName(logger *logging
 	b.fileDefaultProjects = nil
 	b.defaultProjectsInvalidated = true
 	b.programStructureChanged = true
+}
+
+func (b *ProjectCollectionBuilder) DidChangeUserPreferences(oldPreferences, newPreferences lsutil.UserPreferences, logger *logging.LogTree) {
+	if oldPreferences.Locale == newPreferences.Locale {
+		return
+	}
+	b.forEachProject(func(entry dirty.Value[*Project]) bool {
+		entry.Change(func(project *Project) {
+			project.dirty = true
+			project.dirtyFilePath = ""
+			if logger != nil {
+				logger.Logf("Marking project as dirty due to locale change: %s", project.configFilePath)
+			}
+		})
+		return true
+	})
 }
 
 func (b *ProjectCollectionBuilder) markProjectsAffectedByConfigChanges(

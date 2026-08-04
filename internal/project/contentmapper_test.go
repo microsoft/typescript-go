@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -208,6 +209,56 @@ func TestContentMapperInProject(t *testing.T) {
 		rebuiltBox := ls.GetProgram().GetSourceFile("/home/project/app.box")
 		assert.Assert(t, rebuiltBox == boxFile, "expected the unchanged content-mapped file to be reused from the parse cache, not re-transformed")
 	})
+}
+
+func TestContentMapperLocaleChange(t *testing.T) {
+	t.Parallel()
+	files := map[string]any{
+		"/home/project/tsconfig.json":                    `{ "contentMappers": [ { "package": "mapper", "extensions": [".box"] } ] }`,
+		"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.VerbatimMapper),
+		"/home/project/app.box":                          "export const value = 1;\n",
+		"/home/project/main.ts":                          `import { value } from "./app.box"; value;`,
+	}
+	init, utils := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
+		CurrentDirectory:    "/home/project",
+		DefaultLibraryPath:  bundled.LibPath(),
+		TypingsLocation:     projecttestutil.TestTypingsLocation,
+		PositionEncoding:    lsproto.PositionEncodingKindUTF8,
+		LoadExternalPlugins: true,
+	}, nil)
+	spawner := &recordingContentMapperSpawner{inner: contentmappertest.NewSpawner()}
+	init.Spawner = spawner
+
+	var localeMu sync.RWMutex
+	currentLocale := locale.Default
+	utils.Client().GetLocaleFunc = func() locale.Locale {
+		localeMu.RLock()
+		defer localeMu.RUnlock()
+		return currentLocale
+	}
+	utils.Client().SetLocaleFunc = func(value string) {
+		updated, ok := locale.Parse(value)
+		assert.Assert(t, ok)
+		localeMu.Lock()
+		currentLocale = updated
+		localeMu.Unlock()
+	}
+
+	session := project.NewSession(init)
+	defer session.Close()
+	session.DidOpenFile(context.Background(), "file:///home/project/main.ts", 1, files["/home/project/main.ts"].(string), lsproto.LanguageKindTypeScript)
+	_, err := session.GetLanguageService(context.Background(), "file:///home/project/main.ts")
+	assert.NilError(t, err)
+	assert.Equal(t, spawner.spawns.Load(), int32(1))
+
+	preferences := session.Config()
+	preferences.Locale = "fr"
+	session.Configure(preferences)
+	assert.Equal(t, spawner.closes.Load(), int32(1))
+
+	_, err = session.GetLanguageService(context.Background(), "file:///home/project/main.ts")
+	assert.NilError(t, err)
+	assert.Equal(t, spawner.spawns.Load(), int32(2))
 }
 
 func TestContentMappersInParallelProjectReferences(t *testing.T) {

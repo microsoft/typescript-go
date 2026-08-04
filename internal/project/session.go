@@ -151,6 +151,7 @@ type Session struct {
 	scheduledSnapshotUpdateMu         sync.Mutex
 
 	pendingUserConfigChanges bool
+	configureMu              sync.Mutex
 	userConfigRWMu           sync.Mutex
 
 	// pendingFileChanges are accumulated from textDocument/* events delivered
@@ -319,14 +320,23 @@ func (s *Session) Trace(msg string) {
 }
 
 func (s *Session) Configure(config lsutil.UserPreferences) {
+	s.configureMu.Lock()
+	defer s.configureMu.Unlock()
 	s.userConfigRWMu.Lock()
-	defer s.userConfigRWMu.Unlock()
 	s.pendingUserConfigChanges = true
 	oldConfig := s.workspaceUserPreferences
 	s.workspaceUserPreferences = config
+	s.userConfigRWMu.Unlock()
 
 	if config.Locale != "" {
+		oldLocale := s.client.GetLocale()
 		s.client.SetLocale(config.Locale)
+		newLocale := s.client.GetLocale()
+		if oldLocale.String() != newLocale.String() {
+			if s.contentMapperHost != nil {
+				s.contentMapperHost.SetLocale(newLocale)
+			}
+		}
 	}
 
 	// Tell the client to re-request certain commands depending on user preference changes.

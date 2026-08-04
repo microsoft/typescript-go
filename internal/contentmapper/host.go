@@ -5,6 +5,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/spanmap"
 )
 
@@ -96,6 +97,9 @@ type Host interface {
 	// Acquire retains the processes for the given mapper identities until the returned lease is released.
 	// Acquiring a mapper does not start its process; processes remain lazy until Transform is called.
 	Acquire(mappers []*Mapper) (release func())
+	// SetLocale updates the locale used to initialize mapper processes. Existing processes are stopped
+	// and respawned lazily so subsequent transforms use the new locale.
+	SetLocale(locale locale.Locale)
 	// Transform maps a foreign file's content to TypeScript using the given content mapper.
 	//
 	// A non-nil error indicates the mapper itself failed to produce a result — for example the
