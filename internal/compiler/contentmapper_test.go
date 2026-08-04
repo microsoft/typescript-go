@@ -181,7 +181,6 @@ func TestContentMapperSourceFileState(t *testing.T) {
 		code int32
 	}{
 		{name: "malformed response", kind: contentmapper.ProjectErrorKindMalformedResponse, code: 100051},
-		{name: "watched files require dynamic config", kind: contentmapper.ProjectErrorKindWatchedFilesRequireDynamicConfig, code: 100052},
 		{name: "missing config identity", kind: contentmapper.ProjectErrorKindMissingConfigIdentity, code: 100054},
 		{name: "non-absolute watched file", kind: contentmapper.ProjectErrorKindNonAbsoluteWatchedFile, code: 100055},
 	} {

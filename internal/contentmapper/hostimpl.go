@@ -24,7 +24,7 @@ import (
 )
 
 // ProtocolVersion is the content mapper protocol version this host speaks.
-const ProtocolVersion = 2
+const ProtocolVersion = 1
 
 // Content mapper protocol method names.
 const (
@@ -321,9 +321,6 @@ func (h *host) openProjectLocked(ctx context.Context, entry *projectEntry) error
 	if entry.mapper.DynamicConfig && result.ConfigIdentity == "" {
 		return &ProjectError{Kind: ProjectErrorKindMissingConfigIdentity}
 	}
-	if len(result.WatchedFiles) != 0 && !entry.mapper.DynamicConfig {
-		return &ProjectError{Kind: ProjectErrorKindWatchedFilesRequireDynamicConfig}
-	}
 	entry.configIdentity = result.ConfigIdentity
 	for _, fileName := range result.WatchedFiles {
 		if !tspath.PathIsAbsolute(fileName) {
@@ -561,11 +558,14 @@ func (p *projectLease) Transform(mapper *Mapper, request Request) (Result, error
 		p.host.mu.Unlock()
 		return Result{}, errors.New("content mapper project is closed")
 	}
-	if err := p.host.openProjectLocked(p.host.ctx, entry); err != nil {
-		p.host.mu.Unlock()
-		return Result{}, NewTransformError(TransformErrorKindProject, err)
+	handle := ""
+	if mapper.DynamicConfig {
+		if err := p.host.openProjectLocked(p.host.ctx, entry); err != nil {
+			p.host.mu.Unlock()
+			return Result{}, NewTransformError(TransformErrorKindProject, err)
+		}
+		handle = entry.projectHandle
 	}
-	handle := entry.projectHandle
 	p.host.mu.Unlock()
 	return p.host.transformLocked(mapper, request, handle)
 }

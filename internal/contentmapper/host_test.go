@@ -535,9 +535,9 @@ func TestDynamicProjectRequiresConfigIdentity(t *testing.T) {
 	assert.Equal(t, projectError.Kind, contentmapper.ProjectErrorKindMissingConfigIdentity)
 }
 
-func TestStaticProjectRejectsWatchedFiles(t *testing.T) {
+func TestStaticMapperDoesNotUseProjectProtocol(t *testing.T) {
 	t.Parallel()
-	mapperProcess := &recordingMapper{watchedFiles: []string{"/repo/mapper.config.js"}}
+	mapperProcess := &recordingMapper{}
 	host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: mapperProcess}, locale.Default)
 	defer host.Close()
 
@@ -551,11 +551,13 @@ func TestStaticProjectRejectsWatchedFiles(t *testing.T) {
 		CompilerOptions: &core.CompilerOptions{},
 	})
 	_, err := project.Transform(projectMapper, contentmapper.Request{FileName: "/repo/file.ext", Content: "x"})
-	transformError, ok := errors.AsType[*contentmapper.TransformError](err)
-	assert.Assert(t, ok)
-	projectError, ok := errors.AsType[*contentmapper.ProjectError](transformError)
-	assert.Assert(t, ok)
-	assert.Equal(t, projectError.Kind, contentmapper.ProjectErrorKindWatchedFilesRequireDynamicConfig)
+	assert.NilError(t, err)
+	assert.NilError(t, project.Close())
+	mapperProcess.mu.Lock()
+	defer mapperProcess.mu.Unlock()
+	assert.Equal(t, len(mapperProcess.projectHandles), 0)
+	assert.Equal(t, len(mapperProcess.closedHandles), 0)
+	assert.Equal(t, mapperProcess.transformHandle, "")
 }
 
 func (m *recordingMapper) HandleNotification(ctx context.Context, method string, params json.Value) error {

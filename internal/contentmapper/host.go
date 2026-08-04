@@ -46,7 +46,6 @@ const (
 	ProjectErrorKindMalformedResponse ProjectErrorKind = iota
 	ProjectErrorKindMissingConfigIdentity
 	ProjectErrorKindNonAbsoluteWatchedFile
-	ProjectErrorKindWatchedFilesRequireDynamicConfig
 )
 
 // ProjectError reports an invalid mapper openProject response.
@@ -62,8 +61,6 @@ func (e *ProjectError) Error() string {
 		return "content mapper did not return configIdentity for dynamic configuration"
 	case ProjectErrorKindNonAbsoluteWatchedFile:
 		return "content mapper returned a non-absolute path in watchedFiles"
-	case ProjectErrorKindWatchedFilesRequireDynamicConfig:
-		return "content mapper returned watchedFiles without dynamicConfig"
 	default:
 		return "content mapper returned an invalid project response"
 	}

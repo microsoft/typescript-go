@@ -255,10 +255,6 @@
         "category": "Message",
         "code": 100051
     },
-    "The content mapper returned 'watchedFiles' without declaring '\"dynamicConfig\": true'.": {
-        "category": "Message",
-        "code": 100052
-    },
     "The content mapper process failed while handling the project request.": {
         "category": "Message",
         "code": 100053

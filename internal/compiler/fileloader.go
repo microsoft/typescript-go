@@ -482,8 +482,6 @@ func ContentMapperProjectErrorDiagnostic(err error) *diagnostics.Message {
 			return diagnostics.The_content_mapper_did_not_return_configIdentity_for_its_dynamic_configuration
 		case contentmapper.ProjectErrorKindNonAbsoluteWatchedFile:
 			return diagnostics.The_content_mapper_returned_a_non_absolute_path_in_watchedFiles
-		case contentmapper.ProjectErrorKindWatchedFilesRequireDynamicConfig:
-			return diagnostics.The_content_mapper_returned_watchedFiles_without_declaring_dynamicConfig_Colon_true
 		}
 	}
 	return diagnostics.The_content_mapper_process_failed_while_handling_the_project_request
