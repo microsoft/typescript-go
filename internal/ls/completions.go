@@ -2783,17 +2783,6 @@ func (l *LanguageService) createImportAdder(ctx context.Context, typeChecker *ch
 	return autoimport.NewImportAdder(ctx, l.GetProgram(), typeChecker, file, view, l.FormatOptions(), l.converters, l.UserPreferences()), nil
 }
 
-func (l *LanguageService) createImportAdderFromAutoImportView(ctx context.Context, typeChecker *checker.Checker, file *ast.SourceFile) autoimport.ImportAdder {
-	if tspath.IsDynamicFileName(file.FileName()) {
-		return nil
-	}
-	view := l.getCurrentAutoImportView(file)
-	if view == nil {
-		return nil
-	}
-	return autoimport.NewImportAdder(ctx, l.GetProgram(), typeChecker, file, view, l.FormatOptions(), l.converters, l.UserPreferences())
-}
-
 func isRecommendedCompletionMatch(localSymbol *ast.Symbol, recommendedCompletion *ast.Symbol, typeChecker *checker.Checker) bool {
 	return localSymbol == recommendedCompletion ||
 		localSymbol.Flags&ast.SymbolFlagsExportValue != 0 && typeChecker.GetExportSymbolOfSymbol(localSymbol) == recommendedCompletion
@@ -5432,7 +5421,7 @@ func (l *LanguageService) ResolveCompletionItem(
 
 	checker, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
-	return l.getCompletionItemDetails(ctx, program, checker, int(data.Position), file, item, data), nil
+	return l.getCompletionItemDetails(ctx, program, checker, int(data.Position), file, item, data)
 }
 
 func getCompletionDocumentationFormat(ctx context.Context) lsproto.MarkupKind {
@@ -5447,7 +5436,7 @@ func (l *LanguageService) getCompletionItemDetails(
 	file *ast.SourceFile,
 	item *lsproto.CompletionItem,
 	data *lsproto.CompletionItemData,
-) *lsproto.CompletionItem {
+) (*lsproto.CompletionItem, error) {
 	docFormat := getCompletionDocumentationFormat(ctx)
 	contextToken, previousToken := getRelevantTokens(position, file)
 	if IsInString(file, position, previousToken) {
@@ -5460,14 +5449,14 @@ func (l *LanguageService) getCompletionItemDetails(
 			position,
 			contextToken,
 			docFormat,
-		)
+		), nil
 	}
 
 	if data.AutoImport != nil {
 		edits, description := (&autoimport.Fix{AutoImportFix: data.AutoImport}).Edits(ctx, file, program.Options(), l.FormatOptions(), l.converters, l.UserPreferences())
 		item.AdditionalTextEdits = &edits
 		item.Detail = strPtrTo(description)
-		return item
+		return item, nil
 	}
 
 	// Compute all the completion symbols again.
@@ -5485,27 +5474,28 @@ func (l *LanguageService) getCompletionItemDetails(
 		request := *symbolCompletion.request
 		switch request := request.(type) {
 		case *completionDataJSDocTagName:
-			return createSimpleDetails(item, data.Name, docFormat)
+			return createSimpleDetails(item, data.Name, docFormat), nil
 		case *completionDataJSDocTag:
-			return createSimpleDetails(item, data.Name, docFormat)
+			return createSimpleDetails(item, data.Name, docFormat), nil
 		case *completionDataJSDocParameterName:
-			return createSimpleDetails(item, data.Name, docFormat)
+			return createSimpleDetails(item, data.Name, docFormat), nil
 		case *completionDataKeyword:
 			if core.Some(request.keywordCompletions, func(c *CompletionItem) bool {
 				return c.Label == data.Name
 			}) {
-				return createSimpleDetails(item, data.Name, docFormat)
+				return createSimpleDetails(item, data.Name, docFormat), nil
 			}
-			return item
+			return item, nil
 		default:
 			panic(fmt.Sprintf("Unexpected completion data type: %T", request))
 		}
 	case symbolCompletion.symbol != nil:
 		symbolDetails := symbolCompletion.symbol
 		if data.Source == string(completionSourceClassMemberSnippet) {
-			classLikeDeclaration := ast.FindAncestor(symbolDetails.location, ast.IsClassLike)
-			importAdder := l.createImportAdderFromAutoImportView(ctx, checker, file)
-			memberCompletion := l.getEntryForMemberCompletionWithImportAdder(ctx, checker, symbolDetails.symbol, data.Name, classLikeDeclaration, position, symbolDetails.contextToken, file, importAdder)
+			memberCompletion, err := l.getEntryForMemberCompletion(ctx, checker, symbolDetails.symbol, data.Name, symbolDetails.location, position, symbolDetails.contextToken, file)
+			if err != nil {
+				return nil, err
+			}
 			if memberCompletion != nil && len(memberCompletion.additionalTextEdits) > 0 {
 				item.AdditionalTextEdits = &memberCompletion.additionalTextEdits
 				if memberCompletion.hasImportEdits {
@@ -5513,7 +5503,7 @@ func (l *LanguageService) getCompletionItemDetails(
 				} else {
 					item.Detail = strPtrTo(diagnostics.Update_modifiers_of_0.Localize(locale.FromContext(ctx), data.Name))
 				}
-				return item
+				return item, nil
 			}
 		}
 		return l.createCompletionDetailsForSymbol(
@@ -5523,20 +5513,20 @@ func (l *LanguageService) getCompletionItemDetails(
 			symbolDetails.location,
 			position,
 			docFormat,
-		)
+		), nil
 	case symbolCompletion.literal != nil:
 		literal := symbolCompletion.literal
-		return createSimpleDetails(item, completionNameForLiteral(file, preferences, *literal), docFormat)
+		return createSimpleDetails(item, completionNameForLiteral(file, preferences, *literal), docFormat), nil
 	case symbolCompletion.cases != nil:
-		return item
+		return item, nil
 	default:
 		// Didn't find a symbol with this name.  See if we can find a keyword instead.
 		if core.Some(allKeywordCompletions(), func(c *lsproto.CompletionItem) bool {
 			return c.Label == data.Name
 		}) {
-			return createSimpleDetails(item, data.Name, docFormat)
+			return createSimpleDetails(item, data.Name, docFormat), nil
 		}
-		return item
+		return item, nil
 	}
 }
 

@@ -1576,17 +1576,28 @@ func (s *Server) handleCompletion(ctx context.Context, languageService *ls.Langu
 }
 
 func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsproto.CompletionItem, reqMsg *lsproto.RequestMessage) (lsproto.CompletionResolveResponse, error) {
+	if params == nil {
+		return nil, errors.New("completion item is nil")
+	}
 	data := params.Data
-	languageService, err := s.session.GetLanguageService(ctx, lsconv.FileNameToDocumentURI(data.FileName))
+	if data == nil {
+		return nil, errors.New("completion item data is nil")
+	}
+	uri := lsconv.FileNameToDocumentURI(data.FileName)
+	languageService, err := s.session.GetLanguageService(ctx, uri)
 	if err != nil {
 		return nil, err
 	}
 	defer s.recover(reqMsg)
-	return languageService.ResolveCompletionItem(
-		ctx,
-		params,
-		data,
-	)
+	result, err := languageService.ResolveCompletionItem(ctx, params, data)
+	if !errors.Is(err, ls.ErrNeedsAutoImports) {
+		return result, err
+	}
+	languageService, err = s.session.GetCurrentLanguageServiceWithAutoImports(ctx, uri)
+	if err != nil {
+		return nil, err
+	}
+	return languageService.ResolveCompletionItem(ctx, params, data)
 }
 
 func (s *Server) handleDocumentFormat(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentFormattingParams) (lsproto.DocumentFormattingResponse, error) {

@@ -370,12 +370,10 @@ func (adder *importAdder) getNewImportEntry(moduleSpecifier string, importKind l
 }
 
 func (adder *importAdder) getAllExportsForSymbol(symbol *ast.Symbol) []*Export {
-	export := SymbolToExport(symbol, adder.checker)
-	if export == nil {
-		return nil
+	if export := SymbolToExport(symbol, adder.checker); export != nil {
+		return adder.view.SearchByExportID(export.ExportID)
 	}
-	exports := adder.view.SearchByExportIDIfAvailable(export.ExportID)
-	return core.IfElse(len(exports) > 0, exports, []*Export{export})
+	return nil
 }
 
 func TypeToAutoImportableTypeNode(
