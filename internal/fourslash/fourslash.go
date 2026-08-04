@@ -1546,20 +1546,6 @@ func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual
 		actual = f.resolveCompletionItem(t, actual)
 	}
 
-	if expected.InsertText != nil && expected.TextEdit == nil && actual.InsertText == nil && actual.TextEdit != nil {
-		var newText *string
-		if actual.TextEdit.TextEdit != nil {
-			newText = &actual.TextEdit.TextEdit.NewText
-		} else if actual.TextEdit.InsertReplaceEdit != nil {
-			newText = &actual.TextEdit.InsertReplaceEdit.NewText
-		}
-
-		if newText != nil && *newText == *expected.InsertText {
-			actual.InsertText = expected.InsertText
-			actual.TextEdit = nil
-		}
-	}
-
 	if actualAutoImportFix != nil {
 		if err := cmp.Diff(actual, expected, autoImportIgnoreOpts); err != "" {
 			return err
@@ -2630,7 +2616,6 @@ func (f *FourslashTest) VerifyBaselineCodeLens(t *testing.T, preferences *lsutil
 
 func (f *FourslashTest) MarkTestAsStradaServer() {
 	f.isStradaServer = true
-	f.userPreferences.FormatCodeSettings.NewLineCharacter = core.NewLineKindCRLF.GetNewLineCharacter()
 }
 
 func (f *FourslashTest) VerifyBaselineGoToDefinition(

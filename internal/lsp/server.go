@@ -744,6 +744,22 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 // asynchronously after the synchronous work is complete.
 type handlerMap map[lsproto.Method]func(*Server, context.Context, *lsproto.RequestMessage) (func() error, error)
 
+type completionItemResolveParams lsproto.CompletionItem
+
+func (p *completionItemResolveParams) UnmarshalJSONFrom(dec *json.Decoder) error {
+	if err := (*lsproto.CompletionItem)(p).UnmarshalJSONFrom(dec); err != nil {
+		return err
+	}
+	if p.Data == nil {
+		return errors.New("completion item data is nil")
+	}
+	return nil
+}
+
+func (p *completionItemResolveParams) TextDocumentURI() lsproto.DocumentUri {
+	return lsconv.FileNameToDocumentURI(p.Data.FileName)
+}
+
 var handlers = sync.OnceValue(func() handlerMap {
 	handlers := make(handlerMap)
 
@@ -797,7 +813,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerRequestHandler(handlers, lsproto.CallHierarchyOutgoingCallsInfo, (*Server).handleCallHierarchyOutgoingCalls)
 
 	registerRequestHandler(handlers, lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
-	registerRequestHandler(handlers, lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
+	registerCompletionItemResolveRequestHandler(handlers)
 	registerRequestHandler(handlers, lsproto.CodeLensResolveInfo, (*Server).handleCodeLensResolve)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSemanticTokensFullInfo, (*Server).handleSemanticTokensFull)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSemanticTokensRangeInfo, (*Server).handleSemanticTokensRange)
@@ -916,6 +932,14 @@ func registerLanguageServiceWithAutoImportsRequestHandler[Req lsproto.HasTextDoc
 			}, nil
 		})
 	}
+}
+
+func registerCompletionItemResolveRequestHandler(handlers handlerMap) {
+	registerLanguageServiceWithAutoImportsRequestHandler(
+		handlers,
+		lsproto.RequestInfo[*completionItemResolveParams, lsproto.CompletionResolveResponse]{Method: lsproto.MethodCompletionItemResolve},
+		(*Server).handleCompletionItemResolve,
+	)
 }
 
 func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosition, Resp any](
@@ -1575,29 +1599,9 @@ func (s *Server) handleCompletion(ctx context.Context, languageService *ls.Langu
 	)
 }
 
-func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsproto.CompletionItem, reqMsg *lsproto.RequestMessage) (lsproto.CompletionResolveResponse, error) {
-	if params == nil {
-		return nil, errors.New("completion item is nil")
-	}
-	data := params.Data
-	if data == nil {
-		return nil, errors.New("completion item data is nil")
-	}
-	uri := lsconv.FileNameToDocumentURI(data.FileName)
-	languageService, err := s.session.GetLanguageService(ctx, uri)
-	if err != nil {
-		return nil, err
-	}
-	defer s.recover(reqMsg)
-	result, err := languageService.ResolveCompletionItem(ctx, params, data)
-	if !errors.Is(err, ls.ErrNeedsAutoImports) {
-		return result, err
-	}
-	languageService, err = s.session.GetCurrentLanguageServiceWithAutoImports(ctx, uri)
-	if err != nil {
-		return nil, err
-	}
-	return languageService.ResolveCompletionItem(ctx, params, data)
+func (s *Server) handleCompletionItemResolve(ctx context.Context, languageService *ls.LanguageService, params *completionItemResolveParams) (lsproto.CompletionResolveResponse, error) {
+	item := (*lsproto.CompletionItem)(params)
+	return languageService.ResolveCompletionItem(ctx, item, item.Data)
 }
 
 func (s *Server) handleDocumentFormat(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentFormattingParams) (lsproto.DocumentFormattingResponse, error) {
