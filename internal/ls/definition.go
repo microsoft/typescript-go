@@ -195,6 +195,9 @@ func (l *LanguageService) createDefinitionLocations(
 			contextRange := core.OrElse(toContextRange(&nameRange, file, contextNode), &nameRange)
 			targetSelectionLoc := l.getMappedLocation(fileName, nameRange)
 			targetLoc := l.getMappedLocation(fileName, *contextRange)
+			if targetLoc.Uri != targetSelectionLoc.Uri {
+				targetLoc = targetSelectionLoc
+			}
 			locations = append(locations, &lsproto.LocationLink{
 				OriginSelectionRange: &originSelectionRange,
 				TargetSelectionRange: targetSelectionLoc.Range,

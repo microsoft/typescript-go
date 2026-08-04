@@ -1,0 +1,7 @@
+// === goToDefinition ===
+// === /project/source6.ts ===
+// export const [|target|] = 0;
+
+// === /project/consumer.ts ===
+// import { target } from "./index";
+// target/*GOTO DEF*/;
