@@ -2783,9 +2783,7 @@ func (p *Parser) parseNonArrayType() *ast.Node {
 		ast.KindFalseKeyword, ast.KindNullKeyword:
 		return p.parseLiteralTypeNode(false /*negative*/)
 	case ast.KindPrivateIdentifier:
-		pos := p.nodePos()
-		name := p.parsePrivateIdentifier()
-		return p.finishNode(p.factory.NewPrivateNameTypeNode(name), pos)
+		return p.parsePrivateNameTypeNode()
 	case ast.KindMinusToken:
 		if p.lookAhead((*Parser).nextTokenIsNumericOrBigIntLiteral) {
 			return p.parseLiteralTypeNode(true /*negative*/)
@@ -2896,6 +2894,12 @@ func (p *Parser) parseLiteralTypeNode(negative bool) *ast.Node {
 		expression = p.finishNode(p.factory.NewPrefixUnaryExpression(ast.KindMinusToken, expression), pos)
 	}
 	return p.finishNode(p.factory.NewLiteralTypeNode(expression), pos)
+}
+
+func (p *Parser) parsePrivateNameTypeNode() *ast.Node {
+	pos := p.nodePos()
+	name := p.parsePrivateIdentifier()
+	return p.finishNode(p.factory.NewPrivateNameTypeNode(name), pos)
 }
 
 func (p *Parser) parseTypeReference() *ast.Node {
