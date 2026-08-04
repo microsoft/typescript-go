@@ -1339,7 +1339,6 @@ func (c *Checker) getAliasVariances(symbol *ast.Symbol) []VarianceFlags {
 // instantiations of the generic type for type arguments with known relations. The function
 // returns an empty slice when invoked recursively for the given generic type.
 func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type) []VarianceFlags {
-	var variances []VarianceFlags
 	links := c.varianceLinks.Get(symbol)
 	if links.variances == nil {
 		var traceArgs map[string]any
@@ -1361,7 +1360,7 @@ func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type)
 				c.resolutionStart = len(c.typeResolutions)
 			}
 			c.varianceStack = append(c.varianceStack, VarianceStackEntry{symbol, typeParameters})
-			variances = make([]VarianceFlags, len(typeParameters))
+			variances := make([]VarianceFlags, len(typeParameters))
 			for i, tp := range typeParameters {
 				modifiers := c.getTypeParameterModifiers(tp)
 				var variance VarianceFlags
