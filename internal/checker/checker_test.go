@@ -61,6 +61,58 @@ foo.bar;`
 	}
 }
 
+func TestNonlocalCallableVarianceCycleDoesNotInferIndependence(t *testing.T) {
+	t.Parallel()
+
+	content := `
+interface ActionArgs<T> {
+  context: T;
+}
+type ActionFunction<T> = {
+  (args: ActionArgs<T>): void;
+};`
+	fs := vfstest.FromMap(map[string]string{
+		"/variance.ts": content,
+		"/tsconfig.json": `
+				{
+					"compilerOptions": {
+						"strict": true
+					},
+					"files": ["variance.ts"]
+				}
+			`,
+	}, false /*useCaseSensitiveFileNames*/)
+	fs = bundled.WrapFS(fs)
+
+	cd := "/"
+	host := compiler.NewCompilerHost(cd, fs, bundled.LibPath(), nil, nil)
+
+	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile("/tsconfig.json", &core.CompilerOptions{}, nil, host, nil)
+	assert.Equal(t, len(errors), 0, "Expected no errors in parsed command line")
+
+	p := compiler.NewProgram(compiler.ProgramOptions{
+		Config: parsed,
+		Host:   host,
+	})
+	p.BindSourceFiles()
+	c, done := p.GetTypeChecker(t.Context())
+	defer done()
+
+	file := p.GetSourceFile("/variance.ts")
+	actionArgsSymbol := c.GetSymbolAtLocation(file.Statements.Nodes[0].Name())
+	actionFunctionSymbol := c.GetSymbolAtLocation(file.Statements.Nodes[1].Name())
+	c.GetDeclaredTypeOfSymbol(actionArgsSymbol)
+	c.GetDeclaredTypeOfSymbol(actionFunctionSymbol)
+
+	restore := c.MarkVarianceInProgressForTesting(actionArgsSymbol)
+	defer restore()
+
+	variances := c.GetAliasVariancesForTesting(actionFunctionSymbol)
+	assert.Equal(t, len(variances), 1)
+	assert.Equal(t, variances[0]&checker.VarianceFlagsVarianceMask, checker.VarianceFlagsInvariant)
+	assert.Assert(t, variances[0]&checker.VarianceFlagsUnreliable != 0)
+}
+
 func BenchmarkNewChecker(b *testing.B) {
 	repo.SkipIfNoTypeScriptSubmodule(b)
 	fs := osvfs.FS()
