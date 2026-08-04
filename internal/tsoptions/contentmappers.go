@@ -48,5 +48,6 @@ func resolveContentMapperManifest(host ParseConfigHost, containingFile string, p
 		return contentmapper.Manifest{}, "", ast.NewCompilerDiagnostic(diagnostics.The_tsContentMapper_exec_of_the_content_mapper_package_0_must_be_a_non_empty_array_of_strings, packageName)
 	}
 	compilerOptions, _ := cm.CompilerOptions.GetValue()
-	return contentmapper.Manifest{Name: name, Version: version, Exec: exec, CompilerOptions: compilerOptions}, packageDirectory, nil
+	dynamicConfig, _ := cm.DynamicConfig.GetValue()
+	return contentmapper.Manifest{Name: name, Version: version, Exec: exec, CompilerOptions: compilerOptions, DynamicConfig: dynamicConfig}, packageDirectory, nil
 }

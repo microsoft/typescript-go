@@ -1632,10 +1632,12 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 		func(_ tspath.Path, addedProject *Project) {
 			errors = append(errors, updateWatch(ctx, s, s.logger, nil, addedProject.programFilesWatch)...)
 			errors = append(errors, updateWatch(ctx, s, s.logger, nil, addedProject.typingsWatch)...)
+			errors = append(errors, updateWatch(ctx, s, s.logger, nil, addedProject.contentMapperWatch)...)
 		},
 		func(_ tspath.Path, removedProject *Project) {
 			errors = append(errors, updateWatch(ctx, s, s.logger, removedProject.programFilesWatch, nil)...)
 			errors = append(errors, updateWatch(ctx, s, s.logger, removedProject.typingsWatch, nil)...)
+			errors = append(errors, updateWatch(ctx, s, s.logger, removedProject.contentMapperWatch, nil)...)
 		},
 		func(_ tspath.Path, oldProject, newProject *Project) {
 			if oldProject.programFilesWatch.ID() != newProject.programFilesWatch.ID() {
@@ -1651,6 +1653,11 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 				if s.watches.IsPending(newProject.typingsWatch.ID()) {
 					errors = append(errors, updateWatch(ctx, s, s.logger, nil, newProject.typingsWatch)...)
 				}
+			}
+			if oldProject.contentMapperWatch.ID() != newProject.contentMapperWatch.ID() {
+				errors = append(errors, updateWatch(ctx, s, s.logger, oldProject.contentMapperWatch, newProject.contentMapperWatch)...)
+			} else if s.watches.IsPending(newProject.contentMapperWatch.ID()) {
+				errors = append(errors, updateWatch(ctx, s, s.logger, nil, newProject.contentMapperWatch)...)
 			}
 		},
 	)

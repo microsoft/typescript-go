@@ -129,6 +129,10 @@ func (p *Program) GetCurrentDirectory() string {
 	return p.Host().GetCurrentDirectory()
 }
 
+func (p *Program) ContentMapperProject() contentmapper.Project {
+	return p.opts.Host.ContentMapperProject()
+}
+
 // GetGlobalTypingsCacheLocation implements checker.Program.
 func (p *Program) GetGlobalTypingsCacheLocation() string {
 	return p.opts.TypingsLocation

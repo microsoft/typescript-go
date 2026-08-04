@@ -11,7 +11,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -22,19 +21,17 @@ type fakeContentMapperHost struct {
 	transform func(fileName string, content string) (contentmapper.Result, error)
 }
 
-func (fakeContentMapperHost) Acquire(mappers []*contentmapper.Mapper) func() {
-	return func() {}
-}
-
-func (fakeContentMapperHost) SetLocale(locale.Locale) {}
+func (r fakeContentMapperHost) Refresh() error                                 { return nil }
+func (r fakeContentMapperHost) Identities() ([]string, error)                  { return nil, nil }
+func (r fakeContentMapperHost) Identity(*contentmapper.Mapper) (string, error) { return "test", nil }
+func (r fakeContentMapperHost) WatchedFiles() ([]string, error)                { return nil, nil }
+func (r fakeContentMapperHost) Close() error                                   { return nil }
 
 func (r fakeContentMapperHost) Transform(mapper *contentmapper.Mapper, request contentmapper.Request) (contentmapper.Result, error) {
 	return r.transform(request.FileName, request.Content)
 }
 
-func (fakeContentMapperHost) Close() error { return nil }
-
-func newContentMapperProgram(t *testing.T, contentMapperHost contentmapper.Host, files map[string]string, rootFiles []string) *compiler.Program {
+func newContentMapperProgram(t *testing.T, contentMapperProject contentmapper.Project, files map[string]string, rootFiles []string) *compiler.Program {
 	t.Helper()
 	if !bundled.Embedded {
 		t.Skip("bundled files are not embedded")
@@ -58,7 +55,7 @@ func newContentMapperProgram(t *testing.T, contentMapperHost contentmapper.Host,
 	}
 	return compiler.NewProgram(compiler.ProgramOptions{
 		Config: config,
-		Host:   compiler.NewCompilerHost("/src", fs, bundled.LibPath(), nil, nil, contentMapperHost),
+		Host:   compiler.NewCompilerHost("/src", fs, bundled.LibPath(), nil, nil, contentMapperProject),
 		// Load files on the calling goroutine for deterministic diagnostics ordering.
 		SingleThreaded: core.TSTrue,
 	})
@@ -177,4 +174,34 @@ func TestContentMapperSourceFileState(t *testing.T) {
 		assert.Equal(t, file.ContentMapper(), "vue-mapper@1.0.0")
 		assert.Assert(t, file.IsContentMapperFailureStub())
 	})
+
+	for _, test := range []struct {
+		name string
+		kind contentmapper.ProjectErrorKind
+		code int32
+	}{
+		{name: "malformed response", kind: contentmapper.ProjectErrorKindMalformedResponse, code: 100051},
+		{name: "watched files require dynamic config", kind: contentmapper.ProjectErrorKindWatchedFilesRequireDynamicConfig, code: 100052},
+		{name: "missing config identity", kind: contentmapper.ProjectErrorKindMissingConfigIdentity, code: 100054},
+		{name: "non-absolute watched file", kind: contentmapper.ProjectErrorKindNonAbsoluteWatchedFile, code: 100055},
+	} {
+		t.Run(test.name+" is localized", func(t *testing.T) {
+			t.Parallel()
+			program := newContentMapperProgram(t, fakeContentMapperHost{
+				transform: func(fileName string, content string) (contentmapper.Result, error) {
+					return contentmapper.Result{}, contentmapper.NewTransformError(
+						contentmapper.TransformErrorKindProject,
+						&contentmapper.ProjectError{Kind: test.kind},
+					)
+				},
+			}, map[string]string{"/src/fail.vue": "original"}, []string{"/src/fail.vue"})
+			diagnostics := collectContentMapperDiagnostics(program)
+			found := slices.ContainsFunc(diagnostics, func(diagnostic *ast.Diagnostic) bool {
+				return slices.ContainsFunc(diagnostic.MessageChain(), func(message *ast.Diagnostic) bool {
+					return message.Code() == test.code
+				})
+			})
+			assert.Assert(t, found, "expected localized project response diagnostic %d, got: %v", test.code, diagnostics)
+		})
+	}
 }

@@ -457,6 +457,8 @@ func contentMapperTransformDiagnostic(file *ast.SourceFile, label string, err er
 				}
 			}
 			return contentMapperTransformDiagnosticChain(file, label, diagnostics.The_content_mapper_process_could_not_be_started_or_initialized)
+		case contentmapper.TransformErrorKindProject:
+			return contentMapperTransformDiagnosticChain(file, label, ContentMapperProjectErrorDiagnostic(transformError))
 		case contentmapper.TransformErrorKindCompilerOptions:
 			return contentMapperTransformDiagnosticChain(file, label, diagnostics.The_compiler_options_requested_by_the_content_mapper_could_not_be_prepared)
 		case contentmapper.TransformErrorKindRequest:
@@ -468,6 +470,23 @@ func contentMapperTransformDiagnostic(file *ast.SourceFile, label string, err er
 		}
 	}
 	return ast.NewDiagnostic(file, core.NewTextRange(0, 0), diagnostics.The_content_mapper_0_failed_to_transform_this_file, label)
+}
+
+// ContentMapperProjectErrorDiagnostic returns the localized diagnostic message for a project setup error.
+func ContentMapperProjectErrorDiagnostic(err error) *diagnostics.Message {
+	if projectError, ok := errors.AsType[*contentmapper.ProjectError](err); ok {
+		switch projectError.Kind {
+		case contentmapper.ProjectErrorKindMalformedResponse:
+			return diagnostics.The_content_mapper_returned_a_project_response_that_could_not_be_decoded
+		case contentmapper.ProjectErrorKindMissingConfigIdentity:
+			return diagnostics.The_content_mapper_did_not_return_configIdentity_for_its_dynamic_configuration
+		case contentmapper.ProjectErrorKindNonAbsoluteWatchedFile:
+			return diagnostics.The_content_mapper_returned_a_non_absolute_path_in_watchedFiles
+		case contentmapper.ProjectErrorKindWatchedFilesRequireDynamicConfig:
+			return diagnostics.The_content_mapper_returned_watchedFiles_without_declaring_dynamicConfig_Colon_true
+		}
+	}
+	return diagnostics.The_content_mapper_process_failed_while_handling_the_project_request
 }
 
 func contentMapperTransformDiagnosticChain(file *ast.SourceFile, label string, message *diagnostics.Message, args ...any) *ast.Diagnostic {

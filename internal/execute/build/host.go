@@ -1,6 +1,7 @@
 package build
 
 import (
+	"errors"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -49,7 +50,7 @@ func (h *host) GetCurrentDirectory() string {
 }
 
 func (h *host) Trace(msg *diagnostics.Message, args ...any) {
-	panic("build.Orchestrator.host does not support tracing, use a different host for tracing")
+	panic("build.Orchestrator.host does not support tracing; use a different host for tracing")
 }
 
 func (h *host) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
@@ -61,11 +62,11 @@ func (h *host) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
 }
 
 func (h *host) GetContentMappedSourceFile(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper, options *core.CompilerOptions) (*ast.SourceFile, error) {
-	content, ok := h.FS().ReadFile(parseOptions.FileName)
-	if !ok {
-		return nil, nil
-	}
-	return contentmapper.TransformAndParse(parseOptions, content, mapper, options, h.orchestrator.contentMapperHost)
+	return nil, errors.New("content mapper project is unavailable")
+}
+
+func (h *host) ContentMapperProject() contentmapper.Project {
+	panic("build.Orchestrator.host does not support content mapper project; use an individual project's compiler host instead")
 }
 
 func (h *host) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {

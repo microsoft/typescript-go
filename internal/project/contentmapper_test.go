@@ -261,6 +261,73 @@ func TestContentMapperLocaleChange(t *testing.T) {
 	assert.Equal(t, spawner.spawns.Load(), int32(2))
 }
 
+func TestDynamicContentMapperInProject(t *testing.T) {
+	t.Parallel()
+	files := map[string]any{
+		"/home/project/tsconfig.json":                    `{ "contentMappers": [ { "package": "mapper", "extensions": [".box"], "options": { "mode": "project" } } ] }`,
+		"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.DynamicVerbatimMapper),
+		"/home/project/mapper.config.json":               `{ "version": 1 }`,
+		"/home/project/app.box":                          "export const value = 1;\n",
+		"/home/project/main.ts":                          `import { value } from "./app.box"; value;`,
+	}
+	init, utils := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
+		CurrentDirectory:    "/home/project",
+		DefaultLibraryPath:  bundled.LibPath(),
+		TypingsLocation:     projecttestutil.TestTypingsLocation,
+		PositionEncoding:    lsproto.PositionEncodingKindUTF8,
+		LoadExternalPlugins: true,
+	}, nil)
+	init.Spawner = contentmappertest.NewSpawner()
+	session := project.NewSession(init)
+	defer session.Close()
+
+	session.DidOpenFile(context.Background(), "file:///home/project/main.ts", 1, files["/home/project/main.ts"].(string), lsproto.LanguageKindTypeScript)
+	languageService, err := session.GetLanguageService(context.Background(), "file:///home/project/main.ts")
+	assert.NilError(t, err)
+	mappedFile := languageService.GetProgram().GetSourceFile("/home/project/app.box")
+	assert.Assert(t, mappedFile != nil)
+	assert.Assert(t, !mappedFile.IsContentMapperFailureStub())
+
+	program := languageService.GetProgram()
+	assert.NilError(t, utils.FS().WriteFile("/home/project/mapper.config.json", `{ "version": 2 }`))
+	session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{{
+		Uri:  "file:///home/project/mapper.config.json",
+		Type: lsproto.FileChangeTypeChanged,
+	}})
+	languageService, err = session.GetLanguageService(context.Background(), "file:///home/project/main.ts")
+	assert.NilError(t, err)
+	assert.Assert(t, languageService.GetProgram() != program)
+	mappedFile = languageService.GetProgram().GetSourceFile("/home/project/app.box")
+	assert.Assert(t, mappedFile != nil)
+	assert.Assert(t, !mappedFile.IsContentMapperFailureStub())
+}
+
+func TestUnusedDynamicContentMapperIsNotOpened(t *testing.T) {
+	t.Parallel()
+	files := map[string]any{
+		"/home/project/tsconfig.json":                    `{ "contentMappers": [{ "package": "mapper", "extensions": [".box"] }] }`,
+		"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.DynamicVerbatimMapper),
+		"/home/project/main.ts":                          `export const value = 1;`,
+	}
+	init, _ := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
+		CurrentDirectory:    "/home/project",
+		DefaultLibraryPath:  bundled.LibPath(),
+		TypingsLocation:     projecttestutil.TestTypingsLocation,
+		PositionEncoding:    lsproto.PositionEncodingKindUTF8,
+		LoadExternalPlugins: true,
+	}, nil)
+	lifecycle := &contentmappertest.ProjectLifecycle{}
+	init.Spawner = contentmappertest.NewSpawnerWithProjectLifecycle(lifecycle)
+	session := project.NewSession(init)
+	defer session.Close()
+
+	uri := lsproto.DocumentUri("file:///home/project/main.ts")
+	session.DidOpenFile(context.Background(), uri, 1, files["/home/project/main.ts"].(string), lsproto.LanguageKindTypeScript)
+	_, err := session.GetLanguageService(context.Background(), uri)
+	assert.NilError(t, err)
+	assert.Equal(t, lifecycle.Opens.Load(), int32(0))
+}
+
 func TestContentMappersInParallelProjectReferences(t *testing.T) {
 	t.Parallel()
 	files := map[string]any{

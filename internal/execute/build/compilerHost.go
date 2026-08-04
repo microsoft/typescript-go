@@ -1,6 +1,8 @@
 package build
 
 import (
+	"errors"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
@@ -12,8 +14,9 @@ import (
 )
 
 type compilerHost struct {
-	host  *host
-	trace func(msg *diagnostics.Message, args ...any)
+	host                 *host
+	trace                func(msg *diagnostics.Message, args ...any)
+	contentMapperProject contentmapper.Project
 }
 
 var _ compiler.CompilerHost = (*compilerHost)(nil)
@@ -39,7 +42,18 @@ func (h *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.Sourc
 }
 
 func (h *compilerHost) GetContentMappedSourceFile(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper, options *core.CompilerOptions) (*ast.SourceFile, error) {
-	return h.host.GetContentMappedSourceFile(parseOptions, mapper, options)
+	if h.contentMapperProject == nil {
+		return nil, errors.New("content mapper project is unavailable")
+	}
+	content, ok := h.FS().ReadFile(parseOptions.FileName)
+	if !ok {
+		return nil, nil
+	}
+	return contentmapper.TransformAndParse(parseOptions, content, mapper, options, h.contentMapperProject)
+}
+
+func (h *compilerHost) ContentMapperProject() contentmapper.Project {
+	return h.contentMapperProject
 }
 
 func (h *compilerHost) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {

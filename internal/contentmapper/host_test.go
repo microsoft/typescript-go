@@ -2,6 +2,7 @@ package contentmapper_test
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net"
@@ -17,6 +18,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/spanmap"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"gotest.tools/v3/assert"
 )
 
@@ -325,9 +327,15 @@ func TestRunnerLeaseLifecycle(t *testing.T) {
 // recordingMapper captures (as JSON) the options it receives on transform so a test can assert the host
 // forwarded only the declared subset, in order.
 type recordingMapper struct {
-	mu             sync.Mutex
-	received       string
-	receivedLocale string
+	mu              sync.Mutex
+	received        string
+	receivedOptions string
+	receivedLocale  string
+	projectHandles  []string
+	closedHandles   []string
+	transformHandle string
+	watchedFiles    []string
+	configIdentity  *string
 }
 
 type blockingMapper struct {
@@ -355,6 +363,35 @@ func (m *recordingMapper) HandleRequest(ctx context.Context, method string, para
 		m.receivedLocale = p.Locale
 		m.mu.Unlock()
 		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8, DiagnosticSource: "mapper"}, nil
+	case contentmapper.MethodOpenProject:
+		var p contentmapper.OpenProjectParams
+		if err := json.Unmarshal(params, &p); err != nil {
+			return nil, err
+		}
+		m.mu.Lock()
+		m.projectHandles = append(m.projectHandles, p.ProjectHandle)
+		watchedFiles := m.watchedFiles
+		m.mu.Unlock()
+		if watchedFiles == nil {
+			watchedFiles = []string{tspath.CombinePaths(tspath.GetDirectoryPath(p.ConfigFileName), "mapper.config.js")}
+		}
+		configIdentity := "config:" + string(p.Options)
+		if m.configIdentity != nil {
+			configIdentity = *m.configIdentity
+		}
+		return contentmapper.OpenProjectResult{
+			ConfigIdentity: configIdentity,
+			WatchedFiles:   watchedFiles,
+		}, nil
+	case contentmapper.MethodCloseProject:
+		var p contentmapper.CloseProjectParams
+		if err := json.Unmarshal(params, &p); err != nil {
+			return nil, err
+		}
+		m.mu.Lock()
+		m.closedHandles = append(m.closedHandles, p.ProjectHandle)
+		m.mu.Unlock()
+		return nil, nil
 	case contentmapper.MethodTransform:
 		var p contentmapper.TransformParams
 		if err := json.Unmarshal(params, &p); err != nil {
@@ -366,11 +403,159 @@ func (m *recordingMapper) HandleRequest(ctx context.Context, method string, para
 		}
 		m.mu.Lock()
 		m.received = string(raw)
+		m.receivedOptions = string(p.Options)
+		m.transformHandle = p.ProjectHandle
 		m.mu.Unlock()
 		return contentmapper.TransformResult{Text: p.Content}, nil
 	default:
 		return nil, fmt.Errorf("unexpected method %s", method)
 	}
+}
+
+func TestProjectLifecycle(t *testing.T) {
+	t.Parallel()
+	mapperProcess := &recordingMapper{}
+	spawner := &fakeSpawner{handler: mapperProcess}
+	host := contentmapper.NewHost(t.Context(), spawner, locale.Default)
+	defer host.Close()
+
+	staticMapper := &contentmapper.Mapper{
+		Definition: contentmapper.Definition{Options: []byte(`{"mode":"static"}`)},
+		Manifest:   contentmapper.Manifest{Name: "static", Version: "1.0.0", Exec: []string{"mapper"}},
+	}
+	staticProject := host.Project(contentmapper.ProjectSpec{
+		ConfigFileName:  "/repo/tsconfig.json",
+		Mappers:         []*contentmapper.Mapper{staticMapper},
+		CompilerOptions: &core.CompilerOptions{},
+	})
+	assert.Equal(t, spawner.spawns.Load(), int32(0), "static identity should not spawn the mapper")
+	staticIdentities, err := staticProject.Identities()
+	assert.NilError(t, err)
+	assert.Equal(t, len(staticIdentities), 1)
+	assert.NilError(t, staticProject.Close())
+
+	dynamicA := &contentmapper.Mapper{
+		Definition: contentmapper.Definition{Options: []byte(`{"mode":"a"}`)},
+		Manifest:   contentmapper.Manifest{Name: "dynamic", Version: "1.0.0", Exec: []string{"mapper"}, DynamicConfig: true},
+	}
+	dynamicB := &contentmapper.Mapper{
+		Definition: contentmapper.Definition{Options: []byte(`{"mode":"b"}`)},
+		Manifest:   contentmapper.Manifest{Name: "dynamic", Version: "1.0.0", Exec: []string{"mapper"}, DynamicConfig: true},
+	}
+	dynamicAOptions := &core.CompilerOptions{}
+	projectA := host.Project(contentmapper.ProjectSpec{
+		ConfigFileName:  "/repo/a/tsconfig.json",
+		Mappers:         []*contentmapper.Mapper{dynamicA, dynamicB},
+		CompilerOptions: dynamicAOptions,
+	})
+	projectB := host.Project(contentmapper.ProjectSpec{
+		ConfigFileName:  "/repo/b/tsconfig.json",
+		Mappers:         []*contentmapper.Mapper{dynamicA},
+		CompilerOptions: &core.CompilerOptions{},
+	})
+	projectAAgain := host.Project(contentmapper.ProjectSpec{
+		ConfigFileName:  "/repo/a/tsconfig.json",
+		Mappers:         []*contentmapper.Mapper{dynamicA, dynamicB},
+		CompilerOptions: dynamicAOptions,
+	})
+	assert.Equal(t, spawner.spawns.Load(), int32(0), "getting dynamic projects should not start the mapper")
+	projectAIdentities, err := projectA.Identities()
+	assert.NilError(t, err)
+	projectBIdentities, err := projectB.Identities()
+	assert.NilError(t, err)
+	assert.Equal(t, len(projectAIdentities), 2)
+	assert.Equal(t, len(projectBIdentities), 1)
+	assert.Equal(t, spawner.spawns.Load(), int32(1), "dynamic projects should share one mapper process")
+	projectAWatchedFiles, err := projectA.WatchedFiles()
+	assert.NilError(t, err)
+	projectBWatchedFiles, err := projectB.WatchedFiles()
+	assert.NilError(t, err)
+	assert.Equal(t, len(projectAWatchedFiles), 1)
+	assert.Equal(t, len(projectBWatchedFiles), 1)
+
+	_, err = projectA.Transform(dynamicB, contentmapper.Request{FileName: "/repo/a/file.ext", Content: "x"})
+	assert.NilError(t, err)
+	mapperProcess.mu.Lock()
+	assert.Assert(t, slices.Contains(mapperProcess.projectHandles[:2], mapperProcess.transformHandle))
+	mapperProcess.mu.Unlock()
+
+	assert.NilError(t, projectAAgain.Close())
+	assert.NilError(t, projectA.Close())
+	assert.NilError(t, projectB.Close())
+	mapperProcess.mu.Lock()
+	defer mapperProcess.mu.Unlock()
+	assert.Equal(t, len(mapperProcess.projectHandles), 3)
+	assert.Equal(t, len(mapperProcess.closedHandles), 3)
+}
+
+func TestProjectRejectsRelativeWatchedFiles(t *testing.T) {
+	t.Parallel()
+	mapperProcess := &recordingMapper{watchedFiles: []string{"mapper.config.js"}}
+	host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: mapperProcess}, locale.Default)
+	defer host.Close()
+
+	projectMapper := &contentmapper.Mapper{
+		Definition: contentmapper.Definition{Package: "dynamic"},
+		Manifest:   contentmapper.Manifest{Name: "dynamic", Version: "1.0.0", Exec: []string{"mapper"}, DynamicConfig: true},
+	}
+	project := host.Project(contentmapper.ProjectSpec{
+		ConfigFileName:  "/repo/tsconfig.json",
+		Mappers:         []*contentmapper.Mapper{projectMapper},
+		CompilerOptions: &core.CompilerOptions{},
+	})
+	_, err := project.Transform(projectMapper, contentmapper.Request{FileName: "/repo/file.ext", Content: "x"})
+	transformError, ok := errors.AsType[*contentmapper.TransformError](err)
+	assert.Assert(t, ok)
+	projectError, ok := errors.AsType[*contentmapper.ProjectError](transformError)
+	assert.Assert(t, ok)
+	assert.Equal(t, projectError.Kind, contentmapper.ProjectErrorKindNonAbsoluteWatchedFile)
+}
+
+func TestDynamicProjectRequiresConfigIdentity(t *testing.T) {
+	t.Parallel()
+	empty := ""
+	mapperProcess := &recordingMapper{configIdentity: &empty}
+	host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: mapperProcess}, locale.Default)
+	defer host.Close()
+
+	projectMapper := &contentmapper.Mapper{
+		Definition: contentmapper.Definition{Package: "dynamic"},
+		Manifest:   contentmapper.Manifest{Name: "dynamic", Version: "1.0.0", Exec: []string{"mapper"}, DynamicConfig: true},
+	}
+	project := host.Project(contentmapper.ProjectSpec{
+		ConfigFileName:  "/repo/tsconfig.json",
+		Mappers:         []*contentmapper.Mapper{projectMapper},
+		CompilerOptions: &core.CompilerOptions{},
+	})
+	_, err := project.Transform(projectMapper, contentmapper.Request{FileName: "/repo/file.ext", Content: "x"})
+	transformError, ok := errors.AsType[*contentmapper.TransformError](err)
+	assert.Assert(t, ok)
+	projectError, ok := errors.AsType[*contentmapper.ProjectError](transformError)
+	assert.Assert(t, ok)
+	assert.Equal(t, projectError.Kind, contentmapper.ProjectErrorKindMissingConfigIdentity)
+}
+
+func TestStaticProjectRejectsWatchedFiles(t *testing.T) {
+	t.Parallel()
+	mapperProcess := &recordingMapper{watchedFiles: []string{"/repo/mapper.config.js"}}
+	host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: mapperProcess}, locale.Default)
+	defer host.Close()
+
+	projectMapper := &contentmapper.Mapper{
+		Definition: contentmapper.Definition{Package: "static"},
+		Manifest:   contentmapper.Manifest{Name: "static", Version: "1.0.0", Exec: []string{"mapper"}},
+	}
+	project := host.Project(contentmapper.ProjectSpec{
+		ConfigFileName:  "/repo/tsconfig.json",
+		Mappers:         []*contentmapper.Mapper{projectMapper},
+		CompilerOptions: &core.CompilerOptions{},
+	})
+	_, err := project.Transform(projectMapper, contentmapper.Request{FileName: "/repo/file.ext", Content: "x"})
+	transformError, ok := errors.AsType[*contentmapper.TransformError](err)
+	assert.Assert(t, ok)
+	projectError, ok := errors.AsType[*contentmapper.ProjectError](transformError)
+	assert.Assert(t, ok)
+	assert.Equal(t, projectError.Kind, contentmapper.ProjectErrorKindWatchedFilesRequireDynamicConfig)
 }
 
 func (m *recordingMapper) HandleNotification(ctx context.Context, method string, params json.Value) error {
@@ -388,7 +573,7 @@ func TestRunnerForwardsDeclaredOptions(t *testing.T) {
 	// target is declared and set (forwarded); jsx is declared but unset (omitted); strict is set but
 	// undeclared (excluded).
 	_, err := r.Transform(
-		&contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "vue", Version: "1.0.0", Exec: []string{"vue-mapper"}, CompilerOptions: []string{"target", "jsx"}}},
+		&contentmapper.Mapper{Definition: contentmapper.Definition{Options: []byte(`{"strictTemplates":true}`)}, Manifest: contentmapper.Manifest{Name: "vue", Version: "1.0.0", Exec: []string{"vue-mapper"}, CompilerOptions: []string{"target", "jsx"}}},
 		contentmapper.Request{
 			FileName:        "/a.vue",
 			Content:         "x",
@@ -402,6 +587,7 @@ func TestRunnerForwardsDeclaredOptions(t *testing.T) {
 	mapper.mu.Lock()
 	defer mapper.mu.Unlock()
 	assert.Equal(t, mapper.received, fmt.Sprintf(`{"target":%s}`, want))
+	assert.Equal(t, mapper.receivedOptions, `{"strictTemplates":true}`)
 	assert.Equal(t, mapper.receivedLocale, "cs-CZ")
 }
 

@@ -4368,6 +4368,16 @@ var The_content_mapper_diagnostic_source_must_not_be_empty = &Message{code: 1000
 
 var The_content_mapper_diagnostic_source_0_is_reserved_by_TypeScript = &Message{code: 100050, category: CategoryMessage, key: "The_content_mapper_diagnostic_source_0_is_reserved_by_TypeScript_100050", text: "The content mapper diagnostic source '{0}' is reserved by TypeScript."}
 
+var The_content_mapper_returned_a_project_response_that_could_not_be_decoded = &Message{code: 100051, category: CategoryMessage, key: "The_content_mapper_returned_a_project_response_that_could_not_be_decoded_100051", text: "The content mapper returned a project response that could not be decoded."}
+
+var The_content_mapper_returned_watchedFiles_without_declaring_dynamicConfig_Colon_true = &Message{code: 100052, category: CategoryMessage, key: "The_content_mapper_returned_watchedFiles_without_declaring_dynamicConfig_Colon_true_100052", text: "The content mapper returned 'watchedFiles' without declaring 'dynamicConfig': true."}
+
+var The_content_mapper_process_failed_while_handling_the_project_request = &Message{code: 100053, category: CategoryMessage, key: "The_content_mapper_process_failed_while_handling_the_project_request_100053", text: "The content mapper process failed while handling the project request."}
+
+var The_content_mapper_did_not_return_configIdentity_for_its_dynamic_configuration = &Message{code: 100054, category: CategoryMessage, key: "The_content_mapper_did_not_return_configIdentity_for_its_dynamic_configuration_100054", text: "The content mapper did not return 'configIdentity' for its dynamic configuration."}
+
+var The_content_mapper_returned_a_non_absolute_path_in_watchedFiles = &Message{code: 100055, category: CategoryMessage, key: "The_content_mapper_returned_a_non_absolute_path_in_watchedFiles_100055", text: "The content mapper returned a non-absolute path in 'watchedFiles'."}
+
 func keyToMessage(key Key) *Message {
 	switch key {
 	case "Unterminated_string_literal_1002":
@@ -8736,6 +8746,16 @@ func keyToMessage(key Key) *Message {
 		return The_content_mapper_diagnostic_source_must_not_be_empty
 	case "The_content_mapper_diagnostic_source_0_is_reserved_by_TypeScript_100050":
 		return The_content_mapper_diagnostic_source_0_is_reserved_by_TypeScript
+	case "The_content_mapper_returned_a_project_response_that_could_not_be_decoded_100051":
+		return The_content_mapper_returned_a_project_response_that_could_not_be_decoded
+	case "The_content_mapper_returned_watchedFiles_without_declaring_dynamicConfig_Colon_true_100052":
+		return The_content_mapper_returned_watchedFiles_without_declaring_dynamicConfig_Colon_true
+	case "The_content_mapper_process_failed_while_handling_the_project_request_100053":
+		return The_content_mapper_process_failed_while_handling_the_project_request
+	case "The_content_mapper_did_not_return_configIdentity_for_its_dynamic_configuration_100054":
+		return The_content_mapper_did_not_return_configIdentity_for_its_dynamic_configuration
+	case "The_content_mapper_returned_a_non_absolute_path_in_watchedFiles_100055":
+		return The_content_mapper_returned_a_non_absolute_path_in_watchedFiles
 	default:
 		return nil
 	}

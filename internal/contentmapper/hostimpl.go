@@ -2,6 +2,7 @@ package contentmapper
 
 import (
 	"context"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
@@ -19,14 +20,18 @@ import (
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/zeebo/xxh3"
 )
 
 // ProtocolVersion is the content mapper protocol version this host speaks.
-const ProtocolVersion = 1
+const ProtocolVersion = 2
 
+// Content mapper protocol method names.
 const (
-	MethodInitialize = "initialize"
-	MethodTransform  = "transform"
+	MethodInitialize   = "initialize"
+	MethodOpenProject  = "openProject"
+	MethodCloseProject = "closeProject"
+	MethodTransform    = "transform"
 )
 
 // InitializeParams is the parameter object for the initialize request.
@@ -47,6 +52,31 @@ type InitializeResult struct {
 	DiagnosticSource string `json:"diagnosticSource"`
 }
 
+// OpenProjectParams is the parameter object for the openProject request.
+type OpenProjectParams struct {
+	// ConfigFileName is the absolute project configuration file name, or empty when there is none.
+	ConfigFileName string `json:"configFileName"`
+	// ProjectHandle is an opaque, process-local handle assigned by the host.
+	ProjectHandle string `json:"projectHandle"`
+	// Options is the mapper entry's options from the project's contentMappers configuration.
+	Options json.Value `json:"options,omitempty"`
+	// CompilerOptions contains the project's effective compiler options.
+	CompilerOptions json.Value `json:"compilerOptions"`
+}
+
+// OpenProjectResult is the mapper's response to an openProject request.
+type OpenProjectResult struct {
+	// ConfigIdentity is a stable fingerprint of all dynamic configuration that can affect transforms.
+	ConfigIdentity string `json:"configIdentity"`
+	// WatchedFiles are absolute files whose changes may alter ConfigIdentity or transform output.
+	WatchedFiles []string `json:"watchedFiles,omitempty"`
+}
+
+// CloseProjectParams is the parameter object for the closeProject request.
+type CloseProjectParams struct {
+	ProjectHandle string `json:"projectHandle"`
+}
+
 // PositionEncoding is the coordinate space a mapper uses for mappings and diagnostics.
 type PositionEncoding string
 
@@ -57,8 +87,14 @@ const (
 
 // TransformParams is the parameter object for the transform request.
 type TransformParams struct {
+	// FileName is the absolute name of the foreign file being transformed.
 	FileName string `json:"fileName"`
-	Content  string `json:"content"`
+	// Content is the foreign file's source text.
+	Content string `json:"content"`
+	// Options is the mapper entry's options from the project's contentMappers configuration.
+	Options json.Value `json:"options,omitempty"`
+	// ProjectHandle identifies the dynamic mapper project configuration, when one is required.
+	ProjectHandle string `json:"projectHandle,omitempty"`
 	// CompilerOptions holds the values of the options the mapper declared in initialize, keyed by option
 	// name and ordered by the mapper's declaration. It is an empty object when the mapper declared none.
 	CompilerOptions *collections.OrderedMap[string, json.Value] `json:"compilerOptions"`
@@ -66,16 +102,20 @@ type TransformParams struct {
 
 // TransformResult is the mapper's response to a transform request.
 type TransformResult struct {
-	Text        string          `json:"text"`
-	ScriptKind  core.ScriptKind `json:"scriptKind,omitempty"`
-	Diagnostics []Diagnostic    `json:"diagnostics,omitempty"`
+	// Text is the generated JavaScript or TypeScript source text.
+	Text string `json:"text"`
+	// ScriptKind selects how Text is parsed; omitted or unknown values default to TypeScript.
+	ScriptKind core.ScriptKind `json:"scriptKind,omitempty"`
+	// Diagnostics are mapper-authored errors expressed in original-source coordinates.
+	Diagnostics []Diagnostic `json:"diagnostics,omitempty"`
 	// Mappings is the span map's tuple-array JSON (see spanmap.Marshal), expressed in the selected
 	// position encoding. Absent or empty means the output is fully synthesized.
 	Mappings json.Value `json:"mappings,omitempty"`
 }
 
-// Diagnostic is an error reported by a mapper.
+// Diagnostic is an error reported by a mapper in original-source coordinates.
 type Diagnostic struct {
+	// MessageText is the diagnostic message.
 	MessageText string `json:"messageText"`
 	// Start and Length locate the diagnostic in the original content using the selected position encoding.
 	Start  int   `json:"start"`
@@ -97,8 +137,20 @@ type host struct {
 	lifecycleMu      sync.RWMutex
 	diagnosticLocale locale.Locale
 
-	mu    sync.Mutex
-	conns map[string]*mapperConn
+	mu            sync.Mutex
+	conns         map[string]*mapperConn
+	projects      map[string]*projectEntry
+	projectLeases map[string]*projectLease
+	nextProjectID uint64
+}
+
+type projectEntry struct {
+	mapper         *Mapper
+	spec           ProjectSpec
+	projectHandle  string
+	opened         bool
+	configIdentity string
+	watchedFiles   []string
 }
 
 type mapperConn struct {
@@ -155,7 +207,7 @@ func NewHost(ctx context.Context, spawner Spawner, diagnosticLocale locale.Local
 
 func newWithDial(ctx context.Context, diagnosticLocale locale.Locale, dial dialFunc) *host {
 	hostCtx, cancel := context.WithCancel(ctx)
-	h := &host{ctx: hostCtx, cancel: cancel, dial: dial, diagnosticLocale: diagnosticLocale, conns: make(map[string]*mapperConn)}
+	h := &host{ctx: hostCtx, cancel: cancel, dial: dial, diagnosticLocale: diagnosticLocale, conns: make(map[string]*mapperConn), projects: make(map[string]*projectEntry), projectLeases: make(map[string]*projectLease)}
 	h.stop = context.AfterFunc(ctx, func() { _ = h.Close() })
 	return h
 }
@@ -180,10 +232,107 @@ func (h *host) SetLocale(diagnosticLocale locale.Locale) {
 		entry.positionEncoding = ""
 		entry.diagnosticSource = ""
 	}
+	for _, project := range h.projects {
+		project.opened = false
+	}
 	h.mu.Unlock()
 	for _, closer := range closers {
 		_ = closer.Close()
 	}
+}
+
+func (h *host) Project(spec ProjectSpec) Project {
+	h.lifecycleMu.RLock()
+	defer h.lifecycleMu.RUnlock()
+
+	key := projectSpecKey(spec)
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	if h.projects == nil {
+		return nil
+	}
+	if lease := h.projectLeases[key]; lease != nil {
+		return lease.retainLocked()
+	}
+	lease := &projectLease{host: h, key: key, entries: make(map[*Mapper]string, len(spec.Mappers))}
+	lease.refs = 1
+	for _, mapper := range spec.Mappers {
+		entryKey := fmt.Sprintf("%s:%d", mapper.Identity(), h.nextProjectID)
+		h.nextProjectID++
+		entry := &projectEntry{mapper: mapper, spec: spec, projectHandle: entryKey}
+		h.projects[entryKey] = entry
+		connEntry := h.conns[mapper.Identity()]
+		if connEntry == nil {
+			connEntry = &mapperConn{}
+			h.conns[mapper.Identity()] = connEntry
+		}
+		connEntry.refs++
+		lease.entries[mapper] = entryKey
+	}
+	h.projectLeases[key] = lease
+	return lease
+}
+
+func projectSpecKey(spec ProjectSpec) string {
+	var key strings.Builder
+	fmt.Fprintf(&key, "%s\x00%p", spec.ConfigFileName, spec.CompilerOptions)
+	for _, mapper := range spec.Mappers {
+		fmt.Fprintf(&key, "\x00%p", mapper)
+	}
+	return key.String()
+}
+
+func combinedIdentity(mapper *Mapper, configIdentity string) string {
+	buf := make([]byte, 0, len(mapper.Identity())+len(mapper.Options)+len(configIdentity)+2)
+	buf = append(buf, mapper.Identity()...)
+	buf = append(buf, 0)
+	buf = append(buf, mapper.Options...)
+	buf = append(buf, 0)
+	buf = append(buf, configIdentity...)
+	hash := xxh3.Hash128(buf).Bytes()
+	return mapper.Identity() + ":" + hex.EncodeToString(hash[:])
+}
+
+func (h *host) openProjectLocked(ctx context.Context, entry *projectEntry) error {
+	if entry.opened {
+		return nil
+	}
+	conn, _, _, err := h.connForLocked(entry.mapper)
+	if err != nil {
+		return err
+	}
+	compilerOptions, err := json.Marshal(entry.spec.CompilerOptions)
+	if err != nil {
+		return err
+	}
+	raw, err := conn.Call(ctx, MethodOpenProject, OpenProjectParams{
+		ConfigFileName:  entry.spec.ConfigFileName,
+		ProjectHandle:   entry.projectHandle,
+		Options:         entry.mapper.Options,
+		CompilerOptions: compilerOptions,
+	})
+	if err != nil {
+		return err
+	}
+	var result OpenProjectResult
+	if err := json.Unmarshal(raw, &result); err != nil {
+		return &ProjectError{Kind: ProjectErrorKindMalformedResponse}
+	}
+	if entry.mapper.DynamicConfig && result.ConfigIdentity == "" {
+		return &ProjectError{Kind: ProjectErrorKindMissingConfigIdentity}
+	}
+	if len(result.WatchedFiles) != 0 && !entry.mapper.DynamicConfig {
+		return &ProjectError{Kind: ProjectErrorKindWatchedFilesRequireDynamicConfig}
+	}
+	entry.configIdentity = result.ConfigIdentity
+	for _, fileName := range result.WatchedFiles {
+		if !tspath.PathIsAbsolute(fileName) {
+			return &ProjectError{Kind: ProjectErrorKindNonAbsoluteWatchedFile}
+		}
+	}
+	entry.watchedFiles = slices.Clone(result.WatchedFiles)
+	entry.opened = true
+	return nil
 }
 
 func (h *host) Acquire(mappers []*Mapper) func() {
@@ -214,8 +363,16 @@ func (h *host) Acquire(mappers []*Mapper) func() {
 // mapper receives the subset of the project's compiler options it declared in its manifest (an empty
 // object if it declared none).
 func (h *host) Transform(mapper *Mapper, request Request) (Result, error) {
+	return h.transform(mapper, request, "")
+}
+
+func (h *host) transform(mapper *Mapper, request Request, projectHandle string) (Result, error) {
 	h.lifecycleMu.RLock()
 	defer h.lifecycleMu.RUnlock()
+	return h.transformLocked(mapper, request, projectHandle)
+}
+
+func (h *host) transformLocked(mapper *Mapper, request Request, projectHandle string) (Result, error) {
 	conn, positionEncoding, diagnosticSource, err := h.connFor(mapper)
 	if err != nil {
 		return Result{}, NewTransformError(TransformErrorKindInitialize, err)
@@ -227,6 +384,8 @@ func (h *host) Transform(mapper *Mapper, request Request) (Result, error) {
 	raw, err := conn.Call(h.ctx, MethodTransform, TransformParams{
 		FileName:        request.FileName,
 		Content:         request.Content,
+		Options:         mapper.Options,
+		ProjectHandle:   projectHandle,
 		CompilerOptions: options,
 	})
 	if err != nil {
@@ -254,6 +413,8 @@ func (h *host) Close() error {
 		}
 	}
 	h.conns = nil
+	h.projects = nil
+	h.projectLeases = nil
 	h.mu.Unlock()
 	var errs []error
 	for _, closer := range closers {
@@ -269,6 +430,10 @@ func (h *host) Close() error {
 func (h *host) connFor(mapper *Mapper) (ipc.Conn, PositionEncoding, string, error) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
+	return h.connForLocked(mapper)
+}
+
+func (h *host) connForLocked(mapper *Mapper) (ipc.Conn, PositionEncoding, string, error) {
 	if h.conns == nil {
 		return nil, "", "", errors.New("content mapper host is closed")
 	}
@@ -288,6 +453,168 @@ func (h *host) connFor(mapper *Mapper) (ipc.Conn, PositionEncoding, string, erro
 	entry.positionEncoding = positionEncoding
 	entry.diagnosticSource = diagnosticSource
 	return conn, positionEncoding, diagnosticSource, err
+}
+
+type projectLease struct {
+	host    *host
+	key     string
+	entries map[*Mapper]string
+	refs    int
+	once    sync.Once
+}
+
+type retainedProject struct {
+	*projectLease
+	once sync.Once
+}
+
+func (p *projectLease) retainLocked() Project {
+	p.refs++
+	return &retainedProject{projectLease: p}
+}
+
+func (p *retainedProject) Close() (err error) {
+	p.once.Do(func() { err = p.projectLease.release() })
+	return err
+}
+
+func (p *projectLease) Refresh() error {
+	p.host.lifecycleMu.RLock()
+	defer p.host.lifecycleMu.RUnlock()
+	p.host.mu.Lock()
+	defer p.host.mu.Unlock()
+	var result error
+	for _, key := range p.entries {
+		entry := p.host.projects[key]
+		if entry == nil || !entry.opened {
+			continue
+		}
+		if connEntry := p.host.conns[entry.mapper.Identity()]; connEntry != nil && connEntry.conn != nil {
+			_, err := connEntry.conn.Call(p.host.ctx, MethodCloseProject, CloseProjectParams{ProjectHandle: entry.projectHandle})
+			result = errors.Join(result, err)
+		}
+		entry.opened = false
+	}
+	return result
+}
+
+func (p *projectLease) Identities() ([]string, error) {
+	p.host.mu.Lock()
+	defer p.host.mu.Unlock()
+	identities := make([]string, 0, len(p.entries))
+	for mapper, key := range p.entries {
+		entry := p.host.projects[key]
+		if mapper.DynamicConfig {
+			if err := p.host.openProjectLocked(p.host.ctx, entry); err != nil {
+				return nil, err
+			}
+			identities = append(identities, combinedIdentity(mapper, entry.configIdentity))
+		} else {
+			hash := mapper.TransformIdentity(entry.spec.CompilerOptions).Bytes()
+			identities = append(identities, mapper.Identity()+":"+hex.EncodeToString(hash[:]))
+		}
+	}
+	slices.Sort(identities)
+	return identities, nil
+}
+
+func (p *projectLease) Identity(mapper *Mapper) (string, error) {
+	p.host.mu.Lock()
+	defer p.host.mu.Unlock()
+	entry := p.host.projects[p.entries[mapper]]
+	if entry == nil {
+		return "", nil
+	}
+	if mapper.DynamicConfig {
+		if err := p.host.openProjectLocked(p.host.ctx, entry); err != nil {
+			return "", err
+		}
+		return combinedIdentity(mapper, entry.configIdentity), nil
+	}
+	hash := mapper.TransformIdentity(entry.spec.CompilerOptions).Bytes()
+	return mapper.Identity() + ":" + hex.EncodeToString(hash[:]), nil
+}
+
+func (p *projectLease) WatchedFiles() ([]string, error) {
+	p.host.mu.Lock()
+	defer p.host.mu.Unlock()
+	var files []string
+	for _, key := range p.entries {
+		entry := p.host.projects[key]
+		if entry.mapper.DynamicConfig {
+			if err := p.host.openProjectLocked(p.host.ctx, entry); err != nil {
+				return nil, err
+			}
+		}
+		files = append(files, entry.watchedFiles...)
+	}
+	slices.Sort(files)
+	return slices.Compact(files), nil
+}
+
+func (p *projectLease) Transform(mapper *Mapper, request Request) (Result, error) {
+	p.host.lifecycleMu.RLock()
+	defer p.host.lifecycleMu.RUnlock()
+	p.host.mu.Lock()
+	entry := p.host.projects[p.entries[mapper]]
+	if entry == nil {
+		p.host.mu.Unlock()
+		return Result{}, errors.New("content mapper project is closed")
+	}
+	if err := p.host.openProjectLocked(p.host.ctx, entry); err != nil {
+		p.host.mu.Unlock()
+		return Result{}, NewTransformError(TransformErrorKindProject, err)
+	}
+	handle := entry.projectHandle
+	p.host.mu.Unlock()
+	return p.host.transformLocked(mapper, request, handle)
+}
+
+func (p *projectLease) Close() error {
+	var result error
+	p.once.Do(func() {
+		result = p.release()
+	})
+	return result
+}
+
+func (p *projectLease) release() error {
+	var result error
+	{
+		p.host.lifecycleMu.RLock()
+		defer p.host.lifecycleMu.RUnlock()
+		var releasedIdentities []string
+		p.host.mu.Lock()
+		p.refs--
+		if p.refs < 0 {
+			p.host.mu.Unlock()
+			panic("content mapper project reference count below zero")
+		}
+		if p.refs != 0 {
+			p.host.mu.Unlock()
+			return nil
+		}
+		if p.host.projectLeases[p.key] == p {
+			delete(p.host.projectLeases, p.key)
+		}
+		for _, key := range p.entries {
+			entry := p.host.projects[key]
+			if entry == nil {
+				continue
+			}
+			if entry.opened {
+				if connEntry := p.host.conns[entry.mapper.Identity()]; connEntry != nil && connEntry.conn != nil {
+					_, err := connEntry.conn.Call(p.host.ctx, MethodCloseProject, CloseProjectParams{ProjectHandle: entry.projectHandle})
+					result = errors.Join(result, err)
+				}
+			}
+			delete(p.host.projects, key)
+			releasedIdentities = append(releasedIdentities, entry.mapper.Identity())
+		}
+		p.host.mu.Unlock()
+		p.host.release(releasedIdentities)
+	}
+	return result
 }
 
 func (h *host) release(identities []string) {

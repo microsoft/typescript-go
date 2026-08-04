@@ -227,14 +227,13 @@ func CompileFilesEx(
 		defer contentMapperHost.Close()
 	}
 
-	host := createCompilerHost(fs, bundled.LibPath(), currentDirectory, contentMapperHost)
 	var configFile *tsoptions.TsConfigSourceFile
 	var errors []*ast.Diagnostic
 	if tsconfig != nil {
 		configFile = tsconfig.ConfigFile
 		errors = tsconfig.Errors
 	}
-	result := compileFilesWithHost(host, &tsoptions.ParsedCommandLine{
+	config := &tsoptions.ParsedCommandLine{
 		ParsedConfig: &tsoptions.ParsedOptions{
 			CompilerOptions: compilerOptions,
 			FileNames:       programFileNames,
@@ -242,7 +241,18 @@ func CompileFilesEx(
 		},
 		ConfigFile: configFile,
 		Errors:     errors,
-	}, harnessOptions)
+	}
+	var contentMapperProject contentmapper.Project
+	if contentMapperHost != nil {
+		contentMapperProject = contentMapperHost.Project(contentmapper.ProjectSpec{
+			ConfigFileName:  config.ConfigName(),
+			Mappers:         config.ContentMappers(),
+			CompilerOptions: config.CompilerOptions(),
+		})
+		defer contentMapperProject.Close()
+	}
+	host := createCompilerHost(fs, bundled.LibPath(), currentDirectory, contentMapperProject)
+	result := compileFilesWithHost(host, config, harnessOptions)
 	result.Symlinks = symlinks
 	result.Trace = host.tracer.String()
 	result.Repeat = func(testConfig TestConfiguration) *CompilationResult {
@@ -603,13 +613,13 @@ func (t *TracerForBaselining) Reset() {
 	t.packageJsonCache = make(map[tspath.Path]bool)
 }
 
-func createCompilerHost(fs vfs.FS, defaultLibraryPath string, currentDirectory string, contentMapperHost contentmapper.Host) *cachedCompilerHost {
+func createCompilerHost(fs vfs.FS, defaultLibraryPath string, currentDirectory string, contentMapperProject contentmapper.Project) *cachedCompilerHost {
 	tracer := NewTracerForBaselining(tspath.ComparePathsOptions{
 		UseCaseSensitiveFileNames: fs.UseCaseSensitiveFileNames(),
 		CurrentDirectory:          currentDirectory,
 	}, &strings.Builder{})
 	return &cachedCompilerHost{
-		CompilerHost: compiler.NewCompilerHost(currentDirectory, fs, defaultLibraryPath, nil, tracer.Trace, contentMapperHost),
+		CompilerHost: compiler.NewCompilerHost(currentDirectory, fs, defaultLibraryPath, nil, tracer.Trace, contentMapperProject),
 		tracer:       tracer,
 	}
 }

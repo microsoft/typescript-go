@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -101,8 +102,8 @@ func parseProjectReference(json any) *projectReferenceParseResult {
 	return nil
 }
 
-func parseContentMapper(json any) (*contentmapper.Mapper, []*ast.Diagnostic) {
-	v, ok := json.(*collections.OrderedMap[string, any])
+func parseContentMapper(value any) (*contentmapper.Mapper, []*ast.Diagnostic) {
+	v, ok := value.(*collections.OrderedMap[string, any])
 	if !ok {
 		return nil, nil
 	}
@@ -125,6 +126,13 @@ func parseContentMapper(json any) (*contentmapper.Mapper, []*ast.Diagnostic) {
 		}
 	} else {
 		errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, "contentMapper.extensions", "string[]"))
+	}
+	if options, ok := v.Get("options"); ok {
+		if _, isObject := options.(*collections.OrderedMap[string, any]); !isObject {
+			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, "contentMapper.options", "object"))
+		} else {
+			mapper.Options, _ = json.Marshal(options)
+		}
 	}
 	if len(errors) != 0 {
 		return nil, errors

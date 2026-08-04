@@ -25,8 +25,9 @@ import (
 // Definition is a content mapper as declared in a tsconfig's "contentMappers": the npm package that
 // implements the mapper and the foreign file extensions it registers.
 type Definition struct {
-	Package    string   `json:"package"`
-	Extensions []string `json:"extensions"`
+	Package    string     `json:"package"`
+	Extensions []string   `json:"extensions"`
+	Options    json.Value `json:"options,omitempty"`
 }
 
 // Manifest is the content-mapper information read from a package's package.json: its name and version
@@ -37,6 +38,7 @@ type Manifest struct {
 	Version         string
 	Exec            []string
 	CompilerOptions []string
+	DynamicConfig   bool
 }
 
 // Mapper is a resolved content mapper: its tsconfig Definition combined with the Manifest resolved from
@@ -69,8 +71,10 @@ func (m *Mapper) Identity() string {
 func (m *Mapper) TransformIdentity(options *core.CompilerOptions) xxh3.Uint128 {
 	declared, _ := m.MarshalDeclaredOptions(options)
 	optionsJSON, _ := json.Marshal(declared)
-	buf := make([]byte, 0, len(m.Identity())+1+len(optionsJSON))
+	buf := make([]byte, 0, len(m.Identity())+2+len(m.Options)+len(optionsJSON))
 	buf = append(buf, m.Identity()...)
+	buf = append(buf, 0)
+	buf = append(buf, m.Options...)
 	buf = append(buf, 0)
 	buf = append(buf, optionsJSON...)
 	return xxh3.Hash128(buf)

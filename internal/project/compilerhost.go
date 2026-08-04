@@ -1,6 +1,9 @@
 package project
 
 import (
+	"errors"
+	"sync"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
@@ -11,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/zeebo/xxh3"
 )
 
 var _ compiler.CompilerHost = (*compilerHost)(nil)
@@ -23,9 +27,11 @@ type compilerHost struct {
 	sourceFS           *sourceFS
 	configFileRegistry *ConfigFileRegistry
 
-	project *Project
-	builder *ProjectCollectionBuilder
-	logger  *logging.LogTree
+	project              *Project
+	builder              *ProjectCollectionBuilder
+	logger               *logging.LogTree
+	contentMapperProject contentmapper.Project
+	contentMapperOnce    sync.Once
 }
 
 func newCompilerHost(
@@ -115,15 +121,38 @@ func (c *compilerHost) GetContentMappedSourceFile(parseOptions ast.SourceFilePar
 	if c.builder.client != nil {
 		diagnosticLocale = c.builder.client.GetLocale()
 	}
-	key := contentMappedParseCacheKey(parseOptions, fh.Hash(), mapper.TransformIdentity(options), diagnosticLocale)
+	c.contentMapperOnce.Do(func() {
+		if c.builder.contentMapperHost == nil {
+			return
+		}
+		commandLine := c.project.getCommandLineWithTypingsFiles()
+		c.contentMapperProject = c.builder.contentMapperHost.Project(contentmapper.ProjectSpec{
+			ConfigFileName:  commandLine.ConfigName(),
+			Mappers:         commandLine.ContentMappers(),
+			CompilerOptions: commandLine.CompilerOptions(),
+		})
+	})
+	if c.contentMapperProject == nil {
+		return nil, errors.New("content mapper project is unavailable")
+	}
+	identity, err := c.contentMapperProject.Identity(mapper)
+	if err != nil {
+		return nil, contentmapper.NewTransformError(contentmapper.TransformErrorKindProject, err)
+	}
+	transformIdentity := xxh3.Hash128([]byte(identity))
+	key := contentMappedParseCacheKey(parseOptions, fh.Hash(), transformIdentity, diagnosticLocale)
 	return c.builder.parseCache.AcquireOrError(key, func() (*ast.SourceFile, error) {
-		file, err := contentmapper.TransformAndParse(parseOptions, fh.Content(), mapper, options, c.builder.contentMapperHost)
-		if err != nil {
-			return nil, err
+		file, transformErr := contentmapper.TransformAndParse(parseOptions, fh.Content(), mapper, options, c.contentMapperProject)
+		if transformErr != nil {
+			return nil, transformErr
 		}
 		file.Hash = key.Hash
 		return file, nil
 	})
+}
+
+func (c *compilerHost) ContentMapperProject() contentmapper.Project {
+	return c.contentMapperProject
 }
 
 // Trace implements compiler.CompilerHost.

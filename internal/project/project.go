@@ -76,8 +76,10 @@ type Project struct {
 	// Only set before actually loading config file to get actual project references
 	potentialProjectReferences *collections.Set[tspath.Path]
 
-	programFilesWatch *WatchedFiles[*collections.SyncSet[tspath.Path]]
-	typingsWatch      *WatchedFiles[PatternsAndIgnored]
+	programFilesWatch         *WatchedFiles[*collections.SyncSet[tspath.Path]]
+	typingsWatch              *WatchedFiles[PatternsAndIgnored]
+	contentMapperWatch        *WatchedFiles[[]string]
+	contentMapperWatchedFiles *collections.Set[tspath.Path]
 
 	checkerPool *checkerPool
 
@@ -178,6 +180,14 @@ func NewProject(
 			core.Identity,
 		)
 	}
+	project.contentMapperWatch = NewWatchedFiles(
+		"content mapper configuration files for "+configFileName,
+		lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
+		lsproto.GetClientCapabilities(builder.ctx).Workspace.DidChangeWatchedFiles.RelativePatternSupport,
+		func(files []string) PatternsAndIgnored {
+			return PatternsAndIgnored{patternsInsideWorkspace: files}
+		},
+	)
 	return project
 }
 
@@ -271,8 +281,10 @@ func (p *Project) Clone() *Project {
 		ProgramLastUpdate:           p.ProgramLastUpdate,
 		potentialProjectReferences:  p.potentialProjectReferences,
 
-		programFilesWatch: p.programFilesWatch,
-		typingsWatch:      p.typingsWatch,
+		programFilesWatch:         p.programFilesWatch,
+		typingsWatch:              p.typingsWatch,
+		contentMapperWatch:        p.contentMapperWatch,
+		contentMapperWatchedFiles: p.contentMapperWatchedFiles,
 
 		checkerPool: p.checkerPool,
 

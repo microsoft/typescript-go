@@ -15,9 +15,14 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-func snapshotToBuildInfo(snapshot *snapshot, program *compiler.Program, buildInfoFileName string) *BuildInfo {
+func snapshotToBuildInfo(snapshot *snapshot, program *compiler.Program, buildInfoFileName string) (*BuildInfo, error) {
+	contentMapperIdentities, err := ContentMapperIdentities(program.ContentMapperProject())
+	if err != nil {
+		return nil, err
+	}
 	buildInfo := &BuildInfo{
-		Version: core.Version(),
+		Version:                 core.Version(),
+		ContentMapperIdentities: contentMapperIdentities,
 	}
 	to := &toBuildInfo{
 		snapshot:           snapshot,
@@ -52,9 +57,8 @@ func snapshotToBuildInfo(snapshot *snapshot, program *compiler.Program, buildInf
 	buildInfo.Errors = snapshot.hasErrors.IsTrue()
 	buildInfo.SemanticErrors = snapshot.hasSemanticErrors
 	buildInfo.CheckPending = snapshot.checkPending
-	buildInfo.ContentMapperIdentities = ContentMapperIdentities(program.CommandLine())
 	to.setPackageJsons()
-	return buildInfo
+	return buildInfo, nil
 }
 
 type toBuildInfo struct {

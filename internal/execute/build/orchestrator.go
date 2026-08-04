@@ -71,8 +71,7 @@ type Orchestrator struct {
 	// contentMapperHost transforms content-mapped files; it is created once per build session (when
 	// enabled) and shared across all projects so mapper processes are consolidated. It closes itself when
 	// ctx is cancelled (see contentmapper.New).
-	contentMapperHost     contentmapper.Host
-	releaseContentMappers func()
+	contentMapperHost contentmapper.Host
 
 	// order generation result
 	tasks  *collections.SyncMap[tspath.Path, *BuildTask]
@@ -143,6 +142,9 @@ func (o *Orchestrator) createBuildTasks(oldTasks *collections.SyncMap[tspath.Pat
 						// Reuse existing task if config is same
 						task = existing
 					} else {
+						if existing.contentMapperProject != nil {
+							_ = existing.contentMapperProject.Close()
+						}
 						buildInfo = existing.buildInfoEntry
 					}
 				}
@@ -232,24 +234,17 @@ func (o *Orchestrator) GenerateGraph(oldTasks *collections.SyncMap[tspath.Path, 
 	for _, project := range projects {
 		o.setupBuildTask(project, nil, false, &completed, &analyzing, circularityStack)
 	}
-	o.replaceContentMapperLease()
-}
-
-func (o *Orchestrator) replaceContentMapperLease() {
-	if o.contentMapperHost == nil || !o.opts.Command.CompilerOptions.Watch.IsTrue() {
-		return
+	if oldTasks != nil {
+		oldTasks.Range(func(path tspath.Path, oldTask *BuildTask) bool {
+			if task, ok := o.tasks.Load(path); ok && task == oldTask {
+				return true
+			}
+			if oldTask.contentMapperProject != nil {
+				_ = oldTask.contentMapperProject.Close()
+			}
+			return true
+		})
 	}
-	var mappers []*contentmapper.Mapper
-	for _, config := range o.order {
-		if task := o.getTask(o.toPath(config)); task.resolved != nil {
-			mappers = append(mappers, task.resolved.ContentMappers()...)
-		}
-	}
-	release := o.contentMapperHost.Acquire(mappers)
-	if o.releaseContentMappers != nil {
-		o.releaseContentMappers()
-	}
-	o.releaseContentMappers = release
 }
 
 func (o *Orchestrator) Start(ctx context.Context) tsc.CommandLineResult {
@@ -351,6 +346,24 @@ func (o *Orchestrator) checkTasksForEventChanges(changedPaths map[string]fswatch
 		}
 
 		rootChanged := false
+		if task.contentMapperProject != nil {
+			watchedFiles, err := task.contentMapperProject.WatchedFiles()
+			if err != nil {
+				task.contentMapperProjectErr = err
+				task.resetStatus()
+				needsUpdate.Store(true)
+				rootChanged = true
+			}
+			for _, fileName := range watchedFiles {
+				if _, changed := normalizedPaths[o.toPath(fileName)]; changed {
+					task.refreshContentMapperProject(o)
+					task.resetStatus()
+					needsUpdate.Store(true)
+					rootChanged = true
+					break
+				}
+			}
+		}
 		fileNames := task.resolved.FileNames()
 		roots := collections.NewSetWithSizeHint[tspath.Path](len(fileNames))
 		for _, file := range fileNames {
@@ -485,6 +498,19 @@ func (o *Orchestrator) computeDesiredWatches() map[string]bool {
 			dir := tspath.GetDirectoryPath(absPath)
 			if !desiredDirs.Covered(dir) && watchmanager.CanWatchDirectory(dir) {
 				desiredDirs.Set(dir, false)
+			}
+		}
+		if task.contentMapperProject != nil {
+			watchedFiles, err := task.contentMapperProject.WatchedFiles()
+			if err != nil {
+				task.contentMapperProjectErr = err
+			}
+			for _, fileName := range watchedFiles {
+				absPath := o.host.FS().Realpath(fileName)
+				dir := tspath.GetDirectoryPath(absPath)
+				if !desiredDirs.Covered(dir) && watchmanager.CanWatchDirectory(dir) {
+					desiredDirs.Set(dir, false)
+				}
 			}
 		}
 

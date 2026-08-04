@@ -13,6 +13,7 @@ import (
 	"io"
 	"net"
 	"strings"
+	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
@@ -20,6 +21,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ipc"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/spanmap"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 const (
@@ -29,6 +31,8 @@ const (
 	// VerbatimMapper selects a mapper that copies its input through unchanged with an identity span map. The
 	// input is expected to already be valid TypeScript.
 	VerbatimMapper = "verbatim-mapper"
+	// DynamicVerbatimMapper is the verbatim mapper with project-scoped dynamic configuration.
+	DynamicVerbatimMapper = "dynamic-verbatim-mapper"
 	// FailingMapper selects a mapper that initializes but fails every transform request, exercising the
 	// per-file failure and mapper-disabled paths.
 	FailingMapper = "failing-mapper"
@@ -282,12 +286,66 @@ func renderOption(options *collections.OrderedMap[string, json.Value], name stri
 // Serve drives the mapper over the given connection until the connection closes or ctx is cancelled. It
 // is used both by the in-process spawner and by an out-of-process mapper binary wired to stdio.
 func Serve(ctx context.Context, rwc io.ReadWriteCloser) error {
-	return ipc.NewAsyncConn(rwc, Handler{}).Run(ctx)
+	return ipc.NewAsyncConn(rwc, staticProjectHandler{Handler: Handler{}}).Run(ctx)
+}
+
+type staticProjectHandler struct{ ipc.Handler }
+
+func (h staticProjectHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
+	switch method {
+	case contentmapper.MethodOpenProject:
+		return contentmapper.OpenProjectResult{}, nil
+	case contentmapper.MethodCloseProject:
+		return nil, nil
+	default:
+		return h.Handler.HandleRequest(ctx, method, params)
+	}
 }
 
 // verbatimHandler copies its input through unchanged with an identity span map. The input is expected to
 // already be valid TypeScript.
 type verbatimHandler struct{ noNotifications }
+
+type dynamicVerbatimHandler struct {
+	verbatimHandler
+	lifecycle *ProjectLifecycle
+}
+
+func (h dynamicVerbatimHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
+	switch method {
+	case contentmapper.MethodOpenProject:
+		if h.lifecycle != nil {
+			h.lifecycle.Opens.Add(1)
+		}
+		var p contentmapper.OpenProjectParams
+		if err := json.Unmarshal(params, &p); err != nil {
+			return nil, err
+		}
+		identity := p.ConfigFileName + ":" + string(p.Options)
+		watchDirectory := tspath.GetDirectoryPath(p.ConfigFileName)
+		if watchDirectory == "" {
+			watchDirectory = "/"
+		}
+		return contentmapper.OpenProjectResult{
+			ConfigIdentity: identity,
+			WatchedFiles:   []string{tspath.CombinePaths(watchDirectory, "mapper.config.json")},
+		}, nil
+	case contentmapper.MethodCloseProject:
+		if h.lifecycle != nil {
+			h.lifecycle.Closes.Add(1)
+		}
+		return nil, nil
+	case contentmapper.MethodTransform:
+		var p contentmapper.TransformParams
+		if err := json.Unmarshal(params, &p); err != nil {
+			return nil, err
+		}
+		if p.ProjectHandle == "" {
+			return nil, errors.New("dynamic mapper transform requires a project handle")
+		}
+	}
+	return h.verbatimHandler.HandleRequest(ctx, method, params)
+}
 
 func (verbatimHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
@@ -490,7 +548,7 @@ func isIdentifierPart(ch byte) bool {
 }
 
 // handlerForMapper selects the mapper implementation named by a package.json's tsContentMapper.exec command.
-func handlerForMapper(command []string) (ipc.Handler, error) {
+func handlerForMapper(command []string, lifecycle *ProjectLifecycle) (ipc.Handler, error) {
 	if len(command) == 0 {
 		return nil, errors.New("contentmappertest: empty mapper command")
 	}
@@ -499,6 +557,8 @@ func handlerForMapper(command []string) (ipc.Handler, error) {
 		return Handler{}, nil
 	case VerbatimMapper:
 		return verbatimHandler{}, nil
+	case DynamicVerbatimMapper:
+		return dynamicVerbatimHandler{lifecycle: lifecycle}, nil
 	case FailingMapper:
 		return failingHandler{}, nil
 	case SynthesizingMapper:
@@ -521,12 +581,28 @@ func NewSpawner() contentmapper.Spawner {
 	return spawner{}
 }
 
-type spawner struct{}
+// ProjectLifecycle records dynamic mapper project protocol calls.
+type ProjectLifecycle struct {
+	Opens  atomic.Int32
+	Closes atomic.Int32
+}
 
-func (spawner) Spawn(command []string, dir string) (io.ReadWriteCloser, error) {
-	handler, err := handlerForMapper(command)
+// NewSpawnerWithProjectLifecycle returns an in-process mapper spawner that records project protocol calls.
+func NewSpawnerWithProjectLifecycle(lifecycle *ProjectLifecycle) contentmapper.Spawner {
+	return spawner{lifecycle: lifecycle}
+}
+
+type spawner struct {
+	lifecycle *ProjectLifecycle
+}
+
+func (s spawner) Spawn(command []string, dir string) (io.ReadWriteCloser, error) {
+	handler, err := handlerForMapper(command, s.lifecycle)
 	if err != nil {
 		return nil, err
+	}
+	if command[0] != DynamicVerbatimMapper {
+		handler = staticProjectHandler{Handler: handler}
 	}
 	client, server := net.Pipe()
 	go func() { _ = ipc.NewAsyncConn(server, handler).Run(context.Background()) }()
@@ -538,12 +614,16 @@ func (spawner) Spawn(command []string, dir string) (io.ReadWriteCloser, error) {
 // the compiler options it depends on; the others declare none.
 func PackageJSON(mapper string) string {
 	compilerOptions := ""
+	dynamicConfig := ""
 	if mapper == TransformingMapper {
 		compilerOptions = `, "compilerOptions": ["target", "jsx"]`
+	}
+	if mapper == DynamicVerbatimMapper {
+		dynamicConfig = `, "dynamicConfig": true`
 	}
 	return fmt.Sprintf(`{
 	"name": %q,
 	"version": "1.0.0",
-	"tsContentMapper": { "exec": [%q]%s }
-}`, PackageName, mapper, compilerOptions)
+	"tsContentMapper": { "exec": [%q]%s%s }
+}`, PackageName, mapper, compilerOptions, dynamicConfig)
 }

@@ -1024,7 +1024,7 @@ func TestContentMappers(t *testing.T) {
 	config := testConfig{
 		jsonText: `{
 			"contentMappers": [
-				{ "package": "vue-mapper", "extensions": [".vue"] }
+				{ "package": "vue-mapper", "extensions": [".vue"], "options": { "strictTemplates": true } }
 			],
 			"include": ["src"]
 		}`,
@@ -1033,7 +1033,7 @@ func TestContentMappers(t *testing.T) {
 		allFileList: map[string]string{
 			"/src/app.ts":                           "export {}",
 			"/src/Component.vue":                    "<template></template>",
-			"/node_modules/vue-mapper/package.json": `{ "name": "vue-mapper", "version": "1.2.3", "tsContentMapper": { "exec": ["node", "./mapper.js"] } }`,
+			"/node_modules/vue-mapper/package.json": `{ "name": "vue-mapper", "version": "1.2.3", "tsContentMapper": { "exec": ["node", "./mapper.js"], "dynamicConfig": true } }`,
 		},
 		existingOptions: &core.CompilerOptions{LoadExternalPlugins: core.TSTrue},
 	}
@@ -1056,12 +1056,14 @@ func TestContentMappers(t *testing.T) {
 			assert.Equal(t, len(mappers), 1)
 			assert.Equal(t, mappers[0].Package, "vue-mapper")
 			assert.DeepEqual(t, mappers[0].Extensions, []string{".vue"})
+			assert.Equal(t, string(mappers[0].Options), `{"strictTemplates":true}`)
 			assert.DeepEqual(t, parsed.ContentMapperExtensions(), []string{".vue"})
 
 			// The package.json is resolved during parsing, populating name, version, and exec.
 			assert.Equal(t, mappers[0].Name, "vue-mapper")
 			assert.Equal(t, mappers[0].Version, "1.2.3")
 			assert.DeepEqual(t, mappers[0].Exec, []string{"node", "./mapper.js"})
+			assert.Assert(t, mappers[0].DynamicConfig)
 			assert.Equal(t, mappers[0].PackageDirectory, "/node_modules/vue-mapper")
 
 			// The .vue file is picked up by the include glob because its extension is registered.
@@ -1148,6 +1150,11 @@ func TestContentMappersValidation(t *testing.T) {
 			contentMappers: `[{ "extensions": [".vue"] }]`,
 			expectedCode:   diagnostics.Compiler_option_0_requires_a_value_of_type_1.Code(),
 		},
+		{
+			name:           "options is not an object",
+			contentMappers: `[{ "package": "x", "extensions": [".vue"], "options": ["strict"] }]`,
+			expectedCode:   diagnostics.Compiler_option_0_requires_a_value_of_type_1.Code(),
+		},
 	}
 
 	for _, test := range tests {
@@ -1184,7 +1191,7 @@ func TestContentMappersValidation(t *testing.T) {
 						assert.DeepEqual(t, parsed.ContentMappers()[0].Extensions, []string{".vue"})
 						assert.Equal(t, len(parsed.ContentMappers()[1].Extensions), 0)
 						assert.DeepEqual(t, parsed.ContentMapperExtensions(), []string{".vue"})
-					case "missing extensions", "extensions is not an array", "extensions contains a non-string", "package is not a string", "missing package":
+					case "missing extensions", "extensions is not an array", "extensions contains a non-string", "package is not a string", "missing package", "options is not an object":
 						assert.Equal(t, len(parsed.ContentMappers()), 0)
 					}
 

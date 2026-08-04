@@ -72,8 +72,8 @@ type Watcher struct {
 	ctx context.Context
 	// contentMapperHost transforms content-mapped files; it is created once per watch session (when
 	// enabled) and reused across cycles. It closes itself when ctx is cancelled (see contentmapper.New).
-	contentMapperHost     contentmapper.Host
-	releaseContentMappers func()
+	contentMapperHost    contentmapper.Host
+	contentMapperProject contentmapper.Project
 
 	program             *incremental.Program
 	extendedConfigCache *tsc.ExtendedConfigCache
@@ -138,10 +138,10 @@ func createWatcher(
 func (w *Watcher) start(ctx context.Context) {
 	w.ctx = ctx
 	w.contentMapperHost = tsc.NewContentMapperHost(ctx, w.sys, w.config.CompilerOptions())
-	w.replaceContentMapperLease(w.config.ContentMappers())
+	w.replaceContentMapperProject(w.config)
 	w.wm.Lock()
 	w.extendedConfigCache = &tsc.ExtendedConfigCache{}
-	host := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing), nil)
+	host := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing), w.contentMapperProject)
 	w.program = incremental.ReadBuildInfoProgram(w.config, incremental.NewBuildInfoReader(host), host)
 
 	if w.configFileName != "" {
@@ -169,15 +169,31 @@ func (w *Watcher) start(ctx context.Context) {
 	}
 }
 
-func (w *Watcher) replaceContentMapperLease(mappers []*contentmapper.Mapper) {
+func (w *Watcher) replaceContentMapperProject(config *tsoptions.ParsedCommandLine) {
 	if w.contentMapperHost == nil {
 		return
 	}
-	release := w.contentMapperHost.Acquire(mappers)
-	if w.releaseContentMappers != nil {
-		w.releaseContentMappers()
+	project := w.contentMapperHost.Project(contentmapper.ProjectSpec{
+		ConfigFileName:  config.ConfigName(),
+		Mappers:         config.ContentMappers(),
+		CompilerOptions: config.CompilerOptions(),
+	})
+	if w.contentMapperProject != nil {
+		_ = w.contentMapperProject.Close()
 	}
-	w.releaseContentMappers = release
+	w.contentMapperProject = project
+}
+
+func (w *Watcher) contentMapperWatchedFiles() []string {
+	if w.contentMapperProject == nil {
+		return nil
+	}
+	files, err := w.contentMapperProject.WatchedFiles()
+	if err != nil {
+		w.reportDiagnostic(ast.NewCompilerDiagnostic(compiler.ContentMapperProjectErrorDiagnostic(err)))
+		return nil
+	}
+	return files
 }
 
 func (w *Watcher) computeDesiredWatches(seenFilePaths []string) map[string]bool {
@@ -269,6 +285,10 @@ func (w *Watcher) DoCycle() {
 			caseSensitive := w.sys.FS().UseCaseSensitiveFileNames()
 			cwd := w.sys.GetCurrentDirectory()
 			programFiles := w.program.GetProgram().FilesByPath()
+			contentMapperWatchedFiles := collections.NewSetFromItems(core.Map(w.contentMapperWatchedFiles(), func(fileName string) tspath.Path {
+				return tspath.ToPath(fileName, cwd, caseSensitive)
+			})...)
+			contentMapperConfigChanged := false
 			for eventPath := range changedPaths {
 				if w.sys.FS().DirectoryExists(eventPath) {
 					// A watched directory changed: the wildcard file set may have
@@ -277,6 +297,10 @@ func (w *Watcher) DoCycle() {
 					continue
 				}
 				p := tspath.ToPath(eventPath, cwd, caseSensitive)
+				if contentMapperWatchedFiles.Has(p) {
+					contentMapperConfigChanged = true
+					w.forceFullRebuild = true
+				}
 				if w.config.ConfigFile != nil && w.config.PossiblyMatchesFileName(eventPath) {
 					if !w.seenFiles.Has(p) {
 						// A file that matches the project but was not previously
@@ -295,6 +319,12 @@ func (w *Watcher) DoCycle() {
 					// Module resolution may now differ, so the single-file fast
 					// path is unsafe; force a full rebuild.
 					w.forceFullRebuild = true
+				}
+			}
+			if contentMapperConfigChanged && w.contentMapperProject != nil {
+				if err := w.contentMapperProject.Refresh(); err != nil {
+					w.reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.The_content_mapper_process_could_not_be_started_or_initialized))
+					return
 				}
 			}
 		} else {
@@ -381,7 +411,7 @@ func (w *Watcher) doBuild() error {
 
 	if w.program != nil && w.programReady && !w.configModified && !w.watchSetDirty && !w.forceFullRebuild {
 		cached := cachedvfs.From(w.sys.FS())
-		innerHost := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), cached, w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing), w.contentMapperHost)
+		innerHost := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), cached, w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing), w.contentMapperProject)
 		host := &watchCompilerHost{CompilerHost: innerHost, cache: w.sourceFileCache}
 
 		if w.tryUpdateProgram(host) {
@@ -413,7 +443,7 @@ func (w *Watcher) doBuild() error {
 
 	cached := cachedvfs.From(w.sys.FS())
 	tfs := &trackingvfs.FS{Inner: cached}
-	innerHost := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), tfs, w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing), w.contentMapperHost)
+	innerHost := compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), tfs, w.sys.DefaultLibraryPath(), w.extendedConfigCache, getTraceFromSys(w.sys, w.config.Locale(), w.testing), w.contentMapperProject)
 	host := &watchCompilerHost{CompilerHost: innerHost, cache: w.sourceFileCache}
 
 	if w.config.ConfigFile != nil {
@@ -425,6 +455,9 @@ func (w *Watcher) doBuild() error {
 		}
 	}
 	for _, path := range w.configFilePaths {
+		tfs.SeenFiles.Add(path)
+	}
+	for _, path := range w.contentMapperWatchedFiles() {
 		tfs.SeenFiles.Add(path)
 	}
 
@@ -601,7 +634,7 @@ func (w *Watcher) recheckTsConfig() bool {
 	if !reflect.DeepEqual(w.config.ParsedConfig, configParseResult.ParsedConfig) {
 		w.configModified = true
 	}
-	w.replaceContentMapperLease(configParseResult.ContentMappers())
+	w.replaceContentMapperProject(configParseResult)
 	w.config = configParseResult
 	return false
 }

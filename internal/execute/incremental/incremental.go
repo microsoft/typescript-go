@@ -49,7 +49,8 @@ func ReadBuildInfoProgram(config *tsoptions.ParsedCommandLine, reader BuildInfoR
 	}
 	// If any configured content mapper's identity has changed, files it produced may be stale, so the
 	// old program cannot be reused.
-	if !buildInfo.ContentMapperIdentitiesMatch(ContentMapperIdentities(config)) {
+	contentMapperIdentities, err := ContentMapperIdentities(host.ContentMapperProject())
+	if err != nil || !buildInfo.ContentMapperIdentitiesMatch(contentMapperIdentities) {
 		return nil
 	}
 

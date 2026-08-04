@@ -1,13 +1,13 @@
 package incremental
 
 import (
-	"encoding/hex"
 	"fmt"
 	"iter"
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/json"
@@ -494,24 +494,13 @@ func (b *BuildInfo) IsValidVersion() bool {
 	return b.Version == core.Version()
 }
 
-// ContentMapperIdentities returns sorted fingerprints of the content mappers configured in config. Each
-// fingerprint includes the mapper identity and values of its declared compiler options, so changing either
-// invalidates build info. Mappers with no resolved name are omitted. Returns nil when no mapper has an identity.
-func ContentMapperIdentities(config *tsoptions.ParsedCommandLine) []string {
-	mappers := config.ContentMappers()
-	identities := make([]string, 0, len(mappers))
-	for _, mapper := range mappers {
-		if identity := mapper.Identity(); identity != "" {
-			hash := mapper.TransformIdentity(config.CompilerOptions())
-			bytes := hash.Bytes()
-			identities = append(identities, identity+":"+hex.EncodeToString(bytes[:]))
-		}
+// ContentMapperIdentities returns the project's sorted mapper transform identities. A nil project means
+// the compiler host has no configured content mappers.
+func ContentMapperIdentities(project contentmapper.Project) ([]string, error) {
+	if project == nil {
+		return nil, nil
 	}
-	if len(identities) == 0 {
-		return nil
-	}
-	slices.Sort(identities)
-	return identities
+	return project.Identities()
 }
 
 // ContentMapperIdentitiesMatch reports whether the content mapper identities recorded in this build info

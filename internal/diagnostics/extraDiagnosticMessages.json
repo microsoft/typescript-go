@@ -250,5 +250,25 @@
     "The content mapper diagnostic source '{0}' is reserved by TypeScript.": {
         "category": "Message",
         "code": 100050
+    },
+    "The content mapper returned a project response that could not be decoded.": {
+        "category": "Message",
+        "code": 100051
+    },
+    "The content mapper returned 'watchedFiles' without declaring '\"dynamicConfig\": true'.": {
+        "category": "Message",
+        "code": 100052
+    },
+    "The content mapper process failed while handling the project request.": {
+        "category": "Message",
+        "code": 100053
+    },
+    "The content mapper did not return 'configIdentity' for its dynamic configuration.": {
+        "category": "Message",
+        "code": 100054
+    },
+    "The content mapper returned a non-absolute path in 'watchedFiles'.": {
+        "category": "Message",
+        "code": 100055
     }
 }

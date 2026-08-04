@@ -1,6 +1,8 @@
 package compiler
 
 import (
+	"errors"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -24,18 +26,21 @@ type CompilerHost interface {
 	// or an error if the transform fails or the mapper produces invalid position mappings. Implementations
 	// may cache successful results.
 	GetContentMappedSourceFile(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper, options *core.CompilerOptions) (*ast.SourceFile, error)
+	// ContentMapperProject returns the project-scoped content mapper used by this host, or nil when the
+	// command line has no content mappers. The project owns transform identity and lifecycle state.
+	ContentMapperProject() contentmapper.Project
 	GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine
 }
 
 var _ CompilerHost = (*compilerHost)(nil)
 
 type compilerHost struct {
-	currentDirectory    string
-	fs                  vfs.FS
-	defaultLibraryPath  string
-	extendedConfigCache tsoptions.ExtendedConfigCache
-	trace               func(msg *diagnostics.Message, args ...any)
-	contentMapperHost   contentmapper.Host
+	currentDirectory     string
+	fs                   vfs.FS
+	defaultLibraryPath   string
+	extendedConfigCache  tsoptions.ExtendedConfigCache
+	trace                func(msg *diagnostics.Message, args ...any)
+	contentMapperProject contentmapper.Project
 }
 
 func NewCachedFSCompilerHost(
@@ -44,9 +49,9 @@ func NewCachedFSCompilerHost(
 	defaultLibraryPath string,
 	extendedConfigCache tsoptions.ExtendedConfigCache,
 	trace func(msg *diagnostics.Message, args ...any),
-	contentMapperHost contentmapper.Host,
+	contentMapperProject contentmapper.Project,
 ) CompilerHost {
-	return NewCompilerHost(currentDirectory, cachedvfs.From(fs), defaultLibraryPath, extendedConfigCache, trace, contentMapperHost)
+	return NewCompilerHost(currentDirectory, cachedvfs.From(fs), defaultLibraryPath, extendedConfigCache, trace, contentMapperProject)
 }
 
 func NewCompilerHost(
@@ -55,18 +60,18 @@ func NewCompilerHost(
 	defaultLibraryPath string,
 	extendedConfigCache tsoptions.ExtendedConfigCache,
 	trace func(msg *diagnostics.Message, args ...any),
-	contentMapperHost contentmapper.Host,
+	contentMapperProject contentmapper.Project,
 ) CompilerHost {
 	if trace == nil {
 		trace = func(msg *diagnostics.Message, args ...any) {}
 	}
 	return &compilerHost{
-		currentDirectory:    currentDirectory,
-		fs:                  fs,
-		defaultLibraryPath:  defaultLibraryPath,
-		extendedConfigCache: extendedConfigCache,
-		trace:               trace,
-		contentMapperHost:   contentMapperHost,
+		currentDirectory:     currentDirectory,
+		fs:                   fs,
+		defaultLibraryPath:   defaultLibraryPath,
+		extendedConfigCache:  extendedConfigCache,
+		trace:                trace,
+		contentMapperProject: contentMapperProject,
 	}
 }
 
@@ -95,11 +100,18 @@ func (h *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.Sourc
 }
 
 func (h *compilerHost) GetContentMappedSourceFile(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper, options *core.CompilerOptions) (*ast.SourceFile, error) {
+	if h.contentMapperProject == nil {
+		return nil, errors.New("content mapper project is unavailable")
+	}
 	content, ok := h.FS().ReadFile(parseOptions.FileName)
 	if !ok {
 		return nil, nil
 	}
-	return contentmapper.TransformAndParse(parseOptions, content, mapper, options, h.contentMapperHost)
+	return contentmapper.TransformAndParse(parseOptions, content, mapper, options, h.contentMapperProject)
+}
+
+func (h *compilerHost) ContentMapperProject() contentmapper.Project {
+	return h.contentMapperProject
 }
 
 func (h *compilerHost) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {

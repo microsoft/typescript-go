@@ -1167,6 +1167,15 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 				oldCheckerPool := project.checkerPool
 				project.host = newCompilerHost(project.currentDirectory, project, b, logger.Fork("CompilerHost"))
 				result := project.CreateProgram()
+				contentMapperProject := project.host.ContentMapperProject()
+				if contentMapperProject != nil {
+					watchedFiles, _ := contentMapperProject.WatchedFiles()
+					project.contentMapperWatch = project.contentMapperWatch.Clone(watchedFiles)
+					project.contentMapperWatchedFiles = collections.NewSetWithSizeHint[tspath.Path](len(watchedFiles))
+					for _, fileName := range watchedFiles {
+						project.contentMapperWatchedFiles.Add(b.toPath(fileName))
+					}
+				}
 				project.Program = result.Program
 				project.checkerPool = result.Program.GetCheckerPool().(*checkerPool)
 				project.ProgramUpdateKind = result.UpdateKind
@@ -1208,7 +1217,14 @@ func (b *ProjectCollectionBuilder) markFilesChanged(entry dirty.Value[*Project],
 
 			dirtyFilePath = p.dirtyFilePath
 			for _, path := range paths {
-				if p.containsFile(path) {
+				if p.contentMapperWatchedFiles != nil && p.contentMapperWatchedFiles.Has(path) {
+					if p.Program != nil && p.Program.ContentMapperProject() != nil {
+						_ = p.Program.ContentMapperProject().Refresh()
+					}
+					dirty = true
+					dirtyFilePath = ""
+					break
+				} else if p.containsFile(path) {
 					dirty = true
 					if changeType == lsproto.FileChangeTypeDeleted {
 						dirtyFilePath = ""

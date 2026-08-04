@@ -1,14 +1,15 @@
 package incremental_test
 
 import (
-	"slices"
-	"strings"
+	"errors"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
+	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
 
@@ -24,29 +25,39 @@ func configWithMappers(mappers ...*contentmapper.Mapper) *tsoptions.ParsedComman
 func TestContentMapperIdentities(t *testing.T) {
 	t.Parallel()
 
-	assert.Assert(t, incremental.ContentMapperIdentities(configWithMappers()) == nil)
+	identities, err := incremental.ContentMapperIdentities(nil)
+	assert.NilError(t, err)
+	assert.Assert(t, identities == nil)
 
-	// Identities come from the mappers' resolved name/version; a mapper with no name is omitted, and the
-	// result is sorted so reordering content mappers in tsconfig does not change it.
-	config := configWithMappers(
-		&contentmapper.Mapper{Definition: contentmapper.Definition{Package: "vue"}, Manifest: contentmapper.Manifest{Name: "vue", Version: "2.0.0"}},
-		&contentmapper.Mapper{Definition: contentmapper.Definition{Package: "svelte"}, Manifest: contentmapper.Manifest{Name: "svelte", Version: "3.0.0"}},
-		&contentmapper.Mapper{Definition: contentmapper.Definition{Package: "anon"}},
-	)
-	identities := incremental.ContentMapperIdentities(config)
-	assert.Equal(t, len(identities), 2)
-	assert.Assert(t, strings.HasPrefix(identities[0], "svelte@3.0.0:"))
-	assert.Assert(t, strings.HasPrefix(identities[1], "vue@2.0.0:"))
+	project := fakeContentMapperProject{identities: []string{"svelte@3.0.0:one", "vue@2.0.0:two"}}
+	identities, err = incremental.ContentMapperIdentities(project)
+	assert.NilError(t, err)
+	assert.DeepEqual(t, identities, project.identities)
+}
+
+func TestStaticContentMapperTransformIdentity(t *testing.T) {
+	t.Parallel()
+
+	assert.Equal(t, (&contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "vue", Version: "2.0.0"}}).Identity(), "vue@2.0.0")
+	assert.Equal(t, (&contentmapper.Mapper{Definition: contentmapper.Definition{Package: "anon"}}).Identity(), "")
 
 	jsxMapper := &contentmapper.Mapper{
 		Definition: contentmapper.Definition{Package: "jsx"},
 		Manifest:   contentmapper.Manifest{Name: "jsx", Version: "1.0.0", CompilerOptions: []string{"jsx"}},
 	}
-	jsxPreserve := configWithMappers(jsxMapper)
-	jsxPreserve.ParsedConfig.CompilerOptions.Jsx = core.JsxEmitPreserve
-	jsxReact := configWithMappers(jsxMapper)
-	jsxReact.ParsedConfig.CompilerOptions.Jsx = core.JsxEmitReact
-	assert.Assert(t, !slices.Equal(incremental.ContentMapperIdentities(jsxPreserve), incremental.ContentMapperIdentities(jsxReact)))
+	jsxPreserveIdentity := jsxMapper.TransformIdentity(&core.CompilerOptions{Jsx: core.JsxEmitPreserve})
+	jsxReactIdentity := jsxMapper.TransformIdentity(&core.CompilerOptions{Jsx: core.JsxEmitReact})
+	assert.Assert(t, jsxPreserveIdentity != jsxReactIdentity)
+
+	optionsA := &contentmapper.Mapper{
+		Definition: contentmapper.Definition{Package: "vue", Options: []byte(`{"mode":"a"}`)},
+		Manifest:   contentmapper.Manifest{Name: "vue", Version: "1.0.0"},
+	}
+	optionsB := &contentmapper.Mapper{
+		Definition: contentmapper.Definition{Package: "vue", Options: []byte(`{"mode":"b"}`)},
+		Manifest:   contentmapper.Manifest{Name: "vue", Version: "1.0.0"},
+	}
+	assert.Assert(t, optionsA.TransformIdentity(&core.CompilerOptions{}) != optionsB.TransformIdentity(&core.CompilerOptions{}))
 }
 
 func TestContentMapperIdentitiesMatch(t *testing.T) {
@@ -70,19 +81,64 @@ func (r fakeBuildInfoReader) ReadBuildInfo(*tsoptions.ParsedCommandLine) *increm
 	return r.buildInfo
 }
 
+type fakeContentMapperProject struct {
+	identities []string
+	err        error
+}
+
+func (p fakeContentMapperProject) Refresh() error                                 { return nil }
+func (p fakeContentMapperProject) Identities() ([]string, error)                  { return p.identities, p.err }
+func (p fakeContentMapperProject) Identity(*contentmapper.Mapper) (string, error) { return "", nil }
+func (p fakeContentMapperProject) WatchedFiles() ([]string, error)                { return nil, nil }
+
+func (p fakeContentMapperProject) Transform(*contentmapper.Mapper, contentmapper.Request) (contentmapper.Result, error) {
+	return contentmapper.Result{}, nil
+}
+func (p fakeContentMapperProject) Close() error { return nil }
+
+func TestDynamicContentMapperIdentities(t *testing.T) {
+	t.Parallel()
+	config := configWithMappers(&contentmapper.Mapper{
+		Definition: contentmapper.Definition{Package: "dynamic"},
+		Manifest:   contentmapper.Manifest{Name: "dynamic", Version: "1.0.0", DynamicConfig: true},
+	})
+	project := fakeContentMapperProject{identities: []string{"dynamic@1.0.0:opaque"}}
+	identities, err := incremental.ContentMapperIdentities(project)
+	assert.NilError(t, err)
+	assert.DeepEqual(t, identities, project.identities)
+
+	buildInfo := &incremental.BuildInfo{
+		Version:                 core.Version(),
+		FileNames:               []string{"/src/a.ts"},
+		ContentMapperIdentities: []string{"dynamic@1.0.0:old"},
+	}
+	host := compiler.NewCompilerHost("/", vfstest.FromMap[any](nil, true), "", nil, nil, project)
+	program := incremental.ReadBuildInfoProgram(config, fakeBuildInfoReader{buildInfo}, host)
+	assert.Assert(t, program == nil, "expected opaque mapper identity changes to discard the old program")
+}
+
+func TestContentMapperIdentityError(t *testing.T) {
+	t.Parallel()
+	want := errors.New("identity failed")
+	identities, err := incremental.ContentMapperIdentities(fakeContentMapperProject{err: want})
+	assert.Assert(t, identities == nil)
+	assert.ErrorIs(t, err, want)
+}
+
 func TestReadBuildInfoProgramContentMapperIdentityMismatch(t *testing.T) {
 	t.Parallel()
 
-	// An otherwise-valid, incremental build info whose recorded mapper identity differs from the one the
-	// config now resolves to cannot be reused: the old program is discarded (nil) so the project is
-	// rebuilt. The host is never touched because we bail before reconstructing the snapshot.
+	// An otherwise-valid, incremental build info whose recorded mapper identity differs from the current
+	// project cannot be reused: the old program is discarded (nil) so the project is rebuilt.
 	buildInfo := &incremental.BuildInfo{
 		Version:                 core.Version(),
 		FileNames:               []string{"/src/a.ts"},
 		ContentMapperIdentities: []string{"vue@1.0.0"},
 	}
 	config := configWithMappers(&contentmapper.Mapper{Definition: contentmapper.Definition{Package: "vue", Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "vue", Version: "2.0.0"}})
+	project := fakeContentMapperProject{identities: []string{"vue@2.0.0:current"}}
+	host := compiler.NewCompilerHost("/", vfstest.FromMap[any](nil, true), "", nil, nil, project)
 
-	program := incremental.ReadBuildInfoProgram(config, fakeBuildInfoReader{buildInfo}, nil)
+	program := incremental.ReadBuildInfoProgram(config, fakeBuildInfoReader{buildInfo}, host)
 	assert.Assert(t, program == nil, "expected the old program to be discarded when the mapper identity changed")
 }

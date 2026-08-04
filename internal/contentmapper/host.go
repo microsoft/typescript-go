@@ -9,22 +9,26 @@ import (
 	"github.com/microsoft/typescript-go/internal/spanmap"
 )
 
+// TransformErrorKind identifies the stage at which a content mapper transform failed.
 type TransformErrorKind uint8
 
 const (
 	TransformErrorKindUnknown TransformErrorKind = iota
 	TransformErrorKindInitialize
+	TransformErrorKindProject
 	TransformErrorKindCompilerOptions
 	TransformErrorKindRequest
 	TransformErrorKindResponse
 	TransformErrorKindMappings
 )
 
+// TransformError reports a failure while preparing, requesting, or decoding a transform.
 type TransformError struct {
 	Kind TransformErrorKind
 	err  error
 }
 
+// NewTransformError creates a transform error for the given stage and underlying error.
 func NewTransformError(kind TransformErrorKind, err error) *TransformError {
 	return &TransformError{Kind: kind, err: err}
 }
@@ -35,6 +39,37 @@ func (e *TransformError) Error() string {
 
 func (e *TransformError) Unwrap() error { return e.err }
 
+// ProjectErrorKind identifies why a mapper's openProject response was rejected.
+type ProjectErrorKind uint8
+
+const (
+	ProjectErrorKindMalformedResponse ProjectErrorKind = iota
+	ProjectErrorKindMissingConfigIdentity
+	ProjectErrorKindNonAbsoluteWatchedFile
+	ProjectErrorKindWatchedFilesRequireDynamicConfig
+)
+
+// ProjectError reports an invalid mapper openProject response.
+type ProjectError struct {
+	Kind ProjectErrorKind
+}
+
+func (e *ProjectError) Error() string {
+	switch e.Kind {
+	case ProjectErrorKindMalformedResponse:
+		return "content mapper returned a malformed project response"
+	case ProjectErrorKindMissingConfigIdentity:
+		return "content mapper did not return configIdentity for dynamic configuration"
+	case ProjectErrorKindNonAbsoluteWatchedFile:
+		return "content mapper returned a non-absolute path in watchedFiles"
+	case ProjectErrorKindWatchedFilesRequireDynamicConfig:
+		return "content mapper returned watchedFiles without dynamicConfig"
+	default:
+		return "content mapper returned an invalid project response"
+	}
+}
+
+// InitializeErrorKind identifies why a mapper's initialize response was rejected.
 type InitializeErrorKind uint8
 
 const (
@@ -44,6 +79,7 @@ const (
 	InitializeErrorKindReservedDiagnosticSource
 )
 
+// InitializeError reports an invalid or unsupported mapper initialize response.
 type InitializeError struct {
 	Kind             InitializeErrorKind
 	ProtocolVersion  int
@@ -91,9 +127,43 @@ type Request struct {
 	CompilerOptions *core.CompilerOptions
 }
 
+// ProjectSpec describes the project configuration visible to its content mappers.
+type ProjectSpec struct {
+	// ConfigFileName is the absolute project configuration file name, or empty for a project without one.
+	ConfigFileName string
+	// Mappers are the resolved content mapper entries configured for the project.
+	Mappers []*Mapper
+	// CompilerOptions are the project's effective compiler options.
+	CompilerOptions *core.CompilerOptions
+}
+
+// Project is the project-scoped view of a Host. It owns mapper configuration handles and provides the
+// identities and watch dependencies needed for caching and incremental builds. Dynamic-config mapper projects
+// are opened lazily when an identity, watch dependency, or transform is first requested.
+type Project interface {
+	// Refresh invalidates dynamic mapper configuration so it is reopened on the next operation that needs it.
+	Refresh() error
+	// Identities returns sorted transform identities for all configured mappers. It returns an error if
+	// dynamic project configuration cannot be opened or validated.
+	Identities() ([]string, error)
+	// Identity returns the transform identity for mapper, or an empty string if mapper is not in this
+	// project. It returns an error if dynamic project configuration cannot be opened or validated.
+	Identity(mapper *Mapper) (string, error)
+	// WatchedFiles returns the absolute files on which dynamic mapper configuration depends. It returns an
+	// error if dynamic project configuration cannot be opened or validated.
+	WatchedFiles() ([]string, error)
+	// Transform transforms one foreign file using mapper in this project's configuration.
+	Transform(mapper *Mapper, request Request) (result Result, err error)
+	// Close releases this project reference and closes mapper project handles when no references remain.
+	Close() error
+}
+
 // Host transforms foreign file content into TypeScript during program construction, by driving the
 // configured content mappers. Create one with NewHost; Close tears down every mapper it spawned.
 type Host interface {
+	// Project returns a retained project-scoped view for spec. Equivalent specs share underlying mapper
+	// configuration state; the caller must close the returned Project.
+	Project(spec ProjectSpec) Project
 	// Acquire retains the processes for the given mapper identities until the returned lease is released.
 	// Acquiring a mapper does not start its process; processes remain lazy until Transform is called.
 	Acquire(mappers []*Mapper) (release func())

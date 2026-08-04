@@ -1,8 +1,6 @@
 package contentmapper
 
 import (
-	"fmt"
-
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
@@ -20,12 +18,9 @@ func TransformAndParse(
 	content string,
 	mapper *Mapper,
 	compilerOptions *core.CompilerOptions,
-	host Host,
+	project Project,
 ) (*ast.SourceFile, error) {
-	if host == nil {
-		panic(fmt.Sprintf("content mapper host is required to load content-mapped file %q", parseOptions.FileName))
-	}
-	result, err := host.Transform(mapper, Request{
+	result, err := project.Transform(mapper, Request{
 		FileName:        parseOptions.FileName,
 		Content:         content,
 		CompilerOptions: compilerOptions,

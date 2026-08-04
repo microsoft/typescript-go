@@ -42,7 +42,6 @@ type Snapshot struct {
 	autoImportsWatch                   *WatchedFiles[map[tspath.Path]string]
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	userPreferences                    lsutil.UserPreferences
-	releaseContentMappers              func()
 
 	builderLogs *logging.LogTree
 	apiError    error
@@ -477,9 +476,6 @@ func (s *Snapshot) Clone(
 	newSnapshot.parentId = s.id
 	newSnapshot.ProjectCollection = projectCollection
 	newSnapshot.ConfigFileRegistry = configFileRegistry
-	if session.contentMapperHost != nil {
-		newSnapshot.releaseContentMappers = session.contentMapperHost.Acquire(newSnapshot.ConfigFileRegistry.contentMappers().mappers)
-	}
 	newSnapshot.builderLogs = logger
 	newSnapshot.apiError = apiError
 
@@ -555,11 +551,11 @@ func (s *Snapshot) Deref(session *Session) {
 }
 
 func (s *Snapshot) dispose(session *Session) {
-	if s.releaseContentMappers != nil {
-		defer s.releaseContentMappers()
-	}
 	for _, project := range s.ProjectCollection.Projects() {
 		if project.Program != nil && session.programCounter.Deref(project.Program) {
+			if contentMapperProject := project.Program.ContentMapperProject(); contentMapperProject != nil {
+				_ = contentMapperProject.Close()
+			}
 			// This program is no longer referenced by any snapshot.
 			// Mark its checker pool as discarded so its idle-cleanup timer stops
 			// keeping the pool alive, allowing the pool and any idle checkers it

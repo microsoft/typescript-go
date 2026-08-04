@@ -125,6 +125,72 @@ func TestContentMapperWatchLifecycle(t *testing.T) {
 	}
 }
 
+func TestDynamicContentMapperWatchDependency(t *testing.T) {
+	t.Parallel()
+	const mapperConfigFileName = "/home/src/workspaces/project/mapper.config.json"
+	input := &tscInput{files: FileMap{
+		"/home/src/workspaces/project/tsconfig.json": `{
+			"compilerOptions": { "composite": true },
+			"contentMappers": [{ "package": "mapper", "extensions": [".vue"] }]
+		}`,
+		mapperConfigFileName:                                            `{ "version": 1 }`,
+		"/home/src/workspaces/project/app.vue":                          `export const app = 1;`,
+		"/home/src/workspaces/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.DynamicVerbatimMapper),
+	}}
+	testSys := newTestSys(input, false)
+	lifecycle := &contentmappertest.ProjectLifecycle{}
+	spawner := &recordingContentMapperSpawner{inner: contentmappertest.NewSpawnerWithProjectLifecycle(lifecycle)}
+	sys := &recordingContentMapperSystem{TestSys: testSys, spawner: spawner}
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+
+	result := execute.CommandLine(ctx, sys, []string{"--watch", "--loadExternalPlugins"}, testSys)
+	w := result.Watcher.(*execute.Watcher)
+	fullBuilds := w.FullBuilds()
+
+	testSys.writeFileNoError(mapperConfigFileName, `{ "version": 2 }`)
+	testSys.mockWatchBackend.SendEvents([]fswatch.Event{{Kind: fswatch.EventUpdate, Path: mapperConfigFileName}})
+	w.DoCycle()
+
+	assert.Equal(t, w.FullBuilds(), fullBuilds+1)
+	assert.Equal(t, lifecycle.Opens.Load(), int32(2))
+	assert.Equal(t, lifecycle.Closes.Load(), int32(1))
+	assert.Equal(t, spawner.spawns.Load(), int32(1))
+	assert.Equal(t, spawner.closes.Load(), int32(0))
+}
+
+func TestDynamicContentMapperBuildWatchDependency(t *testing.T) {
+	t.Parallel()
+	const mapperConfigFileName = "/home/src/workspaces/project/mapper.config.json"
+	input := &tscInput{files: FileMap{
+		"/home/src/workspaces/project/tsconfig.json": `{
+			"compilerOptions": { "composite": true },
+			"contentMappers": [{ "package": "mapper", "extensions": [".vue"] }]
+		}`,
+		mapperConfigFileName:                                            `{ "version": 1 }`,
+		"/home/src/workspaces/project/app.vue":                          `export const app = 1;`,
+		"/home/src/workspaces/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.DynamicVerbatimMapper),
+	}}
+	testSys := newTestSys(input, false)
+	lifecycle := &contentmappertest.ProjectLifecycle{}
+	spawner := &recordingContentMapperSpawner{inner: contentmappertest.NewSpawnerWithProjectLifecycle(lifecycle)}
+	sys := &recordingContentMapperSystem{TestSys: testSys, spawner: spawner}
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+
+	result := execute.CommandLine(ctx, sys, []string{"--build", "--watch", "--loadExternalPlugins"}, testSys)
+	assert.Equal(t, lifecycle.Opens.Load(), int32(1))
+
+	testSys.writeFileNoError(mapperConfigFileName, `{ "version": 2 }`)
+	testSys.mockWatchBackend.SendEvents([]fswatch.Event{{Kind: fswatch.EventUpdate, Path: mapperConfigFileName}})
+	result.Watcher.DoCycle()
+
+	assert.Equal(t, lifecycle.Opens.Load(), int32(2))
+	assert.Equal(t, lifecycle.Closes.Load(), int32(1))
+	assert.Equal(t, spawner.spawns.Load(), int32(1))
+	assert.Equal(t, spawner.closes.Load(), int32(0))
+}
+
 func TestContentMapperBuildWatchSharedLifecycle(t *testing.T) {
 	t.Parallel()
 	const mapperConfig = `{
