@@ -116,7 +116,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 			location:                file.AsNode(),
 			contextToken:            contextToken,
 		}
-		_, items, _ := l.getCompletionEntriesFromSymbols(
+		_, items, err := l.getCompletionEntriesFromSymbols(
 			ctx,
 			typeChecker,
 			data,
@@ -126,6 +126,9 @@ func (l *LanguageService) convertStringLiteralCompletions(
 			options,
 			includeSymbols, /*includeSymbols*/
 		)
+		if err != nil {
+			panic(err)
+		}
 		defaultCommitCharacters := getDefaultCommitCharacters(completion.hasIndexSignature)
 		itemDefaults := l.setItemDefaults(
 			ctx,
