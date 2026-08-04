@@ -791,7 +791,6 @@ type Checker struct {
 	typeofType                                  *Type
 	typeResolutions                             []TypeResolution
 	resolutionStart                             int
-	inVarianceComputation                       bool
 	varianceStack                               []VarianceStackEntry
 	apparentArgumentCount                       *int
 	lastGetCombinedNodeFlagsNode                *ast.Node

@@ -1356,13 +1356,11 @@ func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type)
 			}()
 		}
 		if !c.varianceStackContains(symbol) {
-			c.varianceStack = append(c.varianceStack, VarianceStackEntry{symbol, typeParameters})
-			oldVarianceComputation := c.inVarianceComputation
 			saveResolutionStart := c.resolutionStart
-			if !c.inVarianceComputation {
-				c.inVarianceComputation = true
+			if len(c.varianceStack) == 0 {
 				c.resolutionStart = len(c.typeResolutions)
 			}
+			c.varianceStack = append(c.varianceStack, VarianceStackEntry{symbol, typeParameters})
 			variances = make([]VarianceFlags, len(typeParameters))
 			for i, tp := range typeParameters {
 				modifiers := c.getTypeParameterModifiers(tp)
@@ -1401,18 +1399,25 @@ func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type)
 					}
 					c.reliabilityFlags = saveReliabilityFlags
 				}
+				// If variance computation was restarted due to a circularity we may have already
+				// computed variances for this generic type. If so, we exit early.
+				if len(links.variances) != 0 {
+					break
+				}
 				variances[i] = variance
 			}
-			if !oldVarianceComputation {
-				c.inVarianceComputation = false
-				c.resolutionStart = saveResolutionStart
-			}
+			// Store the results unless a restarted computation has already stored them.
 			if len(links.variances) == 0 {
 				links.variances = variances
 			}
 			c.varianceStack = c.varianceStack[:len(c.varianceStack)-1]
+			if len(c.varianceStack) == 0 {
+				c.resolutionStart = saveResolutionStart
+			}
 		} else {
-			// Circularity
+			// We've detected a circularity. Since we may compute different variances depending on where
+			// we enter a circularity, we find the generic type with the "smallest" symbol and restart the
+			// computation from there if necessary. This ensures stable results for circular generic types.
 			minIndex := 0
 			for i := 1; i < len(c.varianceStack); i++ {
 				if c.compareSymbols(c.varianceStack[i].symbol, c.varianceStack[minIndex].symbol) < 0 {
@@ -1425,6 +1430,8 @@ func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type)
 				c.getVariancesWorker(saveVarianceStack[minIndex].symbol, saveVarianceStack[minIndex].typeParameters)
 				c.varianceStack = saveVarianceStack
 			}
+			// Store an empty slice to mark that we can't compute variances for this type. We treat type
+			// parameters as co-variant in this case.
 			if len(links.variances) == 0 {
 				links.variances = []VarianceFlags{}
 			}
@@ -3962,8 +3969,8 @@ func (r *Relater) typeArgumentsRelatedTo(sources []*Type, targets []*Type, varia
 					related = r.c.compareTypesIdentical(s, t)
 				}
 			} else {
-				// Propagate unreliable variance flag
-				if r.c.inVarianceComputation && varianceFlags&VarianceFlagsUnreliable != 0 {
+				// Propagate unreliable variance flag in variance computations
+				if len(r.c.varianceStack) != 0 && varianceFlags&VarianceFlagsUnreliable != 0 {
 					r.c.instantiateType(s, r.c.reportUnreliableMapper)
 				}
 				if variance == VarianceFlagsCovariant {
