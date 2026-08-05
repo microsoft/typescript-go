@@ -1,0 +1,9 @@
+negatedUnicodeSetUnionMayContainStrings.ts(1,14): error TS1518: Anything that would possibly match more than a single character is invalid inside a negated character class.
+
+
+==== negatedUnicodeSetUnionMayContainStrings.ts (1 errors) ====
+    const a = /[^\q{xy}b]/v;
+                 ~~~~~~
+!!! error TS1518: Anything that would possibly match more than a single character is invalid inside a negated character class.
+    const b = /[^b\q{xy}]/v;
+    

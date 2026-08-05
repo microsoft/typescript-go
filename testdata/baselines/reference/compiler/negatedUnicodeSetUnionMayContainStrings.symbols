@@ -1,0 +1,9 @@
+//// [tests/cases/compiler/negatedUnicodeSetUnionMayContainStrings.ts] ////
+
+=== negatedUnicodeSetUnionMayContainStrings.ts ===
+const a = /[^\q{xy}b]/v;
+>a : Symbol(a, Decl(negatedUnicodeSetUnionMayContainStrings.ts, 0, 5))
+
+const b = /[^b\q{xy}]/v;
+>b : Symbol(b, Decl(negatedUnicodeSetUnionMayContainStrings.ts, 1, 5))
+
