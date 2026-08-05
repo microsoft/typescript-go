@@ -3821,6 +3821,37 @@ func TestTscNoEmit(t *testing.T) {
 	}
 }
 
+func TestTscModuleDeclarationsInNonScopeBlock(t *testing.T) {
+	t.Parallel()
+	files := FileMap{
+		"/home/src/projects/project/a.ts": stringtestutil.Dedent(`
+			{
+				export { a } from "exportNamed";
+				export * from "exportStar";
+				import { b } from "importNamed";
+				import c = require("importEquals");
+				import "sideEffect";
+			}
+		`),
+	}
+	for _, test := range []*tscInput{
+		{
+			subScenario:     "concurrent",
+			files:           files,
+			cwd:             "/home/src/projects/project",
+			commandLineArgs: []string{"--noEmit", "a.ts"},
+		},
+		{
+			subScenario:     "single threaded",
+			files:           files,
+			cwd:             "/home/src/projects/project",
+			commandLineArgs: []string{"--noEmit", "--singleThreaded", "a.ts"},
+		},
+	} {
+		test.run(t, "moduleDeclarationsInNonScopeBlock")
+	}
+}
+
 func TestTscNoEmitOnError(t *testing.T) {
 	t.Parallel()
 	type tscNoEmitOnErrorScenario struct {
