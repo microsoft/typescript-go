@@ -1354,7 +1354,8 @@ func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type)
 				popFn()
 			}()
 		}
-		if !c.varianceStackContains(symbol) {
+		stackIndex := c.getVarianceStackIndex(symbol)
+		if stackIndex < 0 {
 			saveResolutionStart := c.resolutionStart
 			if len(c.varianceStack) == 0 {
 				c.resolutionStart = len(c.typeResolutions)
@@ -1415,15 +1416,16 @@ func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type)
 			}
 		} else {
 			// We've detected a circularity. Since we may compute different variances depending on where
-			// we enter a circularity, we find the generic type with the "smallest" symbol and restart the
-			// computation from there if necessary. This ensures stable results for circular generic types.
-			minIndex := 0
-			for i := 1; i < len(c.varianceStack); i++ {
+			// we enter a circularity, we find the generic type with the "smallest" symbol in the circular
+			// region of the variance stack and restart the computation from there if necessary. This
+			// ensures stable results for circular generic types.
+			minIndex := stackIndex
+			for i := stackIndex + 1; i < len(c.varianceStack); i++ {
 				if c.compareSymbols(c.varianceStack[i].symbol, c.varianceStack[minIndex].symbol) < 0 {
 					minIndex = i
 				}
 			}
-			if minIndex > 0 {
+			if minIndex > stackIndex {
 				saveVarianceStack := c.varianceStack
 				c.varianceStack = nil
 				c.getVariancesWorker(saveVarianceStack[minIndex].symbol, saveVarianceStack[minIndex].typeParameters)
@@ -1439,13 +1441,13 @@ func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type)
 	return links.variances
 }
 
-func (c *Checker) varianceStackContains(symbol *ast.Symbol) bool {
-	for _, entry := range c.varianceStack {
+func (c *Checker) getVarianceStackIndex(symbol *ast.Symbol) int {
+	for i, entry := range c.varianceStack {
 		if entry.symbol == symbol {
-			return true
+			return i
 		}
 	}
-	return false
+	return -1
 }
 
 func (c *Checker) createMarkerType(symbol *ast.Symbol, source *Type, target *Type) *Type {
