@@ -828,6 +828,22 @@ func TestParseJsonConfigFileContent(t *testing.T) {
 	}
 }
 
+func TestParseCheckerAssociationSeedFromConfig(t *testing.T) {
+	t.Parallel()
+	host := tsoptionstest.NewVFSParseConfigHost(map[string]string{
+		"/project/tsconfig.json": `{
+			"compilerOptions": {
+				"checkerAssociationSeed": 1234
+			},
+			"files": ["index.ts"]
+		}`,
+		"/project/index.ts": "",
+	}, "/project", true)
+	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile("/project/tsconfig.json", nil, nil, host, nil)
+	assert.Assert(t, len(errors) == 0, "unexpected errors: %v", errors)
+	assert.DeepEqual(t, parsed.CompilerOptions().CheckerAssociationSeed, new(1234))
+}
+
 func getParsedWithJsonApi(config testConfig, host tsoptions.ParseConfigHost, basePath string) *tsoptions.ParsedCommandLine {
 	configFileName := tspath.GetNormalizedAbsolutePath(config.configFileName, basePath)
 	path := tspath.ToPath(config.configFileName, basePath, host.FS().UseCaseSensitiveFileNames())
