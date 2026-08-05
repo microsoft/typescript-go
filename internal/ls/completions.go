@@ -4960,7 +4960,7 @@ func (l *LanguageService) createLSPCompletionItem(
 	// Adjustements based on kind modifiers.
 	var tags *[]lsproto.CompletionItemTag
 	// Copied from vscode ts extension: `MyCompletionItem.constructor`.
-	if kindModifiers&lsutil.ScriptElementKindModifierOptional != 0 {
+	if isMemberCompletion && kindModifiers&lsutil.ScriptElementKindModifierOptional != 0 {
 		if insertText == "" {
 			insertText = name
 		}
