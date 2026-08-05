@@ -54,9 +54,10 @@ abstract class Derived extends Base {
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, new("a"), &fourslash.ApplyCodeActionFromCompletionOptions{
-		Name:        "M",
-		Source:      "ClassMemberSnippet/",
-		Description: "Update modifiers of 'M'",
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
+		Name:            "M",
+		Source:          "ClassMemberSnippet/",
+		Description:     "Update modifiers of 'M'",
 		NewFileContent: new(`abstract class Base {
     abstract M<T>(t: T): void;
     abstract M<T>(t: T, x: number): void;

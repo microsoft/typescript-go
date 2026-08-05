@@ -48,9 +48,10 @@ class Foo extends AFoo {
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, new("a"), &fourslash.ApplyCodeActionFromCompletionOptions{
-		Name:        "bar",
-		Source:      "ClassMemberSnippet/",
-		Description: "Update modifiers of 'bar'",
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
+		Name:            "bar",
+		Source:          "ClassMemberSnippet/",
+		Description:     "Update modifiers of 'bar'",
 		NewFileContent: new(`abstract class AFoo {
     abstract bar(): Promise<void>;
 }

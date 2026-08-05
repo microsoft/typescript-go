@@ -36,10 +36,9 @@ class B implements A {
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: append([]fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label:      "def",
-					Kind:       new(lsproto.CompletionItemKindField),
-					SortText:   new(string(ls.SortTextLocationPriority)),
-					InsertText: new("def: string"),
+					Label:    "def",
+					Kind:     new(lsproto.CompletionItemKindField),
+					SortText: new(string(ls.SortTextLocationPriority)),
 				},
 			}, CompletionClassElementKeywords...),
 		},

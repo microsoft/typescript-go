@@ -63,9 +63,10 @@ class E extends Base {
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, new(""), &fourslash.ApplyCodeActionFromCompletionOptions{
-		Name:        "method",
-		Source:      "ClassMemberSnippet/",
-		Description: "Update modifiers of 'method'",
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
+		Name:            "method",
+		Source:          "ClassMemberSnippet/",
+		Description:     "Update modifiers of 'method'",
 		NewFileContent: new(`class Base {
     method() {}
     protected prop = 1;

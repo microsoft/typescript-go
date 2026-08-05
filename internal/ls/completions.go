@@ -17,7 +17,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
-	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/locale"
@@ -1113,7 +1112,8 @@ func (l *LanguageService) getCompletionData(
 					}
 				}
 				if objectLikeContainer.Kind == ast.KindObjectLiteralExpression && preferences.IncludeCompletionsWithObjectLiteralMethodSnippets.IsTrue() {
-					if displayName := getObjectLiteralPropertyCompletionName(member); displayName != "" {
+					displayName, _ := getCompletionEntryDisplayNameForSymbol(member, nil /*origin*/, CompletionKindObjectPropertyDeclaration, false /*isJsxIdentifierExpected*/)
+					if displayName != "" {
 						originalSortText := core.OrElse(symbolToSortTextMap[symbolId], SortTextLocationPriority)
 						symbolToSortTextMap[symbolId] = ObjectLiteralPropertySortText(originalSortText, displayName)
 					}
@@ -1970,6 +1970,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 
 		replacementSpan := (*lsproto.Range)(nil)
 		insertText := ""
+		filterText := ""
 		isSnippet := false
 		sortText := SortTextAutoImportSuggestions
 
@@ -1977,12 +1978,14 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			isSnippet = clientSupportsItemSnippet(ctx)
 			insertText, replacementSpan = getInsertTextAndReplacementSpanForImportCompletion(
 				autoImport.Fix,
+				autoimport.GetImportKindForImportStatement(file, autoImport.Export, l.GetProgram()),
 				data.importStatementCompletion,
 				useSemicolons,
 				file,
 				preferences,
 				isSnippet,
 			)
+			filterText = autoImport.Fix.Name
 			sortText = SortTextLocationPriority
 		}
 
@@ -1997,7 +2000,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 				if autoImport.Export.Flags&ast.SymbolFlagsType == 0 && autoImport.Export.Flags&ast.SymbolFlagsModule == 0 {
 					continue
 				}
-			} else if autoImport.Export.Flags&ast.SymbolFlagsValue == 0 {
+			} else if data.importStatementCompletion == nil && autoImport.Export.Flags&ast.SymbolFlagsValue == 0 {
 				continue
 			}
 		}
@@ -2005,8 +2008,8 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 		entry := l.createLSPCompletionItem(
 			ctx,
 			autoImport.Fix.Name,
-			"",
-			"",
+			insertText,
+			filterText,
 			sortText,
 			autoImport.Export.ScriptElementKind,
 			autoImport.Export.ScriptElementKindModifiers,
@@ -2019,17 +2022,15 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			position,
 			false, /*isMemberCompletion*/
 			isSnippet,
-			true,  /*hasAction*/
-			false, /*preselect*/
+			data.importStatementCompletion == nil, /*hasAction*/
+			false,                                 /*preselect*/
 			autoImport.Fix.ModuleSpecifier,
 			autoImport.Fix.AutoImportFix,
 			nil, /*additionalTextEdits*/
 			nil, /*detail*/
 		)
 
-		if insertText != "" {
-			setNewText(entry, insertText)
-		}
+		entry.Data.IsImportStatementCompletion = data.importStatementCompletion != nil
 
 		if isShadowed, _ := uniques[autoImport.Fix.Name]; !isShadowed {
 			uniques[autoImport.Fix.Name] = false
@@ -2061,7 +2062,7 @@ func completionNameForLiteral(
 	panic(fmt.Sprintf("Unhandled literal value: %v", literal))
 }
 
-func getInsertTextAndReplacementSpanForImportCompletion(fix *autoimport.Fix, importStatementCompletion *importStatementCompletionInfo, useSemicolons bool, file *ast.SourceFile, preferences lsutil.UserPreferences, isSnippet bool) (insertText string, replacementSpan *lsproto.Range) {
+func getInsertTextAndReplacementSpanForImportCompletion(fix *autoimport.Fix, importKind lsproto.ImportKind, importStatementCompletion *importStatementCompletionInfo, useSemicolons bool, file *ast.SourceFile, preferences lsutil.UserPreferences, isSnippet bool) (insertText string, replacementSpan *lsproto.Range) {
 	quotedModuleSpecifier := escapeSnippetText(quote(file, preferences, fix.ModuleSpecifier))
 	tabStop := core.IfElse(isSnippet, "$1", "")
 	suffix := core.IfElse(useSemicolons, ";", "")
@@ -2069,7 +2070,7 @@ func getInsertTextAndReplacementSpanForImportCompletion(fix *autoimport.Fix, imp
 	name := escapeSnippetText(fix.Name)
 	replacementSpan = importStatementCompletion.replacementSpan
 
-	switch fix.ImportKind {
+	switch importKind {
 	case lsproto.ImportKindCommonJS:
 		return fmt.Sprintf("import%s%s%s = require(%s)%s", topLevelTypeOnlyText, name, tabStop, quotedModuleSpecifier, suffix), replacementSpan
 	case lsproto.ImportKindDefault:
@@ -2079,7 +2080,7 @@ func getInsertTextAndReplacementSpanForImportCompletion(fix *autoimport.Fix, imp
 	case lsproto.ImportKindNamed:
 		return fmt.Sprintf("import%s{ %s%s%s } from %s%s", topLevelTypeOnlyText, core.IfElse(importStatementCompletion.couldBeTypeOnlyImportSpecifier, scanner.TokenToString(ast.KindTypeKeyword)+" ", ""), name, tabStop, quotedModuleSpecifier, suffix), replacementSpan
 	default:
-		panic("unhandled import kind: " + fix.ImportKind.String())
+		panic("unhandled import kind: " + importKind.String())
 	}
 }
 
@@ -2243,8 +2244,7 @@ func (l *LanguageService) createCompletionItem(
 	}
 
 	var additionalTextEdits *[]*lsproto.TextEdit
-	isClassMemberSnippetCompletion := false
-	if preferences.IncludeCompletionsWithClassMemberSnippets.IsTrueOrUnknown() && data.completionKind == CompletionKindMemberLike && isClassLikeMemberCompletion(symbol, data.location, file) {
+	if preferences.IncludeCompletionsWithClassMemberSnippets.IsTrue() && data.completionKind == CompletionKindMemberLike && isClassLikeMemberCompletion(symbol, data.location, file) {
 		memberCompletionEntry, err := l.getEntryForMemberCompletion(ctx, typeChecker, symbol, name, data.location, position, contextToken, file)
 		if err != nil {
 			return nil, err
@@ -2252,11 +2252,10 @@ func (l *LanguageService) createCompletionItem(
 		if memberCompletionEntry == nil {
 			return nil, nil
 		}
-		isClassMemberSnippetCompletion = true
 		insertText = memberCompletionEntry.insertText
 		filterText = memberCompletionEntry.filterText
 		isSnippet = memberCompletionEntry.isSnippet
-		if len(memberCompletionEntry.additionalTextEdits) > 0 || memberCompletionEntry.eraseRange != nil {
+		if len(memberCompletionEntry.additionalTextEdits) > 0 {
 			additionalTextEdits = &memberCompletionEntry.additionalTextEdits
 			hasAction = true
 			source = string(completionSourceClassMemberSnippet)
@@ -2350,11 +2349,6 @@ func (l *LanguageService) createCompletionItem(
 
 	preselect := isRecommendedCompletionMatch(symbol, data.recommendedCompletion, typeChecker)
 	kindModifiers := lsutil.GetSymbolModifiers(typeChecker, symbol)
-	if isClassMemberSnippetCompletion ||
-		data.completionKind == CompletionKindObjectPropertyDeclaration &&
-			preferences.IncludeCompletionsWithObjectLiteralMethodSnippets.IsTrue() {
-		kindModifiers &^= lsutil.ScriptElementKindModifierOptional
-	}
 
 	return l.createLSPCompletionItem(
 		ctx,
@@ -2385,8 +2379,6 @@ type memberCompletionEntry struct {
 	filterText          string
 	isSnippet           bool
 	additionalTextEdits []*lsproto.TextEdit
-	hasImportEdits      bool
-	eraseRange          *lsproto.Range
 }
 
 func (l *LanguageService) getEntryForObjectLiteralMethodCompletion(ctx context.Context, typeChecker *checker.Checker, symbol *ast.Symbol, enclosingDeclaration *ast.Node, file *ast.SourceFile) *symbolOriginInfoObjectLiteralMethod {
@@ -2512,19 +2504,24 @@ func (l *LanguageService) collectObjectLiteralMethodSymbols(ctx context.Context,
 
 	var methods []objectLiteralMethodSymbol
 	for _, member := range members {
-		if isObjectLiteralMethodSymbol(member) {
-			entry := l.getEntryForObjectLiteralMethodCompletion(ctx, typeChecker, member, enclosingDeclaration, file)
-			if entry == nil {
-				continue
-			}
-			methods = append(methods, objectLiteralMethodSymbol{
-				symbol: member,
-				origin: &symbolOriginInfo{
-					kind: symbolOriginInfoKindObjectLiteralMethod,
-					data: entry,
-				},
-			})
+		if !isObjectLiteralMethodSymbol(member) {
+			continue
 		}
+		displayName, _ := getCompletionEntryDisplayNameForSymbol(member, nil /*origin*/, CompletionKindObjectPropertyDeclaration, false /*isJsxIdentifierExpected*/)
+		if displayName == "" {
+			continue
+		}
+		entry := l.getEntryForObjectLiteralMethodCompletion(ctx, typeChecker, member, enclosingDeclaration, file)
+		if entry == nil {
+			continue
+		}
+		methods = append(methods, objectLiteralMethodSymbol{
+			symbol: member,
+			origin: &symbolOriginInfo{
+				kind: symbolOriginInfoKindObjectLiteralMethod,
+				data: entry,
+			},
+		})
 	}
 	return methods
 }
@@ -2562,13 +2559,6 @@ func (l *LanguageService) getEntryForMemberCompletion(ctx context.Context, typeC
 	if err != nil {
 		return nil, err
 	}
-	return l.getEntryForMemberCompletionWithImportAdder(ctx, typeChecker, symbol, name, classLikeDeclaration, position, contextToken, file, importAdder), nil
-}
-
-func (l *LanguageService) getEntryForMemberCompletionWithImportAdder(ctx context.Context, typeChecker *checker.Checker, symbol *ast.Symbol, name string, classLikeDeclaration *ast.Node, position int, contextToken *ast.Node, file *ast.SourceFile, importAdder autoimport.ImportAdder) *memberCompletionEntry {
-	if classLikeDeclaration == nil {
-		return nil
-	}
 
 	changeTracker := change.NewTracker(ctx, l.GetProgram().Options(), l.FormatOptions(), l.converters)
 	fixer := newMissingMemberFixer(changeTracker, l.GetProgram(), typeChecker, l.UserPreferences(), importAdder, locale.FromContext(ctx))
@@ -2580,9 +2570,17 @@ func (l *LanguageService) getEntryForMemberCompletionWithImportAdder(ctx context
 	if isSnippet {
 		body = createSnippetTabStopBody(changeTracker.NodeFactory, changeTracker.EmitContext)
 	}
+
 	nodes := fixer.createMemberFromSymbol(symbol, classLikeDeclaration, file, body, preserveOptionalFlagsProperty, abstract)
-	if len(nodes) == 0 {
-		return nil
+	var additionalTextEdits []*lsproto.TextEdit
+	if importAdder != nil && importAdder.HasFixes() {
+		additionalTextEdits = importAdder.Edits()
+	}
+	if presentModifiers.eraseRange != nil {
+		additionalTextEdits = append(additionalTextEdits, &lsproto.TextEdit{
+			Range:   *presentModifiers.eraseRange,
+			NewText: "",
+		})
 	}
 
 	modifiers := ast.ModifierFlagsNone
@@ -2596,12 +2594,20 @@ func (l *LanguageService) getEntryForMemberCompletionWithImportAdder(ctx context
 			if abstract {
 				modifiers |= ast.ModifierFlagsAbstract
 			}
+			if ast.IsClassElement(node) && typeChecker.GetMemberOverrideModifierStatus(classLikeDeclaration, node, symbol) == checker.MemberOverrideStatusNeedsOverride {
+				modifiers |= ast.ModifierFlagsOverride
+			}
 		}
 		completionNodes = append(completionNodes, node)
 	}
 
 	if len(completionNodes) == 0 {
-		return nil
+		return &memberCompletionEntry{
+			insertText:          name,
+			filterText:          name,
+			isSnippet:           isSnippet,
+			additionalTextEdits: additionalTextEdits,
+		}, nil
 	}
 
 	allowedModifiers := modifiers | ast.ModifierFlagsOverride | ast.ModifierFlagsPublic
@@ -2613,7 +2619,7 @@ func (l *LanguageService) getEntryForMemberCompletionWithImportAdder(ctx context
 
 	allowedAndPresent := presentModifiers.modifiers & allowedModifiers
 	if presentModifiers.modifiers&^allowedModifiers != 0 {
-		return nil
+		return nil, nil
 	}
 
 	if modifiers&ast.ModifierFlagsProtected != 0 && allowedAndPresent&ast.ModifierFlagsPublic != 0 {
@@ -2649,21 +2655,7 @@ func (l *LanguageService) getEntryForMemberCompletionWithImportAdder(ctx context
 
 	insertText := strings.Join(texts, newLine)
 	if insertText == "" {
-		return nil
-	}
-
-	var additionalTextEdits []*lsproto.TextEdit
-	hasImportEdits := false
-	if importAdder != nil && importAdder.HasFixes() {
-		additionalTextEdits = importAdder.Edits()
-		hasImportEdits = len(additionalTextEdits) > 0
-	}
-
-	if presentModifiers.eraseRange != nil {
-		additionalTextEdits = append(additionalTextEdits, &lsproto.TextEdit{
-			Range:   *presentModifiers.eraseRange,
-			NewText: "",
-		})
+		return nil, nil
 	}
 
 	return &memberCompletionEntry{
@@ -2671,9 +2663,7 @@ func (l *LanguageService) getEntryForMemberCompletionWithImportAdder(ctx context
 		filterText:          name,
 		isSnippet:           isSnippet,
 		additionalTextEdits: additionalTextEdits,
-		hasImportEdits:      hasImportEdits,
-		eraseRange:          presentModifiers.eraseRange,
-	}
+	}, nil
 }
 
 type presentMemberModifiers struct {
@@ -2934,17 +2924,6 @@ func strPtrTo(v string) *string {
 	return &v
 }
 
-func setNewText(item *lsproto.CompletionItem, insertText string) {
-	item.InsertText = &insertText
-	if item.TextEdit != nil {
-		if item.TextEdit.TextEdit != nil {
-			item.TextEdit.TextEdit.NewText = insertText
-		} else if item.TextEdit.InsertReplaceEdit != nil {
-			item.TextEdit.InsertReplaceEdit.NewText = insertText
-		}
-	}
-}
-
 func boolToPtr(v bool) *bool {
 	if v {
 		return new(true)
@@ -3141,22 +3120,6 @@ func getCompletionEntryDisplayNameForSymbol(
 	default:
 		panic(fmt.Sprintf("Unexpected completion kind: %v", completionKind))
 	}
-}
-
-func getObjectLiteralPropertyCompletionName(symbol *ast.Symbol) string {
-	name := ast.SymbolName(symbol)
-	if name == "" ||
-		symbol.Flags&ast.SymbolFlagsModule != 0 && startsWithQuote(name) ||
-		checker.IsKnownSymbol(symbol) {
-		return ""
-	}
-	if scanner.IsIdentifierText(name, core.LanguageVariantStandard) ||
-		symbol.ValueDeclaration != nil && ast.IsPrivateIdentifierClassElementDeclaration(symbol.ValueDeclaration) ||
-		symbol.Flags&ast.SymbolFlagsAlias != 0 {
-		return name
-	}
-	escapedName, _ := core.StringifyJson(name, "" /*prefix*/, "" /*indent*/)
-	return escapedName
 }
 
 // !!! refactor symbolOriginInfo so that we can tell the difference between flags and the kind of data it has
@@ -5424,7 +5387,7 @@ func (l *LanguageService) ResolveCompletionItem(
 
 	checker, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
-	return l.getCompletionItemDetails(ctx, program, checker, int(data.Position), file, item, data)
+	return l.getCompletionItemDetails(ctx, program, checker, int(data.Position), file, item, data), nil
 }
 
 func getCompletionDocumentationFormat(ctx context.Context) lsproto.MarkupKind {
@@ -5439,7 +5402,7 @@ func (l *LanguageService) getCompletionItemDetails(
 	file *ast.SourceFile,
 	item *lsproto.CompletionItem,
 	data *lsproto.CompletionItemData,
-) (*lsproto.CompletionItem, error) {
+) *lsproto.CompletionItem {
 	docFormat := getCompletionDocumentationFormat(ctx)
 	contextToken, previousToken := getRelevantTokens(position, file)
 	if IsInString(file, position, previousToken) {
@@ -5452,14 +5415,17 @@ func (l *LanguageService) getCompletionItemDetails(
 			position,
 			contextToken,
 			docFormat,
-		), nil
+		)
 	}
 
 	if data.AutoImport != nil {
+		if data.IsImportStatementCompletion {
+			return item
+		}
 		edits, description := (&autoimport.Fix{AutoImportFix: data.AutoImport}).Edits(ctx, file, program.Options(), l.FormatOptions(), l.converters, l.UserPreferences())
 		item.AdditionalTextEdits = &edits
 		item.Detail = strPtrTo(description)
-		return item, nil
+		return item
 	}
 
 	// Compute all the completion symbols again.
@@ -5477,38 +5443,23 @@ func (l *LanguageService) getCompletionItemDetails(
 		request := *symbolCompletion.request
 		switch request := request.(type) {
 		case *completionDataJSDocTagName:
-			return createSimpleDetails(item, data.Name, docFormat), nil
+			return createSimpleDetails(item, data.Name, docFormat)
 		case *completionDataJSDocTag:
-			return createSimpleDetails(item, data.Name, docFormat), nil
+			return createSimpleDetails(item, data.Name, docFormat)
 		case *completionDataJSDocParameterName:
-			return createSimpleDetails(item, data.Name, docFormat), nil
+			return createSimpleDetails(item, data.Name, docFormat)
 		case *completionDataKeyword:
 			if core.Some(request.keywordCompletions, func(c *CompletionItem) bool {
 				return c.Label == data.Name
 			}) {
-				return createSimpleDetails(item, data.Name, docFormat), nil
+				return createSimpleDetails(item, data.Name, docFormat)
 			}
-			return item, nil
+			return item
 		default:
 			panic(fmt.Sprintf("Unexpected completion data type: %T", request))
 		}
 	case symbolCompletion.symbol != nil:
 		symbolDetails := symbolCompletion.symbol
-		if data.Source == string(completionSourceClassMemberSnippet) {
-			memberCompletion, err := l.getEntryForMemberCompletion(ctx, checker, symbolDetails.symbol, data.Name, symbolDetails.location, position, symbolDetails.contextToken, file)
-			if err != nil {
-				return nil, err
-			}
-			if memberCompletion != nil && len(memberCompletion.additionalTextEdits) > 0 {
-				item.AdditionalTextEdits = &memberCompletion.additionalTextEdits
-				if memberCompletion.hasImportEdits {
-					item.Detail = strPtrTo(diagnostics.Includes_imports_of_types_referenced_by_0.Localize(locale.FromContext(ctx), data.Name))
-				} else {
-					item.Detail = strPtrTo(diagnostics.Update_modifiers_of_0.Localize(locale.FromContext(ctx), data.Name))
-				}
-				return item, nil
-			}
-		}
 		return l.createCompletionDetailsForSymbol(
 			item,
 			symbolDetails.symbol,
@@ -5516,20 +5467,20 @@ func (l *LanguageService) getCompletionItemDetails(
 			symbolDetails.location,
 			position,
 			docFormat,
-		), nil
+		)
 	case symbolCompletion.literal != nil:
 		literal := symbolCompletion.literal
-		return createSimpleDetails(item, completionNameForLiteral(file, preferences, *literal), docFormat), nil
+		return createSimpleDetails(item, completionNameForLiteral(file, preferences, *literal), docFormat)
 	case symbolCompletion.cases != nil:
-		return item, nil
+		return item
 	default:
 		// Didn't find a symbol with this name.  See if we can find a keyword instead.
 		if core.Some(allKeywordCompletions(), func(c *lsproto.CompletionItem) bool {
 			return c.Label == data.Name
 		}) {
-			return createSimpleDetails(item, data.Name, docFormat), nil
+			return createSimpleDetails(item, data.Name, docFormat)
 		}
-		return item, nil
+		return item
 	}
 }
 
@@ -6598,7 +6549,9 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 
 		var additionalTextEdits *[]*lsproto.TextEdit
 		if importAdder != nil {
-			additionalTextEdits = new(importAdder.Edits())
+			if edits := importAdder.Edits(); len(edits) != 0 {
+				additionalTextEdits = &edits
+			}
 		}
 
 		return &lsproto.CompletionItem{
@@ -6790,10 +6743,6 @@ func createSnippetPrinter(options printer.PrinterOptions, emitContext *printer.E
 type snippetEmitTextWriter struct {
 	*printer.ChangeTrackerWriter
 	escapes []core.TextChange
-}
-
-func (w *snippetEmitTextWriter) nonEscapingWrite(s string) {
-	w.ChangeTrackerWriter.Write(s)
 }
 
 func (w *snippetEmitTextWriter) Write(s string) {

@@ -922,7 +922,11 @@ function parseVerifyApplyCodeActionArgs(arg: ts.Expression): string {
     const props = obj.properties.flatMap(prop => {
         if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) {
             if (ts.isShorthandPropertyAssignment(prop) && prop.name.text === "preferences") {
-                return []; // !!! parse once preferences are supported in fourslash
+                const preferences = getObjectLiteralExpression(prop.name);
+                if (!preferences) {
+                    throw new Error(`Expected object literal for preferences in verify.applyCodeActionFromCompletion options, got ${prop.getText()}`);
+                }
+                return [`UserPreferences: ${parseUserPreferences(preferences)},`];
             }
             throw new Error(`Expected property assignment with identifier name in verify.applyCodeActionFromCompletion options, got ${prop.getText()}`);
         }
@@ -982,8 +986,11 @@ function parseVerifyApplyCodeActionArgs(arg: ts.Expression): string {
                 }
                 return [`NewRangeContent: new(${getGoMultiLineStringLiteral(newRangeContentInit.text)}),`];
             case "preferences":
-                // Few if any tests use non-default preferences
-                return [];
+                const preferences = getObjectLiteralExpression(init);
+                if (!preferences) {
+                    throw new Error(`Expected object literal for preferences in verify.applyCodeActionFromCompletion options, got ${init.getText()}`);
+                }
+                return [`UserPreferences: ${parseUserPreferences(preferences)},`];
             default:
                 throw new Error(`Unrecognized property in verify.applyCodeActionFromCompletion options: ${prop.getText()}`);
         }
@@ -1333,6 +1340,7 @@ function parseExpectedCompletionItem(expr: ts.Expression, codeActionArgs?: Verif
         let sourceInit: ts.StringLiteralLike | undefined;
         let extensions: string[] = []; // !!!
         let itemProps: string[] = [];
+        let isSnippet = false;
         let name: string | undefined;
         let insertText: string | undefined;
         let filterText: string | undefined;
@@ -1357,7 +1365,7 @@ function parseExpectedCompletionItem(expr: ts.Expression, codeActionArgs?: Verif
                 case "sortText":
                     const sortText = parseSortText(init);
                     itemProps.push(`SortText: new(string(${sortText.expression})),`);
-                    if (sortText.expression === "ls.SortTextOptionalMember") {
+                    if (sortText.optional) {
                         isOptional = true;
                     }
                     if (sortText.deprecated) {
@@ -1398,7 +1406,8 @@ function parseExpectedCompletionItem(expr: ts.Expression, codeActionArgs?: Verif
                     break;
                 case "kindModifiers":
                     const modifiers = parseKindModifiers(init);
-                    ({ isOptional, extensions } = modifiers);
+                    isOptional ||= modifiers.isOptional;
+                    extensions = modifiers.extensions;
                     if (modifiers.isDeprecated) {
                         completionItemTags.add("lsproto.CompletionItemTagDeprecated");
                     }
@@ -1431,7 +1440,12 @@ function parseExpectedCompletionItem(expr: ts.Expression, codeActionArgs?: Verif
                 case "isFromUncheckedFile":
                     break; // Ignored
                 case "hasAction":
-                    itemProps.push("AdditionalTextEdits: fourslash.AnyTextEdits,");
+                    if (init.kind === ts.SyntaxKind.TrueKeyword) {
+                        itemProps.push("AdditionalTextEdits: fourslash.AnyTextEdits,");
+                    }
+                    else if (init.kind !== ts.SyntaxKind.FalseKeyword && init.getText() !== "undefined") {
+                        throw new Error(`Expected true, false, or undefined for hasAction, got ${init.getText()}`);
+                    }
                     break;
                 case "source":
                 case "sourceDisplay":
@@ -1487,6 +1501,7 @@ function parseExpectedCompletionItem(expr: ts.Expression, codeActionArgs?: Verif
                 }
                 case "isSnippet":
                     if (init.kind === ts.SyntaxKind.TrueKeyword) {
+                        isSnippet = true;
                         itemProps.push(`InsertTextFormat: new(lsproto.InsertTextFormatSnippet),`);
                     }
                     break;
@@ -1541,8 +1556,11 @@ function parseExpectedCompletionItem(expr: ts.Expression, codeActionArgs?: Verif
             },`);
         }
         if (isOptional) {
+            const hasInsertText = insertText !== undefined;
             insertText ??= name;
-            filterText ??= name;
+            if (!hasInsertText || isSnippet) {
+                filterText ??= name;
+            }
             name += "?";
         }
         if (filterText) itemProps.unshift(`FilterText: new(${getGoStringLiteral(filterText)}),`);
@@ -3595,6 +3613,7 @@ function parseKindModifiers(expr: ts.Expression): { isOptional: boolean; isDepre
 interface ParsedSortText {
     expression: string;
     deprecated: boolean;
+    optional: boolean;
 }
 
 function parseSortText(expr: ts.Expression): ParsedSortText {
@@ -3603,6 +3622,7 @@ function parseSortText(expr: ts.Expression): ParsedSortText {
         return {
             expression: `ls.DeprecateSortText(${inner.expression})`,
             deprecated: true,
+            optional: inner.optional,
         };
     }
     if (ts.isCallExpression(expr) && expr.expression.getText() === "completion.SortText.SortBelow") {
@@ -3610,6 +3630,7 @@ function parseSortText(expr: ts.Expression): ParsedSortText {
         return {
             expression: `ls.SortBelow(${inner.expression})`,
             deprecated: inner.deprecated,
+            optional: inner.optional,
         };
     }
     if (ts.isCallExpression(expr) && expr.expression.getText() === "completion.SortText.ObjectLiteralProperty") {
@@ -3621,10 +3642,16 @@ function parseSortText(expr: ts.Expression): ParsedSortText {
         return {
             expression: `ls.ObjectLiteralPropertySortText(${base.expression}, ${getGoStringLiteral(symbolDisplayName.text)})`,
             deprecated: base.deprecated,
+            optional: base.optional,
         };
     }
 
-    return { expression: parseSortTextExpression(expr.getText()), deprecated: false };
+    const text = expr.getText();
+    return {
+        expression: parseSortTextExpression(text),
+        deprecated: false,
+        optional: text === "completion.SortText.OptionalMember",
+    };
 }
 
 function parseSortTextExpression(text: string): string {

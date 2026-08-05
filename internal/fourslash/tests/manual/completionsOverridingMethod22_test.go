@@ -52,9 +52,10 @@ abstract class ExtBase implements ExtShape {
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, new(""), &fourslash.ApplyCodeActionFromCompletionOptions{
-		Name:        "$returnPromise",
-		Source:      "ClassMemberSnippet/",
-		Description: "Includes imports of types referenced by '$returnPromise'",
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
+		Name:            "$returnPromise",
+		Source:          "ClassMemberSnippet/",
+		Description:     "Includes imports of types referenced by '$returnPromise'",
 		NewFileContent: new(`import { C, ExtShape } from './b';
 abstract class ExtBase implements ExtShape {
     $

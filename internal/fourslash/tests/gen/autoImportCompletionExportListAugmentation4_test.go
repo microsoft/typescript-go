@@ -80,5 +80,6 @@ import { Container } from "@sapphire/pieces";
 class PingCommand extends CommandAlias {
   
 }`),
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
 	})
 }

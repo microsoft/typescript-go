@@ -46,7 +46,6 @@ type FourslashTest struct {
 	vfs    vfs.FS
 
 	testData      *TestData // !!! consolidate test files from test data and script info
-	content       string
 	baselines     map[baselineCommand]*strings.Builder
 	rangesByText  *collections.MultiMap[string, *RangeMarker]
 	openFiles     map[string]struct{}
@@ -196,7 +195,6 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 
 	f := &FourslashTest{
 		testData:                &testData,
-		content:                 content,
 		stateEnableFormatting:   true,
 		reportFormatOnTypeCrash: true,
 		userPreferences:         lsutil.NewDefaultUserPreferences(),
@@ -1498,9 +1496,6 @@ func (f *FourslashTest) verifyCompletionsAreExactly(t *testing.T, prefix string,
 	for i, actualItem := range actual {
 		switch expectedItem := expected[i].(type) {
 		case string:
-			if actualItem.Data != nil && actualItem.Data.Name == expectedItem {
-				continue
-			}
 			assertDeepEqual(t, actualItem.Label, expectedItem, labelMismatchPrefix)
 		case *lsproto.CompletionItem:
 			assertDeepEqual(t, actualItem.Label, expectedItem.Label, labelMismatchPrefix)
@@ -1567,7 +1562,11 @@ func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual
 		if err := cmp.Diff(actual, expected, completionIgnoreOpts); err != "" {
 			return err
 		}
-		if expected.AdditionalTextEdits != AnyTextEdits {
+		if expected.AdditionalTextEdits == AnyTextEdits {
+			if actual.AdditionalTextEdits == nil || len(*actual.AdditionalTextEdits) == 0 {
+				return "Expected non-empty AdditionalTextEdits for completion item"
+			}
+		} else {
 			if err := cmp.Diff(actual.AdditionalTextEdits, expected.AdditionalTextEdits); err != "" {
 				return fmt.Sprintf("%s:\n%s", "AdditionalTextEdits mismatch", err)
 			}
@@ -1599,18 +1598,6 @@ func (f *FourslashTest) ResolveCompletionItem(t *testing.T, item *lsproto.Comple
 func (f *FourslashTest) resolveCompletionItem(t *testing.T, item *lsproto.CompletionItem) *lsproto.CompletionItem {
 	result := sendRequest(t, f, lsproto.CompletionItemResolveInfo, item)
 	return result
-}
-
-func getExpectedLabel(t *testing.T, item CompletionsExpectedItem) string {
-	switch item := item.(type) {
-	case string:
-		return item
-	case *lsproto.CompletionItem:
-		return item.Label
-	default:
-		t.Fatalf("Expected completion item to be a string or *lsproto.CompletionItem, got %T", item)
-		return ""
-	}
 }
 
 func assertDeepEqual(t *testing.T, actual any, expected any, prefix string, opts ...cmp.Option) {
@@ -2148,6 +2135,25 @@ type ApplyCodeActionFromCompletionOptions struct {
 	UserPreferences *lsutil.UserPreferences
 }
 
+func (f *FourslashTest) findCompletionForCodeAction(t *testing.T, items []*lsproto.CompletionItem, description string) *lsproto.CompletionItem {
+	t.Helper()
+	if item := core.Find(items, func(item *lsproto.CompletionItem) bool {
+		return item.AdditionalTextEdits != nil && len(*item.AdditionalTextEdits) != 0
+	}); item != nil {
+		return item
+	}
+	return core.FirstNonNil(items, func(item *lsproto.CompletionItem) *lsproto.CompletionItem {
+		resolvedItem := f.resolveCompletionItem(t, item)
+		if resolvedItem == nil || resolvedItem.AdditionalTextEdits == nil || len(*resolvedItem.AdditionalTextEdits) == 0 {
+			return nil
+		}
+		if description != "" && (resolvedItem.Detail == nil || !strings.Contains(*resolvedItem.Detail, description)) {
+			return nil
+		}
+		return resolvedItem
+	})
+}
+
 func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, markerName *string, options *ApplyCodeActionFromCompletionOptions) {
 	t.Helper()
 	f.GoToMarker(t, *markerName)
@@ -2169,8 +2175,11 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 
 		data := item.Data
 		if options.AutoImportFix != nil {
-			return data.AutoImport != nil &&
-				(options.AutoImportFix.ModuleSpecifier == "" || data.AutoImport.ModuleSpecifier == options.AutoImportFix.ModuleSpecifier)
+			moduleSpecifier := options.AutoImportFix.ModuleSpecifier
+			if moduleSpecifier == "" {
+				moduleSpecifier = options.Source
+			}
+			return data.AutoImport != nil && data.AutoImport.ModuleSpecifier == moduleSpecifier
 		}
 		if data.AutoImport == nil && data.Source != "" && data.Source == options.Source {
 			return true
@@ -2181,37 +2190,13 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 		return false
 	})
 
-	if len(items) == 0 {
-		t.Fatalf("Code action '%s' from source '%s' not found in completions.", options.Name, options.Source)
-	}
-
-	var correctResolvedItem lsproto.CompletionItem
-	correctItem := core.Find(items, func(item *lsproto.CompletionItem) bool {
-		correctResolvedItem = *f.resolveCompletionItem(t, item)
-		var actualDetail string
-		if correctResolvedItem.Detail != nil {
-			actualDetail = *correctResolvedItem.Detail
-		}
-		if !strings.Contains(actualDetail, options.Description) || correctResolvedItem.AdditionalTextEdits == nil {
-			return false
-		}
-		return true
-	})
-
-	if correctItem == nil {
-		t.Fatalf("No matching code action found for '%s' from source '%s'.", options.Name, options.Source)
-		var actualDetail string
-		if correctResolvedItem.Detail != nil {
-			actualDetail = *correctResolvedItem.Detail
-		}
-		assert.Check(t, strings.Contains(actualDetail, options.Description), "Completion item detail does not contain expected description.")
-		if correctResolvedItem.AdditionalTextEdits == nil {
-			t.Fatalf("Expected non-nil AdditionalTextEdits for code action completion item.")
-		}
+	item := f.findCompletionForCodeAction(t, items, options.Description)
+	if item == nil {
+		t.Fatalf("Code action '%s' from source '%s' not found.", options.Name, options.Source)
 	}
 
 	// apply the item to the test files
-	f.applyTextEdits(t, *correctResolvedItem.AdditionalTextEdits)
+	f.applyTextEdits(t, *item.AdditionalTextEdits)
 	if options.NewFileContent != nil {
 		assert.Equal(t, f.getScriptInfo(f.activeFilename).content, *options.NewFileContent, "File content after applying code action did not match expected content.")
 	} else if options.NewRangeContent != nil {
@@ -5608,7 +5593,7 @@ func isLibFile(fileName string) bool {
 	return false
 }
 
-var AnyTextEdits *[]*lsproto.TextEdit
+var AnyTextEdits = new([]*lsproto.TextEdit)
 
 func (f *FourslashTest) VerifyBaselineGoToImplementation(t *testing.T, markerNames ...string) {
 	f.verifyBaselineDefinitions(

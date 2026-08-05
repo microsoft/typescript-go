@@ -133,11 +133,13 @@ const op: Op = {
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label:    "M",
-					SortText: new(string(ls.ObjectLiteralPropertySortText(ls.SortTextOptionalMember, "M"))),
+					Label:      "M?",
+					InsertText: new("M"),
+					FilterText: new("M"),
+					SortText:   new(string(ls.ObjectLiteralPropertySortText(ls.SortTextOptionalMember, "M"))),
 				},
 				&lsproto.CompletionItem{
-					Label:      "M",
+					Label:      "M?",
 					InsertText: new("M(x) {\n},"),
 					SortText:   new(string(ls.SortBelow(ls.ObjectLiteralPropertySortText(ls.SortTextOptionalMember, "M")))),
 					Data: &lsproto.CompletionItemData{
@@ -163,11 +165,13 @@ const op: Op = {
 					},
 				},
 				&lsproto.CompletionItem{
-					Label:    "O",
-					SortText: new(string(ls.ObjectLiteralPropertySortText(ls.SortTextOptionalMember, "O"))),
+					Label:      "O?",
+					InsertText: new("O"),
+					FilterText: new("O"),
+					SortText:   new(string(ls.ObjectLiteralPropertySortText(ls.SortTextOptionalMember, "O"))),
 				},
 				&lsproto.CompletionItem{
-					Label:      "O",
+					Label:      "O?",
 					InsertText: new("O() {\n},"),
 					SortText:   new(string(ls.SortBelow(ls.ObjectLiteralPropertySortText(ls.SortTextOptionalMember, "O")))),
 					Data: &lsproto.CompletionItemData{

@@ -106,5 +106,6 @@ declare abstract class Container_ extends Node {
 declare class Container extends Container_ {}
 
 export = Container;`),
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
 	})
 }

@@ -57,9 +57,10 @@ class DecoratorSub extends DecoratorBase {
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, new(""), &fourslash.ApplyCodeActionFromCompletionOptions{
-		Name:        "foo",
-		Source:      "ClassMemberSnippet/",
-		Description: "Update modifiers of 'foo'",
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
+		Name:            "foo",
+		Source:          "ClassMemberSnippet/",
+		Description:     "Update modifiers of 'foo'",
 		NewFileContent: new(`declare function decorator(...args: any[]): any;
 class DecoratorBase {
     protected foo(a: string): string;

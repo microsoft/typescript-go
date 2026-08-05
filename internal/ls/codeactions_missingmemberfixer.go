@@ -156,7 +156,7 @@ func (f *missingMemberFixer) createMemberFromSymbol(symbol *ast.Symbol, enclosin
 				nodes = append(nodes, method)
 			}
 		} else {
-			method := f.createSignatureDeclarationFromSignatures(sourceFile, signatures, declarationName, preserveOptional, modifiers, quotePreference, body, enclosingDeclaration)
+			method := f.createSignatureDeclarationFromSignatures(signatures, declarationName, preserveOptional, modifiers, quotePreference, body, enclosingDeclaration)
 			if method != nil {
 				nodes = append(nodes, method)
 			}
@@ -202,7 +202,7 @@ func (f *missingMemberFixer) createModifiers(symbol *ast.Symbol, declaration *as
 }
 
 func (f *missingMemberFixer) shouldAddOverrideKeyword(declaration *ast.Node) bool {
-	return declaration != nil && f.program.Options().NoImplicitOverride.IsTrue() && declaration.Parent != nil && ast.IsClassLike(declaration.Parent)
+	return declaration != nil && f.program.Options().NoImplicitOverride.IsTrue() && ast.HasAbstractModifier(declaration)
 }
 
 func (f *missingMemberFixer) createSignatureDeclarationFromSignature(signature *checker.Signature, kind ast.Kind, sourceFile *ast.SourceFile, enclosingDeclaration *ast.Node, body *ast.FunctionBody, modifiers *ast.ModifierList, name *ast.PropertyName, optional bool) *ast.Node {
@@ -302,7 +302,7 @@ func (f *missingMemberFixer) createSignatureDeclarationFromSignature(signature *
 	return nil
 }
 
-func (f *missingMemberFixer) createSignatureDeclarationFromSignatures(sourceFile *ast.SourceFile, signatures []*checker.Signature, name *ast.PropertyName, optional bool, modifiers *ast.ModifierList, quotePreference lsutil.QuotePreference, body *ast.FunctionBody, enclosingDeclaration *ast.Node) *ast.Node {
+func (f *missingMemberFixer) createSignatureDeclarationFromSignatures(signatures []*checker.Signature, name *ast.PropertyName, optional bool, modifiers *ast.ModifierList, quotePreference lsutil.QuotePreference, body *ast.FunctionBody, enclosingDeclaration *ast.Node) *ast.Node {
 	if len(signatures) == 0 {
 		return nil
 	}

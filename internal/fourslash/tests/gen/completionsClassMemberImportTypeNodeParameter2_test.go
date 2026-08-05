@@ -40,10 +40,9 @@ export declare class Derived extends Cls {
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label:               "method",
-					InsertText:          new("method(param: import(\"./doesntexist.js\").Foo);"),
-					FilterText:          new("method"),
-					AdditionalTextEdits: fourslash.AnyTextEdits,
+					Label:      "method",
+					InsertText: new("method(param: import(\"./doesntexist.js\").Foo);"),
+					FilterText: new("method"),
 				},
 			},
 		},

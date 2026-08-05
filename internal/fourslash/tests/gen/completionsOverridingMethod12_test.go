@@ -81,9 +81,10 @@ abstract class B1 extends A {
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, new("b"), &fourslash.ApplyCodeActionFromCompletionOptions{
-		Name:        "P",
-		Source:      "ClassMemberSnippet/",
-		Description: "Update modifiers of 'P'",
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
+		Name:            "P",
+		Source:          "ClassMemberSnippet/",
+		Description:     "Update modifiers of 'P'",
 		NewFileContent: new(`abstract class A {
     public get P(): string {
         return "";

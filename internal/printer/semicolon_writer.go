@@ -8,7 +8,6 @@ import (
 type trailingSemicolonDeferringWriter struct {
 	inner               EmitTextWriter
 	hasPendingSemicolon bool
-	pendingSemicolon    string
 }
 
 func getTrailingSemicolonDeferringWriter(writer EmitTextWriter) EmitTextWriter {
@@ -17,9 +16,8 @@ func getTrailingSemicolonDeferringWriter(writer EmitTextWriter) EmitTextWriter {
 
 func (w *trailingSemicolonDeferringWriter) commitSemicolon() {
 	if w.hasPendingSemicolon {
-		w.inner.WriteTrailingSemicolon(w.pendingSemicolon)
+		w.inner.WriteTrailingSemicolon(";")
 		w.hasPendingSemicolon = false
-		w.pendingSemicolon = ""
 	}
 }
 
@@ -28,10 +26,8 @@ func (w *trailingSemicolonDeferringWriter) Write(s string) {
 	w.inner.Write(s)
 }
 
-func (w *trailingSemicolonDeferringWriter) WriteTrailingSemicolon(text string) {
-	w.commitSemicolon()
+func (w *trailingSemicolonDeferringWriter) WriteTrailingSemicolon(_ string) {
 	w.hasPendingSemicolon = true
-	w.pendingSemicolon = text
 }
 
 func (w *trailingSemicolonDeferringWriter) WriteComment(text string) {
@@ -101,7 +97,6 @@ func (w *trailingSemicolonDeferringWriter) DecreaseIndent() {
 
 func (w *trailingSemicolonDeferringWriter) Clear() {
 	w.hasPendingSemicolon = false
-	w.pendingSemicolon = ""
 	w.inner.Clear()
 }
 

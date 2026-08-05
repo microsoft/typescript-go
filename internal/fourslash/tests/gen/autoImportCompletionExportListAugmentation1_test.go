@@ -72,5 +72,6 @@ class FullPiece extends Piece {
 class FullPiece extends Piece {
   
 }`),
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
 	})
 }

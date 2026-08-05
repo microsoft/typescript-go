@@ -56,9 +56,10 @@ export class C implements Base {
 		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, new(""), &fourslash.ApplyCodeActionFromCompletionOptions{
-		Name:        "method",
-		Source:      "ClassMemberSnippet/",
-		Description: "Includes imports of types referenced by 'method'",
+		UserPreferences: &lsutil.UserPreferences{IncludeCompletionsWithClassMemberSnippets: core.TSTrue},
+		Name:            "method",
+		Source:          "ClassMemberSnippet/",
+		Description:     "Includes imports of types referenced by 'method'",
 		NewFileContent: new(`import { I } from "./types1";
 import { Base } from "./types2";
 export class C implements Base {
