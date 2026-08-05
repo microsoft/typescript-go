@@ -154,10 +154,11 @@ type CompilerOptions struct {
 	Help                Tristate `json:"help,omitzero"`
 	All                 Tristate `json:"all,omitzero"`
 
-	PprofDir       string   `json:"pprofDir,omitzero"`
-	SingleThreaded Tristate `json:"singleThreaded,omitzero"`
-	Quiet          Tristate `json:"quiet,omitzero"`
-	Checkers       *int     `json:"checkers,omitzero"`
+	PprofDir               string   `json:"pprofDir,omitzero"`
+	SingleThreaded         Tristate `json:"singleThreaded,omitzero"`
+	Quiet                  Tristate `json:"quiet,omitzero"`
+	Checkers               *int     `json:"checkers,omitzero"`
+	CheckerAssociationSeed *int     `json:"checkerAssociationSeed,omitzero"`
 }
 
 // noCopy may be embedded into structs which must not be copied

@@ -97,6 +97,23 @@ func TestGetCheckerAssociationOrder(t *testing.T) {
 	}
 }
 
+func TestGetRandomCheckerAssociationOrder(t *testing.T) {
+	t.Parallel()
+	first := getRandomCheckerAssociationOrder(10, 1234)
+	second := getRandomCheckerAssociationOrder(10, 1234)
+	if !slices.Equal(first, second) {
+		t.Fatalf("same seed produced different orders: %v and %v", first, second)
+	}
+	if other := getRandomCheckerAssociationOrder(10, 5678); slices.Equal(first, other) {
+		t.Fatalf("different seeds produced the same order: %v", first)
+	}
+	slices.Sort(first)
+	want := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	if !slices.Equal(first, want) {
+		t.Fatalf("random order is not a permutation: %v", first)
+	}
+}
+
 func TestGetCheckerAssociationWeights(t *testing.T) {
 	t.Parallel()
 

@@ -122,6 +122,15 @@ func TestParseCommandLineTypeRootsRelativePath(t *testing.T) {
 	assert.Assert(t, strings.HasSuffix(typeRoots[0], "/t"), "typeRoots entry should end with '/t', got: %s", typeRoots[0])
 }
 
+func TestParseCheckerAssociationSeed(t *testing.T) {
+	t.Parallel()
+	host := tsoptionstest.NewVFSParseConfigHost(map[string]string{
+		"/project/index.ts": "",
+	}, "/project", true)
+	cmdLine := tsoptions.ParseCommandLine([]string{"--checkerAssociationSeed", "1234", "index.ts"}, host)
+	assert.DeepEqual(t, cmdLine.CompilerOptions().CheckerAssociationSeed, new(1234))
+}
+
 func TestCustomConditionsNullOverride(t *testing.T) {
 	t.Parallel()
 

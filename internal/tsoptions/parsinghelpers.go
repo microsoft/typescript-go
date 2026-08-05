@@ -487,6 +487,8 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.Quiet = ParseTristate(value)
 	case "checkers":
 		allOptions.Checkers = parseNumber(value)
+	case "checkerAssociationSeed":
+		allOptions.CheckerAssociationSeed = parseNumber(value)
 	default:
 		// different than any key above
 		return false

@@ -134,6 +134,9 @@ Generate pprof CPU/memory profiles to the given directory.
 [94m--checkers[39m
 Set the number of checkers per project.
 
+[94m--checkerAssociationSeed[39m
+Randomly reorder files before assigning them to checkers using the specified seed.
+
 [94m--verbose, -v[39m
 Enable verbose logging.
 

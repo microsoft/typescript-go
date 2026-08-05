@@ -3,6 +3,7 @@ package compiler
 import (
 	"context"
 	"math"
+	"math/rand/v2"
 	"slices"
 	"sort"
 	"sync"
@@ -254,6 +255,21 @@ func getCheckerAssociationOrder(fileWeights []int, isDeclarationFile []bool, pri
 	return fileOrder
 }
 
+// getRandomCheckerAssociationOrder returns a reproducible permutation for
+// fuzzing the order-sensitive streaming partitioner.
+func getRandomCheckerAssociationOrder(fileCount int, seed int) []int {
+	fileOrder := make([]int, fileCount)
+	for i := range fileOrder {
+		fileOrder[i] = i
+	}
+	seed1 := uint64(seed)
+	rng := rand.New(rand.NewPCG(seed1, seed1^0x9e3779b97f4a7c15))
+	rng.Shuffle(len(fileOrder), func(i, j int) {
+		fileOrder[i], fileOrder[j] = fileOrder[j], fileOrder[i]
+	})
+	return fileOrder
+}
+
 func getCheckerAssociationBaseWeight(nodeCount int, textLength int) int {
 	return max(nodeCount+textLength/checkerAssociationTextWeightDivisor, 1)
 }
@@ -403,7 +419,12 @@ func (p *checkerPool) createCheckers() {
 			}
 			fileWeights := getCheckerAssociationWeights(baseWeights, importCounts)
 			adjacentFiles := p.getImportAdjacency()
-			fileOrder := getCheckerAssociationOrder(fileWeights, isDeclarationFile, policy.prioritizeSourceFiles)
+			var fileOrder []int
+			if seed := p.program.Options().CheckerAssociationSeed; seed != nil {
+				fileOrder = getRandomCheckerAssociationOrder(len(fileWeights), *seed)
+			} else {
+				fileOrder = getCheckerAssociationOrder(fileWeights, isDeclarationFile, policy.prioritizeSourceFiles)
+			}
 			associations = getCheckerAssociationsInOrder(fileWeights, adjacentFiles, fileOrder, checkerCount, policy.balancePenaltyMultiplier)
 		}
 		p.fileAssociations = make(map[*ast.SourceFile]*checker.Checker, len(p.program.files))

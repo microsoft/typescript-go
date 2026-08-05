@@ -250,6 +250,14 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		DefaultValueDescription: diagnostics.X_4_unless_singleThreaded_is_passed,
 		minValue:                1,
 	},
+	{
+		Name:                    "checkerAssociationSeed",
+		Kind:                    CommandLineOptionTypeNumber,
+		Category:                diagnostics.Command_line_Options,
+		Description:             diagnostics.NewAdHocMessage("Randomly reorder files before assigning them to checkers using the specified seed."),
+		DefaultValueDescription: false,
+		minValue:                0,
+	},
 }
 
 var optionsForCompiler = []*CommandLineOption{
