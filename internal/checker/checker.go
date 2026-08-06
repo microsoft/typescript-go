@@ -5557,7 +5557,7 @@ func (c *Checker) checkExportDeclaration(node *ast.ExportDeclarationNode) {
 }
 
 func (c *Checker) checkExternalModuleNameInGlobalScope(node *ast.Node) {
-	if getEnclosingContainer(node).Kind != ast.KindSourceFile || ast.IsImportDeclarationOrJSImportDeclaration(node) && node.ImportClause() == nil {
+	if getEnclosingContainer(node).Kind != ast.KindSourceFile || (ast.IsImportDeclarationOrJSImportDeclaration(node) && node.ImportClause() == nil) {
 		return
 	}
 	if moduleName := ast.GetExternalModuleName(node); moduleName != nil {
