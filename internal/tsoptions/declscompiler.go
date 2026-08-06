@@ -251,12 +251,14 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		minValue:                1,
 	},
 	{
-		Name:                    "checkerAssociationSeed",
-		Kind:                    CommandLineOptionTypeNumber,
-		Category:                diagnostics.Command_line_Options,
-		Description:             diagnostics.NewAdHocMessage("Randomly reorder files before assigning them to checkers using the specified seed."),
-		DefaultValueDescription: false,
-		minValue:                0,
+		Name:                       "checkerAssociationSeed",
+		Kind:                       CommandLineOptionTypeNumber,
+		Category:                   diagnostics.Command_line_Options,
+		Description:                diagnostics.NewAdHocMessage("Randomly reorder files before assigning them to checkers using the specified seed."),
+		DefaultValueDescription:    false,
+		AffectsSemanticDiagnostics: true,
+		AffectsBuildInfo:           true,
+		minValue:                   0,
 	},
 }
 
