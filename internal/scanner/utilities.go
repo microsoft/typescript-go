@@ -28,7 +28,9 @@ func GetTextOfNodeFromSourceText(sourceText string, node *ast.Node, includeTrivi
 	}
 	pos := node.Pos()
 	if !includeTrivia {
-		pos = SkipTrivia(sourceText, pos)
+		pos = SkipTriviaEx(sourceText, pos, &SkipTriviaOptions{
+			InJSDoc: node.Flags&ast.NodeFlagsJSDoc != 0,
+		})
 	}
 	text := sourceText[pos:node.End()]
 	if node.Flags&ast.NodeFlagsReparserTransformedLiteral != 0 {
