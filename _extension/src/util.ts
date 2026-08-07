@@ -42,6 +42,7 @@ export interface ExeInfo {
     version: string;
     name: string;
     isLocal?: boolean;
+    isTsdk?: boolean;
 }
 
 const packagedExeBaseNames = ["tsc", "tsgo"];
@@ -159,6 +160,7 @@ export async function getExe(context: vscode.ExtensionContext): Promise<ExeInfo>
     for (const candidate of getTrustedTsdkCandidates(context, await getTsdkCandidates())) {
         const exe = await resolveTsdkPathToExe(candidate.value);
         if (exe) {
+            exe.isTsdk = true;
             return exe;
         }
     }

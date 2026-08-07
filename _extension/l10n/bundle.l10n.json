@@ -3,6 +3,7 @@
   "TypeScript 7": "TypeScript 7",
   "$(beaker) {0}": "$(beaker) {0}",
   "TypeScript Language Server": "TypeScript Language Server",
+  "TypeScript Language Server: {0}": "TypeScript Language Server: {0}",
   "Show Menu": "Show Menu",
   "Language server is not running.": "Language server is not running.",
   "Garbage collection triggered": "Garbage collection triggered",
