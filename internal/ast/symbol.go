@@ -18,6 +18,9 @@ type Symbol struct {
 	id               atomic.Uint64
 	Parent           *Symbol
 	ExportSymbol     *Symbol
+	// CheckerData is side data attached by the one Checker that created this symbol; nil on
+	// binder-created symbols, which are shared between checkers. Owned by the checker package.
+	CheckerData any
 }
 
 func (s *Symbol) IsExternalModule() bool {
