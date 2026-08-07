@@ -229,6 +229,7 @@ const (
 	KindTemplateLiteralType
 	KindTemplateLiteralTypeSpan
 	KindImportType
+	KindPrivateNameType
 	// Binding patterns
 	KindObjectBindingPattern
 	KindArrayBindingPattern
@@ -400,7 +401,7 @@ const (
 	KindFirstFutureReservedWord = KindImplementsKeyword
 	KindLastFutureReservedWord  = KindYieldKeyword
 	KindFirstTypeNode           = KindTypePredicate
-	KindLastTypeNode            = KindImportType
+	KindLastTypeNode            = KindPrivateNameType
 	KindFirstPunctuation        = KindOpenBraceToken
 	KindLastPunctuation         = KindCaretEqualsToken
 	KindFirstToken              = KindUnknown

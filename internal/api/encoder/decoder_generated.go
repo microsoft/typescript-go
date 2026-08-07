@@ -773,6 +773,8 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		return d.factory.NewExpressionWithTypeArguments(expression, typeArguments), nil
 	case ast.KindLiteralType:
 		return d.factory.NewLiteralTypeNode(d.singleChild(childIndices)), nil
+	case ast.KindPrivateNameType:
+		return d.factory.NewPrivateNameTypeNode(d.singleChild(childIndices)), nil
 	case ast.KindThisType:
 		return d.factory.NewThisTypeNode(), nil
 	case ast.KindTypePredicate:

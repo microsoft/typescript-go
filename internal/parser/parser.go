@@ -2777,6 +2777,8 @@ func (p *Parser) parseNonArrayType() *ast.Node {
 	case ast.KindNoSubstitutionTemplateLiteral, ast.KindStringLiteral, ast.KindNumericLiteral, ast.KindBigIntLiteral, ast.KindTrueKeyword,
 		ast.KindFalseKeyword, ast.KindNullKeyword:
 		return p.parseLiteralTypeNode(false /*negative*/)
+	case ast.KindPrivateIdentifier:
+		return p.parsePrivateNameTypeNode()
 	case ast.KindMinusToken:
 		if p.lookAhead((*Parser).nextTokenIsNumericOrBigIntLiteral) {
 			return p.parseLiteralTypeNode(true /*negative*/)
@@ -2887,6 +2889,12 @@ func (p *Parser) parseLiteralTypeNode(negative bool) *ast.Node {
 		expression = p.finishNode(p.factory.NewPrefixUnaryExpression(ast.KindMinusToken, expression), pos)
 	}
 	return p.finishNode(p.factory.NewLiteralTypeNode(expression), pos)
+}
+
+func (p *Parser) parsePrivateNameTypeNode() *ast.Node {
+	pos := p.nodePos()
+	name := p.parsePrivateIdentifier()
+	return p.finishNode(p.factory.NewPrivateNameTypeNode(name), pos)
 }
 
 func (p *Parser) parseTypeReference() *ast.Node {
@@ -6186,7 +6194,7 @@ func (p *Parser) isStartOfType(inStartOfParameter bool) bool {
 		ast.KindNewKeyword, ast.KindStringLiteral, ast.KindNumericLiteral, ast.KindBigIntLiteral, ast.KindTrueKeyword,
 		ast.KindFalseKeyword, ast.KindObjectKeyword, ast.KindAsteriskToken, ast.KindQuestionToken, ast.KindExclamationToken,
 		ast.KindDotDotDotToken, ast.KindInferKeyword, ast.KindImportKeyword, ast.KindAssertsKeyword, ast.KindNoSubstitutionTemplateLiteral,
-		ast.KindTemplateHead:
+		ast.KindTemplateHead, ast.KindPrivateIdentifier:
 		return true
 	case ast.KindFunctionKeyword:
 		return !inStartOfParameter

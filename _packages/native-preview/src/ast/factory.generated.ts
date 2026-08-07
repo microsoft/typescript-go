@@ -195,6 +195,7 @@ import type {
     PostfixUnaryExpression,
     PrefixUnaryExpression,
     PrivateIdentifier,
+    PrivateNameTypeNode,
     PropertyAccessExpression,
     PropertyAssignment,
     PropertyDeclaration,
@@ -932,6 +933,8 @@ function cloneNodeData(node: Node): any {
             return { expression: n.expression, typeArguments: n.typeArguments };
         case SyntaxKind.LiteralType:
             return { literal: n.literal };
+        case SyntaxKind.PrivateNameType:
+            return { name: n.name };
         case SyntaxKind.TypePredicate:
             return { assertsModifier: n.assertsModifier, parameterName: n.parameterName, type: n.type };
         case SyntaxKind.ImportAttribute:
@@ -1415,6 +1418,7 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNode(cbNode, data.expression) ||
         visitNodes(cbNode, cbNodes, data.typeArguments),
     [SyntaxKind.LiteralType]: (data, cbNode, cbNodes) => visitNode(cbNode, data.literal),
+    [SyntaxKind.PrivateNameType]: (data, cbNode, cbNodes) => visitNode(cbNode, data.name),
     [SyntaxKind.TypePredicate]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.assertsModifier) ||
         visitNode(cbNode, data.parameterName) ||
@@ -2475,6 +2479,12 @@ export function createLiteralTypeNode(literal: Node): LiteralTypeNode {
     }) as unknown as LiteralTypeNode;
 }
 
+export function createPrivateNameTypeNode(name: PrivateIdentifier): PrivateNameTypeNode {
+    return new NodeObject(SyntaxKind.PrivateNameType, {
+        name,
+    }) as unknown as PrivateNameTypeNode;
+}
+
 export function createThisTypeNode(): ThisTypeNode {
     return new NodeObject(SyntaxKind.ThisType, undefined) as unknown as ThisTypeNode;
 }
@@ -3478,6 +3488,10 @@ export function updateExpressionWithTypeArguments(node: ExpressionWithTypeArgume
 
 export function updateLiteralTypeNode(node: LiteralTypeNode, literal: Node): LiteralTypeNode {
     return node.literal !== literal ? createLiteralTypeNode(literal) : node;
+}
+
+export function updatePrivateNameTypeNode(node: PrivateNameTypeNode, name: PrivateIdentifier): PrivateNameTypeNode {
+    return node.name !== name ? createPrivateNameTypeNode(name) : node;
 }
 
 export function updateTypePredicateNode(node: TypePredicateNode, assertsModifier: AssertsKeyword | undefined, parameterName: TypePredicateParameterName, type?: TypeNode): TypePredicateNode {

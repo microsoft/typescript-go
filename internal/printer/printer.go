@@ -2196,6 +2196,12 @@ func (p *Printer) emitLiteralType(node *ast.LiteralTypeNode) {
 	p.exitNode(node.AsNode(), state)
 }
 
+func (p *Printer) emitPrivateNameType(node *ast.PrivateNameTypeNode) {
+	state := p.enterNode(node.AsNode())
+	p.emitExpression(node.Name(), ast.OperatorPrecedenceComma)
+	p.exitNode(node.AsNode(), state)
+}
+
 func (p *Printer) emitTemplateTypeSpan(node *ast.TemplateLiteralTypeSpan) {
 	state := p.enterNode(node.AsNode())
 	p.emitTypeNodeOutsideExtends(node.Type)
@@ -2349,6 +2355,8 @@ func (p *Printer) emitTypeNode(node *ast.TypeNode, precedence ast.TypePrecedence
 		p.emitTemplateTypeSpan(node.AsTemplateLiteralTypeSpan())
 	case ast.KindImportType:
 		p.emitImportTypeNode(node.AsImportTypeNode())
+	case ast.KindPrivateNameType:
+		p.emitPrivateNameType(node.AsPrivateNameTypeNode())
 
 	case ast.KindPropertyAccessExpression:
 		// Occurs in pseudo-types such as `f<T>.C`, where `f` is a generic function and `C` is a local type

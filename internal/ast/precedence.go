@@ -707,6 +707,7 @@ func GetTypeNodePrecedence(n *TypeNode) TypePrecedence {
 		KindNamedTupleMember,
 		KindTemplateLiteralType,
 		KindImportType,
+		KindPrivateNameType,
 		// These occur in pseudo-types like `f<T>.C`, where `f` is a generic function and `C` is a local type
 		KindPropertyAccessExpression,
 		KindExpressionWithTypeArguments:

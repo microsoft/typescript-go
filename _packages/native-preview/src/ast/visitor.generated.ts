@@ -133,6 +133,7 @@ import type {
     PartiallyEmittedExpression,
     PostfixUnaryExpression,
     PrefixUnaryExpression,
+    PrivateNameTypeNode,
     PropertyAccessExpression,
     PropertyAssignment,
     PropertyDeclaration,
@@ -305,6 +306,7 @@ import {
     updatePartiallyEmittedExpression,
     updatePostfixUnaryExpression,
     updatePrefixUnaryExpression,
+    updatePrivateNameTypeNode,
     updatePropertyAccessExpression,
     updatePropertyAssignment,
     updatePropertyDeclaration,
@@ -390,6 +392,7 @@ import {
     isModuleReference,
     isNamedExportBindings,
     isNamedImportBindings,
+    isPrivateIdentifier,
     isPropertyName,
     isQuestionDotToken,
     isQuestionOrExclamationToken,
@@ -1038,6 +1041,10 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
     [SyntaxKind.LiteralType]: (node: LiteralTypeNode, visitor: Visitor): LiteralTypeNode => {
         const _literal = visitNode(node.literal, visitor);
         return updateLiteralTypeNode(node, _literal);
+    },
+    [SyntaxKind.PrivateNameType]: (node: PrivateNameTypeNode, visitor: Visitor): PrivateNameTypeNode => {
+        const _name = visitNode(node.name, visitor, isPrivateIdentifier);
+        return updatePrivateNameTypeNode(node, _name);
     },
     [SyntaxKind.TypePredicate]: (node: TypePredicateNode, visitor: Visitor): TypePredicateNode => {
         const _assertsModifier = visitNode(node.assertsModifier, visitor, isAssertsKeyword);
