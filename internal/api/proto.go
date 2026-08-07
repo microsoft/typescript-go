@@ -738,8 +738,8 @@ func newTypeResponse(t *checker.Type, id TypeID) *TypeResponse {
 		if objectFlags&checker.ObjectFlagsReference != 0 {
 			var ref *checker.TypeReference
 			if objectFlags&checker.ObjectFlagsTuple != 0 {
-				tuple := t.AsTupleType()
-				ref = tuple.AsTypeReference()
+				ref = t.AsTypeReference()
+				tuple := t.TargetTupleType()
 				resp.ElementFlags = tuple.ElementFlags()
 				fixedLen := tuple.FixedLength()
 				resp.FixedLength = &fixedLen
