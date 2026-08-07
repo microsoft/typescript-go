@@ -67,7 +67,7 @@ describe("Encoder", () => {
         // Verify header
         const view = new DataView(encoded.buffer, encoded.byteOffset, encoded.byteLength);
         const metadata = view.getUint32(0, true);
-        assert.strictEqual(metadata >>> 24, 6, "protocol version should be 6");
+        assert.strictEqual(metadata >>> 24, 7, "protocol version should be 7");
 
         // Verify we can decode it
         const decoded = decode(encoded);
@@ -75,6 +75,8 @@ describe("Encoder", () => {
         assert.strictEqual(decoded.fileName, "/test.ts");
         assert.strictEqual(decoded.path, "/test.ts");
         assert.strictEqual(decoded.text, "");
+        assert.strictEqual(decoded.supplementalSourceFileNames, undefined);
+        assert.strictEqual(decoded.canonicalSourceFileName, undefined);
     });
 
     test("encodes source file with identifier", () => {
@@ -174,11 +176,11 @@ describe("Encoder", () => {
         assert.strictEqual(rootKind, SyntaxKind.IfStatement);
     });
 
-    test("protocol version is 6", () => {
+    test("protocol version is 7", () => {
         const sf = makeSF("", "/test.ts", []);
         const encoded = encodeSourceFile(sf);
         const view = new DataView(encoded.buffer, encoded.byteOffset, encoded.byteLength);
-        assert.strictEqual(view.getUint32(0, true) >>> 24, 6);
+        assert.strictEqual(view.getUint32(0, true) >>> 24, 7);
     });
 
     test("encodes source files without content mapping metadata", () => {

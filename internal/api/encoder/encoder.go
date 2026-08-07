@@ -63,7 +63,7 @@ const (
 )
 
 const (
-	ProtocolVersion uint8 = 6
+	ProtocolVersion uint8 = 7
 )
 
 // Source File Binary Format
@@ -151,6 +151,8 @@ const (
 // | 44-48       | uint32 | Node index of `externalModuleIndicator` (0 = nil)             |
 // | 48-52       | uint32 | Index of `originalText` in the string offsets section         |
 // | 52-56       | uint32 | Byte offset of `spanMap` in structured data                    |
+// | 56-60       | uint32 | Byte offset of `supplementalSourceFileNames` in structured data |
+// | 60-64       | uint32 | Index of `canonicalSourceFileName`, or noStructuredData         |
 //
 // Structured data (variable)
 // --------------------------
@@ -665,9 +667,15 @@ func recordExtendedData_SourceFile(node *ast.Node, strs *stringTable, positionMa
 	if spanMap := sf.SpanMap(); spanMap != nil {
 		spanMapOffset = encodeSpanMap(spanMap, positionMap, ast.ComputePositionMap(sf.OriginalText()), structuredData)
 	}
+	supplementalFileNames := core.Map(sf.SupplementalSourceFiles(), func(file *ast.SourceFile) string { return file.FileName() })
+	supplementalFileNamesOffset := encodeStringArray(supplementalFileNames, structuredData)
+	canonicalFileNameIndex := uint32(noStructuredData)
+	if canonical := sf.CanonicalSourceFile(); canonical != nil {
+		canonicalFileNameIndex = strs.add(canonical.FileName(), 0, 0, 0)
+	}
 	// imports, moduleAugmentations, ambientModuleNames offsets are placeholders;
 	// they will be patched after the tree walk when node indices are known.
-	*extendedData = appendUint32s(*extendedData, textIndex, fileNameIndex, pathIndex, uint32(sf.LanguageVariant), uint32(sf.ScriptKind), referencedFilesOffset, typeRefDirectivesOffset, libRefDirectivesOffset, noStructuredData, noStructuredData, noStructuredData, 0, originalTextIndex, spanMapOffset)
+	*extendedData = appendUint32s(*extendedData, textIndex, fileNameIndex, pathIndex, uint32(sf.LanguageVariant), uint32(sf.ScriptKind), referencedFilesOffset, typeRefDirectivesOffset, libRefDirectivesOffset, noStructuredData, noStructuredData, noStructuredData, 0, originalTextIndex, spanMapOffset, supplementalFileNamesOffset, canonicalFileNameIndex)
 }
 
 func recordExtendedData_TemplateHead(node *ast.Node, strs *stringTable, positionMap *ast.PositionMap, extendedData *[]byte, structuredData *[]byte) {

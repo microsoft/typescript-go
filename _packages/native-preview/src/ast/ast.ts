@@ -121,6 +121,10 @@ export interface SourceFile extends Node {
     readonly text: string;
     readonly originalText: string;
     readonly spanMap: SpanMap | undefined;
+    /** Compiler-assigned filenames of supplemental outputs associated with this canonical source file. */
+    readonly supplementalSourceFileNames?: readonly string[];
+    /** Canonical source filename associated with this supplemental output, if this is supplemental. */
+    readonly canonicalSourceFileName?: string;
     readonly fileName: string;
     readonly path: Path;
     readonly languageVariant: LanguageVariant;
