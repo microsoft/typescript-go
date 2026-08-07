@@ -3,6 +3,7 @@ package execute
 import (
 	"context"
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -50,6 +51,10 @@ func stopTracing(sys tsc.System, tr *tracing.Tracing) {
 }
 
 func CommandLine(ctx context.Context, sys tsc.System, commandLineArgs []string, testing tsc.CommandLineTesting) tsc.CommandLineResult {
+	if sys.GetEnvironmentVariable("TS_SINGLE_THREADED") == "1" {
+		commandLineArgs = slices.Concat(commandLineArgs, []string{"--singleThreaded"})
+	}
+
 	if len(commandLineArgs) > 0 {
 		switch strings.ToLower(commandLineArgs[0]) {
 		case "-b", "--b", "-build", "--build":
