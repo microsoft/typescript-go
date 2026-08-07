@@ -1614,6 +1614,7 @@ type WriteFile func(fileName string, text string, data *WriteFileData) error
 type EmitOptions struct {
 	TargetSourceFile *ast.SourceFile // Single file to emit. If `nil`, emits all files
 	EmitOnly         EmitOnly
+	ForceDtsEmit     bool
 	WriteFile        WriteFile
 }
 
@@ -1635,7 +1636,7 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 		defer tr.Push(tracing.PhaseEmit, "emit", nil, true)()
 	}
 
-	if options.EmitOnly != EmitOnlyForcedDts {
+	if !options.ForceDtsEmit {
 		result := HandleNoEmitOnError(
 			ctx,
 			p,
@@ -1654,15 +1655,16 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 	}
 	wg := core.NewWorkGroup(p.SingleThreaded())
 	var emitters []*emitter
-	sourceFiles := p.getSourceFilesToEmit(options.TargetSourceFile, options.EmitOnly == EmitOnlyForcedDts)
+	sourceFiles := p.getSourceFilesToEmit(options.TargetSourceFile, options.ForceDtsEmit)
 
 	for _, sourceFile := range sourceFiles {
 		emitter := &emitter{
-			writer:     nil,
-			sourceFile: sourceFile,
-			emitOnly:   options.EmitOnly,
-			writeFile:  options.WriteFile,
-			tr:         p.opts.Tracing,
+			writer:       nil,
+			sourceFile:   sourceFile,
+			emitOnly:     options.EmitOnly,
+			forceDtsEmit: options.ForceDtsEmit,
+			writeFile:    options.WriteFile,
+			tr:           p.opts.Tracing,
 		}
 		emitters = append(emitters, emitter)
 		wg.Queue(func() {
@@ -1676,7 +1678,7 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 
 			// attach writer and perform emit
 			emitter.writer = writer
-			emitter.paths = outputpaths.GetOutputPathsFor(sourceFile, host.Options(), host, options.EmitOnly == EmitOnlyForcedDts)
+			emitter.paths = outputpaths.GetOutputPathsFor(sourceFile, host.Options(), host, options.ForceDtsEmit)
 			emitter.emit()
 			emitter.writer = nil
 

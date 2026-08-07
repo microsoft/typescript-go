@@ -27,12 +27,13 @@ const (
 	EmitAll EmitOnly = iota
 	EmitOnlyJs
 	EmitOnlyDts
-	EmitOnlyForcedDts
+	EmitOnlyBuilderSignature
 )
 
 type emitter struct {
 	host               EmitHost
 	emitOnly           EmitOnly
+	forceDtsEmit       bool
 	emitterDiagnostics ast.DiagnosticsCollection
 	writer             printer.EmitTextWriter
 	paths              *outputpaths.OutputPaths
@@ -229,12 +230,12 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 		e.emitterDiagnostics.Add(elem)
 	}
 
-	if e.emitOnly != EmitOnlyForcedDts && (options.NoEmit == core.TSTrue || e.host.IsEmitBlocked(declarationFilePath)) {
+	if !e.forceDtsEmit && (options.NoEmit == core.TSTrue || e.host.IsEmitBlocked(declarationFilePath)) {
 		e.emitResult.EmitSkipped = true
 		return
 	}
 
-	declBlocked := len(diags) > 0 && e.emitOnly != EmitOnlyForcedDts
+	declBlocked := len(diags) > 0 && !e.forceDtsEmit
 	if declBlocked {
 		e.emitResult.EmitSkipped = true
 		return
@@ -247,7 +248,7 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 		// Module: 			   options.Module, // NYI
 		// ModuleResolution:   options.ModuleResolution, // NYI
 		Target:          options.GetEmitScriptTarget(),
-		SourceMap:       e.emitOnly != EmitOnlyForcedDts && options.DeclarationMap.IsTrue(),
+		SourceMap:       e.emitOnly != EmitOnlyBuilderSignature && options.DeclarationMap.IsTrue(),
 		InlineSourceMap: options.InlineSourceMap.IsTrue(),
 		// InlineSources:       options.InlineSources.IsTrue(), // ignored, per strada
 		// ExtendedDiagnostics: options.ExtendedDiagnostics.IsTrue(), // NYI
@@ -261,7 +262,7 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 	}, emitContext)
 
 	declarationMapOptions := &core.CompilerOptions{
-		SourceMap:  core.IfElse(e.emitOnly != EmitOnlyForcedDts && options.DeclarationMap.IsTrue(), core.TSTrue, core.TSFalse),
+		SourceMap:  core.IfElse(e.emitOnly != EmitOnlyBuilderSignature && options.DeclarationMap.IsTrue(), core.TSTrue, core.TSFalse),
 		SourceRoot: options.SourceRoot,
 		MapRoot:    options.MapRoot,
 		// Explicitly do not pass through either inline option.

@@ -126,6 +126,18 @@ export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 export { CheckFlags, CompletionItemKind, DiagnosticCategory, ElementFlags, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
 export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ProjectReference, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 
+export interface TranspileOptions {
+    compilerOptions?: CompilerOptions;
+    fileName?: string;
+    reportDiagnostics?: boolean;
+}
+
+export interface TranspileOutput {
+    outputText: string;
+    diagnostics?: readonly Diagnostic[];
+    sourceMapText?: string;
+}
+
 export class API<FromLSP extends boolean = false> {
     private client: Client;
     private sourceFileCache: SourceFileCache;
@@ -164,6 +176,26 @@ export class API<FromLSP extends boolean = false> {
     async parseConfigFile(file: DocumentIdentifier): Promise<ConfigResponse> {
         await this.ensureInitialized();
         return this.client.apiRequest<ConfigResponse>("parseConfigFile", { file });
+    }
+
+    async transpileModule(input: string, options: TranspileOptions = {}): Promise<TranspileOutput> {
+        await this.ensureInitialized();
+        return this.client.apiRequest<TranspileOutput>("transpileModule", { input, options });
+    }
+
+    async transpileModuleFromFile(fileName: string, options: TranspileOptions = {}): Promise<TranspileOutput> {
+        await this.ensureInitialized();
+        return this.client.apiRequest<TranspileOutput>("transpileModuleFromFile", { fileName, options });
+    }
+
+    async transpileDeclaration(input: string, options: TranspileOptions = {}): Promise<TranspileOutput> {
+        await this.ensureInitialized();
+        return this.client.apiRequest<TranspileOutput>("transpileDeclaration", { input, options });
+    }
+
+    async transpileDeclarationFromFile(fileName: string, options: TranspileOptions = {}): Promise<TranspileOutput> {
+        await this.ensureInitialized();
+        return this.client.apiRequest<TranspileOutput>("transpileDeclarationFromFile", { fileName, options });
     }
 
     async updateSnapshot(params?: FromLSP extends true ? LSPUpdateSnapshotParams : UpdateSnapshotParams): Promise<Snapshot> {
