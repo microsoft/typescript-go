@@ -66,7 +66,7 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 //// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","errors":true,"root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../shared/types/db.ts","../src/main.ts","../src/other.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}","6ac30e235b3496214b9c209edec4d109-import { A } from \"../shared/types/db\";\nconst a = {\n    lastName: 'sdsd'\n;","ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }"],"fileIdsList":[[2]],"options":{"declaration":false,"noEmitOnError":true,"outDir":"./"},"referencedMap":[[3,1]],"semanticDiagnosticsPerFile":[1,2,3,4],"affectedFilesPendingEmit":[2,3,4]}
+{"version":"FakeTSVersion","errors":true,"root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../shared/types/db.ts","../src/main.ts","../src/other.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}","signature":"54943827690173f946e7a76cd9b9eb27-export interface A {\n    name: string;\n}\n","impliedNodeFormat":1},{"version":"6ac30e235b3496214b9c209edec4d109-import { A } from \"../shared/types/db\";\nconst a = {\n    lastName: 'sdsd'\n;","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1},{"version":"ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"declaration":false,"noEmitOnError":true,"outDir":"./"},"referencedMap":[[3,1]],"semanticDiagnosticsPerFile":[1,2,3,4],"affectedFilesPendingEmit":[2,3,4]}
 //// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -106,20 +106,35 @@ declare const console: { log(msg: any): void; };
     {
       "fileName": "../shared/types/db.ts",
       "version": "4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}",
-      "signature": "4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}",
-      "impliedNodeFormat": "CommonJS"
+      "signature": "54943827690173f946e7a76cd9b9eb27-export interface A {\n    name: string;\n}\n",
+      "impliedNodeFormat": "CommonJS",
+      "original": {
+        "version": "4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}",
+        "signature": "54943827690173f946e7a76cd9b9eb27-export interface A {\n    name: string;\n}\n",
+        "impliedNodeFormat": 1
+      }
     },
     {
       "fileName": "../src/main.ts",
       "version": "6ac30e235b3496214b9c209edec4d109-import { A } from \"../shared/types/db\";\nconst a = {\n    lastName: 'sdsd'\n;",
-      "signature": "6ac30e235b3496214b9c209edec4d109-import { A } from \"../shared/types/db\";\nconst a = {\n    lastName: 'sdsd'\n;",
-      "impliedNodeFormat": "CommonJS"
+      "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
+      "impliedNodeFormat": "CommonJS",
+      "original": {
+        "version": "6ac30e235b3496214b9c209edec4d109-import { A } from \"../shared/types/db\";\nconst a = {\n    lastName: 'sdsd'\n;",
+        "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
+        "impliedNodeFormat": 1
+      }
     },
     {
       "fileName": "../src/other.ts",
       "version": "ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }",
-      "signature": "ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }",
-      "impliedNodeFormat": "CommonJS"
+      "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
+      "impliedNodeFormat": "CommonJS",
+      "original": {
+        "version": "ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }",
+        "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
+        "impliedNodeFormat": 1
+      }
     }
   ],
   "fileIdsList": [
@@ -160,7 +175,7 @@ declare const console: { log(msg: any): void; };
       4
     ]
   ],
-  "size": 1382
+  "size": 1696
 }
 
 Watch Registrations::
@@ -245,7 +260,7 @@ console.log("hi");
 export {};
 
 //// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../shared/types/db.ts","../src/main.ts","../src/other.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}",{"version":"7b22ad4790ccb4d687e7d84c4e640776-import { A } from \"../shared/types/db\";\nconst a = {\n    lastName: 'sdsd'\n};","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1},"ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }"],"fileIdsList":[[2]],"options":{"declaration":false,"noEmitOnError":true,"outDir":"./"},"referencedMap":[[3,1]]}
+{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../shared/types/db.ts","../src/main.ts","../src/other.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}","signature":"54943827690173f946e7a76cd9b9eb27-export interface A {\n    name: string;\n}\n","impliedNodeFormat":1},{"version":"7b22ad4790ccb4d687e7d84c4e640776-import { A } from \"../shared/types/db\";\nconst a = {\n    lastName: 'sdsd'\n};","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1},{"version":"ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"declaration":false,"noEmitOnError":true,"outDir":"./"},"referencedMap":[[3,1]]}
 //// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -284,8 +299,13 @@ export {};
     {
       "fileName": "../shared/types/db.ts",
       "version": "4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}",
-      "signature": "4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}",
-      "impliedNodeFormat": "CommonJS"
+      "signature": "54943827690173f946e7a76cd9b9eb27-export interface A {\n    name: string;\n}\n",
+      "impliedNodeFormat": "CommonJS",
+      "original": {
+        "version": "4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}",
+        "signature": "54943827690173f946e7a76cd9b9eb27-export interface A {\n    name: string;\n}\n",
+        "impliedNodeFormat": 1
+      }
     },
     {
       "fileName": "../src/main.ts",
@@ -301,8 +321,13 @@ export {};
     {
       "fileName": "../src/other.ts",
       "version": "ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }",
-      "signature": "ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }",
-      "impliedNodeFormat": "CommonJS"
+      "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
+      "impliedNodeFormat": "CommonJS",
+      "original": {
+        "version": "ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }",
+        "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
+        "impliedNodeFormat": 1
+      }
     }
   ],
   "fileIdsList": [
@@ -320,7 +345,7 @@ export {};
       "../shared/types/db.ts"
     ]
   },
-  "size": 1389
+  "size": 1609
 }
 
 Watch Registrations::
@@ -385,7 +410,7 @@ Output::
 [[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 //// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../shared/types/db.ts","../src/main.ts","../src/other.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}",{"version":"21728e732a07c83043db4a93ca54350c-import { A } from \"../shared/types/db\";\nconst a: string = 10;","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1},"ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }"],"fileIdsList":[[2]],"options":{"declaration":false,"noEmitOnError":true,"outDir":"./"},"referencedMap":[[3,1]],"semanticDiagnosticsPerFile":[[3,[{"pos":46,"end":47,"code":2322,"category":1,"messageKey":"Type_0_is_not_assignable_to_type_1_2322","messageArgs":["number","string"]}]]],"affectedFilesPendingEmit":[3]}
+{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../shared/types/db.ts","../src/main.ts","../src/other.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}","signature":"54943827690173f946e7a76cd9b9eb27-export interface A {\n    name: string;\n}\n","impliedNodeFormat":1},{"version":"21728e732a07c83043db4a93ca54350c-import { A } from \"../shared/types/db\";\nconst a: string = 10;","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1},{"version":"ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"declaration":false,"noEmitOnError":true,"outDir":"./"},"referencedMap":[[3,1]],"semanticDiagnosticsPerFile":[[3,[{"pos":46,"end":47,"code":2322,"category":1,"messageKey":"Type_0_is_not_assignable_to_type_1_2322","messageArgs":["number","string"]}]]],"affectedFilesPendingEmit":[3]}
 //// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -424,8 +449,13 @@ Output::
     {
       "fileName": "../shared/types/db.ts",
       "version": "4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}",
-      "signature": "4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}",
-      "impliedNodeFormat": "CommonJS"
+      "signature": "54943827690173f946e7a76cd9b9eb27-export interface A {\n    name: string;\n}\n",
+      "impliedNodeFormat": "CommonJS",
+      "original": {
+        "version": "4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}",
+        "signature": "54943827690173f946e7a76cd9b9eb27-export interface A {\n    name: string;\n}\n",
+        "impliedNodeFormat": 1
+      }
     },
     {
       "fileName": "../src/main.ts",
@@ -441,8 +471,13 @@ Output::
     {
       "fileName": "../src/other.ts",
       "version": "ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }",
-      "signature": "ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }",
-      "impliedNodeFormat": "CommonJS"
+      "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
+      "impliedNodeFormat": "CommonJS",
+      "original": {
+        "version": "ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }",
+        "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
+        "impliedNodeFormat": 1
+      }
     }
   ],
   "fileIdsList": [
@@ -485,7 +520,7 @@ Output::
       3
     ]
   ],
-  "size": 1575
+  "size": 1795
 }
 
 Watch Registrations::
@@ -553,7 +588,7 @@ const a = "hello";
 export {};
 
 //// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../shared/types/db.ts","../src/main.ts","../src/other.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}",{"version":"53d07f7c18bc0a70f0fe62e902ac491d-import { A } from \"../shared/types/db\";\nconst a: string = \"hello\";","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1},"ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }"],"fileIdsList":[[2]],"options":{"declaration":false,"noEmitOnError":true,"outDir":"./"},"referencedMap":[[3,1]]}
+{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../shared/types/db.ts","../src/main.ts","../src/other.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}","signature":"54943827690173f946e7a76cd9b9eb27-export interface A {\n    name: string;\n}\n","impliedNodeFormat":1},{"version":"53d07f7c18bc0a70f0fe62e902ac491d-import { A } from \"../shared/types/db\";\nconst a: string = \"hello\";","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1},{"version":"ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"declaration":false,"noEmitOnError":true,"outDir":"./"},"referencedMap":[[3,1]]}
 //// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -592,8 +627,13 @@ export {};
     {
       "fileName": "../shared/types/db.ts",
       "version": "4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}",
-      "signature": "4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}",
-      "impliedNodeFormat": "CommonJS"
+      "signature": "54943827690173f946e7a76cd9b9eb27-export interface A {\n    name: string;\n}\n",
+      "impliedNodeFormat": "CommonJS",
+      "original": {
+        "version": "4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}",
+        "signature": "54943827690173f946e7a76cd9b9eb27-export interface A {\n    name: string;\n}\n",
+        "impliedNodeFormat": 1
+      }
     },
     {
       "fileName": "../src/main.ts",
@@ -609,8 +649,13 @@ export {};
     {
       "fileName": "../src/other.ts",
       "version": "ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }",
-      "signature": "ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }",
-      "impliedNodeFormat": "CommonJS"
+      "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
+      "impliedNodeFormat": "CommonJS",
+      "original": {
+        "version": "ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }",
+        "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
+        "impliedNodeFormat": 1
+      }
     }
   ],
   "fileIdsList": [
@@ -628,7 +673,7 @@ export {};
       "../shared/types/db.ts"
     ]
   },
-  "size": 1380
+  "size": 1600
 }
 
 Watch Registrations::
@@ -690,7 +735,7 @@ export const a = class {
 };
 
 //// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../shared/types/db.ts","../src/main.ts","../src/other.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}",{"version":"6cc24027429965f7fa7493c1b9efd532-import { A } from \"../shared/types/db\";\nexport const a = class { private p = 10; };","signature":"562dfe29cab6c7ded7ded341fc9c8131-export declare const a: {\n    new (): {\n        p: number;\n    };\n};\n\n(53,1): error4094: Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094\np\n\n(53,1): error9027: Add_a_type_annotation_to_the_variable_0_9027\na\n","impliedNodeFormat":1},"ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }"],"fileIdsList":[[2]],"options":{"declaration":false,"noEmitOnError":true,"outDir":"./"},"referencedMap":[[3,1]]}
+{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../shared/types/db.ts","../src/main.ts","../src/other.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}","signature":"54943827690173f946e7a76cd9b9eb27-export interface A {\n    name: string;\n}\n","impliedNodeFormat":1},{"version":"6cc24027429965f7fa7493c1b9efd532-import { A } from \"../shared/types/db\";\nexport const a = class { private p = 10; };","signature":"562dfe29cab6c7ded7ded341fc9c8131-export declare const a: {\n    new (): {\n        p: number;\n    };\n};\n\n(53,1): error4094: Property_0_of_exported_anonymous_class_type_may_not_be_private_or_protected_4094\np\n\n(53,1): error9027: Add_a_type_annotation_to_the_variable_0_9027\na\n","impliedNodeFormat":1},{"version":"ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"declaration":false,"noEmitOnError":true,"outDir":"./"},"referencedMap":[[3,1]]}
 //// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -729,8 +774,13 @@ export const a = class {
     {
       "fileName": "../shared/types/db.ts",
       "version": "4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}",
-      "signature": "4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}",
-      "impliedNodeFormat": "CommonJS"
+      "signature": "54943827690173f946e7a76cd9b9eb27-export interface A {\n    name: string;\n}\n",
+      "impliedNodeFormat": "CommonJS",
+      "original": {
+        "version": "4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}",
+        "signature": "54943827690173f946e7a76cd9b9eb27-export interface A {\n    name: string;\n}\n",
+        "impliedNodeFormat": 1
+      }
     },
     {
       "fileName": "../src/main.ts",
@@ -746,8 +796,13 @@ export const a = class {
     {
       "fileName": "../src/other.ts",
       "version": "ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }",
-      "signature": "ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }",
-      "impliedNodeFormat": "CommonJS"
+      "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
+      "impliedNodeFormat": "CommonJS",
+      "original": {
+        "version": "ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }",
+        "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
+        "impliedNodeFormat": 1
+      }
     }
   ],
   "fileIdsList": [
@@ -765,7 +820,7 @@ export const a = class {
       "../shared/types/db.ts"
     ]
   },
-  "size": 1633
+  "size": 1853
 }
 
 Watch Registrations::
@@ -823,7 +878,7 @@ Output::
 
 //// [/user/username/projects/noEmitOnError/dev-build/src/main.js] *rewrite with same content*
 //// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../shared/types/db.ts","../src/main.ts","../src/other.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}",{"version":"7cd05f722edaaaf0c0efca32b04362e8-import { A } from \"../shared/types/db\";\nexport const a = class { p = 10; };","signature":"1aa32af20adf1f5d970642bd31541eeb-export declare const a: {\n    new (): {\n        p: number;\n    };\n};\n","impliedNodeFormat":1},"ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }"],"fileIdsList":[[2]],"options":{"declaration":false,"noEmitOnError":true,"outDir":"./"},"referencedMap":[[3,1]]}
+{"version":"FakeTSVersion","root":[[2,4]],"fileNames":["lib.es2025.full.d.ts","../shared/types/db.ts","../src/main.ts","../src/other.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}","signature":"54943827690173f946e7a76cd9b9eb27-export interface A {\n    name: string;\n}\n","impliedNodeFormat":1},{"version":"7cd05f722edaaaf0c0efca32b04362e8-import { A } from \"../shared/types/db\";\nexport const a = class { p = 10; };","signature":"1aa32af20adf1f5d970642bd31541eeb-export declare const a: {\n    new (): {\n        p: number;\n    };\n};\n","impliedNodeFormat":1},{"version":"ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"declaration":false,"noEmitOnError":true,"outDir":"./"},"referencedMap":[[3,1]]}
 //// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -862,8 +917,13 @@ Output::
     {
       "fileName": "../shared/types/db.ts",
       "version": "4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}",
-      "signature": "4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}",
-      "impliedNodeFormat": "CommonJS"
+      "signature": "54943827690173f946e7a76cd9b9eb27-export interface A {\n    name: string;\n}\n",
+      "impliedNodeFormat": "CommonJS",
+      "original": {
+        "version": "4dba75627964632af83642176cf4b611-export interface A {\n    name: string;\n}",
+        "signature": "54943827690173f946e7a76cd9b9eb27-export interface A {\n    name: string;\n}\n",
+        "impliedNodeFormat": 1
+      }
     },
     {
       "fileName": "../src/main.ts",
@@ -879,8 +939,13 @@ Output::
     {
       "fileName": "../src/other.ts",
       "version": "ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }",
-      "signature": "ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }",
-      "impliedNodeFormat": "CommonJS"
+      "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
+      "impliedNodeFormat": "CommonJS",
+      "original": {
+        "version": "ac4084c9455da7165ada8cb39f592843-console.log(\"hi\");\nexport { }",
+        "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
+        "impliedNodeFormat": 1
+      }
     }
   ],
   "fileIdsList": [
@@ -898,7 +963,7 @@ Output::
       "../shared/types/db.ts"
     ]
   },
-  "size": 1449
+  "size": 1669
 }
 
 Watch Registrations::

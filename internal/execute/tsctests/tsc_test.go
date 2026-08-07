@@ -1723,6 +1723,12 @@ func TestTscIncremental(t *testing.T) {
 						sys.writeFileNoError("/home/src/workspaces/project/constants.ts", "export default 2;")
 					},
 				},
+				{
+					caption: "whitespace only edit of file whose inferred declaration changed",
+					edit: func(sys *TestSys) {
+						sys.appendFile("/home/src/workspaces/project/class1.ts", "\n")
+					},
+				},
 			},
 		},
 		{
@@ -1746,6 +1752,12 @@ func TestTscIncremental(t *testing.T) {
 					caption: "Modify imports used in global file",
 					edit: func(sys *TestSys) {
 						sys.writeFileNoError("/home/src/workspaces/project/constants.ts", "export default 2;")
+					},
+				},
+				{
+					caption: "whitespace only edit of file whose inferred declaration changed",
+					edit: func(sys *TestSys) {
+						sys.appendFile("/home/src/workspaces/project/class1.ts", "\n")
 					},
 				},
 			},
@@ -2233,6 +2245,59 @@ func TestTscIncremental(t *testing.T) {
 				`),
 			},
 			commandLineArgs: []string{"--noEmit"},
+		},
+		{
+			subScenario: "whitespace edit through const enum barrel",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"incremental": true,
+							"module": "esnext",
+							"moduleResolution": "bundler",
+							"strict": true,
+						},
+						"include": ["src/**/*.ts"],
+					}`),
+				"/home/src/workspaces/project/src/core.ts": stringtestutil.Dedent(`
+					export interface CoreThing { a: number }
+					export const CORE = 1;
+				`),
+				"/home/src/workspaces/project/src/core-barrel.ts": "export * from './core';\n",
+				"/home/src/workspaces/project/src/mid.ts": stringtestutil.Dedent(`
+					import { CORE, CoreThing } from './core-barrel';
+					export const MID: number = CORE + 1;
+					export function useCore(x: CoreThing): number { return x.a + MID; }
+					export const enum MidMode { A = 1, B = 2 }
+				`),
+				"/home/src/workspaces/project/src/index.ts": "export * from './mid';\n",
+				"/home/src/workspaces/project/src/leaf0.ts": stringtestutil.Dedent(`
+					import { MID } from './index';
+					export const L0: number = MID + 0;
+				`),
+				"/home/src/workspaces/project/src/leaf1.ts": stringtestutil.Dedent(`
+					import { MID } from './index';
+					export const L1: number = MID + 1;
+				`),
+				"/home/src/workspaces/project/src/leaf2.ts": stringtestutil.Dedent(`
+					import { MID } from './index';
+					export const L2: number = MID + 2;
+				`),
+			},
+			edits: []*tscEdit{
+				{
+					caption: "whitespace only edit of mid.ts",
+					edit: func(sys *TestSys) {
+						sys.appendFile("/home/src/workspaces/project/src/mid.ts", "\n")
+					},
+				},
+				{
+					caption: "same whitespace only edit of mid.ts again",
+					edit: func(sys *TestSys) {
+						sys.appendFile("/home/src/workspaces/project/src/mid.ts", "\n")
+					},
+				},
+			},
 		},
 	}
 
