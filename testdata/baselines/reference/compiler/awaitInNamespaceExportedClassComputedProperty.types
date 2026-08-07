@@ -13,17 +13,33 @@ namespace N {
 >await x : string
 >x : string
 
-    export class B { [await x]() {} }
+    export class B {
 >B : B
+
+        [await x]() {}
+>[await x] : () => void
+>await x : string
+>x : string
+
+        static [await x]() {}
+>[await x] : () => void
+>await x : string
+>x : string
+    }
+}
+export class C {
+>C : C
+
+    [await x]() {}
+>[await x] : () => void
+>await x : string
+>x : string
+
+    static [await x]() {}
 >[await x] : () => void
 >await x : string
 >x : string
 }
-export class C { [await x]() {} }
->C : C
->[await x] : () => void
->await x : string
->x : string
 
 {
     class D { [await x]() {} }
@@ -36,21 +52,37 @@ export class C { [await x]() {} }
 function f() {
 >f : () => void
 
-    class E { [await x]() {} }
+    class E {
 >E : E
+
+        [await x]() {}
 >[await x] : () => void
 >await x : string
 >x : string
+
+        static [await x]() {}
+>[await x] : () => void
+>await x : string
+>x : string
+    }
 }
 
 async function af() {
 >af : () => Promise<void>
 
-    class F { [await x]() {} }
+    class F {
 >F : F
+
+        [await x]() {}
 >[await x] : () => void
 >await x : string
 >x : string
+
+        static [await x]() {}
+>[await x] : () => void
+>await x : string
+>x : string
+    }
 }
 
 function* gf() {

@@ -4,20 +4,32 @@
 declare const x: string;
 namespace N {
     class A { [await x]() {} }
-    export class B { [await x]() {} }
+    export class B {
+        [await x]() {}
+        static [await x]() {}
+    }
 }
-export class C { [await x]() {} }
+export class C {
+    [await x]() {}
+    static [await x]() {}
+}
 
 {
     class D { [await x]() {} }
 }
 
 function f() {
-    class E { [await x]() {} }
+    class E {
+        [await x]() {}
+        static [await x]() {}
+    }
 }
 
 async function af() {
-    class F { [await x]() {} }
+    class F {
+        [await x]() {}
+        static [await x]() {}
+    }
 }
 
 function* gf() {
@@ -53,11 +65,13 @@ var N;
     }
     class B {
         [await x]() { }
+        static [await x]() { }
     }
     N.B = B;
 })(N || (N = {}));
 export class C {
     [await x]() { }
+    static [await x]() { }
 }
 {
     class D {
@@ -67,11 +81,13 @@ export class C {
 function f() {
     class E {
         [await x]() { }
+        static [await x]() { }
     }
 }
 async function af() {
     class F {
         [await x]() { }
+        static [await x]() { }
     }
 }
 function* gf() {
