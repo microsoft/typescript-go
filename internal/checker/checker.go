@@ -2502,7 +2502,7 @@ func (c *Checker) checkDeferredNodes(context *ast.SourceFile) {
 		}
 		c.checkDeferredNode(node)
 	}
-	links.deferredNodes.Clear()
+	links.deferredNodes = collections.OrderedSet[*ast.Node]{}
 }
 
 func (c *Checker) checkDeferredNode(node *ast.Node) {
@@ -2537,6 +2537,8 @@ func (c *Checker) checkDeferredNode(node *ast.Node) {
 		if ast.IsInstanceOfExpression(node) {
 			c.resolveUntypedCall(node)
 		}
+	case ast.KindObjectLiteralExpression, ast.KindJsxAttributes:
+		c.checkContextualDeprecations(node)
 	}
 	c.currentNode = saveCurrentNode
 }
@@ -8767,7 +8769,7 @@ func (c *Checker) resolveDecorator(node *ast.Node, candidatesOutArray *[]*Signat
 	headMessage := c.getDiagnosticHeadMessageForDecoratorResolution(node)
 	if len(callSignatures) == 0 {
 		diag := ast.NewDiagnosticChain(c.invocationErrorDetails(node.Expression(), apparentType, SignatureKindCall), headMessage)
-		c.addDiagnostic(diag)
+		diag = c.addDiagnostic(diag)
 		c.invocationErrorRecovery(apparentType, SignatureKindCall, diag)
 		return c.resolveErrorCall(node)
 	}
@@ -10003,7 +10005,7 @@ func (c *Checker) invocationError(errorTarget *ast.Node, apparentType *Type, kin
 	if relatedInformation != nil {
 		diagnostic.AddRelatedInfo(relatedInformation)
 	}
-	c.addDiagnostic(diagnostic)
+	diagnostic = c.addDiagnostic(diagnostic)
 	c.invocationErrorRecovery(apparentType, kind, diagnostic)
 }
 
@@ -13157,6 +13159,7 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 		// is nothing to check here.
 		return result //nolint:customlint // expando object literal has no property children to check
 	}
+	c.checkNodeDeferred(node)
 	inDestructuringPattern := ast.IsAssignmentTarget(node)
 	// Grammar checking
 	c.checkGrammarObjectLiteralExpression(node.AsObjectLiteralExpression(), inDestructuringPattern)
@@ -13273,9 +13276,6 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 			if allPropertiesTable != nil {
 				allPropertiesTable[prop.Name] = prop
 			}
-			if ast.IsIdentifier(memberDecl.Name()) {
-				c.checkDeprecatedProperty(memberDecl.Name(), contextualType)
-			}
 			if contextualType != nil && checkMode&CheckModeInferential != 0 && checkMode&CheckModeSkipContextSensitive == 0 && (ast.IsPropertyAssignment(memberDecl) || ast.IsMethodDeclaration(memberDecl)) && c.isContextSensitive(memberDecl) {
 				inferenceContext := c.getInferenceContext(node)
 				// In CheckMode.Inferential we should always have an inference context
@@ -13360,8 +13360,20 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 	return createObjectLiteralType()
 }
 
-func (c *Checker) checkDeprecatedProperty(name *ast.IdentifierNode, contextualType *Type) {
-	if contextualType == nil || name == nil {
+func (c *Checker) checkContextualDeprecations(node *ast.Node) {
+	contextualType := c.getApparentTypeOfContextualType(node, ContextFlagsNone)
+	for _, property := range node.Properties() {
+		if c.isCanceled() {
+			return
+		}
+		if property.Name() != nil && !ast.IsComputedPropertyName(property.Name()) {
+			c.checkDeprecatedProperty(property.Name(), contextualType)
+		}
+	}
+}
+
+func (c *Checker) checkDeprecatedProperty(name *ast.Node, contextualType *Type) {
+	if contextualType == nil {
 		return
 	}
 	prop := c.getPropertyOfType(contextualType, name.Text())
@@ -13968,7 +13980,7 @@ func (c *Checker) getDiagnostics(ctx context.Context, sourceFile *ast.SourceFile
 	if c.wasCanceled {
 		return nil
 	}
-	return collection.GetDiagnosticsForFile(sourceFile.FileName())
+	return collection.GetDiagnosticsForFile(sourceFile)
 }
 
 func (c *Checker) GetGlobalDiagnostics() []*ast.Diagnostic {
@@ -13987,24 +13999,24 @@ func (c *Checker) produceDeferredDiagnostics() {
 	c.deferredDiagnosticCallbacks = nil
 }
 
-func (c *Checker) addDiagnostic(diagnostic *ast.Diagnostic) {
+func (c *Checker) addDiagnostic(diagnostic *ast.Diagnostic) *ast.Diagnostic {
 	// Discard diagnostics created while at the maximum number of recursive TypeToString invocations.
 	if c.serializationLevel < maxSerializationLevel {
-		c.diagnostics.Add(diagnostic)
+		return c.diagnostics.Add(diagnostic)
 	}
+	return diagnostic
 }
 
-func (c *Checker) addSuggestionDiagnostic(diagnostic *ast.Diagnostic) {
+func (c *Checker) addSuggestionDiagnostic(diagnostic *ast.Diagnostic) *ast.Diagnostic {
 	// Discard diagnostics created while at the maximum number of recursive TypeToString invocations.
 	if c.serializationLevel < maxSerializationLevel {
-		c.suggestionDiagnostics.Add(diagnostic)
+		return c.suggestionDiagnostics.Add(diagnostic)
 	}
+	return diagnostic
 }
 
 func (c *Checker) error(location *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
-	diagnostic := NewDiagnosticForNode(location, message, args...)
-	c.addDiagnostic(diagnostic)
-	return diagnostic
+	return c.addDiagnostic(NewDiagnosticForNode(location, message, args...))
 }
 
 func (c *Checker) errorSkippedOnNoEmit(location *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
@@ -14052,8 +14064,7 @@ func (c *Checker) addDeprecatedSuggestionWorker(declarations []*ast.Node, diagno
 			break
 		}
 	}
-	c.addSuggestionDiagnostic(diagnostic)
-	return diagnostic
+	return c.addSuggestionDiagnostic(diagnostic)
 }
 
 func (c *Checker) isDeprecatedSymbol(symbol *ast.Symbol) bool {
@@ -14273,13 +14284,7 @@ func getAdjustedNodeForError(node *ast.Node) *ast.Node {
 }
 
 func (c *Checker) lookupOrIssueError(location *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
-	diagnostic := NewDiagnosticForNode(location, message, args...)
-	existing := c.diagnostics.Lookup(diagnostic)
-	if existing != nil {
-		return existing
-	}
-	c.addDiagnostic(diagnostic)
-	return diagnostic
+	return c.addDiagnostic(NewDiagnosticForNode(location, message, args...))
 }
 
 func getFirstDeclaration(symbol *ast.Symbol) *ast.Node {
