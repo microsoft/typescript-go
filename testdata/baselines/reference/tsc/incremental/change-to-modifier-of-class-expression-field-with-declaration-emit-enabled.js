@@ -115,7 +115,7 @@ function logMessage(person) {
 export {};
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","./MessageablePerson.ts","./main.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"500cfddf7f97c595e46579b9b5afc9bd-const Messageable = () => {\n    return class MessageableClass {\n        public message = 'hello';\n    }\n};\nconst wrapper = () => Messageable();\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;","signature":"3847cb0c7d8f5a6eaa57e0b19ab33ea8-declare const wrapper: () => {\n    new (): {\n        message: string;\n    };\n};\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;\n","impliedNodeFormat":1},{"version":"f1d6119c9df9ff1b48604c0e5c5f624f-import MessageablePerson from './MessageablePerson.js';\nfunction logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"declaration":true,"module":99},"referencedMap":[[3,1]],"semanticDiagnosticsPerFile":[[2,[{"pos":169,"end":181,"code":2304,"category":1,"messageKey":"Cannot_find_name_0_2304","messageArgs":["InstanceType"]},{"pos":182,"end":192,"code":2304,"category":1,"messageKey":"Cannot_find_name_0_2304","messageArgs":["ReturnType"]}]]]}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","./MessageablePerson.ts","./main.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"500cfddf7f97c595e46579b9b5afc9bd-const Messageable = () => {\n    return class MessageableClass {\n        public message = 'hello';\n    }\n};\nconst wrapper = () => Messageable();\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;","f1d6119c9df9ff1b48604c0e5c5f624f-import MessageablePerson from './MessageablePerson.js';\nfunction logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}"],"fileIdsList":[[2]],"options":{"declaration":true,"module":99},"referencedMap":[[3,1]],"semanticDiagnosticsPerFile":[[2,[{"pos":169,"end":181,"code":2304,"category":1,"messageKey":"Cannot_find_name_0_2304","messageArgs":["InstanceType"]},{"pos":182,"end":192,"code":2304,"category":1,"messageKey":"Cannot_find_name_0_2304","messageArgs":["ReturnType"]}]]]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -152,24 +152,14 @@ export {};
     {
       "fileName": "./MessageablePerson.ts",
       "version": "500cfddf7f97c595e46579b9b5afc9bd-const Messageable = () => {\n    return class MessageableClass {\n        public message = 'hello';\n    }\n};\nconst wrapper = () => Messageable();\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;",
-      "signature": "3847cb0c7d8f5a6eaa57e0b19ab33ea8-declare const wrapper: () => {\n    new (): {\n        message: string;\n    };\n};\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "500cfddf7f97c595e46579b9b5afc9bd-const Messageable = () => {\n    return class MessageableClass {\n        public message = 'hello';\n    }\n};\nconst wrapper = () => Messageable();\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;",
-        "signature": "3847cb0c7d8f5a6eaa57e0b19ab33ea8-declare const wrapper: () => {\n    new (): {\n        message: string;\n    };\n};\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "500cfddf7f97c595e46579b9b5afc9bd-const Messageable = () => {\n    return class MessageableClass {\n        public message = 'hello';\n    }\n};\nconst wrapper = () => Messageable();\ntype MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;\nexport default MessageablePerson;",
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "./main.ts",
       "version": "f1d6119c9df9ff1b48604c0e5c5f624f-import MessageablePerson from './MessageablePerson.js';\nfunction logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}",
-      "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "f1d6119c9df9ff1b48604c0e5c5f624f-import MessageablePerson from './MessageablePerson.js';\nfunction logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}",
-        "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "f1d6119c9df9ff1b48604c0e5c5f624f-import MessageablePerson from './MessageablePerson.js';\nfunction logMessage( person: MessageablePerson ) {\n    console.log( person.message );\n}",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "fileIdsList": [
@@ -213,7 +203,7 @@ export {};
       ]
     ]
   ],
-  "size": 2089
+  "size": 1725
 }
 
 tsconfig.json::

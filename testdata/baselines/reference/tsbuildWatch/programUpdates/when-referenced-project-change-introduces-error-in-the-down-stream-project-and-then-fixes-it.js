@@ -91,7 +91,7 @@ export function createSomeObject() {
 }
 
 //// [/user/username/projects/sample1/Library/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","./library.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"e7ed447430123527643b512119fcfd4f-interface SomeObject\n{\n    message: string;\n}\n\nexport function createSomeObject(): SomeObject\n{\n    return {\n        message: \"new Object\"\n    };\n}","signature":"4e6561e4d0bb63e65443157d6f0b1d5d-interface SomeObject {\n    message: string;\n}\nexport declare function createSomeObject(): SomeObject;\nexport {};\n","impliedNodeFormat":1}],"options":{"composite":true},"latestChangedDtsFile":"./library.d.ts"}
+{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","./library.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"e7ed447430123527643b512119fcfd4f-interface SomeObject\n{\n    message: string;\n}\n\nexport function createSomeObject(): SomeObject\n{\n    return {\n        message: \"new Object\"\n    };\n}"],"options":{"composite":true},"latestChangedDtsFile":"./library.d.ts","emitSignatures":[[2,"4e6561e4d0bb63e65443157d6f0b1d5d-interface SomeObject {\n    message: string;\n}\nexport declare function createSomeObject(): SomeObject;\nexport {};\n"]]}
 //// [/user/username/projects/sample1/Library/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -123,20 +123,25 @@ export function createSomeObject() {
     {
       "fileName": "./library.ts",
       "version": "e7ed447430123527643b512119fcfd4f-interface SomeObject\n{\n    message: string;\n}\n\nexport function createSomeObject(): SomeObject\n{\n    return {\n        message: \"new Object\"\n    };\n}",
-      "signature": "4e6561e4d0bb63e65443157d6f0b1d5d-interface SomeObject {\n    message: string;\n}\nexport declare function createSomeObject(): SomeObject;\nexport {};\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "e7ed447430123527643b512119fcfd4f-interface SomeObject\n{\n    message: string;\n}\n\nexport function createSomeObject(): SomeObject\n{\n    return {\n        message: \"new Object\"\n    };\n}",
-        "signature": "4e6561e4d0bb63e65443157d6f0b1d5d-interface SomeObject {\n    message: string;\n}\nexport declare function createSomeObject(): SomeObject;\nexport {};\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "e7ed447430123527643b512119fcfd4f-interface SomeObject\n{\n    message: string;\n}\n\nexport function createSomeObject(): SomeObject\n{\n    return {\n        message: \"new Object\"\n    };\n}",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "options": {
     "composite": true
   },
   "latestChangedDtsFile": "./library.d.ts",
-  "size": 1338
+  "emitSignatures": [
+    {
+      "file": "./library.ts",
+      "signature": "4e6561e4d0bb63e65443157d6f0b1d5d-interface SomeObject {\n    message: string;\n}\nexport declare function createSomeObject(): SomeObject;\nexport {};\n",
+      "original": [
+        2,
+        "4e6561e4d0bb63e65443157d6f0b1d5d-interface SomeObject {\n    message: string;\n}\nexport declare function createSomeObject(): SomeObject;\nexport {};\n"
+      ]
+    }
+  ],
+  "size": 1315
 }
 
 Watch Registrations::

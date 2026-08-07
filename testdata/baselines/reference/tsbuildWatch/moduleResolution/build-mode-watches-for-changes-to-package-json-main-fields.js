@@ -159,7 +159,7 @@ export type TheStr = string;
 export {};
 
 //// [/user/username/projects/myproject/packages/pkg2/build/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,4]],"packageJsons":["../package.json"],"fileNames":["lib.es2025.full.d.ts","../const.ts","../index.ts","../other.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"be0f939ab1143e4064a3742586332724-export type TheNum = 42;","signature":"56e2d69d2edd1f0edd1a64ecfdf6de0d-export type TheNum = 42;\n","impliedNodeFormat":1},{"version":"c95c354b23966e289caeaece40bb8d0a-export type { TheNum } from './const.js';","signature":"f257912cfebb94a04c6ba4e8f754166a-export type { TheNum } from './const.js';\n","impliedNodeFormat":1},{"version":"dfadcd1940a5dc36721d3311ebd8eb8b-export type TheStr = string;","signature":"9551f60bc06319547b96535db4cb8520-export type TheStr = string;\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"./"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./other.d.ts"}
+{"version":"FakeTSVersion","root":[[2,4]],"packageJsons":["../package.json"],"fileNames":["lib.es2025.full.d.ts","../const.ts","../index.ts","../other.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"be0f939ab1143e4064a3742586332724-export type TheNum = 42;","c95c354b23966e289caeaece40bb8d0a-export type { TheNum } from './const.js';","dfadcd1940a5dc36721d3311ebd8eb8b-export type TheStr = string;"],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"./"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./other.d.ts","emitSignatures":[[2,"56e2d69d2edd1f0edd1a64ecfdf6de0d-export type TheNum = 42;\n"],[3,"f257912cfebb94a04c6ba4e8f754166a-export type { TheNum } from './const.js';\n"],[4,"9551f60bc06319547b96535db4cb8520-export type TheStr = string;\n"]]}
 //// [/user/username/projects/myproject/packages/pkg2/build/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -201,35 +201,20 @@ export {};
     {
       "fileName": "../const.ts",
       "version": "be0f939ab1143e4064a3742586332724-export type TheNum = 42;",
-      "signature": "56e2d69d2edd1f0edd1a64ecfdf6de0d-export type TheNum = 42;\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "be0f939ab1143e4064a3742586332724-export type TheNum = 42;",
-        "signature": "56e2d69d2edd1f0edd1a64ecfdf6de0d-export type TheNum = 42;\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "be0f939ab1143e4064a3742586332724-export type TheNum = 42;",
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "../index.ts",
       "version": "c95c354b23966e289caeaece40bb8d0a-export type { TheNum } from './const.js';",
-      "signature": "f257912cfebb94a04c6ba4e8f754166a-export type { TheNum } from './const.js';\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "c95c354b23966e289caeaece40bb8d0a-export type { TheNum } from './const.js';",
-        "signature": "f257912cfebb94a04c6ba4e8f754166a-export type { TheNum } from './const.js';\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "c95c354b23966e289caeaece40bb8d0a-export type { TheNum } from './const.js';",
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "../other.ts",
       "version": "dfadcd1940a5dc36721d3311ebd8eb8b-export type TheStr = string;",
-      "signature": "9551f60bc06319547b96535db4cb8520-export type TheStr = string;\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "dfadcd1940a5dc36721d3311ebd8eb8b-export type TheStr = string;",
-        "signature": "9551f60bc06319547b96535db4cb8520-export type TheStr = string;\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "dfadcd1940a5dc36721d3311ebd8eb8b-export type TheStr = string;",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "fileIdsList": [
@@ -247,7 +232,33 @@ export {};
     ]
   },
   "latestChangedDtsFile": "./other.d.ts",
-  "size": 1611
+  "emitSignatures": [
+    {
+      "file": "../const.ts",
+      "signature": "56e2d69d2edd1f0edd1a64ecfdf6de0d-export type TheNum = 42;\n",
+      "original": [
+        2,
+        "56e2d69d2edd1f0edd1a64ecfdf6de0d-export type TheNum = 42;\n"
+      ]
+    },
+    {
+      "file": "../index.ts",
+      "signature": "f257912cfebb94a04c6ba4e8f754166a-export type { TheNum } from './const.js';\n",
+      "original": [
+        3,
+        "f257912cfebb94a04c6ba4e8f754166a-export type { TheNum } from './const.js';\n"
+      ]
+    },
+    {
+      "file": "../other.ts",
+      "signature": "9551f60bc06319547b96535db4cb8520-export type TheStr = string;\n",
+      "original": [
+        4,
+        "9551f60bc06319547b96535db4cb8520-export type TheStr = string;\n"
+      ]
+    }
+  ],
+  "size": 1504
 }
 
 Watch Registrations::

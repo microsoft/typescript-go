@@ -60,7 +60,7 @@ export {};
 export {};
 
 //// [/home/src/workspaces/project/alpha/bin/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","errors":true,"root":[3],"fileNames":["lib.es2025.full.d.ts","../../beta/b.ts","../src/a.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"c7aa180f19a42166d3166e266d7e59ec-export { }","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1},{"version":"48cb0b944bf6ab58a2c0fa2f1d92b81b-import * as b from '../../beta/b'","signature":"abe7d9981d6018efb6b2b794f40a1607-export {};\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"./"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./src/a.d.ts"}
+{"version":"FakeTSVersion","errors":true,"root":[3],"fileNames":["lib.es2025.full.d.ts","../../beta/b.ts","../src/a.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"c7aa180f19a42166d3166e266d7e59ec-export { }","48cb0b944bf6ab58a2c0fa2f1d92b81b-import * as b from '../../beta/b'"],"fileIdsList":[[2]],"options":{"composite":true,"outDir":"./"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./src/a.d.ts","emitSignatures":[[2,"abe7d9981d6018efb6b2b794f40a1607-export {};\n"],[3,"abe7d9981d6018efb6b2b794f40a1607-export {};\n"]]}
 //// [/home/src/workspaces/project/alpha/bin/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -94,24 +94,14 @@ export {};
     {
       "fileName": "../../beta/b.ts",
       "version": "c7aa180f19a42166d3166e266d7e59ec-export { }",
-      "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "c7aa180f19a42166d3166e266d7e59ec-export { }",
-        "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "c7aa180f19a42166d3166e266d7e59ec-export { }",
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "../src/a.ts",
       "version": "48cb0b944bf6ab58a2c0fa2f1d92b81b-import * as b from '../../beta/b'",
-      "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-      "impliedNodeFormat": "CommonJS",
-      "original": {
-        "version": "48cb0b944bf6ab58a2c0fa2f1d92b81b-import * as b from '../../beta/b'",
-        "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
-        "impliedNodeFormat": 1
-      }
+      "signature": "48cb0b944bf6ab58a2c0fa2f1d92b81b-import * as b from '../../beta/b'",
+      "impliedNodeFormat": "CommonJS"
     }
   ],
   "fileIdsList": [
@@ -129,7 +119,25 @@ export {};
     ]
   },
   "latestChangedDtsFile": "./src/a.d.ts",
-  "size": 1333
+  "emitSignatures": [
+    {
+      "file": "../../beta/b.ts",
+      "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
+      "original": [
+        2,
+        "abe7d9981d6018efb6b2b794f40a1607-export {};\n"
+      ]
+    },
+    {
+      "file": "../src/a.ts",
+      "signature": "abe7d9981d6018efb6b2b794f40a1607-export {};\n",
+      "original": [
+        3,
+        "abe7d9981d6018efb6b2b794f40a1607-export {};\n"
+      ]
+    }
+  ],
+  "size": 1268
 }
 //// [/home/src/workspaces/project/beta/b.d.ts] *new* 
 export {};

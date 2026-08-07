@@ -72,6 +72,16 @@ type CompileTimes struct {
 	BuildInfoReadTime  time.Duration
 	ChangesComputeTime time.Duration
 }
+
+func (t *CompileTimes) addNestedEmitTime(duration time.Duration) {
+	if duration > t.checkTime {
+		t.checkTime = 0
+	} else {
+		t.checkTime -= duration
+	}
+	t.emitTime += duration
+}
+
 type CompileAndEmitResult struct {
 	Diagnostics []*ast.Diagnostic
 	EmitResult  *compiler.EmitResult

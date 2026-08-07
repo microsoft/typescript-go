@@ -113,7 +113,7 @@ declare let z: number;
 let z = 0;
 
 //// [/user/username/projects/project/project1.tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","./commonFile1.ts","./commonFile2.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"4e1a8b13d3ccc04f0aaac579ade4a50b-let x = 1","signature":"0e529fdc590223d6038e844fdfd212cd-declare let x: number;\n","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"06ce815ba25b02847f0b8550f82f5a25-let y = 1","signature":"114cede92fdd1b7222858083021aeba2-declare let y: number;\n","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"composite":true,"strict":true},"latestChangedDtsFile":"./commonFile2.d.ts"}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.es2025.full.d.ts","./commonFile1.ts","./commonFile2.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"4e1a8b13d3ccc04f0aaac579ade4a50b-let x = 1","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"06ce815ba25b02847f0b8550f82f5a25-let y = 1","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"composite":true,"strict":true},"latestChangedDtsFile":"./commonFile2.d.ts","emitSignatures":[[2,"0e529fdc590223d6038e844fdfd212cd-declare let x: number;\n"],[3,"114cede92fdd1b7222858083021aeba2-declare let y: number;\n"]]}
 //// [/user/username/projects/project/project1.tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -150,12 +150,11 @@ let z = 0;
     {
       "fileName": "./commonFile1.ts",
       "version": "4e1a8b13d3ccc04f0aaac579ade4a50b-let x = 1",
-      "signature": "0e529fdc590223d6038e844fdfd212cd-declare let x: number;\n",
+      "signature": "4e1a8b13d3ccc04f0aaac579ade4a50b-let x = 1",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "4e1a8b13d3ccc04f0aaac579ade4a50b-let x = 1",
-        "signature": "0e529fdc590223d6038e844fdfd212cd-declare let x: number;\n",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
@@ -163,12 +162,11 @@ let z = 0;
     {
       "fileName": "./commonFile2.ts",
       "version": "06ce815ba25b02847f0b8550f82f5a25-let y = 1",
-      "signature": "114cede92fdd1b7222858083021aeba2-declare let y: number;\n",
+      "signature": "06ce815ba25b02847f0b8550f82f5a25-let y = 1",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "06ce815ba25b02847f0b8550f82f5a25-let y = 1",
-        "signature": "114cede92fdd1b7222858083021aeba2-declare let y: number;\n",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
@@ -179,10 +177,28 @@ let z = 0;
     "strict": true
   },
   "latestChangedDtsFile": "./commonFile2.d.ts",
-  "size": 1342
+  "emitSignatures": [
+    {
+      "file": "./commonFile1.ts",
+      "signature": "0e529fdc590223d6038e844fdfd212cd-declare let x: number;\n",
+      "original": [
+        2,
+        "0e529fdc590223d6038e844fdfd212cd-declare let x: number;\n"
+      ]
+    },
+    {
+      "file": "./commonFile2.ts",
+      "signature": "114cede92fdd1b7222858083021aeba2-declare let y: number;\n",
+      "original": [
+        3,
+        "114cede92fdd1b7222858083021aeba2-declare let y: number;\n"
+      ]
+    }
+  ],
+  "size": 1345
 }
 //// [/user/username/projects/project/project2.tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","./other.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"7148e8559d706b66aaba2a2423755c63-let z = 0;","signature":"879426698e1db06899fd57775c19b230-declare let z: number;\n","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"composite":true,"strict":true},"latestChangedDtsFile":"./other.d.ts"}
+{"version":"FakeTSVersion","root":[2],"fileNames":["lib.es2025.full.d.ts","./other.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"7148e8559d706b66aaba2a2423755c63-let z = 0;","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"composite":true,"strict":true},"latestChangedDtsFile":"./other.d.ts","emitSignatures":[[2,"879426698e1db06899fd57775c19b230-declare let z: number;\n"]]}
 //// [/user/username/projects/project/project2.tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -214,12 +230,11 @@ let z = 0;
     {
       "fileName": "./other.ts",
       "version": "7148e8559d706b66aaba2a2423755c63-let z = 0;",
-      "signature": "879426698e1db06899fd57775c19b230-declare let z: number;\n",
+      "signature": "7148e8559d706b66aaba2a2423755c63-let z = 0;",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
         "version": "7148e8559d706b66aaba2a2423755c63-let z = 0;",
-        "signature": "879426698e1db06899fd57775c19b230-declare let z: number;\n",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
@@ -230,7 +245,17 @@ let z = 0;
     "strict": true
   },
   "latestChangedDtsFile": "./other.d.ts",
-  "size": 1131
+  "emitSignatures": [
+    {
+      "file": "./other.ts",
+      "signature": "879426698e1db06899fd57775c19b230-declare let z: number;\n",
+      "original": [
+        2,
+        "879426698e1db06899fd57775c19b230-declare let z: number;\n"
+      ]
+    }
+  ],
+  "size": 1142
 }
 
 Watch Registrations::
