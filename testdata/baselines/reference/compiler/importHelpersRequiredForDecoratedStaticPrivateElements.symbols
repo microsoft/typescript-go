@@ -1,0 +1,108 @@
+//// [tests/cases/compiler/importHelpersRequiredForDecoratedStaticPrivateElements.ts] ////
+
+=== main.ts ===
+export declare var dec: any;
+>dec : Symbol(dec, Decl(main.ts, 0, 18))
+
+// Class decorators hoist a class's static private/auto-accessor elements out of the class body, so
+// accessing them still requires the classPrivateField* helpers even at targets (like es2022) that
+// otherwise support private fields natively. Instance private fields are unaffected by this and stay
+// fully native even in a decorated class.
+@dec
+>dec : Symbol(dec, Decl(main.ts, 0, 18))
+
+export class Foo {
+>Foo : Symbol(Foo, Decl(main.ts, 0, 28))
+
+    #instanceField = 1;
+>#instanceField : Symbol(Foo.#instanceField, Decl(main.ts, 7, 18))
+
+    static #staticField = 1;
+>#staticField : Symbol(Foo.#staticField, Decl(main.ts, 8, 23))
+
+    static #staticMethod() { return 1; }
+>#staticMethod : Symbol(Foo.#staticMethod, Decl(main.ts, 9, 28))
+
+    static get #staticAccessor() { return 1; }
+>#staticAccessor : Symbol(Foo.#staticAccessor, Decl(main.ts, 10, 40), Decl(main.ts, 11, 46))
+
+    static set #staticAccessor(v: number) {}
+>#staticAccessor : Symbol(Foo.#staticAccessor, Decl(main.ts, 10, 40), Decl(main.ts, 11, 46))
+>v : Symbol(v, Decl(main.ts, 12, 31))
+
+    static accessor #staticAutoAccessor = 1;
+>#staticAutoAccessor : Symbol(Foo.#staticAutoAccessor, Decl(main.ts, 12, 44))
+
+    getInstanceField() {
+>getInstanceField : Symbol(Foo.getInstanceField, Decl(main.ts, 13, 44))
+
+        return this.#instanceField;
+>this.#instanceField : Symbol(Foo.#instanceField, Decl(main.ts, 7, 18))
+>this : Symbol(Foo, Decl(main.ts, 0, 28))
+    }
+    static getStaticField() {
+>getStaticField : Symbol(Foo.getStaticField, Decl(main.ts, 17, 5))
+
+        return Foo.#staticField;
+>Foo.#staticField : Symbol(Foo.#staticField, Decl(main.ts, 8, 23))
+>Foo : Symbol(Foo, Decl(main.ts, 0, 28))
+    }
+    static callStaticMethod() {
+>callStaticMethod : Symbol(Foo.callStaticMethod, Decl(main.ts, 20, 5))
+
+        return Foo.#staticMethod();
+>Foo.#staticMethod : Symbol(Foo.#staticMethod, Decl(main.ts, 9, 28))
+>Foo : Symbol(Foo, Decl(main.ts, 0, 28))
+    }
+    static useStaticAccessor() {
+>useStaticAccessor : Symbol(Foo.useStaticAccessor, Decl(main.ts, 23, 5))
+
+        Foo.#staticAccessor = Foo.#staticAccessor;
+>Foo.#staticAccessor : Symbol(Foo.#staticAccessor, Decl(main.ts, 10, 40), Decl(main.ts, 11, 46))
+>Foo : Symbol(Foo, Decl(main.ts, 0, 28))
+>Foo.#staticAccessor : Symbol(Foo.#staticAccessor, Decl(main.ts, 10, 40), Decl(main.ts, 11, 46))
+>Foo : Symbol(Foo, Decl(main.ts, 0, 28))
+    }
+    static useStaticAutoAccessor() {
+>useStaticAutoAccessor : Symbol(Foo.useStaticAutoAccessor, Decl(main.ts, 26, 5))
+
+        Foo.#staticAutoAccessor = Foo.#staticAutoAccessor;
+>Foo.#staticAutoAccessor : Symbol(Foo.#staticAutoAccessor, Decl(main.ts, 12, 44))
+>Foo : Symbol(Foo, Decl(main.ts, 0, 28))
+>Foo.#staticAutoAccessor : Symbol(Foo.#staticAutoAccessor, Decl(main.ts, 12, 44))
+>Foo : Symbol(Foo, Decl(main.ts, 0, 28))
+    }
+    static hasStaticField(x: object) {
+>hasStaticField : Symbol(Foo.hasStaticField, Decl(main.ts, 29, 5))
+>x : Symbol(x, Decl(main.ts, 30, 26))
+
+        return #staticField in x;
+>#staticField : Symbol(Foo.#staticField, Decl(main.ts, 8, 23))
+>x : Symbol(x, Decl(main.ts, 30, 26))
+    }
+}
+
+=== node_modules/tslib/index.d.ts ===
+// Provides only the decorator helpers, deliberately omitting __classPrivateField{Get,Set,In}, to
+// confirm that accessing a decorated class's static private elements still requires them.
+export declare function __esDecorate(ctor: any, descriptorIn: any, decorators: any[], contextIn: any, initializers: any, extraInitializers: any): void;
+>__esDecorate : Symbol(__esDecorate, Decl(index.d.ts, 0, 0))
+>ctor : Symbol(ctor, Decl(index.d.ts, 2, 37))
+>descriptorIn : Symbol(descriptorIn, Decl(index.d.ts, 2, 47))
+>decorators : Symbol(decorators, Decl(index.d.ts, 2, 66))
+>contextIn : Symbol(contextIn, Decl(index.d.ts, 2, 85))
+>initializers : Symbol(initializers, Decl(index.d.ts, 2, 101))
+>extraInitializers : Symbol(extraInitializers, Decl(index.d.ts, 2, 120))
+
+export declare function __runInitializers(thisArg: any, initializers: any[], value?: any): any;
+>__runInitializers : Symbol(__runInitializers, Decl(index.d.ts, 2, 151))
+>thisArg : Symbol(thisArg, Decl(index.d.ts, 3, 42))
+>initializers : Symbol(initializers, Decl(index.d.ts, 3, 55))
+>value : Symbol(value, Decl(index.d.ts, 3, 76))
+
+export declare function __setFunctionName(f: any, name: any, prefix?: string): any;
+>__setFunctionName : Symbol(__setFunctionName, Decl(index.d.ts, 3, 95))
+>f : Symbol(f, Decl(index.d.ts, 4, 42))
+>name : Symbol(name, Decl(index.d.ts, 4, 49))
+>prefix : Symbol(prefix, Decl(index.d.ts, 4, 60))
+

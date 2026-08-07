@@ -1,0 +1,32 @@
+main.ts(16,16): error TS2343: This syntax requires an imported helper named '__classPrivateFieldGet' which does not exist in 'tslib'. Consider upgrading your version of 'tslib'.
+
+
+==== main.ts (1 errors) ====
+    export declare var dec: any;
+    
+    // At useDefineForClassFields: false, native decorators are still lowered even at esnext (this is the
+    // one case where the esnext decorator transform isn't skipped by target alone - see
+    // newESDecoratorTransformer's skip condition), so a decorated class's static private elements still
+    // need the classPrivateField* helpers here too.
+    @dec
+    export class Foo {
+        #instanceField = 1;
+        static #staticField = 1;
+    
+        getInstanceField() {
+            return this.#instanceField;
+        }
+        static getStaticField() {
+            return Foo.#staticField;
+                   ~~~~~~~~~~~~~~~~
+!!! error TS2343: This syntax requires an imported helper named '__classPrivateFieldGet' which does not exist in 'tslib'. Consider upgrading your version of 'tslib'.
+        }
+    }
+    
+==== node_modules/tslib/index.d.ts (0 errors) ====
+    // Provides only the decorator helpers, deliberately omitting __classPrivateFieldGet, to confirm that
+    // accessing the decorated class's static private field still requires it.
+    export declare function __esDecorate(ctor: any, descriptorIn: any, decorators: any[], contextIn: any, initializers: any, extraInitializers: any): void;
+    export declare function __runInitializers(thisArg: any, initializers: any[], value?: any): any;
+    export declare function __setFunctionName(f: any, name: any, prefix?: string): any;
+    

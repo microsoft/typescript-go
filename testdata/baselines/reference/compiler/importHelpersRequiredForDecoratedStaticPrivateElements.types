@@ -1,0 +1,117 @@
+//// [tests/cases/compiler/importHelpersRequiredForDecoratedStaticPrivateElements.ts] ////
+
+=== main.ts ===
+export declare var dec: any;
+>dec : any
+
+// Class decorators hoist a class's static private/auto-accessor elements out of the class body, so
+// accessing them still requires the classPrivateField* helpers even at targets (like es2022) that
+// otherwise support private fields natively. Instance private fields are unaffected by this and stay
+// fully native even in a decorated class.
+@dec
+>dec : any
+
+export class Foo {
+>Foo : Foo
+
+    #instanceField = 1;
+>#instanceField : number
+>1 : 1
+
+    static #staticField = 1;
+>#staticField : number
+>1 : 1
+
+    static #staticMethod() { return 1; }
+>#staticMethod : () => number
+>1 : 1
+
+    static get #staticAccessor() { return 1; }
+>#staticAccessor : number
+>1 : 1
+
+    static set #staticAccessor(v: number) {}
+>#staticAccessor : number
+>v : number
+
+    static accessor #staticAutoAccessor = 1;
+>#staticAutoAccessor : number
+>1 : 1
+
+    getInstanceField() {
+>getInstanceField : () => number
+
+        return this.#instanceField;
+>this.#instanceField : number
+>this : this
+    }
+    static getStaticField() {
+>getStaticField : () => number
+
+        return Foo.#staticField;
+>Foo.#staticField : number
+>Foo : typeof Foo
+    }
+    static callStaticMethod() {
+>callStaticMethod : () => number
+
+        return Foo.#staticMethod();
+>Foo.#staticMethod() : number
+>Foo.#staticMethod : () => number
+>Foo : typeof Foo
+    }
+    static useStaticAccessor() {
+>useStaticAccessor : () => void
+
+        Foo.#staticAccessor = Foo.#staticAccessor;
+>Foo.#staticAccessor = Foo.#staticAccessor : number
+>Foo.#staticAccessor : number
+>Foo : typeof Foo
+>Foo.#staticAccessor : number
+>Foo : typeof Foo
+    }
+    static useStaticAutoAccessor() {
+>useStaticAutoAccessor : () => void
+
+        Foo.#staticAutoAccessor = Foo.#staticAutoAccessor;
+>Foo.#staticAutoAccessor = Foo.#staticAutoAccessor : number
+>Foo.#staticAutoAccessor : number
+>Foo : typeof Foo
+>Foo.#staticAutoAccessor : number
+>Foo : typeof Foo
+    }
+    static hasStaticField(x: object) {
+>hasStaticField : (x: object) => x is typeof Foo
+>x : object
+
+        return #staticField in x;
+>#staticField in x : boolean
+>#staticField : any
+>x : object
+    }
+}
+
+=== node_modules/tslib/index.d.ts ===
+// Provides only the decorator helpers, deliberately omitting __classPrivateField{Get,Set,In}, to
+// confirm that accessing a decorated class's static private elements still requires them.
+export declare function __esDecorate(ctor: any, descriptorIn: any, decorators: any[], contextIn: any, initializers: any, extraInitializers: any): void;
+>__esDecorate : (ctor: any, descriptorIn: any, decorators: any[], contextIn: any, initializers: any, extraInitializers: any) => void
+>ctor : any
+>descriptorIn : any
+>decorators : any[]
+>contextIn : any
+>initializers : any
+>extraInitializers : any
+
+export declare function __runInitializers(thisArg: any, initializers: any[], value?: any): any;
+>__runInitializers : (thisArg: any, initializers: any[], value?: any) => any
+>thisArg : any
+>initializers : any[]
+>value : any
+
+export declare function __setFunctionName(f: any, name: any, prefix?: string): any;
+>__setFunctionName : (f: any, name: any, prefix?: string) => any
+>f : any
+>name : any
+>prefix : string | undefined
+
