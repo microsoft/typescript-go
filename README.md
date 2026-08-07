@@ -11,8 +11,6 @@ npm install @typescript/native-preview
 npx tsgo # Use this as you would tsc.
 ```
 
-Set `TSGO_SINGLE_THREADED=1` to run the compiler as if `--singleThreaded` was passed on the command line.
-
 For TypeScript 7.0 RC and later, the command name is `tsc`.
 
 A preview VS Code extension is [available on the VS Code marketplace](https://marketplace.visualstudio.com/items?itemName=TypeScriptTeam.native-preview).
