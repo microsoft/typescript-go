@@ -70,7 +70,7 @@ func (h *affectedFilesHandler) computeDtsSignature(file *ast.SourceFile) string 
 	var signature string
 	h.program.program.Emit(h.ctx, compiler.EmitOptions{
 		TargetSourceFiles: core.SingleElementSlice(file),
-		EmitOnly:          compiler.EmitOnlyForcedDts,
+		EmitOnly:          compiler.EmitOnlyBuilderSignature,
 		WriteFile: func(fileName string, text string, data *compiler.WriteFileData) error {
 			if !tspath.IsDeclarationFileName(fileName) {
 				panic("File extension for signature expected to be dts, got : " + fileName)
