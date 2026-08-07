@@ -1,0 +1,45 @@
+// @importHelpers: true
+// @target: es2022
+// @module: commonjs
+// @filename: main.ts
+export declare var dec: any;
+
+// Class decorators hoist a class's static private/auto-accessor elements out of the class body, so
+// accessing them still requires the classPrivateField* helpers even at targets (like es2022) that
+// otherwise support private fields natively. Instance private fields are unaffected by this and stay
+// fully native even in a decorated class.
+@dec
+export class Foo {
+    #instanceField = 1;
+    static #staticField = 1;
+    static #staticMethod() { return 1; }
+    static get #staticAccessor() { return 1; }
+    static set #staticAccessor(v: number) {}
+    static accessor #staticAutoAccessor = 1;
+
+    getInstanceField() {
+        return this.#instanceField;
+    }
+    static getStaticField() {
+        return Foo.#staticField;
+    }
+    static callStaticMethod() {
+        return Foo.#staticMethod();
+    }
+    static useStaticAccessor() {
+        Foo.#staticAccessor = Foo.#staticAccessor;
+    }
+    static useStaticAutoAccessor() {
+        Foo.#staticAutoAccessor = Foo.#staticAutoAccessor;
+    }
+    static hasStaticField(x: object) {
+        return #staticField in x;
+    }
+}
+
+// @filename: node_modules/tslib/index.d.ts
+// Provides only the decorator helpers, deliberately omitting __classPrivateField{Get,Set,In}, to
+// confirm that accessing a decorated class's static private elements still requires them.
+export declare function __esDecorate(ctor: any, descriptorIn: any, decorators: any[], contextIn: any, initializers: any, extraInitializers: any): void;
+export declare function __runInitializers(thisArg: any, initializers: any[], value?: any): any;
+export declare function __setFunctionName(f: any, name: any, prefix?: string): any;

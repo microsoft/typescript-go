@@ -11269,7 +11269,8 @@ func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, l
 	isAnyLike := IsTypeAny(apparentType) || apparentType == c.silentNeverType
 	var prop *ast.Symbol
 	if ast.IsPrivateIdentifier(right) {
-		if c.languageVersion < LanguageFeatureMinimumTarget.PrivateNamesAndClassStaticBlocks {
+		lexicallyScopedSymbol := c.lookupSymbolForPrivateIdentifierDeclaration(right.Text(), right)
+		if c.languageVersion < LanguageFeatureMinimumTarget.PrivateNamesAndClassStaticBlocks || c.isStaticPrivateElementOfDecoratedClass(lexicallyScopedSymbol) {
 			if assignmentKind != AssignmentKindNone {
 				c.checkExternalEmitHelpers(node, ExternalEmitHelpersClassPrivateFieldSet)
 			}
@@ -11277,7 +11278,6 @@ func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, l
 				c.checkExternalEmitHelpers(node, ExternalEmitHelpersClassPrivateFieldGet)
 			}
 		}
-		lexicallyScopedSymbol := c.lookupSymbolForPrivateIdentifierDeclaration(right.Text(), right)
 		if assignmentKind != AssignmentKindNone && lexicallyScopedSymbol != nil && lexicallyScopedSymbol.ValueDeclaration != nil && ast.IsMethodDeclaration(lexicallyScopedSymbol.ValueDeclaration) {
 			c.grammarErrorOnNode(right, diagnostics.Cannot_assign_to_private_method_0_Private_methods_are_not_writable, right.Text())
 		}
@@ -11490,6 +11490,21 @@ func (c *Checker) lookupSymbolForPrivateIdentifierDeclaration(propName string, l
 
 func (c *Checker) getPrivateIdentifierPropertyOfType(leftType *Type, lexicallyScopedIdentifier *ast.Symbol) *ast.Symbol {
 	return c.getPropertyOfType(leftType, lexicallyScopedIdentifier.Name)
+}
+
+// isStaticPrivateElementOfDecoratedClass reports whether symbol is a static private class element
+// (field, method, accessor, or auto-accessor) declared in a class whose native (non-legacy) decorators
+// will actually be lowered. Decorator lowering hoists a decorated class's static private elements out
+// of the class body into a wrapping closure, which forces accesses to them to use the
+// classPrivateField* emit helpers even at targets that otherwise support private fields natively - see
+// esDecoratorTransformer's hasStaticPrivateClassElements/shouldTransformPrivateStaticElementsInClass.
+func (c *Checker) isStaticPrivateElementOfDecoratedClass(symbol *ast.Symbol) bool {
+	if symbol == nil || symbol.ValueDeclaration == nil || c.legacyDecorators || !ast.HasStaticModifier(symbol.ValueDeclaration) {
+		return false
+	}
+	class := ast.GetContainingClass(symbol.ValueDeclaration)
+	return class != nil && ast.HasDecorators(class) &&
+		(c.languageVersion < LanguageFeatureMinimumTarget.ClassAndClassElementDecorators || !c.compilerOptions.GetUseDefineForClassFields())
 }
 
 func (c *Checker) checkPrivateIdentifierPropertyAccess(leftType *Type, right *ast.Node, lexicallyScopedIdentifier *ast.Symbol) bool {
@@ -13080,12 +13095,13 @@ func (c *Checker) checkInExpression(left *ast.Expression, right *ast.Expression,
 		return c.silentNeverType
 	}
 	if ast.IsPrivateIdentifier(left) {
-		if c.languageVersion < LanguageFeatureMinimumTarget.PrivateNamesAndClassStaticBlocks {
+		lexicallyScopedSymbol := c.symbolNodeLinks.Get(left).resolvedSymbol
+		if c.languageVersion < LanguageFeatureMinimumTarget.PrivateNamesAndClassStaticBlocks || c.isStaticPrivateElementOfDecoratedClass(lexicallyScopedSymbol) {
 			c.checkExternalEmitHelpers(left, ExternalEmitHelpersClassPrivateFieldIn)
 		}
 		// Unlike in 'checkPrivateIdentifierExpression' we now have access to the RHS type
 		// which provides us with the opportunity to emit more detailed errors
-		if c.symbolNodeLinks.Get(left).resolvedSymbol == nil && ast.GetContainingClass(left) != nil {
+		if lexicallyScopedSymbol == nil && ast.GetContainingClass(left) != nil {
 			isUncheckedJS := c.isUncheckedJSSuggestion(left, rightType.symbol, true /*excludeClasses*/)
 			c.reportNonexistentProperty(left, rightType, isUncheckedJS)
 		}

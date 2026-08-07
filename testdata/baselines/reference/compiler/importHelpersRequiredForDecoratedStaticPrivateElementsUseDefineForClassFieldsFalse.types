@@ -1,0 +1,64 @@
+//// [tests/cases/compiler/importHelpersRequiredForDecoratedStaticPrivateElementsUseDefineForClassFieldsFalse.ts] ////
+
+=== main.ts ===
+export declare var dec: any;
+>dec : any
+
+// At useDefineForClassFields: false, native decorators are still lowered even at esnext (this is the
+// one case where the esnext decorator transform isn't skipped by target alone - see
+// newESDecoratorTransformer's skip condition), so a decorated class's static private elements still
+// need the classPrivateField* helpers here too.
+@dec
+>dec : any
+
+export class Foo {
+>Foo : Foo
+
+    #instanceField = 1;
+>#instanceField : number
+>1 : 1
+
+    static #staticField = 1;
+>#staticField : number
+>1 : 1
+
+    getInstanceField() {
+>getInstanceField : () => number
+
+        return this.#instanceField;
+>this.#instanceField : number
+>this : this
+    }
+    static getStaticField() {
+>getStaticField : () => number
+
+        return Foo.#staticField;
+>Foo.#staticField : number
+>Foo : typeof Foo
+    }
+}
+
+=== node_modules/tslib/index.d.ts ===
+// Provides only the decorator helpers, deliberately omitting __classPrivateFieldGet, to confirm that
+// accessing the decorated class's static private field still requires it.
+export declare function __esDecorate(ctor: any, descriptorIn: any, decorators: any[], contextIn: any, initializers: any, extraInitializers: any): void;
+>__esDecorate : (ctor: any, descriptorIn: any, decorators: any[], contextIn: any, initializers: any, extraInitializers: any) => void
+>ctor : any
+>descriptorIn : any
+>decorators : any[]
+>contextIn : any
+>initializers : any
+>extraInitializers : any
+
+export declare function __runInitializers(thisArg: any, initializers: any[], value?: any): any;
+>__runInitializers : (thisArg: any, initializers: any[], value?: any) => any
+>thisArg : any
+>initializers : any[]
+>value : any
+
+export declare function __setFunctionName(f: any, name: any, prefix?: string): any;
+>__setFunctionName : (f: any, name: any, prefix?: string) => any
+>f : any
+>name : any
+>prefix : string | undefined
+

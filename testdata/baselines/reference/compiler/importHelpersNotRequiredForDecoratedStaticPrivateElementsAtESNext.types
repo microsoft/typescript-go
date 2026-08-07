@@ -1,0 +1,28 @@
+//// [tests/cases/compiler/importHelpersNotRequiredForDecoratedStaticPrivateElementsAtESNext.ts] ////
+
+=== main.ts ===
+export declare var dec: any;
+>dec : any
+
+// At target: esnext with the default useDefineForClassFields: true, native decorators need no
+// transform at all (see newESDecoratorTransformer's skip condition), so even a decorated class's
+// static private elements stay fully native and never need the classPrivateField* helpers.
+@dec
+>dec : any
+
+export class Foo {
+>Foo : Foo
+
+    static #staticField = 1;
+>#staticField : number
+>1 : 1
+
+    static getStaticField() {
+>getStaticField : () => number
+
+        return Foo.#staticField;
+>Foo.#staticField : number
+>Foo : typeof Foo
+    }
+}
+
