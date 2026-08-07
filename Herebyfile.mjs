@@ -1522,6 +1522,7 @@ const platforms = [
     { os: "darwin", arch: "x64", vsix: true, cert: "MacDeveloperHarden" },
     { os: "darwin", arch: "arm64", vsix: true, cert: "MacDeveloperHarden" },
     { os: "aix", arch: "ppc64" },
+    { os: "android", arch: "arm64" },
     { os: "freebsd", arch: "arm64" },
     { os: "freebsd", arch: "x64" },
     { os: "linux", arch: "loong64" },
@@ -1541,7 +1542,6 @@ const ignoredGoTargets = new Map([
     ["android/386", "Android is not a Node runtime target TypeScript supports"],
     ["android/amd64", "Android is not a Node runtime target TypeScript supports"],
     ["android/arm", "Android is not a Node runtime target TypeScript supports"],
-    ["android/arm64", "Android is not a Node runtime target TypeScript supports"],
     ["freebsd/386", "FreeBSD is experimental in Node and limited here to mainstream 64-bit x64/arm64"],
     ["freebsd/arm", "FreeBSD is experimental in Node and limited here to mainstream 64-bit x64/arm64"],
     ["linux/386", "ia32 means 32-bit x86, which TypeScript does not support for native packages"],
@@ -1609,7 +1609,7 @@ const getPlatforms = memoize(() => {
     const publishTag = getPublishTag();
     let supportedPlatforms = publishAsTypescript && publishTag !== "next"
         ? platforms
-        : platforms.filter(({ vsix }) => vsix);
+        : platforms.filter(({ os, vsix }) => vsix || os === "android");
 
     if (!options.forRelease) {
         supportedPlatforms = supportedPlatforms.filter(({ os, arch }) => os === process.platform && arch === process.arch);
