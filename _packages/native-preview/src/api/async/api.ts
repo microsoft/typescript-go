@@ -1454,6 +1454,9 @@ export class Checker {
     async getESSymbolType(): Promise<Type> {
         return this.getIntrinsicType("getESSymbolType");
     }
+    async getNonPrimitiveType(): Promise<Type> {
+        return this.getIntrinsicType("getNonPrimitiveType");
+    }
 
     async typeToTypeNode(type: Type, enclosingDeclaration?: Node, flags?: number): Promise<TypeNode | undefined> {
         const binaryData = await this.client.apiRequestBinary("typeToTypeNode", {
