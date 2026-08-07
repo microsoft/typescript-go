@@ -37,3 +37,18 @@ func TestDiagnosticsCollectionDeduplicatesExactDiagnosticsOnAdd(t *testing.T) {
 		t.Fatalf("canonical diagnostic has %d related diagnostics, want 2", got)
 	}
 }
+
+func TestDiagnosticsCollectionPreservesDistinctAdHocMessages(t *testing.T) {
+	t.Parallel()
+
+	var collection DiagnosticsCollection
+	first := NewCompilerDiagnostic(diagnostics.NewAdHocMessage("first"))
+	second := NewCompilerDiagnostic(diagnostics.NewAdHocMessage("second"))
+
+	collection.Add(first)
+	collection.Add(second)
+	collected := collection.GetGlobalDiagnostics()
+	if len(collected) != 2 {
+		t.Fatalf("GetGlobalDiagnostics() returned %d diagnostics, want 2", len(collected))
+	}
+}
