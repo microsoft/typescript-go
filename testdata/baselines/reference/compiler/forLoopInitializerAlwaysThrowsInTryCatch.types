@@ -1,0 +1,113 @@
+//// [tests/cases/compiler/forLoopInitializerAlwaysThrowsInTryCatch.ts] ////
+
+=== forLoopInitializerAlwaysThrowsInTryCatch.ts ===
+// Test 1: The original crash case
+function test1() {
+>test1 : () => void
+
+    try {
+        for ((() => { throw new Error(); })(); ;) {
+>(() => { throw new Error(); })() : never
+>(() => { throw new Error(); }) : () => never
+>() => { throw new Error(); } : () => never
+>new Error() : Error
+>Error : ErrorConstructor
+        }
+    } catch (e) {
+>e : unknown
+    }
+}
+
+// Test 2: Unlabelled break and continue inside the unreachable body
+function test2() {
+>test2 : () => void
+
+    try {
+        for ((() => { throw new Error(); })(); ;) {
+>(() => { throw new Error(); })() : never
+>(() => { throw new Error(); }) : () => never
+>() => { throw new Error(); } : () => never
+>new Error() : Error
+>Error : ErrorConstructor
+
+            if (Math.random()) {
+>Math.random() : number
+>Math.random : () => number
+>Math : Math
+>random : () => number
+
+                break;
+            } else {
+                continue;
+            }
+        }
+    } catch (e) {
+>e : unknown
+    }
+}
+
+// Test 3: Nested loops where inner loop has unreachable body with break/continue
+// Verifies that break/continue don't leak and pollute the outer loop's CFG
+function test3() {
+>test3 : () => void
+
+    while (true) {
+>true : true
+
+        try {
+            for ((() => { throw new Error(); })(); ;) {
+>(() => { throw new Error(); })() : never
+>(() => { throw new Error(); }) : () => never
+>() => { throw new Error(); } : () => never
+>new Error() : Error
+>Error : ErrorConstructor
+
+                if (Math.random()) {
+>Math.random() : number
+>Math.random : () => number
+>Math : Math
+>random : () => number
+
+                    break;
+                } else {
+                    continue;
+                }
+            }
+        } catch (e) {
+>e : unknown
+        }
+    }
+}
+
+// Test 4: Labeled break and continue inside the unreachable body
+function test4() {
+>test4 : () => void
+
+    try {
+        label1: for ((() => { throw new Error(); })(); ;) {
+>label1 : any
+>(() => { throw new Error(); })() : never
+>(() => { throw new Error(); }) : () => never
+>() => { throw new Error(); } : () => never
+>new Error() : Error
+>Error : ErrorConstructor
+
+            if (Math.random()) {
+>Math.random() : number
+>Math.random : () => number
+>Math : Math
+>random : () => number
+
+                break label1;
+>label1 : any
+
+            } else {
+                continue label1;
+>label1 : any
+            }
+        }
+    } catch (e) {
+>e : unknown
+    }
+}
+
