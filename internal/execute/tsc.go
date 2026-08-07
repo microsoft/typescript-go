@@ -51,7 +51,7 @@ func stopTracing(sys tsc.System, tr *tracing.Tracing) {
 }
 
 func CommandLine(ctx context.Context, sys tsc.System, commandLineArgs []string, testing tsc.CommandLineTesting) tsc.CommandLineResult {
-	if sys.GetEnvironmentVariable("TSGO_SINGLE_THREADED") == "1" {
+	if sys.GetEnvironmentVariable("TS_SINGLE_THREADED") == "1" {
 		commandLineArgs = slices.Concat(commandLineArgs, []string{"--singleThreaded"})
 	}
 

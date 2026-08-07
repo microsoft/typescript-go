@@ -51,7 +51,7 @@ func TestSingleThreadedEnvironmentVariable(t *testing.T) {
 			t.Parallel()
 			sys := &programCaptureSystem{TestSys: newTestSys(&tscInput{
 				files: testCase.files,
-				env:   map[string]string{"TSGO_SINGLE_THREADED": "1"},
+				env:   map[string]string{"TS_SINGLE_THREADED": "1"},
 			}, false)}
 
 			result := execute.CommandLine(context.Background(), sys, testCase.commandLineArgs, sys)
