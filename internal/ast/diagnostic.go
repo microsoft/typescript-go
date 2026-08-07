@@ -35,8 +35,15 @@ type Diagnostic struct {
 	loc      core.TextRange
 	code     int32
 	category diagnostics.Category
+	// source, when non-empty, is a custom prefix (e.g. a content mapper's name) shown instead of "TS"
+	// before the code. It marks the diagnostic as coming from an external source whose ranges point
+	// into the file's original, untransformed text.
+	source string
 	// Original message; may be nil.
-	message            *diagnostics.Message
+	message *diagnostics.Message
+	// messageText is an already-localized message used when message is nil, e.g. a diagnostic
+	// deserialized from an external process that owns its own localization.
+	messageText        string
 	messageKey         diagnostics.Key
 	messageArgs        []string
 	messageChain       []*Diagnostic
@@ -54,6 +61,7 @@ func (d *Diagnostic) Len() int                                  { return d.loc.L
 func (d *Diagnostic) Loc() core.TextRange                       { return d.loc }
 func (d *Diagnostic) Code() int32                               { return d.code }
 func (d *Diagnostic) Category() diagnostics.Category            { return d.category }
+func (d *Diagnostic) Source() string                            { return d.source }
 func (d *Diagnostic) MessageKey() diagnostics.Key               { return d.messageKey }
 func (d *Diagnostic) MessageArgs() []string                     { return d.messageArgs }
 func (d *Diagnostic) MessageChain() []*Diagnostic               { return d.messageChain }
@@ -99,12 +107,52 @@ func (d *Diagnostic) Clone() *Diagnostic {
 }
 
 func (d *Diagnostic) Localize(locale locale.Locale) string {
-	return diagnostics.Localize(locale, d.message, d.messageKey, d.messageArgs...)
+	if d.message == nil && d.messageText != "" {
+		return d.messageText
+	}
+	return diagnostics.Localize(locale, d.message, d.messageKey, d.displayMessageArgs()...)
 }
 
 // For debugging only.
 func (d *Diagnostic) String() string {
-	return diagnostics.Localize(locale.Default, d.message, d.messageKey, d.messageArgs...)
+	if d.message == nil && d.messageText != "" {
+		return d.messageText
+	}
+	return diagnostics.Localize(locale.Default, d.message, d.messageKey, d.displayMessageArgs()...)
+}
+
+// displayMessageArgs substitutes the original text for a complete alias span when a diagnostic argument
+// exactly matches the generated alias. Stored arguments remain unchanged for code fixes and serialization.
+func (d *Diagnostic) displayMessageArgs() []string {
+	if d.file == nil || d.source != "" {
+		return d.messageArgs
+	}
+	segment, ok := d.file.SpanMap().AliasForGeneratedSpan(d.loc)
+	if !ok {
+		return d.messageArgs
+	}
+	generatedText := d.file.Text()
+	originalText := d.file.OriginalText()
+	if segment.GenStart < 0 || segment.GenEnd > core.TextPos(len(generatedText)) ||
+		segment.OrigStart < 0 || segment.OrigEnd > core.TextPos(len(originalText)) {
+		return d.messageArgs
+	}
+	generatedName := generatedText[segment.GenStart:segment.GenEnd]
+	originalName := originalText[segment.OrigStart:segment.OrigEnd]
+	var result []string
+	for i, arg := range d.messageArgs {
+		if arg != generatedName {
+			continue
+		}
+		if result == nil {
+			result = slices.Clone(d.messageArgs)
+		}
+		result[i] = originalName
+	}
+	if result != nil {
+		return result
+	}
+	return d.messageArgs
 }
 
 func NewDiagnosticFromSerialized(
@@ -158,6 +206,21 @@ func NewDiagnosticChain(chain *Diagnostic, message *diagnostics.Message, args ..
 
 func NewCompilerDiagnostic(message *diagnostics.Message, args ...any) *Diagnostic {
 	return NewDiagnostic(nil, core.UndefinedTextRange(), message, args...)
+}
+
+// NewExternalDiagnostic creates a diagnostic reported by an external source such as a content mapper.
+// The message text is already localized (the external source owns localization) and the code is shown
+// with the given source prefix (e.g. "vue") instead of "TS". The location refers to the file's original,
+// untransformed content.
+func NewExternalDiagnostic(file *SourceFile, loc core.TextRange, source string, category diagnostics.Category, code int32, messageText string) *Diagnostic {
+	return &Diagnostic{
+		file:        file,
+		loc:         loc,
+		code:        code,
+		category:    category,
+		source:      source,
+		messageText: messageText,
+	}
 }
 
 type DiagnosticsCollection struct {

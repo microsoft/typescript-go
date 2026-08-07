@@ -1,11 +1,14 @@
 package build
 
 import (
+	"errors"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
@@ -47,7 +50,7 @@ func (h *host) GetCurrentDirectory() string {
 }
 
 func (h *host) Trace(msg *diagnostics.Message, args ...any) {
-	panic("build.Orchestrator.host does not support tracing, use a different host for tracing")
+	panic("build.Orchestrator.host does not support tracing; use a different host for tracing")
 }
 
 func (h *host) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
@@ -56,6 +59,14 @@ func (h *host) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
 		return h.sourceFiles.loadOrStore(opts, h.host.GetSourceFile, false /* allowZero */)
 	}
 	return h.host.GetSourceFile(opts)
+}
+
+func (h *host) GetContentMappedSourceFiles(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper, options *core.CompilerOptions) (contentmapper.SourceFiles, error) {
+	return contentmapper.SourceFiles{}, errors.New("content mapper project is unavailable")
+}
+
+func (h *host) ContentMapperProject() contentmapper.Project {
+	panic("build.Orchestrator.host does not support content mapper project; use an individual project's compiler host instead")
 }
 
 func (h *host) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {

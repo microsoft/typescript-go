@@ -90,7 +90,11 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 	wg := core.NewWorkGroup(t.program.SingleThreaded())
 	for _, file := range files {
 		wg.Queue(func() {
-			version := t.snapshot.computeHash(file.Text())
+			versionText := file.Text()
+			if file.ContentMapper() != "" {
+				versionText = file.OriginalText()
+			}
+			version := t.snapshot.computeHash(versionText)
 			impliedNodeFormat := t.program.GetSourceFileMetaData(file.Path()).ImpliedNodeFormat
 			affectsGlobalScope := fileAffectsGlobalScope(file)
 			var signature string

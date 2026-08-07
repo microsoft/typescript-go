@@ -18,6 +18,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ipc"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
@@ -27,6 +28,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/project"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -407,7 +409,7 @@ type Session struct {
 }
 
 // Ensure Session implements Handler
-var _ Handler = (*Session)(nil)
+var _ ipc.Handler = (*Session)(nil)
 
 // SessionOptions configures an API session.
 type SessionOptions struct {
@@ -1132,7 +1134,6 @@ func (s *Session) handleParseConfigFile(ctx context.Context, params *ParseConfig
 		nil, /*existingOptionsRaw*/
 		configFileName,
 		nil, /*resolutionStack*/
-		nil, /*extraFileExtensions*/
 		nil, /*extendedConfigCache*/
 	)
 	return NewConfigFileResponse(parsedCommandLine), nil
@@ -1817,11 +1818,14 @@ func toAPITextEdits(sourceFile *ast.SourceFile, converters *lsconv.Converters, e
 	positionMap := sourceFile.GetPositionMap()
 	result := make([]*TextEdit, len(edits))
 	for i, edit := range edits {
-		start := converters.LineAndCharacterToPosition(sourceFile, edit.Range.Start)
-		end := converters.LineAndCharacterToPosition(sourceFile, edit.Range.End)
+		starts := lsconv.FromLSPPositionForSourceFile(converters, sourceFile, edit.Range.Start, spanmap.FeatureAll)
+		ends := lsconv.FromLSPPositionForSourceFile(converters, sourceFile, edit.Range.End, spanmap.FeatureAll)
+		if len(starts) != 1 || len(ends) != 1 {
+			return nil
+		}
 		result[i] = &TextEdit{
-			Pos:     positionMap.UTF8ToUTF16(int(start)),
-			End:     positionMap.UTF8ToUTF16(int(end)),
+			Pos:     positionMap.UTF8ToUTF16(int(starts[0].Position)),
+			End:     positionMap.UTF8ToUTF16(int(ends[0].Position)),
 			NewText: edit.NewText,
 		}
 	}

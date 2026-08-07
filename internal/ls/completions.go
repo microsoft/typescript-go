@@ -20,11 +20,13 @@ import (
 	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -37,13 +39,20 @@ func (l *LanguageService) ProvideCompletion(
 	LSPPosition lsproto.Position,
 	context *lsproto.CompletionContext,
 ) (lsproto.CompletionResponse, error) {
-	_, file := l.getProgramAndFile(documentURI)
+	program, file := l.getProgramAndFile(documentURI)
 	var triggerCharacter *string
 	if context != nil {
 		triggerCharacter = context.TriggerCharacter
 	}
 	ctx = format.WithFormatCodeSettings(ctx, l.FormatOptions(), l.FormatOptions().NewLineCharacter)
-	position := int(l.converters.LineAndCharacterToPosition(file, LSPPosition))
+	positions := lsconv.FromLSPPositionForSourceFile(l.converters, file, LSPPosition, spanmap.FeatureCompletion)
+	if len(positions) == 0 || !positions[0].Fidelity.IsExact() {
+		// In a content-mapped file the cursor is outside a verbatim span, so any completion committed here
+		// could not be applied to the original text. Offer nothing rather than edits at a bogus location.
+		return lsproto.CompletionItemsOrListOrNull{}, nil
+	}
+	file = positions[0].Script
+	position := int(positions[0].Position)
 	completionListInternal, err := l.getCompletionsAtPosition(
 		ctx,
 		file,
@@ -54,8 +63,43 @@ func (l *LanguageService) ProvideCompletion(
 	if err != nil {
 		return lsproto.CompletionItemsOrListOrNull{}, err
 	}
-	completionList := ensureItemData(file.FileName(), position, completionListInternal.toLSP())
+	completionList := ensureItemData(file, position, completionListInternal.toLSP())
+	if file.SpanMap() != nil {
+		l.filterContentMappedAutoImports(ctx, program, file, completionList)
+	}
 	return lsproto.CompletionItemsOrListOrNull{List: completionList}, nil
+}
+
+// filterContentMappedAutoImports eagerly resolves auto-import edits for a content-mapped file and drops any
+// completion whose import edit cannot be placed entirely within verbatim spans (it would otherwise insert
+// an import into generated code with no counterpart in the original file). Surviving auto-imports carry
+// their additional edits directly so the client applies correct original-text positions on commit.
+func (l *LanguageService) filterContentMappedAutoImports(ctx context.Context, program *compiler.Program, file *ast.SourceFile, list *lsproto.CompletionList) {
+	if list == nil {
+		return
+	}
+	filtered := list.Items[:0]
+	for _, item := range list.Items {
+		if item.Data == nil || item.Data.AutoImport == nil {
+			filtered = append(filtered, item)
+			continue
+		}
+		edits, description, ok := (&autoimport.Fix{AutoImportFix: item.Data.AutoImport}).Edits(
+			ctx,
+			file,
+			program.Options(),
+			l.FormatOptions(),
+			l.converters,
+			l.UserPreferences(),
+		)
+		if !ok {
+			continue
+		}
+		item.AdditionalTextEdits = &edits
+		item.Detail = strPtrTo(description)
+		filtered = append(filtered, item)
+	}
+	list.Items = filtered
 }
 
 func (l *LanguageService) GetCompletionsAtPosition(ctx context.Context, file *ast.SourceFile, position int, triggerCharacter *string, includeSymbols bool) (*CompletionList, error) {
@@ -74,20 +118,45 @@ type CompletionList struct {
 	Items        []*CompletionItem
 }
 
-func ensureItemData(fileName string, pos int, list *lsproto.CompletionList) *lsproto.CompletionList {
+func ensureItemData(file *ast.SourceFile, pos int, list *lsproto.CompletionList) *lsproto.CompletionList {
 	if list == nil {
 		return nil
 	}
 	for _, item := range list.Items {
 		if item.Data == nil {
 			item.Data = &lsproto.CompletionItemData{
-				FileName: fileName,
-				Position: int32(pos),
-				Name:     item.Label,
+				FileName:              file.OriginalFileName(),
+				Position:              int32(pos),
+				SupplementalFileIndex: supplementalFileIndex(file),
+				Name:                  item.Label,
 			}
 		}
 	}
 	return list
+}
+
+func supplementalFileIndex(file *ast.SourceFile) *int32 {
+	canonical := file.CanonicalSourceFile()
+	if canonical == nil {
+		return nil
+	}
+	for i, supplemental := range canonical.SupplementalSourceFiles() {
+		if supplemental == file {
+			return new(int32(i))
+		}
+	}
+	panic("supplemental source file is not linked from its canonical source file")
+}
+
+func sourceFileForSupplementalFileIndex(file *ast.SourceFile, index *int32) *ast.SourceFile {
+	if index == nil {
+		return file
+	}
+	supplemental := file.SupplementalSourceFiles()
+	if *index >= 0 && int(*index) < len(supplemental) {
+		return supplemental[*index]
+	}
+	return nil
 }
 
 // *completionDataData | *completionDataKeyword | *completionDataJSDocTagName | *completionDataJSDocTag | *completionDataJSDocParameterName
@@ -186,7 +255,7 @@ const (
 	CompletionKindString
 )
 
-var TriggerCharacters = []string{".", `"`, "'", "`", "/", "@", "<", "#", " ", "*"}
+var CompletionTriggerCharacters = []string{".", `"`, "'", "`", "/", "@", "<", "#", " ", "*"}
 
 // All commit characters, valid when `isNewIdentifierLocation` is false.
 var allCommitCharacters = []string{".", ",", ";"}
@@ -1145,9 +1214,15 @@ func (l *LanguageService) getCompletionData(
 
 		// import { type | -> token text should be blank
 		var lowerCaseTokenText string
-		usagePosition := l.createLspPosition(position, file)
+		usagePosition, fidelity := l.createLspPosition(position, file)
+		if !fidelity.IsExact() {
+			return nil
+		}
 		if previousToken != nil && ast.IsIdentifier(previousToken) {
-			usagePosition = l.createLspPosition(scanner.GetTokenPosOfNode(previousToken, file, false /*includeJSDoc*/), file)
+			usagePosition, fidelity = l.createLspPosition(scanner.GetTokenPosOfNode(previousToken, file, false /*includeJSDoc*/), file)
+			if !fidelity.IsExact() {
+				return nil
+			}
 			if !(previousToken == contextToken && importStatementCompletion != nil) {
 				lowerCaseTokenText = strings.ToLower(previousToken.Text())
 			}
@@ -2107,7 +2182,11 @@ func (l *LanguageService) createCompletionItem(
 		} else {
 			end = dot.End()
 		}
-		replacementSpan = new(l.createLspRangeFromBounds(astnav.GetStartOfNode(dot, file, false /*includeJSDoc*/), end, file))
+		lspRange, fidelity := l.createLspRangeFromBounds(astnav.GetStartOfNode(dot, file, false /*includeJSDoc*/), end, file)
+		if !fidelity.IsExact() {
+			return nil
+		}
+		replacementSpan = &lspRange
 	}
 
 	if data.jsxInitializer.isInitializer {
@@ -2116,7 +2195,11 @@ func (l *LanguageService) createCompletionItem(
 		}
 		insertText = fmt.Sprintf("{%s}", insertText)
 		if data.jsxInitializer.initializer != nil {
-			replacementSpan = new(l.createLspRangeFromNode(data.jsxInitializer.initializer, file))
+			lspRange, fidelity := l.createLspRangeFromNode(data.jsxInitializer.initializer, file)
+			if !fidelity.IsExact() {
+				return nil
+			}
+			replacementSpan = &lspRange
 		}
 	}
 
@@ -2143,11 +2226,15 @@ func (l *LanguageService) createCompletionItem(
 			data.propertyAccessToConvert.Parent,
 			data.propertyAccessToConvert.Expression(),
 		)
-		replacementSpan = new(l.createLspRangeFromBounds(
+		lspRange, fidelity := l.createLspRangeFromBounds(
 			astnav.GetStartOfNode(wrapNode, file, false /*includeJSDoc*/),
 			data.propertyAccessToConvert.End(),
 			file,
-		))
+		)
+		if !fidelity.IsExact() {
+			return nil
+		}
+		replacementSpan = &lspRange
 	}
 
 	if originIsTypeOnlyAlias(origin) {
@@ -3103,7 +3190,11 @@ func (l *LanguageService) getReplacementRangeForContextToken(file *ast.SourceFil
 	case ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral:
 		return l.createRangeFromStringLiteralLikeContent(file, contextToken, position)
 	default:
-		return new(l.createLspRangeFromNode(contextToken, file))
+		lspRange, fidelity := l.createLspRangeFromNode(contextToken, file)
+		if !fidelity.IsExact() {
+			return nil
+		}
+		return &lspRange
 	}
 }
 
@@ -3117,7 +3208,11 @@ func (l *LanguageService) createRangeFromStringLiteralLikeContent(file *ast.Sour
 		}
 		replacementEnd = min(position, node.End())
 	}
-	return new(l.createLspRangeFromBounds(nodeStart+1, replacementEnd, file))
+	lspRange, fidelity := l.createLspRangeFromBounds(nodeStart+1, replacementEnd, file)
+	if !fidelity.IsExact() {
+		return nil
+	}
+	return &lspRange
 }
 
 func quotePropertyName(file *ast.SourceFile, preferences lsutil.UserPreferences, name string) string {
@@ -3472,7 +3567,10 @@ func (l *LanguageService) getOptionalReplacementSpan(location *ast.Node, file *a
 	// StringLiteralLike locations are handled separately in stringCompletions.ts
 	if location != nil && (location.Kind == ast.KindIdentifier || location.Kind == ast.KindPrivateIdentifier) {
 		start := astnav.GetStartOfNode(location, file, false /*includeJSDoc*/)
-		return new(l.createLspRangeFromBounds(start, location.End(), file))
+		lspRange, fidelity := l.createLspRangeFromBounds(start, location.End(), file)
+		if fidelity.IsExact() {
+			return &lspRange
+		}
 	}
 	return nil
 }
@@ -4273,9 +4371,13 @@ func (l *LanguageService) setItemDefaults(
 	}
 	if optionalReplacementSpan != nil {
 		// Ported from vscode ts extension.
+		end, fidelity := l.createLspPosition(position, file)
+		if !fidelity.IsExact() {
+			return itemDefaults
+		}
 		insertRange := lsproto.Range{
 			Start: optionalReplacementSpan.Start,
-			End:   l.createLspPosition(position, file),
+			End:   end,
 		}
 		if clientSupportsDefaultEditRange(ctx) {
 			itemDefaults = core.OrElse(itemDefaults, &lsproto.CompletionItemDefaults{})
@@ -4379,7 +4481,10 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 	tagName := jsxClosingElement.Parent.AsJsxElement().OpeningElement.TagName()
 	closingTag := scanner.GetTextOfNode(tagName)
 	fullClosingTag := closingTag + core.IfElse(hasClosingAngleBracket, "", ">")
-	optionalReplacementSpan := new(l.createLspRangeFromNode(jsxClosingElement.TagName(), file))
+	optionalReplacementSpan, fidelity := l.createLspRangeFromNode(jsxClosingElement.TagName(), file)
+	if !fidelity.IsExact() {
+		return nil
+	}
 	defaultCommitCharacters := getDefaultCommitCharacters(false /*isNewIdentifierLocation*/)
 
 	lspItem := l.createLSPCompletionItem(
@@ -4413,7 +4518,7 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 		file,
 		items,
 		&defaultCommitCharacters,
-		optionalReplacementSpan,
+		&optionalReplacementSpan,
 	)
 
 	return &CompletionList{
@@ -4446,11 +4551,12 @@ func (l *LanguageService) createLSPCompletionItem(
 ) *lsproto.CompletionItem {
 	kind := getCompletionsSymbolKind(elementKind)
 	data := &lsproto.CompletionItemData{
-		FileName:   file.FileName(),
-		Position:   int32(position),
-		Source:     source,
-		Name:       name,
-		AutoImport: autoImportFix,
+		FileName:              file.OriginalFileName(),
+		Position:              int32(position),
+		SupplementalFileIndex: supplementalFileIndex(file),
+		Source:                source,
+		Name:                  name,
+		AutoImport:            autoImportFix,
 	}
 
 	// Text edit
@@ -4898,6 +5004,10 @@ func (l *LanguageService) ResolveCompletionItem(
 	if file == nil {
 		return nil, fmt.Errorf("file not found: %s", data.FileName)
 	}
+	file = sourceFileForSupplementalFileIndex(file, data.SupplementalFileIndex)
+	if file == nil {
+		return nil, fmt.Errorf("supplemental source file index not found: %d", *data.SupplementalFileIndex)
+	}
 
 	checker, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
@@ -4933,7 +5043,10 @@ func (l *LanguageService) getCompletionItemDetails(
 	}
 
 	if data.AutoImport != nil {
-		edits, description := (&autoimport.Fix{AutoImportFix: data.AutoImport}).Edits(ctx, file, program.Options(), l.FormatOptions(), l.converters, l.UserPreferences())
+		// Auto-imports in content-mapped files are evaluated eagerly so edits outside
+		// of verbatim spans can cause the completion item to be filtered out entirely.
+		// Only real files take this code path, so the final Edits() is guaranteed ok.
+		edits, description, _ := (&autoimport.Fix{AutoImportFix: data.AutoImport}).Edits(ctx, file, program.Options(), l.FormatOptions(), l.converters, l.UserPreferences())
 		item.AdditionalTextEdits = &edits
 		item.Detail = strPtrTo(description)
 		return item
@@ -5216,7 +5329,11 @@ func (l *LanguageService) getSingleLineReplacementSpanForImportCompletionNode(no
 	// Use token position (excluding JSDoc/trivia) instead of node.Pos() to avoid including JSDoc comments
 	tokenPos := scanner.GetTokenPosOfNode(node, sourceFile, false /*includeJSDoc*/)
 	if printer.GetLinesBetweenPositions(sourceFile, tokenPos, node.End()) == 0 {
-		return new(l.createLspRangeFromNode(node, sourceFile))
+		lspRange, fidelity := l.createLspRangeFromNode(node, sourceFile)
+		if !fidelity.IsExact() {
+			return nil
+		}
+		return &lspRange
 	}
 
 	if node.Kind == ast.KindImportKeyword || node.Kind == ast.KindImportSpecifier {
@@ -5252,7 +5369,11 @@ func (l *LanguageService) getSingleLineReplacementSpanForImportCompletionNode(no
 	// assume that the "module specifier" is actually just another statement, and return
 	// the single-line range of the import excluding that probable statement.
 	if printer.GetLinesBetweenPositions(sourceFile, withoutModuleSpecifier.Pos(), withoutModuleSpecifier.End()) == 0 {
-		return new(l.createLspRangeFromBounds(withoutModuleSpecifier.Pos(), withoutModuleSpecifier.End(), sourceFile))
+		lspRange, fidelity := l.createLspRangeFromBounds(withoutModuleSpecifier.Pos(), withoutModuleSpecifier.End(), sourceFile)
+		if !fidelity.IsExact() {
+			return nil
+		}
+		return &lspRange
 	}
 	return nil
 }
@@ -6071,10 +6192,11 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 			AdditionalTextEdits: additionalTextEdits,
 			InsertTextFormat:    core.IfElse(clientSupportsItemSnippet(ctx), new(lsproto.InsertTextFormatSnippet), nil),
 			Data: &lsproto.CompletionItemData{
-				FileName: file.FileName(),
-				Position: int32(position),
-				Name:     name,
-				Source:   string(completionSourceSwitchCases),
+				FileName:              file.OriginalFileName(),
+				Position:              int32(position),
+				SupplementalFileIndex: supplementalFileIndex(file),
+				Name:                  name,
+				Source:                string(completionSourceSwitchCases),
 			},
 		}, nil
 	}

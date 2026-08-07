@@ -42,6 +42,10 @@ export class SessionManager implements vscode.Disposable {
         this.outputChannel = outputChannel;
         this.telemetryReporter = telemetryReporter;
         this.initializedEventEmitter = initializedEventEmitter;
+
+        // Workspace trust gates content mappers (external plugin processes), which are passed to the
+        // server as an initialization option. Restart when trust is granted so they become active.
+        this.disposables.push(vscode.workspace.onDidGrantWorkspaceTrust(() => this.restart(context)));
     }
 
     start(context: vscode.ExtensionContext): Promise<void> {
@@ -70,6 +74,10 @@ export class SessionManager implements vscode.Disposable {
         }
         const result = await this.currentSession.client.initializeAPISession(pipe);
         return result.pipe;
+    }
+
+    async discoverContentMappers(uris: readonly vscode.Uri[], extensions: readonly string[]): Promise<readonly string[]> {
+        return this.currentSession?.client.discoverContentMappers(uris, extensions) ?? [];
     }
 
     async dispose(): Promise<void> {

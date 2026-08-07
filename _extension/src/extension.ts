@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 
 import {
+    registerDiscoverContentMappersCommand,
     registerEnablementCommands,
     updateUseTsgoSetting,
 } from "./commands";
@@ -51,6 +52,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     const sessionManager = new SessionManager(context, output, languageServerInitializedEventEmitter, telemetryReporter);
     context.subscriptions.push(sessionManager);
     registerEnablementCommands(context, telemetryReporter, () => sessionManager.stop());
+    registerDiscoverContentMappersCommand(context, (uris, extensions) => sessionManager.discoverContentMappers(uris, extensions));
 
     let pluginWarningShown = false;
     const onDidChangeExtensions = vscode.extensions.onDidChange(() => {

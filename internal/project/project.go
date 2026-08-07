@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -75,8 +76,10 @@ type Project struct {
 	// Only set before actually loading config file to get actual project references
 	potentialProjectReferences *collections.Set[tspath.Path]
 
-	programFilesWatch *WatchedFiles[*collections.SyncSet[tspath.Path]]
-	typingsWatch      *WatchedFiles[PatternsAndIgnored]
+	programFilesWatch         *WatchedFiles[*collections.SyncSet[tspath.Path]]
+	typingsWatch              *WatchedFiles[PatternsAndIgnored]
+	contentMapperWatch        *WatchedFiles[[]string]
+	contentMapperWatchedFiles *collections.Set[tspath.Path]
 
 	checkerPool *checkerPool
 
@@ -102,6 +105,7 @@ func NewInferredProject(
 	currentDirectory string,
 	compilerOptions *core.CompilerOptions,
 	rootFileNames []string,
+	contentMappers []*contentmapper.Mapper,
 	builder *ProjectCollectionBuilder,
 	logger *logging.LogTree,
 ) *Project {
@@ -121,15 +125,27 @@ func NewInferredProject(
 			ResolveJsonModule:          core.TSTrue,
 		}
 	}
-	p.CommandLine = tsoptions.NewParsedCommandLine(
+	p.CommandLine = newInferredProjectCommandLine(
 		compilerOptions,
 		rootFileNames,
+		contentMappers,
 		tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: builder.fs.fs.UseCaseSensitiveFileNames(),
 			CurrentDirectory:          currentDirectory,
 		},
 	)
 	return p
+}
+
+func newInferredProjectCommandLine(
+	compilerOptions *core.CompilerOptions,
+	rootFileNames []string,
+	contentMappers []*contentmapper.Mapper,
+	comparePathsOptions tspath.ComparePathsOptions,
+) *tsoptions.ParsedCommandLine {
+	commandLine := tsoptions.NewParsedCommandLine(compilerOptions, rootFileNames, comparePathsOptions)
+	commandLine.ParsedConfig.ContentMappers = contentMappers
+	return commandLine
 }
 
 func NewProject(
@@ -164,6 +180,14 @@ func NewProject(
 			core.Identity,
 		)
 	}
+	project.contentMapperWatch = NewWatchedFiles(
+		"content mapper configuration files for "+configFileName,
+		lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
+		lsproto.GetClientCapabilities(builder.ctx).Workspace.DidChangeWatchedFiles.RelativePatternSupport,
+		func(files []string) PatternsAndIgnored {
+			return PatternsAndIgnored{patternsInsideWorkspace: files}
+		},
+	)
 	return project
 }
 
@@ -257,8 +281,10 @@ func (p *Project) Clone() *Project {
 		ProgramLastUpdate:           p.ProgramLastUpdate,
 		potentialProjectReferences:  p.potentialProjectReferences,
 
-		programFilesWatch: p.programFilesWatch,
-		typingsWatch:      p.typingsWatch,
+		programFilesWatch:         p.programFilesWatch,
+		typingsWatch:              p.typingsWatch,
+		contentMapperWatch:        p.contentMapperWatch,
+		contentMapperWatchedFiles: p.contentMapperWatchedFiles,
 
 		checkerPool: p.checkerPool,
 
@@ -312,6 +338,9 @@ func (p *Project) getCommandLineWithTypingsFiles() *tsoptions.ParsedCommandLine 
 					CurrentDirectory:          p.currentDirectory,
 				},
 			)
+			// Preserve the original command line's content mappers: without them the augmented
+			// command line would treat content-mapped root files as unknown foreign files.
+			p.commandLineWithTypingsFiles.ParsedConfig.ContentMappers = p.CommandLine.ContentMappers()
 		}
 	})
 	return p.commandLineWithTypingsFiles
@@ -363,7 +392,6 @@ func (p *Project) CreateProgram() CreateProgramResult {
 
 	// Create the command line, potentially augmented with typing files
 	commandLine := p.getCommandLineWithTypingsFiles()
-
 	if p.dirtyFilePath != "" && p.Program != nil && p.Program.CommandLine() == commandLine {
 		var dirtyFile *ast.SourceFile
 		newProgram, dirtyFile, programCloned = p.Program.UpdateProgram(p.dirtyFilePath, p.host, createCheckerPool)
@@ -372,19 +400,33 @@ func (p *Project) CreateProgram() CreateProgramResult {
 			for _, file := range newProgram.SourceFiles() {
 				// Use pointer identity: dirtyFile is the exact instance UpdateProgram acquired,
 				// and it is the only file whose refcount is already accounted for.
-				if file != dirtyFile {
+				if file != dirtyFile && !file.IsContentMapperFailureStub() && !file.IsContentMapperSupplemental() {
 					// UpdateProgram acquired the changed file only, so we need to ref everything else
-					p.host.builder.parseCache.Ref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
+					if file.ContentMapper() != "" {
+						p.host.builder.contentMappedParseCache.Ref(contentMappedParseCacheKeyForFile(file))
+					} else {
+						p.host.builder.parseCache.Ref(parseCacheKeyForFile(file))
+					}
 				}
 			}
 			for _, file := range newProgram.DuplicateSourceFiles() {
-				p.host.builder.parseCache.Ref(NewParseCacheKey(file.ParseOptions, file.Hash, file.ScriptKind))
+				if !file.IsContentMapperFailureStub {
+					if file.ContentMapper != "" {
+						p.host.builder.contentMappedParseCache.Ref(contentMappedParseCacheKeyForDuplicate(file))
+					} else {
+						p.host.builder.parseCache.Ref(parseCacheKeyForDuplicate(file))
+					}
+				}
 			}
 		} else if dirtyFile != nil {
 			// UpdateProgram always acquires the dirty file before deciding whether it can
 			// reuse the old program. If it falls back to a full rebuild, release that
 			// speculative acquire so the rebuilt program is the only remaining owner.
-			p.host.builder.parseCache.Deref(NewParseCacheKey(dirtyFile.ParseOptions(), dirtyFile.Hash, dirtyFile.ScriptKind))
+			if dirtyFile.ContentMapper() != "" {
+				p.host.builder.contentMappedParseCache.Deref(contentMappedParseCacheKeyForFile(dirtyFile))
+			} else {
+				p.host.builder.parseCache.Deref(parseCacheKeyForFile(dirtyFile))
+			}
 		}
 	} else {
 		var typingsLocation string

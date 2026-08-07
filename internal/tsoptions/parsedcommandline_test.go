@@ -4,6 +4,7 @@ import (
 	"slices"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tsoptions/tsoptionstest"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -163,6 +164,35 @@ func TestParsedCommandLine(t *testing.T) {
 					"/dev/b.ts",
 				})
 			})
+		})
+
+		t.Run("PossiblyMatchesFileName with content mapper extensions", func(t *testing.T) {
+			t.Parallel()
+
+			host := tsoptionstest.NewVFSParseConfigHost(map[string]string{}, "/dev", true)
+			configFileName := "/dev/tsconfig.json"
+			jsonText := `{
+			"include": ["src"],
+			"contentMappers": [ { "package": "mapper", "extensions": [".box"] } ]
+		}`
+			tsconfigSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(configFileName, "/dev/tsconfig.json", jsonText)
+			parsedCommandLine := tsoptions.ParseJsonSourceFileConfigFileContent(
+				tsconfigSourceFile,
+				host,
+				"/dev",
+				&core.CompilerOptions{LoadExternalPlugins: core.TSTrue},
+				nil,
+				configFileName,
+				nil,
+				nil,
+			)
+
+			// A created content-mapped file under an included directory must be recognized as a
+			// possible root file, or the config's root files are never reloaded for it.
+			assert.Assert(t, parsedCommandLine.PossiblyMatchesFileName("/dev/src/new.box"))
+			assert.Assert(t, parsedCommandLine.PossiblyMatchesFileName("/dev/src/new.ts"))
+			assert.Assert(t, !parsedCommandLine.PossiblyMatchesFileName("/dev/src/new.vue"))
+			assert.Assert(t, !parsedCommandLine.PossiblyMatchesFileName("/dev/other/new.box"))
 		})
 	})
 }

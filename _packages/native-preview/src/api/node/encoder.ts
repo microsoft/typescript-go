@@ -139,7 +139,9 @@ function recordExtendedData(node: Node, strs: StringTable, extendedData: number[
         const referencedFilesOffset = encodeFileReferences(sf.referencedFiles, structuredWriter);
         const typeRefDirectivesOffset = encodeFileReferences(sf.typeReferenceDirectives, structuredWriter);
         const libRefDirectivesOffset = encodeFileReferences(sf.libReferenceDirectives, structuredWriter);
-        extendedData.push(textIndex, fileNameIndex, pathIndex, sf.languageVariant, sf.scriptKind, referencedFilesOffset, typeRefDirectivesOffset, libRefDirectivesOffset, NO_STRUCTURED_DATA, NO_STRUCTURED_DATA, NO_STRUCTURED_DATA, 0);
+        // Content-mapper relationships are program-owned metadata supplied only by the Go encoder.
+        // Locally constructed SourceFiles cannot establish those relationships, so leave both slots empty.
+        extendedData.push(textIndex, fileNameIndex, pathIndex, sf.languageVariant, sf.scriptKind, referencedFilesOffset, typeRefDirectivesOffset, libRefDirectivesOffset, NO_STRUCTURED_DATA, NO_STRUCTURED_DATA, NO_STRUCTURED_DATA, 0, textIndex, NO_STRUCTURED_DATA, NO_STRUCTURED_DATA, NO_STRUCTURED_DATA);
     }
     else if (
         node.kind === SyntaxKind.TemplateHead ||

@@ -6,8 +6,10 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 )
 
 func (l *LanguageService) ProvideSelectionRanges(ctx context.Context, params *lsproto.SelectionRangeParams) (lsproto.SelectionRangeResponse, error) {
@@ -16,10 +18,13 @@ func (l *LanguageService) ProvideSelectionRanges(ctx context.Context, params *ls
 		return lsproto.SelectionRangesOrNull{}, nil
 	}
 
-	var results []*lsproto.SelectionRange
+	results := make([]*lsproto.SelectionRange, 0, len(params.Positions))
 	for _, position := range params.Positions {
-		pos := l.converters.LineAndCharacterToPosition(sourceFile, position)
-		selectionRange := getSmartSelectionRange(l, sourceFile, int(pos))
+		positions := lsconv.FromLSPPositionForSourceFile(l.converters, sourceFile, position, spanmap.FeatureSelectionRanges)
+		if len(positions) != 1 || !positions[0].Fidelity.IsSingleSegment() {
+			return lsproto.SelectionRangesOrNull{}, nil
+		}
+		selectionRange := getSmartSelectionRange(l, positions[0].Script, int(positions[0].Position))
 		if selectionRange != nil {
 			results = append(results, selectionRange)
 		}
@@ -176,7 +181,10 @@ func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos 
 			return current
 		}
 
-		lspRange := l.converters.ToLSPRange(sourceFile, core.NewTextRange(start, end))
+		lspRange, fidelity := l.converters.ToLSPRangeForFeature(sourceFile, core.NewTextRange(start, end), spanmap.FeatureSelectionRanges)
+		if fidelity.IsNone() {
+			return current
+		}
 
 		if current != nil && current.Range == lspRange {
 			return current
@@ -205,9 +213,8 @@ func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos 
 		if pos1 == pos2 {
 			return true
 		}
-		lspPos1 := l.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(pos1))
-		lspPos2 := l.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(pos2))
-		return lspPos1.Line == lspPos2.Line
+		lineStarts := sourceFile.ECMALineMap()
+		return scanner.ComputeLineOfPosition(lineStarts, pos1) == scanner.ComputeLineOfPosition(lineStarts, pos2)
 	}
 
 	shouldSkipNode := func(node *ast.Node, parent *ast.Node) bool {
@@ -238,7 +245,10 @@ func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos 
 		return false
 	}
 
-	fullRange := l.converters.ToLSPRange(sourceFile, core.NewTextRange(sourceFile.Pos(), sourceFile.End()))
+	fullRange, fidelity := l.converters.ToLSPRangeForFeature(sourceFile, core.NewTextRange(sourceFile.Pos(), sourceFile.End()), spanmap.FeatureSelectionRanges)
+	if fidelity.IsNone() {
+		return nil
+	}
 	result := &lsproto.SelectionRange{
 		Range: fullRange,
 	}

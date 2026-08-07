@@ -95,7 +95,10 @@ func TestParse(t *testing.T) {
 				packagejson.Fields{},
 				packagejson.HeaderFields{},
 				packagejson.Expected[string]{},
+				packagejson.Expected[bool]{},
 				packagejson.Expected[map[string]string]{},
+				packagejson.Expected[[]string]{},
+				packagejson.Expected[packagejson.ContentMapperFields]{},
 				packagejson.ExportsOrImports{},
 			))
 		})

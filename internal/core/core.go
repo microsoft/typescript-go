@@ -543,6 +543,21 @@ func GetScriptKindFromFileName(fileName string) ScriptKind {
 	return ScriptKindUnknown
 }
 
+func GetDefaultExtensionForScriptKind(scriptKind ScriptKind) string {
+	switch scriptKind {
+	case ScriptKindJS:
+		return tspath.ExtensionJs
+	case ScriptKindJSX:
+		return tspath.ExtensionJsx
+	case ScriptKindTSX:
+		return tspath.ExtensionTsx
+	case ScriptKindJSON:
+		return tspath.ExtensionJson
+	default:
+		return tspath.ExtensionTs
+	}
+}
+
 // Given a name and a list of names that are *not* equal to the name, return a spelling suggestion if there is one that is close enough.
 // Names less than length 3 only check for case-insensitive equality.
 //

@@ -1,9 +1,11 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
@@ -57,6 +59,54 @@ func (s *osSys) GetWidthOfTerminal() int {
 
 func (s *osSys) GetEnvironmentVariable(name string) string {
 	return os.Getenv(name)
+}
+
+func (s *osSys) Spawn(command []string, dir string) (io.ReadWriteCloser, error) {
+	return spawnProcess(command, dir)
+}
+
+// spawnProcess launches a process and adapts its stdio to an io.ReadWriteCloser (Read is its stdout,
+// Write is its stdin).
+func spawnProcess(command []string, dir string) (io.ReadWriteCloser, error) {
+	cmd := exec.Command(command[0], command[1:]...)
+	cmd.Dir = dir
+	cmd.Stderr = os.Stderr
+	stdin, err := cmd.StdinPipe()
+	if err != nil {
+		return nil, err
+	}
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		return nil, err
+	}
+	if err := cmd.Start(); err != nil {
+		return nil, err
+	}
+	return &childProcess{cmd: cmd, stdin: stdin, stdout: stdout}, nil
+}
+
+// childProcess adapts a spawned process's stdout (read) and stdin (write) into one io.ReadWriteCloser.
+// Close kills and reaps the process.
+type childProcess struct {
+	cmd    *exec.Cmd
+	stdin  io.WriteCloser
+	stdout io.ReadCloser
+}
+
+func (p *childProcess) Read(b []byte) (int, error)  { return p.stdout.Read(b) }
+func (p *childProcess) Write(b []byte) (int, error) { return p.stdin.Write(b) }
+
+func (p *childProcess) Close() error {
+	// Kill guarantees the process is gone even if it is ignoring stdin's EOF; Wait then reaps it and
+	// closes the stdio pipes it created. Kill is best-effort because Wait reports the real outcome, and a
+	// "signal: killed" ExitError is the expected result of that kill, so only an unexpected Wait error is
+	// surfaced.
+	_ = p.cmd.Process.Kill()
+	err := p.cmd.Wait()
+	if _, ok := errors.AsType[*exec.ExitError](err); ok {
+		return nil
+	}
+	return err
 }
 
 func newSystem() *osSys {

@@ -69,6 +69,12 @@ const customStructures: Structure[] = [
                 documentation: "The initial log verbosity level, matching the client's output channel log level at startup. Subsequent changes are sent via custom/setLogVerbosity.",
             },
             {
+                name: "loadExternalPlugins",
+                type: { kind: "base", name: "boolean" },
+                optional: true,
+                documentation: "LoadExternalPlugins allows configured content mappers to launch external plugin processes. The client should set this only for trusted workspaces. It mirrors the --loadExternalPlugins CLI flag.",
+            },
+            {
                 name: "trackFlakyDiagnostics",
                 type: { kind: "reference", name: "DiagnosticFlakeLogLevel" },
                 optional: true,
@@ -141,6 +147,12 @@ const customStructures: Structure[] = [
                 type: { kind: "base", name: "integer" },
                 documentation: "The position where the completion was requested.",
                 omitzeroValue: true,
+            },
+            {
+                name: "supplementalFileIndex",
+                type: { kind: "base", name: "integer" },
+                optional: true,
+                documentation: "Zero-based index into the canonical file's supplemental source files. Absent when the completion was requested in the canonical file.",
             },
             {
                 name: "source",
@@ -415,6 +427,33 @@ const customStructures: Structure[] = [
             },
         ],
         documentation: "Result for the custom/projectInfo request.",
+    },
+    {
+        name: "DiscoverContentMappersParams",
+        properties: [
+            {
+                name: "textDocuments",
+                type: { kind: "array", element: { kind: "reference", name: "TextDocumentIdentifier" } },
+                documentation: "Open foreign documents whose configured projects should be checked for content mappers.",
+            },
+            {
+                name: "extensions",
+                type: { kind: "array", element: { kind: "base", name: "string" } },
+                documentation: "Candidate foreign file extensions, including the leading dot.",
+            },
+        ],
+        documentation: "Parameters for the custom/discoverContentMappers request.",
+    },
+    {
+        name: "DiscoverContentMappersResult",
+        properties: [
+            {
+                name: "extensions",
+                type: { kind: "array", element: { kind: "base", name: "string" } },
+                documentation: "Requested extensions provided by content mappers in discovered configured projects.",
+            },
+        ],
+        documentation: "Result for the custom/discoverContentMappers request.",
     },
     {
         name: "SetLogVerbosityParams",
@@ -868,6 +907,14 @@ const customRequests: Request[] = [
         result: { kind: "reference", name: "ProjectInfoResult" },
         messageDirection: "clientToServer",
         documentation: "Returns project information (e.g. the tsconfig.json path) for a given text document.",
+    },
+    {
+        method: "custom/discoverContentMappers",
+        typeName: "CustomDiscoverContentMappersRequest",
+        params: { kind: "reference", name: "DiscoverContentMappersParams" },
+        result: { kind: "reference", name: "DiscoverContentMappersResult" },
+        messageDirection: "clientToServer",
+        documentation: "Discovers content mappers from configured projects governing the supplied foreign documents.",
     },
     {
         method: "custom/textDocument/sourceDefinition",

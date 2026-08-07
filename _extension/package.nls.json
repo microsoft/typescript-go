@@ -25,6 +25,7 @@
     "native-preview.sortImports.title": "Sort Imports",
     "native-preview.removeUnusedImports.title": "Remove Unused Imports",
     "native-preview.codeLens.showLocations.title": "Show References of CodeLens",
+    "native-preview.discoverContentMappers.title": "Discover TypeScript Content Mappers",
     "native-preview.dev.runGC.title": "TypeScript: Run Garbage Collection",
     "native-preview.dev.saveHeapProfile.title": "TypeScript: Save Heap Profile",
     "native-preview.dev.saveAllocProfile.title": "TypeScript: Save Allocation Profile",

@@ -232,7 +232,12 @@ type ATAStateChange struct {
 	Logs                *logging.LogTree
 }
 
-func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays map[tspath.Path]*Overlay, session *Session) *Snapshot {
+func (s *Snapshot) Clone(
+	ctx context.Context,
+	change SnapshotChange,
+	overlays map[tspath.Path]*Overlay,
+	session *Session,
+) *Snapshot {
 	var logger *logging.LogTree
 
 	// Print in-progress logs immediately if cloning fails
@@ -288,6 +293,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	}
 
 	start := time.Now()
+	contentMappers := s.ConfigFileRegistry.contentMappers()
 	fs := newSnapshotFSBuilder(session.fs.fs, s.fs.overlays, overlays, s.fs.diskFiles, s.fs.diskDirectories, s.fs.nodeModulesRealpathAliases, session.options.PositionEncoding, s.toPath)
 	if change.fileChanges.HasExcessiveWatchEvents() {
 		invalidateStart := time.Now()
@@ -306,7 +312,11 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			logger.Logf("npm install detected, invalidated node_modules cache in %v", time.Since(invalidateStart))
 		}
 	} else {
-		change.fileChanges = fs.expandAndFilterWatchEvents(change.fileChanges)
+		var contentMapperExtensions []string
+		if contentMappers != nil {
+			contentMapperExtensions = contentMappers.extensions
+		}
+		change.fileChanges = fs.expandAndFilterWatchEvents(change.fileChanges, contentMapperExtensions)
 		change.fileChanges = s.fs.expandRealpathAliases(change.fileChanges)
 		change.fileChanges = fs.markDirtyFiles(change.fileChanges)
 		change.fileChanges = fs.convertOpenAndCloseToChanges(change.fileChanges)
@@ -336,7 +346,9 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		s.sessionOptions,
 		customConfigFileName,
 		session.parseCache,
+		session.contentMappedParseCache,
 		session.extendedConfigCache,
+		session.contentMapperHost,
 		session.client,
 	)
 
@@ -345,6 +357,9 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	}
 
 	projectCollectionBuilder.DidChangeCustomConfigFileName(logger.Fork("DidChangeCustomConfigFileName"))
+	if change.newConfig != nil {
+		projectCollectionBuilder.DidChangeUserPreferences(s.userPreferences, *change.newConfig, logger.Fork("DidChangeUserPreferences"))
+	}
 
 	if !change.fileChanges.IsEmpty() {
 		projectCollectionBuilder.DidChangeFiles(change.fileChanges, logger.Fork("DidChangeFiles"))
@@ -539,6 +554,9 @@ func (s *Snapshot) Deref(session *Session) {
 func (s *Snapshot) dispose(session *Session) {
 	for _, project := range s.ProjectCollection.Projects() {
 		if project.Program != nil && session.programCounter.Deref(project.Program) {
+			if contentMapperProject := project.Program.ContentMapperProject(); contentMapperProject != nil {
+				_ = contentMapperProject.Close()
+			}
 			// This program is no longer referenced by any snapshot.
 			// Mark its checker pool as discarded so its idle-cleanup timer stops
 			// keeping the pool alive, allowing the pool and any idle checkers it
@@ -547,10 +565,22 @@ func (s *Snapshot) dispose(session *Session) {
 				project.checkerPool.Discard()
 			}
 			for _, file := range project.Program.SourceFiles() {
-				session.parseCache.Deref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
+				if !file.IsContentMapperFailureStub() && !file.IsContentMapperSupplemental() {
+					if file.ContentMapper() != "" {
+						session.contentMappedParseCache.Deref(contentMappedParseCacheKeyForFile(file))
+					} else {
+						session.parseCache.Deref(parseCacheKeyForFile(file))
+					}
+				}
 			}
 			for _, file := range project.Program.DuplicateSourceFiles() {
-				session.parseCache.Deref(NewParseCacheKey(file.ParseOptions, file.Hash, file.ScriptKind))
+				if !file.IsContentMapperFailureStub {
+					if file.ContentMapper != "" {
+						session.contentMappedParseCache.Deref(contentMappedParseCacheKeyForDuplicate(file))
+					} else {
+						session.parseCache.Deref(parseCacheKeyForDuplicate(file))
+					}
+				}
 			}
 		}
 	}

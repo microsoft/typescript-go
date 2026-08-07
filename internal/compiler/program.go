@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/json"
@@ -128,6 +129,10 @@ func (p *Program) GetCurrentDirectory() string {
 	return p.Host().GetCurrentDirectory()
 }
 
+func (p *Program) ContentMapperProject() contentmapper.Project {
+	return p.opts.Host.ContentMapperProject()
+}
+
 // GetGlobalTypingsCacheLocation implements checker.Program.
 func (p *Program) GetGlobalTypingsCacheLocation() string {
 	return p.opts.TypingsLocation
@@ -234,7 +239,7 @@ func (p *Program) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.Fi
 	// Still, without the failed lookup reporting that only the loader does, this isn't terribly complicated
 
 	fileName := tspath.ResolvePath(tspath.GetDirectoryPath(origin.FileName()), ref.FileName)
-	supportedExtensionsBase := tsoptions.GetSupportedExtensions(p.Options(), nil /*extraFileExtensions*/)
+	supportedExtensionsBase := tsoptions.GetSupportedExtensions(p.Options(), p.CommandLine().ContentMapperExtensions())
 	supportedExtensions := tsoptions.GetSupportedExtensionsWithJsonIfResolveJsonModule(p.Options(), supportedExtensionsBase)
 	allowNonTsExtensions := p.Options().AllowNonTsExtensions.IsTrue()
 	if tspath.HasExtension(fileName) {
@@ -317,7 +322,25 @@ func (p *Program) ReuseProgram(changedFilePath tspath.Path, newHost CompilerHost
 	}
 
 	oldFile := p.filesByPath[changedFilePath]
-	newFile := newHost.GetSourceFile(oldFile.ParseOptions())
+	var newFile *ast.SourceFile
+	var oldSupplementalFiles []*ast.SourceFile
+	var newSupplementalFiles []*ast.SourceFile
+	if oldFile.ContentMapper() != "" {
+		// Content-mapped files are produced by running an external transform, which a plain reparse can't
+		// reproduce. Re-run the transform through the host; any failure (or a missing file) falls back to
+		// a full rebuild so the file loader's failure policy runs.
+		mapper := newOpts.Config.GetContentMapperForFileName(oldFile.FileName())
+		var err error
+		files, transformErr := newHost.GetContentMappedSourceFiles(oldFile.ParseOptions(), mapper, newOpts.Config.CompilerOptions())
+		newFile, err = files.Canonical, transformErr
+		if err != nil {
+			return nil, nil, false
+		}
+		oldSupplementalFiles = oldFile.SupplementalSourceFiles()
+		newSupplementalFiles = files.Supplemental
+	} else {
+		newFile = newHost.GetSourceFile(oldFile.ParseOptions())
+	}
 
 	// If this file is part of a package redirect group (same package installed in multiple
 	// node_modules locations), we need to rebuild the program because the redirect targets
@@ -331,8 +354,29 @@ func (p *Program) ReuseProgram(changedFilePath tspath.Path, newHost CompilerHost
 	if !p.canReplaceFileInProgram(oldFile, newFile) {
 		return nil, newFile, false
 	}
-	if oldNeedsImportHelpers := p.importHelpersImportSpecifiers[oldFile.Path()] != nil; oldNeedsImportHelpers != p.needsImportHelpersImportSpecifier(newFile) {
+	// Cloning does not recompute synthetic helper or JSX-runtime import bookkeeping. Fall back to a full
+	// build whenever either version requires those imports.
+	if p.importHelpersImportSpecifiers[oldFile.Path()] != nil || p.needsImportHelpersImportSpecifier(newFile) {
 		return nil, newFile, false
+	}
+	if p.jsxRuntimeImportSpecifiers[oldFile.Path()] != nil || p.jsxRuntimeImportSpecifier(newFile) != "" {
+		return nil, newFile, false
+	}
+	if len(oldSupplementalFiles) != len(newSupplementalFiles) {
+		return nil, newFile, false
+	}
+	for i, oldSupplemental := range oldSupplementalFiles {
+		newSupplemental := newSupplementalFiles[i]
+		if oldSupplemental.Path() != newSupplemental.Path() ||
+			!p.canReplaceFileInProgram(oldSupplemental, newSupplemental) {
+			return nil, newFile, false
+		}
+		if p.importHelpersImportSpecifiers[oldSupplemental.Path()] != nil || p.needsImportHelpersImportSpecifier(newSupplemental) {
+			return nil, newFile, false
+		}
+		if p.jsxRuntimeImportSpecifiers[oldSupplemental.Path()] != nil || p.jsxRuntimeImportSpecifier(newSupplemental) != "" {
+			return nil, newFile, false
+		}
 	}
 	// TODO: reverify compiler options when config has changed?
 	result := &Program{
@@ -352,6 +396,14 @@ func (p *Program) ReuseProgram(changedFilePath tspath.Path, newHost CompilerHost
 	result.files[index] = newFile
 	result.filesByPath = maps.Clone(result.filesByPath)
 	result.filesByPath[newFile.Path()] = newFile
+	if len(oldSupplementalFiles) != 0 {
+		for i, oldSupplemental := range oldSupplementalFiles {
+			newSupplemental := newSupplementalFiles[i]
+			supplementalIndex := core.FindIndex(result.files, func(file *ast.SourceFile) bool { return file == oldSupplemental })
+			result.files[supplementalIndex] = newSupplemental
+			result.filesByPath[newSupplemental.Path()] = newSupplemental
+		}
+	}
 	updateFileIncludeProcessor(result)
 	return result, newFile, true
 }
@@ -378,6 +430,8 @@ func (p *Program) GetCheckerPool() CheckerPool {
 func (p *Program) canReplaceFileInProgram(file1 *ast.SourceFile, file2 *ast.SourceFile) bool {
 	return file2 != nil &&
 		file1.ParseOptions() == file2.ParseOptions() &&
+		file1.ScriptKind == file2.ScriptKind &&
+		ast.IsExternalOrCommonJSModule(file1) == ast.IsExternalOrCommonJSModule(file2) &&
 		file1.UsesUriStyleNodeCoreModules == file2.UsesUriStyleNodeCoreModules &&
 		slices.EqualFunc(file1.Imports(), file2.Imports(), func(n1 *ast.Node, n2 *ast.Node) bool {
 			return equalModuleSpecifiers(n1, n2) &&
@@ -405,6 +459,15 @@ func (p *Program) needsImportHelpersImportSpecifier(file *ast.SourceFile) bool {
 	return true
 }
 
+func (p *Program) jsxRuntimeImportSpecifier(file *ast.SourceFile) string {
+	if !ast.IsSourceFileJS(file) && file.ScriptKind != core.ScriptKindTSX {
+		return ""
+	}
+	redirect, _ := p.projectReferenceFileMapper.getRedirectForResolution(file)
+	optionsForFile := module.GetCompilerOptionsWithRedirect(p.opts.Config.CompilerOptions(), redirect)
+	return ast.GetJSXRuntimeImport(ast.GetJSXImplicitImportBase(optionsForFile, file), optionsForFile)
+}
+
 func equalModuleSpecifiers(n1 *ast.Node, n2 *ast.Node) bool {
 	return n1.Kind == n2.Kind && (!ast.IsStringLiteral(n1) || n1.Text() == n2.Text())
 }
@@ -424,9 +487,24 @@ func equalCheckJSDirectives(d1 *ast.CheckJsDirective, d2 *ast.CheckJsDirective) 
 func (p *Program) SourceFiles() []*ast.SourceFile               { return p.files }
 func (p *Program) DuplicateSourceFiles() []*DuplicateSourceFile { return p.duplicateSourceFiles }
 func (p *Program) Options() *core.CompilerOptions               { return p.opts.Config.CompilerOptions() }
-func (p *Program) CommandLine() *tsoptions.ParsedCommandLine    { return p.opts.Config }
-func (p *Program) Host() CompilerHost                           { return p.opts.Host }
-func (p *Program) Tracing() *tracing.Tracing                    { return p.opts.Tracing }
+
+// GetContentMapper returns the content mapper that produced the given source file, or nil if the
+// file was not produced by a content mapper.
+func (p *Program) GetContentMapper(file *ast.SourceFile) *contentmapper.Mapper {
+	if file.ContentMapper() == "" {
+		return nil
+	}
+	mapper := p.opts.Config.GetContentMapperForFileName(file.FileName())
+	if mapper != nil && mapper.Identity() == file.ContentMapper() {
+		return mapper
+	}
+	return nil
+}
+
+func (p *Program) ContentMapperExtensions() []string         { return p.opts.Config.ContentMapperExtensions() }
+func (p *Program) CommandLine() *tsoptions.ParsedCommandLine { return p.opts.Config }
+func (p *Program) Host() CompilerHost                        { return p.opts.Host }
+func (p *Program) Tracing() *tracing.Tracing                 { return p.opts.Tracing }
 func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 	return slices.Clip(p.opts.Config.GetConfigFileParsingDiagnostics())
 }
@@ -696,8 +774,9 @@ func (p *Program) GetSuggestionDiagnostics(ctx context.Context, sourceFile *ast.
 }
 
 func (p *Program) GetProgramDiagnostics() []*ast.Diagnostic {
-	return SortAndDeduplicateDiagnostics(core.Concatenate(
+	return SortAndDeduplicateDiagnostics(slices.Concat(
 		p.programDiagnostics,
+		p.contentMapperDiagnostics,
 		p.includeProcessor.getDiagnostics(p).GetGlobalDiagnostics(),
 	))
 }
@@ -723,7 +802,7 @@ func (p *Program) canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile) 
 		return false
 	}
 
-	if sourceFile.ScriptKind == core.ScriptKindTS || sourceFile.ScriptKind == core.ScriptKindTSX || sourceFile.ScriptKind == core.ScriptKindExternal {
+	if sourceFile.ScriptKind == core.ScriptKindTS || sourceFile.ScriptKind == core.ScriptKindTSX {
 		return true
 	}
 
@@ -731,11 +810,10 @@ func (p *Program) canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile) 
 	isCheckJS := isJS && ast.IsCheckJSEnabledForFile(sourceFile, p.Options())
 	isPlainJS := ast.IsPlainJSFile(sourceFile, p.Options().CheckJs)
 
-	// By default, only type-check .ts, .tsx, Deferred, plain JS, checked JS and External
+	// By default, only type-check .ts, .tsx, plain JS, and checked JS
 	// - plain JS: .js files with no // ts-check and checkJs: undefined
 	// - check JS: .js files with either // ts-check or checkJs: true
-	// - external: files that are added by plugins
-	return isPlainJS || isCheckJS || sourceFile.ScriptKind == core.ScriptKindDeferred
+	return isPlainJS || isCheckJS
 }
 
 func (p *Program) getSourceFilesToEmit(targetSourceFiles []*ast.SourceFile, forceDtsEmit bool, forceJsEmit bool) []*ast.SourceFile {
@@ -1800,7 +1878,13 @@ func GetDiagnosticsOfAnyProgram(
 		return diagnostics
 	}
 
-	allDiagnostics = appendDiagnosticsForAllFiles(allDiagnostics, program.GetSyntacticDiagnostics)
+	syntacticDiagnostics := appendDiagnosticsForAllFiles(nil, program.GetSyntacticDiagnostics)
+	if len(syntacticDiagnostics) > 0 {
+		// Per-file content mapper failures are syntactic diagnostics, but the locationless diagnostic
+		// that disables a repeatedly failing mapper must still be reported.
+		allDiagnostics = append(allDiagnostics, program.Program().contentMapperDiagnostics...)
+	}
+	allDiagnostics = append(allDiagnostics, syntacticDiagnostics...)
 
 	// If we didn't have any syntactic errors, then also try getting the program (options),
 	// global and semantic errors.

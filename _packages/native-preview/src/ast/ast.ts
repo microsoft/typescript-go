@@ -49,6 +49,7 @@ import type {
     WhileStatement,
     WithStatement,
 } from "./ast.generated.ts";
+import type { SpanMap } from "./spanMap.ts";
 
 export { SyntaxKind } from "#enums/syntaxKind";
 export { TokenFlags } from "#enums/tokenFlags";
@@ -118,6 +119,12 @@ export interface SourceFile extends Node {
     readonly statements: NodeArray<Statement>;
     readonly endOfFileToken: EndOfFile;
     readonly text: string;
+    readonly originalText: string;
+    readonly spanMap: SpanMap | undefined;
+    /** Compiler-assigned filenames of supplemental outputs associated with this canonical source file. */
+    readonly supplementalSourceFileNames?: readonly string[];
+    /** Canonical source filename associated with this supplemental output, if this is supplemental. */
+    readonly canonicalSourceFileName?: string;
     readonly fileName: string;
     readonly path: Path;
     readonly languageVariant: LanguageVariant;

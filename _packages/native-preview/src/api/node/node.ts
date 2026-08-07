@@ -5,6 +5,9 @@ import {
     type Node,
     NodeFlags,
     type Path,
+    SpanMap,
+    SpanMapFeature,
+    SpanMapKind,
     SyntaxKind,
     TokenFlags,
 } from "../../ast/index.ts";
@@ -59,6 +62,9 @@ export class RemoteSourceFile extends RemoteNode implements SourceFileInfo {
     private _cachedImports: readonly Node[] | undefined;
     private _cachedModuleAugmentations: readonly Node[] | undefined;
     private _cachedAmbientModuleNames: readonly string[] | undefined;
+    private _cachedSpanMap: SpanMap | undefined;
+    private _spanMapRead = false;
+    private _cachedSupplementalSourceFileNames: readonly string[] | undefined;
 
     constructor(data: Uint8Array, decoder: TextDecoder, timing?: TimingCollector) {
         const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
@@ -230,6 +236,54 @@ export class RemoteSourceFile extends RemoteNode implements SourceFileInfo {
         if (nodeIndex === 0) return undefined;
         if (nodeIndex === this.index) return true;
         return this.getOrCreateNodeAtIndex(nodeIndex) as Node;
+    }
+
+    get originalText(): string {
+        const stringIndex = this.view.getUint32(this.extendedDataOffset + 48, true);
+        return this.getString(stringIndex);
+    }
+
+    get spanMap(): SpanMap | undefined {
+        if (this._spanMapRead) return this._cachedSpanMap;
+        this._spanMapRead = true;
+        const offset = this.view.getUint32(this.extendedDataOffset + 52, true);
+        if (offset === NO_STRUCTURED_DATA) return undefined;
+        const buf = new Uint8Array(this.view.buffer, this.view.byteOffset, this.view.byteLength);
+        const reader = new MsgpackReader(buf, this._offsetStructuredData + offset);
+        const count = reader.readArrayHeader();
+        const segments = Array(count);
+        for (let i = 0; i < count; i++) {
+            const tupleLength = reader.readArrayHeader();
+            if (tupleLength !== 5 && tupleLength !== 6) throw new Error("Invalid span map segment");
+            const generatedStart = reader.readUint();
+            const generatedLength = reader.readUint();
+            const originalStart = reader.readUint();
+            const originalLength = reader.readUint();
+            const kind = reader.readUint();
+            const features = tupleLength === 6 ? reader.readUint() as SpanMapFeature : SpanMapFeature.All;
+            if (kind !== SpanMapKind.Verbatim && kind !== SpanMapKind.Atom && kind !== SpanMapKind.Alias) throw new Error(`Invalid span map kind: ${kind}`);
+            segments[i] = {
+                generatedStart,
+                generatedEnd: generatedStart + generatedLength,
+                originalStart,
+                originalEnd: originalStart + originalLength,
+                kind,
+                features,
+            };
+        }
+        return this._cachedSpanMap = new SpanMap(segments);
+    }
+
+    get supplementalSourceFileNames(): readonly string[] | undefined {
+        if (this._cachedSupplementalSourceFileNames !== undefined) return this._cachedSupplementalSourceFileNames;
+        const offset = this.view.getUint32(this.extendedDataOffset + 56, true);
+        if (offset === NO_STRUCTURED_DATA) return undefined;
+        return this._cachedSupplementalSourceFileNames = this.readStringArray(offset);
+    }
+
+    get canonicalSourceFileName(): string | undefined {
+        const stringIndex = this.view.getUint32(this.extendedDataOffset + 60, true);
+        return stringIndex === NO_STRUCTURED_DATA ? undefined : this.getString(stringIndex);
     }
 
     get isDeclarationFile(): boolean {
