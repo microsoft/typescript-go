@@ -184,7 +184,17 @@ func (b *NodeBuilderImpl) pseudoTypeToNode(t *pseudochecker.PseudoType) *ast.Nod
 		if len(d.TypeParameters) > 0 {
 			res := make([]*ast.Node, 0, len(d.TypeParameters))
 			for _, tp := range d.TypeParameters {
-				res = append(res, b.reuseNode(tp.AsNode()))
+				reused := b.reuseNode(tp.AsNode())
+				if reused == nil {
+					// The existing node could not be reused, e.g. because its constraint names
+					// something that is not accessible from the file being emitted. Serialize the
+					// type parameter from the checker instead, the way reuseTypeNode falls back for
+					// type nodes. Appending the nil would leave it in the type parameter list, where
+					// the printer dereferences it while looking for a trailing comma.
+					b.ctx.tracker.ReportInferenceFallback(tp.AsNode())
+					reused = b.typeParameterToDeclaration(b.ch.getDeclaredTypeOfTypeParameter(b.ch.getSymbolOfDeclaration(tp.AsNode())))
+				}
+				res = append(res, reused)
 			}
 			typeParams = b.f.NewNodeList(res)
 		}
