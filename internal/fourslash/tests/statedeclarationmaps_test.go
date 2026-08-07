@@ -54,6 +54,39 @@ new /*1*/A();
 	}
 }
 
+func TestDeclarationMapGoToDefinitionUsesMappedSource(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `
+// @Filename: /project/source0.ts
+export const unrelated = 0;
+// @Filename: /project/source1.ts
+// @Filename: /project/source2.ts
+// @Filename: /project/source3.ts
+// @Filename: /project/source4.ts
+// @Filename: /project/source5.ts
+// @Filename: /project/source6.ts
+export const /*target*/target = 0;
+// @Filename: /project/index.d.ts
+export declare const target: number;
+//# sourceMappingURL=index.d.ts.map
+// @Filename: /project/index.d.ts.map
+{
+	"version": 3,
+	"file": "index.d.ts",
+	"sourceRoot": "",
+	"sources": ["source0.ts", "source1.ts", "source2.ts", "source3.ts", "source4.ts", "source5.ts", "source6.ts"],
+	"names": [],
+	"mappings": "AAAA,qBMAa"
+}
+// @Filename: /project/consumer.ts
+import { target } from "./index";
+target/*use*/;`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyBaselineGoToDefinition(t, false /*includeOriginalSelectionRange*/, "use")
+}
+
 func TestDeclarationMapTestCasesForMaps(t *testing.T) {
 	t.Parallel()
 	type testCase struct {
