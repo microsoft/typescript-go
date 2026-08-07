@@ -735,7 +735,7 @@ func (tx *DeclarationTransformer) transformMappedTypeNode(input *ast.MappedTypeN
 }
 
 func (tx *DeclarationTransformer) transformHeritageClause(clause *ast.HeritageClause) *ast.Node {
-	retainedClauses := core.Filter(clause.Types.Nodes, func(t *ast.Node) bool {
+	retainedClauses := core.Filter(clause.Types.Nodes, func(t *ast.HeritageClauseElement) bool {
 		name := ast.GetHeritageClauseElementName(t)
 		return ast.IsEntityName(name) || ast.IsEntityNameExpression(name) ||
 			(clause.Token == ast.KindExtendsKeyword && ast.IsExpressionWithTypeArguments(t) && t.Expression().Kind == ast.KindNullKeyword)

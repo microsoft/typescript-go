@@ -914,7 +914,7 @@ func getIntersectingMeaningFromDeclarations(node *ast.Node, symbol *ast.Symbol, 
 }
 
 // Returns the node in an `extends` or `implements` clause of a class or interface.
-func getAllSuperTypeNodes(node *ast.Node) []*ast.TypeNode {
+func getAllSuperTypeNodes(node *ast.Node) []*ast.HeritageClauseElement {
 	if ast.IsInterfaceDeclaration(node) {
 		return ast.GetHeritageElements(node, ast.KindExtendsKeyword)
 	}

@@ -1843,7 +1843,7 @@ func isTypeHeritageClause(isInterface bool, token ast.Kind) bool {
 		!isInterface && token == ast.KindImplementsKeyword
 }
 
-func (p *Parser) parseTypeHeritageClauseElement() *ast.Node {
+func (p *Parser) parseTypeHeritageClauseElement() *ast.HeritageClauseElement {
 	pos := p.nodePos()
 	expressionWithTypeArguments := p.parseExpressionWithTypeArguments().AsExpressionWithTypeArguments()
 	if !isValidHeritageTypeReferenceExpression(expressionWithTypeArguments.Expression) {

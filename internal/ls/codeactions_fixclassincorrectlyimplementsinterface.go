@@ -104,7 +104,7 @@ func getAllCodeActionsToFixClassIncorrectlyImplementsInterface(context context.C
 	}, nil
 }
 
-func addChanges(context context.Context, fixContext *CodeFixContext, changeTracker *change.Tracker, importAdder autoimport.ImportAdder, typeChecker *checker.Checker, classDeclaration *ast.Node, implementedTypeNode *ast.Node) {
+func addChanges(context context.Context, fixContext *CodeFixContext, changeTracker *change.Tracker, importAdder autoimport.ImportAdder, typeChecker *checker.Checker, classDeclaration *ast.Node, implementedTypeNode *ast.HeritageClauseElement) {
 	missingMemberFixer := newMissingMemberFixer(changeTracker, fixContext.Program, typeChecker, fixContext.LS.UserPreferences(), importAdder, locale.FromContext(context))
 	constructor := getConstructor(classDeclaration)
 	implementedType := typeChecker.GetTypeAtLocation(implementedTypeNode)
