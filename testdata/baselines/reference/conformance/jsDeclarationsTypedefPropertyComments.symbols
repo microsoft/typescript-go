@@ -1,0 +1,40 @@
+//// [tests/cases/conformance/jsdoc/declarations/jsDeclarationsTypedefPropertyComments.ts] ////
+
+=== lib.js ===
+/**
+ * @typedef {Object} Foo
+ * @property {boolean} bool Whether `.bool` is true or not
+ */
+export class C {
+>C : Symbol(C, Decl(lib.js, 0, 0))
+
+    /** @returns {Foo} */
+    getFoo() { return { bool: false }; }
+>getFoo : Symbol(C.getFoo, Decl(lib.js, 4, 16))
+>bool : Symbol(bool, Decl(lib.js, 6, 23))
+}
+
+=== main.js ===
+import { C } from './lib.js';
+>C : Symbol(C, Decl(main.js, 0, 8))
+
+export class Main {
+>Main : Symbol(Main, Decl(main.js, 0, 29))
+
+    constructor() {
+        this.c = new C();
+>this.c : Symbol(Main.c, Decl(main.js, 3, 19))
+>this : Symbol(Main, Decl(main.js, 0, 29))
+>c : Symbol(Main.c, Decl(main.js, 3, 19))
+>C : Symbol(C, Decl(main.js, 0, 8))
+    }
+
+    getFoo() { return { ...this.c.getFoo() }; }
+>getFoo : Symbol(Main.getFoo, Decl(main.js, 5, 5))
+>this.c.getFoo : Symbol(C.getFoo, Decl(lib.js, 4, 16))
+>this.c : Symbol(Main.c, Decl(main.js, 3, 19))
+>this : Symbol(Main, Decl(main.js, 0, 29))
+>c : Symbol(Main.c, Decl(main.js, 3, 19))
+>getFoo : Symbol(C.getFoo, Decl(lib.js, 4, 16))
+}
+

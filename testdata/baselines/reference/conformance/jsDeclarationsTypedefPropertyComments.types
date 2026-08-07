@@ -1,0 +1,46 @@
+//// [tests/cases/conformance/jsdoc/declarations/jsDeclarationsTypedefPropertyComments.ts] ////
+
+=== lib.js ===
+/**
+ * @typedef {Object} Foo
+ * @property {boolean} bool Whether `.bool` is true or not
+ */
+export class C {
+>C : C
+
+    /** @returns {Foo} */
+    getFoo() { return { bool: false }; }
+>getFoo : () => Foo
+>{ bool: false } : { bool: false; }
+>bool : false
+>false : false
+}
+
+=== main.js ===
+import { C } from './lib.js';
+>C : typeof C
+
+export class Main {
+>Main : Main
+
+    constructor() {
+        this.c = new C();
+>this.c = new C() : C
+>this.c : any
+>this : this
+>c : any
+>new C() : C
+>C : typeof C
+    }
+
+    getFoo() { return { ...this.c.getFoo() }; }
+>getFoo : () => { bool: boolean; }
+>{ ...this.c.getFoo() } : { bool: boolean; }
+>this.c.getFoo() : import("./lib.js").Foo
+>this.c.getFoo : () => import("./lib.js").Foo
+>this.c : C
+>this : this
+>c : C
+>getFoo : () => import("./lib.js").Foo
+}
+
