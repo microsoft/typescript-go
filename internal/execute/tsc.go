@@ -290,7 +290,7 @@ func performIncrementalCompilation(
 	compileTimes *tsc.CompileTimes,
 	testing tsc.CommandLineTesting,
 ) tsc.CommandLineResult {
-	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing))
+	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, sys.PnpApi(), getTraceFromSys(sys, config.Locale(), testing))
 	buildInfoReadStart := sys.Now()
 	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host), host)
 	compileTimes.BuildInfoReadTime = sys.Now().Sub(buildInfoReadStart)
@@ -339,7 +339,7 @@ func performCompilation(
 	compileTimes *tsc.CompileTimes,
 	testing tsc.CommandLineTesting,
 ) tsc.CommandLineResult {
-	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, config.Locale(), testing))
+	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, sys.PnpApi(), getTraceFromSys(sys, config.Locale(), testing))
 
 	tr := startTracingIfNeeded(sys, config, testing)
 

@@ -251,7 +251,7 @@ func TestProgram(t *testing.T) {
 						CompilerOptions: &opts,
 					},
 				},
-				Host: compiler.NewCompilerHost("c:/dev/src", fs, bundled.LibPath(), nil, nil),
+				Host: compiler.NewCompilerHost("c:/dev/src", fs, bundled.LibPath(), nil, nil, nil),
 			})
 
 			actualFiles := []string{}
@@ -291,7 +291,7 @@ func TestIncludeProcessorDiagnosticsWithMissingFileCasing(t *testing.T) {
 				CompilerOptions: &opts,
 			},
 		},
-		Host: compiler.NewCompilerHost("/", fs, bundled.LibPath(), nil, nil),
+		Host: compiler.NewCompilerHost("/", fs, bundled.LibPath(), nil, nil, nil),
 	})
 
 	// GetProgramDiagnostics triggers getDiagnostics which processes all
@@ -333,7 +333,7 @@ func BenchmarkNewProgram(b *testing.B) {
 						CompilerOptions: &opts,
 					},
 				},
-				Host: compiler.NewCompilerHost("c:/dev/src", fs, bundled.LibPath(), nil, nil),
+				Host: compiler.NewCompilerHost("c:/dev/src", fs, bundled.LibPath(), nil, nil, nil),
 			}
 
 			for b.Loop() {
@@ -350,7 +350,7 @@ func BenchmarkNewProgram(b *testing.B) {
 		fs := osvfs.FS()
 		fs = bundled.WrapFS(fs)
 
-		host := compiler.NewCompilerHost(rootPath, fs, bundled.LibPath(), nil, nil)
+		host := compiler.NewCompilerHost(rootPath, fs, bundled.LibPath(), nil, nil, nil)
 
 		parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile(tspath.CombinePaths(rootPath, "tsconfig.json"), nil, nil, host, nil)
 		assert.Equal(b, len(errors), 0, "Expected no errors in parsed command line")

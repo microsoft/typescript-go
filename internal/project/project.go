@@ -77,6 +77,7 @@ type Project struct {
 
 	programFilesWatch *WatchedFiles[*collections.SyncSet[tspath.Path]]
 	typingsWatch      *WatchedFiles[PatternsAndIgnored]
+	pnpManifestWatch  *WatchedFiles[PatternsAndIgnored]
 
 	checkerPool *checkerPool
 
@@ -160,6 +161,14 @@ func NewProject(
 		project.typingsWatch = NewWatchedFiles(
 			"typings installer files",
 			lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
+			lsproto.GetClientCapabilities(builder.ctx).Workspace.DidChangeWatchedFiles.RelativePatternSupport,
+			core.Identity,
+		)
+	}
+	if builder.pnpApi != nil {
+		project.pnpManifestWatch = NewWatchedFiles(
+			"pnp manifest files for "+configFileName,
+			lsproto.WatchKindChange,
 			lsproto.GetClientCapabilities(builder.ctx).Workspace.DidChangeWatchedFiles.RelativePatternSupport,
 			core.Identity,
 		)
@@ -259,6 +268,7 @@ func (p *Project) Clone() *Project {
 
 		programFilesWatch: p.programFilesWatch,
 		typingsWatch:      p.typingsWatch,
+		pnpManifestWatch:  p.pnpManifestWatch,
 
 		checkerPool: p.checkerPool,
 

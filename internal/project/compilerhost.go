@@ -5,6 +5,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/locale"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -18,6 +19,7 @@ type compilerHost struct {
 	currentDirectory string
 	sessionOptions   *SessionOptions
 
+	pnpApi             *pnp.PnpApi
 	sourceFS           *sourceFS
 	configFileRegistry *ConfigFileRegistry
 
@@ -37,6 +39,7 @@ func newCompilerHost(
 		currentDirectory: currentDirectory,
 		sessionOptions:   builder.sessionOptions,
 
+		pnpApi:   builder.pnpApi,
 		sourceFS: newSourceFS(true, builder.fs, builder.toPath),
 
 		project: project,
@@ -78,6 +81,11 @@ func (c *compilerHost) FS() vfs.FS {
 // GetCurrentDirectory implements compiler.CompilerHost.
 func (c *compilerHost) GetCurrentDirectory() string {
 	return c.currentDirectory
+}
+
+// PnpApi implements compiler.CompilerHost.
+func (c *compilerHost) PnpApi() *pnp.PnpApi {
+	return c.pnpApi
 }
 
 // GetResolvedProjectReference implements compiler.CompilerHost.
