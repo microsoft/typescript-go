@@ -86,18 +86,24 @@ export class SpanMap {
 
     /**
      * Returns every generated projection of an original position whose segment participates in `feature`.
-     * Results are ordered by generated start; uncovered or disabled positions produce no results.
+     * Segment ends are inclusive for point mapping, so adjacent spans may both produce projections.
+     * Results are ordered by generated position; uncovered or disabled positions produce no results.
      */
     originalToGeneratedPositions(position: number, feature: SpanMapFeature): readonly MappedPosition[] {
-        const segments = originalSegmentsAt(this.getOriginalSegments(), position);
-        if (!segments) return [];
-        return segments
-            .filter(segment => supportsFeature(segment, feature))
-            .map(segment =>
-                segment.kind === SpanMapKind.Verbatim
+        const groups = originalSegmentGroupsAtPoint(this.getOriginalSegments(), position);
+        const results: MappedPosition[] = [];
+        for (const group of groups) {
+            for (const segment of group.segments) {
+                if (!supportsFeature(segment, feature)) continue;
+                const mapped = segment.kind === SpanMapKind.Verbatim
                     ? { position: mapVerbatimPosition(segment, position, true), fidelity: SpanMapFidelity.Exact }
-                    : { position: segment.generatedStart, fidelity: SpanMapFidelity.Atom }
-            );
+                    : { position: group.atEnd ? segment.generatedEnd : segment.generatedStart, fidelity: SpanMapFidelity.Atom };
+                if (!results.some(result => result.position === mapped.position && result.fidelity === mapped.fidelity)) {
+                    results.push(mapped);
+                }
+            }
+        }
+        return results.sort((left, right) => left.position - right.position);
     }
 
     /**
@@ -300,13 +306,45 @@ function originalSegmentsAt(segments: readonly NormalizedSpanMapSegment[], posit
         index < 0 || !(
             segments[index].originalStart === position
             || position < segments[index].originalEnd
-            || index === segments.length - 1 && position === segments[index].originalEnd
         )
     ) return undefined;
     while (index > 0 && sameOriginalRange(segments[index - 1], segments[index])) index--;
     let end = index + 1;
     while (end < segments.length && sameOriginalRange(segments[end], segments[index])) end++;
     return segments.slice(index, end);
+}
+
+interface OriginalSegmentGroupAtPoint {
+    readonly segments: readonly NormalizedSpanMapSegment[];
+    readonly atEnd: boolean;
+}
+
+/** Returns the duplicate original-range groups containing or touching `position`. */
+function originalSegmentGroupsAtPoint(segments: readonly NormalizedSpanMapSegment[], position: number): readonly OriginalSegmentGroupAtPoint[] {
+    let low = 0;
+    let high = segments.length;
+    while (low < high) {
+        const middle = (low + high) >>> 1;
+        if (segments[middle].originalStart < position) low = middle + 1;
+        else high = middle;
+    }
+    if (low < segments.length && segments[low].originalStart === position) {
+        const right = originalSegmentsAt(segments, position)!;
+        const groups: OriginalSegmentGroupAtPoint[] = [];
+        if (low > 0 && segments[low - 1].originalEnd === position) {
+            let leftStart = low - 1;
+            while (leftStart > 0 && sameOriginalRange(segments[leftStart - 1], segments[low - 1])) leftStart--;
+            groups.push({ segments: segments.slice(leftStart, low), atEnd: true });
+        }
+        groups.push({ segments: right, atEnd: false });
+        return groups;
+    }
+    if (low === 0) return [];
+    const left = segments[low - 1];
+    if (position > left.originalEnd) return [];
+    let start = low - 1;
+    while (start > 0 && sameOriginalRange(segments[start - 1], left)) start--;
+    return [{ segments: segments.slice(start, low), atEnd: position === left.originalEnd }];
 }
 
 /** Reports whether a segment participates in an original-to-generated query for `features`. */

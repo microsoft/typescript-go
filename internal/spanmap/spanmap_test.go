@@ -246,6 +246,36 @@ func TestOriginalToGeneratedPositions(t *testing.T) {
 	}
 }
 
+func TestOriginalToGeneratedPositionsAtEndpoint(t *testing.T) {
+	t.Parallel()
+
+	m := spanmap.New([]spanmap.Segment{
+		{GenStart: 2, GenEnd: 5, OrigStart: 10, OrigEnd: 13, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureCompletion},
+		{GenStart: 8, GenEnd: 11, OrigStart: 13, OrigEnd: 16, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureCompletion},
+		{GenStart: 20, GenEnd: 23, OrigStart: 30, OrigEnd: 35, Kind: spanmap.KindAtom, Features: spanmap.FeatureCompletion},
+	})
+
+	assert.DeepEqual(t, m.OriginalToGeneratedPositions(13, spanmap.FeatureCompletion), []spanmap.MappedPosition{
+		{Position: 5, Fidelity: spanmap.FidelityExact},
+		{Position: 8, Fidelity: spanmap.FidelityExact},
+	})
+	assert.DeepEqual(t, m.OriginalToGeneratedPositions(35, spanmap.FeatureCompletion), []spanmap.MappedPosition{
+		{Position: 23, Fidelity: spanmap.FidelityAtom},
+	})
+
+	filtered := spanmap.New([]spanmap.Segment{
+		{GenStart: 20, GenEnd: 23, OrigStart: 10, OrigEnd: 13, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureHover},
+		{GenStart: 2, GenEnd: 5, OrigStart: 13, OrigEnd: 16, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureCompletion},
+	})
+	assert.DeepEqual(t, filtered.OriginalToGeneratedPositions(13, spanmap.FeatureAll), []spanmap.MappedPosition{
+		{Position: 2, Fidelity: spanmap.FidelityExact},
+		{Position: 23, Fidelity: spanmap.FidelityExact},
+	})
+	assert.DeepEqual(t, filtered.OriginalToGeneratedPositions(13, spanmap.FeatureCompletion), []spanmap.MappedPosition{
+		{Position: 2, Fidelity: spanmap.FidelityExact},
+	})
+}
+
 func TestOriginalToGeneratedDuplicateGroup(t *testing.T) {
 	t.Parallel()
 

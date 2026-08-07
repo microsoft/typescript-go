@@ -420,30 +420,38 @@ func (m *SpanMap) mapHigh(pos core.TextPos, idx int, in bool) core.TextPos {
 }
 
 // OriginalToGeneratedPositions returns every generated projection of an original position whose segment
-// participates in feature. Results are ordered by generated start. It returns no results for an uncovered
-// position or when all covering segments reject feature. A nil SpanMap maps identically.
+// participates in feature. Segment ends are inclusive for point mapping, so a position shared by adjacent
+// original spans returns projections from both sides. Results are ordered by generated position. It returns
+// no results for an uncovered position or when all touching segments reject feature. A nil SpanMap maps identically.
 func (m *SpanMap) OriginalToGeneratedPositions(pos core.TextPos, feature Feature) []MappedPosition {
 	if m == nil {
 		return []MappedPosition{{Position: pos, Fidelity: FidelityExact}}
 	}
-	segments, inside := originalSegmentsAt(m.origIndex(), pos)
-	if !inside {
+	groups := originalSegmentGroupsAtPoint(m.origIndex(), pos)
+	if len(groups) == 0 {
 		return nil
 	}
-	results := make([]MappedPosition, 0, len(segments))
-	for _, segment := range segments {
-		if !supportsFeature(segment, feature) {
-			continue
-		}
-		if segment.Kind == KindVerbatim {
-			results = append(results, MappedPosition{
-				Position: clamp(segment.GenStart+(pos-segment.OrigStart), segment.GenStart, segment.GenEnd),
-				Fidelity: FidelityExact,
-			})
-		} else {
-			results = append(results, MappedPosition{Position: segment.GenStart, Fidelity: FidelityAtom})
+	var results []MappedPosition
+	for _, group := range groups {
+		for _, segment := range group.segments {
+			if !supportsFeature(segment, feature) {
+				continue
+			}
+			mapped := MappedPosition{Fidelity: FidelityAtom}
+			if segment.Kind == KindVerbatim {
+				mapped.Position = clamp(segment.GenStart+(pos-segment.OrigStart), segment.GenStart, segment.GenEnd)
+				mapped.Fidelity = FidelityExact
+			} else if group.atEnd {
+				mapped.Position = segment.GenEnd
+			} else {
+				mapped.Position = segment.GenStart
+			}
+			if !slices.Contains(results, mapped) {
+				results = append(results, mapped)
+			}
 		}
 	}
+	slices.SortFunc(results, func(a, b MappedPosition) int { return int(a.Position - b.Position) })
 	return results
 }
 
@@ -621,6 +629,48 @@ func originalSegmentsAt(segments []Segment, pos core.TextPos) ([]Segment, bool) 
 		end++
 	}
 	return segments[start:end], true
+}
+
+type originalSegmentGroupAtPoint struct {
+	segments []Segment
+	atEnd    bool
+}
+
+// originalSegmentGroupsAtPoint returns the duplicate original-range groups containing or touching pos.
+// Interior positions return one group. At a boundary between adjacent groups, both the group ending at pos
+// and the group starting at pos are returned. segments must be ordered by OrigStart, OrigEnd, then GenStart.
+func originalSegmentGroupsAtPoint(segments []Segment, pos core.TextPos) []originalSegmentGroupAtPoint {
+	index, startsAtPosition := slices.BinarySearchFunc(segments, pos, func(segment Segment, position core.TextPos) int {
+		return int(segment.OrigStart - position)
+	})
+	if startsAtPosition {
+		right, _ := originalSegmentsAt(segments, pos)
+		var groups []originalSegmentGroupAtPoint
+		if index > 0 {
+			leftIndex := index - 1
+			if segments[leftIndex].OrigEnd == pos {
+				leftStart := leftIndex
+				for leftStart > 0 && sameOriginalRange(segments[leftStart-1], segments[leftIndex]) {
+					leftStart--
+				}
+				groups = append(groups, originalSegmentGroupAtPoint{segments: segments[leftStart:index], atEnd: true})
+			}
+		}
+		return append(groups, originalSegmentGroupAtPoint{segments: right})
+	}
+	if index == 0 {
+		return nil
+	}
+	leftIndex := index - 1
+	segment := segments[leftIndex]
+	if pos > segment.OrigEnd {
+		return nil
+	}
+	start := leftIndex
+	for start > 0 && sameOriginalRange(segments[start-1], segment) {
+		start--
+	}
+	return []originalSegmentGroupAtPoint{{segments: segments[start:index], atEnd: pos == segment.OrigEnd}}
 }
 
 // supportsFeature reports whether segment participates in feature.

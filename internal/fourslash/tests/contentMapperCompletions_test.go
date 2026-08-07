@@ -49,6 +49,26 @@ card.se/*incoming*/ttings;
 	f.VerifyCompletions(t, "markup", nil)
 }
 
+func TestContentMapperCompletionAtMappedBoundary(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	f, done := newContentMapperFourslash(t, `// @Filename: /settings.ts
+export const settings = { color: "blue", size: 2 };
+
+// @Filename: /ProfileCard.vue
+<script lang="ts">
+import { settings } from "./settings";
+settings./*boundary*/</script>
+<template>{{ settings }}</template>
+`, contentmappertest.ComponentMapper, ".vue")
+	defer done()
+
+	f.VerifyCompletions(t, "boundary", &fourslash.CompletionsExpectedList{
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{CommitCharacters: &DefaultCommitCharacters, EditRange: Ignored},
+		Items:        &fourslash.CompletionsExpectedItems{Includes: []fourslash.CompletionsExpectedItem{"color", "size"}},
+	})
+}
+
 func TestContentMapperModulePathCompletions(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
