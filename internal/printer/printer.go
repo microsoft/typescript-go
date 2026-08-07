@@ -4476,8 +4476,19 @@ func (p *Printer) emitHeritageClause(node *ast.HeritageClause) {
 	p.writeSpace()
 	p.emitToken(node.Token, node.Pos(), WriteKindKeyword, node.AsNode())
 	p.writeSpace()
-	p.emitList((*Printer).emitTypeNodeOutsideExtends, node.AsNode(), node.Types, LFHeritageClauseTypes)
+	p.emitList((*Printer).emitHeritageClauseElement, node.AsNode(), node.Types, LFHeritageClauseTypes)
 	p.exitNode(node.AsNode(), state)
+}
+
+func (p *Printer) emitHeritageClauseElement(node *ast.HeritageClauseElement) {
+	switch node.Kind {
+	case ast.KindExpressionWithTypeArguments:
+		p.emitExpressionWithTypeArguments(node.AsExpressionWithTypeArguments())
+	case ast.KindTypeReference:
+		p.emitTypeReference(node.AsTypeReferenceNode())
+	default:
+		panic(fmt.Sprintf("unhandled HeritageClauseElement: %v", node.Kind))
+	}
 }
 
 func (p *Printer) emitHeritageClauseNode(node *ast.HeritageClauseNode) {
