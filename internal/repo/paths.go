@@ -79,7 +79,9 @@ type SkippableTest interface {
 	Skipf(format string, args ...any)
 }
 
-func SkipIfNoTypeScriptSubmodule(t SkippableTest) {
+type DefSkippableTest = SkippableTest /* ref: nonnil */
+
+func SkipIfNoTypeScriptSubmodule(t DefSkippableTest) {
 	t.Helper()
 	if !typeScriptSubmoduleExists() {
 		t.Skipf("TypeScript submodule does not exist")

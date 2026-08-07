@@ -12,11 +12,11 @@ type Locale language.Tag
 
 var Default Locale
 
-func WithLocale(ctx context.Context, locale Locale) context.Context {
+func WithLocale(ctx context.Context /* ref: nonnil */, locale Locale) context.Context {
 	return context.WithValue(ctx, contextKey(0), locale)
 }
 
-func FromContext(ctx context.Context) Locale {
+func FromContext(ctx context.Context /* ref: nonnil */) Locale {
 	locale, _ := ctx.Value(contextKey(0)).(Locale)
 	return locale
 }
