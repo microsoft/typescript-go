@@ -11,6 +11,7 @@ import { CheckFlags } from "#enums/checkFlags";
 import { CompletionItemKind } from "#enums/completionItemKind";
 import { DiagnosticCategory } from "#enums/diagnosticCategory";
 import { ElementFlags } from "#enums/elementFlags";
+import { EmitOnly } from "#enums/emitOnly";
 import { ModuleKind } from "#enums/moduleKind";
 import { NodeBuilderFlags } from "#enums/nodeBuilderFlags";
 import { ObjectFlags } from "#enums/objectFlags";
@@ -56,7 +57,6 @@ import {
 import type {
     CompilerOptions,
     CompletionInfoResponse,
-    ConfigResponse,
     DocumentIdentifier,
     DocumentPosition,
     ImportAdderActionRequest,
@@ -64,6 +64,7 @@ import type {
     IndexInfoResponse,
     InitializeResponse,
     LSPUpdateSnapshotParams,
+    ParsedCommandLine,
     ProfileResult,
     ProjectReference,
     ProjectResponse,
@@ -71,6 +72,7 @@ import type {
     SourceFileMetadata,
     SymbolResponse,
     TextEdit,
+    TypeAcquisition,
     TypePredicateResponse,
     TypeResponse,
     UpdateSnapshotParams,
@@ -101,6 +103,9 @@ import type {
     CompletionOptions,
     ConditionalType,
     Diagnostic,
+    EmitOutput,
+    EmitOutputFile,
+    EmitResult,
     FreshableType,
     GetImportEditsForSymbolsOptions,
     IdentifierTypePredicate,
@@ -131,8 +136,14 @@ import type {
 } from "./types.ts";
 
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
-export { CheckFlags, CompletionItemKind, DiagnosticCategory, ElementFlags, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
-export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ProjectReference, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export { CheckFlags, CompletionItemKind, DiagnosticCategory, ElementFlags, EmitOnly, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
+export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutput, EmitOutputFile, EmitResult, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ParsedCommandLine, ProjectReference, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeAcquisition, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+
+interface EmitOutputResponse {
+    readonly emitSkipped: boolean;
+    readonly diagnostics: readonly Diagnostic[];
+    readonly outputFiles: readonly (EmitOutputFile & { readonly fileName: string; })[];
+}
 
 export interface TranspileOptions {
     compilerOptions?: CompilerOptions;
@@ -181,9 +192,9 @@ export class API<FromLSP extends boolean = false> {
         }
     }
 
-    parseConfigFile(file: DocumentIdentifier): ConfigResponse {
+    parseConfigFile(file: DocumentIdentifier): ParsedCommandLine {
         this.ensureInitialized();
-        return this.client.apiRequest<ConfigResponse>("parseConfigFile", { file });
+        return this.client.apiRequest<ParsedCommandLine>("parseConfigFile", { file });
     }
 
     transpileModule(input: string, options: TranspileOptions = {}): TranspileOutput {
@@ -691,7 +702,10 @@ class ProjectObjectRegistry {
 export class Project {
     readonly id: Path;
     readonly configFileName: string;
+    readonly parsedCommandLine: ParsedCommandLine;
+    /** @deprecated Use `parsedCommandLine.options`. */
     readonly compilerOptions: CompilerOptions;
+    /** @deprecated Use `parsedCommandLine.fileNames`. */
     readonly rootFiles: readonly string[];
 
     readonly program: Program;
@@ -710,8 +724,9 @@ export class Project {
     ) {
         this.id = data.id;
         this.configFileName = data.configFileName;
-        this.compilerOptions = data.compilerOptions;
-        this.rootFiles = data.rootFiles;
+        this.parsedCommandLine = data.parsedCommandLine;
+        this.compilerOptions = this.parsedCommandLine.options;
+        this.rootFiles = this.parsedCommandLine.fileNames;
         this.client = client;
         this.snapshotId = snapshotId;
         this.program = new Program(
@@ -899,6 +914,35 @@ export class Program {
     }
 
     /**
+     * Get all config source file names associated with this program's project config.
+     * Includes the root config file and any extended config files.
+     */
+    getConfigFileNames(): readonly string[] {
+        const data = this.client.apiRequest<string[]>("getConfigFileNames", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+        });
+        return data ?? [];
+    }
+
+    /**
+     * Get a config source file by file name/URI.
+     * This can return the project's root tsconfig file or one of its extended config files.
+     */
+    getConfigSourceFile(file: DocumentIdentifier): SourceFile | undefined {
+        const binaryData = this.client.apiRequestBinary("getConfigSourceFile", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            file,
+        });
+        if (!binaryData) {
+            return undefined;
+        }
+
+        return new RemoteSourceFile(binaryData, this.decoder) as unknown as SourceFile;
+    }
+
+    /**
      * Get syntactic (parse) diagnostics for a specific file or all files.
      * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
      */
@@ -995,6 +1039,68 @@ export class Program {
         });
         return data ?? [];
     }
+
+    /**
+     * Emits files to the configured filesystem.
+     *
+     * When the API has a virtual filesystem with a `writeFile` callback, output
+     * is written there. Otherwise, the server writes directly to the host filesystem.
+     */
+    emit(emitOnly?: EmitOnly): EmitResult {
+        return this.client.apiRequest<EmitResult>("emit", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            emitOnly,
+        });
+    }
+
+    /**
+     * Emits files and returns their contents without writing to the filesystem.
+     */
+    emitToString(emitOnly?: EmitOnly): EmitOutput {
+        const response = this.client.apiRequest<EmitOutputResponse>("emitToString", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            emitOnly,
+        });
+        return toEmitOutput(response);
+    }
+
+    /**
+     * Gets JavaScript output for selected files regardless of project `noEmit`, `emitDeclarationOnly`, and `noEmitOnError` settings.
+     */
+    getJavaScriptEmit(files: readonly DocumentIdentifier[]): EmitOutput {
+        const response = this.client.apiRequest<EmitOutputResponse>("getJavaScriptEmit", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            files,
+        });
+        return toEmitOutput(response);
+    }
+
+    /**
+     * Gets declaration output for selected files regardless of project `noEmit`, `declaration`, `emitDeclarationOnly`, and `noEmitOnError` settings.
+     */
+    getDeclarationEmit(files: readonly DocumentIdentifier[]): EmitOutput {
+        const response = this.client.apiRequest<EmitOutputResponse>("getDeclarationEmit", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            files,
+        });
+        return toEmitOutput(response);
+    }
+}
+
+function toEmitOutput(response: EmitOutputResponse): EmitOutput {
+    const outputFiles = new Map<string, EmitOutputFile>();
+    for (const { fileName, ...outputFile } of response.outputFiles) {
+        outputFiles.set(fileName, outputFile);
+    }
+    return {
+        emitSkipped: response.emitSkipped,
+        diagnostics: response.diagnostics,
+        outputFiles,
+    };
 }
 
 export class Checker {

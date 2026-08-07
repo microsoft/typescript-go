@@ -224,8 +224,8 @@ func transpileWorker(ctx context.Context, input string, options Options, declara
 	var outputText, sourceMapText string
 	var hasOutputText, hasSourceMapText bool
 	result := program.Emit(ctx, compiler.EmitOptions{
-		EmitOnly:     emitOnly,
-		ForceDtsEmit: declaration,
+		EmitOnly:  emitOnly,
+		ForceEmit: declaration,
 		WriteFile: func(fileName string, text string, data *compiler.WriteFileData) error {
 			if strings.HasSuffix(fileName, ".map") {
 				debug.Assert(!hasSourceMapText, "Unexpected multiple source map outputs, file: "+fileName)
