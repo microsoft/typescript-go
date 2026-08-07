@@ -8841,6 +8841,9 @@ type CompletionItemData struct {
 	// The position where the completion was requested.
 	Position int32 `json:"position,omitzero" lsp:"nullable"`
 
+	// Zero-based index into the canonical file's supplemental source files. Absent when the completion was requested in the canonical file.
+	SupplementalFileIndex *int32 `json:"supplementalFileIndex,omitzero"`
+
 	// Special source value for disambiguation.
 	Source string `json:"source,omitzero" lsp:"nullable"`
 

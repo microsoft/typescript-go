@@ -7,10 +7,12 @@ import (
 	"os/exec"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/spanmap"
 	"gotest.tools/v3/assert"
 )
@@ -90,14 +92,22 @@ func TestFileNameToDocumentURI(t *testing.T) {
 }
 
 type testScript struct {
-	name string
-	text string
+	name         string
+	text         string
+	originalText string
+	spanMap      *spanmap.SpanMap
 }
 
-func (s *testScript) FileName() string          { return s.name }
-func (s *testScript) Text() string              { return s.text }
-func (s *testScript) OriginalText() string      { return s.text }
-func (s *testScript) SpanMap() *spanmap.SpanMap { return nil }
+func (s *testScript) FileName() string         { return s.name }
+func (s *testScript) OriginalFileName() string { return s.name }
+func (s *testScript) Text() string             { return s.text }
+func (s *testScript) OriginalText() string {
+	if s.originalText != "" {
+		return s.originalText
+	}
+	return s.text
+}
+func (s *testScript) SpanMap() *spanmap.SpanMap { return s.spanMap }
 
 func newTestConverters(text string) (*lsconv.Converters, *testScript) {
 	script := &testScript{name: "test.ts", text: text}
@@ -106,6 +116,34 @@ func newTestConverters(text string) (*lsconv.Converters, *testScript) {
 		return lineMap
 	})
 	return conv, script
+}
+
+func TestConvertersSourceFileProjectionExpansion(t *testing.T) {
+	t.Parallel()
+	original := "x"
+	parseOptions := ast.SourceFileParseOptions{FileName: "/component.vue", Path: "/component.vue"}
+	canonical := parser.ParseSourceFile(parseOptions, " x", core.ScriptKindTS)
+	canonical.SetOriginalText(original)
+	canonical.SetContentMapper("mapper")
+	canonical.SetSpanMap(spanmap.New([]spanmap.Segment{{GenStart: 1, GenEnd: 2, OrigEnd: 1, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll}}))
+	supplementalOptions := parseOptions
+	supplementalOptions.Path = "/component.vue::supplemental"
+	supplemental := parser.ParseSourceFile(supplementalOptions, "  x", core.ScriptKindTS)
+	supplemental.SetOriginalText(original)
+	supplemental.SetContentMapper("mapper")
+	supplemental.SetSpanMap(spanmap.New([]spanmap.Segment{{GenStart: 2, GenEnd: 3, OrigEnd: 1, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll}}))
+	canonical.SetSupplementalSourceFiles([]*ast.SourceFile{supplemental})
+	lineMap := lsconv.ComputeLSPLineStarts(original)
+	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *lsconv.LSPLineMap { return lineMap })
+
+	positions := lsconv.FromLSPPositionForSourceFile(converters, canonical, lsproto.Position{}, spanmap.FeatureHover)
+	assert.Equal(t, len(positions), 2)
+	var projectedFile *ast.SourceFile = positions[0].Script
+	assert.Assert(t, projectedFile == canonical)
+	assert.Assert(t, positions[0].Script == canonical)
+	assert.Equal(t, positions[0].Position, core.TextPos(1))
+	assert.Assert(t, positions[1].Script == supplemental)
+	assert.Equal(t, positions[1].Position, core.TextPos(2))
 }
 
 // TestConvertersInvalidUTF8 verifies behavior on text containing invalid UTF-8
@@ -137,7 +175,7 @@ func TestConvertersInvalidUTF8(t *testing.T) {
 	}
 	for _, m := range mappings {
 		lc := lsproto.Position{Line: m.line, Character: m.char}
-		positions := conv.FromLSPPosition(script, lc, spanmap.FeatureAll)
+		positions := lsconv.FromLSPPosition(conv, script, lc, spanmap.FeatureAll)
 		assert.Equal(t, len(positions), 1)
 		assert.Equal(t, positions[0].Position, m.bytePos,
 			fmt.Sprintf("LineAndCharacterToPosition(%d,%d)", m.line, m.char))
@@ -149,7 +187,7 @@ func TestConvertersInvalidUTF8(t *testing.T) {
 	// Byte-by-byte round-trip across the entire text.
 	for bytePos := core.TextPos(0); bytePos <= core.TextPos(len(text)); bytePos++ {
 		lc, _ := conv.ToLSPPosition(script, bytePos)
-		positions := conv.FromLSPPosition(script, lc, spanmap.FeatureAll)
+		positions := lsconv.FromLSPPosition(conv, script, lc, spanmap.FeatureAll)
 		assert.Equal(t, len(positions), 1)
 		assert.Equal(t, positions[0].Position, bytePos, fmt.Sprintf("round-trip byte %d", bytePos))
 	}
@@ -327,7 +365,7 @@ func TestConvertersAgainstJSReference(t *testing.T) {
 				assert.Equal(t, gotLC, expectedLC,
 					fmt.Sprintf("PositionToLineAndCharacter(%d) mismatch in %q", bytePos, c.text))
 
-				positions := conv.FromLSPPosition(script, expectedLC, spanmap.FeatureAll)
+				positions := lsconv.FromLSPPosition(conv, script, expectedLC, spanmap.FeatureAll)
 				assert.Equal(t, len(positions), 1)
 				assert.Equal(t, positions[0].Position, bytePos,
 					fmt.Sprintf("LineAndCharacterToPosition(%d,%d) mismatch in %q", tup.Line, tup.Char, c.text))

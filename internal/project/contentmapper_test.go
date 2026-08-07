@@ -20,6 +20,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/testutil/contentmappertest"
 	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"gotest.tools/v3/assert"
 )
 
@@ -209,6 +210,76 @@ func TestContentMapperInProject(t *testing.T) {
 		rebuiltBox := ls.GetProgram().GetSourceFile("/home/project/app.box")
 		assert.Assert(t, rebuiltBox == boxFile, "expected the unchanged content-mapped file to be reused from the parse cache, not re-transformed")
 	})
+}
+
+func TestContentMapperSupplementalFileClonedOnEdit(t *testing.T) {
+	t.Parallel()
+	files := map[string]any{
+		"/home/project/tsconfig.json":                    `{ "compilerOptions": { "strict": true }, "contentMappers": [{ "package": "mapper", "extensions": [".box"] }] }`,
+		"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.SupplementalMapper),
+		"/home/project/app.box":                          "declare const supplementalValue: number;\n",
+		"/home/project/extra.d.ts":                       "interface Extra {}\n",
+		"/home/project/main.ts":                          "const value: number = supplementalValue;\n",
+	}
+	init, utils := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
+		CurrentDirectory:    "/home/project",
+		DefaultLibraryPath:  bundled.LibPath(),
+		TypingsLocation:     projecttestutil.TestTypingsLocation,
+		PositionEncoding:    lsproto.PositionEncodingKindUTF8,
+		LoadExternalPlugins: true,
+	}, nil)
+	init.Spawner = contentmappertest.NewSpawner()
+	session := project.NewSession(init)
+	defer session.Close()
+
+	ctx := context.Background()
+	mainURI := lsproto.DocumentUri("file:///home/project/main.ts")
+	session.DidOpenFile(ctx, mainURI, 1, files["/home/project/main.ts"].(string), lsproto.LanguageKindTypeScript)
+	languageService, err := session.GetLanguageService(ctx, mainURI)
+	assert.NilError(t, err)
+	oldProgram := languageService.GetProgram()
+	oldCanonical := oldProgram.GetSourceFile("/home/project/app.box")
+	oldSupplemental := oldCanonical.SupplementalSourceFiles()
+	assert.Equal(t, len(oldSupplemental), 1)
+	assert.Equal(t, oldSupplemental[0].FileName(), "/home/project/app.box.0.ts")
+	assert.Equal(t, oldSupplemental[0].Path(), tspath.Path("/home/project/app.box.0.ts"))
+	assert.Assert(t, oldProgram.GetSourceFileByPath(oldSupplemental[0].Path()) == oldSupplemental[0])
+	assert.Assert(t, oldProgram.FilesByPath()[oldSupplemental[0].Path()] == oldSupplemental[0])
+
+	assert.NilError(t, utils.FS().WriteFile("/home/project/app.box", "declare const supplementalValue: string;\n"))
+	session.DidChangeWatchedFiles(ctx, []*lsproto.FileEvent{{
+		Uri:  "file:///home/project/app.box",
+		Type: lsproto.FileChangeTypeChanged,
+	}})
+	languageService, err = session.GetLanguageService(ctx, mainURI)
+	assert.NilError(t, err)
+	updatedSnapshot := session.Snapshot()
+	configuredProject := updatedSnapshot.GetDefaultProject(mainURI)
+	assert.Equal(t, configuredProject.ProgramUpdateKind, project.ProgramUpdateKindCloned)
+
+	newProgram := languageService.GetProgram()
+	newCanonical := newProgram.GetSourceFile("/home/project/app.box")
+	newSupplemental := newCanonical.SupplementalSourceFiles()
+	assert.Equal(t, len(newSupplemental), 1)
+	assert.Equal(t, newSupplemental[0].Path(), oldSupplemental[0].Path())
+	assert.Assert(t, newCanonical != oldCanonical)
+	assert.Assert(t, newSupplemental[0] != oldSupplemental[0])
+	assert.Assert(t, newProgram.FilesByPath()[newSupplemental[0].Path()] == newSupplemental[0])
+	assert.Assert(t, strings.Contains(newSupplemental[0].Text(), "supplementalValue: string"))
+	mainFile := newProgram.GetSourceFile("/home/project/main.ts")
+	diagnostics := newProgram.GetSemanticDiagnostics(ctx, mainFile)
+	assert.Assert(t, slices.ContainsFunc(diagnostics, func(diagnostic *ast.Diagnostic) bool { return diagnostic.Code() == 2322 }))
+
+	// Changing the supplemental file's reference graph must fall back from cloning to a full rebuild.
+	assert.NilError(t, utils.FS().WriteFile("/home/project/app.box", "/// <reference path=\"./extra.d.ts\" />\ndeclare const supplementalValue: string;\n"))
+	session.DidChangeWatchedFiles(ctx, []*lsproto.FileEvent{{
+		Uri:  "file:///home/project/app.box",
+		Type: lsproto.FileChangeTypeChanged,
+	}})
+	_, err = session.GetLanguageService(ctx, mainURI)
+	assert.NilError(t, err)
+	configuredProject = session.Snapshot().GetDefaultProject(mainURI)
+	assert.Equal(t, configuredProject.ProgramUpdateKind, project.ProgramUpdateKindSameFileNames)
 }
 
 func TestContentMapperLocaleChange(t *testing.T) {
@@ -852,6 +923,27 @@ func TestContentMapperCompletions(t *testing.T) {
 		insert := resp.List.ItemDefaults.EditRange.EditRangeWithInsertReplace.Insert
 		assert.Equal(t, insert.End.Line, uint32(1), "the edit range must map back to the original cursor line")
 		assert.Equal(t, insert.End.Character, uint32(3), "the edit range must end at the original cursor character")
+	})
+
+	t.Run("prepares auto imports for a supplemental script", func(t *testing.T) {
+		t.Parallel()
+		files := baseFiles("const value = help;\n")
+		files["/home/project/node_modules/mapper/package.json"] = contentmappertest.PackageJSON(contentmappertest.SupplementalMapper)
+		files["/home/project/dep.ts"] = "export const helper = 1;\n"
+		session := newSession(t, files)
+		defer session.Close()
+
+		resp := completeContentMapped(t, session, "file:///home/project/app.box", lsproto.Position{Line: 0, Character: 18})
+		assert.Assert(t, resp.List != nil, "expected completions from the supplemental script")
+		var helper *lsproto.CompletionItem
+		for _, item := range resp.List.Items {
+			if item.Label == "helper" && item.Data != nil && item.Data.AutoImport != nil {
+				helper = item
+				break
+			}
+		}
+		assert.Assert(t, helper != nil, "expected the `helper` auto-import from the supplemental script")
+		assert.Assert(t, helper.AdditionalTextEdits != nil, "expected the supplemental import edit to be attached eagerly")
 	})
 
 	t.Run("declines completions outside a verbatim span", func(t *testing.T) {

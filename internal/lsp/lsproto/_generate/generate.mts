@@ -149,6 +149,12 @@ const customStructures: Structure[] = [
                 omitzeroValue: true,
             },
             {
+                name: "supplementalFileIndex",
+                type: { kind: "base", name: "integer" },
+                optional: true,
+                documentation: "Zero-based index into the canonical file's supplemental source files. Absent when the completion was requested in the canonical file.",
+            },
+            {
                 name: "source",
                 type: { kind: "base", name: "string" },
                 documentation: "Special source value for disambiguation.",

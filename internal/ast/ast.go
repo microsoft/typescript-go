@@ -2463,14 +2463,16 @@ type SourceFile struct {
 	CompositeBase
 
 	// Fields set by NewSourceFile
-	fileName       string // For debugging convenience
-	parseOptions   SourceFileParseOptions
-	text           string
-	originalText   string           // For content-mapped files, the untransformed source text.
-	spanMap        *spanmap.SpanMap // For content-mapped files, maps transformed positions back to the original text.
-	contentMapper  string           // For content-mapped files, the identity of the mapper that produced this file.
-	Statements     *NodeList        // NodeList[*Statement]
-	EndOfFileToken *TokenNode       // TokenNode[*EndOfFileToken]
+	fileName                string // For debugging convenience
+	parseOptions            SourceFileParseOptions
+	text                    string
+	originalText            string           // For content-mapped files, the untransformed source text.
+	spanMap                 *spanmap.SpanMap // For content-mapped files, maps transformed positions back to the original text.
+	contentMapper           string           // For content-mapped files, the identity of the mapper that produced this file.
+	supplementalSourceFiles []*SourceFile
+	canonicalSourceFile     *SourceFile
+	Statements              *NodeList  // NodeList[*Statement]
+	EndOfFileToken          *TokenNode // TokenNode[*EndOfFileToken]
 
 	// Fields for lazily-computed data owned by packages outside ast.
 	dataMu sync.Mutex
@@ -2567,6 +2569,14 @@ func (node *SourceFile) OriginalText() string {
 	return node.text
 }
 
+// OriginalFileName returns the canonical filename associated with a supplemental source file, or FileName() otherwise.
+func (node *SourceFile) OriginalFileName() string {
+	if node.canonicalSourceFile != nil {
+		return node.canonicalSourceFile.FileName()
+	}
+	return node.FileName()
+}
+
 // SetOriginalText records the untransformed source text of a content-mapped file, whose Text() holds
 // the transformed TypeScript.
 func (node *SourceFile) SetOriginalText(text string) {
@@ -2601,6 +2611,35 @@ func (node *SourceFile) SetContentMapper(identity string) {
 // original, untransformed content.
 func (node *SourceFile) SetSpanMap(spanMap *spanmap.SpanMap) {
 	node.spanMap = spanMap
+}
+
+// SupplementalSourceFiles returns the additional outputs produced from this canonical source file.
+func (node *SourceFile) SupplementalSourceFiles() []*SourceFile {
+	return node.supplementalSourceFiles
+}
+
+// SetSupplementalSourceFiles records the additional outputs produced with this canonical source file.
+func (node *SourceFile) SetSupplementalSourceFiles(files []*SourceFile) {
+	if node.canonicalSourceFile != nil || node.supplementalSourceFiles != nil {
+		panic("content mapper source file association already set")
+	}
+	node.supplementalSourceFiles = files
+	for _, file := range files {
+		if file.canonicalSourceFile != nil || file.supplementalSourceFiles != nil {
+			panic("content mapper source file association already set")
+		}
+		file.canonicalSourceFile = node
+	}
+}
+
+// CanonicalSourceFile returns the canonical output associated with this supplemental source file.
+func (node *SourceFile) CanonicalSourceFile() *SourceFile {
+	return node.canonicalSourceFile
+}
+
+// IsContentMapperSupplemental reports whether this is an unnamed supplemental mapper output.
+func (node *SourceFile) IsContentMapperSupplemental() bool {
+	return node.canonicalSourceFile != nil
 }
 
 func (file *SourceFile) HasIdentifier(name string) bool {

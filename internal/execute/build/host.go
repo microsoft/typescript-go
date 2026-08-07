@@ -61,8 +61,8 @@ func (h *host) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
 	return h.host.GetSourceFile(opts)
 }
 
-func (h *host) GetContentMappedSourceFile(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper, options *core.CompilerOptions) (*ast.SourceFile, error) {
-	return nil, errors.New("content mapper project is unavailable")
+func (h *host) GetContentMappedSourceFiles(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper, options *core.CompilerOptions) (contentmapper.SourceFiles, error) {
+	return contentmapper.SourceFiles{}, errors.New("content mapper project is unavailable")
 }
 
 func (h *host) ContentMapperProject() contentmapper.Project {

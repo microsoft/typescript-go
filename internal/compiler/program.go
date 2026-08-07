@@ -323,16 +323,21 @@ func (p *Program) ReuseProgram(changedFilePath tspath.Path, newHost CompilerHost
 
 	oldFile := p.filesByPath[changedFilePath]
 	var newFile *ast.SourceFile
+	var oldSupplementalFiles []*ast.SourceFile
+	var newSupplementalFiles []*ast.SourceFile
 	if oldFile.ContentMapper() != "" {
 		// Content-mapped files are produced by running an external transform, which a plain reparse can't
 		// reproduce. Re-run the transform through the host; any failure (or a missing file) falls back to
 		// a full rebuild so the file loader's failure policy runs.
 		mapper := newOpts.Config.GetContentMapperForFileName(oldFile.FileName())
 		var err error
-		newFile, err = newHost.GetContentMappedSourceFile(oldFile.ParseOptions(), mapper, newOpts.Config.CompilerOptions())
+		files, transformErr := newHost.GetContentMappedSourceFiles(oldFile.ParseOptions(), mapper, newOpts.Config.CompilerOptions())
+		newFile, err = files.Canonical, transformErr
 		if err != nil {
-			return NewProgram(newOpts), nil, false
+			return nil, nil, false
 		}
+		oldSupplementalFiles = oldFile.SupplementalSourceFiles()
+		newSupplementalFiles = files.Supplemental
 	} else {
 		newFile = newHost.GetSourceFile(oldFile.ParseOptions())
 	}
@@ -349,8 +354,29 @@ func (p *Program) ReuseProgram(changedFilePath tspath.Path, newHost CompilerHost
 	if !p.canReplaceFileInProgram(oldFile, newFile) {
 		return nil, newFile, false
 	}
-	if oldNeedsImportHelpers := p.importHelpersImportSpecifiers[oldFile.Path()] != nil; oldNeedsImportHelpers != p.needsImportHelpersImportSpecifier(newFile) {
+	// Cloning does not recompute synthetic helper or JSX-runtime import bookkeeping. Fall back to a full
+	// build whenever either version requires those imports.
+	if p.importHelpersImportSpecifiers[oldFile.Path()] != nil || p.needsImportHelpersImportSpecifier(newFile) {
 		return nil, newFile, false
+	}
+	if p.jsxRuntimeImportSpecifiers[oldFile.Path()] != nil || p.jsxRuntimeImportSpecifier(newFile) != "" {
+		return nil, newFile, false
+	}
+	if len(oldSupplementalFiles) != len(newSupplementalFiles) {
+		return nil, newFile, false
+	}
+	for i, oldSupplemental := range oldSupplementalFiles {
+		newSupplemental := newSupplementalFiles[i]
+		if oldSupplemental.Path() != newSupplemental.Path() ||
+			!p.canReplaceFileInProgram(oldSupplemental, newSupplemental) {
+			return nil, newFile, false
+		}
+		if p.importHelpersImportSpecifiers[oldSupplemental.Path()] != nil || p.needsImportHelpersImportSpecifier(newSupplemental) {
+			return nil, newFile, false
+		}
+		if p.jsxRuntimeImportSpecifiers[oldSupplemental.Path()] != nil || p.jsxRuntimeImportSpecifier(newSupplemental) != "" {
+			return nil, newFile, false
+		}
 	}
 	// TODO: reverify compiler options when config has changed?
 	result := &Program{
@@ -370,6 +396,14 @@ func (p *Program) ReuseProgram(changedFilePath tspath.Path, newHost CompilerHost
 	result.files[index] = newFile
 	result.filesByPath = maps.Clone(result.filesByPath)
 	result.filesByPath[newFile.Path()] = newFile
+	if len(oldSupplementalFiles) != 0 {
+		for i, oldSupplemental := range oldSupplementalFiles {
+			newSupplemental := newSupplementalFiles[i]
+			supplementalIndex := core.FindIndex(result.files, func(file *ast.SourceFile) bool { return file == oldSupplemental })
+			result.files[supplementalIndex] = newSupplemental
+			result.filesByPath[newSupplemental.Path()] = newSupplemental
+		}
+	}
 	updateFileIncludeProcessor(result)
 	return result, newFile, true
 }
@@ -396,6 +430,8 @@ func (p *Program) GetCheckerPool() CheckerPool {
 func (p *Program) canReplaceFileInProgram(file1 *ast.SourceFile, file2 *ast.SourceFile) bool {
 	return file2 != nil &&
 		file1.ParseOptions() == file2.ParseOptions() &&
+		file1.ScriptKind == file2.ScriptKind &&
+		ast.IsExternalOrCommonJSModule(file1) == ast.IsExternalOrCommonJSModule(file2) &&
 		file1.UsesUriStyleNodeCoreModules == file2.UsesUriStyleNodeCoreModules &&
 		slices.EqualFunc(file1.Imports(), file2.Imports(), func(n1 *ast.Node, n2 *ast.Node) bool {
 			return equalModuleSpecifiers(n1, n2) &&
@@ -423,6 +459,15 @@ func (p *Program) needsImportHelpersImportSpecifier(file *ast.SourceFile) bool {
 	return true
 }
 
+func (p *Program) jsxRuntimeImportSpecifier(file *ast.SourceFile) string {
+	if !ast.IsSourceFileJS(file) && file.ScriptKind != core.ScriptKindTSX {
+		return ""
+	}
+	redirect, _ := p.projectReferenceFileMapper.getRedirectForResolution(file)
+	optionsForFile := module.GetCompilerOptionsWithRedirect(p.opts.Config.CompilerOptions(), redirect)
+	return ast.GetJSXRuntimeImport(ast.GetJSXImplicitImportBase(optionsForFile, file), optionsForFile)
+}
+
 func equalModuleSpecifiers(n1 *ast.Node, n2 *ast.Node) bool {
 	return n1.Kind == n2.Kind && (!ast.IsStringLiteral(n1) || n1.Text() == n2.Text())
 }
@@ -446,7 +491,14 @@ func (p *Program) Options() *core.CompilerOptions               { return p.opts.
 // GetContentMapper returns the content mapper that produced the given source file, or nil if the
 // file was not produced by a content mapper.
 func (p *Program) GetContentMapper(file *ast.SourceFile) *contentmapper.Mapper {
-	return p.contentMapperForFile[file.Path()]
+	if file.ContentMapper() == "" {
+		return nil
+	}
+	mapper := p.opts.Config.GetContentMapperForFileName(file.FileName())
+	if mapper != nil && mapper.Identity() == file.ContentMapper() {
+		return mapper
+	}
+	return nil
 }
 
 func (p *Program) ContentMapperExtensions() []string         { return p.opts.Config.ContentMapperExtensions() }

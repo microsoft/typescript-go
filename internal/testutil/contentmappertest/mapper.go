@@ -46,6 +46,16 @@ const (
 	DuplicateMapper = "duplicate-mapper"
 	// LispMapper transforms one small Lisp expression and maps its operator to a generated helper as an alias.
 	LispMapper = "lisp-mapper"
+	// SupplementalMapper emits a synthesized canonical module and the original text as a supplemental script.
+	SupplementalMapper = "supplemental-mapper"
+	// SupplementalDiagnosticsMapper prefixes the supplemental script with unmapped generated code before
+	// copying the original text verbatim, exercising both supplemental diagnostic rendering modes.
+	SupplementalDiagnosticsMapper = "supplemental-diagnostics-mapper"
+	// SupplementalGlobalsMapper emits supplemental declarations that depend on other mapped roots through
+	// the shared global scope.
+	SupplementalGlobalsMapper = "supplemental-globals-mapper"
+	// SupplementalModuleMapper emits an external-module supplemental output.
+	SupplementalModuleMapper = "supplemental-module-mapper"
 	// PackageName is the conventional npm package name for the mapper in test fixtures.
 	PackageName = "mapper"
 )
@@ -79,6 +89,110 @@ type duplicateHandler struct {
 
 type lispHandler struct{ noNotifications }
 
+type supplementalHandler struct{ noNotifications }
+
+type supplementalDiagnosticsHandler struct{ noNotifications }
+
+type supplementalGlobalsHandler struct{ noNotifications }
+
+type supplementalModuleHandler struct{ noNotifications }
+
+func (supplementalGlobalsHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
+	switch method {
+	case contentmapper.MethodInitialize:
+		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8, DiagnosticSource: "mapper"}, nil
+	case contentmapper.MethodTransform:
+		var p contentmapper.TransformParams
+		if err := json.Unmarshal(params, &p); err != nil {
+			return nil, err
+		}
+		var supplemental string
+		switch {
+		case strings.HasSuffix(p.FileName, "/a.vue"):
+			supplemental = "/// <reference path=\"./extra.d.ts\" />\ninterface Shared extends Extra { value: string }"
+		case strings.HasSuffix(p.FileName, "/b.vue"):
+			supplemental = "declare const shared: Shared;"
+		default:
+			return nil, fmt.Errorf("contentmappertest: unexpected supplemental global input %q", p.FileName)
+		}
+		return contentmapper.TransformResult{
+			MappedOutput: contentmapper.MappedOutput{Text: "export default shared.value;", ScriptKind: core.ScriptKindTS},
+			Supplemental: []contentmapper.MappedOutput{{Text: supplemental, ScriptKind: core.ScriptKindTS}},
+		}, nil
+	default:
+		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
+	}
+}
+
+func (supplementalModuleHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
+	switch method {
+	case contentmapper.MethodInitialize:
+		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8, DiagnosticSource: "mapper"}, nil
+	case contentmapper.MethodTransform:
+		var p contentmapper.TransformParams
+		if err := json.Unmarshal(params, &p); err != nil {
+			return nil, err
+		}
+		return contentmapper.TransformResult{
+			MappedOutput: contentmapper.MappedOutput{Text: "export default 1;", ScriptKind: core.ScriptKindTS},
+			Supplemental: []contentmapper.MappedOutput{{Text: `export const privateValue: number = "wrong";`, ScriptKind: core.ScriptKindTS}},
+		}, nil
+	default:
+		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
+	}
+}
+
+func (supplementalDiagnosticsHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
+	switch method {
+	case contentmapper.MethodInitialize:
+		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8, DiagnosticSource: "mapper"}, nil
+	case contentmapper.MethodTransform:
+		var p contentmapper.TransformParams
+		if err := json.Unmarshal(params, &p); err != nil {
+			return nil, err
+		}
+		const prefix = "missingSupplementalGlobal;\n"
+		mappings, err := spanmap.New([]spanmap.Segment{{
+			GenStart: core.TextPos(len(prefix)),
+			GenEnd:   core.TextPos(len(prefix) + len(p.Content)),
+			OrigEnd:  core.TextPos(len(p.Content)),
+			Kind:     spanmap.KindVerbatim,
+			Features: spanmap.FeatureAll,
+		}}).Marshal()
+		if err != nil {
+			return nil, err
+		}
+		return contentmapper.TransformResult{
+			MappedOutput: contentmapper.MappedOutput{Text: "export {};"},
+			Supplemental: []contentmapper.MappedOutput{{Text: prefix + p.Content, ScriptKind: core.ScriptKindTS, Mappings: json.Value(mappings)}},
+		}, nil
+	default:
+		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
+	}
+}
+
+func (supplementalHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
+	switch method {
+	case contentmapper.MethodInitialize:
+		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8, DiagnosticSource: "mapper"}, nil
+	case contentmapper.MethodTransform:
+		var p contentmapper.TransformParams
+		if err := json.Unmarshal(params, &p); err != nil {
+			return nil, err
+		}
+		mappings, err := spanmap.New([]spanmap.Segment{{GenEnd: core.TextPos(len(p.Content)), OrigEnd: core.TextPos(len(p.Content)), Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll}}).Marshal()
+		if err != nil {
+			return nil, err
+		}
+		return contentmapper.TransformResult{
+			MappedOutput: contentmapper.MappedOutput{Text: "export {};"},
+			Supplemental: []contentmapper.MappedOutput{{Text: p.Content, ScriptKind: core.ScriptKindTS, Mappings: json.Value(mappings)}},
+		}, nil
+	default:
+		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
+	}
+}
+
 func (lispHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
 	case contentmapper.MethodInitialize:
@@ -104,11 +218,11 @@ func (lispHandler) HandleRequest(ctx context.Context, method string, params json
 		if err != nil {
 			return nil, err
 		}
-		return contentmapper.TransformResult{
+		return contentmapper.TransformResult{MappedOutput: contentmapper.MappedOutput{
 			Text:       `add(1, 2, "oops");`,
 			ScriptKind: core.ScriptKindTS,
 			Mappings:   json.Value(mappings),
-		}, nil
+		}}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
 	}
@@ -144,7 +258,7 @@ func (h duplicateHandler) HandleRequest(ctx context.Context, method string, para
 		if err != nil {
 			return nil, err
 		}
-		return contentmapper.TransformResult{Text: generated, ScriptKind: core.ScriptKindTS, Mappings: json.Value(mappings)}, nil
+		return contentmapper.TransformResult{MappedOutput: contentmapper.MappedOutput{Text: generated, ScriptKind: core.ScriptKindTS, Mappings: json.Value(mappings)}}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
 	}
@@ -174,10 +288,8 @@ func (Handler) HandleRequest(ctx context.Context, method string, params json.Val
 			return nil, err
 		}
 		return contentmapper.TransformResult{
-			Text:        text,
-			ScriptKind:  core.ScriptKindTS,
-			Mappings:    mappings,
-			Diagnostics: diagnostics,
+			MappedOutput: contentmapper.MappedOutput{Text: text, ScriptKind: core.ScriptKindTS, Mappings: mappings},
+			Diagnostics:  diagnostics,
 		}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
@@ -365,7 +477,7 @@ func (verbatimHandler) HandleRequest(ctx context.Context, method string, params 
 		if err != nil {
 			return nil, err
 		}
-		return contentmapper.TransformResult{Text: p.Content, Mappings: json.Value(mappings)}, nil
+		return contentmapper.TransformResult{MappedOutput: contentmapper.MappedOutput{Text: p.Content, Mappings: json.Value(mappings)}}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
 	}
@@ -399,15 +511,19 @@ func (synthesizingHandler) HandleRequest(ctx context.Context, method string, par
 	case contentmapper.MethodInitialize:
 		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8, DiagnosticSource: "mapper"}, nil
 	case contentmapper.MethodTransform:
+		var p contentmapper.TransformParams
+		if err := json.Unmarshal(params, &p); err != nil {
+			return nil, err
+		}
 		mappings, err := spanmap.New(nil).Marshal()
 		if err != nil {
 			return nil, err
 		}
-		return contentmapper.TransformResult{
+		return contentmapper.TransformResult{MappedOutput: contentmapper.MappedOutput{
 			Text:       synthesizedOutput,
 			ScriptKind: core.ScriptKindTS,
 			Mappings:   json.Value(mappings),
-		}, nil
+		}}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
 	}
@@ -428,11 +544,11 @@ func (componentHandler) HandleRequest(ctx context.Context, method string, params
 		if err != nil {
 			return nil, err
 		}
-		return contentmapper.TransformResult{
+		return contentmapper.TransformResult{MappedOutput: contentmapper.MappedOutput{
 			Text:       text,
 			ScriptKind: core.ScriptKindTS,
 			Mappings:   mappings,
-		}, nil
+		}}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
 	}
@@ -569,6 +685,14 @@ func handlerForMapper(command []string, lifecycle *ProjectLifecycle) (ipc.Handle
 		return duplicateHandler{}, nil
 	case LispMapper:
 		return lispHandler{}, nil
+	case SupplementalMapper:
+		return supplementalHandler{}, nil
+	case SupplementalDiagnosticsMapper:
+		return supplementalDiagnosticsHandler{}, nil
+	case SupplementalGlobalsMapper:
+		return supplementalGlobalsHandler{}, nil
+	case SupplementalModuleMapper:
+		return supplementalModuleHandler{}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unknown mapper command %v", command)
 	}

@@ -135,7 +135,7 @@ func addChanges(context context.Context, fixContext *CodeFixContext, changeTrack
 
 func getChanges(changeTracker *change.Tracker, importAdder autoimport.ImportAdder, sourceFile *ast.SourceFile) []*lsproto.TextEdit {
 	changes, _ := changeTracker.GetChanges()
-	fileChanges := changes[sourceFile.FileName()]
+	fileChanges := changes[sourceFile.OriginalFileName()]
 	if importAdder != nil && importAdder.HasFixes() {
 		fileChanges = append(fileChanges, importAdder.Edits()...)
 	}

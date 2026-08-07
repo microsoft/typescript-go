@@ -41,15 +41,19 @@ func (h *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.Sourc
 	return h.host.GetSourceFile(opts)
 }
 
-func (h *compilerHost) GetContentMappedSourceFile(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper, options *core.CompilerOptions) (*ast.SourceFile, error) {
+func (h *compilerHost) GetContentMappedSourceFiles(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper, options *core.CompilerOptions) (contentmapper.SourceFiles, error) {
 	if h.contentMapperProject == nil {
-		return nil, errors.New("content mapper project is unavailable")
+		return contentmapper.SourceFiles{}, errors.New("content mapper project is unavailable")
 	}
 	content, ok := h.FS().ReadFile(parseOptions.FileName)
 	if !ok {
-		return nil, nil
+		return contentmapper.SourceFiles{}, nil
 	}
-	return contentmapper.TransformAndParse(parseOptions, content, mapper, options, h.contentMapperProject)
+	files, err := contentmapper.TransformAndParse(parseOptions, content, mapper, options, h.contentMapperProject)
+	if err == nil {
+		err = contentmapper.CheckSupplementalFileNameCollisions(files, h.FS().FileExists)
+	}
+	return files, err
 }
 
 func (h *compilerHost) ContentMapperProject() contentmapper.Project {

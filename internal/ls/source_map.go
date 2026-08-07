@@ -1,6 +1,7 @@
 package ls
 
 import (
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -10,24 +11,34 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
+// sourceFileRangeToLSPLocation maps a range from an arbitrary program SourceFile to an LSP location,
+// composing content-mapper span maps and declaration source maps as needed. LS features should use this
+// for cross-file results instead of calling getMappedLocation or lsconv.ToLSPLocation directly.
+// This unfiltered form is appropriate for diagnostics and text edits.
+func (l *LanguageService) sourceFileRangeToLSPLocation(file *ast.SourceFile, fileRange core.TextRange) (lsproto.Location, spanmap.Fidelity) {
+	if file.ContentMapper() != "" {
+		return l.converters.ToLSPLocation(file, fileRange)
+	}
+	return l.getMappedLocation(file.FileName(), fileRange)
+}
+
+// sourceFileRangeToLSPLocationForFeature is the preferred conversion for visible LS results that may
+// come from another file. It applies content-mapper feature filtering and follows declaration source maps.
+// Do not use it for diagnostics or text edits.
+func (l *LanguageService) sourceFileRangeToLSPLocationForFeature(file *ast.SourceFile, fileRange core.TextRange, feature spanmap.Feature) (lsproto.Location, spanmap.Fidelity) {
+	if file.ContentMapper() != "" {
+		return l.converters.ToLSPLocationForFeature(file, fileRange, feature)
+	}
+	return l.getMappedLocation(file.FileName(), fileRange)
+}
+
+// getMappedLocation follows declaration source maps from a .d.ts range to its source location.
+// It is an implementation detail of sourceFileRangeToLSPLocation; LS features should not call it directly,
+// because it does not preserve a content-mapper projection or apply span-map feature filtering.
 func (l *LanguageService) getMappedLocation(fileName string, fileRange core.TextRange) (lsproto.Location, spanmap.Fidelity) {
-	return l.getMappedLocationWorker(fileName, fileRange, nil)
-}
-
-func (l *LanguageService) getMappedLocationForFeature(fileName string, fileRange core.TextRange, feature spanmap.Feature) (lsproto.Location, spanmap.Fidelity) {
-	return l.getMappedLocationWorker(fileName, fileRange, &feature)
-}
-
-func (l *LanguageService) getMappedLocationWorker(fileName string, fileRange core.TextRange, feature *spanmap.Feature) (lsproto.Location, spanmap.Fidelity) {
 	startPos := l.tryGetSourcePosition(fileName, core.TextPos(fileRange.Pos()))
 	if startPos == nil {
-		var lspRange lsproto.Range
-		var fidelity spanmap.Fidelity
-		if feature == nil {
-			lspRange, fidelity = l.createLspRangeFromRange(fileRange, l.getScript(fileName))
-		} else {
-			lspRange, fidelity = l.converters.ToLSPRangeForFeature(l.getScript(fileName), fileRange, *feature)
-		}
+		lspRange, fidelity := l.createLspRangeFromRange(fileRange, l.getScript(fileName))
 		return lsproto.Location{
 			Uri:   lsconv.FileNameToDocumentURI(fileName),
 			Range: lspRange,
@@ -44,13 +55,7 @@ func (l *LanguageService) getMappedLocationWorker(fileName string, fileRange cor
 		}
 	}
 	newRange := core.NewTextRange(startPos.Pos, endPos.Pos)
-	var lspRange lsproto.Range
-	var fidelity spanmap.Fidelity
-	if feature == nil {
-		lspRange, fidelity = l.createLspRangeFromRange(newRange, l.getScript(startPos.FileName))
-	} else {
-		lspRange, fidelity = l.converters.ToLSPRangeForFeature(l.getScript(startPos.FileName), newRange, *feature)
-	}
+	lspRange, fidelity := l.createLspRangeFromRange(newRange, l.getScript(startPos.FileName))
 	return lsproto.Location{
 		Uri:   lsconv.FileNameToDocumentURI(startPos.FileName),
 		Range: lspRange,
@@ -66,26 +71,18 @@ func (s *script) FileName() string {
 	return s.fileName
 }
 
+func (s *script) OriginalFileName() string { return s.fileName }
+
 func (s *script) Text() string {
 	return s.text
 }
 
-// SpanMap and OriginalText satisfy lsconv.Script for a plain (non-content-mapped) file: it carries no
-// span map and its original text is its own text.
+func (s *script) OriginalText() string      { return s.text }
 func (s *script) SpanMap() *spanmap.SpanMap { return nil }
 
-func (s *script) OriginalText() string { return s.text }
+var _ lsconv.Script = (*script)(nil)
 
-func (l *LanguageService) getScript(fileName string) lsconv.Script {
-	if program := l.GetProgram(); program != nil {
-		if file := program.GetSourceFile(fileName); file != nil {
-			// Use a program lookup first so we get mappable scripts for content-mapped files
-			return file
-		}
-	}
-	// Fall back to getting the plain text from the file system. This happens when fileName
-	// is the result of a .d.ts.map mapping back to a source file whose declaration file is
-	// part of the program instead of the source.
+func (l *LanguageService) getScript(fileName string) *script {
 	text, ok := l.host.ReadFile(fileName)
 	if !ok {
 		return nil

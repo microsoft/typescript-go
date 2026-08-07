@@ -20,6 +20,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
@@ -44,12 +45,13 @@ func (l *LanguageService) ProvideCompletion(
 		triggerCharacter = context.TriggerCharacter
 	}
 	ctx = format.WithFormatCodeSettings(ctx, l.FormatOptions(), l.FormatOptions().NewLineCharacter)
-	positions := l.converters.FromLSPPosition(file, LSPPosition, spanmap.FeatureCompletion)
+	positions := lsconv.FromLSPPositionForSourceFile(l.converters, file, LSPPosition, spanmap.FeatureCompletion)
 	if len(positions) == 0 || !positions[0].Fidelity.IsExact() {
 		// In a content-mapped file the cursor is outside a verbatim span, so any completion committed here
 		// could not be applied to the original text. Offer nothing rather than edits at a bogus location.
 		return lsproto.CompletionItemsOrListOrNull{}, nil
 	}
+	file = positions[0].Script
 	position := int(positions[0].Position)
 	completionListInternal, err := l.getCompletionsAtPosition(
 		ctx,
@@ -61,7 +63,7 @@ func (l *LanguageService) ProvideCompletion(
 	if err != nil {
 		return lsproto.CompletionItemsOrListOrNull{}, err
 	}
-	completionList := ensureItemData(file.FileName(), position, completionListInternal.toLSP())
+	completionList := ensureItemData(file, position, completionListInternal.toLSP())
 	if file.SpanMap() != nil {
 		l.filterContentMappedAutoImports(ctx, program, file, completionList)
 	}
@@ -116,20 +118,45 @@ type CompletionList struct {
 	Items        []*CompletionItem
 }
 
-func ensureItemData(fileName string, pos int, list *lsproto.CompletionList) *lsproto.CompletionList {
+func ensureItemData(file *ast.SourceFile, pos int, list *lsproto.CompletionList) *lsproto.CompletionList {
 	if list == nil {
 		return nil
 	}
 	for _, item := range list.Items {
 		if item.Data == nil {
 			item.Data = &lsproto.CompletionItemData{
-				FileName: fileName,
-				Position: int32(pos),
-				Name:     item.Label,
+				FileName:              file.OriginalFileName(),
+				Position:              int32(pos),
+				SupplementalFileIndex: supplementalFileIndex(file),
+				Name:                  item.Label,
 			}
 		}
 	}
 	return list
+}
+
+func supplementalFileIndex(file *ast.SourceFile) *int32 {
+	canonical := file.CanonicalSourceFile()
+	if canonical == nil {
+		return nil
+	}
+	for i, supplemental := range canonical.SupplementalSourceFiles() {
+		if supplemental == file {
+			return new(int32(i))
+		}
+	}
+	panic("supplemental source file is not linked from its canonical source file")
+}
+
+func sourceFileForSupplementalFileIndex(file *ast.SourceFile, index *int32) *ast.SourceFile {
+	if index == nil {
+		return file
+	}
+	supplemental := file.SupplementalSourceFiles()
+	if *index >= 0 && int(*index) < len(supplemental) {
+		return supplemental[*index]
+	}
+	return nil
 }
 
 // *completionDataData | *completionDataKeyword | *completionDataJSDocTagName | *completionDataJSDocTag | *completionDataJSDocParameterName
@@ -4524,11 +4551,12 @@ func (l *LanguageService) createLSPCompletionItem(
 ) *lsproto.CompletionItem {
 	kind := getCompletionsSymbolKind(elementKind)
 	data := &lsproto.CompletionItemData{
-		FileName:   file.FileName(),
-		Position:   int32(position),
-		Source:     source,
-		Name:       name,
-		AutoImport: autoImportFix,
+		FileName:              file.OriginalFileName(),
+		Position:              int32(position),
+		SupplementalFileIndex: supplementalFileIndex(file),
+		Source:                source,
+		Name:                  name,
+		AutoImport:            autoImportFix,
 	}
 
 	// Text edit
@@ -4975,6 +5003,10 @@ func (l *LanguageService) ResolveCompletionItem(
 	program, file := l.tryGetProgramAndFile(data.FileName)
 	if file == nil {
 		return nil, fmt.Errorf("file not found: %s", data.FileName)
+	}
+	file = sourceFileForSupplementalFileIndex(file, data.SupplementalFileIndex)
+	if file == nil {
+		return nil, fmt.Errorf("supplemental source file index not found: %d", *data.SupplementalFileIndex)
 	}
 
 	checker, done := program.GetTypeCheckerForFile(ctx, file)
@@ -6160,10 +6192,11 @@ func (l *LanguageService) getExhaustiveCaseSnippets(
 			AdditionalTextEdits: additionalTextEdits,
 			InsertTextFormat:    core.IfElse(clientSupportsItemSnippet(ctx), new(lsproto.InsertTextFormatSnippet), nil),
 			Data: &lsproto.CompletionItemData{
-				FileName: file.FileName(),
-				Position: int32(position),
-				Name:     name,
-				Source:   string(completionSourceSwitchCases),
+				FileName:              file.OriginalFileName(),
+				Position:              int32(position),
+				SupplementalFileIndex: supplementalFileIndex(file),
+				Name:                  name,
+				Source:                string(completionSourceSwitchCases),
 			},
 		}, nil
 	}

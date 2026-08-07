@@ -144,6 +144,8 @@ func (o *Overlay) Text() string {
 	return o.content
 }
 
+func (o *Overlay) OriginalFileName() string { return o.FileName() }
+
 // SpanMap and OriginalText satisfy lsconv.Script. An overlay holds the editor's raw text (for a
 // content-mapped file, that is the original foreign text, not the transformed output), so it never
 // carries a span map and its original text is its own text.
@@ -364,7 +366,7 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 				})
 				for _, textChange := range change.Changes {
 					if partialChange := textChange.Partial; partialChange != nil {
-						ranges := converters.FromLSPRange(o, partialChange.Range, spanmap.FeatureAll)
+						ranges := lsconv.FromLSPRange(converters, o, partialChange.Range, spanmap.FeatureAll)
 						debug.Assert(len(ranges) == 1, "expected exactly one range for partial change")
 						textChange := core.TextChange{TextRange: ranges[0].Span, NewText: partialChange.Text}
 						newContent := textChange.ApplyTo(o.content)

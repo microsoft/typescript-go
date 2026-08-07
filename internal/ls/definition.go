@@ -36,11 +36,11 @@ func (l *LanguageService) provideDefinitionWorker(
 	clientSupportsLink := caps.TextDocument.Definition.LinkSupport
 
 	program, file := l.getProgramAndFile(documentURI)
-	positions := l.converters.FromLSPPosition(file, position, spanmap.FeatureDefinition)
-	var results []lsproto.DefinitionResponse
+	positions := lsconv.FromLSPPositionForSourceFile(l.converters, file, position, spanmap.FeatureDefinition)
+	results := make([]lsproto.DefinitionResponse, 0, len(positions))
 	for _, mapped := range positions {
 		if mapped.Fidelity.IsSingleSegment() {
-			results = append(results, l.provideDefinitionAtPosition(ctx, program, file, mapped.Position, clientSupportsLink))
+			results = append(results, l.provideDefinitionAtPosition(ctx, program, mapped.Script, mapped.Position, clientSupportsLink))
 		}
 	}
 	return combineDefinitionResponses(results, clientSupportsLink), nil
@@ -119,11 +119,11 @@ func (l *LanguageService) ProvideTypeDefinition(
 	clientSupportsLink := caps.TextDocument.TypeDefinition.LinkSupport
 
 	program, file := l.getProgramAndFile(documentURI)
-	positions := l.converters.FromLSPPosition(file, position, spanmap.FeatureTypeDefinition)
-	var results []lsproto.TypeDefinitionResponse
+	positions := lsconv.FromLSPPositionForSourceFile(l.converters, file, position, spanmap.FeatureTypeDefinition)
+	results := make([]lsproto.TypeDefinitionResponse, 0, len(positions))
 	for _, mapped := range positions {
 		if mapped.Fidelity.IsSingleSegment() {
-			results = append(results, l.provideTypeDefinitionAtPosition(ctx, program, file, mapped.Position, clientSupportsLink))
+			results = append(results, l.provideTypeDefinitionAtPosition(ctx, program, mapped.Script, mapped.Position, clientSupportsLink))
 		}
 	}
 	return combineDefinitionResponses(results, clientSupportsLink), nil
@@ -206,7 +206,7 @@ func getDeclarationNameForKeyword(node *ast.Node) *ast.Node {
 }
 
 type fileRange struct {
-	fileName  string
+	file      *ast.SourceFile
 	fileRange core.TextRange
 }
 
@@ -243,7 +243,6 @@ func (l *LanguageService) createDefinitionLocations(
 
 	for _, decl := range declarations {
 		file := ast.GetSourceFileOfNode(decl)
-		fileName := file.FileName()
 		name := core.OrElse(ast.GetNameOfDeclaration(decl), decl)
 		var nameRange core.TextRange
 		if name.Kind == ast.KindEmptyStatement {
@@ -251,14 +250,14 @@ func (l *LanguageService) createDefinitionLocations(
 		} else {
 			nameRange = createRangeFromNode(name, file)
 		}
-		if locationRanges.AddIfAbsent(fileRange{fileName, nameRange}) {
+		if locationRanges.AddIfAbsent(fileRange{file, nameRange}) {
 			contextNode := core.OrElse(getContextNode(decl), decl)
 			contextRange := core.OrElse(toContextRange(&nameRange, file, contextNode), &nameRange)
 			if !nameRange.ContainedBy(*contextRange) {
 				enclosingRange := core.NewTextRange(min(nameRange.Pos(), contextRange.Pos()), max(nameRange.End(), contextRange.End()))
 				contextRange = &enclosingRange
 			}
-			targetSelectionLoc, selectionFidelity := l.getMappedLocationForFeature(fileName, nameRange, feature)
+			targetSelectionLoc, selectionFidelity := l.sourceFileRangeToLSPLocationForFeature(file, nameRange, feature)
 			if !selectionFidelity.IsSingleSegment() {
 				zeroRange := lsproto.Range{}
 				fileFallbacks = append(fileFallbacks, &lsproto.LocationLink{
@@ -269,7 +268,7 @@ func (l *LanguageService) createDefinitionLocations(
 				})
 				continue
 			}
-			targetLoc, contextFidelity := l.getMappedLocation(fileName, *contextRange)
+			targetLoc, contextFidelity := l.sourceFileRangeToLSPLocation(file, *contextRange)
 			if contextFidelity.IsNone() || targetLoc.Uri != targetSelectionLoc.Uri || !lspRangeContains(targetLoc.Range, targetSelectionLoc.Range) {
 				targetLoc = targetSelectionLoc
 			}
@@ -311,7 +310,7 @@ func createLocationsFromLinks(links []*lsproto.LocationLink) lsproto.DefinitionR
 }
 
 func (l *LanguageService) createLocationFromFileAndRange(file *ast.SourceFile, textRange core.TextRange, feature spanmap.Feature) lsproto.DefinitionResponse {
-	mappedLocation, fidelity := l.getMappedLocationForFeature(file.FileName(), textRange, feature)
+	mappedLocation, fidelity := l.sourceFileRangeToLSPLocationForFeature(file, textRange, feature)
 	if fidelity.IsNone() {
 		mappedLocation.Range = lsproto.Range{}
 	}

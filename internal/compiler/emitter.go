@@ -52,9 +52,17 @@ func (e *emitter) emit() {
 	e.emitResult.Diagnostics = e.emitterDiagnostics.GetDiagnostics()
 }
 
-func (e *emitter) getDeclarationTransformers(emitContext *printer.EmitContext, declarationFilePath string, declarationMapPath string) []*declarations.DeclarationTransformer {
-	transform := declarations.NewDeclarationTransformer(e.host, emitContext, e.host.Options(), declarationFilePath, declarationMapPath)
-	return []*declarations.DeclarationTransformer{transform}
+type declarationTransformer interface {
+	TransformSourceFile(sourceFile *ast.SourceFile) *ast.SourceFile
+	GetDiagnostics() []*ast.Diagnostic
+}
+
+func (e *emitter) getDeclarationTransformers(emitContext *printer.EmitContext, sourceFile *ast.SourceFile, declarationFilePath string, declarationMapPath string) []declarationTransformer {
+	forceDtsEmit := e.emitOnly == EmitOnlyForcedDts || e.forceEmit && e.emitOnly == EmitOnlyDts
+	return []declarationTransformer{
+		declarations.NewDeclarationTransformer(e.host, emitContext, e.host.Options(), declarationFilePath, declarationMapPath),
+		declarations.NewSupplementalReferencesTransformer(e.host, sourceFile, declarationFilePath, forceDtsEmit),
+	}
 }
 
 func (e *emitter) runScriptTransformers(emitContext *printer.EmitContext, sourceFile *ast.SourceFile) *ast.SourceFile {
@@ -72,7 +80,7 @@ func (e *emitter) runDeclarationTransformers(emitContext *printer.EmitContext, s
 		defer e.tr.Push(tracing.PhaseEmit, "transformNodes", map[string]any{"path": string(sourceFile.Path())}, false)()
 	}
 	var diags []*ast.Diagnostic
-	for _, transformer := range e.getDeclarationTransformers(emitContext, declarationFilePath, declarationMapPath) {
+	for _, transformer := range e.getDeclarationTransformers(emitContext, sourceFile, declarationFilePath, declarationMapPath) {
 		sourceFile = transformer.TransformSourceFile(sourceFile)
 		diags = append(diags, transformer.GetDiagnostics()...)
 	}
@@ -455,7 +463,6 @@ type SourceFileMayBeEmittedHost interface {
 
 func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host SourceFileMayBeEmittedHost, forceDtsEmit bool, forceJsEmit bool) bool {
 	// TODO: move this to outputpaths?
-
 	options := host.Options()
 	// Js files are emitted only if option is enabled
 	if !forceJsEmit && options.NoEmitForJsFiles.IsTrue() && ast.IsSourceFileJS(sourceFile) {

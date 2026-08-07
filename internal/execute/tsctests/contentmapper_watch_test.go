@@ -125,6 +125,38 @@ func TestContentMapperWatchLifecycle(t *testing.T) {
 	}
 }
 
+func TestContentMapperSupplementalCollisionWatch(t *testing.T) {
+	t.Parallel()
+	const supplementalFileName = "/home/src/workspaces/project/app.vue.0.ts"
+	input := &tscInput{files: FileMap{
+		"/home/src/workspaces/project/tsconfig.json": `{
+			"compilerOptions": { "noLib": true },
+			"contentMappers": [{ "package": "mapper", "extensions": [".vue"] }]
+		}`,
+		"/home/src/workspaces/project/app.vue":                          `declare const value: number;`,
+		"/home/src/workspaces/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.SupplementalMapper),
+	}}
+	testSys := newTestSys(input, false)
+	spawner := &recordingContentMapperSpawner{inner: contentmappertest.NewSpawner()}
+	sys := &recordingContentMapperSystem{TestSys: testSys, spawner: spawner}
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+
+	result := execute.CommandLine(ctx, sys, []string{"--watch", "--loadExternalPlugins"}, testSys)
+	w := result.Watcher.(*execute.Watcher)
+	fullBuilds := w.FullBuilds()
+
+	testSys.writeFileNoError(supplementalFileName, "export {};\n")
+	testSys.mockWatchBackend.SendEvents([]fswatch.Event{{Kind: fswatch.EventUpdate, Path: supplementalFileName}})
+	w.DoCycle()
+	assert.Equal(t, w.FullBuilds(), fullBuilds+1, "creating a supplemental filename collision must force a full rebuild")
+
+	assert.NilError(t, testSys.fsFromFileMap().Remove(supplementalFileName))
+	testSys.mockWatchBackend.SendEvents([]fswatch.Event{{Kind: fswatch.EventUpdate, Path: supplementalFileName}})
+	w.DoCycle()
+	assert.Equal(t, w.FullBuilds(), fullBuilds+2, "removing a supplemental filename collision must force a full rebuild")
+}
+
 func TestDynamicContentMapperWatchDependency(t *testing.T) {
 	t.Parallel()
 	const mapperConfigFileName = "/home/src/workspaces/project/mapper.config.json"

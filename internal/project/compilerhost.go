@@ -111,16 +111,45 @@ func (c *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.Sourc
 }
 
 // GetContentMappedSourceFile implements compiler.CompilerHost.
-func (c *compilerHost) GetContentMappedSourceFile(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper, options *core.CompilerOptions) (*ast.SourceFile, error) {
+func (c *compilerHost) GetContentMappedSourceFiles(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper, options *core.CompilerOptions) (contentmapper.SourceFiles, error) {
 	c.ensureAlive()
 	fh := c.sourceFS.GetFileByPath(parseOptions.FileName, parseOptions.Path)
 	if fh == nil {
-		return nil, nil
+		return contentmapper.SourceFiles{}, nil
 	}
 	diagnosticLocale := locale.Default
 	if c.builder.client != nil {
 		diagnosticLocale = c.builder.client.GetLocale()
 	}
+	c.ensureContentMapperProject()
+	if c.contentMapperProject == nil {
+		return contentmapper.SourceFiles{}, errors.New("content mapper project is unavailable")
+	}
+	identity, err := c.contentMapperProject.Identity(mapper)
+	if err != nil {
+		return contentmapper.SourceFiles{}, contentmapper.NewTransformError(contentmapper.TransformErrorKindProject, err)
+	}
+	transformIdentity := xxh3.Hash128([]byte(identity))
+	key := contentMappedParseCacheKey(parseOptions, fh.Hash(), transformIdentity, diagnosticLocale)
+	files, err := c.builder.contentMappedParseCache.AcquireOrError(key, func() (contentmapper.SourceFiles, error) {
+		files, transformErr := contentmapper.TransformAndParse(parseOptions, fh.Content(), mapper, options, c.contentMapperProject)
+		if transformErr != nil {
+			return contentmapper.SourceFiles{}, transformErr
+		}
+		files.Canonical.Hash = key.Hash
+		return files, nil
+	})
+	if err == nil {
+		err = contentmapper.CheckSupplementalFileNameCollisions(files, c.FS().FileExists)
+		if err != nil {
+			c.builder.contentMappedParseCache.Deref(key)
+			return contentmapper.SourceFiles{}, err
+		}
+	}
+	return files, err
+}
+
+func (c *compilerHost) ensureContentMapperProject() {
 	c.contentMapperOnce.Do(func() {
 		if c.builder.contentMapperHost == nil {
 			return
@@ -131,23 +160,6 @@ func (c *compilerHost) GetContentMappedSourceFile(parseOptions ast.SourceFilePar
 			Mappers:         commandLine.ContentMappers(),
 			CompilerOptions: commandLine.CompilerOptions(),
 		})
-	})
-	if c.contentMapperProject == nil {
-		return nil, errors.New("content mapper project is unavailable")
-	}
-	identity, err := c.contentMapperProject.Identity(mapper)
-	if err != nil {
-		return nil, contentmapper.NewTransformError(contentmapper.TransformErrorKindProject, err)
-	}
-	transformIdentity := xxh3.Hash128([]byte(identity))
-	key := contentMappedParseCacheKey(parseOptions, fh.Hash(), transformIdentity, diagnosticLocale)
-	return c.builder.parseCache.AcquireOrError(key, func() (*ast.SourceFile, error) {
-		file, transformErr := contentmapper.TransformAndParse(parseOptions, fh.Content(), mapper, options, c.contentMapperProject)
-		if transformErr != nil {
-			return nil, transformErr
-		}
-		file.Hash = key.Hash
-		return file, nil
 	})
 }
 

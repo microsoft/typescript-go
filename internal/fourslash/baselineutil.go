@@ -939,6 +939,9 @@ func (t *textWithContext) FileName() string {
 }
 
 // implements lsconv.Script
+func (t *textWithContext) OriginalFileName() string { return t.fileName }
+
+// implements lsconv.Script
 func (t *textWithContext) Text() string {
 	return t.content
 }

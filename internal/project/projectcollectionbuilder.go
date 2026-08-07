@@ -30,11 +30,12 @@ const (
 )
 
 type ProjectCollectionBuilder struct {
-	sessionOptions      *SessionOptions
-	parseCache          *ParseCache
-	extendedConfigCache *ExtendedConfigCache
-	contentMapperHost   contentmapper.Host
-	toPath              func(fileName string) tspath.Path
+	sessionOptions          *SessionOptions
+	parseCache              *ParseCache
+	contentMappedParseCache *ContentMappedParseCache
+	extendedConfigCache     *ExtendedConfigCache
+	contentMapperHost       contentmapper.Host
+	toPath                  func(fileName string) tspath.Path
 
 	ctx                                context.Context
 	fs                                 *snapshotFSBuilder
@@ -67,6 +68,7 @@ func newProjectCollectionBuilder(
 	sessionOptions *SessionOptions,
 	customConfigFileName string,
 	parseCache *ParseCache,
+	contentMappedParseCache *ContentMappedParseCache,
 	extendedConfigCache *ExtendedConfigCache,
 	contentMapperHost contentmapper.Host,
 	client Client,
@@ -78,6 +80,7 @@ func newProjectCollectionBuilder(
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
 		sessionOptions:                     sessionOptions,
 		parseCache:                         parseCache,
+		contentMappedParseCache:            contentMappedParseCache,
 		extendedConfigCache:                extendedConfigCache,
 		contentMapperHost:                  contentMapperHost,
 		base:                               oldProjectCollection,

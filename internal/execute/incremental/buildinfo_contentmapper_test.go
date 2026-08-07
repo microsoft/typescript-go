@@ -94,6 +94,7 @@ func (p fakeContentMapperProject) WatchedFiles() ([]string, error)              
 func (p fakeContentMapperProject) Transform(*contentmapper.Mapper, contentmapper.Request) (contentmapper.Result, error) {
 	return contentmapper.Result{}, nil
 }
+
 func (p fakeContentMapperProject) Close() error { return nil }
 
 func TestDynamicContentMapperIdentities(t *testing.T) {

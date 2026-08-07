@@ -5,6 +5,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/parser"
@@ -29,40 +30,39 @@ func NewParseCacheKey(
 	}
 }
 
-// contentMappedParseCacheKey builds the parse-cache key for a content-mapped file. The key folds the
-// file's raw content, the mapper's transform identity, and its diagnostic locale into the hash, and uses
-// a fixed placeholder script kind. That lets the key be reconstructed from the produced source file
-// (see parseCacheKeyForFile) without knowing the output script kind up front.
-func contentMappedParseCacheKey(options ast.SourceFileParseOptions, rawHash, transformIdentity xxh3.Uint128, diagnosticLocale locale.Locale) ParseCacheKey {
+// ContentMappedParseCacheKey identifies the complete output bundle for one mapped input. Hash folds the
+// original content, mapper transform identity, and diagnostic locale together.
+type ContentMappedParseCacheKey struct {
+	ast.SourceFileParseOptions
+	Hash xxh3.Uint128
+}
+
+func contentMappedParseCacheKey(options ast.SourceFileParseOptions, rawHash, transformIdentity xxh3.Uint128, diagnosticLocale locale.Locale) ContentMappedParseCacheKey {
 	buf := make([]byte, 32, 32+len(diagnosticLocale.String()))
 	binary.LittleEndian.PutUint64(buf[0:8], rawHash.Hi)
 	binary.LittleEndian.PutUint64(buf[8:16], rawHash.Lo)
 	binary.LittleEndian.PutUint64(buf[16:24], transformIdentity.Hi)
 	binary.LittleEndian.PutUint64(buf[24:32], transformIdentity.Lo)
 	buf = append(buf, diagnosticLocale.String()...)
-	return NewParseCacheKey(options, xxh3.Hash128(buf), core.ScriptKindUnknown)
+	return ContentMappedParseCacheKey{SourceFileParseOptions: options, Hash: xxh3.Hash128(buf)}
 }
 
-// parseCacheKeyForFile reconstructs the parse-cache key for a source file held by a program. Content-
-// mapped files store a composite hash (raw content + transform identity) on their Hash field and are
-// keyed by a placeholder script kind, matching contentMapperParseCacheKey; all other files key on their
-// own hash and script kind.
+// parseCacheKeyForFile reconstructs the ordinary parse-cache key for a source file held by a program.
 func parseCacheKeyForFile(file *ast.SourceFile) ParseCacheKey {
-	scriptKind := file.ScriptKind
-	if file.ContentMapper() != "" {
-		scriptKind = core.ScriptKindUnknown
-	}
-	return NewParseCacheKey(file.ParseOptions(), file.Hash, scriptKind)
+	return NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind)
 }
 
-// parseCacheKeyForDuplicate reconstructs the parse-cache key for a deduplicated source file, mirroring
-// parseCacheKeyForFile.
+func contentMappedParseCacheKeyForFile(file *ast.SourceFile) ContentMappedParseCacheKey {
+	return ContentMappedParseCacheKey{SourceFileParseOptions: file.ParseOptions(), Hash: file.Hash}
+}
+
+// parseCacheKeyForDuplicate reconstructs an ordinary parse-cache key for a deduplicated source file.
 func parseCacheKeyForDuplicate(file *compiler.DuplicateSourceFile) ParseCacheKey {
-	scriptKind := file.ScriptKind
-	if file.ContentMapper != "" {
-		scriptKind = core.ScriptKindUnknown
-	}
-	return NewParseCacheKey(file.ParseOptions, file.Hash, scriptKind)
+	return NewParseCacheKey(file.ParseOptions, file.Hash, file.ScriptKind)
+}
+
+func contentMappedParseCacheKeyForDuplicate(file *compiler.DuplicateSourceFile) ContentMappedParseCacheKey {
+	return ContentMappedParseCacheKey{SourceFileParseOptions: file.ParseOptions, Hash: file.Hash}
 }
 
 type ParseCache = RefCountCache[ParseCacheKey, *ast.SourceFile, FileHandle]
@@ -76,4 +76,16 @@ func NewParseCache(options RefCountCacheOptions) *ParseCache {
 			return file
 		},
 	)
+}
+
+type ContentMappedParseCache struct {
+	// One reference owns the canonical file and all supplemental files as a bundle. Callers ref and
+	// deref the canonical file only.
+	*RefCountCache[ContentMappedParseCacheKey, contentmapper.SourceFiles, struct{}]
+}
+
+func NewContentMappedParseCache(options RefCountCacheOptions) *ContentMappedParseCache {
+	return &ContentMappedParseCache{RefCountCache: NewRefCountCache(options, func(ContentMappedParseCacheKey, struct{}) contentmapper.SourceFiles {
+		panic("content-mapped source files must be produced with AcquireOrError")
+	})}
 }

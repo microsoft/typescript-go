@@ -84,6 +84,15 @@ type InitializeError struct {
 	DiagnosticSource string
 }
 
+// SupplementalFileCollisionError reports a compiler-assigned supplemental filename that already exists.
+type SupplementalFileCollisionError struct {
+	FileName string
+}
+
+func (e *SupplementalFileCollisionError) Error() string {
+	return fmt.Sprintf("content mapper supplemental output file %q already exists", e.FileName)
+}
+
 func (e *InitializeError) Error() string {
 	switch e.Kind {
 	case InitializeErrorKindProtocolVersion:
@@ -111,6 +120,15 @@ type Result struct {
 	// produces against the transformed text can be reported at their original locations. A successful
 	// transform must return a non-nil map; an empty map describes fully synthesized output.
 	Mappings *spanmap.SpanMap
+	// Supplemental contains additional unnamed outputs associated with the canonical result.
+	Supplemental []MappedResult
+}
+
+// MappedResult is one generated output and its mapping to the original input.
+type MappedResult struct {
+	Text       string
+	ScriptKind core.ScriptKind
+	Mappings   *spanmap.SpanMap
 }
 
 // Request carries the inputs for transforming one foreign file.

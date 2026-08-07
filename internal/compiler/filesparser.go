@@ -26,6 +26,7 @@ type parseTask struct {
 	loaded                      bool
 	startedSubTasks             bool
 	isForAutomaticTypeDirective bool
+	isContentMapperSupplemental bool
 	includeReason               *FileIncludeReason
 	packageId                   module.PackageId
 
@@ -69,7 +70,7 @@ func (t *parseTask) load(loader *fileLoader) {
 		return
 	}
 
-	if tspath.HasExtension(t.normalizedFilePath) {
+	if !t.isContentMapperSupplemental && tspath.HasExtension(t.normalizedFilePath) {
 		compilerOptions := loader.opts.Config.CompilerOptions()
 		allowNonTsExtensions := compilerOptions.AllowNonTsExtensions.IsTrue()
 		if !allowNonTsExtensions {
@@ -109,7 +110,10 @@ func (t *parseTask) load(loader *fileLoader) {
 		t.metadata = loader.loadSourceFileMetaData(t.normalizedFilePath)
 	}
 
-	file := loader.parseSourceFile(t)
+	file := t.file
+	if file == nil {
+		file = loader.parseSourceFile(t)
+	}
 	if file == nil {
 		return
 	}
@@ -156,6 +160,17 @@ func (t *parseTask) load(loader *fileLoader) {
 	}
 
 	loader.resolveImportsAndModuleAugmentations(t)
+	for _, supplemental := range file.SupplementalSourceFiles() {
+		t.subTasks = append(t.subTasks, &parseTask{
+			normalizedFilePath:          supplemental.FileName(),
+			file:                        supplemental,
+			isContentMapperSupplemental: true,
+			includeReason: &FileIncludeReason{
+				kind: fileIncludeKindContentMapperSupplemental,
+				data: t.path,
+			},
+		})
+	}
 }
 
 func (t *parseTask) redirect(loader *fileLoader, fileName string) {
@@ -555,7 +570,6 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 		outputFileToProjectReferenceSource:   outputFileToProjectReferenceSource,
 		redirectTargetsMap:                   redirectTargetsMap,
 		redirectFilesByPath:                  redirectFilesByPath,
-		contentMapperForFile:                 loader.contentMapperForFile,
 		contentMapperDiagnostics:             loader.contentMapperDiagnostics,
 	}
 }

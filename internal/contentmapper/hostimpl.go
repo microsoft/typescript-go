@@ -100,17 +100,24 @@ type TransformParams struct {
 	CompilerOptions *collections.OrderedMap[string, json.Value] `json:"compilerOptions"`
 }
 
-// TransformResult is the mapper's response to a transform request.
-type TransformResult struct {
+// MappedOutput is generated source text and its mapping to an original input.
+type MappedOutput struct {
 	// Text is the generated JavaScript or TypeScript source text.
 	Text string `json:"text"`
 	// ScriptKind selects how Text is parsed; omitted or unknown values default to TypeScript.
 	ScriptKind core.ScriptKind `json:"scriptKind,omitempty"`
-	// Diagnostics are mapper-authored errors expressed in original-source coordinates.
-	Diagnostics []Diagnostic `json:"diagnostics,omitempty"`
 	// Mappings is the span map's tuple-array JSON (see spanmap.Marshal), expressed in the selected
 	// position encoding. Absent or empty means the output is fully synthesized.
 	Mappings json.Value `json:"mappings,omitempty"`
+}
+
+// TransformResult is the canonical output for one input file.
+type TransformResult struct {
+	MappedOutput
+	// Diagnostics are mapper-authored errors expressed in original-source coordinates.
+	Diagnostics []Diagnostic `json:"diagnostics,omitempty"`
+	// Supplemental contains additional unnamed compiler inputs associated with this source file.
+	Supplemental []MappedOutput `json:"supplemental,omitempty"`
 }
 
 // Diagnostic is an error reported by a mapper in original-source coordinates.
@@ -360,13 +367,9 @@ func (h *host) Acquire(mappers []*Mapper) func() {
 // mapper receives the subset of the project's compiler options it declared in its manifest (an empty
 // object if it declared none).
 func (h *host) Transform(mapper *Mapper, request Request) (Result, error) {
-	return h.transform(mapper, request, "")
-}
-
-func (h *host) transform(mapper *Mapper, request Request, projectHandle string) (Result, error) {
 	h.lifecycleMu.RLock()
 	defer h.lifecycleMu.RUnlock()
-	return h.transformLocked(mapper, request, projectHandle)
+	return h.transformLocked(mapper, request, "")
 }
 
 func (h *host) transformLocked(mapper *Mapper, request Request, projectHandle string) (Result, error) {
@@ -388,11 +391,11 @@ func (h *host) transformLocked(mapper *Mapper, request Request, projectHandle st
 	if err != nil {
 		return Result{}, NewTransformError(TransformErrorKindRequest, err)
 	}
-	result, err := decodeTransformResult(raw, request.Content, positionEncoding, diagnosticSource)
+	decoded, err := decodeTransformResult(raw, request.Content, positionEncoding, diagnosticSource)
 	if err != nil {
 		return Result{}, NewTransformError(TransformErrorKindResponse, err)
 	}
-	return result, nil
+	return decoded, nil
 }
 
 // Close shuts down every mapper process. It is safe to call more than once and is invoked automatically
@@ -680,38 +683,21 @@ func decodeTransformResult(raw json.Value, originalText string, positionEncoding
 	if err := json.Unmarshal(raw, &res); err != nil {
 		return Result{}, err
 	}
-	// Any script kind the mapper does not produce a valid, non-Unknown value for defaults to a .ts file.
-	scriptKind := core.ScriptKindTS
-	switch res.ScriptKind {
-	case core.ScriptKindJS, core.ScriptKindJSX, core.ScriptKindTS, core.ScriptKindTSX, core.ScriptKindJSON:
-		scriptKind = res.ScriptKind
+	mapped, originalPositions, err := decodeMappedOutput(res.MappedOutput, originalText, positionEncoding)
+	if err != nil {
+		return Result{}, err
 	}
 	result := Result{
-		Text:       res.Text,
-		ScriptKind: scriptKind,
+		Text:       mapped.Text,
+		ScriptKind: mapped.ScriptKind,
+		Mappings:   mapped.Mappings,
 	}
-	generatedPositions, err := newPositionNormalizer(res.Text, positionEncoding)
-	if err != nil {
-		return Result{}, err
-	}
-	originalPositions, err := newPositionNormalizer(originalText, positionEncoding)
-	if err != nil {
-		return Result{}, err
-	}
-	// A successful transform always carries a span map. Absent or empty mappings describe fully
-	// synthesized output (no segment corresponds to the original), so decode to an empty map rather than
-	// nil, which would mean "not content-mapped".
-	if len(res.Mappings) > 0 {
-		mappings, err := spanmap.Unmarshal(res.Mappings)
+	for _, supplemental := range res.Supplemental {
+		mapped, _, err := decodeMappedOutput(supplemental, originalText, positionEncoding)
 		if err != nil {
 			return Result{}, err
 		}
-		result.Mappings, err = normalizeMappings(mappings, generatedPositions, originalPositions)
-		if err != nil {
-			return Result{}, err
-		}
-	} else {
-		result.Mappings = spanmap.New(nil)
+		result.Supplemental = append(result.Supplemental, mapped)
 	}
 	for _, d := range res.Diagnostics {
 		if d.Start < 0 || d.Length < 0 || d.Start > int(^uint(0)>>1)-d.Length {
@@ -735,6 +721,43 @@ func decodeTransformResult(raw json.Value, originalText string, positionEncoding
 		))
 	}
 	return result, nil
+}
+
+func decodeMappedOutput(output MappedOutput, originalText string, positionEncoding PositionEncoding) (MappedResult, *positionNormalizer, error) {
+	// Any script kind the mapper does not produce a valid, non-Unknown value for defaults to a .ts file.
+	scriptKind := core.ScriptKindTS
+	switch output.ScriptKind {
+	case core.ScriptKindJS, core.ScriptKindJSX, core.ScriptKindTS, core.ScriptKindTSX, core.ScriptKindJSON:
+		scriptKind = output.ScriptKind
+	}
+	result := MappedResult{
+		Text:       output.Text,
+		ScriptKind: scriptKind,
+	}
+	generatedPositions, err := newPositionNormalizer(output.Text, positionEncoding)
+	if err != nil {
+		return MappedResult{}, nil, err
+	}
+	originalPositions, err := newPositionNormalizer(originalText, positionEncoding)
+	if err != nil {
+		return MappedResult{}, nil, err
+	}
+	// A successful transform always carries a span map. Absent or empty mappings describe fully
+	// synthesized output (no segment corresponds to the original), so decode to an empty map rather than
+	// nil, which would mean "not content-mapped".
+	if len(output.Mappings) > 0 {
+		mappings, err := spanmap.Unmarshal(output.Mappings)
+		if err != nil {
+			return MappedResult{}, nil, err
+		}
+		result.Mappings, err = normalizeMappings(mappings, generatedPositions, originalPositions)
+		if err != nil {
+			return MappedResult{}, nil, err
+		}
+	} else {
+		result.Mappings = spanmap.New(nil)
+	}
+	return result, originalPositions, nil
 }
 
 func normalizeMappings(mappings *spanmap.SpanMap, generatedPositions *positionNormalizer, originalPositions *positionNormalizer) (*spanmap.SpanMap, error) {

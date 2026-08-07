@@ -154,7 +154,7 @@ func getAllIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *Code
 	}
 
 	changes, _ := changeTracker.GetChanges()
-	fileChanges := changes[fixContext.SourceFile.FileName()]
+	fileChanges := changes[fixContext.SourceFile.OriginalFileName()]
 	if len(fileChanges) == 0 {
 		return nil, nil
 	}
@@ -193,7 +193,7 @@ func tryCodeAction(ctx context.Context, fixContext *CodeFixContext, ch *checker.
 	}
 
 	changes, _ := changeTracker.GetChanges()
-	fileChanges := changes[fixContext.SourceFile.FileName()]
+	fileChanges := changes[fixContext.SourceFile.OriginalFileName()]
 
 	// Add import edits if import adder has fixes
 	if importAdder != nil && importAdder.HasFixes() {

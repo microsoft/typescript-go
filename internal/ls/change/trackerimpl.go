@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/format"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/parser"
@@ -52,7 +53,8 @@ func (t *Tracker) getTextChangesFromChanges() map[string][]*lsproto.TextEdit {
 		})
 
 		if len(textChanges) > 0 {
-			changes[sourceFile.FileName()] = textChanges
+			fileName := sourceFile.OriginalFileName()
+			changes[fileName] = append(changes[fileName], textChanges...)
 		}
 	}
 	return changes
@@ -66,7 +68,7 @@ func (t *Tracker) computeNewText(change *trackerEdit, targetSourceFile *ast.Sour
 		return change.NewText
 	}
 
-	positions := t.converters.FromLSPPosition(sourceFile, change.Range.Start, spanmap.FeatureAll)
+	positions := lsconv.FromLSPPositionForSourceFile(t.converters, sourceFile, change.Range.Start, spanmap.FeatureAll)
 	var result string
 	found := false
 	// The original range may have multiple verbatim copies; it is safe to lose their identity only when
@@ -75,9 +77,10 @@ func (t *Tracker) computeNewText(change *trackerEdit, targetSourceFile *ast.Sour
 		if !mapped.Fidelity.IsExact() {
 			continue
 		}
+		projection := mapped.Script
 		pos := int(mapped.Position)
 		formatNode := func(n *ast.Node) string {
-			return t.getFormattedTextOfNode(n, targetSourceFile, sourceFile, pos, change.options)
+			return t.getFormattedTextOfNode(n, targetSourceFile, projection, pos, change.options)
 		}
 
 		var text string
@@ -95,7 +98,7 @@ func (t *Tracker) computeNewText(change *trackerEdit, targetSourceFile *ast.Sour
 		}
 		// Strip initial indentation if text will be inserted in the middle of the line.
 		noIndent := text
-		if !(change.options.indentation != nil || format.GetLineStartPositionForPosition(pos, targetSourceFile) == pos) {
+		if !(change.options.indentation != nil || format.GetLineStartPositionForPosition(pos, projection) == pos) {
 			noIndent = strings.TrimLeftFunc(text, unicode.IsSpace)
 		}
 		candidate := change.options.Prefix + noIndent + core.IfElse(strings.HasSuffix(noIndent, change.options.Suffix), "", change.options.Suffix)
@@ -120,7 +123,7 @@ func (t *Tracker) getFormattedTextOfNode(nodeIn *ast.Node, targetSourceFile *ast
 
 	var initialIndentation, delta int
 	if options.indentation == nil {
-		initialIndentation = format.GetIndentation(pos, sourceFile, formatOptions, options.Prefix == t.newLine || format.GetLineStartPositionForPosition(pos, targetSourceFile) == pos)
+		initialIndentation = format.GetIndentation(pos, sourceFile, formatOptions, options.Prefix == t.newLine || format.GetLineStartPositionForPosition(pos, sourceFile) == pos)
 	} else {
 		initialIndentation = *options.indentation
 	}

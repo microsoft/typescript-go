@@ -392,7 +392,6 @@ func (p *Project) CreateProgram() CreateProgramResult {
 
 	// Create the command line, potentially augmented with typing files
 	commandLine := p.getCommandLineWithTypingsFiles()
-
 	if p.dirtyFilePath != "" && p.Program != nil && p.Program.CommandLine() == commandLine {
 		var dirtyFile *ast.SourceFile
 		newProgram, dirtyFile, programCloned = p.Program.UpdateProgram(p.dirtyFilePath, p.host, createCheckerPool)
@@ -401,21 +400,33 @@ func (p *Project) CreateProgram() CreateProgramResult {
 			for _, file := range newProgram.SourceFiles() {
 				// Use pointer identity: dirtyFile is the exact instance UpdateProgram acquired,
 				// and it is the only file whose refcount is already accounted for.
-				if file != dirtyFile && !file.IsContentMapperFailureStub() {
+				if file != dirtyFile && !file.IsContentMapperFailureStub() && !file.IsContentMapperSupplemental() {
 					// UpdateProgram acquired the changed file only, so we need to ref everything else
-					p.host.builder.parseCache.Ref(parseCacheKeyForFile(file))
+					if file.ContentMapper() != "" {
+						p.host.builder.contentMappedParseCache.Ref(contentMappedParseCacheKeyForFile(file))
+					} else {
+						p.host.builder.parseCache.Ref(parseCacheKeyForFile(file))
+					}
 				}
 			}
 			for _, file := range newProgram.DuplicateSourceFiles() {
 				if !file.IsContentMapperFailureStub {
-					p.host.builder.parseCache.Ref(parseCacheKeyForDuplicate(file))
+					if file.ContentMapper != "" {
+						p.host.builder.contentMappedParseCache.Ref(contentMappedParseCacheKeyForDuplicate(file))
+					} else {
+						p.host.builder.parseCache.Ref(parseCacheKeyForDuplicate(file))
+					}
 				}
 			}
 		} else if dirtyFile != nil {
 			// UpdateProgram always acquires the dirty file before deciding whether it can
 			// reuse the old program. If it falls back to a full rebuild, release that
 			// speculative acquire so the rebuilt program is the only remaining owner.
-			p.host.builder.parseCache.Deref(parseCacheKeyForFile(dirtyFile))
+			if dirtyFile.ContentMapper() != "" {
+				p.host.builder.contentMappedParseCache.Deref(contentMappedParseCacheKeyForFile(dirtyFile))
+			} else {
+				p.host.builder.parseCache.Deref(parseCacheKeyForFile(dirtyFile))
+			}
 		}
 	} else {
 		var typingsLocation string

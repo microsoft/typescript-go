@@ -311,7 +311,11 @@ func (w *Watcher) DoCycle() {
 						continue
 					}
 				}
-				if _, isSource := programFiles[p]; !isSource && w.seenFiles.Has(p) {
+				if sourceFile := programFiles[p]; sourceFile != nil && sourceFile.IsContentMapperSupplemental() {
+					// A supplemental path is a failed physical lookup reserved for a virtual source file.
+					// Creating a file there introduces a collision and changes the program shape.
+					w.forceFullRebuild = true
+				} else if _, isSource := programFiles[p]; !isSource && w.seenFiles.Has(p) {
 					// A non-source build dependency changed. Such dependencies
 					// (e.g. package.json or a previously-missing module path) are
 					// tracked in seenFiles but are not program source files, so a
@@ -520,7 +524,10 @@ func (w *Watcher) tryUpdateProgram(host *watchCompilerHost) bool {
 
 	var changedPath tspath.Path
 	var changedCount int
-	for path := range oldProgram.FilesByPath() {
+	for path, file := range oldProgram.FilesByPath() {
+		if file.IsContentMapperSupplemental() {
+			continue
+		}
 		if _, ok := w.sourceFileCache.Load(path); !ok {
 			changedPath = path
 			changedCount++

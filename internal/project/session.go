@@ -83,8 +83,9 @@ type SessionInit struct {
 	Logger        logging.Logger
 	NpmExecutor   ata.NpmExecutor
 	// Spawner launches content mapper processes. It is nil when the host cannot spawn processes.
-	Spawner    contentmapper.Spawner
-	ParseCache *ParseCache
+	Spawner                 contentmapper.Spawner
+	ParseCache              *ParseCache
+	ContentMappedParseCache *ContentMappedParseCache
 }
 
 // Session manages the state of an LSP session. It receives textDocument
@@ -117,7 +118,8 @@ type Session struct {
 
 	// parseCache is the ref-counted cache of source files used when
 	// creating programs during snapshot cloning.
-	parseCache *ParseCache
+	parseCache              *ParseCache
+	contentMappedParseCache *ContentMappedParseCache
 	// extendedConfigCache is the ref-counted cache of tsconfig ASTs
 	// that are used in the "extends" of another tsconfig.
 	extendedConfigCache *ExtendedConfigCache
@@ -222,6 +224,10 @@ func NewSession(init *SessionInit) *Session {
 	if parseCache == nil {
 		parseCache = NewParseCache(RefCountCacheOptions{})
 	}
+	contentMappedParseCache := init.ContentMappedParseCache
+	if contentMappedParseCache == nil {
+		contentMappedParseCache = NewContentMappedParseCache(RefCountCacheOptions{})
+	}
 	extendedConfigCache := NewExtendedConfigCache()
 
 	sessionLogger := init.Logger
@@ -229,19 +235,20 @@ func NewSession(init *SessionInit) *Session {
 		sessionLogger = logging.NewNopLogger()
 	}
 	session := &Session{
-		backgroundCtx:       init.BackgroundCtx,
-		options:             init.Options,
-		toPath:              toPath,
-		client:              init.Client,
-		logger:              sessionLogger,
-		npmExecutor:         init.NpmExecutor,
-		contentMapperHost:   newContentMapperHost(init),
-		fs:                  overlayFS,
-		parseCache:          parseCache,
-		extendedConfigCache: extendedConfigCache,
-		programCounter:      &programCounter{},
-		backgroundQueue:     background.NewQueue(),
-		startTime:           time.Now(),
+		backgroundCtx:           init.BackgroundCtx,
+		options:                 init.Options,
+		toPath:                  toPath,
+		client:                  init.Client,
+		logger:                  sessionLogger,
+		npmExecutor:             init.NpmExecutor,
+		contentMapperHost:       newContentMapperHost(init),
+		fs:                      overlayFS,
+		parseCache:              parseCache,
+		contentMappedParseCache: contentMappedParseCache,
+		extendedConfigCache:     extendedConfigCache,
+		programCounter:          &programCounter{},
+		backgroundQueue:         background.NewQueue(),
+		startTime:               time.Now(),
 		snapshot: NewSnapshot(
 			uint64(0),
 			&SnapshotFS{

@@ -132,7 +132,7 @@ func (f *Fix) Edits(
 // so an empty result with safe == false means the fix could not be represented and must be discarded.
 func fileEdits(tracker *change.Tracker, file *ast.SourceFile) (edits []*lsproto.TextEdit, safe bool) {
 	changes, unmappable := tracker.GetChanges()
-	return changes[file.FileName()], len(unmappable) == 0
+	return changes[file.OriginalFileName()], len(unmappable) == 0
 }
 
 func addImportType(f *Fix, file *ast.SourceFile, preferences lsutil.UserPreferences, tracker *change.Tracker, locale locale.Locale) string {

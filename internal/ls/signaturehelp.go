@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
@@ -53,10 +54,11 @@ func (l *LanguageService) ProvideSignatureHelp(
 	context *lsproto.SignatureHelpContext,
 ) (lsproto.SignatureHelpResponse, error) {
 	program, sourceFile := l.getProgramAndFile(documentURI)
-	positions := l.converters.FromLSPPosition(sourceFile, position, spanmap.FeatureSignatureHelp)
+	positions := lsconv.FromLSPPositionForSourceFile(l.converters, sourceFile, position, spanmap.FeatureSignatureHelp)
 	if len(positions) == 0 || !positions[0].Fidelity.IsSingleSegment() {
 		return lsproto.SignatureHelpOrNull{}, nil
 	}
+	sourceFile = positions[0].Script
 	pos := int(positions[0].Position)
 	items := l.GetSignatureHelpItems(
 		ctx,

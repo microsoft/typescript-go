@@ -25,7 +25,7 @@ type CompilerHost interface {
 	// failure accounting), so implementations must use it as-is. It returns nil if the file cannot be read,
 	// or an error if the transform fails or the mapper produces invalid position mappings. Implementations
 	// may cache successful results.
-	GetContentMappedSourceFile(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper, options *core.CompilerOptions) (*ast.SourceFile, error)
+	GetContentMappedSourceFiles(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper, options *core.CompilerOptions) (contentmapper.SourceFiles, error)
 	// ContentMapperProject returns the project-scoped content mapper used by this host, or nil when the
 	// command line has no content mappers. The project owns transform identity and lifecycle state.
 	ContentMapperProject() contentmapper.Project
@@ -99,15 +99,19 @@ func (h *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.Sourc
 	return parser.ParseSourceFile(opts, text, core.GetScriptKindFromFileName(opts.FileName))
 }
 
-func (h *compilerHost) GetContentMappedSourceFile(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper, options *core.CompilerOptions) (*ast.SourceFile, error) {
+func (h *compilerHost) GetContentMappedSourceFiles(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper, options *core.CompilerOptions) (contentmapper.SourceFiles, error) {
 	if h.contentMapperProject == nil {
-		return nil, errors.New("content mapper project is unavailable")
+		return contentmapper.SourceFiles{}, errors.New("content mapper project is unavailable")
 	}
 	content, ok := h.FS().ReadFile(parseOptions.FileName)
 	if !ok {
-		return nil, nil
+		return contentmapper.SourceFiles{}, nil
 	}
-	return contentmapper.TransformAndParse(parseOptions, content, mapper, options, h.contentMapperProject)
+	files, err := contentmapper.TransformAndParse(parseOptions, content, mapper, options, h.contentMapperProject)
+	if err == nil {
+		err = contentmapper.CheckSupplementalFileNameCollisions(files, h.FS().FileExists)
+	}
+	return files, err
 }
 
 func (h *compilerHost) ContentMapperProject() contentmapper.Project {

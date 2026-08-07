@@ -47,11 +47,12 @@ func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.Ren
 
 func (l *LanguageService) GetRenameInfo(ctx context.Context, newName string, documentURI lsproto.DocumentUri, position lsproto.Position) RenameInfo {
 	program, sourceFile := l.getProgramAndFile(documentURI)
-	positions := l.converters.FromLSPPosition(sourceFile, position, spanmap.FeatureRename)
+	positions := lsconv.FromLSPPositionForSourceFile(l.converters, sourceFile, position, spanmap.FeatureRename)
 	for _, mapped := range positions {
 		if !mapped.Fidelity.IsExact() {
 			continue
 		}
+		sourceFile := mapped.Script
 		node := astnav.GetTouchingPropertyName(sourceFile, int(mapped.Position))
 		node = getAdjustedLocation(node, true /*forRename*/, sourceFile)
 		if nodeIsEligibleForRename(node) {
@@ -117,7 +118,7 @@ func (l *LanguageService) symbolAndEntriesToRename(ctx context.Context, params *
 func (l *LanguageService) renameEditRange(entry *ReferenceEntry) (lsproto.Range, bool) {
 	l.resolveEntry(entry)
 	if entry.node == nil {
-		location, fidelity := l.getMappedLocation(entry.fileName, *entry.textRange)
+		location, fidelity := l.sourceFileRangeToLSPLocation(entry.sourceFile, *entry.textRange)
 		return location.Range, fidelity.IsExact()
 	}
 	sourceFile := ast.GetSourceFileOfNode(entry.node)

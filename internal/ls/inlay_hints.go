@@ -35,20 +35,22 @@ func (l *LanguageService) ProvideInlayHint(
 	program, file := l.getProgramAndFile(params.TextDocument.Uri)
 	quotePreference := lsutil.GetQuotePreference(file, userPreferences)
 
-	checker, done := program.GetTypeCheckerForFile(ctx, file)
-	defer done()
-	var result []*lsproto.InlayHint
-	for _, mapped := range l.converters.FromLSPRange(file, params.Range, spanmap.FeatureInlayHints) {
+	mappedRanges := lsconv.FromLSPRangeForSourceFile(l.converters, file, params.Range, spanmap.FeatureInlayHints)
+	result := make([]*lsproto.InlayHint, 0, len(mappedRanges))
+	for _, mapped := range mappedRanges {
+		projection := mapped.Script
+		checker, done := program.GetTypeCheckerForFile(ctx, projection)
+		defer done()
 		inlayHintState := &inlayHintState{
 			ctx:             ctx,
 			span:            mapped.Span,
 			preferences:     inlayHintPreferences,
 			quotePreference: quotePreference,
-			file:            file,
+			file:            projection,
 			checker:         checker,
 			converters:      l.converters,
 		}
-		inlayHintState.visit(file.AsNode())
+		inlayHintState.visit(projection.AsNode())
 		result = append(result, inlayHintState.result...)
 	}
 	return lsproto.InlayHintsOrNull{InlayHints: &result}, nil
@@ -792,7 +794,7 @@ func (s *inlayHintState) getNodeDisplayPart(text string, node *ast.Node) *lsprot
 	// user somewhere wrong, so it is better to omit the target than to fabricate one.
 	if lspRange, fidelity := s.converters.ToLSPRangeForFeature(file, core.NewTextRange(pos, end), spanmap.FeatureInlayHints); fidelity.IsSingleSegment() {
 		part.Location = &lsproto.Location{
-			Uri:   lsconv.FileNameToDocumentURI(file.FileName()),
+			Uri:   lsconv.FileNameToDocumentURI(file.OriginalFileName()),
 			Range: lspRange,
 		}
 	}

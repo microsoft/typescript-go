@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
@@ -27,12 +28,12 @@ func (l *LanguageService) ProvideSourceDefinition(
 	documentURI lsproto.DocumentUri,
 	position lsproto.Position,
 ) (lsproto.DefinitionResponse, error) {
-	_, file := l.getProgramAndFile(documentURI)
-	positions := l.converters.FromLSPPosition(file, position, spanmap.FeatureSourceDefinition)
-	var results []lsproto.DefinitionResponse
+	program, file := l.getProgramAndFile(documentURI)
+	positions := lsconv.FromLSPPositionForSourceFile(l.converters, file, position, spanmap.FeatureSourceDefinition)
+	results := make([]lsproto.DefinitionResponse, 0, len(positions))
 	for _, mapped := range positions {
 		if mapped.Fidelity.IsSingleSegment() {
-			result, err := l.provideSourceDefinitionAtPosition(ctx, documentURI, mapped.Position)
+			result, err := l.provideSourceDefinitionAtPosition(ctx, program, mapped.Script, mapped.Position)
 			if err != nil {
 				return lsproto.DefinitionResponse{}, err
 			}
@@ -44,13 +45,13 @@ func (l *LanguageService) ProvideSourceDefinition(
 
 func (l *LanguageService) provideSourceDefinitionAtPosition(
 	ctx context.Context,
-	documentURI lsproto.DocumentUri,
+	program *compiler.Program,
+	file *ast.SourceFile,
 	textPos core.TextPos,
 ) (lsproto.DefinitionResponse, error) {
 	caps := lsproto.GetClientCapabilities(ctx)
 	clientSupportsLink := caps.TextDocument.Definition.LinkSupport
 
-	program, file := l.getProgramAndFile(documentURI)
 	pos := int(textPos)
 	resolver := l.newSourceDefResolver(program, file.FileName())
 	node := astnav.GetTouchingPropertyName(file, pos)

@@ -94,7 +94,7 @@ func (c *testConverters) PositionToLineAndCharacter(script lsconv.Script, positi
 }
 
 func (c *testConverters) LineAndCharacterToPosition(script lsconv.Script, position lsproto.Position) core.TextPos {
-	positions := c.FromLSPPosition(script, position, spanmap.FeatureAll)
+	positions := lsconv.FromLSPPosition(c.Converters, script, position, spanmap.FeatureAll)
 	debug.Assert(len(positions) == 1, "fourslash script must have exactly one position projection")
 	return positions[0].Position
 }
@@ -131,6 +131,8 @@ func (s *scriptInfo) SpanMap() *spanmap.SpanMap { return nil }
 func (s *scriptInfo) FileName() string {
 	return s.fileName
 }
+
+func (s *scriptInfo) OriginalFileName() string { return s.fileName }
 
 func (s *scriptInfo) GetLineContent(line int) string {
 	numLines := len(s.lineMap.LineStarts)
@@ -2596,7 +2598,7 @@ func (f *FourslashTest) VerifyBaselineCodeLens(t *testing.T, preferences *lsutil
 				locations = locs
 			}
 
-			ranges := f.converters.FromLSPRange(f.getScriptInfo(openFile), resolvedCodeLens.Range, spanmap.FeatureAll)
+			ranges := lsconv.FromLSPRange(f.converters.Converters, f.getScriptInfo(openFile), resolvedCodeLens.Range, spanmap.FeatureAll)
 			if len(ranges) != 1 {
 				continue
 			}
@@ -4060,7 +4062,7 @@ func updatePosition(pos int, editStart int, editEnd int, newText string) int {
 }
 
 func (f *FourslashTest) fromLSPRange(script *scriptInfo, r lsproto.Range) core.TextRange {
-	ranges := f.converters.FromLSPRange(script, r, spanmap.FeatureAll)
+	ranges := lsconv.FromLSPRange(f.converters.Converters, script, r, spanmap.FeatureAll)
 	if len(ranges) != 1 {
 		return core.TextRange{}
 	}
@@ -5468,6 +5470,8 @@ var _ diagnosticwriter.FileLike = (*fourslashDiagnosticFile)(nil)
 func (f *fourslashDiagnosticFile) FileName() string {
 	return f.file.UnitName
 }
+
+func (f *fourslashDiagnosticFile) OriginalFileName() string { return f.file.UnitName }
 
 func (f *fourslashDiagnosticFile) Text() string {
 	return f.file.Content

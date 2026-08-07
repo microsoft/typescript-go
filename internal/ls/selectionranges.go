@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/spanmap"
@@ -17,13 +18,13 @@ func (l *LanguageService) ProvideSelectionRanges(ctx context.Context, params *ls
 		return lsproto.SelectionRangesOrNull{}, nil
 	}
 
-	var results []*lsproto.SelectionRange
+	results := make([]*lsproto.SelectionRange, 0, len(params.Positions))
 	for _, position := range params.Positions {
-		positions := l.converters.FromLSPPosition(sourceFile, position, spanmap.FeatureSelectionRanges)
+		positions := lsconv.FromLSPPositionForSourceFile(l.converters, sourceFile, position, spanmap.FeatureSelectionRanges)
 		if len(positions) != 1 || !positions[0].Fidelity.IsSingleSegment() {
 			return lsproto.SelectionRangesOrNull{}, nil
 		}
-		selectionRange := getSmartSelectionRange(l, sourceFile, int(positions[0].Position))
+		selectionRange := getSmartSelectionRange(l, positions[0].Script, int(positions[0].Position))
 		if selectionRange != nil {
 			results = append(results, selectionRange)
 		}

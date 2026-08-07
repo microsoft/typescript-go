@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
@@ -34,10 +35,11 @@ func (l *LanguageService) ProvideHover(ctx context.Context, params *lsproto.Hove
 	}
 
 	program, file := l.getProgramAndFile(params.TextDocument.Uri)
-	positions := l.converters.FromLSPPosition(file, params.Position, spanmap.FeatureHover)
+	positions := lsconv.FromLSPPositionForSourceFile(l.converters, file, params.Position, spanmap.FeatureHover)
 	if len(positions) == 0 || !positions[0].Fidelity.IsSingleSegment() {
 		return lsproto.HoverOrNull{}, nil
 	}
+	file = positions[0].Script
 	position := int(positions[0].Position)
 	node := astnav.GetTouchingPropertyName(file, position)
 	if ast.IsSourceFile(node) || ast.IsPropertyAccessOrQualifiedName(node) && isInComment(file, position, node) == nil {
@@ -1125,7 +1127,7 @@ func (l *LanguageService) writeNameLink(b *strings.Builder, c *checker.Checker, 
 		declaration := declarations[0]
 		file := ast.GetSourceFileOfNode(declaration)
 		node := core.OrElse(ast.GetNameOfDeclaration(declaration), declaration)
-		loc, fidelity := l.getMappedLocationForFeature(file.FileName(), createRangeFromNode(node, file), spanmap.FeatureHover)
+		loc, fidelity := l.sourceFileRangeToLSPLocationForFeature(file, createRangeFromNode(node, file), spanmap.FeatureHover)
 		prefixLen := core.IfElse(strings.HasPrefix(text, "()"), 2, 0)
 		linkText := trimCommentPrefix(text[prefixLen:])
 		if linkText == "" {

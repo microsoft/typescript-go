@@ -106,7 +106,7 @@ type ReferenceEntry struct {
 	kind       entryKind
 	node       *ast.Node
 	context    *ast.Node // !!! ContextWithStartAndEndNode, optional
-	fileName   string
+	sourceFile *ast.SourceFile
 	textRange  *core.TextRange
 	lspRange   *lsproto.Location
 	unmappable bool
@@ -185,25 +185,26 @@ func (l *LanguageService) getLocationOfEntry(entry *ReferenceEntry) (lsproto.Loc
 }
 
 func (l *LanguageService) getLocationOfEntryForFeature(entry *ReferenceEntry, feature spanmap.Feature) (lsproto.Location, bool) {
-	if entry.textRange == nil {
-		sourceFile := ast.GetSourceFileOfNode(entry.node)
-		textRange := getRangeOfNode(entry.node, sourceFile, nil /*endNode*/)
-		entry.textRange = &textRange
-		entry.fileName = sourceFile.FileName()
-	}
-	location, fidelity := l.getMappedLocationForFeature(entry.fileName, *entry.textRange, feature)
+	l.resolveEntrySource(entry)
+	location, fidelity := l.sourceFileRangeToLSPLocationForFeature(entry.sourceFile, *entry.textRange, feature)
 	return location, fidelity.IsSingleSegment()
 }
 
-func (l *LanguageService) resolveEntry(entry *ReferenceEntry) *ReferenceEntry {
-	if entry.textRange == nil {
-		sourceFile := ast.GetSourceFileOfNode(entry.node)
-		textRange := getRangeOfNode(entry.node, sourceFile, nil /*endNode*/)
-		entry.textRange = &textRange
-		entry.fileName = sourceFile.FileName()
+func (l *LanguageService) resolveEntrySource(entry *ReferenceEntry) {
+	if entry.sourceFile == nil {
+		debug.Assert(entry.node != nil, "reference entry must have a node or source file")
+		entry.sourceFile = ast.GetSourceFileOfNode(entry.node)
 	}
+	if entry.textRange == nil {
+		textRange := getRangeOfNode(entry.node, entry.sourceFile, nil /*endNode*/)
+		entry.textRange = &textRange
+	}
+}
+
+func (l *LanguageService) resolveEntry(entry *ReferenceEntry) *ReferenceEntry {
+	l.resolveEntrySource(entry)
 	if entry.lspRange == nil {
-		location, fidelity := l.getMappedLocation(entry.fileName, *entry.textRange)
+		location, fidelity := l.sourceFileRangeToLSPLocation(entry.sourceFile, *entry.textRange)
 		entry.lspRange = &location
 		entry.unmappable = !fidelity.IsSingleSegment()
 	}
@@ -657,7 +658,7 @@ func (l *LanguageService) provideSymbolsAndEntries(ctx context.Context, uri lspr
 	} else if isRename {
 		feature = spanmap.FeatureRename
 	}
-	positions := l.converters.FromLSPPosition(sourceFile, documentPosition, feature)
+	positions := lsconv.FromLSPPositionForSourceFile(l.converters, sourceFile, documentPosition, feature)
 	if len(positions) == 0 {
 		return SymbolAndEntriesData{}, false
 	}
@@ -667,7 +668,7 @@ func (l *LanguageService) provideSymbolsAndEntries(ctx context.Context, uri lspr
 		if !mapped.Fidelity.IsSingleSegment() {
 			continue
 		}
-		data, found := l.provideSymbolsAndEntriesAtPosition(ctx, program, sourceFile, int(mapped.Position), isRename, implementations)
+		data, found := l.provideSymbolsAndEntriesAtPosition(ctx, program, mapped.Script, int(mapped.Position), isRename, implementations)
 		if !found {
 			continue
 		}
@@ -1124,9 +1125,9 @@ func (l *LanguageService) convertEntriesToLocationLinks(entries []*ReferenceEntr
 		// For entries with nodes, compute ranges directly from the node
 		if entry.node != nil {
 			// Get the context range (broader scope including declaration context)
-			contextTextRange := toContextRange(entry.textRange, l.program.GetSourceFile(entry.fileName), entry.context)
+			contextTextRange := toContextRange(entry.textRange, entry.sourceFile, entry.context)
 			if contextTextRange != nil {
-				contextLocation, fidelity := l.getMappedLocationForFeature(entry.fileName, *contextTextRange, feature)
+				contextLocation, fidelity := l.sourceFileRangeToLSPLocationForFeature(entry.sourceFile, *contextTextRange, feature)
 				if !fidelity.IsNone() && contextLocation.Uri == loc.Uri {
 					targetRange = contextLocation.Range
 				}
@@ -1134,7 +1135,7 @@ func (l *LanguageService) convertEntriesToLocationLinks(entries []*ReferenceEntr
 		}
 
 		links = append(links, &lsproto.LocationLink{
-			TargetUri:            lsconv.FileNameToDocumentURI(entry.fileName),
+			TargetUri:            lsconv.FileNameToDocumentURI(entry.sourceFile.OriginalFileName()),
 			TargetRange:          targetRange,
 			TargetSelectionRange: targetSelectionRange,
 		})
@@ -1144,14 +1145,9 @@ func (l *LanguageService) convertEntriesToLocationLinks(entries []*ReferenceEntr
 
 func (l *LanguageService) mergeReferences(program *compiler.Program, referencesToMerge ...[]*SymbolAndEntries) []*SymbolAndEntries {
 	result := []*SymbolAndEntries{}
-	getSourceFileIndexOfEntry := func(program *compiler.Program, entry *ReferenceEntry) int {
-		var sourceFile *ast.SourceFile
-		if entry.kind == entryKindRange {
-			sourceFile = program.GetSourceFile(entry.fileName)
-		} else {
-			sourceFile = ast.GetSourceFileOfNode(entry.node)
-		}
-		return slices.Index(program.SourceFiles(), sourceFile)
+	getSourceFileIndexOfEntry := func(entry *ReferenceEntry) int {
+		l.resolveEntrySource(entry)
+		return slices.Index(program.SourceFiles(), entry.sourceFile)
 	}
 
 	for _, references := range referencesToMerge {
@@ -1181,8 +1177,8 @@ func (l *LanguageService) mergeReferences(program *compiler.Program, referencesT
 			reference := result[refIndex]
 			sortedRefs := append(reference.references, entry.references...)
 			slices.SortStableFunc(sortedRefs, func(entry1, entry2 *ReferenceEntry) int {
-				entry1File := getSourceFileIndexOfEntry(program, entry1)
-				entry2File := getSourceFileIndexOfEntry(program, entry2)
+				entry1File := getSourceFileIndexOfEntry(entry1)
+				entry2File := getSourceFileIndexOfEntry(entry2)
 				if entry1File != entry2File {
 					return cmp.Compare(entry1File, entry2File)
 				}
@@ -1775,9 +1771,9 @@ func (l *LanguageService) getReferencedSymbolsForModule(ctx context.Context, pro
 			return newNodeEntry(rangeNode)
 		case ModuleReferenceKindReference:
 			return &ReferenceEntry{
-				kind:      entryKindRange,
-				fileName:  reference.referencingFile.FileName(),
-				textRange: &reference.ref.TextRange,
+				kind:       entryKindRange,
+				sourceFile: reference.referencingFile,
+				textRange:  &reference.ref.TextRange,
 			}
 		}
 		return nil

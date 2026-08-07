@@ -172,7 +172,7 @@ func (adder *importAdder) Edits() []*lsproto.TextEdit {
 	// Unmappable files are dropped by GetChanges, so a content-mapped importing file that cannot be
 	// faithfully rewritten yields no edits rather than a corrupting one.
 	changes, _ := tracker.GetChanges()
-	return changes[adder.view.importingFile.FileName()]
+	return changes[adder.view.importingFile.OriginalFileName()]
 }
 
 func sortedNamedImports(m map[string]*newImportBinding) []*newImportBinding {

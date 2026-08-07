@@ -70,7 +70,6 @@ type fileLoader struct {
 	// contentMapperMu guards the content-mapper bookkeeping below, which is written concurrently as
 	// content-mapped files are parsed across worker goroutines.
 	contentMapperMu          sync.Mutex
-	contentMapperForFile     map[tspath.Path]*contentmapper.Mapper
 	contentMapperFailures    map[*contentmapper.Mapper]int
 	contentMapperDiagnostics []*ast.Diagnostic
 }
@@ -133,8 +132,6 @@ type processedFiles struct {
 	redirectTargetsMap map[tspath.Path][]string
 	// filesByPath for redirect files
 	redirectFilesByPath map[tspath.Path]*redirectsFile
-	// Association from a content-mapped source file path to the content mapper that produced it.
-	contentMapperForFile map[tspath.Path]*contentmapper.Mapper
 	// Program-level diagnostics reported when a content mapper fails fatally (reported once per mapper).
 	contentMapperDiagnostics []*ast.Diagnostic
 	finishedProcessing       bool
@@ -417,13 +414,12 @@ func (p *fileLoader) parseSourceFile(t *parseTask) *ast.SourceFile {
 // if the file cannot be read.
 func (p *fileLoader) parseContentMappedFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
 	mapper := p.opts.Config.GetContentMapperForFileName(opts.FileName)
-	p.recordContentMapper(opts.Path, mapper)
 	label := mapper.Name
 	if p.contentMapperDisabled(mapper) {
 		// The mapper already exceeded its failure budget; add the file empty without re-reporting.
 		return p.emptyContentMappedFile(opts, mapper.Identity())
 	}
-	sourceFile, err := p.opts.Host.GetContentMappedSourceFile(opts, mapper, p.opts.Config.CompilerOptions())
+	files, err := p.opts.Host.GetContentMappedSourceFiles(opts, mapper, p.opts.Config.CompilerOptions())
 	if err != nil {
 		sourceFile := p.emptyContentMappedFile(opts, mapper.Identity())
 		if p.recordContentMapperFailure(mapper, label) {
@@ -437,10 +433,13 @@ func (p *fileLoader) parseContentMappedFile(opts ast.SourceFileParseOptions) *as
 		}
 		return sourceFile
 	}
-	return sourceFile
+	return files.Canonical
 }
 
 func contentMapperTransformDiagnostic(file *ast.SourceFile, label string, err error) *ast.Diagnostic {
+	if collision, ok := errors.AsType[*contentmapper.SupplementalFileCollisionError](err); ok {
+		return contentMapperTransformDiagnosticChain(file, label, diagnostics.Content_mapper_supplemental_output_file_0_conflicts_with_an_existing_file, collision.FileName)
+	}
 	if transformError, ok := errors.AsType[*contentmapper.TransformError](err); ok {
 		switch transformError.Kind {
 		case contentmapper.TransformErrorKindInitialize:
@@ -528,20 +527,6 @@ func (p *fileLoader) emptyContentMappedFile(opts ast.SourceFileParseOptions, map
 	sourceFile.SetOriginalText(content)
 	sourceFile.SetContentMapper(mapperIdentity)
 	return sourceFile
-}
-
-// recordContentMapper associates a content-mapped file with the mapper that produced it, so the
-// program can report the mapping without re-matching extensions.
-func (p *fileLoader) recordContentMapper(path tspath.Path, mapper *contentmapper.Mapper) {
-	if mapper == nil {
-		return
-	}
-	p.contentMapperMu.Lock()
-	defer p.contentMapperMu.Unlock()
-	if p.contentMapperForFile == nil {
-		p.contentMapperForFile = make(map[tspath.Path]*contentmapper.Mapper)
-	}
-	p.contentMapperForFile[path] = mapper
 }
 
 // contentMapperDisabled reports whether mapper has exceeded its failure budget and been disabled.

@@ -210,6 +210,9 @@ func (t *TestFileInfo) FileName() string {
 	return t.fileName
 }
 
+// OriginalFileName implements lsconv.Script.
+func (t *TestFileInfo) OriginalFileName() string { return t.fileName }
+
 // Text implements lsconv.Script.
 func (t *TestFileInfo) Text() string {
 	return t.Content

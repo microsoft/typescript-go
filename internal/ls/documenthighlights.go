@@ -39,11 +39,11 @@ func (l *LanguageService) ProvideMultiDocumentHighlights(ctx context.Context, do
 
 func (l *LanguageService) provideDocumentHighlightsWorker(ctx context.Context, documentUri lsproto.DocumentUri, documentPosition lsproto.Position, filesToSearch []lsproto.DocumentUri) (lsproto.MultiDocumentHighlightsOrNull, error) {
 	program, sourceFile := l.getProgramAndFile(documentUri)
-	positions := l.converters.FromLSPPosition(sourceFile, documentPosition, spanmap.FeatureDocumentHighlights)
-	var results []lsproto.MultiDocumentHighlightsOrNull
+	positions := lsconv.FromLSPPositionForSourceFile(l.converters, sourceFile, documentPosition, spanmap.FeatureDocumentHighlights)
+	results := make([]lsproto.MultiDocumentHighlightsOrNull, 0, len(positions))
 	for _, mapped := range positions {
 		if mapped.Fidelity.IsSingleSegment() {
-			results = append(results, l.provideDocumentHighlightsAtPosition(ctx, documentUri, int(mapped.Position), program, sourceFile, filesToSearch))
+			results = append(results, l.provideDocumentHighlightsAtPosition(ctx, documentUri, int(mapped.Position), program, mapped.Script, filesToSearch))
 		}
 	}
 	return combineMultiDocumentHighlights(results), nil
@@ -156,9 +156,10 @@ func (l *LanguageService) getSemanticDocumentHighlights(ctx context.Context, pos
 
 	var result []*lsproto.MultiDocumentHighlight
 	for _, sf := range sourceFiles {
-		if highlights, ok := fileHighlights[sf.FileName()]; ok {
+		fileName := sf.OriginalFileName()
+		if highlights, ok := fileHighlights[fileName]; ok {
 			result = append(result, &lsproto.MultiDocumentHighlight{
-				Uri:        lsconv.FileNameToDocumentURI(sf.FileName()),
+				Uri:        lsconv.FileNameToDocumentURI(fileName),
 				Highlights: highlights,
 			})
 		}
@@ -168,14 +169,15 @@ func (l *LanguageService) getSemanticDocumentHighlights(ctx context.Context, pos
 
 func (l *LanguageService) toDocumentHighlight(entry *ReferenceEntry) (string, *lsproto.DocumentHighlight) {
 	entry = l.resolveEntry(entry)
+	fileName := entry.sourceFile.OriginalFileName()
 
 	kind := lsproto.DocumentHighlightKindRead
 	lspRange, ok := l.getRangeOfEntryForFeature(entry, spanmap.FeatureDocumentHighlights)
 	if !ok {
-		return entry.fileName, nil
+		return fileName, nil
 	}
 	if entry.kind == entryKindRange {
-		return entry.fileName, &lsproto.DocumentHighlight{
+		return fileName, &lsproto.DocumentHighlight{
 			Range: lspRange,
 			Kind:  &kind,
 		}
@@ -191,7 +193,7 @@ func (l *LanguageService) toDocumentHighlight(entry *ReferenceEntry) (string, *l
 		Kind:  &kind,
 	}
 
-	return entry.fileName, dh
+	return fileName, dh
 }
 
 func (l *LanguageService) getSyntacticDocumentHighlights(node *ast.Node, sourceFile *ast.SourceFile) []*lsproto.DocumentHighlight {

@@ -118,9 +118,9 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 					continue
 				}
 
-				for _, mapped := range l.converters.FromLSPRange(file, diag.Range, spanmap.FeatureCodeActions) {
+				for _, mapped := range lsconv.FromLSPRangeForSourceFile(l.converters, file, diag.Range, spanmap.FeatureCodeActions) {
 					fixContext := &CodeFixContext{
-						SourceFile: file,
+						SourceFile: mapped.Script,
 						Span:       mapped.Span,
 						ErrorCode:  errorCode,
 						Program:    program,

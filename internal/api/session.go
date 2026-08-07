@@ -1818,8 +1818,8 @@ func toAPITextEdits(sourceFile *ast.SourceFile, converters *lsconv.Converters, e
 	positionMap := sourceFile.GetPositionMap()
 	result := make([]*TextEdit, len(edits))
 	for i, edit := range edits {
-		starts := converters.FromLSPPosition(sourceFile, edit.Range.Start, spanmap.FeatureAll)
-		ends := converters.FromLSPPosition(sourceFile, edit.Range.End, spanmap.FeatureAll)
+		starts := lsconv.FromLSPPositionForSourceFile(converters, sourceFile, edit.Range.Start, spanmap.FeatureAll)
+		ends := lsconv.FromLSPPositionForSourceFile(converters, sourceFile, edit.Range.End, spanmap.FeatureAll)
 		if len(starts) != 1 || len(ends) != 1 {
 			return nil
 		}

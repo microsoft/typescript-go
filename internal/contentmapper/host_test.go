@@ -25,6 +25,29 @@ import (
 // fakeMapper is an in-process mapper that transforms content verbatim and reports one diagnostic.
 type fakeMapper struct{}
 
+type responseMapper struct {
+	response func(contentmapper.TransformParams) any
+}
+
+func (m responseMapper) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
+	switch method {
+	case contentmapper.MethodInitialize:
+		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8, DiagnosticSource: "mapper"}, nil
+	case contentmapper.MethodTransform:
+		var p contentmapper.TransformParams
+		if err := json.Unmarshal(params, &p); err != nil {
+			return nil, err
+		}
+		return m.response(p), nil
+	default:
+		return nil, fmt.Errorf("unexpected method %s", method)
+	}
+}
+
+func (responseMapper) HandleNotification(ctx context.Context, method string, params json.Value) error {
+	return nil
+}
+
 func (fakeMapper) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
 	case contentmapper.MethodInitialize:
@@ -43,8 +66,7 @@ func (fakeMapper) HandleRequest(ctx context.Context, method string, params json.
 			return nil, err
 		}
 		return contentmapper.TransformResult{
-			Text:     p.Content,
-			Mappings: json.Value(mappings),
+			MappedOutput: contentmapper.MappedOutput{Text: p.Content, Mappings: json.Value(mappings)},
 			Diagnostics: []contentmapper.Diagnostic{{
 				MessageText: "boom",
 				Start:       0,
@@ -90,7 +112,7 @@ func (m unicodeMapper) HandleRequest(ctx context.Context, method string, params 
 		case contentmapper.PositionEncodingUTF16:
 			emojiLength, textLength = 1, 2
 		default:
-			return contentmapper.TransformResult{Text: p.Content}, nil
+			return contentmapper.TransformResult{MappedOutput: contentmapper.MappedOutput{Text: p.Content}}, nil
 		}
 		mappings, err := json.Marshal([][5]int{
 			{0, emojiLength, 0, emojiLength, int(spanmap.KindVerbatim)},
@@ -100,8 +122,7 @@ func (m unicodeMapper) HandleRequest(ctx context.Context, method string, params 
 			return nil, err
 		}
 		return contentmapper.TransformResult{
-			Text:     p.Content,
-			Mappings: mappings,
+			MappedOutput: contentmapper.MappedOutput{Text: p.Content, Mappings: mappings},
 			Diagnostics: []contentmapper.Diagnostic{{
 				MessageText: "after non-ASCII character",
 				Start:       emojiLength,
@@ -127,7 +148,6 @@ func (m invalidDiagnosticMapper) HandleRequest(ctx context.Context, method strin
 		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: m.encoding, DiagnosticSource: "mapper"}, nil
 	case contentmapper.MethodTransform:
 		return contentmapper.TransformResult{
-			Text: "",
 			Diagnostics: []contentmapper.Diagnostic{{
 				MessageText: "invalid boundary",
 				Start:       1,
@@ -190,6 +210,45 @@ func TestRunnerTransform(t *testing.T) {
 	assert.Equal(t, len(result.Diagnostics), 1)
 	assert.Equal(t, result.Diagnostics[0].Code(), int32(9999))
 	assert.Equal(t, result.Diagnostics[0].Source(), "vue")
+}
+
+func TestRunnerTransformResponseValidation(t *testing.T) {
+	t.Parallel()
+	request := contentmapper.Request{FileName: "/a.vue", Content: "a"}
+	mapper := &contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}}}
+
+	t.Run("malformed result fails the request", func(t *testing.T) {
+		t.Parallel()
+		host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: responseMapper{response: func(p contentmapper.TransformParams) any {
+			return map[string]any{"text": 1}
+		}}}, locale.Default)
+		defer host.Close()
+		_, err := host.Transform(mapper, request)
+		assert.Assert(t, err != nil)
+	})
+}
+
+func TestRunnerTransformSupplementalOutputs(t *testing.T) {
+	t.Parallel()
+	host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: responseMapper{response: func(p contentmapper.TransformParams) any {
+		return contentmapper.TransformResult{
+			MappedOutput: contentmapper.MappedOutput{Text: "export default 1;"},
+			Supplemental: []contentmapper.MappedOutput{
+				{Text: "declare const first: string;"},
+				{Text: "declare const second: number;", ScriptKind: core.ScriptKindJS},
+			},
+		}
+	}}}, locale.Default)
+	defer host.Close()
+	mapper := &contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}}}
+	result, err := host.Transform(mapper, contentmapper.Request{FileName: "/component.vue", Content: "component"})
+	assert.NilError(t, err)
+	assert.Equal(t, len(result.Supplemental), 2)
+	assert.Equal(t, result.Supplemental[0].Text, "declare const first: string;")
+	assert.Equal(t, result.Supplemental[0].ScriptKind, core.ScriptKindTS)
+	assert.Assert(t, result.Supplemental[0].Mappings != nil)
+	assert.Equal(t, result.Supplemental[1].ScriptKind, core.ScriptKindJS)
+	assert.Assert(t, result.Supplemental[1].Mappings != nil)
 }
 
 func TestRunnerPositionEncodings(t *testing.T) {
@@ -406,7 +465,7 @@ func (m *recordingMapper) HandleRequest(ctx context.Context, method string, para
 		m.receivedOptions = string(p.Options)
 		m.transformHandle = p.ProjectHandle
 		m.mu.Unlock()
-		return contentmapper.TransformResult{Text: p.Content}, nil
+		return contentmapper.TransformResult{MappedOutput: contentmapper.MappedOutput{Text: p.Content}}, nil
 	default:
 		return nil, fmt.Errorf("unexpected method %s", method)
 	}

@@ -7,6 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/spanmap"
@@ -17,10 +18,11 @@ var jsxTagWordPattern = new("[a-zA-Z0-9:\\-\\._$]*")
 
 func (l *LanguageService) ProvideLinkedEditingRange(ctx context.Context, params *lsproto.LinkedEditingRangeParams) (lsproto.LinkedEditingRangeResponse, error) {
 	_, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
-	positions := l.converters.FromLSPPosition(sourceFile, params.Position, spanmap.FeatureLinkedEditing)
+	positions := lsconv.FromLSPPositionForSourceFile(l.converters, sourceFile, params.Position, spanmap.FeatureLinkedEditing)
 	if len(positions) != 1 || !positions[0].Fidelity.IsExact() {
 		return lsproto.LinkedEditingRangeResponse{}, nil
 	}
+	sourceFile = positions[0].Script
 	position := positions[0].Position
 	token := astnav.FindPrecedingToken(sourceFile, int(position))
 

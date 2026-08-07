@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/format"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -58,10 +59,11 @@ func (l *LanguageService) ProvideFormatDocumentRange(
 	}
 	_, file := l.getProgramAndFile(documentURI)
 	formatOpts := lsutil.FromLSFormatOptions(l.FormatOptions(), options)
-	ranges := l.converters.FromLSPRange(file, r, spanmap.FeatureFormatting)
+	ranges := lsconv.FromLSPRangeForSourceFile(l.converters, file, r, spanmap.FeatureFormatting)
 	if len(ranges) != 1 || !ranges[0].Fidelity.IsExact() {
 		return lsproto.TextEditsOrNull{}, nil
 	}
+	file = ranges[0].Script
 	edits := l.toLSProtoTextEdits(file, l.getFormattingEditsForRange(
 		ctx,
 		file,
@@ -83,10 +85,11 @@ func (l *LanguageService) ProvideFormatDocumentOnType(
 	}
 	_, file := l.getProgramAndFile(documentURI)
 	formatOpts := lsutil.FromLSFormatOptions(l.FormatOptions(), options)
-	positions := l.converters.FromLSPPosition(file, position, spanmap.FeatureFormatting)
+	positions := lsconv.FromLSPPositionForSourceFile(l.converters, file, position, spanmap.FeatureFormatting)
 	if len(positions) != 1 || !positions[0].Fidelity.IsExact() {
 		return lsproto.TextEditsOrNull{}, nil
 	}
+	file = positions[0].Script
 	edits := l.toLSProtoTextEdits(file, l.getFormattingEditsAfterKeystroke(
 		ctx,
 		file,

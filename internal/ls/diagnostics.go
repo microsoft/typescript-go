@@ -17,11 +17,14 @@ import (
 // suggestion, and (when declarations are emitted) declaration diagnostics.
 func getAllDiagnostics(ctx context.Context, program *compiler.Program, file *ast.SourceFile) []*ast.Diagnostic {
 	var diags []*ast.Diagnostic
-	diags = append(diags, program.GetSyntacticDiagnostics(ctx, file)...)
-	diags = append(diags, program.GetSemanticDiagnostics(ctx, file)...)
-	diags = append(diags, program.GetSuggestionDiagnostics(ctx, file)...)
-	if program.Options().GetEmitDeclarations() {
-		diags = append(diags, program.GetDeclarationDiagnostics(ctx, file)...)
+	files := append([]*ast.SourceFile{file}, file.SupplementalSourceFiles()...)
+	for _, sourceFile := range files {
+		diags = append(diags, program.GetSyntacticDiagnostics(ctx, sourceFile)...)
+		diags = append(diags, program.GetSemanticDiagnostics(ctx, sourceFile)...)
+		diags = append(diags, program.GetSuggestionDiagnostics(ctx, sourceFile)...)
+		if program.Options().GetEmitDeclarations() {
+			diags = append(diags, program.GetDeclarationDiagnostics(ctx, sourceFile)...)
+		}
 	}
 	return diags
 }

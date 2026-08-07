@@ -97,7 +97,11 @@ func (l *LanguageService) getPreparedAutoImportView(fromFile *ast.SourceFile) (*
 		return nil, nil
 	}
 	registry := l.host.AutoImportRegistry()
-	if !registry.IsPreparedForImportingFile(fromFile.FileName(), l.projectPath, l.UserPreferences()) {
+	registryFile := fromFile
+	if canonical := fromFile.CanonicalSourceFile(); canonical != nil {
+		registryFile = canonical
+	}
+	if !registry.IsPreparedForImportingFile(registryFile.FileName(), l.projectPath, l.UserPreferences()) {
 		return nil, ErrNeedsAutoImports
 	}
 

@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/debug"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -41,11 +42,11 @@ func (l *LanguageService) adjustFoldingEnd(ranges []*lsproto.FoldingRange, sourc
 	result := make([]*lsproto.FoldingRange, 0, len(ranges))
 	for _, r := range ranges {
 		if r.EndCharacter != nil && *r.EndCharacter > 0 {
-			positions := l.converters.FromLSPPosition(sourceFile, lsproto.Position{
+			positions := lsconv.FromLSPPositionForSourceFile(l.converters, sourceFile, lsproto.Position{
 				Line:      r.EndLine,
 				Character: *r.EndCharacter,
 			}, spanmap.FeatureFoldingRanges)
-			if len(positions) == 1 && !positions[0].Fidelity.IsNone() && positions[0].Position > 0 && int(positions[0].Position) <= len(sourceText) {
+			if len(positions) == 1 && positions[0].Script == sourceFile && !positions[0].Fidelity.IsNone() && positions[0].Position > 0 && int(positions[0].Position) <= len(sourceText) {
 				endOffset := positions[0].Position
 				foldEndChar := sourceText[int(endOffset)-1]
 				if foldEndChar == '}' || foldEndChar == ']' || foldEndChar == ')' || foldEndChar == '`' || foldEndChar == '>' {

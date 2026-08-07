@@ -346,6 +346,7 @@ func (s *Snapshot) Clone(
 		s.sessionOptions,
 		customConfigFileName,
 		session.parseCache,
+		session.contentMappedParseCache,
 		session.extendedConfigCache,
 		session.contentMapperHost,
 		session.client,
@@ -564,13 +565,21 @@ func (s *Snapshot) dispose(session *Session) {
 				project.checkerPool.Discard()
 			}
 			for _, file := range project.Program.SourceFiles() {
-				if !file.IsContentMapperFailureStub() {
-					session.parseCache.Deref(parseCacheKeyForFile(file))
+				if !file.IsContentMapperFailureStub() && !file.IsContentMapperSupplemental() {
+					if file.ContentMapper() != "" {
+						session.contentMappedParseCache.Deref(contentMappedParseCacheKeyForFile(file))
+					} else {
+						session.parseCache.Deref(parseCacheKeyForFile(file))
+					}
 				}
 			}
 			for _, file := range project.Program.DuplicateSourceFiles() {
 				if !file.IsContentMapperFailureStub {
-					session.parseCache.Deref(parseCacheKeyForDuplicate(file))
+					if file.ContentMapper != "" {
+						session.contentMappedParseCache.Deref(contentMappedParseCacheKeyForDuplicate(file))
+					} else {
+						session.parseCache.Deref(parseCacheKeyForDuplicate(file))
+					}
 				}
 			}
 		}
