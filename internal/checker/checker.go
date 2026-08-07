@@ -48,11 +48,6 @@ const (
 	CheckModeForceTuple CheckMode = 1 << 7
 )
 
-type deprecatedSuggestionKey struct {
-	location *ast.Node
-	code     int32
-}
-
 type TypeSystemEntity any
 
 type TypeSystemPropertyName int32
@@ -898,7 +893,6 @@ type Checker struct {
 	reportedUnreachableNodes                    collections.Set[*ast.Node]
 	nonExistentProperties                       collections.Set[NonExistentPropertyKey]
 	deferredDiagnosticCallbacks                 []func()
-	deprecatedSuggestionKeys                    collections.Set[deprecatedSuggestionKey]
 	typeToStringNodebuilder                     *NodeBuilder
 
 	mu     sync.Mutex
@@ -8382,9 +8376,6 @@ func (c *Checker) checkDeprecatedSignature(sig *Signature, node *ast.Node) {
 
 func (c *Checker) addDeprecatedSuggestionWithSignature(location *ast.Node, declaration *ast.Node, deprecatedEntity string, signatureString string) *ast.Diagnostic {
 	message := core.IfElse(deprecatedEntity != "", diagnostics.The_signature_0_of_1_is_deprecated, diagnostics.X_0_is_deprecated)
-	if !c.deprecatedSuggestionKeys.AddIfAbsent(deprecatedSuggestionKey{location: location, code: message.Code()}) {
-		return nil
-	}
 	diagnostic := NewDiagnosticForNode(location, message, signatureString, deprecatedEntity)
 	return c.addDeprecatedSuggestionWorker([]*ast.Node{declaration}, diagnostic)
 }
@@ -8773,7 +8764,7 @@ func (c *Checker) resolveDecorator(node *ast.Node, candidatesOutArray *[]*Signat
 	headMessage := c.getDiagnosticHeadMessageForDecoratorResolution(node)
 	if len(callSignatures) == 0 {
 		diag := ast.NewDiagnosticChain(c.invocationErrorDetails(node.Expression(), apparentType, SignatureKindCall), headMessage)
-		c.addDiagnostic(diag)
+		diag = c.addDiagnostic(diag)
 		c.invocationErrorRecovery(apparentType, SignatureKindCall, diag)
 		return c.resolveErrorCall(node)
 	}
@@ -10009,7 +10000,7 @@ func (c *Checker) invocationError(errorTarget *ast.Node, apparentType *Type, kin
 	if relatedInformation != nil {
 		diagnostic.AddRelatedInfo(relatedInformation)
 	}
-	c.addDiagnostic(diagnostic)
+	diagnostic = c.addDiagnostic(diagnostic)
 	c.invocationErrorRecovery(apparentType, kind, diagnostic)
 }
 
@@ -13984,7 +13975,7 @@ func (c *Checker) getDiagnostics(ctx context.Context, sourceFile *ast.SourceFile
 	if c.wasCanceled {
 		return nil
 	}
-	return collection.GetDiagnosticsForFile(sourceFile.FileName())
+	return collection.GetDiagnosticsForFile(sourceFile)
 }
 
 func (c *Checker) GetGlobalDiagnostics() []*ast.Diagnostic {
@@ -14003,24 +13994,24 @@ func (c *Checker) produceDeferredDiagnostics() {
 	c.deferredDiagnosticCallbacks = nil
 }
 
-func (c *Checker) addDiagnostic(diagnostic *ast.Diagnostic) {
+func (c *Checker) addDiagnostic(diagnostic *ast.Diagnostic) *ast.Diagnostic {
 	// Discard diagnostics created while at the maximum number of recursive TypeToString invocations.
 	if c.serializationLevel < maxSerializationLevel {
-		c.diagnostics.Add(diagnostic)
+		return c.diagnostics.Add(diagnostic)
 	}
+	return diagnostic
 }
 
-func (c *Checker) addSuggestionDiagnostic(diagnostic *ast.Diagnostic) {
+func (c *Checker) addSuggestionDiagnostic(diagnostic *ast.Diagnostic) *ast.Diagnostic {
 	// Discard diagnostics created while at the maximum number of recursive TypeToString invocations.
 	if c.serializationLevel < maxSerializationLevel {
-		c.suggestionDiagnostics.Add(diagnostic)
+		return c.suggestionDiagnostics.Add(diagnostic)
 	}
+	return diagnostic
 }
 
 func (c *Checker) error(location *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
-	diagnostic := NewDiagnosticForNode(location, message, args...)
-	c.addDiagnostic(diagnostic)
-	return diagnostic
+	return c.addDiagnostic(NewDiagnosticForNode(location, message, args...))
 }
 
 func (c *Checker) errorSkippedOnNoEmit(location *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
@@ -14056,9 +14047,6 @@ func (c *Checker) IsDeprecatedDeclaration(declaration *ast.Node) bool {
 }
 
 func (c *Checker) addDeprecatedSuggestion(location *ast.Node, declarations []*ast.Node, deprecatedEntity string) *ast.Diagnostic {
-	if !c.deprecatedSuggestionKeys.AddIfAbsent(deprecatedSuggestionKey{location: location, code: diagnostics.X_0_is_deprecated.Code()}) {
-		return nil
-	}
 	diagnostic := NewDiagnosticForNode(location, diagnostics.X_0_is_deprecated, deprecatedEntity)
 	return c.addDeprecatedSuggestionWorker(declarations, diagnostic)
 }
@@ -14071,8 +14059,7 @@ func (c *Checker) addDeprecatedSuggestionWorker(declarations []*ast.Node, diagno
 			break
 		}
 	}
-	c.addSuggestionDiagnostic(diagnostic)
-	return diagnostic
+	return c.addSuggestionDiagnostic(diagnostic)
 }
 
 func (c *Checker) isDeprecatedSymbol(symbol *ast.Symbol) bool {
@@ -14292,13 +14279,7 @@ func getAdjustedNodeForError(node *ast.Node) *ast.Node {
 }
 
 func (c *Checker) lookupOrIssueError(location *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
-	diagnostic := NewDiagnosticForNode(location, message, args...)
-	existing := c.diagnostics.Lookup(diagnostic)
-	if existing != nil {
-		return existing
-	}
-	c.addDiagnostic(diagnostic)
-	return diagnostic
+	return c.addDiagnostic(NewDiagnosticForNode(location, message, args...))
 }
 
 func getFirstDeclaration(symbol *ast.Symbol) *ast.Node {
