@@ -2,8 +2,9 @@
 
 import getExePath from "#getExePath";
 import { execFileSync } from "node:child_process";
+import { optimizeBin } from "./optimizeBin.js";
 
-const exe = getExePath();
+const exe = optimizeBin() ?? getExePath();
 
 if (process.platform !== "win32" && typeof process.execve === "function") {
     // > v22.15.0
