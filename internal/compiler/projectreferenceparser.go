@@ -1,7 +1,7 @@
 package compiler
 
 import (
-	"maps"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -96,8 +96,20 @@ func (p *projectReferenceParser) initMapperWorker(tasks []*projectReferenceParse
 			// Map current task's files first, before recursing into subtasks.
 			// This matches TypeScript's behavior where child project references
 			// overwrite parent entries when a file belongs to multiple projects.
-			maps.Copy(p.loader.projectReferenceFileMapper.sourceToProjectReference, task.resolved.SourceToProjectReference())
-			maps.Copy(p.loader.projectReferenceFileMapper.outputDtsToProjectReference, task.resolved.OutputDtsToProjectReference())
+			p.addRealpathAliases(
+				p.loader.projectReferenceFileMapper.sourceToProjectReference,
+				task.resolved.SourceToProjectReference(),
+				func(projectReference *tsoptions.SourceOutputAndProjectReference) string {
+					return projectReference.Source
+				},
+			)
+			p.addRealpathAliases(
+				p.loader.projectReferenceFileMapper.outputDtsToProjectReference,
+				task.resolved.OutputDtsToProjectReference(),
+				func(projectReference *tsoptions.SourceOutputAndProjectReference) string {
+					return projectReference.OutputDts
+				},
+			)
 			if p.loader.projectReferenceFileMapper.opts.canUseProjectReferenceSource() {
 				declDir := task.resolved.CompilerOptions().DeclarationDir
 				if declDir == "" {
@@ -112,4 +124,43 @@ func (p *projectReferenceParser) initMapperWorker(tasks []*projectReferenceParse
 		p.loader.projectReferenceFileMapper.referencesInConfigFile[path] = referencesInConfig
 	}
 	return results
+}
+
+func (p *projectReferenceParser) addRealpathAliases(
+	target map[tspath.Path]*tsoptions.SourceOutputAndProjectReference,
+	entries map[tspath.Path]*tsoptions.SourceOutputAndProjectReference,
+	getFileName func(*tsoptions.SourceOutputAndProjectReference) string,
+) {
+	for path, projectReference := range entries {
+		target[path] = projectReference
+		fileName := getFileName(projectReference)
+		if fileName == "" {
+			continue
+		}
+		realpath := p.getRealpathForPossiblyMissingPath(fileName)
+		if realpath == "" || realpath == fileName {
+			continue
+		}
+		target[p.loader.toPath(realpath)] = projectReference
+	}
+}
+
+func (p *projectReferenceParser) getRealpathForPossiblyMissingPath(fileName string) string {
+	fs := p.loader.opts.Host.FS()
+	if realpath := fs.Realpath(fileName); realpath != "" && realpath != fileName {
+		return realpath
+	}
+	for probe := fileName; ; {
+		parent := tspath.GetDirectoryPath(probe)
+		if parent == "" || parent == probe {
+			return fileName
+		}
+		if fs.DirectoryExists(parent) {
+			realParent := fs.Realpath(parent)
+			if realParent != "" && realParent != parent {
+				return tspath.NormalizePath(realParent + strings.TrimPrefix(fileName, parent))
+			}
+		}
+		probe = parent
+	}
 }
