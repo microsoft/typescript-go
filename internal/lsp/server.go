@@ -48,7 +48,6 @@ type ServerOptions struct {
 	ParseCache         *project.ParseCache
 	NpmInstall         func(cwd string, args []string) ([]byte, error)
 	ProgressDelay      time.Duration // delay before showing progress UI; 0 means no delay
-	SetParentProcessID func(parentPID int)
 }
 
 func NewServer(opts *ServerOptions) *Server {
@@ -70,7 +69,6 @@ func NewServer(opts *ServerOptions) *Server {
 		typingsLocation:       opts.TypingsLocation,
 		parseCache:            opts.ParseCache,
 		npmInstall:            opts.NpmInstall,
-		startWatchdog:         opts.SetParentProcessID,
 		initComplete:          make(chan struct{}),
 		progressDelay:         opts.ProgressDelay,
 	}
@@ -220,8 +218,6 @@ type Server struct {
 
 	progressDelay   time.Duration
 	projectProgress *projectLoadingProgress
-
-	startWatchdog func(parentPID int)
 
 	flakeLogging lsproto.DiagnosticFlakeLogLevel
 }
@@ -1090,10 +1086,6 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 		s.locale, _ = locale.Parse(*s.initializeParams.Locale)
 	}
 	s.initLocale = s.locale
-
-	if s.startWatchdog != nil && params.ProcessId.Integer != nil {
-		s.startWatchdog(int(*params.ProcessId.Integer))
-	}
 
 	response := &lsproto.InitializeResult{
 		ServerInfo: &lsproto.ServerInfo{
