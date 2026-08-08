@@ -1,0 +1,44 @@
+//// [tests/cases/compiler/declarationEmitNegativeNumericLiteralAsConst.ts] ////
+
+=== declarationEmitNegativeNumericLiteralAsConst.ts ===
+export const a = -1e500 as const;
+>a : Symbol(a, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 0, 12))
+>const : Symbol(const)
+
+export const b = -123456789012345678901234567890 as const;
+>b : Symbol(b, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 1, 12))
+>const : Symbol(const)
+
+export const c = -0xff as const;
+>c : Symbol(c, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 2, 12))
+>const : Symbol(const)
+
+export const d = -1e3 as const;
+>d : Symbol(d, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 3, 12))
+>const : Symbol(const)
+
+export const e = 1e3 as const;
+>e : Symbol(e, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 4, 12))
+>const : Symbol(const)
+
+export const f = 0xff as const;
+>f : Symbol(f, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 5, 12))
+>const : Symbol(const)
+
+export const g = -0xffn as const;
+>g : Symbol(g, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 6, 12))
+>const : Symbol(const)
+
+export const h = -1_000 as const;
+>h : Symbol(h, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 7, 12))
+>const : Symbol(const)
+
+export const nested = [-1e500] as const;
+>nested : Symbol(nested, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 8, 12))
+>const : Symbol(const)
+
+export const obj = { value: -1e500 } as const;
+>obj : Symbol(obj, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 9, 12))
+>value : Symbol(value, Decl(declarationEmitNegativeNumericLiteralAsConst.ts, 9, 20))
+>const : Symbol(const)
+
