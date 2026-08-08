@@ -9,18 +9,19 @@ import (
 // in the pages of the store which is suitable for values where sizeof(V) is small.
 type nodeLinkStore[V any] struct {
 	store core.PagedLinkStore[V]
+	ids   *ast.IdAllocator
 }
 
 func (s *nodeLinkStore[V]) Get(node *ast.Node) *V {
-	return s.store.Get(uint64(ast.GetNodeId(node)))
+	return s.store.Get(uint64(s.ids.GetNodeId(node)))
 }
 
 func (s *nodeLinkStore[V]) Has(node *ast.Node) bool {
-	return s.store.Has(uint64(ast.GetNodeId(node)))
+	return s.store.Has(uint64(s.ids.GetNodeId(node)))
 }
 
 func (s *nodeLinkStore[V]) TryGet(node *ast.Node) *V {
-	return s.store.TryGet(uint64(ast.GetNodeId(node)))
+	return s.store.TryGet(uint64(s.ids.GetNodeId(node)))
 }
 
 // symbolArenaLinkStore is a links store keyed by symbol references. Values are stored
@@ -28,10 +29,11 @@ func (s *nodeLinkStore[V]) TryGet(node *ast.Node) *V {
 type symbolArenaLinkStore[V any] struct {
 	store core.PagedLinkStore[*V]
 	arena core.Arena[V]
+	ids   *ast.IdAllocator
 }
 
 func (s *symbolArenaLinkStore[V]) Get(symbol *ast.Symbol) *V {
-	link := s.store.Get(uint64(ast.GetSymbolId(symbol)))
+	link := s.store.Get(uint64(s.ids.GetSymbolId(symbol)))
 	if *link == nil {
 		*link = s.arena.New()
 	}
@@ -43,7 +45,7 @@ func (s *symbolArenaLinkStore[V]) Has(symbol *ast.Symbol) bool {
 }
 
 func (s *symbolArenaLinkStore[V]) TryGet(symbol *ast.Symbol) *V {
-	if link := s.store.TryGet(uint64(ast.GetSymbolId(symbol))); link != nil {
+	if link := s.store.TryGet(uint64(s.ids.GetSymbolId(symbol))); link != nil {
 		return *link
 	}
 	return nil

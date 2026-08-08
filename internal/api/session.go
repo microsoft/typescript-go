@@ -41,7 +41,7 @@ type snapshotData struct {
 	snapshot *project.Snapshot
 	refCount int
 
-	// Symbol IDs come from ast.GetSymbolId, a global atomic counter, so the same
+	// Symbol IDs come from global atomic counters in ast, so the same
 	// *ast.Symbol pointer always has the same unique ID across all projects in the
 	// snapshot. Symbols are registered snapshot-wide to ensure identity semantics:
 	// querying the same symbol from two different projects returns the same handle.

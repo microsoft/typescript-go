@@ -32,10 +32,11 @@ func (s *LinkStore[K, V]) TryGet(key K) *V {
 }
 
 const (
-	pageShift    = 8
-	pageSize     = 1 << pageShift
-	pageMask     = pageSize - 1
-	maxPageCount = 65536
+	pageShift         = 8
+	pageSize          = 1 << pageShift
+	pageMask          = pageSize - 1
+	maxPageCount      = 65536
+	LinkStorePageSize = pageSize
 )
 
 // Implements a sparse-array-like structure for storing elements keyed by dense uint64 keys. Elements are

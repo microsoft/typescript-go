@@ -583,6 +583,7 @@ var nextCheckerID atomic.Uint32
 
 type Checker struct {
 	id                                          uint32
+	ids                                         ast.IdAllocator
 	program                                     Program
 	compilerOptions                             *core.CompilerOptions
 	files                                       []*ast.SourceFile
@@ -909,6 +910,8 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 
 	c := &Checker{}
 	c.id = nextCheckerID.Add(1)
+	c.symbolNodeLinks.ids = &c.ids
+	c.valueSymbolLinks.ids = &c.ids
 	c.tracer = tracer
 	c.program = program
 	c.compilerOptions = program.Options()
