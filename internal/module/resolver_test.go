@@ -49,6 +49,23 @@ func TestResolveModuleNameTrailingSlash(t *testing.T) {
 	}
 }
 
+func TestResolveModuleNameWithEmptyContainingFileDoesNotPanic(t *testing.T) {
+	t.Parallel()
+
+	host := &resolutionHostStub{fs: vfstest.FromMap(map[string]string{}, true), cwd: "/repo"}
+	opts := &core.CompilerOptions{
+		ModuleResolution: core.ModuleResolutionKindBundler,
+		Module:           core.ModuleKindESNext,
+		Target:           core.ScriptTargetESNext,
+	}
+	resolver := module.NewResolver(host, opts, "", "")
+
+	r, _ := resolver.ResolveModuleName("./foo", "", core.ModuleKindESNext, nil)
+	if r.IsResolved() {
+		t.Fatal("unexpectedly resolved module from empty containing file")
+	}
+}
+
 // blockingFS wraps a vfs.FS and forces FileExists calls for `targetPath` to
 // block on `gate` until released. Each caller sends on `arrived` when it
 // reaches the gate. This is used to deterministically reproduce the

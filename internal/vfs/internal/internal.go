@@ -2,7 +2,6 @@ package internal
 
 import (
 	"encoding/binary"
-	"fmt"
 	"io/fs"
 	"strings"
 	"unicode/utf16"
@@ -20,7 +19,7 @@ type Common struct {
 func RootLength(p string) int {
 	l := tspath.GetEncodedRootLength(p)
 	if l == 0 {
-		panic(fmt.Sprintf("vfs: path %q is not absolute", p))
+		return 0
 	} else if l < 0 {
 		return ^l
 	}
@@ -30,6 +29,9 @@ func RootLength(p string) int {
 func SplitPath(p string) (rootName, rest string) {
 	p = tspath.NormalizePath(p)
 	l := RootLength(p)
+	if l == 0 {
+		return "", ""
+	}
 	rootName, rest = p[:l], p[l:]
 	rest = tspath.RemoveTrailingDirectorySeparator(rest)
 	return rootName, rest
@@ -37,6 +39,9 @@ func SplitPath(p string) (rootName, rest string) {
 
 func (vfs *Common) RootAndPath(path string) (fsys fs.FS, rootName string, rest string) {
 	rootName, rest = SplitPath(path)
+	if rootName == "" {
+		return nil, "", ""
+	}
 	if rest == "" {
 		rest = "."
 	}
