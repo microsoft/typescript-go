@@ -1,0 +1,80 @@
+//// [tests/cases/compiler/legacyDecoratorsObjectLiteralKeyNameAsClass.ts] ////
+
+=== legacyDecoratorsObjectLiteralKeyNameAsClass.ts ===
+// Repro from issue: class name used as object literal key should not be renamed to the alias
+
+const dec = (t: any) => t;
+>dec : (t: any) => any
+>(t: any) => t : (t: any) => any
+>t : any
+>t : any
+
+@dec
+>dec : (t: any) => any
+
+class SessionAuth {
+>SessionAuth : SessionAuth
+
+    static requirement() {
+>requirement : () => { SessionAuth: never[]; }
+
+        return { SessionAuth: [] };
+>{ SessionAuth: [] } : { SessionAuth: never[]; }
+>SessionAuth : never[]
+>[] : never[]
+    }
+}
+
+// Method shorthand name in object literal should not be renamed
+@dec
+>dec : (t: any) => any
+
+class Foo {
+>Foo : Foo
+
+    static methods() {
+>methods : () => { Foo(): number; }
+
+        return {
+>{            Foo() { return 1; }        } : { Foo(): number; }
+
+            Foo() { return 1; }
+>Foo : () => number
+>1 : 1
+
+        };
+    }
+}
+
+// Class field name should not be renamed
+@dec
+>dec : (t: any) => any
+
+class Bar {
+>Bar : Bar
+
+    Bar = 42;
+>Bar : number
+>42 : 42
+}
+
+// Self-reference in expression positions SHOULD still be renamed
+@dec
+>dec : (t: any) => any
+
+class SelfRef {
+>SelfRef : SelfRef
+
+    static instance = new SelfRef();
+>instance : SelfRef
+>new SelfRef() : SelfRef
+>SelfRef : typeof SelfRef
+
+    method() {
+>method : () => typeof SelfRef
+
+        return SelfRef;
+>SelfRef : typeof SelfRef
+    }
+}
+

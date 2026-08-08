@@ -1,6 +1,8 @@
 package tstransforms
 
 import (
+	"slices"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -38,6 +40,8 @@ func (tx *LegacyDecoratorsTransformer) visit(node *ast.Node) *ast.Node {
 		return tx.visitIdentifier(node.AsIdentifier())
 	case ast.KindPropertyAccessExpression:
 		return tx.visitPropertyAccessExpression(node.AsPropertyAccessExpression())
+	case ast.KindPropertyAssignment:
+		return tx.visitPropertyAssignment(node.AsPropertyAssignment())
 	case ast.KindDecorator:
 		// Decorators are elided. They will be emitted as part of `visitClassDeclaration`.
 		return nil
@@ -87,6 +91,23 @@ func (tx *LegacyDecoratorsTransformer) visitPropertyAccessExpression(node *ast.P
 	expression := tx.Visitor().VisitNode(node.Expression)
 	if expression != node.Expression {
 		return tx.Factory().UpdatePropertyAccessExpression(node, expression, node.QuestionDotToken, node.Name(), node.Flags)
+	}
+	return node.AsNode()
+}
+
+func (tx *LegacyDecoratorsTransformer) visitPropertyAssignment(node *ast.PropertyAssignment) *ast.Node {
+	// Visit the initializer but not the property key name, since the key name is not a value
+	// reference to the class. If the key is a computed property name, visit its expression.
+	name := node.Name()
+	var visitedName *ast.Node
+	if ast.IsComputedPropertyName(name) {
+		visitedName = tx.Visitor().VisitNode(name)
+	} else {
+		visitedName = name
+	}
+	initializer := tx.Visitor().VisitNode(node.Initializer)
+	if visitedName != name || initializer != node.Initializer {
+		return tx.Factory().UpdatePropertyAssignment(node, node.Modifiers(), visitedName, node.PostfixToken, node.Type, initializer)
 	}
 	return node.AsNode()
 }
@@ -152,16 +173,22 @@ func (tx *LegacyDecoratorsTransformer) visitParamerDeclaration(node *ast.Paramet
 // with decorators, a temporary value is stored for later use.
 func (tx *LegacyDecoratorsTransformer) visitPropertyNameOfClassElement(member *ast.Node) *ast.Node {
 	name := member.Name()
-	if ast.IsComputedPropertyName(name) && ast.HasDecorators(member) {
-		expression := tx.Visitor().VisitNode(name.AsComputedPropertyName().Expression)
-		innerExpression := ast.SkipPartiallyEmittedExpressions(expression)
-		if !transformers.IsSimpleInlineableExpression(innerExpression) {
-			generatedName := tx.Factory().NewGeneratedNameForNode(name)
-			tx.EmitContext().AddVariableDeclaration(generatedName)
-			return tx.Factory().UpdateComputedPropertyName(name.AsComputedPropertyName(), tx.Factory().NewAssignmentExpression(generatedName.AsNode(), expression))
+	if ast.IsComputedPropertyName(name) {
+		if ast.HasDecorators(member) {
+			expression := tx.Visitor().VisitNode(name.AsComputedPropertyName().Expression)
+			innerExpression := ast.SkipPartiallyEmittedExpressions(expression)
+			if !transformers.IsSimpleInlineableExpression(innerExpression) {
+				generatedName := tx.Factory().NewGeneratedNameForNode(name)
+				tx.EmitContext().AddVariableDeclaration(generatedName)
+				return tx.Factory().UpdateComputedPropertyName(name.AsComputedPropertyName(), tx.Factory().NewAssignmentExpression(generatedName.AsNode(), expression))
+			}
 		}
+		return tx.Visitor().VisitNode(name)
 	}
-	return tx.Visitor().VisitNode(name)
+	// For non-computed names, return the name as-is.
+	// Non-computed property names are declaration names, not value references to the class,
+	// so they must not be substituted with the class alias.
+	return name
 }
 
 func (tx *LegacyDecoratorsTransformer) visitPropertyDeclaration(node *ast.PropertyDeclaration) *ast.Node {
@@ -516,19 +543,48 @@ func (tx *LegacyDecoratorsTransformer) hasInternalStaticReference(node *ast.Clas
 		if ast.IsIdentifier(n) && tx.referenceResolver.GetReferencedValueDeclaration(tx.EmitContext().MostOriginal(n)) == classNode {
 			return true
 		}
-		// For PropertyAccessExpression, only check the expression, not the name.
-		// The .Name() is a property access name, not a value reference to the class.
-		if ast.IsPropertyAccessExpression(n) {
+		// For nodes with declaration name positions or property key positions, skip the name
+		// and only check expression/value children. This prevents declaration names and
+		// property keys from being mistakenly treated as constructor references to the class.
+		switch n.Kind {
+		case ast.KindPropertyAccessExpression:
+			// Only check the expression, not the property name.
 			return isOrContainsStaticSelfReference(n.Expression())
+		case ast.KindPropertyAssignment:
+			// Only check the initializer (and computed key expression), not the property key name.
+			pa := n.AsPropertyAssignment()
+			if ast.IsComputedPropertyName(pa.Name()) {
+				return isOrContainsStaticSelfReference(pa.Name().AsComputedPropertyName().Expression) ||
+					isOrContainsStaticSelfReference(pa.Initializer)
+			}
+			return isOrContainsStaticSelfReference(pa.Initializer)
+		case ast.KindPropertyDeclaration:
+			// Only check the initializer (and computed key expression), not the declaration name.
+			pd := n.AsPropertyDeclaration()
+			if ast.IsComputedPropertyName(pd.Name()) {
+				if isOrContainsStaticSelfReference(pd.Name().AsComputedPropertyName().Expression) {
+					return true
+				}
+			}
+			return pd.Initializer != nil && isOrContainsStaticSelfReference(pd.Initializer)
+		case ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor:
+			// Only check the computed key expression, parameters, and body, not the declaration name.
+			fn := n.FunctionLikeData()
+			if ast.IsComputedPropertyName(n.Name()) {
+				if isOrContainsStaticSelfReference(n.Name().AsComputedPropertyName().Expression) {
+					return true
+				}
+			}
+			if fn.Parameters != nil {
+				if slices.ContainsFunc(fn.Parameters.Nodes, isOrContainsStaticSelfReference) {
+					return true
+				}
+			}
+			return n.Body() != nil && isOrContainsStaticSelfReference(n.Body())
 		}
 		return n.ForEachChild(isOrContainsStaticSelfReference)
 	}
-	for _, member := range node.Members.Nodes {
-		if member.ForEachChild(isOrContainsStaticSelfReference) {
-			return true
-		}
-	}
-	return false
+	return slices.ContainsFunc(node.Members.Nodes, isOrContainsStaticSelfReference)
 }
 
 /**
