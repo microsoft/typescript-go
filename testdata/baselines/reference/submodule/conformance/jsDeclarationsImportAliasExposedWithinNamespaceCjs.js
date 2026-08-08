@@ -95,7 +95,6 @@ declare const testFnTypes: Record<string, any>;
 export declare namespace testFnTypes {
     export type input = boolean | myTypes.typeC;
 }
-/** @typedef {boolean|myTypes.typeC} testFnTypes.input */
 /**
  * @function testFn
  * @description A test function.

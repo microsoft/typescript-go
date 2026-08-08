@@ -68,8 +68,3 @@ export type HandlerOptions = {
      */
     name: string;
 };
-/**
- * @typedef {Object} HandlerOptions
- * @property {String} name
- * Should be able to export a type alias at the same time.
- */

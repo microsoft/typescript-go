@@ -7,11 +7,6 @@
 -declare namespace x {
 -    let a: number;
 -}
-+/**
-+ * @template T
-+ * @template {keyof T} K
-+ * @typedef {T[K]} Foo
-+ */
 +type Foo<T, K extends keyof T> = T[K];
 +declare const x: {
 +    a: number;

@@ -13,22 +13,13 @@
  }
 +export default Cls;
 +export type default = string | number;
-+/**
-+ * @typedef {string | number} default
-+ */
  //// [index2.d.ts]
  export default class C {
  }
 +export type default = string | number;
-+/**
-+ * @typedef {string | number} default
-+ */
  //// [index3.d.ts]
 -export type _default = string | number;
 +declare const x = 12;
  export { x as default };
 -declare const x: 12;
 +export type default = string | number;
-+/**
-+ * @typedef {string | number} default
-+ */

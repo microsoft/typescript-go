@@ -1,0 +1,19 @@
+//// [tests/cases/compiler/jsdocTypedefDeclarationComment.ts] ////
+
+=== main.js ===
+export const value = 0;
+>value : Symbol(value, Decl(main.js, 0, 12))
+
+/** Use `@typedef` when documenting types. */
+export const documented = 1;
+>documented : Symbol(documented, Decl(main.js, 3, 12))
+
+/** Comment on the `Inline` type @typedef {string} Inline */
+
+/**
+ * Comment on the `Foo` type
+ *
+ * @typedef {Object} Foo
+ * @property {boolean} bool Whether `.bool` is true or not
+ */
+

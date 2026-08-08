@@ -107,33 +107,17 @@ class LocalThing {
 //// [index.d.ts]
 export {};
 export type PropName = string | number | symbol;
+/**
+ * Callback
+ */
 export type NumberToStringCb = (a: number) => string;
 export type MixinName<T> = T & {
     name: string;
 };
-export type Identity<T> = (x: T) => T;
-/**
- * @typedef {string | number | symbol} PropName
- */
-/**
- * Callback
- *
- * @callback NumberToStringCb
- * @param {number} a
- * @returns {string}
- */
-/**
- * @template T
- * @typedef {T & {name: string}} MixinName
- */
 /**
  * Identity function
- *
- * @template T
- * @callback Identity
- * @param {T} x
- * @returns {T}
  */
+export type Identity<T> = (x: T) => T;
 //// [mixed.d.ts]
 declare const _exports: {
     doTheThing: typeof doTheThing;
@@ -143,9 +127,6 @@ export = _exports;
 export type SomeType = {
     x: string;
 } | number | LocalThing | ExportedThing;
-/**
- * @typedef {{x: string} | number | LocalThing | ExportedThing} SomeType
- */
 /**
  * @param {number} x
  * @returns {SomeType}

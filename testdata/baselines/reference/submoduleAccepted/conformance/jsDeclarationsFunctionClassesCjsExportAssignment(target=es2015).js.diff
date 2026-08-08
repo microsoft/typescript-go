@@ -12,30 +12,49 @@
 -    timeout: number;
 -}
  //// [context.d.ts]
--export = Context;
+ export = Context;
  /**
   * Imports
-  *
-@@= skipped -16, +8 lines =@@
-  * @typedef {import("./hook")} Hook
-  * @typedef {import("./hook").HookHandler} HookHandler
-  */
-+export = Context;
+- *
+- * @typedef {import("./timer")} Timer
+- * @typedef {import("./hook")} Hook
+- * @typedef {import("./hook").HookHandler} HookHandler
+- */
++ */
 +export type Timer = import("./timer");
++/**
++ * Imports
++ */
 +export type Hook = import("./hook");
++/**
++ * Imports
++ */
 +export type HookHandler = import("./hook").HookHandler;
+ /**
+  * Input type definition
+- *
+- * @typedef {Object} Input
+- * @prop {Timer} timer
+- * @prop {Hook} hook
+  */
 +export type Input = {
 +    timer: Timer;
 +    hook: Hook;
 +};
+ /**
+  * State type definition
+- *
+- * @typedef {Object} State
+- * @prop {Timer} timer
+- * @prop {Hook} hook
+  */
 +export type State = {
 +    timer: Timer;
 +    hook: Hook;
 +};
  /**
-  * Input type definition
+  * New `Context`
   *
-@@= skipped -20, +32 lines =@@
   * @class
   * @param {Input} input
   */
@@ -117,11 +136,11 @@
 -};
  //// [hook.d.ts]
  export = Hook;
+-/**
+- * @typedef {(arg: import("./context")) => void} HookHandler
+- */
 +export type HookHandler = (arg: import("./context")) => void;
  /**
-  * @typedef {(arg: import("./context")) => void} HookHandler
-  */
-@@= skipped -76, +21 lines =@@
   * @param {HookHandler} handle
   */
  declare function Hook(handle: HookHandler): void;

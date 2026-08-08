@@ -5,7 +5,6 @@
 
  //// [module.d.ts]
 -export type TaskGroupIds = "parseHTML" | "styleLayout";
-+/** @typedef {'parseHTML'|'styleLayout'} TaskGroupIds */
 +declare const _exports: {
 +    taskGroups: {
 +        parseHTML: {
@@ -46,6 +45,14 @@
 -};
  //// [index.d.ts]
  export = MainThreadTasks;
+-/** @typedef {import('./module.js').TaskGroup} TaskGroup */
+-/**
+- * @typedef TaskNode
+- * @prop {TaskNode[]} children
+- * @prop {TaskNode|undefined} parent
+- * @prop {TaskGroup} group
+- */
+-/** @typedef {{timers: Map<string, TaskNode>}} PriorTaskData */
 +export type TaskGroup = import('./module.js').TaskGroup;
 +export type TaskNode = {
 +    children: TaskNode[];
@@ -55,10 +62,10 @@
 +export type PriorTaskData = {
 +    timers: Map<string, TaskNode>;
 +};
- /** @typedef {import('./module.js').TaskGroup} TaskGroup */
- /**
-  * @typedef TaskNode
-@@= skipped -41, +47 lines =@@
+ declare class MainThreadTasks {
+     /**
+      * @param {TaskGroup} x
+@@= skipped -41, +38 lines =@@
       */
      constructor(x: TaskGroup, y: TaskNode);
  }

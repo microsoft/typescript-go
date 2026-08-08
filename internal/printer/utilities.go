@@ -857,6 +857,52 @@ func isJSDocLikeText(text string, comment ast.CommentRange) bool {
 		text[comment.Pos()+3] != '/'
 }
 
+func isConvertedJSDocDeclarationComment(text string, comment ast.CommentRange) bool {
+	if !isJSDocLikeText(text, comment) {
+		return false
+	}
+	commentText := text[comment.Pos():comment.End()]
+	inBackticks := false
+	inFencedCodeBlock := false
+	for i := 0; i < len(commentText); {
+		if commentText[i] == '`' {
+			end := i + 1
+			for end < len(commentText) && commentText[end] == '`' {
+				end++
+			}
+			if end-i >= 3 {
+				inFencedCodeBlock = !inFencedCodeBlock
+				inBackticks = false
+			} else if !inFencedCodeBlock && (end-i)%2 == 1 {
+				inBackticks = !inBackticks
+			}
+			i = end
+			continue
+		}
+		if commentText[i] == '@' && !inBackticks && !inFencedCodeBlock &&
+			(isJSDocTag(commentText[i+1:], "typedef") || isJSDocTag(commentText[i+1:], "callback")) {
+			return true
+		}
+		i++
+	}
+	return false
+}
+
+func isJSDocTag(text string, tag string) bool {
+	if !strings.HasPrefix(text, tag) {
+		return false
+	}
+	if len(text) == len(tag) {
+		return true
+	}
+	switch text[len(tag)] {
+	case ' ', '\t', '\n', '\r', '}', '*':
+		return true
+	default:
+		return false
+	}
+}
+
 func IsPinnedComment(text string, comment ast.CommentRange) bool {
 	return comment.Kind == ast.KindMultiLineCommentTrivia &&
 		comment.Len() > 5 &&

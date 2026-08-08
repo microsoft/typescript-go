@@ -1,9 +1,14 @@
 --- old.callbackTagVariadicType.js
 +++ new.callbackTagVariadicType.js
-@@= skipped -28, +28 lines =@@
-  * @param {...string} args
-  * @returns {number}
-  */
+@@= skipped -23, +23 lines =@@
+
+
+ //// [callbackTagVariadicType.d.ts]
+-/**
+- * @callback Foo
+- * @param {...string} args
+- * @returns {number}
+- */
 +export type Foo = (...args: string) => number;
  /** @type {Foo} */
 -export const x: Foo;

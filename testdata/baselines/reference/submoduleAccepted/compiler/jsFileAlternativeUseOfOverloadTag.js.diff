@@ -55,6 +55,25 @@
 -    export { constructor_1 as constructor };
 -}
 -declare namespace example3 {
+-    /**
+-     * @overload evaluate(options = {}, [callback])
+-     *   Evaluate something
+-     *   @note Something interesting
+-     *   @param options [map]
+-     *   @return [string] returns evaluation result
+-     *   @return [null] returns nothing if callback provided
+-     *   @callback callback function (error, result)
+-     *     If callback is provided it will be called with evaluation result
+-     *     @param error [Error]
+-     *     @param result [String]
+-     *   @see callback
+-     */
+-    function evaluate(): any;
+-}
+-/**
+- * function (error, result)
+- *     If callback is provided it will be called with evaluation result
+- */
 +    constructor: (value: any, options: any) => void;
 +};
 +declare const example2: {
@@ -78,21 +97,7 @@
 +     */
 +    constructor: () => void;
 +};
-+type callback = (error: any, result: any) => any;
+ type callback = (error: any, result: any) => any;
 +declare const example3: {
-     /**
-      * @overload evaluate(options = {}, [callback])
-      *   Evaluate something
-@@= skipped -63, +44 lines =@@
-      *     @param result [String]
-      *   @see callback
-      */
--    function evaluate(): any;
--}
--/**
-- * function (error, result)
-- *     If callback is provided it will be called with evaluation result
-- */
--type callback = (error: any, result: any) => any;
 +    evaluate: (options: any, callback: any) => void;
 +};

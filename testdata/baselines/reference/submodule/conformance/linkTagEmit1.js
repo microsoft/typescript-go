@@ -48,12 +48,6 @@ var see3 = true;
 
 
 //// [linkTagEmit1.d.ts]
-/** @typedef {number} N */
-/**
- * @typedef {Object} D1
- * @property {1} e Just link to {@link NS.R} this time
- * @property {1} m Wyatt Earp loved {@link N integers} I bet.
- */
 type N = number;
 type D1 = {
     /**
@@ -66,7 +60,6 @@ type D1 = {
     m: 1;
 };
 type Z = number;
-/** @typedef {number} Z @see N {@link N} */
 /**
  * @param {number} integer {@link Z}
  */
@@ -74,4 +67,3 @@ declare function computeCommonSourceDirectoryOfFilenames(integer: number): numbe
 /** {@link https://hvad} */
 declare var see3: boolean;
 type Attempt = number;
-/** @typedef {number} Attempt {@link https://wat} {@linkcode I think lingcod is better} {@linkplain or lutefisk}*/

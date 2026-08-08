@@ -20,15 +20,27 @@
 - * @returns {T[]}
 - */
 -declare function flatMap(): any;
+-/**
+- * @typedef Oops
+- * @template T
+- * @property {T} a
+- * @property {T} b
+- */
+-/**
+- * @callback Call
+- * @template T
+- * @param {T} x
+- * @returns {T}
+- */
 +type Oops = {
 +    a: T;
 +    b: T;
 +};
 +type Call = (x: T) => T;
  /**
-  * @typedef Oops
   * @template T
-@@= skipped -39, +28 lines =@@
+  * @type {Call<T>}
+@@= skipped -39, +16 lines =@@
          noooooo: string;
      };
  };

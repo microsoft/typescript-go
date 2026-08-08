@@ -67,9 +67,6 @@ module.exports = {
 
 
 //// [conn.d.ts]
-/**
- * @typedef {string | number} Whatever
- */
 export = Conn;
 export type Whatever = string | number;
 declare class Conn {
@@ -78,9 +75,6 @@ declare class Conn {
     method(): void;
 }
 //// [usage.d.ts]
-/**
- * @typedef {import("./conn")} Conn
- */
 declare const _exports: {
     Wrap: typeof Wrap;
 };

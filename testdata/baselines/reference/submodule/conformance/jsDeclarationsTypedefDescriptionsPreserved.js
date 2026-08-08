@@ -39,21 +39,8 @@
 //// [index.d.ts]
 /**
  * Options for Foo <------------
- * @typedef {Object} FooOptions
- * @property {boolean} bar - Marvin K Mooney
- * @property {string} baz - Sylvester McMonkey McBean
  */
 type FooOptions = {
-    /**
-     * - Marvin K Mooney
-     */
-    bar: boolean;
-    /**
-     * - Sylvester McMonkey McBean
-     */
-    baz: string;
-};
-type BarOptions = {
     /**
      * - Marvin K Mooney
      */
@@ -67,7 +54,14 @@ type BarOptions = {
  * Multiline
  * Options
  * for Foo <------------
- * @typedef {Object} BarOptions
- * @property {boolean} bar - Marvin K Mooney
- * @property {string} baz - Sylvester McMonkey McBean
  */
+type BarOptions = {
+    /**
+     * - Marvin K Mooney
+     */
+    bar: boolean;
+    /**
+     * - Sylvester McMonkey McBean
+     */
+    baz: string;
+};

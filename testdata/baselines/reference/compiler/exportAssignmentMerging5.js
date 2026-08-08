@@ -29,9 +29,6 @@ let v1 = { x: "test" };
 
 
 //// [a.d.ts]
-/**
- * @typedef {{x: string}} Foo
- */
 declare const _exports: {
     a: number;
     b: string;

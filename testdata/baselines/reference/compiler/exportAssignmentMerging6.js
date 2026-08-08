@@ -36,9 +36,6 @@ let v1 = { x: "test" };
 export type Foo = {
     x: string;
 };
-/**
- * @typedef {{x: string}} Foo
- */
 export declare const x = 1;
 //// [b.d.ts]
 export {};

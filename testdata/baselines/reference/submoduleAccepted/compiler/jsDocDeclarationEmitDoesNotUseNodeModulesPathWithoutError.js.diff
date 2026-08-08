@@ -1,9 +1,12 @@
 --- old.jsDocDeclarationEmitDoesNotUseNodeModulesPathWithoutError.js
 +++ new.jsDocDeclarationEmitDoesNotUseNodeModulesPathWithoutError.js
-@@= skipped -49, +49 lines =@@
- /**
-  * @typedef {import('@lion/ajax').LionRequestInit} LionRequestInit
-  */
+@@= skipped -46, +46 lines =@@
+
+
+ //// [index.d.ts]
+-/**
+- * @typedef {import('@lion/ajax').LionRequestInit} LionRequestInit
+- */
 -export class NewAjax {
 +export type LionRequestInit = import('@lion/ajax').LionRequestInit;
 +export declare class NewAjax {
