@@ -1,0 +1,19 @@
+//// [tests/cases/compiler/optionalChainingArrowFunctionCommentEs2018.ts] ////
+
+=== optionalChainingArrowFunctionCommentEs2018.ts ===
+const thing = { nested: { condition: true } };
+>thing : Symbol(thing, Decl(optionalChainingArrowFunctionCommentEs2018.ts, 0, 5))
+>nested : Symbol(nested, Decl(optionalChainingArrowFunctionCommentEs2018.ts, 0, 15))
+>condition : Symbol(condition, Decl(optionalChainingArrowFunctionCommentEs2018.ts, 0, 25))
+
+const wat = () =>
+>wat : Symbol(wat, Decl(optionalChainingArrowFunctionCommentEs2018.ts, 1, 5))
+
+    // explanatory comment
+    thing?.nested?.condition ? "pass" : "fail";
+>thing?.nested?.condition : Symbol(condition, Decl(optionalChainingArrowFunctionCommentEs2018.ts, 0, 25))
+>thing?.nested : Symbol(nested, Decl(optionalChainingArrowFunctionCommentEs2018.ts, 0, 15))
+>thing : Symbol(thing, Decl(optionalChainingArrowFunctionCommentEs2018.ts, 0, 5))
+>nested : Symbol(nested, Decl(optionalChainingArrowFunctionCommentEs2018.ts, 0, 15))
+>condition : Symbol(condition, Decl(optionalChainingArrowFunctionCommentEs2018.ts, 0, 25))
+
