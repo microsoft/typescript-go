@@ -1,0 +1,80 @@
+selfReferenceExactInstancesPreserveFiniteNesting.ts(50,5): error TS2322: Type 'Right.Outer' is not assignable to type 'Left.Outer'.
+  Types of property 'box' are incompatible.
+    Type 'Box<Right.L2>' is not assignable to type 'Box<Left.L2>'.
+      Type 'Right.L2' is not assignable to type 'Left.L2'.
+        Types of property 'box' are incompatible.
+          Type 'Box<Right.L3>' is not assignable to type 'Box<Left.L3>'.
+            Type 'Right.L3' is not assignable to type 'Left.L3'.
+              Types of property 'box' are incompatible.
+                Type 'Box<Right.Leaf>' is not assignable to type 'Box<Left.Leaf>'.
+                  Type 'Right.Leaf' is not assignable to type 'Left.Leaf'.
+                    Types of property 'id' are incompatible.
+                      Type 'number' is not assignable to type 'string'.
+
+
+==== selfReferenceExactInstancesPreserveFiniteNesting.ts (1 errors) ====
+    interface Box<T> {
+        left2(): Box<Left.L2>;
+        left3(): Box<Left.L3>;
+        leftLeaf(): Box<Left.Leaf>;
+        right2(): Box<Right.L2>;
+        right3(): Box<Right.L3>;
+        rightLeaf(): Box<Right.Leaf>;
+        value: T;
+    }
+    
+    namespace Left {
+        export interface Outer {
+            box: Box<L2>;
+        }
+        export interface L2 {
+            box: Box<L3>;
+        }
+        export interface L3 {
+            box: Box<Leaf>;
+        }
+        export interface Leaf {
+            id: string;
+        }
+    }
+    
+    namespace Right {
+        export interface Outer {
+            box: Box<L2>;
+        }
+        export interface L2 {
+            box: Box<L3>;
+        }
+        export interface L3 {
+            box: Box<Leaf>;
+        }
+        export interface Leaf {
+            id: number;
+        }
+    }
+    
+    declare const box: Box<unknown>;
+    box.left2();
+    box.left3();
+    box.leftLeaf();
+    box.right2();
+    box.right3();
+    box.rightLeaf();
+    
+    function test(left: Left.Outer, right: Right.Outer) {
+        left = right;
+        ~~~~
+!!! error TS2322: Type 'Right.Outer' is not assignable to type 'Left.Outer'.
+!!! error TS2322:   Types of property 'box' are incompatible.
+!!! error TS2322:     Type 'Box<Right.L2>' is not assignable to type 'Box<Left.L2>'.
+!!! error TS2322:       Type 'Right.L2' is not assignable to type 'Left.L2'.
+!!! error TS2322:         Types of property 'box' are incompatible.
+!!! error TS2322:           Type 'Box<Right.L3>' is not assignable to type 'Box<Left.L3>'.
+!!! error TS2322:             Type 'Right.L3' is not assignable to type 'Left.L3'.
+!!! error TS2322:               Types of property 'box' are incompatible.
+!!! error TS2322:                 Type 'Box<Right.Leaf>' is not assignable to type 'Box<Left.Leaf>'.
+!!! error TS2322:                   Type 'Right.Leaf' is not assignable to type 'Left.Leaf'.
+!!! error TS2322:                     Types of property 'id' are incompatible.
+!!! error TS2322:                       Type 'number' is not assignable to type 'string'.
+    }
+    

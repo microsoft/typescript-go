@@ -1,0 +1,67 @@
+selfReferencePreservesFiniteNesting.ts(37,5): error TS2322: Type 'Right.Outer' is not assignable to type 'Left.Outer'.
+  Types of property 'box' are incompatible.
+    Type 'RecursiveBox<Right.Inner>' is not assignable to type 'RecursiveBox<Left.Inner>'.
+      Type 'Right.Inner' is not assignable to type 'Left.Inner'.
+        Types of property 'box' are incompatible.
+          Type 'RecursiveBox<Right.Mid>' is not assignable to type 'RecursiveBox<Left.Mid>'.
+            Type 'Right.Mid' is not assignable to type 'Left.Mid'.
+              Types of property 'box' are incompatible.
+                Type 'RecursiveBox<Right.Leaf>' is not assignable to type 'RecursiveBox<Left.Leaf>'.
+                  Type 'Right.Leaf' is not assignable to type 'Left.Leaf'.
+                    Types of property 'id' are incompatible.
+                      Type 'number' is not assignable to type 'string'.
+
+
+==== selfReferencePreservesFiniteNesting.ts (1 errors) ====
+    interface RecursiveBox<T> {
+        aNext?: RecursiveBox<T>;
+        zValue: T;
+    }
+    
+    namespace Left {
+        export interface Outer {
+            box: RecursiveBox<Inner>;
+        }
+        export interface Inner {
+            box: RecursiveBox<Mid>;
+        }
+        export interface Mid {
+            box: RecursiveBox<Leaf>;
+        }
+        export interface Leaf {
+            id: string;
+        }
+    }
+    
+    namespace Right {
+        export interface Outer {
+            box: RecursiveBox<Inner>;
+        }
+        export interface Inner {
+            box: RecursiveBox<Mid>;
+        }
+        export interface Mid {
+            box: RecursiveBox<Leaf>;
+        }
+        export interface Leaf {
+            id: number;
+        }
+    }
+    
+    function test(left: Left.Outer, right: Right.Outer) {
+        left = right;
+        ~~~~
+!!! error TS2322: Type 'Right.Outer' is not assignable to type 'Left.Outer'.
+!!! error TS2322:   Types of property 'box' are incompatible.
+!!! error TS2322:     Type 'RecursiveBox<Right.Inner>' is not assignable to type 'RecursiveBox<Left.Inner>'.
+!!! error TS2322:       Type 'Right.Inner' is not assignable to type 'Left.Inner'.
+!!! error TS2322:         Types of property 'box' are incompatible.
+!!! error TS2322:           Type 'RecursiveBox<Right.Mid>' is not assignable to type 'RecursiveBox<Left.Mid>'.
+!!! error TS2322:             Type 'Right.Mid' is not assignable to type 'Left.Mid'.
+!!! error TS2322:               Types of property 'box' are incompatible.
+!!! error TS2322:                 Type 'RecursiveBox<Right.Leaf>' is not assignable to type 'RecursiveBox<Left.Leaf>'.
+!!! error TS2322:                   Type 'Right.Leaf' is not assignable to type 'Left.Leaf'.
+!!! error TS2322:                     Types of property 'id' are incompatible.
+!!! error TS2322:                       Type 'number' is not assignable to type 'string'.
+    }
+    
