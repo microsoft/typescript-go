@@ -1,0 +1,45 @@
+// === QuickInfo ===
+=== /test.ts ===
+// import { Runner } from "./runner";
+// const runner = Runner.make<string>();
+// runner.state;
+//        ^^^^^
+// | ----------------------------------------------------------------------
+// | ```typescript
+// | (property) Runner<string>.state: string
+// | ```
+// | 
+// | (verbosity level: 5)
+// | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 85,
+      "LSPosition": {
+        "line": 2,
+        "character": 12
+      },
+      "Name": "state",
+      "Data": {}
+    },
+    "item": {
+      "hover": {
+        "contents": {
+          "kind": "markdown",
+          "value": "```typescript\n(property) Runner<string>.state: string\n```\n"
+        },
+        "range": {
+          "start": {
+            "line": 2,
+            "character": 7
+          },
+          "end": {
+            "line": 2,
+            "character": 12
+          }
+        }
+      },
+      "verbosityLevel": 5
+    }
+  }
+]
