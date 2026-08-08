@@ -484,3 +484,8 @@ func (c *Checker) TypePredicateToTypePredicateNode(t *TypePredicate, enclosingDe
 	nodeBuilder := c.getNodeBuilderEx(idToSymbol)
 	return nodeBuilder.TypePredicateToTypePredicateNode(t, enclosingDeclaration, flags, nodebuilder.InternalFlagsNone, nil)
 }
+
+func (c *Checker) TypePredicateToTypePredicateNodeEx(t *TypePredicate, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) *ast.TypePredicateNodeNode {
+	nodeBuilder := c.getNodeBuilderEx(idToSymbol)
+	return nodeBuilder.TypePredicateToTypePredicateNode(t, enclosingDeclaration, flags, internalFlags, nil)
+}

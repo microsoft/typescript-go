@@ -41,6 +41,8 @@ type CodeAction struct {
 	Changes           []*lsproto.TextEdit
 	FixID             string
 	FixAllDescription string
+	Kind              lsproto.CodeActionKind
+	DisabledReason    string
 }
 
 // Compare defines a total ordering for CodeAction values, comparing description
@@ -72,6 +74,27 @@ var codeFixProviders = []*CodeFixProvider{
 	IsolatedDeclarationsFixProvider,
 	FixClassIncorrectlyImplementsInterfaceProvider,
 	// Add more code fix providers here as they are implemented
+}
+
+// RefactorActionFactory is a function that produces refactoring code actions.
+type RefactorActionFactory func(ctx context.Context, refactorContext *RefactorContext, refactorID string) ([]*CodeAction, error)
+
+// RefactorAction describes a single refactoring action offered by a RefactorProvider.
+type RefactorAction struct {
+	Title      string
+	ID         string
+	Kinds      []lsproto.CodeActionKind
+	GetActions RefactorActionFactory
+}
+
+// RefactorProvider represents a provider for refactoring code actions.
+type RefactorProvider struct {
+	RefactorActions []RefactorAction
+}
+
+// refactorProviders is the list of all registered refactoring providers.
+var refactorProviders = []*RefactorProvider{
+	InferReturnTypeProvider,
 }
 
 // ProvideCodeActions returns code actions for the given range and context
@@ -154,7 +177,98 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 		actions = append(actions, fixAllActions...)
 	}
 
+	// Refactoring actions (contextual, not diagnostic-driven)
+	if params.Context != nil && wantsRefactors(params.Context.Only) {
+		refactorContext := &RefactorContext{
+			SourceFile: file,
+			Range: core.NewTextRange(
+				int(l.converters.LineAndCharacterToPosition(file, params.Range.Start)),
+				int(l.converters.LineAndCharacterToPosition(file, params.Range.End)),
+			),
+			Program: program,
+			LS:      l,
+			Params:  params,
+		}
+
+		for _, provider := range refactorProviders {
+			for _, action := range provider.RefactorActions {
+				if !refactorActionMatchesOnly(action, params.Context.Only) {
+					continue
+				}
+
+				providerActions, err := action.GetActions(ctx, refactorContext, action.ID)
+				if err != nil {
+					return lsproto.CodeActionResponse{}, err
+				}
+
+				for _, a := range providerActions {
+					actions = append(actions, convertRefactorToLSPCodeAction(a, params.TextDocument.Uri))
+				}
+			}
+		}
+	}
+
 	return lsproto.CommandOrCodeActionArrayOrNull{CommandOrCodeActionArray: &actions}, nil
+}
+
+// wantsRefactors returns true if the Only filter is nil/empty (meaning all kinds are wanted)
+// or explicitly includes any refactor kind.
+func wantsRefactors(only *[]lsproto.CodeActionKind) bool {
+	if only == nil || len(*only) == 0 {
+		return true
+	}
+
+	for _, kind := range *only {
+		if kind == lsproto.CodeActionKindEmpty || codeActionKindContains(lsproto.CodeActionKindRefactor, kind) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// refactorActionMatchesOnly returns true if the action's Kinds match any of the requested Only kinds.
+// If Only is nil/empty, all actions match.
+func refactorActionMatchesOnly(action RefactorAction, only *[]lsproto.CodeActionKind) bool {
+	if only == nil || len(*only) == 0 {
+		return true
+	}
+
+	for _, requestedKind := range *only {
+		for _, actionKind := range action.Kinds {
+			if codeActionKindContains(requestedKind, actionKind) {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+// convertRefactorToLSPCodeAction converts an internal CodeAction to an LSP CodeAction for refactoring.
+func convertRefactorToLSPCodeAction(action *CodeAction, uri lsproto.DocumentUri) lsproto.CommandOrCodeAction {
+	kind := action.Kind
+	if kind == "" {
+		kind = lsproto.CodeActionKindRefactorRewrite
+	}
+
+	lspAction := &lsproto.CodeAction{
+		Title: action.Description,
+		Kind:  &kind,
+	}
+
+	if action.DisabledReason != "" {
+		lspAction.Disabled = &lsproto.CodeActionDisabled{Reason: action.DisabledReason}
+	} else {
+		changes := map[lsproto.DocumentUri][]*lsproto.TextEdit{
+			uri: action.Changes,
+		}
+		lspAction.Edit = &lsproto.WorkspaceEdit{Changes: &changes}
+	}
+
+	return lsproto.CommandOrCodeAction{
+		CodeAction: lspAction,
+	}
 }
 
 // getFixAllQuickFixes returns per-provider "Fix all in file" quickfix entries for providers
