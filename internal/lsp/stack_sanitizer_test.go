@@ -83,6 +83,31 @@ created by github.com/microsoft/typescript-go/internal/lsp.(*Server).dispatchLoo
 	})
 }
 
+// This test represents a stack trace captured via PanicWithStack from a cross-project
+// worker goroutine. The stack originates from the goroutine where the panic occurred
+// with recovery infrastructure frames (debug.Stack, deferred func, panic) already
+// stripped by NewPanicWithStack, leaving only the actual crash site frames.
+func TestSanitizedCrossProjectPanicStackTrace(t *testing.T) {
+	t.Parallel()
+
+	// This is the stack after NewPanicWithStack trims recovery overhead.
+	// It starts directly at the crash site without debug.Stack/panic frames.
+	input := `github.com/microsoft/typescript-go/internal/checker.(*Checker).checkExpression(0xc0045a8000, {0x10f6688, 0xc00c2871d0}, 0xc0001fe008, 0x0)
+	github.com/microsoft/typescript-go/internal/checker/checker.go:5000 +0x1a0
+github.com/microsoft/typescript-go/internal/ls.(*LanguageService).provideSymbolsAndEntries(0xc008329200, {0x10f6688, 0xc00c2871d0}, {0xc00b472030, 0x28}, {0x2, 0x4}, 0x0, 0x0)
+	github.com/microsoft/typescript-go/internal/ls/findallreferences.go:100 +0x200
+github.com/microsoft/typescript-go/internal/ls.handleCrossProject[...].func1()
+	github.com/microsoft/typescript-go/internal/ls/crossproject.go:105 +0x150
+github.com/microsoft/typescript-go/internal/core.(*WorkGroup).worker(0xc000120080)
+	github.com/microsoft/typescript-go/internal/core/workgroup.go:50 +0x80
+created by github.com/microsoft/typescript-go/internal/core.(*WorkGroup).Queue in goroutine 35
+	github.com/microsoft/typescript-go/internal/core/workgroup.go:35 +0x60`
+
+	baseline.Run(t, "crossProjectPanicStackTrace.md", sanitizedStackTraceBaselineContents(t, input, sanitizeStackTrace(input)), baseline.Options{
+		Subfolder: "lsp/stackSanitizer/",
+	})
+}
+
 func sanitizedStackTraceBaselineContents(t *testing.T, input string, output string) string {
 	builder := strings.Builder{}
 	builder.WriteString("Test name: `")
