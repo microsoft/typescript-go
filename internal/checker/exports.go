@@ -173,6 +173,10 @@ func (c *Checker) GetDeclaredTypeOfSymbol(symbol *ast.Symbol) *Type {
 	return c.getDeclaredTypeOfSymbol(symbol)
 }
 
+func (c *Checker) GetNonMissingTypeOfSymbol(symbol *ast.Symbol) *Type {
+	return c.getNonMissingTypeOfSymbol(symbol)
+}
+
 func (c *Checker) GetTypeOfSymbol(symbol *ast.Symbol) *Type {
 	return c.getTypeOfSymbol(symbol)
 }
