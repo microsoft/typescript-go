@@ -18,9 +18,9 @@ export enum StringEnum {
 }
 
 export const stringRecord = {
->stringRecord : { readonly a: StringEnum.A; readonly "not-an-identifier": StringEnum.B; }
->{    [StringEnum.A]: StringEnum.A,    [StringEnum.B]: StringEnum.B,} as const : { readonly a: StringEnum.A; readonly "not-an-identifier": StringEnum.B; }
->{    [StringEnum.A]: StringEnum.A,    [StringEnum.B]: StringEnum.B,} : { readonly a: StringEnum.A; readonly "not-an-identifier": StringEnum.B; }
+>stringRecord : { readonly [StringEnum.A]: StringEnum.A; readonly [StringEnum.B]: StringEnum.B; }
+>{    [StringEnum.A]: StringEnum.A,    [StringEnum.B]: StringEnum.B,} as const : { readonly [StringEnum.A]: StringEnum.A; readonly [StringEnum.B]: StringEnum.B; }
+>{    [StringEnum.A]: StringEnum.A,    [StringEnum.B]: StringEnum.B,} : { readonly [StringEnum.A]: StringEnum.A; readonly [StringEnum.B]: StringEnum.B; }
 
     [StringEnum.A]: StringEnum.A,
 >[StringEnum.A] : StringEnum.A
@@ -44,7 +44,7 @@ export const stringRecord = {
 
 export type StringKey = keyof typeof stringRecord;
 >StringKey : StringEnum.A | StringEnum.B
->stringRecord : { readonly a: StringEnum.A; readonly "not-an-identifier": StringEnum.B; }
+>stringRecord : { readonly [StringEnum.A]: StringEnum.A; readonly [StringEnum.B]: StringEnum.B; }
 
 export enum NumericEnum {
 >NumericEnum : NumericEnum
@@ -64,9 +64,9 @@ export enum NumericEnum {
 }
 
 export const numericRecord = {
->numericRecord : { readonly 0: NumericEnum.Zero; readonly [-1]: NumericEnum.Negative; }
->{    [NumericEnum.Zero]: NumericEnum.Zero,    [NumericEnum.Negative]: NumericEnum.Negative,} as const : { readonly 0: NumericEnum.Zero; readonly [-1]: NumericEnum.Negative; }
->{    [NumericEnum.Zero]: NumericEnum.Zero,    [NumericEnum.Negative]: NumericEnum.Negative,} : { readonly 0: NumericEnum.Zero; readonly [-1]: NumericEnum.Negative; }
+>numericRecord : { readonly [NumericEnum.Zero]: NumericEnum.Zero; readonly [NumericEnum.Negative]: NumericEnum.Negative; }
+>{    [NumericEnum.Zero]: NumericEnum.Zero,    [NumericEnum.Negative]: NumericEnum.Negative,} as const : { readonly [NumericEnum.Zero]: NumericEnum.Zero; readonly [NumericEnum.Negative]: NumericEnum.Negative; }
+>{    [NumericEnum.Zero]: NumericEnum.Zero,    [NumericEnum.Negative]: NumericEnum.Negative,} : { readonly [NumericEnum.Zero]: NumericEnum.Zero; readonly [NumericEnum.Negative]: NumericEnum.Negative; }
 
     [NumericEnum.Zero]: NumericEnum.Zero,
 >[NumericEnum.Zero] : NumericEnum.Zero
@@ -90,7 +90,7 @@ export const numericRecord = {
 
 export type NumericKey = keyof typeof numericRecord;
 >NumericKey : NumericEnum.Zero | NumericEnum.Negative
->numericRecord : { readonly 0: NumericEnum.Zero; readonly [-1]: NumericEnum.Negative; }
+>numericRecord : { readonly [NumericEnum.Zero]: NumericEnum.Zero; readonly [NumericEnum.Negative]: NumericEnum.Negative; }
 
 type Assignability<T extends StringEnum | NumericEnum> = T;
 >Assignability : T

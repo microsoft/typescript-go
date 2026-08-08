@@ -62,8 +62,8 @@ export declare enum StringEnum {
     Unused = "unused"
 }
 export declare const stringRecord: {
-    readonly a: StringEnum.A;
-    readonly "not-an-identifier": StringEnum.B;
+    readonly [StringEnum.A]: StringEnum.A;
+    readonly [StringEnum.B]: StringEnum.B;
 };
 export type StringKey = keyof typeof stringRecord;
 export declare enum NumericEnum {
@@ -72,51 +72,11 @@ export declare enum NumericEnum {
     Unused = 1
 }
 export declare const numericRecord: {
-    readonly 0: NumericEnum.Zero;
-    readonly [-1]: NumericEnum.Negative;
+    readonly [NumericEnum.Zero]: NumericEnum.Zero;
+    readonly [NumericEnum.Negative]: NumericEnum.Negative;
 };
 export type NumericKey = keyof typeof numericRecord;
 type Assignability<T extends StringEnum | NumericEnum> = T;
 export type StringDemo<T extends StringKey> = Assignability<T>;
 export type NumericDemo<T extends NumericKey> = Assignability<T>;
 export {};
-
-
-//// [DtsFileErrors]
-
-
-enumComputedPropertyDeclarationEmit.d.ts(22,61): error TS2344: Type 'T' does not satisfy the constraint 'NumericEnum | StringEnum'.
-  Type '"a" | "not-an-identifier"' is not assignable to type 'NumericEnum | StringEnum'.
-    Type '"a"' is not assignable to type 'NumericEnum | StringEnum'.
-
-
-==== enumComputedPropertyDeclarationEmit.d.ts (1 errors) ====
-    export declare enum StringEnum {
-        A = "a",
-        B = "not-an-identifier",
-        Unused = "unused"
-    }
-    export declare const stringRecord: {
-        readonly a: StringEnum.A;
-        readonly "not-an-identifier": StringEnum.B;
-    };
-    export type StringKey = keyof typeof stringRecord;
-    export declare enum NumericEnum {
-        Zero = 0,
-        Negative = -1,
-        Unused = 1
-    }
-    export declare const numericRecord: {
-        readonly 0: NumericEnum.Zero;
-        readonly [-1]: NumericEnum.Negative;
-    };
-    export type NumericKey = keyof typeof numericRecord;
-    type Assignability<T extends StringEnum | NumericEnum> = T;
-    export type StringDemo<T extends StringKey> = Assignability<T>;
-                                                                ~
-!!! error TS2344: Type 'T' does not satisfy the constraint 'NumericEnum | StringEnum'.
-!!! error TS2344:   Type '"a" | "not-an-identifier"' is not assignable to type 'NumericEnum | StringEnum'.
-!!! error TS2344:     Type '"a"' is not assignable to type 'NumericEnum | StringEnum'.
-    export type NumericDemo<T extends NumericKey> = Assignability<T>;
-    export {};
-    
