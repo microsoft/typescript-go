@@ -16,6 +16,8 @@ func main() {
 
 func runMain() int {
 	core.ApplyDebugStackLimit()
+	core.ApplyDefaultGOGC()
+
 	args := os.Args[1:]
 	if len(args) > 0 {
 		switch args[0] {

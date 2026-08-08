@@ -33,6 +33,14 @@ func ApplyDebugStackLimit() {
 	rtdebug.SetMaxStack(n)
 }
 
+func ApplyDefaultGOGC() {
+	v := os.Getenv("GOGC") //nolint:forbidigo
+	if v != "" {
+		return
+	}
+	rtdebug.SetGCPercent(50)
+}
+
 func Filter[T any](slice []T, f func(T) bool) []T {
 	for i, value := range slice {
 		if !f(value) {
