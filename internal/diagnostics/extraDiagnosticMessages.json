@@ -43,6 +43,10 @@
         "category": "Error",
         "code": 5090
     },
+    "A project reference path cannot be an empty string. Did you mean '.'?": {
+        "category": "Error",
+        "code": 18052
+    },
     "A JSDoc '@type' tag on a function must have a signature with the correct number of arguments.": {
         "category": "Error",
         "code": 8030

@@ -60,7 +60,7 @@ Output::
 [7m9[0m         { "path": "./utils", "circular": "yes" },
 [7m [0m [91m                                         ~~~~~[0m
 
-[96mtsconfig.json[0m:[93m10[0m:[93m19[0m - [91merror[0m[90m TS18051: [0mCompiler option 'reference.path' cannot be given an empty string.
+[96mtsconfig.json[0m:[93m10[0m:[93m19[0m - [91merror[0m[90m TS18052: [0mA project reference path cannot be an empty string. Did you mean '.'?
 
 [7m10[0m         { "path": "" },
 [7m  [0m [91m                  ~~[0m
