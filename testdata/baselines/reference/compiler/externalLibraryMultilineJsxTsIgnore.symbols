@@ -1,0 +1,96 @@
+//// [tests/cases/compiler/externalLibraryMultilineJsxTsIgnore.ts] ////
+
+=== /node_modules/pkg/exports.d.ts ===
+export { x, y } from "./src/ui";
+>x : Symbol(x, Decl(exports.d.ts, 0, 8))
+>y : Symbol(y, Decl(exports.d.ts, 0, 11))
+
+=== /node_modules/pkg/src/ui.tsx ===
+declare global {
+>global : Symbol(global, Decl(ui.tsx, 0, 0))
+
+    namespace JSX {
+>JSX : Symbol(JSX, Decl(ui.tsx, 0, 16))
+
+        interface Element {}
+>Element : Symbol(Element, Decl(ui.tsx, 1, 19))
+
+        interface IntrinsicAttributes {}
+>IntrinsicAttributes : Symbol(IntrinsicAttributes, Decl(ui.tsx, 2, 28))
+
+        interface ElementChildrenAttribute {
+>ElementChildrenAttribute : Symbol(ElementChildrenAttribute, Decl(ui.tsx, 3, 40))
+
+            children: {};
+>children : Symbol(ElementChildrenAttribute.children, Decl(ui.tsx, 4, 44))
+        }
+        interface IntrinsicElements {
+>IntrinsicElements : Symbol(IntrinsicElements, Decl(ui.tsx, 6, 9))
+
+            div: {};
+>div : Symbol(IntrinsicElements.div, Decl(ui.tsx, 7, 37))
+        }
+    }
+}
+
+declare const Component: (props: {}) => JSX.Element;
+>Component : Symbol(Component, Decl(ui.tsx, 13, 13))
+>props : Symbol(props, Decl(ui.tsx, 13, 26))
+>JSX : Symbol(JSX, Decl(ui.tsx, 0, 16))
+>Element : Symbol(JSX.Element, Decl(ui.tsx, 1, 19))
+
+export const x = (
+>x : Symbol(x, Decl(ui.tsx, 15, 12))
+
+    // @ts-ignore
+    <Component
+>Component : Symbol(Component, Decl(ui.tsx, 13, 13))
+
+        invalid=""
+>invalid : Symbol(invalid, Decl(ui.tsx, 17, 14))
+
+    >
+        <div />
+>div : Symbol(JSX.IntrinsicElements.div, Decl(ui.tsx, 7, 37))
+
+    </Component>
+>Component : Symbol(Component, Decl(ui.tsx, 13, 13))
+
+);
+
+export const y = (
+>y : Symbol(y, Decl(ui.tsx, 24, 12))
+
+    <div>
+>div : Symbol(JSX.IntrinsicElements.div, Decl(ui.tsx, 7, 37))
+
+        {/* @ts-ignore */}
+        <Component
+>Component : Symbol(Component, Decl(ui.tsx, 13, 13))
+
+            invalid=""
+>invalid : Symbol(invalid, Decl(ui.tsx, 27, 18))
+
+        >
+            <div />
+>div : Symbol(JSX.IntrinsicElements.div, Decl(ui.tsx, 7, 37))
+
+        </Component>
+>Component : Symbol(Component, Decl(ui.tsx, 13, 13))
+
+    </div>
+>div : Symbol(JSX.IntrinsicElements.div, Decl(ui.tsx, 7, 37))
+
+);
+
+=== /index.ts ===
+import { x, y } from "pkg";
+>x : Symbol(x, Decl(index.ts, 0, 8))
+>y : Symbol(y, Decl(index.ts, 0, 11))
+
+x;
+>x : Symbol(x, Decl(index.ts, 0, 8))
+
+y;
+>y : Symbol(y, Decl(index.ts, 0, 11))
+

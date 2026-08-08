@@ -1,0 +1,92 @@
+//// [tests/cases/compiler/externalLibraryMultilineJsxTsIgnore.ts] ////
+
+=== /node_modules/pkg/exports.d.ts ===
+export { x, y } from "./src/ui";
+>x : JSX.Element
+>y : JSX.Element
+
+=== /node_modules/pkg/src/ui.tsx ===
+declare global {
+>global : any
+
+    namespace JSX {
+        interface Element {}
+        interface IntrinsicAttributes {}
+        interface ElementChildrenAttribute {
+            children: {};
+>children : {}
+        }
+        interface IntrinsicElements {
+            div: {};
+>div : {}
+        }
+    }
+}
+
+declare const Component: (props: {}) => JSX.Element;
+>Component : (props: {}) => JSX.Element
+>props : {}
+>JSX : any
+
+export const x = (
+>x : JSX.Element
+>(    // @ts-ignore    <Component        invalid=""    >        <div />    </Component>) : JSX.Element
+
+    // @ts-ignore
+    <Component
+><Component        invalid=""    >        <div />    </Component> : JSX.Element
+>Component : (props: {}) => JSX.Element
+
+        invalid=""
+>invalid : string
+
+    >
+        <div />
+><div /> : JSX.Element
+>div : any
+
+    </Component>
+>Component : (props: {}) => JSX.Element
+
+);
+
+export const y = (
+>y : JSX.Element
+>(    <div>        {/* @ts-ignore */}        <Component            invalid=""        >            <div />        </Component>    </div>) : JSX.Element
+
+    <div>
+><div>        {/* @ts-ignore */}        <Component            invalid=""        >            <div />        </Component>    </div> : JSX.Element
+>div : any
+
+        {/* @ts-ignore */}
+        <Component
+><Component            invalid=""        >            <div />        </Component> : JSX.Element
+>Component : (props: {}) => JSX.Element
+
+            invalid=""
+>invalid : string
+
+        >
+            <div />
+><div /> : JSX.Element
+>div : any
+
+        </Component>
+>Component : (props: {}) => JSX.Element
+
+    </div>
+>div : any
+
+);
+
+=== /index.ts ===
+import { x, y } from "pkg";
+>x : JSX.Element
+>y : JSX.Element
+
+x;
+>x : JSX.Element
+
+y;
+>y : JSX.Element
+
