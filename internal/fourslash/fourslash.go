@@ -1980,6 +1980,270 @@ func (f *FourslashTest) getAllQuickFixActions(t *testing.T, errorCode ...int) []
 	return actions
 }
 
+func (f *FourslashTest) getRefactorActions(t *testing.T) []*lsproto.CodeAction {
+	t.Helper()
+	return f.getRefactorActionsWithOptions(t, nil, nil)
+}
+
+func (f *FourslashTest) getRefactorActionsWithTrigger(t *testing.T, triggerKind *lsproto.CodeActionTriggerKind) []*lsproto.CodeAction {
+	t.Helper()
+	return f.getRefactorActionsWithOptions(t, nil, triggerKind)
+}
+
+func (f *FourslashTest) getRefactorActionsWithOnly(t *testing.T, only *[]lsproto.CodeActionKind) []*lsproto.CodeAction {
+	t.Helper()
+	return f.getRefactorActionsWithOptions(t, only, nil)
+}
+
+func (f *FourslashTest) getRefactorActionsWithOptions(t *testing.T, only *[]lsproto.CodeActionKind, triggerKind *lsproto.CodeActionTriggerKind) []*lsproto.CodeAction {
+	t.Helper()
+
+	endPos := f.currentCaretPosition
+	if f.selectionEnd != nil {
+		endPos = *f.selectionEnd
+	}
+
+	params := &lsproto.CodeActionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Range: lsproto.Range{
+			Start: f.currentCaretPosition,
+			End:   endPos,
+		},
+		Context: &lsproto.CodeActionContext{
+			Diagnostics: []*lsproto.Diagnostic{},
+			Only:        only,
+			TriggerKind: triggerKind,
+		},
+	}
+
+	result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
+
+	var actions []*lsproto.CodeAction
+
+	if result.CommandOrCodeActionArray != nil {
+		for _, item := range *result.CommandOrCodeActionArray {
+			if item.CodeAction != nil && item.CodeAction.Kind != nil &&
+				isRefactoringKind(*item.CodeAction.Kind) && item.CodeAction.Disabled == nil {
+				actions = append(actions, item.CodeAction)
+			}
+		}
+	}
+
+	return actions
+}
+
+// VerifyRefactorOptions contains options for VerifyRefactor.
+type VerifyRefactorOptions struct {
+	TriggerKind    *lsproto.CodeActionTriggerKind
+	ApplyChanges   bool
+	Title          string
+	NewFileContent string
+}
+
+// VerifyRefactor verifies that a refactoring code action matching the given title is available,
+// and optionally verifies the file content after applying the edit.
+func (f *FourslashTest) VerifyRefactor(t *testing.T, options VerifyRefactorOptions) {
+	t.Helper()
+	actions := f.getRefactorActionsWithTrigger(t, options.TriggerKind)
+
+	var matchingAction *lsproto.CodeAction
+
+	for _, action := range actions {
+		if action.Title == options.Title {
+			matchingAction = action
+			break
+		}
+	}
+
+	if matchingAction == nil {
+		t.Fatalf("Expected refactoring %q to be available, but it was not. Got: %v", options.Title, actionTitles(actions))
+	}
+
+	if options.NewFileContent != "" {
+		actual := f.applyRefactorEdits(t, matchingAction, options.ApplyChanges)
+		assert.Equal(t, options.NewFileContent, actual, "File content after applying refactoring did not match expected content.")
+	}
+}
+
+func (f *FourslashTest) applyRefactorEdits(t *testing.T, action *lsproto.CodeAction, applyChanges bool) string {
+	t.Helper()
+	actual := f.getScriptInfo(f.activeFilename).content
+
+	if action.Edit == nil || action.Edit.Changes == nil {
+		return actual
+	}
+
+	expectedURI := lsconv.FileNameToDocumentURI(f.activeFilename)
+	for uri, edits := range *action.Edit.Changes {
+		if uri != expectedURI {
+			t.Fatalf("Refactoring returned edits for unexpected URI %q (expected %q)", uri, expectedURI)
+		}
+
+		if applyChanges {
+			f.applyTextEdits(t, edits)
+		} else {
+			actual = f.applyEditsToContent(actual, edits)
+		}
+	}
+
+	if applyChanges {
+		actual = f.getScriptInfo(f.activeFilename).content
+	}
+
+	return actual
+}
+
+// VerifyRefactorAvailable verifies that a refactoring code action with the given title is available.
+func (f *FourslashTest) VerifyRefactorAvailable(t *testing.T, title string) {
+	t.Helper()
+	f.VerifyRefactor(t, VerifyRefactorOptions{Title: title})
+}
+
+// VerifyRefactorAvailableForTriggerReason verifies that a refactoring code action
+// with the given title is available when requested with the given trigger reason.
+// "implicit" maps to the automatic trigger, "invoked" to the invoked trigger.
+func (f *FourslashTest) VerifyRefactorAvailableForTriggerReason(t *testing.T, triggerReason string, title string) {
+	t.Helper()
+	actions := f.getRefactorActionsWithTrigger(t, triggerKind(triggerReason))
+
+	for _, action := range actions {
+		if action.Title == title {
+			return
+		}
+	}
+
+	t.Fatalf("Expected refactoring %q to be available for trigger reason %q, but it was not. Got: %v", title, triggerReason, actionTitles(actions))
+}
+
+// VerifyRefactorNotAvailableForTriggerReason verifies that a refactoring code action
+// with the given title is not available when requested with the given trigger reason.
+func (f *FourslashTest) VerifyRefactorNotAvailableForTriggerReason(t *testing.T, triggerReason string, title string) {
+	t.Helper()
+	actions := f.getRefactorActionsWithTrigger(t, triggerKind(triggerReason))
+
+	for _, action := range actions {
+		if action.Title == title {
+			t.Fatalf("Expected refactoring %q to not be available for trigger reason %q, but it was", title, triggerReason)
+		}
+	}
+}
+
+func triggerKind(triggerReason string) *lsproto.CodeActionTriggerKind {
+	kind := lsproto.CodeActionTriggerKindInvoked
+	if triggerReason == "implicit" {
+		kind = lsproto.CodeActionTriggerKindAutomatic
+	}
+
+	return &kind
+}
+
+// VerifyRefactorNotAvailable verifies that a refactoring code action with the given title is NOT available.
+func (f *FourslashTest) VerifyRefactorNotAvailable(t *testing.T, title string) {
+	t.Helper()
+	actions := f.getRefactorActions(t)
+
+	for _, action := range actions {
+		if action.Title == title {
+			t.Fatalf("Expected refactoring %q to not be available, but it was", title)
+		}
+	}
+}
+
+// VerifyRefactorDisabled verifies that a refactoring code action with the given title IS returned
+// but with its Disabled field set (i.e. the action is not applicable).
+func (f *FourslashTest) VerifyRefactorDisabled(t *testing.T, title string) {
+	t.Helper()
+	actions := f.getRefactorActionsIncludingDisabled(t)
+
+	for _, action := range actions {
+		if action.Title == title {
+			if action.Disabled == nil {
+				t.Fatalf("Expected refactoring %q to be disabled, but it was enabled", title)
+			}
+
+			return
+		}
+	}
+
+	t.Fatalf("Expected refactoring %q to be present (disabled), but it was not found. Got: %v", title, actionTitles(actions))
+}
+
+func (f *FourslashTest) getRefactorActionsIncludingDisabled(t *testing.T) []*lsproto.CodeAction {
+	t.Helper()
+
+	params := &lsproto.CodeActionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Range: lsproto.Range{
+			Start: f.currentCaretPosition,
+			End:   f.currentCaretPosition,
+		},
+		Context: &lsproto.CodeActionContext{
+			Diagnostics: []*lsproto.Diagnostic{},
+		},
+	}
+
+	result := sendRequest(t, f, lsproto.TextDocumentCodeActionInfo, params)
+
+	var actions []*lsproto.CodeAction
+
+	if result.CommandOrCodeActionArray != nil {
+		for _, item := range *result.CommandOrCodeActionArray {
+			if item.CodeAction != nil && item.CodeAction.Kind != nil &&
+				isRefactoringKind(*item.CodeAction.Kind) {
+				actions = append(actions, item.CodeAction)
+			}
+		}
+	}
+
+	return actions
+}
+
+// VerifyRefactorWithOnlyAvailable verifies that a refactoring action with the given title IS available
+// when the given Only filter is sent in the request context.
+func (f *FourslashTest) VerifyRefactorWithOnlyAvailable(t *testing.T, title string, only []lsproto.CodeActionKind) {
+	t.Helper()
+	actions := f.getRefactorActionsWithOnly(t, &only)
+
+	for _, action := range actions {
+		if action.Title == title {
+			return
+		}
+	}
+
+	t.Fatalf("Expected refactoring %q to be available with Only=%v, but it was not (got: %v)", title, only, actionTitles(actions))
+}
+
+// VerifyRefactorWithOnlyNotAvailable verifies that a refactoring action with the given title is NOT available
+// when the given Only filter is sent in the request context.
+func (f *FourslashTest) VerifyRefactorWithOnlyNotAvailable(t *testing.T, title string, only []lsproto.CodeActionKind) {
+	t.Helper()
+	actions := f.getRefactorActionsWithOnly(t, &only)
+
+	for _, action := range actions {
+		if action.Title == title {
+			t.Fatalf("Expected refactoring %q to not be available with Only=%v, but it was", title, only)
+		}
+	}
+}
+
+func actionTitles(actions []*lsproto.CodeAction) []string {
+	titles := make([]string, len(actions))
+	for i, a := range actions {
+		titles[i] = a.Title
+	}
+	return titles
+}
+
+func isRefactoringKind(kind lsproto.CodeActionKind) bool {
+	return kind == lsproto.CodeActionKindRefactor ||
+		string(kind) == "refactor" ||
+		strings.HasPrefix(string(kind), string(lsproto.CodeActionKindRefactor)+".")
+}
+
 func (f *FourslashTest) updateTextRangeForTextEdits(textRange core.TextRange, edits []*lsproto.TextEdit) core.TextRange {
 	script := f.getScriptInfo(f.activeFilename)
 	spans := make([]textEditSpan, 0, len(edits))
@@ -2014,7 +2278,7 @@ func (f *FourslashTest) updateTextRangeForTextEdits(textRange core.TextRange, ed
 // applyEditsToContent applies text edits to a content string without mutating the file.
 func (f *FourslashTest) applyEditsToContent(content string, edits []*lsproto.TextEdit) string {
 	script := f.getScriptInfo(f.activeFilename)
-	slices.SortFunc(edits, func(a, b *lsproto.TextEdit) int {
+	slices.SortStableFunc(edits, func(a, b *lsproto.TextEdit) int {
 		aStart := f.converters.LineAndCharacterToPosition(script, a.Range.Start)
 		bStart := f.converters.LineAndCharacterToPosition(script, b.Range.Start)
 		return int(aStart) - int(bStart)

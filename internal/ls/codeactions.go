@@ -37,10 +37,14 @@ type CodeFixContext struct {
 
 // CodeAction represents a single code action fix
 type CodeAction struct {
+	Kind              lsproto.CodeActionKind
 	Description       string
 	Changes           []*lsproto.TextEdit
 	FixID             string
 	FixAllDescription string
+	RenameFilename    string
+	RenameLocation    int
+	DisabledReason    string
 }
 
 // Compare defines a total ordering for CodeAction values, comparing description
@@ -152,6 +156,10 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 			return lsproto.CodeActionResponse{}, err
 		}
 		actions = append(actions, fixAllActions...)
+	}
+
+	if err := l.provideRefactorActions(ctx, params, program, file, &actions); err != nil {
+		return lsproto.CodeActionResponse{}, err
 	}
 
 	return lsproto.CommandOrCodeActionArrayOrNull{CommandOrCodeActionArray: &actions}, nil

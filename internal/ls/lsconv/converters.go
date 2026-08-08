@@ -192,11 +192,13 @@ func (c *Converters) LineAndCharacterToPosition(script Script, lineAndCharacter 
 }
 
 func (c *Converters) PositionToLineAndCharacter(script Script, position core.TextPos) lsproto.Position {
+	return c.positionToLineAndCharacter(script.Text(), c.getLineMap(script.FileName()), position)
+}
+
+func (c *Converters) positionToLineAndCharacter(text string, lineMap *LSPLineMap, position core.TextPos) lsproto.Position {
 	// UTF-8 offset to UTF-8/16 0-indexed line and character
 
-	position = max(0, min(position, core.TextPos(len(script.Text()))))
-
-	lineMap := c.getLineMap(script.FileName())
+	position = max(0, min(position, core.TextPos(len(text))))
 
 	line, isLineStart := slices.BinarySearch(lineMap.LineStarts, position)
 	if !isLineStart {
@@ -213,7 +215,7 @@ func (c *Converters) PositionToLineAndCharacter(script Script, position core.Tex
 		character = position - start
 	} else {
 		// We need to rescan the text as UTF-16 to find the character offset.
-		for _, r := range script.Text()[start:position] {
+		for _, r := range text[start:position] {
 			character += core.TextPos(utf16.RuneLen(r))
 		}
 	}
@@ -222,6 +224,12 @@ func (c *Converters) PositionToLineAndCharacter(script Script, position core.Tex
 		Line:      uint32(line),
 		Character: uint32(character),
 	}
+}
+
+// PositionToLineAndCharacterForText converts an offset in the given text to an LSP position using this Converters' position encoding.
+// Unlike PositionToLineAndCharacter, it does not require the text to correspond to a file registered in the line map.
+func (c *Converters) PositionToLineAndCharacterForText(text string, position core.TextPos) lsproto.Position {
+	return c.positionToLineAndCharacter(text, ComputeLSPLineStarts(text), position)
 }
 
 type diagnosticOptions struct {

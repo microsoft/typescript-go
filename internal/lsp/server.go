@@ -1190,6 +1190,7 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 						lsproto.CodeActionKindSourceRemoveUnusedImports,
 						lsproto.CodeActionKindSourceSortImports,
 						lsproto.CodeActionKindSourceFixAll,
+						lsproto.CodeActionKindRefactor,
 					},
 				},
 			},
