@@ -75,9 +75,9 @@ func (c *Checker) getSymbolsInScope(location *ast.Node, meaning ast.SymbolFlags)
 				}
 				fallthrough
 			case ast.KindModuleDeclaration:
-				copyLocallyVisibleExportSymbols(c.getSymbolOfDeclaration(location).Exports, meaning&ast.SymbolFlagsModuleMember)
+				copyLocallyVisibleExportSymbols(c.getSymbolOfDeclaration(location).Exports(), meaning&ast.SymbolFlagsModuleMember)
 			case ast.KindEnumDeclaration:
-				copySymbols(c.getSymbolOfDeclaration(location).Exports, meaning&ast.SymbolFlagsEnumMember)
+				copySymbols(c.getSymbolOfDeclaration(location).Exports(), meaning&ast.SymbolFlagsEnumMember)
 			case ast.KindClassExpression:
 				className := location.AsClassExpression().Name()
 				if className != nil {
@@ -459,7 +459,7 @@ func (c *Checker) tryGetTarget(symbol *ast.Symbol) *ast.Symbol {
 }
 
 func (c *Checker) GetExportSymbolOfSymbol(symbol *ast.Symbol) *ast.Symbol {
-	return c.getMergedSymbol(core.IfElse(symbol.ExportSymbol != nil, symbol.ExportSymbol, symbol))
+	return c.getMergedSymbol(core.IfElse(symbol.ExportSymbol() != nil, symbol.ExportSymbol(), symbol))
 }
 
 func (c *Checker) GetExportSpecifierLocalTargetSymbol(node *ast.Node) *ast.Symbol {

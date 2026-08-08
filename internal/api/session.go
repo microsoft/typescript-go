@@ -164,8 +164,8 @@ func (sd *snapshotData) newSymbolResponse(symbol *ast.Symbol, canonicalProject P
 		resp.Parent = SymbolHandle(symbol.Parent)
 	}
 
-	if symbol.ExportSymbol != nil {
-		resp.ExportSymbol = SymbolHandle(symbol.ExportSymbol)
+	if symbol.ExportSymbol() != nil {
+		resp.ExportSymbol = SymbolHandle(symbol.ExportSymbol())
 	}
 
 	return resp
@@ -1616,18 +1616,18 @@ func (s *Session) handleGetParentOfSymbol(_ context.Context, params *GetSymbolPr
 
 func (s *Session) handleGetMembersOfSymbol(ctx context.Context, params *GetSymbolPropertyParams) ([]*SymbolResponse, error) {
 	return s.resolveSymbolTablePropertyOfSymbol(ctx, params, func(symbol *ast.Symbol) ast.SymbolTable {
-		return symbol.Members
+		return symbol.Members()
 	})
 }
 
 func (s *Session) handleGetExportsOfSymbol(ctx context.Context, params *GetSymbolPropertyParams) ([]*SymbolResponse, error) {
 	return s.resolveSymbolTablePropertyOfSymbol(ctx, params, func(symbol *ast.Symbol) ast.SymbolTable {
-		return symbol.Exports
+		return symbol.Exports()
 	})
 }
 
 func (s *Session) handleGetExportSymbolOfSymbol(_ context.Context, params *GetSymbolPropertyParams) (*SymbolResponse, error) {
-	return s.resolveSymbolPropertyOfSymbol(params, func(sym *ast.Symbol) *ast.Symbol { return sym.ExportSymbol })
+	return s.resolveSymbolPropertyOfSymbol(params, func(sym *ast.Symbol) *ast.Symbol { return sym.ExportSymbol() })
 }
 
 func (s *Session) handleGetSymbolOfType(_ context.Context, params *GetTypePropertyParams) (*SymbolResponse, error) {

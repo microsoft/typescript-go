@@ -260,10 +260,10 @@ func (c *Checker) getExternalModuleContainer(declaration *ast.Node) *ast.Symbol 
 
 func (c *Checker) getFileSymbolIfFileSymbolExportEqualsContainer(d *ast.Node, container *ast.Symbol) *ast.Symbol {
 	fileSymbol := c.getExternalModuleContainer(d)
-	if fileSymbol == nil || fileSymbol.Exports == nil {
+	if fileSymbol == nil || fileSymbol.Exports() == nil {
 		return nil
 	}
-	exported, ok := fileSymbol.Exports[ast.InternalSymbolNameExportEquals]
+	exported, ok := fileSymbol.Exports()[ast.InternalSymbolNameExportEquals]
 	if !ok || exported == nil {
 		return nil
 	}
@@ -346,8 +346,8 @@ func (c *Checker) getAliasForSymbolInContainer(container *ast.Symbol, symbol *as
 	}
 	// Check if container is a thing with an `export=` which points directly at `symbol`, and if so, return
 	// the container itself as the alias for the symbol
-	if container.Exports != nil {
-		exportEquals, ok := container.Exports[ast.InternalSymbolNameExportEquals]
+	if container.Exports() != nil {
+		exportEquals, ok := container.Exports()[ast.InternalSymbolNameExportEquals]
 		if ok && exportEquals != nil && c.getSymbolIfSameReference(exportEquals, symbol) != nil {
 			return container
 		}
@@ -551,8 +551,8 @@ func (c *Checker) trySymbolTable(
 	// Check for ExportSymbol by direct name lookup rather than discovering it during
 	// the alias iteration below (where it would never match, since only alias-flagged
 	// symbols are iterated).
-	if ok && res != nil && res.ExportSymbol != nil {
-		if c.isAccessible(ctx, c.getMergedSymbol(res.ExportSymbol) /*resolvedAliasSymbol*/, nil, ignoreQualification) {
+	if ok && res != nil && res.ExportSymbol() != nil {
+		if c.isAccessible(ctx, c.getMergedSymbol(res.ExportSymbol()) /*resolvedAliasSymbol*/, nil, ignoreQualification) {
 			candidateChains = append(candidateChains, []*ast.Symbol{ctx.symbol})
 		}
 	}
@@ -760,7 +760,7 @@ func (c *Checker) someSymbolTableInScope(
 				break
 			}
 			sym := c.getSymbolOfDeclaration(ast.GetReparsedNodeForNode(location))
-			if callback(sym.Exports, symbolTableIDFromExports(sym), false, true, location) {
+			if callback(sym.Exports(), symbolTableIDFromExports(sym), false, true, location) {
 				return true
 			}
 		case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration:
@@ -774,7 +774,7 @@ func (c *Checker) someSymbolTableInScope(
 			var table ast.SymbolTable
 			sym := c.getSymbolOfDeclaration(location)
 			// TODO: Should this filtered table be cached in some way?
-			for key, memberSymbol := range sym.Members {
+			for key, memberSymbol := range sym.Members() {
 				if memberSymbol.Flags&(ast.SymbolFlagsType & ^ast.SymbolFlagsAssignment) != 0 {
 					if table == nil {
 						table = make(ast.SymbolTable)

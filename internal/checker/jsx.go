@@ -284,7 +284,7 @@ func (c *Checker) discriminateContextualTypeByJSXAttributes(node *ast.Node, cont
 		if s.Name == jsxChildrenPropertyName && ast.IsJsxElement(element) && len(ast.GetSemanticJsxChildren(element.Children().Nodes)) != 0 {
 			return false
 		}
-		return node.Symbol().Members[s.Name] == nil && c.isDiscriminantProperty(contextualType, s.Name)
+		return node.Symbol().Members()[s.Name] == nil && c.isDiscriminantProperty(contextualType, s.Name)
 	})
 	discriminator := &ObjectLiteralDiscriminator{c: c, props: discriminantProperties, members: discriminantMembers}
 	discriminated := c.discriminateTypeByDiscriminableItems(contextualType, discriminator)
@@ -1051,7 +1051,7 @@ func (c *Checker) instantiateAliasOrInterfaceWithDefaults(managedSym *ast.Symbol
 
 func (c *Checker) getJsxLibraryManagedAttributes(jsxNamespace *ast.Symbol) *ast.Symbol {
 	if jsxNamespace != nil {
-		return c.getSymbol(jsxNamespace.Exports, JsxNames.LibraryManagedAttributes, ast.SymbolFlagsType)
+		return c.getSymbol(jsxNamespace.Exports(), JsxNames.LibraryManagedAttributes, ast.SymbolFlagsType)
 	}
 	return nil
 }
@@ -1059,7 +1059,7 @@ func (c *Checker) getJsxLibraryManagedAttributes(jsxNamespace *ast.Symbol) *ast.
 func (c *Checker) getJsxElementTypeSymbol(jsxNamespace *ast.Symbol) *ast.Symbol {
 	// JSX.ElementType [symbol]
 	if jsxNamespace != nil {
-		return c.getSymbol(jsxNamespace.Exports, JsxNames.ElementType, ast.SymbolFlagsType)
+		return c.getSymbol(jsxNamespace.Exports(), JsxNames.ElementType, ast.SymbolFlagsType)
 	}
 	return nil
 }
@@ -1093,7 +1093,7 @@ func (c *Checker) getJsxElementChildrenPropertyName(jsxNamespace *ast.Symbol) st
 func (c *Checker) getNameFromJsxElementAttributesContainer(nameOfAttribPropContainer string, jsxNamespace *ast.Symbol) string {
 	// JSX.ElementAttributesProperty | JSX.ElementChildrenAttribute [symbol]
 	if jsxNamespace != nil {
-		jsxElementAttribPropInterfaceSym := c.getSymbol(jsxNamespace.Exports, nameOfAttribPropContainer, ast.SymbolFlagsType)
+		jsxElementAttribPropInterfaceSym := c.getSymbol(jsxNamespace.Exports(), nameOfAttribPropContainer, ast.SymbolFlagsType)
 		if jsxElementAttribPropInterfaceSym != nil {
 			jsxElementAttribPropInterfaceType := c.getDeclaredTypeOfSymbol(jsxElementAttribPropInterfaceSym)
 			propertiesOfJsxElementAttribPropInterface := c.getPropertiesOfType(jsxElementAttribPropInterfaceType)

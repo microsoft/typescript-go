@@ -111,7 +111,7 @@ func (e *exportExtractor) extractFromFile(file *ast.SourceFile) []*Export {
 		moduleDeclarations := core.Filter(file.Statements.Nodes, ast.IsModuleWithStringLiteralName)
 		var exportCount int
 		for _, decl := range moduleDeclarations {
-			exportCount += len(decl.AsModuleDeclaration().Symbol.Exports)
+			exportCount += len(decl.AsModuleDeclaration().Symbol.Exports())
 		}
 		exports := make([]*Export, 0, exportCount)
 		for _, decl := range moduleDeclarations {
@@ -132,11 +132,11 @@ func (e *exportExtractor) extractFromModule(file *ast.SourceFile) []*Export {
 	})
 	var augmentationExportCount int
 	for _, decl := range moduleAugmentations {
-		augmentationExportCount += len(decl.Symbol.Exports)
+		augmentationExportCount += len(decl.Symbol.Exports())
 	}
 	moduleID := e.getModuleID(file)
-	exports := make([]*Export, 0, len(file.Symbol.Exports)+augmentationExportCount)
-	for name, symbol := range file.Symbol.Exports {
+	exports := make([]*Export, 0, len(file.Symbol.Exports())+augmentationExportCount)
+	for name, symbol := range file.Symbol.Exports() {
 		e.extractFromSymbol(name, symbol, moduleID, file.FileName(), file, &exports)
 	}
 	for _, decl := range moduleAugmentations {
@@ -159,7 +159,7 @@ func (e *exportExtractor) extractFromModule(file *ast.SourceFile) []*Export {
 }
 
 func (e *exportExtractor) extractFromModuleDeclaration(decl *ast.ModuleDeclaration, file *ast.SourceFile, moduleID ModuleID, moduleFileName string, exports *[]*Export) {
-	for name, symbol := range decl.Symbol.Exports {
+	for name, symbol := range decl.Symbol.Exports() {
 		e.extractFromSymbol(name, symbol, moduleID, moduleFileName, file, exports)
 	}
 }
@@ -174,7 +174,7 @@ func (e *symbolExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 		allExports := e.checker.GetExportsOfModule(symbol.Parent)
 		// allExports includes named exports from the file that will be processed separately;
 		// we want to add only the ones that come from the star
-		for name, namedExport := range symbol.Parent.Exports {
+		for name, namedExport := range symbol.Parent.Exports() {
 			if name != ast.InternalSymbolNameExportStar {
 				idx := slices.Index(allExports, namedExport)
 				if idx >= 0 || shouldIgnoreSymbol(namedExport) {
@@ -214,8 +214,8 @@ func (e *symbolExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 
 	if target != nil {
 		if syntax == ExportSyntaxEquals && target.Flags&ast.SymbolFlagsNamespace != 0 {
-			*exports = slices.Grow(*exports, len(target.Exports))
-			for innerName, namedExport := range target.Exports {
+			*exports = slices.Grow(*exports, len(target.Exports()))
+			for innerName, namedExport := range target.Exports() {
 				if innerName != ast.InternalSymbolNameExportStar {
 					export, _ := e.createExport(namedExport, moduleID, moduleFileName, syntax, file, checkerLease)
 					if export != nil {
@@ -234,7 +234,7 @@ func (e *symbolExtractor) extractFromSymbol(name string, symbol *ast.Symbol, mod
 			*exports = slices.Grow(*exports, len(expression.AsObjectLiteralExpression().Properties.Nodes))
 			for _, prop := range expression.AsObjectLiteralExpression().Properties.Nodes {
 				if ast.IsShorthandPropertyAssignment(prop) || ast.IsPropertyAssignment(prop) && prop.AsPropertyAssignment().Name().Kind == ast.KindIdentifier {
-					export, _ := e.createExport(expression.Symbol().Members[prop.Name().Text()], moduleID, moduleFileName, syntax, file, checkerLease)
+					export, _ := e.createExport(expression.Symbol().Members()[prop.Name().Text()], moduleID, moduleFileName, syntax, file, checkerLease)
 					if export != nil {
 						export.through = name
 						*exports = append(*exports, export)

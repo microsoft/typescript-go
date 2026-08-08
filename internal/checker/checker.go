@@ -965,7 +965,7 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.errorTypes = make(map[CacheHashKey]*Type)
 	c.moduleSymbols = make(map[*ast.Node]*ast.Symbol)
 	c.globalThisSymbol = c.newSymbolEx(ast.SymbolFlagsModule, "globalThis", ast.CheckFlagsReadonly)
-	c.globalThisSymbol.Exports = c.globals
+	c.globalThisSymbol.SetExports(c.globals)
 	c.globals[c.globalThisSymbol.Name] = c.globalThisSymbol
 	c.resolveName = c.createNameResolver().Resolve
 	c.resolveNameForSymbolSuggestion = c.createNameResolverForSuggestion().Resolve
@@ -1409,7 +1409,7 @@ func (c *Checker) mergeModuleAugmentation(moduleName *ast.Node) {
 		return
 	}
 	if ast.IsGlobalScopeAugmentation(moduleNode) {
-		c.mergeSymbolTable(c.globals, moduleAugmentation.Symbol.Exports, false /*unidirectional*/, nil /*parent*/)
+		c.mergeSymbolTable(c.globals, moduleAugmentation.Symbol.Exports(), false /*unidirectional*/, nil /*parent*/)
 	} else {
 		// find a module that about to be augmented
 		// do not validate names of augmentations that are defined in ambient context
@@ -1436,11 +1436,11 @@ func (c *Checker) mergeModuleAugmentation(moduleName *ast.Node) {
 				// moduleName will be a StringLiteral since this is not `declare global`.
 				ast.GetSymbolTable(&c.patternAmbientModuleAugmentations)[moduleName.Text()] = merged
 			} else {
-				if mainModule.Exports[ast.InternalSymbolNameExportStar] != nil && len(moduleAugmentation.Symbol.Exports) != 0 {
+				if mainModule.Exports()[ast.InternalSymbolNameExportStar] != nil && len(moduleAugmentation.Symbol.Exports()) != 0 {
 					// We may need to merge the module augmentation's exports into the target symbols of the resolved exports
 					resolvedExports := c.getResolvedMembersOrExportsOfSymbol(mainModule, MembersOrExportsResolutionKindResolvedExports)
-					for key, value := range moduleAugmentation.Symbol.Exports {
-						if resolvedExports[key] != nil && mainModule.Exports[key] == nil {
+					for key, value := range moduleAugmentation.Symbol.Exports() {
+						if resolvedExports[key] != nil && mainModule.Exports()[key] == nil {
 							c.mergeSymbol(resolvedExports[key], value, false /*unidirectional*/)
 						}
 					}
@@ -5699,7 +5699,7 @@ func (c *Checker) checkExternalModuleExports(node *ast.Node) {
 	moduleSymbol := c.getSymbolOfDeclaration(node)
 	links := c.moduleSymbolLinks.Get(moduleSymbol)
 	if !links.exportsChecked {
-		exportEqualsSymbol := moduleSymbol.Exports[ast.InternalSymbolNameExportEquals]
+		exportEqualsSymbol := moduleSymbol.Exports()[ast.InternalSymbolNameExportEquals]
 		// An export assignment is in error if (a) the module exports value members or (b) if the module exports type or
 		// namespace members and the exported entity also exports type or namespace members.
 		if exportEqualsSymbol != nil && (c.hasExportedMembersOfKind(moduleSymbol, ast.SymbolFlagsValue) || c.hasShadowedNamespace(exportEqualsSymbol)) {
@@ -5741,7 +5741,7 @@ func (c *Checker) checkExternalModuleExports(node *ast.Node) {
 }
 
 func (c *Checker) hasExportedMembersOfKind(moduleSymbol *ast.Symbol, kind ast.SymbolFlags) bool {
-	for _, symbol := range moduleSymbol.Exports {
+	for _, symbol := range moduleSymbol.Exports() {
 		if symbol.Name != ast.InternalSymbolNameExportEquals && c.getSymbolFlags(symbol)&kind != 0 {
 			return true
 		}
@@ -6582,8 +6582,8 @@ func (c *Checker) getIterationTypesOfMethod(t *Type, resolver *IterationTypesRes
 	if len(methodSignatures) == 1 && methodType.symbol != nil {
 		globalGeneratorType := resolver.getGlobalGeneratorType()
 		globalIteratorType := resolver.getGlobalIteratorType()
-		isGeneratorMethod := globalGeneratorType.symbol != nil && globalGeneratorType.symbol.Members[methodName] == methodType.symbol
-		isIteratorMethod := !isGeneratorMethod && globalIteratorType.symbol != nil && globalIteratorType.symbol.Members[methodName] == methodType.symbol
+		isGeneratorMethod := globalGeneratorType.symbol != nil && globalGeneratorType.symbol.Members()[methodName] == methodType.symbol
+		isIteratorMethod := !isGeneratorMethod && globalIteratorType.symbol != nil && globalIteratorType.symbol.Members()[methodName] == methodType.symbol
 		if isGeneratorMethod || isIteratorMethod {
 			typeParameters := core.IfElse(isGeneratorMethod, globalGeneratorType, globalIteratorType).AsInterfaceType().TypeParameters()
 			mapper := methodType.Mapper()
@@ -6750,7 +6750,7 @@ func (c *Checker) checkAliasSymbol(node *ast.Node) {
 	// Based on symbol.flags we can compute a set of excluded meanings (meaning that resolved alias should not have,
 	// otherwise it will conflict with some local declaration). Note that in addition to normal flags we include matching SymbolFlags.Export*
 	// in order to prevent collisions with declarations that were exported from the current module (they still contribute to local names).
-	symbol = c.getMergedSymbol(core.OrElse(symbol.ExportSymbol, symbol))
+	symbol = c.getMergedSymbol(core.OrElse(symbol.ExportSymbol(), symbol))
 	targetFlags := c.getSymbolFlags(target)
 	// A type-only import/export will already have a grammar error in a JS file, so no need to issue more errors within
 	if ast.IsInJSFile(node) && targetFlags&ast.SymbolFlagsValue == 0 && !ast.IsTypeOnlyImportOrExportDeclaration(node) {
@@ -6759,7 +6759,7 @@ func (c *Checker) checkAliasSymbol(node *ast.Node) {
 		if ast.IsExportSpecifier(node) {
 			diag := c.error(errorNode, diagnostics.Types_cannot_appear_in_export_declarations_in_JavaScript_files)
 			if sourceSymbol := ast.GetSourceFileOfNode(node).AsNode().Symbol(); sourceSymbol != nil {
-				if alreadyExportedSymbol := sourceSymbol.Exports[node.PropertyNameOrName().Text()]; alreadyExportedSymbol == target {
+				if alreadyExportedSymbol := sourceSymbol.Exports()[node.PropertyNameOrName().Text()]; alreadyExportedSymbol == target {
 					if exportingDeclaration := core.Find(alreadyExportedSymbol.Declarations, ast.IsJSTypeAliasDeclaration); exportingDeclaration != nil {
 						diag.AddRelatedInfo(NewDiagnosticForNode(exportingDeclaration, diagnostics.X_0_is_automatically_exported_here, alreadyExportedSymbol.Name))
 					}
@@ -6919,7 +6919,7 @@ func (c *Checker) checkExportsOnMergedDeclarations(node *ast.Node) {
 		// Local symbol is undefined => this declaration is non-exported.
 		// However, symbol might contain other declarations that are exported.
 		symbol = c.getSymbolOfDeclaration(node)
-		if symbol.ExportSymbol == nil {
+		if symbol.ExportSymbol() == nil {
 			// This is a pure local symbol (all declarations are non-exported) - no need to check anything.
 			return
 		}
@@ -7148,7 +7148,7 @@ func (c *Checker) checkUnusedLocalsAndParameters(node *ast.Node) {
 	for _, local := range node.Locals() {
 		referenceKinds := c.symbolReferenceLinks.Get(local).referenceKinds
 		if local.Flags&ast.SymbolFlagsTypeParameter != 0 && (local.Flags&ast.SymbolFlagsVariable == 0 || referenceKinds&ast.SymbolFlagsVariable != 0) ||
-			local.Flags&ast.SymbolFlagsTypeParameter == 0 && (referenceKinds != 0 || local.ExportSymbol != nil ||
+			local.Flags&ast.SymbolFlagsTypeParameter == 0 && (referenceKinds != 0 || local.ExportSymbol() != nil ||
 				local.Flags&ast.SymbolFlagsModuleExports != 0) {
 			continue
 		}
@@ -11340,7 +11340,7 @@ func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, l
 				return c.anyType
 			}
 			if leftType.symbol == c.globalThisSymbol {
-				globalSymbol := c.globalThisSymbol.Exports[right.Text()]
+				globalSymbol := c.globalThisSymbol.Exports()[right.Text()]
 				if globalSymbol != nil && globalSymbol.Flags&ast.SymbolFlagsBlockScoped != 0 {
 					c.error(right, diagnostics.Property_0_does_not_exist_on_type_1, right.Text(), c.TypeToString(leftType))
 				} else if c.noImplicitAny {
@@ -11480,11 +11480,11 @@ func (c *Checker) lookupSymbolForPrivateIdentifierDeclaration(propName string, l
 	for containingClass := getContainingClassExcludingClassDecorators(location); containingClass != nil; containingClass = ast.GetContainingClass(containingClass) {
 		symbol := containingClass.Symbol()
 		name := binder.GetSymbolNameForPrivateIdentifier(symbol, propName)
-		prop := symbol.Members[name]
+		prop := symbol.Members()[name]
 		if prop != nil {
 			return prop
 		}
-		prop = symbol.Exports[name]
+		prop = symbol.Exports()[name]
 		if prop != nil {
 			return prop
 		}
@@ -13148,8 +13148,8 @@ func (c *Checker) checkReferenceExpression(expr *ast.Node, invalidReferenceMessa
 
 func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type {
 	// Expando object literals have empty properties but filled exports
-	if len(node.Properties()) == 0 && node.Symbol() != nil && len(node.Symbol().Exports) != 0 {
-		result := c.newAnonymousType(node.Symbol(), node.Symbol().Exports, nil, nil, nil)
+	if len(node.Properties()) == 0 && node.Symbol() != nil && len(node.Symbol().Exports()) != 0 {
+		result := c.newAnonymousType(node.Symbol(), node.Symbol().Exports(), nil, nil, nil)
 		if ast.IsInJSFile(node) && !ast.IsInJsonFile(node) {
 			result.objectFlags |= ObjectFlagsJSLiteral
 		}
@@ -14181,11 +14181,11 @@ func (c *Checker) mergeSymbol(target *ast.Symbol, source *ast.Symbol, unidirecti
 			binder.SetValueDeclaration(target, source.ValueDeclaration)
 		}
 		target.Declarations = append(target.Declarations, source.Declarations...)
-		if source.Members != nil {
-			c.mergeSymbolTable(ast.GetSymbolTable(&target.Members), source.Members, unidirectional, nil)
+		if source.Members() != nil {
+			c.mergeSymbolTable(ast.GetMembers(target), source.Members(), unidirectional, nil)
 		}
-		if source.Exports != nil {
-			c.mergeSymbolTable(ast.GetSymbolTable(&target.Exports), source.Exports, unidirectional, target)
+		if source.Exports() != nil {
+			c.mergeSymbolTable(ast.GetExports(target), source.Exports(), unidirectional, target)
 		}
 		if !unidirectional {
 			c.recordMergedSymbol(target, source)
@@ -14351,8 +14351,8 @@ func (c *Checker) cloneSymbol(symbol *ast.Symbol) *ast.Symbol {
 	result.Declarations = symbol.Declarations[0:len(symbol.Declarations):len(symbol.Declarations)]
 	result.Parent = symbol.Parent
 	result.ValueDeclaration = symbol.ValueDeclaration
-	result.Members = maps.Clone(symbol.Members)
-	result.Exports = maps.Clone(symbol.Exports)
+	result.SetMembers(maps.Clone(symbol.Members()))
+	result.SetExports(maps.Clone(symbol.Exports()))
 	c.recordMergedSymbol(result, symbol)
 	return result
 }
@@ -14386,8 +14386,8 @@ func (c *Checker) getSymbolIfSameReference(s1 *ast.Symbol, s2 *ast.Symbol) *ast.
 }
 
 func (c *Checker) getExportSymbolOfValueSymbolIfExported(symbol *ast.Symbol) *ast.Symbol {
-	if symbol != nil && symbol.Flags&ast.SymbolFlagsExportValue != 0 && symbol.ExportSymbol != nil {
-		symbol = symbol.ExportSymbol
+	if symbol != nil && symbol.Flags&ast.SymbolFlagsExportValue != 0 && symbol.ExportSymbol() != nil {
+		symbol = symbol.ExportSymbol()
 	}
 	return c.getMergedSymbol(symbol)
 }
@@ -14594,13 +14594,13 @@ func (c *Checker) getTargetOfModuleDefault(moduleSymbol *ast.Symbol, node *ast.N
 }
 
 func (c *Checker) reportNonDefaultExport(moduleSymbol *ast.Symbol, node *ast.Node) {
-	if moduleSymbol.Exports != nil && moduleSymbol.Exports[node.Symbol().Name] != nil {
+	if moduleSymbol.Exports() != nil && moduleSymbol.Exports()[node.Symbol().Name] != nil {
 		c.error(node, diagnostics.Module_0_has_no_default_export_Did_you_mean_to_use_import_1_from_0_instead, c.symbolToString(moduleSymbol), c.symbolToString(node.Symbol()))
 	} else {
 		diagnostic := c.error(node.Name(), diagnostics.Module_0_has_no_default_export, c.symbolToString(moduleSymbol))
 		var exportStar *ast.Symbol
-		if moduleSymbol.Exports != nil {
-			exportStar = moduleSymbol.Exports[ast.InternalSymbolNameExportStar]
+		if moduleSymbol.Exports() != nil {
+			exportStar = moduleSymbol.Exports()[ast.InternalSymbolNameExportStar]
 		}
 		if exportStar != nil {
 			defaultExport := core.Find(exportStar.Declarations, func(decl *ast.Declaration) bool {
@@ -14608,7 +14608,7 @@ func (c *Checker) reportNonDefaultExport(moduleSymbol *ast.Symbol, node *ast.Nod
 					return false
 				}
 				resolvedExternalModuleName := c.resolveExternalModuleName(decl, decl.ModuleSpecifier(), false /*ignoreErrors*/)
-				return resolvedExternalModuleName != nil && resolvedExternalModuleName.Exports[ast.InternalSymbolNameDefault] != nil
+				return resolvedExternalModuleName != nil && resolvedExternalModuleName.Exports()[ast.InternalSymbolNameDefault] != nil
 			})
 			if defaultExport != nil {
 				diagnostic.AddRelatedInfo(createDiagnosticForNode(defaultExport, diagnostics.X_export_Asterisk_does_not_re_export_a_default))
@@ -14618,12 +14618,12 @@ func (c *Checker) reportNonDefaultExport(moduleSymbol *ast.Symbol, node *ast.Nod
 }
 
 func (c *Checker) resolveExportByName(moduleSymbol *ast.Symbol, name string, sourceNode *ast.Node, dontResolveAlias bool) *ast.Symbol {
-	exportValue := moduleSymbol.Exports[ast.InternalSymbolNameExportEquals]
+	exportValue := moduleSymbol.Exports()[ast.InternalSymbolNameExportEquals]
 	var exportSymbol *ast.Symbol
 	if exportValue != nil {
 		exportSymbol = c.getPropertyOfTypeEx(c.getTypeOfSymbol(exportValue), name, true /*skipObjectFunctionPropertyAugment*/, false /*includeTypeOnlyMembers*/)
 	} else {
-		exportSymbol = moduleSymbol.Exports[name]
+		exportSymbol = moduleSymbol.Exports()[name]
 	}
 	resolved := c.resolveSymbolEx(exportSymbol, dontResolveAlias)
 	c.markSymbolOfAliasDeclarationIfTypeOnly(sourceNode, nil)
@@ -14700,7 +14700,7 @@ func (c *Checker) getExternalModuleMember(node *ast.Node, specifier *ast.Node, d
 			}
 			var symbolFromVariable *ast.Symbol
 			// First check if module was specified with "export=". If so, get the member from the resolved type
-			if moduleSymbol != nil && moduleSymbol.Exports[ast.InternalSymbolNameExportEquals] != nil {
+			if moduleSymbol != nil && moduleSymbol.Exports()[ast.InternalSymbolNameExportEquals] != nil {
 				symbolFromVariable = c.getPropertyOfTypeEx(c.getTypeOfSymbol(targetSymbol), nameText, true /*skipObjectFunctionPropertyAugment*/, false /*includeTypeOnlyMembers*/)
 			} else {
 				symbolFromVariable = c.getPropertyOfVariable(targetSymbol, nameText)
@@ -14708,7 +14708,7 @@ func (c *Checker) getExternalModuleMember(node *ast.Node, specifier *ast.Node, d
 			// if symbolFromVariable is export - get its final target
 			symbolFromVariable = c.resolveSymbolEx(symbolFromVariable, dontResolveAlias)
 			exportContainer := targetSymbol
-			if moduleSymbol != nil && moduleSymbol.Exports[ast.InternalSymbolNameExportEquals] != nil {
+			if moduleSymbol != nil && moduleSymbol.Exports()[ast.InternalSymbolNameExportEquals] != nil {
 				// For `export =` modules, supplemental type/namespace exports live on the original module symbol.
 				exportContainer = moduleSymbol
 			}
@@ -14786,8 +14786,8 @@ func (c *Checker) combineValueAndTypeSymbols(valueSymbol *ast.Symbol, typeSymbol
 		result.Parent = typeSymbol.Parent
 	}
 	result.ValueDeclaration = valueSymbol.ValueDeclaration
-	result.Members = maps.Clone(typeSymbol.Members)
-	result.Exports = maps.Clone(valueSymbol.Exports)
+	result.SetMembers(maps.Clone(typeSymbol.Members()))
+	result.SetExports(maps.Clone(valueSymbol.Exports()))
 	return result
 }
 
@@ -14903,7 +14903,7 @@ func (c *Checker) errorNoModuleMemberSymbol(moduleSymbol *ast.Symbol, targetSymb
 			diagnostic.AddRelatedInfo(createDiagnosticForNode(suggestion.ValueDeclaration, diagnostics.X_0_is_declared_here, suggestionName))
 		}
 	} else {
-		if moduleSymbol.Exports[ast.InternalSymbolNameDefault] != nil {
+		if moduleSymbol.Exports()[ast.InternalSymbolNameDefault] != nil {
 			c.error(name, diagnostics.Module_0_has_no_exported_member_1_Did_you_mean_to_use_import_1_from_0_instead, moduleName, declarationName)
 		} else {
 			c.reportNonExportedMember(name, declarationName, moduleSymbol, moduleName)
@@ -14916,7 +14916,7 @@ func (c *Checker) reportNonExportedMember(name *ast.Node, declarationName string
 	if locals := moduleSymbol.ValueDeclaration.Locals(); locals != nil {
 		localSymbol = locals[name.Text()]
 	}
-	exports := moduleSymbol.Exports
+	exports := moduleSymbol.Exports()
 	if localSymbol != nil {
 		if exportedEqualsSymbol := exports[ast.InternalSymbolNameExportEquals]; exportedEqualsSymbol != nil {
 			if c.getSymbolIfSameReference(exportedEqualsSymbol, localSymbol) != nil {
@@ -15560,7 +15560,7 @@ func (c *Checker) GetAmbientModules() []*ast.Symbol {
 
 func (c *Checker) resolveExternalModuleSymbol(moduleSymbol *ast.Symbol, dontResolveAlias bool) *ast.Symbol {
 	if moduleSymbol != nil {
-		exportEquals := c.resolveSymbolEx(moduleSymbol.Exports[ast.InternalSymbolNameExportEquals], dontResolveAlias)
+		exportEquals := c.resolveSymbolEx(moduleSymbol.Exports()[ast.InternalSymbolNameExportEquals], dontResolveAlias)
 		if exportEquals != nil {
 			return c.getMergedSymbol(exportEquals)
 		}
@@ -15727,8 +15727,8 @@ func (c *Checker) cloneTypeAsModuleType(symbol *ast.Symbol, moduleType *Type, re
 	result := c.newSymbol(symbol.Flags, symbol.Name)
 	result.Declarations = slices.Clone(symbol.Declarations)
 	result.ValueDeclaration = symbol.ValueDeclaration
-	result.Members = maps.Clone(symbol.Members)
-	result.Exports = maps.Clone(symbol.Exports)
+	result.SetMembers(maps.Clone(symbol.Members()))
+	result.SetExports(maps.Clone(symbol.Exports()))
 	result.Parent = symbol.Parent
 	links := c.exportTypeLinks.Get(result)
 	links.target = symbol
@@ -15929,17 +15929,17 @@ func (c *Checker) getExportsOfSymbol(symbol *ast.Symbol) ast.SymbolTable {
 	if symbol.Flags&ast.SymbolFlagsModule != 0 {
 		return c.getExportsOfModule(symbol)
 	}
-	return symbol.Exports
+	return symbol.Exports()
 }
 
 func (c *Checker) getResolvedMembersOrExportsOfSymbol(symbol *ast.Symbol, resolutionKind MembersOrExportsResolutionKind) ast.SymbolTable {
 	links := c.membersAndExportsLinks.Get(symbol)
 	if links[resolutionKind] == nil {
 		isStatic := resolutionKind == MembersOrExportsResolutionKindResolvedExports
-		earlySymbols := symbol.Exports
+		earlySymbols := symbol.Exports()
 		switch {
 		case !isStatic:
-			earlySymbols = symbol.Members
+			earlySymbols = symbol.Members()
 		case symbol.Flags&ast.SymbolFlagsModule != 0:
 			earlySymbols, _ = c.getExportsOfModuleWorker(symbol)
 		}
@@ -15965,7 +15965,7 @@ func (c *Checker) getResolvedMembersOrExportsOfSymbol(symbol *ast.Symbol, resolu
 			}
 		}
 		if isStatic {
-			if assignmentSymbol := symbol.Exports[ast.InternalSymbolNameAssignmentDeclaration]; assignmentSymbol != nil {
+			if assignmentSymbol := symbol.Exports()[ast.InternalSymbolNameAssignmentDeclaration]; assignmentSymbol != nil {
 				for _, member := range assignmentSymbol.Declarations {
 					if c.hasLateBindableName(member) {
 						if lateSymbols == nil {
@@ -16130,7 +16130,7 @@ func (c *Checker) getMembersOfSymbol(symbol *ast.Symbol) ast.SymbolTable {
 	if symbol.Flags&ast.SymbolFlagsLateBindingContainer != 0 {
 		return c.getResolvedMembersOrExportsOfSymbol(symbol, MembersOrExportsResolutionKindResolvedMembers)
 	}
-	return symbol.Members
+	return symbol.Members()
 }
 
 func (c *Checker) getExportsOfModule(moduleSymbol *ast.Symbol) ast.SymbolTable {
@@ -16152,7 +16152,7 @@ type ExportCollisionTable = map[string]*ExportCollision
 
 func (c *Checker) getExportsOfModuleWorker(moduleSymbol *ast.Symbol) (exports ast.SymbolTable, typeOnlyExportStarMap map[string]*ast.Node) {
 	var visitedSymbols []*ast.Symbol
-	nonTypeOnlyNames := collections.NewSetWithSizeHint[string](len(moduleSymbol.Exports))
+	nonTypeOnlyNames := collections.NewSetWithSizeHint[string](len(moduleSymbol.Exports()))
 	// The ES6 spec permits export * declarations in a module to circularly reference the module itself. For example,
 	// module 'a' can 'export * from "b"' and 'b' can 'export * from "a"' without error.
 	var visit func(*ast.Symbol, *ast.Node, bool) ast.SymbolTable
@@ -16161,17 +16161,17 @@ func (c *Checker) getExportsOfModuleWorker(moduleSymbol *ast.Symbol) (exports as
 			// Add non-type-only names before checking if we've visited this module,
 			// because we might have visited it via an 'export type *', and visiting
 			// again with 'export *' will override the type-onlyness of its exports.
-			for name := range symbol.Exports {
+			for name := range symbol.Exports() {
 				nonTypeOnlyNames.Add(name)
 			}
 		}
-		if symbol == nil || symbol.Exports == nil || slices.Contains(visitedSymbols, symbol) {
+		if symbol == nil || symbol.Exports() == nil || slices.Contains(visitedSymbols, symbol) {
 			return nil
 		}
 		visitedSymbols = append(visitedSymbols, symbol)
-		symbols := maps.Clone(symbol.Exports)
+		symbols := maps.Clone(symbol.Exports())
 		// All export * declarations are collected in an __export symbol by the binder
-		exportStars := symbol.Exports[ast.InternalSymbolNameExportStar]
+		exportStars := symbol.Exports()[ast.InternalSymbolNameExportStar]
 		if exportStars != nil {
 			nestedSymbols := make(ast.SymbolTable)
 			lookupTable := make(ExportCollisionTable)
@@ -16203,7 +16203,7 @@ func (c *Checker) getExportsOfModuleWorker(moduleSymbol *ast.Symbol) (exports as
 	}
 	var originalModule *ast.Symbol
 	if moduleSymbol != nil {
-		if c.resolveSymbolEx(moduleSymbol.Exports[ast.InternalSymbolNameExportEquals], false /*dontResolveAlias*/) != nil {
+		if c.resolveSymbolEx(moduleSymbol.Exports()[ast.InternalSymbolNameExportEquals], false /*dontResolveAlias*/) != nil {
 			originalModule = moduleSymbol
 		}
 	}
@@ -16214,8 +16214,8 @@ func (c *Checker) getExportsOfModuleWorker(moduleSymbol *ast.Symbol) (exports as
 		exports = make(ast.SymbolTable)
 	}
 	// A CommonJS module defined by an 'export=' might also export typedefs, stored on the original module
-	if originalModule != nil && len(originalModule.Exports) > 1 {
-		for _, symbol := range originalModule.Exports {
+	if originalModule != nil && len(originalModule.Exports()) > 1 {
+		for _, symbol := range originalModule.Exports() {
 			if symbol.Name == ast.InternalSymbolNameExportEquals || symbol.Name == ast.InternalSymbolNameExportStar {
 				continue
 			}
@@ -16606,7 +16606,7 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 		if symbol.Name == "exports" {
 			return c.getTypeOfSymbol(c.resolveExternalModuleSymbol(symbol.ValueDeclaration.Symbol(), false /*dontResolveAlias*/))
 		}
-		return c.newAnonymousType(symbol, symbol.Members, nil, nil, nil)
+		return c.newAnonymousType(symbol, symbol.Members(), nil, nil, nil)
 	}
 	var result *Type
 	switch declaration.Kind {
@@ -20723,7 +20723,7 @@ func (c *Checker) resolveAnonymousTypeMembers(t *Type) {
 	// And likewise for construct signatures for classes
 	if symbol.Flags&ast.SymbolFlagsClass != 0 {
 		classType := c.getDeclaredTypeOfClassOrInterface(symbol)
-		constructSignatures := c.getSignaturesOfSymbol(symbol.Members[ast.InternalSymbolNameConstructor])
+		constructSignatures := c.getSignaturesOfSymbol(symbol.Members()[ast.InternalSymbolNameConstructor])
 		if len(constructSignatures) == 0 {
 			constructSignatures = c.getDefaultConstructSignatures(classType)
 		}
@@ -24065,7 +24065,7 @@ func (c *Checker) evaluateEntity(expr *ast.Node, location *ast.Node) evaluator.R
 			rootSymbol := c.resolveEntityName(root, ast.SymbolFlagsValue, true /*ignoreErrors*/, false, nil)
 			if rootSymbol != nil && rootSymbol.Flags&ast.SymbolFlagsEnum != 0 {
 				name := expr.AsElementAccessExpression().ArgumentExpression.Text()
-				member := rootSymbol.Exports[name]
+				member := rootSymbol.Exports()[name]
 				if member != nil {
 					if location != nil {
 						return c.evaluateEnumMember(expr, member, location)
@@ -24693,7 +24693,7 @@ func (c *Checker) getGlobalImportMetaExpressionType() *Type {
 		metaPropertySymbol.Parent = symbol
 		c.valueSymbolLinks.Get(metaPropertySymbol).resolvedType = importMetaType
 		members := createSymbolTable([]*ast.Symbol{metaPropertySymbol})
-		symbol.Members = members
+		symbol.SetMembers(members)
 		c.deferredGlobalImportMetaExpressionType = c.newAnonymousType(symbol, members, nil, nil, nil)
 	}
 	return c.deferredGlobalImportMetaExpressionType
@@ -27147,7 +27147,7 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 					return c.getUnionType(append(types, c.undefinedType))
 				}
 			}
-			if objectType.symbol == c.globalThisSymbol && hasPropName && c.globalThisSymbol.Exports[propName] != nil && c.globalThisSymbol.Exports[propName].Flags&ast.SymbolFlagsBlockScoped != 0 {
+			if objectType.symbol == c.globalThisSymbol && hasPropName && c.globalThisSymbol.Exports()[propName] != nil && c.globalThisSymbol.Exports()[propName].Flags&ast.SymbolFlagsBlockScoped != 0 {
 				c.error(accessExpression, diagnostics.Property_0_does_not_exist_on_type_1, propName, c.TypeToString(objectType))
 			} else if c.noImplicitAny && accessFlags&AccessFlagsSuppressNoImplicitAnyError == 0 {
 				if hasPropName && c.typeHasStaticProperty(propName, objectType) {
@@ -30778,7 +30778,7 @@ func (c *Checker) discriminateContextualTypeByObjectMembers(node *ast.Node, cont
 			return false
 		})
 		discriminantMembers := core.Filter(c.getPropertiesOfType(contextualType), func(s *ast.Symbol) bool {
-			return s.Flags&ast.SymbolFlagsOptional != 0 && node.Symbol().Members[s.Name] == nil && c.isDiscriminantProperty(contextualType, s.Name)
+			return s.Flags&ast.SymbolFlagsOptional != 0 && node.Symbol().Members()[s.Name] == nil && c.isDiscriminantProperty(contextualType, s.Name)
 		})
 		discriminator := &ObjectLiteralDiscriminator{c: c, props: discriminantProperties, members: discriminantMembers}
 		discriminated = c.discriminateTypeByDiscriminableItems(contextualType, discriminator)
