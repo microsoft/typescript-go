@@ -89,7 +89,7 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 			}
 
 			if isFixAllKind(kind) {
-				fixAllAction, err := l.createFixAllAction(ctx, program, file, params.TextDocument.Uri)
+				fixAllAction, err := l.createFixAllAction(ctx, program, file, params.TextDocument.Uri, kind)
 				if err != nil {
 					return lsproto.CodeActionResponse{}, err
 				}
@@ -239,7 +239,8 @@ func codeActionKindContains(requestedKind, actionKind lsproto.CodeActionKind) bo
 
 // isFixAllKind returns true if the requested kind matches source.fixAll
 func isFixAllKind(kind lsproto.CodeActionKind) bool {
-	return codeActionKindContains(kind, lsproto.CodeActionKindSourceFixAll)
+	return codeActionKindContains(kind, lsproto.CodeActionKindSourceFixAll) ||
+		kind == lsproto.CodeActionKindSourceFixAllTs
 }
 
 // wantsQuickFixes returns true if the Only filter is nil/empty (meaning all kinds are wanted)
@@ -263,8 +264,12 @@ func (l *LanguageService) createFixAllAction(
 	program *compiler.Program,
 	file *ast.SourceFile,
 	uri lsproto.DocumentUri,
+	requestedKind lsproto.CodeActionKind,
 ) (*lsproto.CommandOrCodeAction, error) {
 	kind := lsproto.CodeActionKindSourceFixAll
+	if requestedKind == lsproto.CodeActionKindSourceFixAllTs {
+		kind = requestedKind
+	}
 	lspChanges := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
 
 	for _, provider := range codeFixProviders {
@@ -303,7 +308,7 @@ func (l *LanguageService) createFixAllAction(
 // getOrganizeImportsActionTitle returns the appropriate title for the given organize imports kind
 func getOrganizeImportsActionTitle(ctx context.Context, kind lsproto.CodeActionKind) string {
 	loc := locale.FromContext(ctx)
-	switch kind {
+	switch getBaseOrganizeImportsKind(kind) {
 	case lsproto.CodeActionKindSourceRemoveUnusedImports:
 		return diagnostics.Remove_Unused_Imports.Localize(loc)
 	case lsproto.CodeActionKindSourceSortImports:
@@ -316,6 +321,13 @@ func getOrganizeImportsActionTitle(ctx context.Context, kind lsproto.CodeActionK
 // getOrganizeImportsActionsForKind returns the organize imports code action kinds that should be
 // returned for the given requested kind.
 func getOrganizeImportsActionsForKind(requestedKind lsproto.CodeActionKind) []lsproto.CodeActionKind {
+	switch requestedKind {
+	case lsproto.CodeActionKindSourceOrganizeImportsTs,
+		lsproto.CodeActionKindSourceRemoveUnusedImportsTs,
+		lsproto.CodeActionKindSourceSortImportsTs:
+		return []lsproto.CodeActionKind{requestedKind}
+	}
+
 	organizeImportsKinds := []lsproto.CodeActionKind{
 		lsproto.CodeActionKindSourceOrganizeImports,
 		lsproto.CodeActionKindSourceRemoveUnusedImports,
@@ -334,6 +346,19 @@ func getOrganizeImportsActionsForKind(requestedKind lsproto.CodeActionKind) []ls
 	}
 
 	return result
+}
+
+func getBaseOrganizeImportsKind(kind lsproto.CodeActionKind) lsproto.CodeActionKind {
+	switch kind {
+	case lsproto.CodeActionKindSourceOrganizeImportsTs:
+		return lsproto.CodeActionKindSourceOrganizeImports
+	case lsproto.CodeActionKindSourceRemoveUnusedImportsTs:
+		return lsproto.CodeActionKindSourceRemoveUnusedImports
+	case lsproto.CodeActionKindSourceSortImportsTs:
+		return lsproto.CodeActionKindSourceSortImports
+	default:
+		return kind
+	}
 }
 
 // createOrganizeImportsAction creates the organize imports code action

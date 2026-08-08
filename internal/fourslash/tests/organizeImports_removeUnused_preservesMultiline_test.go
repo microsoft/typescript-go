@@ -60,6 +60,31 @@ export { a, c };`,
 	)
 }
 
+func TestOrganizeImports_removeUnusedTsKind(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `import {
+    a,
+    b,
+    c,
+} from "module";
+
+export { a, c };`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyOrganizeImports(
+		t,
+		`import {
+    a,
+    c
+} from "module";
+
+export { a, c };`,
+		lsproto.CodeActionKindSourceRemoveUnusedImportsTs,
+		nil,
+	)
+}
+
 func TestOrganizeImports_removeUnusedUsesLanguageServiceFormatOptions(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")

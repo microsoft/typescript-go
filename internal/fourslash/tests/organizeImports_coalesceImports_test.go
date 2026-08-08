@@ -25,6 +25,23 @@ M; n; B; y; O;`,
 	)
 }
 
+func TestOrganizeImports_coalesceImportsTsKind(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `import x from "lib";
+import y from "lib";
+x; y;`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	f.VerifyOrganizeImports(
+		t,
+		`import { default as x, default as y } from "lib";
+x; y;`,
+		lsproto.CodeActionKindSourceOrganizeImportsTs,
+		&lsutil.UserPreferences{OrganizeImportsSort: lsutil.OrganizeImportsSortOrdinalIgnoreCase},
+	)
+}
+
 func TestOrganizeImports_coalesceImports_combineSideEffectOnly(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")

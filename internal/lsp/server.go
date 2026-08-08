@@ -1187,9 +1187,13 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 					CodeActionKinds: &[]lsproto.CodeActionKind{
 						lsproto.CodeActionKindQuickFix,
 						lsproto.CodeActionKindSourceOrganizeImports,
+						lsproto.CodeActionKindSourceOrganizeImportsTs,
 						lsproto.CodeActionKindSourceRemoveUnusedImports,
+						lsproto.CodeActionKindSourceRemoveUnusedImportsTs,
 						lsproto.CodeActionKindSourceSortImports,
+						lsproto.CodeActionKindSourceSortImportsTs,
 						lsproto.CodeActionKindSourceFixAll,
+						lsproto.CodeActionKindSourceFixAllTs,
 					},
 				},
 			},
