@@ -161,6 +161,7 @@ const (
 	MethodGetExportSpecifierLocalTarget     Method = "getExportSpecifierLocalTargetSymbol"
 	MethodGetAliasedSymbol                  Method = "getAliasedSymbol"
 	MethodGetImmediateAliasedSymbol         Method = "getImmediateAliasedSymbol"
+	MethodGetFullyQualifiedName             Method = "getFullyQualifiedName"
 	MethodGetExportsOfModule                Method = "getExportsOfModule"
 	MethodGetMemberInModuleExports          Method = "getMemberInModuleExports"
 	MethodGetJSDocTags                      Method = "getJsDocTags"
@@ -474,6 +475,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetExportSpecifierLocalTarget:     unmarshallerFor[CheckerNodeParams],
 	MethodGetAliasedSymbol:                  unmarshallerFor[CheckerSymbolParams],
 	MethodGetImmediateAliasedSymbol:         unmarshallerFor[CheckerSymbolParams],
+	MethodGetFullyQualifiedName:             unmarshallerFor[CheckerSymbolParams],
 	MethodGetExportsOfModule:                unmarshallerFor[CheckerSymbolParams],
 	MethodGetMemberInModuleExports:          unmarshallerFor[GetMemberInModuleExportsParams],
 	MethodGetJSDocTags:                      unmarshallerFor[CheckerSymbolParams],
