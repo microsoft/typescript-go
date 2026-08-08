@@ -266,6 +266,8 @@ var styleCheckDiagnostics = collections.NewSetFromItems(
 	diagnostics.Not_all_code_paths_return_a_value.Code(),
 )
 
+const diagnosticTagVsHiddenInEditor = lsproto.DiagnosticTag(2147483641)
+
 func diagnosticToLSP(ctx context.Context, converters *Converters, diagnostic *ast.Diagnostic, opts diagnosticOptions) *lsproto.Diagnostic {
 	locale := locale.FromContext(ctx)
 	var severity lsproto.DiagnosticSeverity
@@ -300,9 +302,12 @@ func diagnosticToLSP(ctx context.Context, converters *Converters, diagnostic *as
 
 	var tags []lsproto.DiagnosticTag
 	if len(opts.tagValueSet) > 0 && (diagnostic.ReportsUnnecessary() || diagnostic.ReportsDeprecated()) {
-		tags = make([]lsproto.DiagnosticTag, 0, 2)
+		tags = make([]lsproto.DiagnosticTag, 0, 3)
 		if diagnostic.ReportsUnnecessary() && slices.Contains(opts.tagValueSet, lsproto.DiagnosticTagUnnecessary) {
 			tags = append(tags, lsproto.DiagnosticTagUnnecessary)
+			if opts.visualStudio {
+				tags = append(tags, diagnosticTagVsHiddenInEditor)
+			}
 		}
 		if diagnostic.ReportsDeprecated() && slices.Contains(opts.tagValueSet, lsproto.DiagnosticTagDeprecated) {
 			tags = append(tags, lsproto.DiagnosticTagDeprecated)
