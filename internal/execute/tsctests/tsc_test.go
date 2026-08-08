@@ -124,6 +124,13 @@ func TestTscCommandline(t *testing.T) {
 			commandLineArgs: []string{"--strictPropertyInitialization", "--strictNullChecks", "false", "a.ts"},
 		},
 		{
+			subScenario: "non-object config root",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": `[]`,
+			},
+			commandLineArgs: []string{},
+		},
+		{
 			subScenario: "Project is empty string",
 			files: FileMap{
 				"/home/src/workspaces/project/first.ts": `export const a = 1`,
@@ -186,6 +193,14 @@ func TestTscCommandline(t *testing.T) {
 				"/home/src/workspaces/project/tsconfig.json": ``,
 			},
 			commandLineArgs: []string{"-p", "."},
+		},
+		{
+			subScenario: "compiler option at top level of tsconfig",
+			files: FileMap{
+				"/home/src/workspaces/project/index.ts":      "",
+				"/home/src/workspaces/project/tsconfig.json": `{ "strict": true }`,
+			},
+			commandLineArgs: []string{"--pretty", "false"},
 		},
 		{
 			subScenario:     "Parse enum type options",
@@ -4127,6 +4142,44 @@ func TestTscProjectReferences(t *testing.T) {
 					"references": [
 						{ "path": "../utils" },
 					],
+				}`),
+			},
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--p", "project"},
+		},
+		{
+			subScenario: "when project references have invalid fields",
+			files: FileMap{
+				"/home/src/workspaces/solution/project/index.ts": `export const x = 10;`,
+				"/home/src/workspaces/solution/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"noEmit": true
+					},
+					"files": ["index.ts"],
+					"references": [
+						{ "path": true },
+						{ "circular": true },
+						{ "path": "../utils", "circular": "yes" },
+						{ "path": "" },
+						{ "path": "../valid", "circular": true }
+					]
+				}`),
+				"/home/src/workspaces/solution/utils/index.ts":   "export const y = 10;",
+				"/home/src/workspaces/solution/utils/index.d.ts": "export declare const y = 10;",
+				"/home/src/workspaces/solution/utils/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true
+					}
+				}`),
+				"/home/src/workspaces/solution/valid/index.ts":   "export const z = 10;",
+				"/home/src/workspaces/solution/valid/index.d.ts": "export declare const z = 10;",
+				"/home/src/workspaces/solution/valid/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true
+					}
 				}`),
 			},
 			cwd:             "/home/src/workspaces/solution",

@@ -78,8 +78,9 @@ type DeclarationTransformer struct {
 	suppressNewDiagnosticContexts    bool
 	witnessedCjsExports              collections.Set[string]
 	lateStatementReplacementMap      map[ast.NodeId]*ast.Node
-	expandoHosts                     map[ast.NodeId]*ast.Node   // store the result of transforming expando hosts so they can be inserted later if the host is actually referenced
-	expandoMembers                   map[ast.NodeId][]*ast.Node // store any found expando _members_ after transforming them so *if* the host is referenced, they can be emitted alongside it
+	expandoHosts                     map[ast.NodeId]*ast.Node               // store the result of transforming expando hosts so they can be inserted later if the host is actually referenced
+	expandoMembers                   map[ast.NodeId][]*ast.Node             // store any found expando _members_ after transforming them so *if* the host is referenced, they can be emitted alongside it
+	deferredExpandoAssignments       map[ast.NodeId][]*ast.BinaryExpression // expando assignments whose host wasn't visible when collected, processed if the host is late-marked visible
 	seenProperties                   collections.Set[thisPropertyAssignmentKey]
 	thisPropertyAssignmentsCollected []*ast.Node
 	rawReferencedFiles               []ReferencedFilePair
@@ -293,6 +294,7 @@ func (tx *DeclarationTransformer) visitSourceFile(node *ast.SourceFile) *ast.Nod
 	tx.lateStatementReplacementMap = make(map[ast.NodeId]*ast.Node)
 	tx.expandoHosts = make(map[ast.NodeId]*ast.Node)
 	tx.expandoMembers = make(map[ast.NodeId][]*ast.Node)
+	tx.deferredExpandoAssignments = make(map[ast.NodeId][]*ast.BinaryExpression)
 	tx.rawReferencedFiles = make([]ReferencedFilePair, 0)
 	tx.rawTypeReferenceDirectives = make([]*ast.FileReference, 0)
 	tx.rawLibReferenceDirectives = make([]*ast.FileReference, 0)
@@ -547,12 +549,12 @@ func (tx *DeclarationTransformer) getTypeReferences() (result []*ast.FileReferen
 }
 
 func (tx *DeclarationTransformer) setupDiagnosticContext(input *ast.Node) (bool, func()) {
-	canProdiceDiagnostic := canProduceDiagnostics(input)
+	canProduceDiagnostic := canProduceDiagnostics(input)
 	oldWithinObjectLiteralType := tx.suppressNewDiagnosticContexts
 	shouldEnterSuppressNewDiagnosticsContextContext := (input.Kind == ast.KindTypeLiteral || input.Kind == ast.KindMappedType) && !(input.Parent.Kind == ast.KindTypeAliasDeclaration || input.Parent.Kind == ast.KindJSTypeAliasDeclaration)
 
 	oldDiag := tx.state.getSymbolAccessibilityDiagnostic
-	if canProdiceDiagnostic && !tx.suppressNewDiagnosticContexts {
+	if canProduceDiagnostic && !tx.suppressNewDiagnosticContexts {
 		tx.state.getSymbolAccessibilityDiagnostic = createGetSymbolAccessibilityDiagnosticForNode(input)
 	}
 	oldName := tx.state.errorNameNode
@@ -561,7 +563,7 @@ func (tx *DeclarationTransformer) setupDiagnosticContext(input *ast.Node) (bool,
 		tx.suppressNewDiagnosticContexts = true
 	}
 
-	return canProdiceDiagnostic, func() {
+	return canProduceDiagnostic, func() {
 		tx.state.getSymbolAccessibilityDiagnostic = oldDiag
 		tx.state.errorNameNode = oldName
 		tx.suppressNewDiagnosticContexts = oldWithinObjectLiteralType
@@ -614,7 +616,7 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 		tx.enclosingDeclaration = input
 	}
 
-	canProdiceDiagnostic, cleanupDiagnosticContext := tx.setupDiagnosticContext(input)
+	canProduceDiagnostic, cleanupDiagnosticContext := tx.setupDiagnosticContext(input)
 	defer cleanupDiagnosticContext()
 
 	var result *ast.Node
@@ -690,7 +692,7 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 		result = tx.Visitor().VisitEachChild(input)
 	}
 
-	if result != nil && canProdiceDiagnostic && ast.HasDynamicName(input) {
+	if result != nil && canProduceDiagnostic && ast.HasDynamicName(input) {
 		tx.checkName(input)
 	}
 
@@ -834,18 +836,34 @@ func (tx *DeclarationTransformer) transformVariableDeclaration(input *ast.Variab
 	if tx.state.currentSourceFile.CommonJSModuleIndicator != nil && ast.IsVariableDeclarationInitializedToRequire(input.AsNode()) {
 		return tx.transformCjsRequireVariableDeclaration(input)
 	}
-	if ast.IsBindingPattern(input.Name()) {
+	if ast.IsBindingPattern(input.Name()) && hasAnyBindingInitializers(input.Name().AsBindingPattern()) {
 		return tx.recreateBindingPattern(input.Name().AsBindingPattern())
 	}
 	// Variable declaration types also suppress new diagnostic contexts, provided the contexts wouldn't be made for binding pattern types
 	tx.suppressNewDiagnosticContexts = true
 	return tx.Factory().UpdateVariableDeclaration(
 		input,
-		input.Name(),
+		tx.bindingNameVisitor.VisitNode(input.Name()),
 		nil,
 		tx.ensureType(input.AsNode(), false),
 		tx.ensureNoInitializer(input.AsNode()),
 	)
+}
+
+func hasAnyBindingInitializers(bindingPattern *ast.BindingPattern) bool {
+	for _, elem := range bindingPattern.Elements.Nodes {
+		if !ast.IsBindingElement(elem) {
+			continue
+		}
+		e := elem.AsBindingElement()
+		if e.Initializer != nil {
+			return true
+		}
+		if e.Name() != nil && ast.IsBindingPattern(e.Name()) && hasAnyBindingInitializers(e.Name().AsBindingPattern()) {
+			return true
+		}
+	}
+	return false
 }
 
 func (tx *DeclarationTransformer) transformCjsRequireVariableDeclaration(input *ast.VariableDeclaration) *ast.Node {
@@ -1220,7 +1238,8 @@ func (tx *DeclarationTransformer) transformExportAssignment(input *ast.Node, ass
 		if tx.needsDeclare {
 			mods = append(mods, tx.Factory().NewModifier(ast.KindDeclareKeyword))
 		}
-		funcDecl := tx.transformFunctionLikeToDeclaration(unwrapped, newId, tx.Factory().NewModifierList(mods))
+		fullSignatureType := assignment.Type()
+		funcDecl := tx.transformFunctionLikeToDeclaration(unwrapped, newId, tx.Factory().NewModifierList(mods), fullSignatureType)
 		tx.preserveJsDoc(funcDecl, input)
 		// Reuse the same name node for the export so unique names resolve consistently
 		exportAssignment := tx.Factory().NewExportAssignment(nil, isExportEquals, nil, newId)
@@ -1259,18 +1278,30 @@ func (tx *DeclarationTransformer) transformExportAssignment(input *ast.Node, ass
 	return tx.Factory().NewSyntaxList([]*ast.Node{statement, exportAssignment})
 }
 
-func (tx *DeclarationTransformer) transformFunctionLikeToDeclaration(unwrapped *ast.Node, funcName *ast.Node, mods *ast.ModifierList) *ast.Node {
+func (tx *DeclarationTransformer) transformFunctionLikeToDeclaration(unwrapped *ast.Node, funcName *ast.Node, mods *ast.ModifierList, fullSignatureType *ast.Node) *ast.Node {
 	d := unwrapped.FunctionLikeData()
-	return tx.Factory().NewFunctionDeclaration(
-		mods,
-		nil,
-		funcName,
-		tx.ensureTypeParams(unwrapped, d.TypeParameters),
-		tx.updateParamList(unwrapped, d.Parameters),
-		tx.ensureType(unwrapped, false),
-		tx.Visitor().VisitNode(d.FullSignature),
-		nil,
-	)
+	sig := d.FullSignature
+	if sig == nil {
+		sig = fullSignatureType
+	}
+	if sig == nil {
+		return tx.Factory().NewFunctionDeclaration(
+			mods,
+			nil,
+			funcName,
+			tx.ensureTypeParams(unwrapped, d.TypeParameters),
+			tx.updateParamList(unwrapped, d.Parameters),
+			tx.ensureType(unwrapped, false),
+			tx.Visitor().VisitNode(sig),
+			nil,
+		)
+	} else {
+		// If a full signature type node is present, emit as a variable statement to reuse it
+		return tx.Factory().NewVariableStatement(
+			mods,
+			tx.Factory().NewVariableDeclarationList(tx.Factory().NewNodeList([]*ast.Node{tx.Factory().NewVariableDeclaration(funcName, nil, tx.Visitor().VisitNode(sig), nil)}), ast.NodeFlagsConst),
+		)
+	}
 }
 
 func (tx *DeclarationTransformer) transformBinaryExpressionToExportDeclaration(input *ast.Node, name *ast.Node) *ast.Node {
@@ -1702,7 +1733,9 @@ func (tx *DeclarationTransformer) transformTopLevelDeclaration(input *ast.Node) 
 	}
 	original := tx.EmitContext().MostOriginal(input)
 	id := ast.GetNodeId(original)
-	if _, ok := tx.expandoHosts[id]; ok {
+	_, isExpandoHost := tx.expandoHosts[id]
+	_, hasDeferredExpandoAssignments := tx.deferredExpandoAssignments[id]
+	if isExpandoHost || hasDeferredExpandoAssignments {
 		return tx.createFullExpandoBlock(id)
 	}
 
@@ -1711,10 +1744,10 @@ func (tx *DeclarationTransformer) transformTopLevelDeclaration(input *ast.Node) 
 		tx.enclosingDeclaration = input
 	}
 
-	canProdiceDiagnostic := canProduceDiagnostics(input)
+	canProduceDiagnostic := canProduceDiagnostics(input)
 	oldDiag := tx.state.getSymbolAccessibilityDiagnostic
 	oldName := tx.state.errorNameNode
-	if canProdiceDiagnostic {
+	if canProduceDiagnostic {
 		tx.state.getSymbolAccessibilityDiagnostic = createGetSymbolAccessibilityDiagnosticForNode(input)
 	}
 	saveNeedsDeclare := tx.needsDeclare
@@ -2728,7 +2761,13 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 		return
 	}
 
+	hostId := tx.getExpandoHostId(declaration)
+
 	if ast.IsDeclaration(declaration) && isDeclarationAndNotVisible(tx.EmitContext(), tx.resolver, declaration) {
+		// The host isn't visible (yet) - printing the type of a visible declaration may still
+		// late-mark it as visible (e.g. an exported variable whose type prints as `typeof host`),
+		// so defer the assignment to be processed if and when that happens.
+		tx.deferredExpandoAssignments[hostId] = append(tx.deferredExpandoAssignments[hostId], node)
 		return
 	}
 
@@ -2749,7 +2788,6 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 		localName = tx.Factory().NewGeneratedNameForNode(node.AsNode())
 	}
 
-	hostId := tx.getExpandoHostId(declaration)
 	_, cleanupDiagnosticContext := tx.setupDiagnosticContext(node.AsNode())
 	defer cleanupDiagnosticContext()
 
@@ -2876,6 +2914,15 @@ func (tx *DeclarationTransformer) transformExpandoHost(name *ast.Node, declarati
 }
 
 func (tx *DeclarationTransformer) createFullExpandoBlock(id ast.NodeId) *ast.Node {
+	// Process any expando assignments on this host that were skipped because it wasn't
+	// visible when they were collected - if it's still not visible, they simply get
+	// re-deferred, and are dropped if the host is never late-marked visible.
+	if deferred, ok := tx.deferredExpandoAssignments[id]; ok {
+		delete(tx.deferredExpandoAssignments, id)
+		for _, assignment := range deferred {
+			tx.transformExpandoAssignment(assignment)
+		}
+	}
 	n := tx.expandoHosts[id]
 	if addOns, ok := tx.expandoMembers[id]; ok {
 		var modifiers *ast.ModifierList

@@ -7,16 +7,47 @@ import type { NodeFlags } from "#enums/nodeFlags";
 import type { ScriptKind } from "#enums/scriptKind";
 import { SyntaxKind } from "#enums/syntaxKind";
 import type {
+    AssertionExpression,
+    BindingElement,
+    CaseClause,
+    ComputedPropertyName,
+    Decorator,
+    DefaultClause,
+    DoStatement,
     EndOfFile,
     EntityName,
+    EnumMember,
+    Expression,
+    ExpressionStatement,
+    ForInStatement,
+    ForOfStatement,
+    ForStatement,
     Identifier,
+    IfStatement,
+    JsxAttribute,
+    JsxExpression,
+    JsxSpreadAttribute,
     KeywordSyntaxKind,
     ModifierSyntaxKind,
+    ParameterDeclaration,
     PropertyAccessExpression,
+    PropertyAssignment,
+    PropertyDeclaration,
+    PropertySignatureDeclaration,
     PunctuationSyntaxKind,
+    ReturnStatement,
+    SatisfiesExpression,
+    ShorthandPropertyAssignment,
+    SpreadAssignment,
     Statement,
+    SwitchStatement,
+    TemplateSpan,
     ThisExpression,
+    ThrowStatement,
     Token,
+    VariableDeclaration,
+    WhileStatement,
+    WithStatement,
 } from "./ast.generated.ts";
 
 export { SyntaxKind } from "#enums/syntaxKind";
@@ -75,6 +106,13 @@ export interface FileReference extends TextRange {
     readonly preserve: boolean;
 }
 
+export interface LineAndCharacter {
+    /** 0-based line number. */
+    readonly line: number;
+    /** 0-based character offset, in UTF-16 code units, from the start of the line. */
+    readonly character: number;
+}
+
 export interface SourceFile extends Node {
     readonly kind: SyntaxKind.SourceFile;
     readonly statements: NodeArray<Statement>;
@@ -92,6 +130,12 @@ export interface SourceFile extends Node {
     readonly moduleAugmentations: readonly Node[];
     readonly ambientModuleNames: readonly string[];
     readonly externalModuleIndicator: Node | true | undefined;
+    /** Returns the UTF-16 code unit offset of the start of each line. */
+    getLineStarts(): readonly number[];
+    /** Converts a UTF-16 code unit position into a 0-based line and character. */
+    getLineAndCharacterOfPosition(position: number): LineAndCharacter;
+    /** Converts a 0-based line and character into a UTF-16 code unit position. */
+    getPositionOfLineAndCharacter(line: number, character: number): number;
     /** @internal */
     tokenCache?: Map<string, Node>;
 }
@@ -114,4 +158,45 @@ export type EntityNameOrEntityNameExpression = EntityName | EntityNameExpression
 
 export interface JsxTagNamePropertyAccess extends PropertyAccessExpression {
     readonly expression: Identifier | ThisExpression | JsxTagNamePropertyAccess;
+}
+
+export type HasExpressionInitializer =
+    | VariableDeclaration
+    | ParameterDeclaration
+    | BindingElement
+    | PropertyDeclaration
+    | PropertyAssignment
+    | EnumMember;
+
+export type HasInitializer =
+    | HasExpressionInitializer
+    | ForStatement
+    | ForInStatement
+    | ForOfStatement
+    | JsxAttribute;
+
+export type HasIllegalExpressionInitializer = PropertySignatureDeclaration;
+
+export type HasExpression =
+    | ExpressionStatement
+    | IfStatement
+    | DoStatement
+    | WhileStatement
+    | ReturnStatement
+    | WithStatement
+    | SwitchStatement
+    | CaseClause
+    | DefaultClause
+    | ThrowStatement
+    | AssertionExpression
+    | TemplateSpan
+    | ComputedPropertyName
+    | Decorator
+    | JsxExpression
+    | JsxSpreadAttribute
+    | SpreadAssignment
+    | SatisfiesExpression;
+
+export interface ObjectAssignmentInitializer extends ShorthandPropertyAssignment {
+    readonly objectAssignmentInitializer: Expression;
 }
