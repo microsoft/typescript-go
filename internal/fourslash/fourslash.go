@@ -891,6 +891,7 @@ func (f *FourslashTest) CloseFileOfMarker(t *testing.T, markerName string) {
 }
 
 func (f *FourslashTest) openFile(t *testing.T, filename string) {
+	t.Helper()
 	script := f.getScriptInfo(filename)
 	if script == nil {
 		if content, ok := f.vfs.ReadFile(filename); ok {

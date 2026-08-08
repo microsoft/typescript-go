@@ -98,6 +98,19 @@ func NewConfiguredProject(
 	return NewProject(configFileName, KindConfigured, tspath.GetDirectoryPath(configFileName), builder, logger)
 }
 
+// ensureAllowJsForInferredProject returns compiler options with AllowJs and
+// AllowNonTsExtensions forced on. If both are already set, the original pointer
+// is returned; otherwise a clone is made.
+func ensureAllowJsForInferredProject(compilerOptions *core.CompilerOptions) *core.CompilerOptions {
+	if compilerOptions.AllowJs == core.TSTrue && compilerOptions.AllowNonTsExtensions == core.TSTrue {
+		return compilerOptions
+	}
+	clone := compilerOptions.Clone()
+	clone.AllowJs = core.TSTrue
+	clone.AllowNonTsExtensions = core.TSTrue
+	return clone
+}
+
 func NewInferredProject(
 	currentDirectory string,
 	compilerOptions *core.CompilerOptions,
@@ -120,6 +133,8 @@ func NewInferredProject(
 			AllowNonTsExtensions:       core.TSTrue,
 			ResolveJsonModule:          core.TSTrue,
 		}
+	} else {
+		compilerOptions = ensureAllowJsForInferredProject(compilerOptions)
 	}
 	p.CommandLine = tsoptions.NewParsedCommandLine(
 		compilerOptions,
