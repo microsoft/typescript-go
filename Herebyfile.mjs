@@ -1486,8 +1486,8 @@ const mainNativePreviewPackage = {
 };
 
 /**
- * @typedef {"win32" | "linux" | "darwin" | "aix" | "android" | "freebsd" | "netbsd" | "openbsd" | "sunos"} OS
- * @typedef {"x64" | "arm" | "arm64" | "ia32" | "ppc64" | "loong64" | "mips64el" | "riscv64" | "s390x"} Arch
+ * @typedef {"win32" | "linux" | "darwin" | "aix" | "android" | "freebsd" | "netbsd" | "openbsd" | "sunos" | "wasip1"} OS
+ * @typedef {"x64" | "arm" | "arm64" | "ia32" | "ppc64" | "loong64" | "mips64el" | "riscv64" | "s390x" | "wasm"} Arch
  * @typedef {"Microsoft400" | "LinuxSign" | "MacDeveloperHarden" | "8020" | "VSCodePublisher"} Cert
  * @typedef {`${OS | "alpine"}-${Exclude<Arch, "arm"> | "armhf"}`} VSCodeTarget
  * @typedef {{ name: string; sourceDir: string }} VsixExtensionPackage
@@ -1534,7 +1534,7 @@ const platforms = [
     { os: "openbsd", arch: "arm64" },
     { os: "openbsd", arch: "x64" },
     { os: "sunos", arch: "x64" },
-    // Wasm?
+    { os: "wasip1", arch: "wasm" },
 ];
 
 const ignoredGoTargets = new Map([
@@ -1558,7 +1558,7 @@ const ignoredGoTargets = new Map([
 
 /**
  * @param {string} os
- * @returns {"windows" | "illumos" | "darwin" | "linux" | "aix" | "android" | "freebsd" | "netbsd" | "openbsd"}
+ * @returns {"windows" | "illumos" | "darwin" | "linux" | "aix" | "android" | "freebsd" | "netbsd" | "openbsd" | "wasip1"}
  */
 function nodeToGOOS(os) {
     switch (os) {
@@ -1573,6 +1573,7 @@ function nodeToGOOS(os) {
         case "freebsd":
         case "netbsd":
         case "openbsd":
+        case "wasip1":
             return os;
         default:
             throw new Error(`Unsupported OS: ${os}`);
@@ -1582,7 +1583,7 @@ function nodeToGOOS(os) {
 /**
  * @param {string} arch
  * @param {string} os
- * @returns {"amd64" | "386" | "mips64le" | "ppc64" | "ppc64le" | "arm" | "arm64" | "loong64" | "riscv64" | "s390x"}
+ * @returns {"amd64" | "386" | "mips64le" | "ppc64" | "ppc64le" | "arm" | "arm64" | "loong64" | "riscv64" | "s390x" | "wasm"}
  */
 function nodeToGOARCH(arch, os) {
     switch (arch) {
@@ -1599,6 +1600,7 @@ function nodeToGOARCH(arch, os) {
         case "loong64":
         case "riscv64":
         case "s390x":
+        case "wasm":
             return arch;
         default:
             throw new Error(`Unsupported ARCH: ${arch}`);
@@ -1609,7 +1611,7 @@ const getPlatforms = memoize(() => {
     const publishTag = getPublishTag();
     let supportedPlatforms = publishAsTypescript && publishTag !== "next"
         ? platforms
-        : platforms.filter(({ vsix }) => vsix);
+        : platforms.filter(({ os, vsix }) => vsix || os === "wasip1");
 
     if (!options.forRelease) {
         supportedPlatforms = supportedPlatforms.filter(({ os, arch }) => os === process.platform && arch === process.arch);
@@ -1697,6 +1699,7 @@ function goDistTargetToPlatform(target) {
         case "linux":
         case "netbsd":
         case "openbsd":
+        case "wasip1":
             nodeOs = target.GOOS;
             break;
         default:
@@ -1726,6 +1729,7 @@ function goDistTargetToPlatform(target) {
         case "loong64":
         case "riscv64":
         case "s390x":
+        case "wasm":
             nodeArch = target.GOARCH;
             break;
         default:
@@ -1863,7 +1867,7 @@ async function runBuildNativePreviewPackages() {
     const mainPackage = {
         ...inputPackageJson,
         name: mainNativePreviewPackage.npmPackageName,
-        optionalDependencies: Object.fromEntries(platforms.map(p => [p.npmPackageName, getVersion()])),
+        optionalDependencies: Object.fromEntries(platforms.filter(p => p.nodeOs !== "wasip1").map(p => [p.npmPackageName, getVersion()])),
     };
 
     const mainPackageDir = mainNativePreviewPackage.npmDir;
@@ -1923,8 +1927,8 @@ async function runBuildNativePreviewPackages() {
             imports: undefined,
             dependencies: undefined,
             name: npmPackageName,
-            os: [nodeOs],
-            cpu: [nodeArch],
+            os: nodeOs === "wasip1" ? undefined : [nodeOs],
+            cpu: nodeOs === "wasip1" ? undefined : [nodeArch],
             exports: {
                 "./package.json": "./package.json",
             },
@@ -1948,7 +1952,7 @@ async function runBuildNativePreviewPackages() {
 
         const exeName = nativePreviewExeName(nodeOs);
         await buildTsgo({
-            out: publishAsTypescript ? path.join(out, exeName) : out,
+            out: publishAsTypescript || nodeOs === "wasip1" ? path.join(out, exeName) : out,
             env: { GOOS: goos, GOARCH: goarch, GOARM: "6", CGO_ENABLED: "0" },
             extraFlags,
         });
@@ -1979,7 +1983,14 @@ export const signNativePreviewPackages = task({
  */
 function nativePreviewExeName(nodeOs) {
     const baseName = publishAsTypescript ? "tsc" : "tsgo";
-    return nodeOs === "win32" ? `${baseName}.exe` : baseName;
+    switch (nodeOs) {
+        case "win32":
+            return `${baseName}.exe`;
+        case "wasip1":
+            return `${baseName}.wasm`;
+        default:
+            return baseName;
+    }
 }
 
 async function runSignNativePreviewPackages() {
