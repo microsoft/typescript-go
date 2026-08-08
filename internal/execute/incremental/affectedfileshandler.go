@@ -132,9 +132,17 @@ func (h *affectedFilesHandler) getFilesAffectedBy(path tspath.Path) []*ast.Sourc
 	seenFileNamesMap := h.forEachFileReferencedBy(
 		file,
 		func(currentFile *ast.SourceFile, currentPath tspath.Path) (queueForFile bool, fastReturn bool) {
-			// If the current file is not nil and has a shape change, we need to queue it for processing
-			if currentFile != nil && h.updateShapeSignature(currentFile, false) {
-				return true, false
+			if currentFile != nil {
+				info, _ := h.program.snapshot.fileInfos.Load(currentPath)
+				if !currentFile.IsDeclarationFile && info.signature == info.version {
+					// This file has no previous declaration signature. Computing one may show
+					// that propagation can stop, but requires declaration emit; skip that
+					// refinement and conservatively continue to its importers.
+					return true, false
+				}
+				if h.updateShapeSignature(currentFile, false) {
+					return true, false
+				}
 			}
 			return false, false
 		},

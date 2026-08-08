@@ -82,4 +82,3 @@ SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/index.ts
 Signatures::
 (computed .d.ts) /home/src/workspaces/project/data.ts
-(computed .d.ts) /home/src/workspaces/project/index.ts
