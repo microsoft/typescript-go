@@ -61,7 +61,7 @@ export class A {
   getSelf(): this {
     return this;
   }
-  passParameter(@parameterDecorator() param: number = foo()): void {}
+  passParameter(@parameterDecorator() param: number = foo()) {}
   @getterDecorator()
   get a(): number {
     return foo();
