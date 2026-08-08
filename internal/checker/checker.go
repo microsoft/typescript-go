@@ -31889,10 +31889,6 @@ func (c *Checker) getTypeOfNode(node *ast.Node) *Type {
 		classType = c.getDeclaredTypeOfClassOrInterface(c.getSymbolOfDeclaration(classDecl))
 	}
 
-	if heritageType, ok := c.getTypeOfHeritageTypeReferenceName(node); ok {
-		return heritageType
-	}
-
 	if ast.IsPartOfTypeNode(node) {
 		typeFromTypeNode := c.getTypeFromTypeNode(node)
 		if classType != nil {
@@ -32067,50 +32063,6 @@ func (c *Checker) getRegularTypeOfExpression(expr *ast.Node) *Type {
 		expr = expr.Parent
 	}
 	return c.getRegularTypeOfLiteralType(c.getTypeOfExpression(expr))
-}
-
-// Heritage type references used to be expression-with-type-arguments nodes.
-// Preserve expression-space type queries for their qualified-name components.
-func (c *Checker) getTypeOfHeritageTypeReferenceName(node *ast.Node) (*Type, bool) {
-	if !ast.IsNameOfHeritageClauseTypeReference(node) {
-		return nil, false
-	}
-	if ast.IsQualifiedName(node) {
-		return c.getHeritageExpressionType(node), true
-	}
-	if ast.IsIdentifier(node) && ast.IsQualifiedName(node.Parent) {
-		parent := node.Parent.AsQualifiedName()
-		if parent.Right == node &&
-			ast.IsQualifiedName(node.Parent.Parent) && node.Parent.Parent.AsQualifiedName().Left == node.Parent {
-			return c.getHeritageExpressionType(node.Parent), true
-		}
-		if parent.Left == node {
-			return c.getRegularTypeOfExpression(node), true
-		}
-	}
-	return nil, false
-}
-
-func (c *Checker) getHeritageExpressionType(node *ast.Node) *Type {
-	if !ast.IsQualifiedName(node) {
-		return c.getRegularTypeOfExpression(node)
-	}
-	qualified := node.AsQualifiedName()
-	var leftType *Type
-	if ast.IsQualifiedName(qualified.Left) {
-		leftType = c.getHeritageExpressionType(qualified.Left)
-	} else {
-		leftType = c.getRegularTypeOfExpression(qualified.Left)
-	}
-	apparentType := c.getApparentType(leftType)
-	if IsTypeAny(apparentType) {
-		return c.anyType
-	}
-	symbol := c.getPropertyOfTypeEx(apparentType, qualified.Right.Text(), isConstEnumObjectType(apparentType), false /*includeTypeOnlyMembers*/)
-	if symbol == nil {
-		return c.anyType
-	}
-	return c.getRegularTypeOfLiteralType(c.getTypeOfSymbol(symbol))
 }
 
 func (c *Checker) containsArgumentsReference(node *ast.Node) bool {
