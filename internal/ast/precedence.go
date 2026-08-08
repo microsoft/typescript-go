@@ -222,6 +222,8 @@ const (
 // Gets the precedence of an operator
 func GetOperatorPrecedence(nodeKind Kind, operatorKind Kind, flags OperatorPrecedenceFlags) OperatorPrecedence {
 	switch nodeKind {
+	case KindCommaListExpression:
+		return OperatorPrecedenceComma
 	case KindSpreadElement:
 		return OperatorPrecedenceSpread
 	case KindYieldExpression:

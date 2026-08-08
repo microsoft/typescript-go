@@ -20,6 +20,7 @@ import type {
     ClassDeclaration,
     ClassExpression,
     ClassStaticBlockDeclaration,
+    CommaListExpression,
     ComputedPropertyName,
     ConditionalExpression,
     ConditionalTypeNode,
@@ -196,6 +197,7 @@ import {
     updateClassDeclaration,
     updateClassExpression,
     updateClassStaticBlockDeclaration,
+    updateCommaListExpression,
     updateComputedPropertyName,
     updateConditionalExpression,
     updateConditionalTypeNode,
@@ -1125,6 +1127,10 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
     [SyntaxKind.PartiallyEmittedExpression]: (node: PartiallyEmittedExpression, visitor: Visitor): PartiallyEmittedExpression => {
         const _expression = visitNode(node.expression, visitor, isExpression);
         return updatePartiallyEmittedExpression(node, _expression);
+    },
+    [SyntaxKind.CommaListExpression]: (node: CommaListExpression, visitor: Visitor): CommaListExpression => {
+        const _elements = visitNodes(node.elements, visitor);
+        return updateCommaListExpression(node, _elements);
     },
     [SyntaxKind.JsxElement]: (node: JsxElement, visitor: Visitor): JsxElement => {
         const _openingElement = visitNode(node.openingElement, visitor, isJsxOpeningElement);

@@ -257,6 +257,33 @@ func (v *NodeVisitor) visitTopLevelStatements(nodes *StatementList) *StatementLi
 	return v.visitNodes(nodes)
 }
 
+// VisitCommaListElements visits the elements of a CommaListExpression.
+// The visitor is used to visit the last element (the "value" element).
+// The discardVisitor is used to visit all other elements whose result will be discarded at runtime.
+// If discardVisitor is nil, it defaults to visitor.
+func VisitCommaListElements(elements *NodeList, visitor *NodeVisitor, discardVisitor *NodeVisitor) *NodeList {
+	if discardVisitor == nil {
+		discardVisitor = visitor
+	}
+	if discardVisitor == visitor || elements == nil || len(elements.Nodes) <= 1 {
+		return visitor.VisitNodes(elements)
+	}
+	length := len(elements.Nodes)
+	i := 0
+	combined := &NodeVisitor{
+		Visit: func(node *Node) *Node {
+			discarded := i < length-1
+			i++
+			if discarded {
+				return discardVisitor.Visit(node)
+			}
+			return visitor.Visit(node)
+		},
+		Factory: visitor.Factory,
+	}
+	return combined.VisitNodes(elements)
+}
+
 func (v *NodeVisitor) liftToBlock(node *Statement) *Statement {
 	var nodes []*Node
 	if node != nil {
