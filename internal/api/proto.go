@@ -6,6 +6,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
@@ -14,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
+	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -69,6 +71,7 @@ const (
 
 	MethodInitialize               Method = "initialize"
 	MethodUpdateSnapshot           Method = "updateSnapshot"
+	MethodUpdateTemporarySnapshot  Method = "updateTemporarySnapshot"
 	MethodParseConfigFile          Method = "parseConfigFile"
 	MethodGetDefaultProjectForFile Method = "getDefaultProjectForFile"
 	MethodGetSymbolAtPosition      Method = "getSymbolAtPosition"
@@ -81,6 +84,8 @@ const (
 	MethodGetSourceFile            Method = "getSourceFile"
 	MethodGetSourceFileNames       Method = "getSourceFileNames"
 	MethodGetSourceFileMetadata    Method = "getSourceFileMetadata"
+	MethodGetConfigFileNames       Method = "getConfigFileNames"
+	MethodGetConfigSourceFile      Method = "getConfigSourceFile"
 	MethodResolveName              Method = "resolveName"
 	MethodGetSignaturesOfType      Method = "getSignaturesOfType"
 	MethodGetResolvedSignature     Method = "getResolvedSignature"
@@ -126,6 +131,7 @@ const (
 	MethodGetTypeFromTypeNode               Method = "getTypeFromTypeNode"
 	MethodGetWidenedType                    Method = "getWidenedType"
 	MethodGetParameterType                  Method = "getParameterType"
+	MethodGetTypeParameterAtPosition        Method = "getTypeParameterAtPosition"
 	MethodIsArrayLikeType                   Method = "isArrayLikeType"
 	MethodIsTypeAssignableTo                Method = "isTypeAssignableTo"
 	MethodGetShorthandAssignmentValueSymbol Method = "getShorthandAssignmentValueSymbol"
@@ -139,12 +145,15 @@ const (
 	MethodGetTypePredicateOfSignature       Method = "getTypePredicateOfSignature"
 	MethodGetBaseTypes                      Method = "getBaseTypes"
 	MethodGetPropertiesOfType               Method = "getPropertiesOfType"
+	MethodGetApparentPropertiesOfType       Method = "getApparentPropertiesOfType"
 	MethodGetApparentType                   Method = "getApparentType"
 	MethodGetPropertyOfType                 Method = "getPropertyOfType"
 	MethodGetIndexInfosOfType               Method = "getIndexInfosOfType"
 	MethodGetConstraintOfTypeParameter      Method = "getConstraintOfTypeParameter"
+	MethodGetDefaultFromTypeParameter       Method = "getDefaultFromTypeParameter"
 	MethodGetBaseConstraintOfType           Method = "getBaseConstraintOfType"
 	MethodGetTypeArguments                  Method = "getTypeArguments"
+	MethodGetImportAdderEdits               Method = "getImportAdderEdits"
 	MethodGetTrueTypeOfConditionalType      Method = "getTrueTypeOfConditionalType"
 	MethodGetFalseTypeOfConditionalType     Method = "getFalseTypeOfConditionalType"
 	MethodGetConstantValue                  Method = "getConstantValue"
@@ -178,7 +187,11 @@ const (
 	MethodGetConfigFileParsingDiagnostics Method = "getConfigFileParsingDiagnostics"
 
 	// Emitter methods
-	MethodPrintNode Method = "printNode"
+	MethodPrintNode          Method = "printNode"
+	MethodEmit               Method = "emit"
+	MethodEmitToString       Method = "emitToString"
+	MethodGetJavaScriptEmit  Method = "getJavaScriptEmit"
+	MethodGetDeclarationEmit Method = "getDeclarationEmit"
 
 	// Intrinsic type getters
 	MethodGetAnyType       Method = "getAnyType"
@@ -329,6 +342,17 @@ type UpdateSnapshotParams struct {
 	CloseFiles []DocumentIdentifier `json:"closeFiles,omitempty"`
 }
 
+// UpdateTemporarySnapshotParams are the parameters for creating a temporary
+// snapshot that overrides a single file's content.
+type UpdateTemporarySnapshotParams struct {
+	// Snapshot is the current client snapshot on which to layer the temporary update.
+	Snapshot SnapshotID `json:"snapshot"`
+	// File identifies the file whose content is temporarily overridden.
+	File DocumentIdentifier `json:"file"`
+	// NewText is the temporary content for the file.
+	NewText string `json:"newText"`
+}
+
 // ProjectFileChanges describes what source files changed within a single project.
 type ProjectFileChanges struct {
 	// ChangedFiles lists source file paths whose content differs.
@@ -364,11 +388,14 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodRelease:                  unmarshallerFor[ReleaseParams],
 	MethodInitialize:               noParams,
 	MethodUpdateSnapshot:           unmarshallerFor[UpdateSnapshotParams],
+	MethodUpdateTemporarySnapshot:  unmarshallerFor[UpdateTemporarySnapshotParams],
 	MethodParseConfigFile:          unmarshallerFor[ParseConfigFileParams],
 	MethodGetDefaultProjectForFile: unmarshallerFor[GetDefaultProjectForFileParams],
 	MethodGetSourceFile:            unmarshallerFor[GetSourceFileParams],
 	MethodGetSourceFileNames:       unmarshallerFor[GetSourceFileNamesParams],
 	MethodGetSourceFileMetadata:    unmarshallerFor[GetSourceFileParams],
+	MethodGetConfigFileNames:       unmarshallerFor[GetProjectDiagnosticsParams],
+	MethodGetConfigSourceFile:      unmarshallerFor[GetSourceFileParams],
 	MethodGetSymbolAtPosition:      unmarshallerFor[GetSymbolAtPositionParams],
 	MethodGetSymbolsAtPositions:    unmarshallerFor[GetSymbolsAtPositionsParams],
 	MethodGetSymbolAtLocation:      unmarshallerFor[GetSymbolAtLocationParams],
@@ -415,10 +442,11 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 
 	MethodGetContextualType:                 unmarshallerFor[GetContextualTypeParams],
 	MethodGetBaseTypeOfLiteralType:          unmarshallerFor[GetBaseTypeOfLiteralTypeParams],
-	MethodGetNonNullableType:                unmarshallerFor[GetNonNullableTypeParams],
+	MethodGetNonNullableType:                unmarshallerFor[GetTypePropertyParams],
 	MethodGetTypeFromTypeNode:               unmarshallerFor[GetTypeFromTypeNodeParams],
 	MethodGetWidenedType:                    unmarshallerFor[GetWidenedTypeParams],
 	MethodGetParameterType:                  unmarshallerFor[GetParameterTypeParams],
+	MethodGetTypeParameterAtPosition:        unmarshallerFor[GetParameterTypeParams],
 	MethodIsArrayLikeType:                   unmarshallerFor[IsArrayLikeTypeParams],
 	MethodIsTypeAssignableTo:                unmarshallerFor[IsTypeAssignableToParams],
 	MethodGetShorthandAssignmentValueSymbol: unmarshallerFor[GetTypeAtLocationParams],
@@ -427,17 +455,20 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodSignatureToSignatureDeclaration:   unmarshallerFor[SignatureToSignatureDeclarationParams],
 	MethodTypeToString:                      unmarshallerFor[TypeToTypeNodeParams],
 	MethodIsContextSensitive:                unmarshallerFor[GetContextualTypeParams],
-	MethodGetReturnTypeOfSignature:          unmarshallerFor[CheckerSignatureParams],
+	MethodGetReturnTypeOfSignature:          unmarshallerFor[GetSignaturePropertyParams],
 	MethodGetRestTypeOfSignature:            unmarshallerFor[CheckerSignatureParams],
 	MethodGetTypePredicateOfSignature:       unmarshallerFor[CheckerSignatureParams],
 	MethodGetBaseTypes:                      unmarshallerFor[CheckerTypeParams],
 	MethodGetPropertiesOfType:               unmarshallerFor[CheckerTypeParams],
-	MethodGetApparentType:                   unmarshallerFor[CheckerTypeParams],
+	MethodGetApparentPropertiesOfType:       unmarshallerFor[GetTypePropertyParams],
+	MethodGetApparentType:                   unmarshallerFor[GetTypePropertyParams],
 	MethodGetPropertyOfType:                 unmarshallerFor[GetPropertyOfTypeParams],
 	MethodGetIndexInfosOfType:               unmarshallerFor[CheckerTypeParams],
-	MethodGetConstraintOfTypeParameter:      unmarshallerFor[CheckerTypeParams],
+	MethodGetConstraintOfTypeParameter:      unmarshallerFor[GetTypePropertyParams],
 	MethodGetBaseConstraintOfType:           unmarshallerFor[CheckerTypeParams],
+	MethodGetDefaultFromTypeParameter:       unmarshallerFor[GetTypePropertyParams],
 	MethodGetTypeArguments:                  unmarshallerFor[CheckerTypeParams],
+	MethodGetImportAdderEdits:               unmarshallerFor[GetImportAdderEditsParams],
 	MethodGetConstantValue:                  unmarshallerFor[CheckerNodeParams],
 	MethodGetSignatureFromDeclaration:       unmarshallerFor[CheckerNodeParams],
 	MethodGetExportSpecifierLocalTarget:     unmarshallerFor[CheckerNodeParams],
@@ -454,6 +485,10 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetSignatureUsages:                unmarshallerFor[GetSignatureUsagesParams],
 	MethodGetCompletionsAtPosition:          unmarshallerFor[GetCompletionsAtPositionParams],
 	MethodPrintNode:                         unmarshallerFor[PrintNodeParams],
+	MethodEmit:                              unmarshallerFor[EmitParams],
+	MethodEmitToString:                      unmarshallerFor[EmitParams],
+	MethodGetJavaScriptEmit:                 unmarshallerFor[SelectedFilesEmitParams],
+	MethodGetDeclarationEmit:                unmarshallerFor[SelectedFilesEmitParams],
 	MethodGetAnyType:                        unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetStringType:                     unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetNumberType:                     unmarshallerFor[GetIntrinsicTypeParams],
@@ -498,8 +533,11 @@ type ProfileResult struct {
 }
 
 type ConfigFileResponse struct {
-	FileNames []string              `json:"fileNames"`
-	Options   *core.CompilerOptions `json:"options"`
+	FileNames         []string                 `json:"fileNames"`
+	Options           *core.CompilerOptions    `json:"options"`
+	ProjectReferences []*core.ProjectReference `json:"projectReferences,omitempty"`
+	TypeAcquisition   *core.TypeAcquisition    `json:"typeAcquisition,omitempty"`
+	CompileOnSave     *bool                    `json:"compileOnSave,omitempty"`
 }
 
 type GetDefaultProjectForFileParams struct {
@@ -508,10 +546,33 @@ type GetDefaultProjectForFileParams struct {
 }
 
 type ProjectResponse struct {
-	Id              ProjectID             `json:"id"`
-	ConfigFileName  string                `json:"configFileName"`
-	RootFiles       []string              `json:"rootFiles"`
-	CompilerOptions *core.CompilerOptions `json:"compilerOptions"`
+	Id                ProjectID             `json:"id"`
+	ConfigFileName    string                `json:"configFileName"`
+	ParsedCommandLine *ConfigFileResponse   `json:"parsedCommandLine"`
+	RootFiles         []string              `json:"rootFiles"`
+	CompilerOptions   *core.CompilerOptions `json:"compilerOptions"`
+}
+
+func NewConfigFileResponse(parsedCommandLine *tsoptions.ParsedCommandLine) *ConfigFileResponse {
+	if parsedCommandLine == nil {
+		return nil
+	}
+	compileOnSave := parsedCommandLine.CompileOnSave
+	if compileOnSave == nil {
+		if rawConfig, ok := parsedCommandLine.Raw.(*collections.OrderedMap[string, any]); ok {
+			if value, ok := rawConfig.GetOrZero("compileOnSave").(bool); ok {
+				compileOnSave = &value
+			}
+		}
+	}
+	compilerOptions := parsedCommandLine.CompilerOptions()
+	return &ConfigFileResponse{
+		FileNames:         parsedCommandLine.FileNames(),
+		Options:           compilerOptions,
+		ProjectReferences: parsedCommandLine.ProjectReferences(),
+		TypeAcquisition:   parsedCommandLine.TypeAcquisition(),
+		CompileOnSave:     compileOnSave,
+	}
 }
 
 func NewProjectResponse(p *project.Project) *ProjectResponse {
@@ -519,10 +580,11 @@ func NewProjectResponse(p *project.Project) *ProjectResponse {
 		panic("NewProjectResponse called with unloaded project")
 	}
 	return &ProjectResponse{
-		Id:              ProjectHandle(p),
-		ConfigFileName:  p.Name(),
-		RootFiles:       p.CommandLine.FileNames(),
-		CompilerOptions: p.CommandLine.CompilerOptions(),
+		Id:                ProjectHandle(p),
+		ConfigFileName:    p.Name(),
+		ParsedCommandLine: NewConfigFileResponse(p.CommandLine),
+		RootFiles:         p.CommandLine.FileNames(),
+		CompilerOptions:   p.CommandLine.CompilerOptions(),
 	}
 }
 
@@ -1014,6 +1076,31 @@ type GetTypesAtPositionsParams struct {
 	Positions []uint32           `json:"positions"`
 }
 
+type ImportAdderActionKind string
+
+const (
+	ImportAdderActionKindImportSymbol ImportAdderActionKind = "importSymbol"
+)
+
+type ImportAdderAction struct {
+	Kind                   ImportAdderActionKind `json:"kind"`
+	Symbol                 SymbolID              `json:"symbol,omitempty"`
+	IsValidTypeOnlyUseSite *bool                 `json:"isValidTypeOnlyUseSite,omitempty"`
+}
+
+type GetImportAdderEditsParams struct {
+	Snapshot SnapshotID          `json:"snapshot"`
+	Project  ProjectID           `json:"project"`
+	File     DocumentIdentifier  `json:"file"`
+	Actions  []ImportAdderAction `json:"actions"`
+}
+
+type TextEdit struct {
+	Pos     int    `json:"pos"`
+	End     int    `json:"end"`
+	NewText string `json:"newText"`
+}
+
 // TypeToTypeNodeParams are the parameters for the typeToTypeNode method.
 type TypeToTypeNodeParams struct {
 	Snapshot SnapshotID `json:"snapshot"`
@@ -1039,6 +1126,36 @@ type PrintNodeParams struct {
 	PreserveSourceNewlines        bool   `json:"preserveSourceNewlines,omitempty"`
 	NeverAsciiEscape              bool   `json:"neverAsciiEscape,omitempty"`
 	TerminateUnterminatedLiterals bool   `json:"terminateUnterminatedLiterals,omitempty"`
+}
+
+type EmitParams struct {
+	Snapshot SnapshotID `json:"snapshot"`
+	Project  ProjectID  `json:"project"`
+	EmitOnly *uint32    `json:"emitOnly,omitempty"`
+}
+
+type SelectedFilesEmitParams struct {
+	Snapshot SnapshotID           `json:"snapshot"`
+	Project  ProjectID            `json:"project"`
+	Files    []DocumentIdentifier `json:"files"`
+}
+
+type EmitResponse struct {
+	EmitSkipped  bool                  `json:"emitSkipped"`
+	Diagnostics  []*DiagnosticResponse `json:"diagnostics"`
+	EmittedFiles []string              `json:"emittedFiles"`
+}
+
+type EmitOutputFile struct {
+	FileName       string  `json:"fileName"`
+	Text           string  `json:"text"`
+	SourceFileName *string `json:"sourceFileName,omitempty"`
+}
+
+type EmitOutputResponse struct {
+	EmitSkipped bool                  `json:"emitSkipped"`
+	Diagnostics []*DiagnosticResponse `json:"diagnostics"`
+	OutputFiles []*EmitOutputFile     `json:"outputFiles"`
 }
 
 // CheckerTypeParams are parameters for checker methods that operate on a type.

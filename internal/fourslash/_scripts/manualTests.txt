@@ -57,6 +57,8 @@ exhaustiveCaseCompletions5
 exhaustiveCaseCompletions6
 exhaustiveCaseCompletions7
 exhaustiveCaseCompletions8
+formatConflictDiff3Marker1
+formatConflictMarker1
 formatOnEnterInComment
 getEditsForFileRename_caseInsensitive
 getEditsForFileRename_directory_down
@@ -79,6 +81,7 @@ importNameCodeFixOptionalImport0
 incrementalParsingWithJsDoc
 isDefinitionAcrossGlobalProjects
 jsdocDeprecated_suggestion1
+jsdocDeprecated_suggestion19
 jsdocDeprecated_suggestion2
 jsDocFunctionSignatures12
 jsDocFunctionSignatures2

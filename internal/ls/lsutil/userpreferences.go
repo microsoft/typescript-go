@@ -1,6 +1,7 @@
 package lsutil
 
 import (
+	"maps"
 	"reflect"
 	"slices"
 	"strings"
@@ -31,6 +32,7 @@ func NewDefaultUserPreferences() UserPreferences {
 		ReportStyleChecksAsWarnings:        core.TSTrue,
 
 		ExcludeLibrarySymbolsInNavTo: core.TSTrue,
+		WorkspaceSymbolsScope:        WorkspaceSymbolsScopeAllOpenProjects,
 	}
 }
 
@@ -166,7 +168,8 @@ type UserPreferences struct {
 
 	// ------- Symbols -------
 
-	ExcludeLibrarySymbolsInNavTo core.Tristate `raw:"excludeLibrarySymbolsInNavTo" config:"workspaceSymbols.excludeLibrarySymbols"`
+	ExcludeLibrarySymbolsInNavTo core.Tristate         `raw:"excludeLibrarySymbolsInNavTo" config:"workspaceSymbols.excludeLibrarySymbols"`
+	WorkspaceSymbolsScope        WorkspaceSymbolsScope `config:"workspaceSymbols.scope"`
 
 	// ------- Misc -------
 
@@ -176,6 +179,7 @@ type UserPreferences struct {
 	DisableLineTextInReferences core.Tristate `raw:"disableLineTextInReferences"` // !!!
 	DisplayPartsForJSDoc        core.Tristate `raw:"displayPartsForJSDoc"`        // !!!
 	ReportStyleChecksAsWarnings core.Tristate `raw:"reportStyleChecksAsWarnings" config:"reportStyleChecksAsWarnings"`
+	Locale                      string        `config:"locale"`
 
 	// ------- ATA -------
 
@@ -224,6 +228,13 @@ type CodeLensUserPreferences struct {
 // --- Enum Types ---
 
 type QuotePreference string
+
+type WorkspaceSymbolsScope string
+
+const (
+	WorkspaceSymbolsScopeAllOpenProjects WorkspaceSymbolsScope = "allOpenProjects"
+	WorkspaceSymbolsScopeCurrentProject  WorkspaceSymbolsScope = "currentProject"
+)
 
 const (
 	QuotePreferenceUnknown QuotePreference = ""
@@ -886,7 +897,19 @@ func ParseUserPreferences(items map[string]any) UserPreferences {
 	// editor < javascript < typescript < js/ts
 	if editorItem, ok := items["editor"]; ok && editorItem != nil {
 		if editorSettings, ok := editorItem.(map[string]any); ok {
-			prefs = prefs.withConfig(map[string]any{"unstable": editorSettings})
+			normalizedSettings := make(map[string]any, len(editorSettings)+2)
+			maps.Copy(normalizedSettings, editorSettings)
+			if tabSize, ok := normalizedSettings["tabSize"]; ok {
+				if _, hasIndentSize := normalizedSettings["indentSize"]; !hasIndentSize {
+					normalizedSettings["indentSize"] = tabSize
+				}
+			}
+			if insertSpaces, ok := normalizedSettings["insertSpaces"]; ok {
+				if _, hasConvertTabsToSpaces := normalizedSettings["convertTabsToSpaces"]; !hasConvertTabsToSpaces {
+					normalizedSettings["convertTabsToSpaces"] = insertSpaces
+				}
+			}
+			prefs = prefs.withConfig(map[string]any{"unstable": normalizedSettings})
 		}
 	}
 	// Apply javascript, then typescript, then js/ts (highest precedence).
