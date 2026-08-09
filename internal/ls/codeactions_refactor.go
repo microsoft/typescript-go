@@ -207,7 +207,7 @@ func applyTextEdits(file *ast.SourceFile, edits []*lsproto.TextEdit, l *Language
 		})
 	}
 
-	slices.SortFunc(changes, func(a, b core.TextChange) int {
+	slices.SortStableFunc(changes, func(a, b core.TextChange) int {
 		return a.Pos() - b.Pos()
 	})
 
