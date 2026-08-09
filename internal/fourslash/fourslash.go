@@ -2176,13 +2176,18 @@ func (f *FourslashTest) VerifyRefactorDisabled(t *testing.T, title string) {
 func (f *FourslashTest) getRefactorActionsIncludingDisabled(t *testing.T) []*lsproto.CodeAction {
 	t.Helper()
 
+	endPos := f.currentCaretPosition
+	if f.selectionEnd != nil {
+		endPos = *f.selectionEnd
+	}
+
 	params := &lsproto.CodeActionParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 		},
 		Range: lsproto.Range{
 			Start: f.currentCaretPosition,
-			End:   f.currentCaretPosition,
+			End:   endPos,
 		},
 		Context: &lsproto.CodeActionContext{
 			Diagnostics: []*lsproto.Diagnostic{},
