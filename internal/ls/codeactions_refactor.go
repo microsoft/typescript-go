@@ -104,6 +104,10 @@ func (l *LanguageService) convertRefactorAction(ctx context.Context, refactorCon
 			continue
 		}
 
+		if a.RenameFilename != "" && lsconv.FileNameToDocumentURI(a.RenameFilename) != uri {
+			return nil, fmt.Errorf("refactoring action %q: rename target %q does not match requested document %q", action.ID, a.RenameFilename, uri)
+		}
+
 		lspActions = append(lspActions, convertRefactorToLSPCodeAction(l, file, a, uri))
 	}
 

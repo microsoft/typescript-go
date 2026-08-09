@@ -312,3 +312,37 @@ func TestProvideRefactorActionsForProviders_FactoryError(t *testing.T) {
 		t.Errorf("expected error to reference the action ID, got %v", err)
 	}
 }
+
+func TestProvideRefactorActionsForProviders_RejectsCrossFileRename(t *testing.T) {
+	text := "const x: { a: number } = { a: 1 };\n"
+	l, sourceFile := newRefactorPipelineTestLS(t, text)
+	refactorContext := refactorPipelineParams()
+
+	refactorContext.SourceFile = sourceFile
+
+	setRefactorProviders(t, []*RefactorProvider{{
+		RefactorActions: []RefactorAction{{
+			ID:    "extract-type",
+			Title: "Extract type",
+			Kinds: []lsproto.CodeActionKind{lsproto.CodeActionKindRefactorExtract},
+			Factory: func(ctx context.Context, refactorContext *RefactorContext, refactorID string) ([]*CodeAction, error) {
+				return []*CodeAction{{
+					Description:    "Extract to type alias",
+					Changes:        []*lsproto.TextEdit{{Range: lsproto.Range{Start: lsproto.Position{Line: 0, Character: 10}, End: lsproto.Position{Line: 0, Character: 23}}, NewText: "NewType"}},
+					RenameFilename: "/other.ts",
+					RenameLocation: 5,
+				}}, nil
+			},
+		}},
+	}})
+
+	var actions []lsproto.CommandOrCodeAction
+
+	err := l.provideRefactorActionsForProviders(context.Background(), refactorContext, nil, &actions)
+	if err == nil {
+		t.Fatal("expected a cross-file rename target to be rejected")
+	}
+	if !strings.Contains(err.Error(), "other.ts") {
+		t.Errorf("expected error to reference the rename target, got %v", err)
+	}
+}
