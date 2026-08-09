@@ -61,6 +61,68 @@ foo.bar;`
 	}
 }
 
+func TestGetTypeAtLocationTypeOnlyImportClause(t *testing.T) {
+	t.Parallel()
+
+	// A type-only import clause is a type declaration, but it only has a symbol
+	// when it declares a default import name. Every other form leaves the clause
+	// symbol-less, and getTypeOfNode used to hand that nil symbol straight to
+	// getDeclaredTypeOfSymbol.
+	testCases := []struct {
+		name    string
+		content string
+	}{
+		{"named", `import type { A } from "./x";`},
+		{"namespace", `import type * as ns from "./x";`},
+		{"empty", `import type {} from "./x";`},
+		{"default", `import type A from "./x";`},
+		{"defaultAndNamed", `import type A, { B } from "./x";`},
+		{"unresolvedModule", `import type { A } from "./nonexistent";`},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+
+			fs := vfstest.FromMap(map[string]string{
+				"/foo.ts": testCase.content,
+				"/x.ts":   "export interface A { a: string }\nexport interface B { b: string }",
+				"/tsconfig.json": `
+						{
+							"compilerOptions": {},
+							"files": ["foo.ts", "x.ts"]
+						}
+					`,
+			}, false /*useCaseSensitiveFileNames*/)
+			fs = bundled.WrapFS(fs)
+
+			host := compiler.NewCompilerHost("/", fs, bundled.LibPath(), nil, nil)
+
+			parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile("/tsconfig.json", &core.CompilerOptions{}, nil, host, nil)
+			assert.Equal(t, len(errors), 0, "Expected no errors in parsed command line")
+
+			p := compiler.NewProgram(compiler.ProgramOptions{
+				Config: parsed,
+				Host:   host,
+			})
+			p.BindSourceFiles()
+			c, done := p.GetTypeChecker(t.Context())
+			defer done()
+
+			file := p.GetSourceFile("/foo.ts")
+			importClause := file.Statements.Nodes[0].AsImportDeclaration().ImportClause
+			if importClause == nil {
+				t.Fatalf("Expected an import clause")
+			}
+
+			// Should return a type rather than panicking.
+			if c.GetTypeAtLocation(importClause) == nil {
+				t.Fatalf("Expected GetTypeAtLocation to return a type")
+			}
+		})
+	}
+}
+
 func BenchmarkNewChecker(b *testing.B) {
 	repo.SkipIfNoTypeScriptSubmodule(b)
 	fs := osvfs.FS()

@@ -31974,6 +31974,11 @@ func (c *Checker) getTypeOfNode(node *ast.Node) *Type {
 	if ast.IsTypeDeclaration(node) {
 		// In this case, we call getSymbolOfDeclaration instead of getSymbolAtLocation because it is a declaration
 		symbol := c.getSymbolOfDeclaration(node)
+		if symbol == nil {
+			// A type-only import clause with no default import name has no symbol,
+			// as in `import type { A } from "./x"`.
+			return c.errorType
+		}
 		return c.getDeclaredTypeOfSymbol(symbol)
 	}
 
