@@ -2161,11 +2161,11 @@ func (f *FourslashTest) VerifyRefactorDisabled(t *testing.T, title string) {
 	actions := f.getRefactorActionsIncludingDisabled(t)
 
 	for _, action := range actions {
-		if action.Title == title {
-			if action.Disabled == nil {
-				t.Fatalf("Expected refactoring %q to be disabled, but it was enabled", title)
-			}
+		if action.Title == title && action.Disabled == nil {
+			t.Fatalf("Expected refactoring %q to be disabled, but it was enabled", title)
+		}
 
+		if action.Title == title {
 			return
 		}
 	}
