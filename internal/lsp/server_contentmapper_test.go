@@ -16,7 +16,7 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-func TestDiscoverContentMappersBeforeDidOpen(t *testing.T) {
+func TestSetContentMapperContributionsBeforeDidOpen(t *testing.T) {
 	t.Parallel()
 	if !bundled.Embedded {
 		t.Skip("bundled files are not embedded")
@@ -95,12 +95,14 @@ export const title = "Profile";
 	<-client.Server.InitComplete()
 
 	uri := lsproto.DocumentUri("file:///home/project/ProfileCard.vue")
-	msg, result, ok := lsptestutil.SendRequest(t, client, lsproto.CustomDiscoverContentMappersInfo, &lsproto.DiscoverContentMappersParams{
-		TextDocuments: []lsproto.TextDocumentIdentifier{{Uri: uri}},
-		Extensions:    []string{".vue", ".svelte"},
+	msg, _, ok := lsptestutil.SendRequest(t, client, lsproto.CustomSetContentMapperContributionsInfo, &lsproto.SetContentMapperContributionsParams{
+		OpenDocuments: []lsproto.TextDocumentIdentifier{{Uri: uri}},
+		Contributions: []*lsproto.ContentMapperContribution{{
+			ContributorId: "test",
+			Extensions:    []string{".vue", ".svelte"},
+		}},
 	})
 	assert.Assert(t, ok && msg.AsResponse().Error == nil)
-	assert.DeepEqual(t, result.Extensions, []string{".vue"})
 
 	mu.Lock()
 	registered := append([]*lsproto.Registration(nil), registrations...)

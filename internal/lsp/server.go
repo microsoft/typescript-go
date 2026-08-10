@@ -33,6 +33,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/project/ata"
+	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"golang.org/x/sync/errgroup"
@@ -1122,7 +1123,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 
 	registerRequestHandler(handlers, lsproto.CustomInitializeAPISessionInfo, (*Server).handleInitializeAPISession)
 	registerRequestHandler(handlers, lsproto.CustomProjectInfoInfo, (*Server).handleProjectInfo)
-	registerRequestHandler(handlers, lsproto.CustomDiscoverContentMappersInfo, (*Server).handleDiscoverContentMappers)
+	registerRequestHandler(handlers, lsproto.CustomSetContentMapperContributionsInfo, (*Server).handleSetContentMapperContributions)
 	return handlers
 })
 
@@ -2265,11 +2266,92 @@ func (s *Server) handleProjectInfo(ctx context.Context, params *lsproto.ProjectI
 	}, nil
 }
 
-func (s *Server) handleDiscoverContentMappers(ctx context.Context, params *lsproto.DiscoverContentMappersParams, _ *lsproto.RequestMessage) (lsproto.CustomDiscoverContentMappersResponse, error) {
-	textDocuments := make([]lsproto.DocumentUri, len(params.TextDocuments))
-	for i, document := range params.TextDocuments {
-		textDocuments[i] = document.Uri
+func (s *Server) handleSetContentMapperContributions(ctx context.Context, params *lsproto.SetContentMapperContributionsParams, _ *lsproto.RequestMessage) (lsproto.CustomSetContentMapperContributionsResponse, error) {
+	contributions, err := parseContentMapperContributions(params.Contributions)
+	if err != nil {
+		return lsproto.Null{}, err
 	}
-	extensions := s.session.DiscoverContentMapperExtensions(ctx, textDocuments, params.Extensions)
-	return &lsproto.DiscoverContentMappersResult{Extensions: extensions}, nil
+	documents := core.Map(params.OpenDocuments, func(document lsproto.TextDocumentIdentifier) lsproto.DocumentUri { return document.Uri })
+	s.session.SetContentMapperContributions(ctx, contributions, documents)
+	return lsproto.Null{}, nil
+}
+
+func parseContentMapperContributions(values []*lsproto.ContentMapperContribution) (project.ContentMapperContributions, error) {
+	var result project.ContentMapperContributions
+	var claimedExtensions collections.Set[string]
+	for index, value := range values {
+		if value == nil || value.ContributorId == "" {
+			return result, errors.New("content mapper contribution requires a contributorId")
+		}
+		identity := fmt.Sprintf("%s[%d]", value.ContributorId, index)
+		validExtensions := make([]string, 0, len(value.Extensions))
+		for _, extension := range value.Extensions {
+			if !isValidContributedContentMapperExtension(extension) {
+				return result, fmt.Errorf("content mapper contribution %q has invalid extension %q", identity, extension)
+			}
+			validExtensions = append(validExtensions, extension)
+		}
+		if value.InferredProjectContribution == nil {
+			continue
+		}
+		inferredProject := value.InferredProjectContribution
+		manifest := inferredProject.Manifest
+		if manifest.Name == "" || len(manifest.Exec) == 0 {
+			return result, fmt.Errorf("content mapper contribution %q requires a manifest name and exec", identity)
+		}
+		for _, option := range valueOrZero(manifest.CompilerOptions) {
+			if tsoptions.CommandLineCompilerOptionsMap.Get(option) == nil {
+				return result, fmt.Errorf("content mapper contribution %q requests unknown compiler option %q", identity, option)
+			}
+		}
+		for _, extension := range validExtensions {
+			if !claimedExtensions.AddIfAbsent(extension) {
+				return result, fmt.Errorf("content mapper contributions both claim extension %q", extension)
+			}
+			result.Extensions = append(result.Extensions, extension)
+		}
+		options := []byte("{}")
+		if inferredProject.Options != nil {
+			var err error
+			options, err = json.Marshal(*inferredProject.Options)
+			if err != nil {
+				return result, fmt.Errorf("content mapper contribution %q has invalid options", identity)
+			}
+		}
+		mapper := &contentmapper.Mapper{
+			Definition: contentmapper.Definition{Package: identity, Extensions: validExtensions, Options: options},
+			Manifest: contentmapper.Manifest{
+				Name:            manifest.Name,
+				Version:         valueOrZero(manifest.Version),
+				Exec:            slices.Clone(manifest.Exec),
+				CompilerOptions: slices.Clone(valueOrZero(manifest.CompilerOptions)),
+				DynamicConfig:   valueOrZero(manifest.DynamicConfig),
+			},
+			ContributionID: identity,
+		}
+		if manifest.Cwd != nil {
+			if !tspath.PathIsAbsolute(*manifest.Cwd) {
+				return result, fmt.Errorf("content mapper contribution %q has non-absolute cwd", identity)
+			}
+			mapper.PackageDirectory = *manifest.Cwd
+		}
+		result.Mappers = append(result.Mappers, mapper)
+	}
+	slices.Sort(result.Extensions)
+	return result, nil
+}
+
+func isValidContributedContentMapperExtension(extension string) bool {
+	if len(extension) <= 1 || extension[0] != '.' || tspath.GetAnyExtensionFromPath("file"+extension, nil, false) != extension {
+		return false
+	}
+	return !slices.Contains(core.Flatten(tspath.AllSupportedExtensionsWithJson), extension)
+}
+
+func valueOrZero[T any](value *T) T {
+	if value == nil {
+		var zero T
+		return zero
+	}
+	return *value
 }

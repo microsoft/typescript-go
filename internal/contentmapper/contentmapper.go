@@ -47,11 +47,20 @@ type Mapper struct {
 	Definition
 	Manifest         `json:"-"`
 	PackageDirectory string `json:"-"`
+	// ContributionID is provided by an LSP client extension for inferred project content mappers.
+	ContributionID string `json:"-"`
 }
 
 // Identity returns the mapper's "name@version" identity, or just the name when it declares no version,
 // or an empty string when the mapper has not been resolved to a name.
 func (m *Mapper) Identity() string {
+	if m.ContributionID != "" {
+		return m.ContributionID + " (" + m.manifestIdentity() + ")"
+	}
+	return m.manifestIdentity()
+}
+
+func (m *Mapper) manifestIdentity() string {
 	switch {
 	case m.Name == "":
 		return ""

@@ -6,7 +6,6 @@ import (
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/collections"
-	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -28,19 +27,13 @@ type ConfigFileRegistry struct {
 
 type configuredContentMappers struct {
 	extensions []string
-	mappers    []*contentmapper.Mapper
 }
 
 func collectConfiguredContentMappers(commandLines []*tsoptions.ParsedCommandLine) *configuredContentMappers {
 	var seenExtensions collections.Set[string]
-	var seenMappers collections.Set[*contentmapper.Mapper]
 	var extensions []string
-	var mappers []*contentmapper.Mapper
 	for _, commandLine := range commandLines {
 		for _, mapper := range commandLine.ContentMappers() {
-			if seenMappers.AddIfAbsent(mapper) {
-				mappers = append(mappers, mapper)
-			}
 			for _, extension := range mapper.Extensions {
 				if seenExtensions.AddIfAbsent(extension) {
 					extensions = append(extensions, extension)
@@ -49,7 +42,7 @@ func collectConfiguredContentMappers(commandLines []*tsoptions.ParsedCommandLine
 		}
 	}
 	slices.Sort(extensions)
-	return &configuredContentMappers{extensions: extensions, mappers: mappers}
+	return &configuredContentMappers{extensions: extensions}
 }
 
 func (c *ConfigFileRegistry) contentMappers() *configuredContentMappers {

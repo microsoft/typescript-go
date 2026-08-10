@@ -41,6 +41,8 @@ type ProjectCollectionBuilder struct {
 	fs                                 *snapshotFSBuilder
 	base                               *ProjectCollection
 	compilerOptionsForInferredProjects *core.CompilerOptions
+	inferredContentMappers             []*contentmapper.Mapper
+	inferredContentMapperExtensions    []string
 	configFileRegistryBuilder          *configFileRegistryBuilder
 
 	client Client // optional; used for project loading notifications
@@ -65,6 +67,8 @@ func newProjectCollectionBuilder(
 	oldConfigFileRegistry *ConfigFileRegistry,
 	oldAPIState APIState,
 	compilerOptionsForInferredProjects *core.CompilerOptions,
+	inferredContentMappers []*contentmapper.Mapper,
+	inferredContentMapperExtensions []string,
 	sessionOptions *SessionOptions,
 	customConfigFileName string,
 	parseCache *ParseCache,
@@ -78,6 +82,8 @@ func newProjectCollectionBuilder(
 		fs:                                 fs,
 		toPath:                             fs.toPath,
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
+		inferredContentMappers:             inferredContentMappers,
+		inferredContentMapperExtensions:    inferredContentMapperExtensions,
 		sessionOptions:                     sessionOptions,
 		parseCache:                         parseCache,
 		contentMappedParseCache:            contentMappedParseCache,
@@ -452,6 +458,13 @@ func (b *ProjectCollectionBuilder) appendAPIOpenedInferredRoots(inferredProjectF
 
 func (b *ProjectCollectionBuilder) cleanupInferredProject(logger *logging.LogTree) {
 	b.updateInferredProjectRoots(b.collectInferredProjectRoots(), logger)
+}
+
+func (b *ProjectCollectionBuilder) DidChangeContentMapperContributions(logger *logging.LogTree) {
+	b.cleanupInferredProject(logger)
+	if b.inferredProject.Value() != nil {
+		b.updateProgram(b.inferredProject, logger)
+	}
 }
 
 func (b *ProjectCollectionBuilder) ensureInferredProjectIncludesClosedFile(fileName string, logger *logging.LogTree) {
@@ -1078,7 +1091,7 @@ func (b *ProjectCollectionBuilder) updateInferredProjectRoots(rootFileNames []st
 	}
 
 	slices.Sort(rootFileNames)
-	contentMappers := b.configFileRegistryBuilder.contentMappers().mappers
+	contentMappers := b.inferredContentMappers
 	if b.inferredProject.Value() == nil {
 		b.inferredProject.Set(NewInferredProject(b.sessionOptions.CurrentDirectory, b.compilerOptionsForInferredProjects, rootFileNames, contentMappers, b, logger))
 	} else {
@@ -1113,7 +1126,7 @@ func (b *ProjectCollectionBuilder) isSupportedInInferredProject(fileName string)
 	if tspath.IsDynamicFileName(fileName) || core.GetScriptKindFromFileName(fileName) != core.ScriptKindUnknown {
 		return true
 	}
-	return tspath.FileExtensionIsOneOf(fileName, b.configFileRegistryBuilder.contentMappers().extensions)
+	return tspath.FileExtensionIsOneOf(fileName, b.inferredContentMapperExtensions)
 }
 
 // updateProgram updates the program for the given project entry if necessary. It returns

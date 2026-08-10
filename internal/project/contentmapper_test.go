@@ -465,6 +465,15 @@ func TestContentMapperOpenFileExcludedByConfigChange(t *testing.T) {
 
 	ctx := context.Background()
 	boxURI := lsproto.DocumentUri("file:///home/project/src/app.box")
+	session.SetContentMapperContributions(ctx, project.ContentMapperContributions{
+		Mappers: []*contentmapper.Mapper{{
+			Definition:       contentmapper.Definition{Package: "test.extension", Extensions: []string{".box"}},
+			Manifest:         contentmapper.Manifest{Name: "mapper", Version: "1.0.0", Exec: []string{contentmappertest.TransformingMapper}, CompilerOptions: contentmappertest.DeclaredOptions},
+			PackageDirectory: "/home/project",
+			ContributionID:   "test.extension[0]",
+		}},
+		Extensions: []string{".box"},
+	}, nil)
 	session.DidOpenFile(ctx, boxURI, 1, files["/home/project/src/app.box"].(string), lsproto.LanguageKind("box"))
 	languageService, err := session.GetLanguageService(ctx, boxURI)
 	assert.NilError(t, err)
@@ -613,7 +622,7 @@ func TestContentMapperProcessSharedAcrossProjects(t *testing.T) {
 	assert.Equal(t, spawner.closes.Load(), int32(1), "final project owner should close the shared process")
 }
 
-func TestContentMapperInferredProjectUsesSessionMappers(t *testing.T) {
+func TestContentMapperInferredProjectUsesExtensionContributions(t *testing.T) {
 	t.Parallel()
 	files := map[string]any{
 		"/home/configured/tsconfig.json": `{
@@ -643,6 +652,17 @@ func TestContentMapperInferredProjectUsesSessionMappers(t *testing.T) {
 
 	boxURI := lsproto.DocumentUri("file:///home/loose/app.box")
 	session.DidOpenFile(ctx, boxURI, 1, files["/home/loose/app.box"].(string), lsproto.LanguageKind("box"))
+	_, err = session.GetLanguageService(ctx, boxURI)
+	assert.ErrorContains(t, err, "no project found", "configured mapper must not leak into inferred projects")
+	session.SetContentMapperContributions(ctx, project.ContentMapperContributions{
+		Mappers: []*contentmapper.Mapper{{
+			Definition:       contentmapper.Definition{Package: "test.extension", Extensions: []string{".box"}},
+			Manifest:         contentmapper.Manifest{Name: "mapper", Version: "1.0.0", Exec: []string{contentmappertest.TransformingMapper}, CompilerOptions: contentmappertest.DeclaredOptions},
+			PackageDirectory: "/home",
+			ContributionID:   "test.extension[0]",
+		}},
+		Extensions: []string{".box"},
+	}, []lsproto.DocumentUri{boxURI})
 	languageService, err := session.GetLanguageService(ctx, boxURI)
 	assert.NilError(t, err)
 	defaultProject := session.Snapshot().GetDefaultProject(boxURI)
@@ -650,14 +670,14 @@ func TestContentMapperInferredProjectUsesSessionMappers(t *testing.T) {
 	assert.Equal(t, defaultProject.Kind, project.KindInferred)
 	boxFile := languageService.GetProgram().GetSourceFile("/home/loose/app.box")
 	assert.Assert(t, boxFile != nil, "expected loose app.box in the inferred project")
-	assert.Assert(t, boxFile.ContentMapper() != "", "expected loose app.box to use the session mapper union")
+	assert.Assert(t, boxFile.ContentMapper() != "", "expected loose app.box to use the extension contribution")
 	assert.Assert(t, !strings.Contains(boxFile.Text(), "#{target}"), "expected loose app.box to be transformed: %q", boxFile.Text())
 }
 
 func TestContentMapperInferredProjectSurvivesTypingsInstall(t *testing.T) {
 	t.Parallel()
-	// A loose foreign file lands in the inferred project with the session's content mapper
-	// union. When ATA finishes installing typings, the inferred program rebuilds with the
+	// A loose foreign file lands in the inferred project with an extension content mapper.
+	// When ATA finishes installing typings, the inferred program rebuilds with the
 	// typings-augmented command line; if that command line drops the content mappers, the
 	// foreign root file is parsed as plain TypeScript with an unknown script kind and the
 	// server panics.
@@ -688,6 +708,15 @@ func TestContentMapperInferredProjectSurvivesTypingsInstall(t *testing.T) {
 	defer session.Close()
 
 	ctx := context.Background()
+	session.SetContentMapperContributions(ctx, project.ContentMapperContributions{
+		Mappers: []*contentmapper.Mapper{{
+			Definition:       contentmapper.Definition{Package: "test.extension", Extensions: []string{".box"}},
+			Manifest:         contentmapper.Manifest{Name: "mapper", Version: "1.0.0", Exec: []string{contentmappertest.TransformingMapper}, CompilerOptions: contentmappertest.DeclaredOptions},
+			PackageDirectory: "/home",
+			ContributionID:   "test.extension[0]",
+		}},
+		Extensions: []string{".box"},
+	}, nil)
 	configuredURI := lsproto.DocumentUri("file:///home/configured/main.ts")
 	session.DidOpenFile(ctx, configuredURI, 1, files["/home/configured/main.ts"].(string), lsproto.LanguageKindTypeScript)
 	_, err := session.GetLanguageService(ctx, configuredURI)
@@ -764,66 +793,6 @@ func TestContentMapperCreatedFileAdoptedByConfiguredProject(t *testing.T) {
 	boxFile := languageService.GetProgram().GetSourceFile("/home/project/new.box")
 	assert.Assert(t, boxFile != nil, "expected new.box in the configured project")
 	assert.Assert(t, !strings.Contains(boxFile.Text(), "#{target}"), "expected new.box to be transformed: %q", boxFile.Text())
-}
-
-func TestDiscoverContentMapperExtensions(t *testing.T) {
-	t.Parallel()
-	files := map[string]any{
-		"/home/project/tsconfig.json": `{
-			"compilerOptions": { "target": "es2020", "module": "esnext", "moduleResolution": "bundler", "strict": true },
-			"contentMappers": [ { "package": "mapper", "extensions": [".vue"] } ]
-		}`,
-		"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.ComponentMapper),
-		"/home/project/ProfileCard.vue":                  `<template><h1>Profile</h1></template>`,
-		"/home/other/tsconfig.json": `{
-			"compilerOptions": { "target": "es2020", "module": "esnext", "moduleResolution": "bundler" },
-			"contentMappers": [ { "package": "mapper", "extensions": [".svelte"] } ]
-		}`,
-		"/home/other/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.ComponentMapper),
-		"/home/other/Widget.svelte":                    `<template><h1>Widget</h1></template>`,
-	}
-	init, utils := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
-		CurrentDirectory:    "/home/project",
-		DefaultLibraryPath:  bundled.LibPath(),
-		TypingsLocation:     projecttestutil.TestTypingsLocation,
-		PositionEncoding:    lsproto.PositionEncodingKindUTF8,
-		LoadExternalPlugins: true,
-	}, nil)
-	init.Spawner = contentmappertest.NewSpawner()
-	session := project.NewSession(init)
-	defer session.Close()
-
-	ctx := context.Background()
-	assert.DeepEqual(t, session.DiscoverContentMapperExtensions(ctx, []lsproto.DocumentUri{
-		"file:///home/other/Widget.svelte",
-	}, []string{".svelte"}), []string{".svelte"})
-
-	matched := session.DiscoverContentMapperExtensions(ctx, []lsproto.DocumentUri{
-		"file:///home/project/ProfileCard.vue",
-		"file:///home/project/ignored.svelte",
-	}, []string{".vue", ".svelte", ".vue", "vue", "../bad"})
-	assert.DeepEqual(t, matched, []string{".vue"})
-
-	calls := utils.Client().RegisterContentMapperExtensionsCalls()
-	assert.Assert(t, len(calls) > 0, "expected content mapper extensions to be registered")
-	assert.DeepEqual(t, calls[len(calls)-1].Extensions, []string{".svelte", ".vue"})
-
-	snapshot := session.Snapshot()
-	assert.Assert(t, snapshot.GetDefaultProject("file:///home/project/ProfileCard.vue") != nil, "expected the configured project to be discovered")
-	assert.Assert(t, snapshot.GetDefaultProject("file:///home/project/ignored.svelte") == nil, "unmatched extensions should not load a project")
-
-	untrustedInit, untrustedUtils := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
-		CurrentDirectory:    "/home/project",
-		DefaultLibraryPath:  bundled.LibPath(),
-		TypingsLocation:     projecttestutil.TestTypingsLocation,
-		PositionEncoding:    lsproto.PositionEncodingKindUTF8,
-		LoadExternalPlugins: false,
-	}, nil)
-	untrustedInit.Spawner = contentmappertest.NewSpawner()
-	untrusted := project.NewSession(untrustedInit)
-	defer untrusted.Close()
-	assert.Equal(t, len(untrusted.DiscoverContentMapperExtensions(ctx, []lsproto.DocumentUri{"file:///home/project/ProfileCard.vue"}, []string{".vue"})), 0)
-	assert.Equal(t, len(untrustedUtils.Client().RegisterContentMapperExtensionsCalls()), 0)
 }
 
 func TestContentMapperSynthesizedDocumentSymbols(t *testing.T) {

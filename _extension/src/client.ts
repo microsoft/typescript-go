@@ -24,6 +24,7 @@ import {
     configurationMiddleware,
     sendNotificationMiddleware,
 } from "./configurationMiddleware";
+import type { SerializedContentMapperContribution } from "./contentMapperContributions";
 import { registerMultiDocumentHighlightFeature } from "./languageFeatures/documentHighlight";
 import { registerHoverFeature } from "./languageFeatures/hover";
 import { registerOnAutoInsertFeature } from "./languageFeatures/onAutoInsert";
@@ -519,21 +520,14 @@ export class Client implements vscode.Disposable {
         }, token);
     }
 
-    async discoverContentMappers(uris: readonly vscode.Uri[], extensions: readonly string[]): Promise<readonly string[]> {
-        if (!this.client || !this.isInitialized || !vscode.workspace.isTrusted) {
-            return [];
+    async setContentMapperContributions(contributions: readonly SerializedContentMapperContribution[], openDocuments: readonly vscode.Uri[]): Promise<void> {
+        if (!this.client || !this.isInitialized) {
+            return;
         }
-        try {
-            const result = await this.client.sendRequest<{ extensions: string[]; }>("custom/discoverContentMappers", {
-                textDocuments: uris.map(uri => ({ uri: uri.toString() })),
-                extensions: [...extensions],
-            });
-            return result.extensions;
-        }
-        catch (error) {
-            this.outputChannel.warn(`Content mapper discovery failed: ${String(error)}`);
-            return [];
-        }
+        await this.client.sendRequest("custom/setContentMapperContributions", {
+            contributions: vscode.workspace.isTrusted ? contributions : [],
+            openDocuments: openDocuments.map(uri => ({ uri: uri.toString() })),
+        });
     }
 }
 

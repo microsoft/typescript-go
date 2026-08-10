@@ -429,31 +429,41 @@ const customStructures: Structure[] = [
         documentation: "Result for the custom/projectInfo request.",
     },
     {
-        name: "DiscoverContentMappersParams",
+        name: "ContentMapperManifest",
         properties: [
-            {
-                name: "textDocuments",
-                type: { kind: "array", element: { kind: "reference", name: "TextDocumentIdentifier" } },
-                documentation: "Open foreign documents whose configured projects should be checked for content mappers.",
-            },
-            {
-                name: "extensions",
-                type: { kind: "array", element: { kind: "base", name: "string" } },
-                documentation: "Candidate foreign file extensions, including the leading dot.",
-            },
+            { name: "name", type: { kind: "base", name: "string" }, documentation: "Human-readable mapper name." },
+            { name: "version", type: { kind: "base", name: "string" }, optional: true, documentation: "Mapper version." },
+            { name: "exec", type: { kind: "array", element: { kind: "base", name: "string" } }, documentation: "Executable and arguments used to start the mapper." },
+            { name: "cwd", type: { kind: "base", name: "string" }, optional: true, documentation: "Absolute working directory for the mapper process." },
+            { name: "compilerOptions", type: { kind: "array", element: { kind: "base", name: "string" } }, optional: true, documentation: "Compiler option names forwarded to the mapper." },
+            { name: "dynamicConfig", type: { kind: "base", name: "boolean" }, optional: true, documentation: "Whether the mapper uses project-scoped dynamic configuration." },
         ],
-        documentation: "Parameters for the custom/discoverContentMappers request.",
+        documentation: "Inline content mapper manifest supplied by a contributing extension.",
     },
     {
-        name: "DiscoverContentMappersResult",
+        name: "InferredProjectContentMapperContribution",
         properties: [
-            {
-                name: "extensions",
-                type: { kind: "array", element: { kind: "base", name: "string" } },
-                documentation: "Requested extensions provided by content mappers in discovered configured projects.",
-            },
+            { name: "options", type: { kind: "reference", name: "LSPObject" }, optional: true, documentation: "Options supplied to transforms in inferred projects." },
+            { name: "manifest", type: { kind: "reference", name: "ContentMapperManifest" }, documentation: "Inline manifest for the mapper contributed to inferred projects." },
         ],
-        documentation: "Result for the custom/discoverContentMappers request.",
+        documentation: "Content mapper configuration contributed to inferred projects.",
+    },
+    {
+        name: "ContentMapperContribution",
+        properties: [
+            { name: "contributorId", type: { kind: "base", name: "string" }, documentation: "Unique identifier of the contributor extension." },
+            { name: "extensions", type: { kind: "array", element: { kind: "base", name: "string" } }, documentation: "File extensions handled by this content mapper." },
+            { name: "inferredProjectContribution", type: { kind: "reference", name: "InferredProjectContentMapperContribution" }, optional: true, documentation: "When present, contributes this mapper to inferred projects." },
+        ],
+        documentation: "One extension-provided content mapper contribution.",
+    },
+    {
+        name: "SetContentMapperContributionsParams",
+        properties: [
+            { name: "contributions", type: { kind: "array", element: { kind: "reference", name: "ContentMapperContribution" } }, documentation: "Complete replacement set of active extension contributions." },
+            { name: "openDocuments", type: { kind: "array", element: { kind: "reference", name: "TextDocumentIdentifier" } }, documentation: "Currently open documents matching contributed extensions." },
+        ],
+        documentation: "Parameters for the custom/setContentMapperContributions request.",
     },
     {
         name: "SetLogVerbosityParams",
@@ -909,12 +919,12 @@ const customRequests: Request[] = [
         documentation: "Returns project information (e.g. the tsconfig.json path) for a given text document.",
     },
     {
-        method: "custom/discoverContentMappers",
-        typeName: "CustomDiscoverContentMappersRequest",
-        params: { kind: "reference", name: "DiscoverContentMappersParams" },
-        result: { kind: "reference", name: "DiscoverContentMappersResult" },
+        method: "custom/setContentMapperContributions",
+        typeName: "CustomSetContentMapperContributionsRequest",
+        params: { kind: "reference", name: "SetContentMapperContributionsParams" },
+        result: { kind: "base", name: "null" },
         messageDirection: "clientToServer",
-        documentation: "Discovers content mappers from configured projects governing the supplied foreign documents.",
+        documentation: "Replaces extension content mapper contributions and discovers configured mappers for matching open documents.",
     },
     {
         method: "custom/textDocument/sourceDefinition",

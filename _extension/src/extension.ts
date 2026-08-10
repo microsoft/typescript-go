@@ -1,10 +1,10 @@
 import * as vscode from "vscode";
 
 import {
-    registerDiscoverContentMappersCommand,
     registerEnablementCommands,
     updateUseTsgoSetting,
 } from "./commands";
+import type { ContentMapperContribution } from "./contentMapperContributions";
 import {
     aiConnectionString,
     getExplicitConfigTarget,
@@ -27,6 +27,7 @@ import assert from "node:assert";
 export interface ExtensionAPI {
     onLanguageServerInitialized: vscode.Event<void>;
     initializeAPIConnection(pipe?: string): Promise<string>;
+    registerContentMappers(contributorId: string, contributions: readonly ContentMapperContribution[]): vscode.Disposable;
 }
 
 export async function activate(context: vscode.ExtensionContext): Promise<ExtensionAPI | undefined> {
@@ -52,7 +53,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
     const sessionManager = new SessionManager(context, output, languageServerInitializedEventEmitter, telemetryReporter);
     context.subscriptions.push(sessionManager);
     registerEnablementCommands(context, telemetryReporter, () => sessionManager.stop());
-    registerDiscoverContentMappersCommand(context, (uris, extensions) => sessionManager.discoverContentMappers(uris, extensions));
 
     let pluginWarningShown = false;
     const onDidChangeExtensions = vscode.extensions.onDidChange(() => {
@@ -81,6 +81,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<Extens
         onLanguageServerInitialized: onLanguageServerInitialized,
         async initializeAPIConnection(pipe?: string): Promise<string> {
             return sessionManager.initializeAPIConnection(pipe);
+        },
+        registerContentMappers(contributorId, contributions): vscode.Disposable {
+            return sessionManager.registerContentMappers(contributorId, contributions);
         },
     };
 

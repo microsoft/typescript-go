@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"maps"
 	"math"
 	"runtime"
 	gometrics "runtime/metrics"
@@ -51,7 +50,13 @@ const (
 	UpdateReasonRequestedLanguageServiceWithAutoImports
 	UpdateReasonIdleCleanDiskCache
 	UpdateReasonDidChangeConfigFile
+	UpdateReasonDidChangeContentMapperContributions
 )
+
+type ContentMapperContributions struct {
+	Mappers    []*contentmapper.Mapper
+	Extensions []string
+}
 
 // watchRequestTimeout is the maximum time to wait for the client to respond to
 // a WatchFiles or UnwatchFiles request while holding the watches mutex.
@@ -383,6 +388,29 @@ func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, vers
 	})
 }
 
+// SetContentMapperContributions atomically replaces extension-provided inferred-project mappers and
+// discovers configured projects for matching open documents. Configured projects never consume these mappers.
+func (s *Session) SetContentMapperContributions(ctx context.Context, contributions ContentMapperContributions, documentURIs []lsproto.DocumentUri) {
+	if !s.options.LoadExternalPlugins {
+		return
+	}
+	s.cancelScheduledSnapshotUpdate()
+	s.snapshotUpdateMu.Lock()
+	defer s.snapshotUpdateMu.Unlock()
+	s.pendingFileChangesMu.Lock()
+	changes, overlays := s.flushChangesLocked(ctx)
+	s.pendingFileChangesMu.Unlock()
+	s.UpdateSnapshot(ctx, overlays, SnapshotChange{
+		reason:                     UpdateReasonDidChangeContentMapperContributions,
+		fileChanges:                changes,
+		contentMapperContributions: &contributions,
+		ResourceRequest: ResourceRequest{
+			ConfiguredProjectDocuments: documentURIs,
+		},
+	})
+	_ = s.updateContentMapperRegistrations(ctx, s.Snapshot())
+}
+
 func (s *Session) DidCloseFile(ctx context.Context, uri lsproto.DocumentUri) {
 	s.cancelWarmAutoImportCache()
 	s.scheduleIdleCacheClean()
@@ -424,9 +452,10 @@ func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, ve
 // isContentMapperFile reports whether uri is a foreign file handled by a configured content mapper, based
 // on the extensions currently registered with the client for text document synchronization.
 func (s *Session) isContentMapperFile(uri lsproto.DocumentUri) bool {
-	contentMappers := s.Snapshot().ConfigFileRegistry.contentMappers()
-	return contentMappers != nil && len(contentMappers.extensions) > 0 &&
-		tspath.FileExtensionIsOneOf(uri.FileName(), contentMappers.extensions)
+	snapshot := s.Snapshot()
+	configured := snapshot.ConfigFileRegistry.contentMappers()
+	extensions := append(slices.Clone(configured.extensions), snapshot.inferredProjectContentMapperExtensions...)
+	return tspath.FileExtensionIsOneOf(uri.FileName(), extensions)
 }
 
 func (s *Session) DidSaveFile(ctx context.Context, uri lsproto.DocumentUri) {
@@ -1157,79 +1186,6 @@ func (s *Session) GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUr
 	return allProjects, nil
 }
 
-// DiscoverContentMapperExtensions loads configured projects for the supplied foreign documents without
-// creating inferred projects, publishes any newly discovered content-mapper registrations, and returns
-// the requested extensions provided by those configs.
-func (s *Session) DiscoverContentMapperExtensions(ctx context.Context, documentURIs []lsproto.DocumentUri, candidateExtensions []string) []string {
-	caseSensitive := s.Snapshot().UseCaseSensitiveFileNames()
-	canonicalize := func(value string) string { return tspath.GetCanonicalFileName(value, caseSensitive) }
-
-	candidateKeys := collections.NewSetWithSizeHint[string](len(candidateExtensions))
-	candidates := make(map[string]string, len(candidateExtensions))
-	for _, extension := range candidateExtensions {
-		if len(extension) <= 1 || extension[0] != '.' || tspath.GetAnyExtensionFromPath("file"+extension, nil, false) != extension {
-			continue
-		}
-		key := canonicalize(extension)
-		if candidateKeys.AddIfAbsent(key) {
-			candidates[key] = extension
-		}
-	}
-	if candidateKeys.Len() == 0 {
-		return nil
-	}
-
-	documents := make([]lsproto.DocumentUri, 0, len(documentURIs))
-	seenDocuments := collections.NewSetWithSizeHint[string](len(documentURIs))
-	candidateExtensionsCanonical := slices.Collect(maps.Keys(candidateKeys.Keys()))
-	for _, uri := range documentURIs {
-		fileName := uri.FileName()
-		if fileName == "" {
-			continue
-		}
-		if tspath.GetAnyExtensionFromPath(canonicalize(fileName), candidateExtensionsCanonical, false) == "" {
-			continue
-		}
-		key := canonicalize(string(uri))
-		if !seenDocuments.AddIfAbsent(key) {
-			continue
-		}
-		documents = append(documents, uri)
-	}
-	if len(documents) == 0 {
-		return nil
-	}
-
-	snapshot := s.getSnapshot(ctx, ResourceRequest{ConfiguredProjectDocuments: documents}, false /*callerRef*/)
-	if err := s.updateContentMapperRegistrations(ctx, snapshot); err != nil {
-		return nil
-	}
-
-	var discovered collections.Set[string]
-	for _, uri := range documents {
-		project := snapshot.GetDefaultProject(uri)
-		if project == nil || project.Kind != KindConfigured {
-			continue
-		}
-		commandLine := snapshot.ConfigFileRegistry.GetConfig(project.configFilePath)
-		if commandLine == nil {
-			continue
-		}
-		for _, extension := range commandLine.ContentMapperExtensions() {
-			discovered.Add(canonicalize(extension))
-		}
-	}
-	matched := make([]string, 0, candidateKeys.Len())
-	for key := range candidateKeys.Keys() {
-		if discovered.Has(key) {
-			extension := candidates[key]
-			matched = append(matched, extension)
-		}
-	}
-	slices.Sort(matched)
-	return matched
-}
-
 func (s *Session) GetLanguageServicesForDocuments(ctx context.Context, uris []lsproto.DocumentUri) []*ls.LanguageService {
 	snapshot := s.getSnapshot(
 		ctx,
@@ -1574,7 +1530,9 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 // config that maps it is discovered.
 func (s *Session) updateContentMapperRegistrations(ctx context.Context, snapshot *Snapshot) error {
 	contentMappers := snapshot.ConfigFileRegistry.contentMappers()
-	extensions := contentMappers.extensions
+	extensions := append(slices.Clone(contentMappers.extensions), snapshot.inferredProjectContentMapperExtensions...)
+	slices.Sort(extensions)
+	extensions = slices.Compact(extensions)
 
 	s.contentMapperRegistrationMu.Lock()
 	defer s.contentMapperRegistrationMu.Unlock()

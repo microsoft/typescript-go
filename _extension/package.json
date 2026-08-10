@@ -276,10 +276,6 @@
                 "enablement": "false"
             },
             {
-                "command": "typescript.native-preview.discoverContentMappers",
-                "title": "%native-preview.discoverContentMappers.title%"
-            },
-            {
                 "command": "typescript.native-preview.dev.runGC",
                 "title": "%native-preview.dev.runGC.title%",
                 "enablement": "typescript.native-preview.serverRunning",
@@ -318,10 +314,6 @@
         ],
         "menus": {
             "commandPalette": [
-                {
-                    "command": "typescript.native-preview.discoverContentMappers",
-                    "when": "false"
-                },
                 {
                     "command": "typescript.native-preview.restart",
                     "when": "typescript.native-preview.serverRunning"

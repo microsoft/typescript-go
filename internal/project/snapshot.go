@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
@@ -35,13 +36,15 @@ type Snapshot struct {
 	converters     *lsconv.Converters
 
 	// Immutable state, cloned between snapshots
-	fs                                 *SnapshotFS
-	ProjectCollection                  *ProjectCollection
-	ConfigFileRegistry                 *ConfigFileRegistry
-	AutoImports                        *autoimport.Registry
-	autoImportsWatch                   *WatchedFiles[map[tspath.Path]string]
-	compilerOptionsForInferredProjects *core.CompilerOptions
-	userPreferences                    lsutil.UserPreferences
+	fs                                     *SnapshotFS
+	ProjectCollection                      *ProjectCollection
+	ConfigFileRegistry                     *ConfigFileRegistry
+	AutoImports                            *autoimport.Registry
+	autoImportsWatch                       *WatchedFiles[map[tspath.Path]string]
+	compilerOptionsForInferredProjects     *core.CompilerOptions
+	inferredProjectContentMappers          []*contentmapper.Mapper
+	inferredProjectContentMapperExtensions []string
+	userPreferences                        lsutil.UserPreferences
 
 	builderLogs *logging.LogTree
 	apiError    error
@@ -212,6 +215,7 @@ type SnapshotChange struct {
 	// It should only be set the value in the next snapshot should be changed. If nil, the
 	// value from the previous snapshot will be copied to the new snapshot.
 	compilerOptionsForInferredProjects *core.CompilerOptions
+	contentMapperContributions         *ContentMapperContributions
 	newConfig                          *lsutil.UserPreferences
 	// ataChanges contains ATA-related changes to apply to projects in the new snapshot.
 	ataChanges map[tspath.Path]*ATAStateChange
@@ -289,11 +293,19 @@ func (s *Snapshot) Clone(
 			logger.Logf("Reason: IdleCleanDiskCache")
 		case UpdateReasonDidChangeConfigFile:
 			logger.Logf("Reason: DidChangeConfigFile - %v", getDetails())
+		case UpdateReasonDidChangeContentMapperContributions:
+			logger.Logf("Reason: DidChangeContentMapperContributions - %v", getDetails())
 		}
 	}
 
 	start := time.Now()
-	contentMappers := s.ConfigFileRegistry.contentMappers()
+	configuredContentMappers := s.ConfigFileRegistry.contentMappers()
+	inferredContentMappers := s.inferredProjectContentMappers
+	inferredContentMapperExtensions := s.inferredProjectContentMapperExtensions
+	if change.contentMapperContributions != nil {
+		inferredContentMappers = change.contentMapperContributions.Mappers
+		inferredContentMapperExtensions = change.contentMapperContributions.Extensions
+	}
 	fs := newSnapshotFSBuilder(session.fs.fs, s.fs.overlays, overlays, s.fs.diskFiles, s.fs.diskDirectories, s.fs.nodeModulesRealpathAliases, session.options.PositionEncoding, s.toPath)
 	if change.fileChanges.HasExcessiveWatchEvents() {
 		invalidateStart := time.Now()
@@ -313,9 +325,10 @@ func (s *Snapshot) Clone(
 		}
 	} else {
 		var contentMapperExtensions []string
-		if contentMappers != nil {
-			contentMapperExtensions = contentMappers.extensions
+		if configuredContentMappers != nil {
+			contentMapperExtensions = configuredContentMappers.extensions
 		}
+		contentMapperExtensions = append(slices.Clone(contentMapperExtensions), inferredContentMapperExtensions...)
 		change.fileChanges = fs.expandAndFilterWatchEvents(change.fileChanges, contentMapperExtensions)
 		change.fileChanges = s.fs.expandRealpathAliases(change.fileChanges)
 		change.fileChanges = fs.markDirtyFiles(change.fileChanges)
@@ -343,6 +356,8 @@ func (s *Snapshot) Clone(
 		s.ConfigFileRegistry,
 		s.ProjectCollection.apiState,
 		compilerOptionsForInferredProjects,
+		inferredContentMappers,
+		inferredContentMapperExtensions,
 		s.sessionOptions,
 		customConfigFileName,
 		session.parseCache,
@@ -357,6 +372,9 @@ func (s *Snapshot) Clone(
 	}
 
 	projectCollectionBuilder.DidChangeCustomConfigFileName(logger.Fork("DidChangeCustomConfigFileName"))
+	if change.contentMapperContributions != nil {
+		projectCollectionBuilder.DidChangeContentMapperContributions(logger.Fork("DidChangeContentMapperContributions"))
+	}
 	if change.newConfig != nil {
 		projectCollectionBuilder.DidChangeUserPreferences(s.userPreferences, *change.newConfig, logger.Fork("DidChangeUserPreferences"))
 	}
@@ -477,6 +495,8 @@ func (s *Snapshot) Clone(
 	newSnapshot.parentId = s.id
 	newSnapshot.ProjectCollection = projectCollection
 	newSnapshot.ConfigFileRegistry = configFileRegistry
+	newSnapshot.inferredProjectContentMappers = inferredContentMappers
+	newSnapshot.inferredProjectContentMapperExtensions = inferredContentMapperExtensions
 	newSnapshot.builderLogs = logger
 	newSnapshot.apiError = apiError
 
