@@ -575,13 +575,9 @@ func TestWatch(t *testing.T) {
 			},
 			commandLineArgs: []string{"--watch"},
 			edits: []*tscEdit{
-				{
-					caption:      "comment out global declaration",
-					expectedDiff: "incremental build does not report the missing global declaration",
-					edit: func(sys *TestSys) {
-						sys.writeFileNoError("/home/src/workspaces/project/x.ts", `// const a = 1;`)
-					},
-				},
+				newTscEdit("comment out global declaration", func(sys *TestSys) {
+					sys.writeFileNoError("/home/src/workspaces/project/x.ts", `// const a = 1;`)
+				}),
 				newTscEdit("restore global declaration", func(sys *TestSys) {
 					sys.writeFileNoError("/home/src/workspaces/project/x.ts", `const a = 1;`)
 				}),

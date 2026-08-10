@@ -67,8 +67,17 @@ Edit [0]:: comment out global declaration
 Output::
 [2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
 
-[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+[96ma.ts[0m:[93m1[0m:[93m13[0m - [91merror[0m[90m TS2304: [0mCannot find name 'a'.
 
+[7m1[0m console.log(a);
+[7m [0m [91m            ~[0m
+
+
+Found 1 error in a.ts[90m:1[0m
+
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
+
+//// [/home/src/workspaces/project/a.js] *rewrite with same content*
 //// [/home/src/workspaces/project/x.js] *modified* 
 "use strict";
 // const a = 1;
@@ -80,23 +89,13 @@ Directory watches::
   /home/src/workspaces/project (recursive)
 tsconfig.json::
 SemanticDiagnostics::
+*refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
+*refresh*    /home/src/workspaces/project/a.ts
 *refresh*    /home/src/workspaces/project/x.ts
 Signatures::
+(computed .d.ts) /home/src/workspaces/project/a.ts
 (computed .d.ts) /home/src/workspaces/project/x.ts
 
-
-Diff:: incremental build does not report the missing global declaration
---- nonIncremental.output.txt
-+++ incremental.output.txt
-@@ -1,8 +0,0 @@
--[96ma.ts[0m:[93m1[0m:[93m13[0m - [91merror[0m[90m TS2304: [0mCannot find name 'a'.
--
--[7m1[0m console.log(a);
--[7m [0m [91m            ~[0m
--
--
--Found 1 error in a.ts[90m:1[0m
--
 
 Edit [1]:: restore global declaration
 //// [/home/src/workspaces/project/x.ts] *modified* 
