@@ -2219,6 +2219,50 @@ func TestTscIncremental(t *testing.T) {
 			},
 			commandLineArgs: []string{"--noEmit"},
 		},
+		func() *tscInput {
+			depDts := "export declare function value(): number;\nexport declare function other(): string;\n"
+			files := FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"incremental": true,
+							"module": "esnext",
+							"moduleResolution": "bundler",
+							"strict": true,
+							"noEmit": true,
+						},
+						"include": ["src/**/*.ts"],
+					}`),
+				"/home/src/workspaces/project/node_modules/.pnpm/dep@1.0.0/node_modules/dep/package.json": `{ "name": "dep", "version": "1.0.0", "types": "index.d.ts" }`,
+				"/home/src/workspaces/project/node_modules/.pnpm/dep@1.0.0/node_modules/dep/index.d.ts":   depDts,
+				"/home/src/workspaces/project/node_modules/.pnpm/dep@2.0.0/node_modules/dep/package.json": `{ "name": "dep", "version": "2.0.0", "types": "index.d.ts" }`,
+				"/home/src/workspaces/project/node_modules/.pnpm/dep@2.0.0/node_modules/dep/index.d.ts":   depDts,
+				"/home/src/workspaces/project/node_modules/dep":                                           vfstest.Symlink("/home/src/workspaces/project/node_modules/.pnpm/dep@1.0.0/node_modules/dep"),
+				"/home/src/workspaces/project/src/shared.ts":                                              "export { value } from \"dep\";\n",
+			}
+			for i := range 12 {
+				files[fmt.Sprintf("/home/src/workspaces/project/src/route%d.ts", i)] = fmt.Sprintf("import { value } from \"./shared\";\nexport const r%d: number = value();\n", i)
+			}
+			return &tscInput{
+				subScenario: "pnpm dependency version change moves resolved paths",
+				files:       files,
+				commandLineArgs: []string{
+					"--noEmit",
+				},
+				edits: []*tscEdit{
+					{
+						caption: "pnpm dependency version bump repoints node_modules/dep symlink",
+						edit: func(sys *TestSys) {
+							sys.symlinkNoError(
+								"/home/src/workspaces/project/node_modules/dep",
+								"/home/src/workspaces/project/node_modules/.pnpm/dep@2.0.0/node_modules/dep",
+							)
+						},
+					},
+					noChange,
+				},
+			}
+		}(),
 	}
 
 	for _, test := range testCases {

@@ -586,6 +586,10 @@ func (s *TestSys) appendFile(path string, text string) {
 	s.writeFileNoError(path, content+text)
 }
 
+func (s *TestSys) symlinkNoError(path string, target string) {
+	s.mapFs().AddSymlink(strings.TrimPrefix(path, "/"), strings.TrimPrefix(target, "/"))
+}
+
 func (s *TestSys) prependFile(path string, text string) {
 	content := s.readFileNoError(path)
 	s.writeFileNoError(path, text+content)
