@@ -165,7 +165,7 @@ func (r *TranspileBaselineRunner) runKind(
 		baselineExtension = tspath.GetDeclarationEmitExtensionForPath(configuredName + extension)
 	}
 	baselineName := configuredName + baselineExtension
-	baseline.Run(t, filepath.Join("transpile", baselineName), result.String(), baseline.Options{IsSubmodule: true})
+	baseline.Run(t, "transpile/"+baselineName, result.String(), baseline.Options{IsSubmodule: true})
 }
 
 func appendTranspileSection(result *strings.Builder, fileName string, content string) {
