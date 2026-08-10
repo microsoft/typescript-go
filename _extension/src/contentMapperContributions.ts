@@ -20,7 +20,7 @@ export interface ContentMapperContribution {
 export interface SerializedContentMapperContribution {
     readonly contributorId: string;
     readonly extensions: readonly string[];
-    readonly inferredProject?: {
+    readonly inferredProjectContribution?: {
         readonly options?: Readonly<Record<string, unknown>>;
         readonly manifest: {
             readonly name: string;
@@ -42,7 +42,7 @@ export function serializeContentMapperContributions(
             result.push({
                 contributorId,
                 extensions: [...contribution.extensions],
-                inferredProject: contribution.inferredProject && {
+                inferredProjectContribution: contribution.inferredProject && {
                     options: contribution.inferredProject.options,
                     manifest: {
                         ...contribution.inferredProject.manifest,
