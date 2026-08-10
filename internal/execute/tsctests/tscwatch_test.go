@@ -564,6 +564,29 @@ func TestWatch(t *testing.T) {
 				}),
 			},
 		},
+		// Global (script) files: commenting out a global declaration in one
+		// file must surface the resulting error in another file that used it.
+		{
+			subScenario: "watch detects error across global script files when global decl removed",
+			files: FileMap{
+				"/home/src/workspaces/project/a.ts":          `console.log(a);`,
+				"/home/src/workspaces/project/x.ts":          `const a = 1;`,
+				"/home/src/workspaces/project/tsconfig.json": `{}`,
+			},
+			commandLineArgs: []string{"--watch"},
+			edits: []*tscEdit{
+				{
+					caption:      "comment out global declaration",
+					expectedDiff: "incremental build does not report the missing global declaration",
+					edit: func(sys *TestSys) {
+						sys.writeFileNoError("/home/src/workspaces/project/x.ts", `// const a = 1;`)
+					},
+				},
+				newTscEdit("restore global declaration", func(sys *TestSys) {
+					sys.writeFileNoError("/home/src/workspaces/project/x.ts", `const a = 1;`)
+				}),
+			},
+		},
 		// Ancestor fallback: creating deeply nested directories that didn't
 		// exist at initial build time should trigger a rebuild and re-watch.
 		{
