@@ -1,0 +1,89 @@
+//// [tests/cases/compiler/expandoArrowFunctionDeclarationEmitJSDoc.ts] ////
+
+=== namedExports.js ===
+// An expando host declared as a function declaration keeps its JSDoc in the
+// declaration file; one declared as an arrow function or function expression
+// should keep it too, since both are emitted as a `declare function`.
+
+/**
+ * jsdoc description on `ExpandoFunctionNamedExport`
+ */
+function ExpandoFunctionNamedExport() { return null; }
+>ExpandoFunctionNamedExport : Symbol(ExpandoFunctionNamedExport, Decl(namedExports.js, 0, 0))
+
+ExpandoFunctionNamedExport.args = { num: 3 };
+>ExpandoFunctionNamedExport.args : Symbol(ExpandoFunctionNamedExport.args, Decl(namedExports.js, 7, 54))
+>ExpandoFunctionNamedExport : Symbol(ExpandoFunctionNamedExport, Decl(namedExports.js, 0, 0))
+>args : Symbol(ExpandoFunctionNamedExport.args, Decl(namedExports.js, 7, 54))
+>num : Symbol(num, Decl(namedExports.js, 8, 35))
+
+/**
+ * jsdoc description on `ExpandoArrowNamedExport`
+ */
+const ExpandoArrowNamedExport = () => { return null; };
+>ExpandoArrowNamedExport : Symbol(ExpandoArrowNamedExport, Decl(namedExports.js, 13, 5))
+
+ExpandoArrowNamedExport.args = { num: 3 };
+>ExpandoArrowNamedExport.args : Symbol(ExpandoArrowNamedExport.args, Decl(namedExports.js, 13, 55))
+>ExpandoArrowNamedExport : Symbol(ExpandoArrowNamedExport, Decl(namedExports.js, 13, 5))
+>args : Symbol(ExpandoArrowNamedExport.args, Decl(namedExports.js, 13, 55))
+>num : Symbol(num, Decl(namedExports.js, 14, 32))
+
+/**
+ * jsdoc description on `ExpandoFunctionExpressionNamedExport`
+ */
+const ExpandoFunctionExpressionNamedExport = function () { return null; };
+>ExpandoFunctionExpressionNamedExport : Symbol(ExpandoFunctionExpressionNamedExport, Decl(namedExports.js, 19, 5))
+
+ExpandoFunctionExpressionNamedExport.args = { num: 3 };
+>ExpandoFunctionExpressionNamedExport.args : Symbol(ExpandoFunctionExpressionNamedExport.args, Decl(namedExports.js, 19, 74))
+>ExpandoFunctionExpressionNamedExport : Symbol(ExpandoFunctionExpressionNamedExport, Decl(namedExports.js, 19, 5))
+>args : Symbol(ExpandoFunctionExpressionNamedExport.args, Decl(namedExports.js, 19, 74))
+>num : Symbol(num, Decl(namedExports.js, 20, 45))
+
+export { ExpandoFunctionNamedExport, ExpandoArrowNamedExport, ExpandoFunctionExpressionNamedExport };
+>ExpandoFunctionNamedExport : Symbol(ExpandoFunctionNamedExport, Decl(namedExports.js, 22, 8))
+>ExpandoArrowNamedExport : Symbol(ExpandoArrowNamedExport, Decl(namedExports.js, 22, 36))
+>ExpandoFunctionExpressionNamedExport : Symbol(ExpandoFunctionExpressionNamedExport, Decl(namedExports.js, 22, 61))
+
+=== inlineExports.js ===
+/**
+ * jsdoc description on `ExpandoFunctionInlineNamedExport`
+ */
+export function ExpandoFunctionInlineNamedExport() { return null; }
+>ExpandoFunctionInlineNamedExport : Symbol(ExpandoFunctionInlineNamedExport, Decl(inlineExports.js, 0, 0))
+
+ExpandoFunctionInlineNamedExport.args = { num: 3 };
+>ExpandoFunctionInlineNamedExport.args : Symbol(ExpandoFunctionInlineNamedExport.args, Decl(inlineExports.js, 3, 67))
+>ExpandoFunctionInlineNamedExport : Symbol(ExpandoFunctionInlineNamedExport, Decl(inlineExports.js, 0, 0))
+>args : Symbol(ExpandoFunctionInlineNamedExport.args, Decl(inlineExports.js, 3, 67))
+>num : Symbol(num, Decl(inlineExports.js, 4, 41))
+
+/**
+ * jsdoc description on `ExpandoArrowInlineNamedExport`
+ */
+export const ExpandoArrowInlineNamedExport = () => { return null; };
+>ExpandoArrowInlineNamedExport : Symbol(ExpandoArrowInlineNamedExport, Decl(inlineExports.js, 9, 12))
+
+ExpandoArrowInlineNamedExport.args = { num: 3 };
+>ExpandoArrowInlineNamedExport.args : Symbol(ExpandoArrowInlineNamedExport.args, Decl(inlineExports.js, 9, 68))
+>ExpandoArrowInlineNamedExport : Symbol(ExpandoArrowInlineNamedExport, Decl(inlineExports.js, 9, 12))
+>args : Symbol(ExpandoArrowInlineNamedExport.args, Decl(inlineExports.js, 9, 68))
+>num : Symbol(num, Decl(inlineExports.js, 10, 38))
+
+=== defaultExport.js ===
+/**
+ * jsdoc description on `ExpandoArrowDefaultExport`
+ */
+const ExpandoArrowDefaultExport = () => { return null; };
+>ExpandoArrowDefaultExport : Symbol(ExpandoArrowDefaultExport, Decl(defaultExport.js, 3, 5))
+
+ExpandoArrowDefaultExport.args = { num: 3 };
+>ExpandoArrowDefaultExport.args : Symbol(ExpandoArrowDefaultExport.args, Decl(defaultExport.js, 3, 57))
+>ExpandoArrowDefaultExport : Symbol(ExpandoArrowDefaultExport, Decl(defaultExport.js, 3, 5))
+>args : Symbol(ExpandoArrowDefaultExport.args, Decl(defaultExport.js, 3, 57))
+>num : Symbol(num, Decl(defaultExport.js, 4, 34))
+
+export default ExpandoArrowDefaultExport;
+>ExpandoArrowDefaultExport : Symbol(ExpandoArrowDefaultExport, Decl(defaultExport.js, 3, 5))
+

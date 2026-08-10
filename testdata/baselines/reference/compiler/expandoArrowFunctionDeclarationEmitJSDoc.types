@@ -1,0 +1,111 @@
+//// [tests/cases/compiler/expandoArrowFunctionDeclarationEmitJSDoc.ts] ////
+
+=== namedExports.js ===
+// An expando host declared as a function declaration keeps its JSDoc in the
+// declaration file; one declared as an arrow function or function expression
+// should keep it too, since both are emitted as a `declare function`.
+
+/**
+ * jsdoc description on `ExpandoFunctionNamedExport`
+ */
+function ExpandoFunctionNamedExport() { return null; }
+>ExpandoFunctionNamedExport : { (): null; args: { num: number; }; }
+
+ExpandoFunctionNamedExport.args = { num: 3 };
+>ExpandoFunctionNamedExport.args = { num: 3 } : { num: number; }
+>ExpandoFunctionNamedExport.args : { num: number; }
+>ExpandoFunctionNamedExport : { (): null; args: { num: number; }; }
+>args : { num: number; }
+>{ num: 3 } : { num: number; }
+>num : number
+>3 : 3
+
+/**
+ * jsdoc description on `ExpandoArrowNamedExport`
+ */
+const ExpandoArrowNamedExport = () => { return null; };
+>ExpandoArrowNamedExport : { (): null; args: { num: number; }; }
+>() => { return null; } : { (): null; args: { num: number; }; }
+
+ExpandoArrowNamedExport.args = { num: 3 };
+>ExpandoArrowNamedExport.args = { num: 3 } : { num: number; }
+>ExpandoArrowNamedExport.args : { num: number; }
+>ExpandoArrowNamedExport : { (): null; args: { num: number; }; }
+>args : { num: number; }
+>{ num: 3 } : { num: number; }
+>num : number
+>3 : 3
+
+/**
+ * jsdoc description on `ExpandoFunctionExpressionNamedExport`
+ */
+const ExpandoFunctionExpressionNamedExport = function () { return null; };
+>ExpandoFunctionExpressionNamedExport : { (): null; args: { num: number; }; }
+>function () { return null; } : { (): null; args: { num: number; }; }
+
+ExpandoFunctionExpressionNamedExport.args = { num: 3 };
+>ExpandoFunctionExpressionNamedExport.args = { num: 3 } : { num: number; }
+>ExpandoFunctionExpressionNamedExport.args : { num: number; }
+>ExpandoFunctionExpressionNamedExport : { (): null; args: { num: number; }; }
+>args : { num: number; }
+>{ num: 3 } : { num: number; }
+>num : number
+>3 : 3
+
+export { ExpandoFunctionNamedExport, ExpandoArrowNamedExport, ExpandoFunctionExpressionNamedExport };
+>ExpandoFunctionNamedExport : { (): null; args: { num: number; }; }
+>ExpandoArrowNamedExport : { (): null; args: { num: number; }; }
+>ExpandoFunctionExpressionNamedExport : { (): null; args: { num: number; }; }
+
+=== inlineExports.js ===
+/**
+ * jsdoc description on `ExpandoFunctionInlineNamedExport`
+ */
+export function ExpandoFunctionInlineNamedExport() { return null; }
+>ExpandoFunctionInlineNamedExport : { (): null; args: { num: number; }; }
+
+ExpandoFunctionInlineNamedExport.args = { num: 3 };
+>ExpandoFunctionInlineNamedExport.args = { num: 3 } : { num: number; }
+>ExpandoFunctionInlineNamedExport.args : { num: number; }
+>ExpandoFunctionInlineNamedExport : { (): null; args: { num: number; }; }
+>args : { num: number; }
+>{ num: 3 } : { num: number; }
+>num : number
+>3 : 3
+
+/**
+ * jsdoc description on `ExpandoArrowInlineNamedExport`
+ */
+export const ExpandoArrowInlineNamedExport = () => { return null; };
+>ExpandoArrowInlineNamedExport : { (): null; args: { num: number; }; }
+>() => { return null; } : { (): null; args: { num: number; }; }
+
+ExpandoArrowInlineNamedExport.args = { num: 3 };
+>ExpandoArrowInlineNamedExport.args = { num: 3 } : { num: number; }
+>ExpandoArrowInlineNamedExport.args : { num: number; }
+>ExpandoArrowInlineNamedExport : { (): null; args: { num: number; }; }
+>args : { num: number; }
+>{ num: 3 } : { num: number; }
+>num : number
+>3 : 3
+
+=== defaultExport.js ===
+/**
+ * jsdoc description on `ExpandoArrowDefaultExport`
+ */
+const ExpandoArrowDefaultExport = () => { return null; };
+>ExpandoArrowDefaultExport : { (): null; args: { num: number; }; }
+>() => { return null; } : { (): null; args: { num: number; }; }
+
+ExpandoArrowDefaultExport.args = { num: 3 };
+>ExpandoArrowDefaultExport.args = { num: 3 } : { num: number; }
+>ExpandoArrowDefaultExport.args : { num: number; }
+>ExpandoArrowDefaultExport : { (): null; args: { num: number; }; }
+>args : { num: number; }
+>{ num: 3 } : { num: number; }
+>num : number
+>3 : 3
+
+export default ExpandoArrowDefaultExport;
+>ExpandoArrowDefaultExport : { (): null; args: { num: number; }; }
+

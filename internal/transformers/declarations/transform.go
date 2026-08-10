@@ -2890,7 +2890,14 @@ func (tx *DeclarationTransformer) transformExpandoHost(name *ast.Node, declarati
 	} else if ast.IsVariableDeclaration(declaration) && ast.IsFunctionExpressionOrArrowFunction(declaration.Initializer()) {
 		fn := declaration.Initializer()
 		typeParameters, parameters, asteriskToken := extractExpandoHostParams(fn)
-		replacement = append(replacement, tx.Factory().NewFunctionDeclaration(modifiers, asteriskToken, tx.Factory().NewIdentifier(name.Text()), tx.ensureTypeParams(fn, typeParameters), tx.updateParamList(fn, parameters), tx.ensureType(fn, false), nil /*fullSignature*/, nil /*body*/))
+		funcDecl := tx.Factory().NewFunctionDeclaration(modifiers, asteriskToken, tx.Factory().NewIdentifier(name.Text()), tx.ensureTypeParams(fn, typeParameters), tx.updateParamList(fn, parameters), tx.ensureType(fn, false), nil /*fullSignature*/, nil /*body*/)
+		// This function declaration is synthesized from scratch, so it has no position for the
+		// printer to scan for leading comments and any JSDoc on the variable statement is dropped.
+		// The function declaration branch above keeps its JSDoc for free because it updates the
+		// original node instead. Point the comment range at the whole statement, which is where
+		// JSDoc on the host is written.
+		tx.EmitContext().SetCommentRange(funcDecl, root.Loc)
+		replacement = append(replacement, funcDecl)
 	} else {
 		tx.expandoHosts[id] = tx.transformTopLevelDeclaration(declaration)
 		return
