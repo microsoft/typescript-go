@@ -198,6 +198,16 @@ func TestUnmarshalAcceptsOmittedOptionalFields(t *testing.T) {
 				assert.Equal(t, fr.EndLine, uint32(10))
 			},
 		},
+		{
+			name:   "InitializeParams without deprecated rootUri",
+			input:  `{"processId": null, "capabilities": {}}`,
+			target: new(InitializeParams),
+			check: func(t *testing.T, target any) {
+				t.Helper()
+				params := target.(*InitializeParams)
+				assert.Assert(t, params.RootUri.DocumentUri == nil)
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -242,6 +252,12 @@ func TestUnmarshalRejectsIncompleteObjects(t *testing.T) {
 			input:   `{}`,
 			target:  new(Location),
 			errText: "missing required properties: uri, range",
+		},
+		{
+			name:    "InitializeParams missing capabilities",
+			input:   `{"processId": null}`,
+			target:  new(InitializeParams),
+			errText: "missing required properties: capabilities",
 		},
 	}
 

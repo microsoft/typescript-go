@@ -1127,6 +1127,12 @@ function patchAndPreprocessModel() {
         }
 
         for (const prop of structure.properties) {
+            // rootUri is deprecated in favor of workspaceFolders. Accept clients that
+            // omit the property and treat omission the same as an explicit null.
+            if (structure.name === "_InitializeParams" && prop.name === "rootUri") {
+                prop.omitzeroValue = true;
+            }
+
             // Replace initializationOptions type with custom InitializationOptions.
             // The spec types this field as LSPAny?, which includes null, so keep
             // it nullable so a null value sent by loose clients is accepted.

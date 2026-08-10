@@ -1736,7 +1736,7 @@ type InitializeParams struct {
 	// `rootUri` wins.
 	//
 	// Deprecated: in favour of workspaceFolders.
-	RootUri DocumentUriOrNull `json:"rootUri" lsp:"required"`
+	RootUri DocumentUriOrNull `json:"rootUri,omitzero" lsp:"nullable"`
 
 	// The capabilities provided by the client (editor or tool)
 	Capabilities *ClientCapabilities `json:"capabilities" lsp:"required"`
