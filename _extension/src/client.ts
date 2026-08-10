@@ -38,6 +38,7 @@ import {
     readNativePreviewConfig,
 } from "./util";
 import { getLanguageForUri } from "./util";
+import { workspaceSymbolSendRequestMiddleware } from "./workspaceSymbolMiddleware";
 
 // Registration IDs the server uses for content mapper capabilities all share this prefix (see
 // RegisterContentMapperExtensions in internal/lsp/server.go). The extension watches for these dynamic
@@ -127,6 +128,7 @@ export class Client implements vscode.Disposable {
                     },
                 },
                 sendNotification: sendNotificationMiddleware,
+                sendRequest: workspaceSymbolSendRequestMiddleware,
                 provideHover: () => undefined,
                 handleRegisterCapability: async (params, next) => {
                     await next(params, CancellationToken.None);

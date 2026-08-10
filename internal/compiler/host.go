@@ -96,7 +96,7 @@ func (h *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.Sourc
 	if !ok {
 		return nil
 	}
-	return parser.ParseSourceFile(opts, text, core.GetScriptKindFromFileName(opts.FileName))
+	return parser.ParseSourceFile(opts, text, core.EnsureScriptKindFromFileName(opts.FileName))
 }
 
 func (h *compilerHost) GetContentMappedSourceFiles(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper, options *core.CompilerOptions) (contentmapper.SourceFiles, error) {
