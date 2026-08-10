@@ -2,6 +2,7 @@ package incremental
 
 import (
 	"context"
+	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
@@ -87,6 +88,8 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 		t.snapshot.options.SkipDefaultLibCheck.IsTrue() == t.oldProgram.snapshot.options.SkipDefaultLibCheck.IsTrue()
 
 	files := t.program.GetSourceFiles()
+	var structuralChanges atomic.Int32
+	var referenceReplacementFiles collections.SyncSet[tspath.Path]
 	wg := core.NewWorkGroup(t.program.SingleThreaded())
 	for _, file := range files {
 		wg.Queue(func() {
@@ -99,21 +102,35 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 				t.snapshot.referencedMap.storeReferences(file.Path(), newReferences)
 			}
 			if t.oldProgram != nil {
+				countable := !t.program.IsSourceFileDefaultLibrary(file.Path())
 				if oldFileInfo, ok := t.oldProgram.snapshot.fileInfos.Load(file.Path()); ok {
 					signature = oldFileInfo.signature
 					if oldFileInfo.version != version || oldFileInfo.affectsGlobalScope != affectsGlobalScope || oldFileInfo.impliedNodeFormat != impliedNodeFormat {
 						t.snapshot.addFileToChangeSet(file.Path())
-					} else if oldReferences, _ := t.oldProgram.snapshot.referencedMap.getReferences(file.Path()); !newReferences.Equals(oldReferences) {
-						// Referenced files changed
-						t.snapshot.addFileToChangeSet(file.Path())
-					} else if newReferences != nil {
-						for refPath := range newReferences.Keys() {
-							if t.program.GetSourceFileByPath(refPath) == nil {
-								if _, ok := t.oldProgram.snapshot.fileInfos.Load(refPath); ok {
-									// Referenced file was deleted in the new program
-									t.snapshot.addFileToChangeSet(file.Path())
-									break
+						if countable {
+							structuralChanges.Add(1)
+						}
+					} else {
+						referencesChanged := false
+						oldReferences, _ := t.oldProgram.snapshot.referencedMap.getReferences(file.Path())
+						if !newReferences.Equals(oldReferences) {
+							// Referenced files changed
+							referencesChanged = true
+						} else if newReferences != nil {
+							for refPath := range newReferences.Keys() {
+								if t.program.GetSourceFileByPath(refPath) == nil {
+									if _, ok := t.oldProgram.snapshot.fileInfos.Load(refPath); ok {
+										// Referenced file was deleted in the new program
+										referencesChanged = true
+										break
+									}
 								}
+							}
+						}
+						if referencesChanged {
+							t.snapshot.addFileToChangeSet(file.Path())
+							if countable && t.referencesWereReplaced(oldReferences, newReferences) {
+								referenceReplacementFiles.Add(file.Path())
 							}
 						}
 					}
@@ -152,6 +169,96 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 		})
 	}
 	wg.RunAndWait()
+
+	t.maybeDropIncrementalState(int(structuralChanges.Load()), &referenceReplacementFiles)
+}
+
+func (t *toProgramSnapshot) referencesWereReplaced(oldReferences *collections.Set[tspath.Path], newReferences *collections.Set[tspath.Path]) bool {
+	hasRemovedReference := false
+	for path := range oldReferences.Keys() {
+		if !newReferences.Has(path) && t.program.GetSourceFileByPath(path) == nil {
+			hasRemovedReference = true
+			break
+		}
+	}
+	if !hasRemovedReference {
+		return false
+	}
+	for path := range newReferences.Keys() {
+		if !oldReferences.Has(path) {
+			if _, ok := t.oldProgram.snapshot.fileInfos.Load(path); !ok {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+const minAffectedFilesToDropIncrementalState = 8
+
+func (t *toProgramSnapshot) maybeDropIncrementalState(structuralChanges int, referenceReplacementFiles *collections.SyncSet[tspath.Path]) {
+	if t.oldProgram == nil || t.snapshot.options.Composite.IsTrue() {
+		return
+	}
+	if structuralChanges != 0 || referenceReplacementFiles.Size() == 0 {
+		return
+	}
+
+	checkedFileCount := 0
+	for _, file := range t.program.GetSourceFiles() {
+		if !t.program.SkipTypeChecking(file, true) {
+			checkedFileCount++
+		}
+	}
+
+	seen := collections.Set[tspath.Path]{}
+	queue := make([]tspath.Path, 0, referenceReplacementFiles.Size())
+	referenceReplacementFiles.Range(func(path tspath.Path) bool {
+		queue = append(queue, path)
+		return true
+	})
+	affectedCheckedFileCount := 0
+	for len(queue) != 0 {
+		path := queue[len(queue)-1]
+		queue = queue[:len(queue)-1]
+		if !seen.AddIfAbsent(path) {
+			continue
+		}
+		if file := t.program.GetSourceFileByPath(path); file != nil && !t.program.SkipTypeChecking(file, true) {
+			affectedCheckedFileCount++
+		}
+		for referencedBy := range t.snapshot.referencedMap.getReferencedBy(path) {
+			queue = append(queue, referencedBy)
+		}
+	}
+
+	// Reconciliation computes shape signatures for affected files before checking them. Once a
+	// sizable majority of the checked program is affected, rebuilding cold is the cheaper bound.
+	if affectedCheckedFileCount < minAffectedFilesToDropIncrementalState ||
+		affectedCheckedFileCount*2 < checkedFileCount {
+		return
+	}
+	t.rebuildSnapshotAsCold()
+}
+
+func (t *toProgramSnapshot) rebuildSnapshotAsCold() {
+	s := t.snapshot
+	s.changedFilesSet = collections.SyncSet[tspath.Path]{}
+	s.semanticDiagnosticsPerFile = collections.SyncMap[tspath.Path, *DiagnosticsOrBuildInfoDiagnosticsWithFileName]{}
+	s.emitDiagnosticsPerFile = collections.SyncMap[tspath.Path, *DiagnosticsOrBuildInfoDiagnosticsWithFileName]{}
+	s.emitSignatures = collections.SyncMap[tspath.Path, *emitSignature]{}
+	s.affectedFilesPendingEmit = collections.SyncMap[tspath.Path, FileEmitKind]{}
+	s.latestChangedDtsFile = ""
+	emitKind := GetFileEmitKind(s.options)
+	s.fileInfos.Range(func(path tspath.Path, info *FileInfo) bool {
+		// A cold build stores the file version as the signature and queues every file for emit.
+		info.signature = info.version
+		s.affectedFilesPendingEmit.Store(path, emitKind)
+		return true
+	})
+	s.buildInfoEmitPending.Store(true)
+	t.globalFileRemoved = false
+	t.oldProgram = nil
 }
 
 func (t *toProgramSnapshot) handleFileDelete() {

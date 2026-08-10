@@ -668,6 +668,7 @@ Output::
 
 tsconfig.json::
 SemanticDiagnostics::
+*refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
 *refresh*    /home/src/workspaces/project/node_modules/.pnpm/dep@2.0.0/node_modules/dep/index.d.ts
 *refresh*    /home/src/workspaces/project/src/shared.ts
 *refresh*    /home/src/workspaces/project/src/route0.ts
@@ -683,20 +684,6 @@ SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/src/route8.ts
 *refresh*    /home/src/workspaces/project/src/route9.ts
 Signatures::
-(used version)   /home/src/workspaces/project/node_modules/.pnpm/dep@2.0.0/node_modules/dep/index.d.ts
-(computed .d.ts) /home/src/workspaces/project/src/shared.ts
-(used version)   /home/src/workspaces/project/src/route0.ts
-(used version)   /home/src/workspaces/project/src/route1.ts
-(used version)   /home/src/workspaces/project/src/route10.ts
-(used version)   /home/src/workspaces/project/src/route11.ts
-(used version)   /home/src/workspaces/project/src/route2.ts
-(used version)   /home/src/workspaces/project/src/route3.ts
-(used version)   /home/src/workspaces/project/src/route4.ts
-(used version)   /home/src/workspaces/project/src/route5.ts
-(used version)   /home/src/workspaces/project/src/route6.ts
-(used version)   /home/src/workspaces/project/src/route7.ts
-(used version)   /home/src/workspaces/project/src/route8.ts
-(used version)   /home/src/workspaces/project/src/route9.ts
 
 
 Edit [1]:: no change
