@@ -166,7 +166,6 @@ const (
 	MethodGetJSDocTags                      Method = "getJsDocTags"
 	MethodGetDocumentationComment           Method = "getDocumentationComment"
 	MethodIsArrayType                       Method = "isArrayType"
-	MethodIsTupleType                       Method = "isTupleType"
 
 	// Reference methods
 	MethodGetReferencesToSymbolInFile Method = "getReferencesToSymbolInFile"
@@ -479,7 +478,6 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetJSDocTags:                      unmarshallerFor[CheckerSymbolParams],
 	MethodGetDocumentationComment:           unmarshallerFor[CheckerSymbolParams],
 	MethodIsArrayType:                       unmarshallerFor[CheckerTypeParams],
-	MethodIsTupleType:                       unmarshallerFor[CheckerTypeParams],
 	MethodGetReferencesToSymbolInFile:       unmarshallerFor[GetReferencesToSymbolInFileParams],
 	MethodGetReferencedSymbolsForNode:       unmarshallerFor[GetReferencedSymbolsForNodeParams],
 	MethodGetSignatureUsages:                unmarshallerFor[GetSignatureUsagesParams],
@@ -650,9 +648,10 @@ type GetTypesOfSymbolsParams struct {
 }
 
 type TypeResponse struct {
-	Id          TypeID `json:"id"`
-	Flags       uint32 `json:"flags"`
-	ObjectFlags uint32 `json:"objectFlags,omitempty"`
+	Id                   TypeID `json:"id"`
+	Flags                uint32 `json:"flags"`
+	ObjectFlags          uint32 `json:"objectFlags,omitempty"`
+	IsTupleTypeReference bool   `json:"isTupleTypeReference,omitempty"`
 
 	// LiteralType data
 	Value any `json:"value"`
@@ -734,19 +733,17 @@ func newTypeResponse(t *checker.Type, id TypeID) *TypeResponse {
 		}
 	case flags&checker.TypeFlagsObject != 0:
 		resp.ObjectFlags = uint32(t.ObjectFlags())
+		resp.IsTupleTypeReference = checker.IsTupleType(t)
 		objectFlags := t.ObjectFlags()
 		if objectFlags&checker.ObjectFlagsReference != 0 {
-			var ref *checker.TypeReference
-			if objectFlags&checker.ObjectFlagsTuple != 0 {
+			ref := t.AsTypeReference()
+			if objectFlags&checker.ObjectFlagsTuple != 0 && ref.Target() == t {
 				tuple := t.AsTupleType()
-				ref = tuple.AsTypeReference()
 				resp.ElementFlags = tuple.ElementFlags()
 				fixedLen := tuple.FixedLength()
 				resp.FixedLength = &fixedLen
 				isReadonly := tuple.IsReadonly()
 				resp.TupleReadonly = &isReadonly
-			} else {
-				ref = t.AsTypeReference()
 			}
 			if ref.Target() != nil {
 				resp.Target = TypeHandle(ref.Target())
