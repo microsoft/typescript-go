@@ -180,7 +180,6 @@ export const title = "Profile";
 	assert.Assert(t, ok && renameMsg.AsResponse().Error == nil)
 	assert.Assert(t, rename.WorkspaceEdit == nil)
 	<-unregisteredSignal
-
 	mu.Lock()
 	unregistered := append([]*lsproto.Unregistration(nil), unregistrations...)
 	mu.Unlock()

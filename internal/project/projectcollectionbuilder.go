@@ -496,7 +496,7 @@ func (b *ProjectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, confi
 		// See if we can find a default project without updating a bunch of stuff.
 		if result := b.findDefaultProject(fileName, path); result != nil {
 			hasChanges = b.updateProgram(result, logger) || hasChanges
-			if result.Value() != nil {
+			if result.Value() != nil && result.Value().containsFile(path) {
 				if hasChanges {
 					b.cleanupInferredProject(logger)
 					if b.inferredProject.Value() != nil {
@@ -1124,6 +1124,9 @@ func (b *ProjectCollectionBuilder) updateInferredProjectRoots(rootFileNames []st
 
 func (b *ProjectCollectionBuilder) isSupportedInInferredProject(fileName string) bool {
 	if tspath.IsDynamicFileName(fileName) || core.GetScriptKindFromFileName(fileName) != core.ScriptKindUnknown {
+		return true
+	}
+	if file := b.fs.GetFile(fileName); file != nil && file.IsOverlay() && tspath.GetAnyExtensionFromPath(fileName, nil, false) == "" {
 		return true
 	}
 	return tspath.FileExtensionIsOneOf(fileName, b.inferredContentMapperExtensions)

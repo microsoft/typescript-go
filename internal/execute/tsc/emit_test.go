@@ -80,6 +80,7 @@ func (s *timingTestSystem) GetWidthOfTerminal() int                   { return 0
 func (s *timingTestSystem) GetEnvironmentVariable(name string) string { return "" }
 func (s *timingTestSystem) Now() time.Time                            { return s.clock.Now() }
 func (s *timingTestSystem) SinceStart() time.Duration                 { return s.clock.SinceStart() }
+
 func (s *timingTestSystem) Spawn([]string, string) (io.ReadWriteCloser, error) {
 	return nil, errors.New("spawn not implemented in timingTestSystem")
 }

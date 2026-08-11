@@ -101,7 +101,7 @@ func (f *diskFile) IsOverlay() bool {
 }
 
 func (f *diskFile) Kind() core.ScriptKind {
-	return core.EnsureScriptKindFromFileName(f.fileName)
+	return core.GetScriptKindFromFileName(f.fileName)
 }
 
 func (f *diskFile) Clone() *diskFile {
@@ -323,7 +323,7 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 			}
 			scriptKind := lsconv.LanguageKindToScriptKind(events.openChange.LanguageKind)
 			if scriptKind == core.ScriptKindUnknown {
-				scriptKind = core.EnsureScriptKindFromFileName(uri.FileName())
+				scriptKind = core.GetScriptKindFromFileName(uri.FileName())
 			}
 			newOverlays[path] = newOverlay(
 				uri.FileName(),

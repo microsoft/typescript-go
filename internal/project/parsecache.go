@@ -23,6 +23,9 @@ func NewParseCacheKey(
 	hash xxh3.Uint128,
 	scriptKind core.ScriptKind,
 ) ParseCacheKey {
+	if scriptKind == core.ScriptKindUnknown {
+		scriptKind = core.EnsureScriptKindFromFileName(options.FileName)
+	}
 	return ParseCacheKey{
 		SourceFileParseOptions: options,
 		Hash:                   hash,
