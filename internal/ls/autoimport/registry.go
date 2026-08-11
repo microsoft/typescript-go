@@ -1142,6 +1142,12 @@ func hasSymlinkToNodeModules(filePath tspath.Path, symlinkCache *symlinks.KnownS
 	if symlinkCache == nil {
 		return false
 	}
+	// Keep local workspace files indexed in project buckets even if they are
+	// reachable through a node_modules symlink from another workspace package.
+	// Only skip files whose canonical path is itself in node_modules.
+	if !strings.Contains(string(filePath), "/node_modules/") {
+		return false
+	}
 
 	// First check if the file itself has a symlink to node_modules
 	if filesByRealpath := symlinkCache.FilesByRealpath(); filesByRealpath != nil {
