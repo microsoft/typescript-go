@@ -153,14 +153,35 @@ func compareDecimalStrings(a string, b string) int {
 
 // Disjunction ::= Alternative ('|' Alternative)*
 func (p *regExpParser) scanDisjunction(isInGroup bool) {
+	// Names defined by any of this disjunction's alternatives. Since exactly one
+	// alternative is chosen at runtime, these names are unioned together (rather
+	// than intersected) and, when this disjunction is nested inside a group,
+	// bubbled up into the enclosing alternative's scope once the group closes.
+	// This ensures a name defined inside a nested group (e.g. `(?:(?<a>x))`) is
+	// still visible to a duplicate check for a sibling group later in the same
+	// enclosing alternative (e.g. `(?:(?<a>x))(?<a>z)`).
+	var disjunctionNames map[string]bool
 	for {
 		p.namedCapturingGroups = append(p.namedCapturingGroups, make(map[string]bool))
 		p.scanAlternative(isInGroup)
+		alternativeNames := p.namedCapturingGroups[len(p.namedCapturingGroups)-1]
 		p.namedCapturingGroups = p.namedCapturingGroups[:len(p.namedCapturingGroups)-1]
+		for name := range alternativeNames {
+			if disjunctionNames == nil {
+				disjunctionNames = make(map[string]bool)
+			}
+			disjunctionNames[name] = true
+		}
 		if p.char() != '|' {
-			return
+			break
 		}
 		p.incPos(1)
+	}
+	if isInGroup && len(p.namedCapturingGroups) > 0 {
+		parentScope := p.namedCapturingGroups[len(p.namedCapturingGroups)-1]
+		for name := range disjunctionNames {
+			parentScope[name] = true
+		}
 	}
 }
 
