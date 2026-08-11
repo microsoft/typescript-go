@@ -1230,7 +1230,7 @@ func (b *registryBuilder) buildProjectBucket(
 	result.bucket = &RegistryBucket{}
 	moduleResolver := module.NewResolverWithOptions(b.host, core.EmptyCompilerOptions, "", "", b.resolverOptions)
 	program := b.host.GetProgramForProject(projectPath)
-projectRootPath := b.base.toPath(program.GetCurrentDirectory())
+	projectRootPath := b.base.toPath(program.GetCurrentDirectory())
 	symlinkCache := program.GetSymlinkCache()
 	getChecker, closePool, checkerCount := createCheckerPool(program)
 	defer closePool()
