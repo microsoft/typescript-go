@@ -553,7 +553,7 @@ func (c *Checker) narrowTypeByBinaryExpression(f *FlowState, t *Type, expr *ast.
 	return t
 }
 
-// Returns true if the type includes the "top" of the type heirarchy, or close enough to it - `unknown`, `{}`, and negated types and intersections thereof
+// Returns true if the type includes the "top" of the type hierarchy, or close enough to it - `unknown`, `{}`, and negated types and intersections thereof
 // Used to determine if we should narrow to a literal type in `===` comparisons
 func (c *Checker) typeIsTopInclusive(t *Type) bool {
 	if t.flags&TypeFlagsUnknown != 0 || someType(t, c.IsEmptyAnonymousObjectType) {
