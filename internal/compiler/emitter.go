@@ -27,7 +27,7 @@ const (
 	EmitAll EmitOnly = iota
 	EmitOnlyJs
 	EmitOnlyDts
-	EmitOnlyForcedDts
+	EmitOnlyBuilderSignature
 )
 
 type emitter struct {
@@ -58,7 +58,7 @@ type declarationTransformer interface {
 }
 
 func (e *emitter) getDeclarationTransformers(emitContext *printer.EmitContext, sourceFile *ast.SourceFile, declarationFilePath string, declarationMapPath string) []declarationTransformer {
-	forceDtsEmit := e.emitOnly == EmitOnlyForcedDts || e.forceEmit && e.emitOnly == EmitOnlyDts
+	forceDtsEmit := e.emitOnly == EmitOnlyBuilderSignature || e.forceEmit && e.emitOnly == EmitOnlyDts
 	return []declarationTransformer{
 		declarations.NewDeclarationTransformer(e.host, emitContext, e.host.Options(), declarationFilePath, declarationMapPath),
 		declarations.NewSupplementalReferencesTransformer(e.host, sourceFile, declarationFilePath, forceDtsEmit),
@@ -227,7 +227,7 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 	// Declaration files for content-mapped files don't get source maps because the mapped positions would point into
 	// transformed TS content that exists only in-memory during the build. As a future improvement, it may be possible
 	// to double-map the positions using the content-mapped file's spanmap.
-	emitDeclarationMap := e.emitOnly != EmitOnlyForcedDts && options.DeclarationMap.IsTrue() && sourceFile.ContentMapper() == ""
+	emitDeclarationMap := e.emitOnly != EmitOnlyBuilderSignature && options.DeclarationMap.IsTrue() && sourceFile.ContentMapper() == ""
 
 	if e.tr != nil {
 		defer e.tr.Push(tracing.PhaseEmit, "emitDeclarationFileOrBundle", map[string]any{"declarationFilePath": declarationFilePath}, true)()
@@ -242,12 +242,12 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 		e.emitterDiagnostics.Add(elem)
 	}
 
-	if !e.forceEmit && e.emitOnly != EmitOnlyForcedDts && (options.NoEmit == core.TSTrue || e.host.IsEmitBlocked(declarationFilePath)) {
+	if !e.forceEmit && e.emitOnly != EmitOnlyBuilderSignature && (options.NoEmit == core.TSTrue || e.host.IsEmitBlocked(declarationFilePath)) {
 		e.emitResult.EmitSkipped = true
 		return
 	}
 
-	declBlocked := len(diags) > 0 && !e.forceEmit && e.emitOnly != EmitOnlyForcedDts
+	declBlocked := len(diags) > 0 && !e.forceEmit && e.emitOnly != EmitOnlyBuilderSignature
 	if declBlocked {
 		e.emitResult.EmitSkipped = true
 		return
