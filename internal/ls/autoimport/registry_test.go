@@ -836,7 +836,7 @@ export const b = a;
 
 		stats := autoImportStats(t, session)
 		projectBucket := singleBucket(t, stats.ProjectBuckets)
-		assert.Assert(t, projectBucket.FileCount >= 2, "expected pkg-a project bucket to include local files despite circular workspace symlinks")
+assert.Equal(t, 3, projectBucket.FileCount, "expected all pkg-a project files despite circular workspace symlinks")
 	})
 
 	t.Run("changed fileExcludePatterns triggers bucket rebuild", func(t *testing.T) {
