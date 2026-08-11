@@ -16,6 +16,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/api"
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/fswatch"
@@ -221,6 +222,8 @@ type Server struct {
 	projectProgress *projectLoadingProgress
 
 	startWatchdog func(parentPID int)
+
+	flakeLogging lsproto.DiagnosticFlakeLogLevel
 }
 
 func (s *Server) Session() *project.Session { return s.session }
@@ -1064,6 +1067,9 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			s.logger.SetVerbosity(v)
 		}
 	}
+	if s.initializationOptions.TrackFlakyDiagnostics != nil {
+		s.flakeLogging = *s.initializationOptions.TrackFlakyDiagnostics
+	}
 	s.clientCapabilities = params.Capabilities.Resolve()
 	if s.clientCapabilities.Window.WorkDoneProgress {
 		s.projectProgress = newProjectLoadingProgress(s, s.progressDelay)
@@ -1389,7 +1395,60 @@ func (s *Server) handleSetLogVerbosity(_ context.Context, params *lsproto.SetLog
 
 func (s *Server) handleDocumentDiagnostic(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentDiagnosticParams) (lsproto.DocumentDiagnosticResponse, error) {
 	ctx = core.WithCheckerLifetime(ctx, core.CheckerLifetimeDiagnostics)
-	return ls.ProvideDiagnostics(ctx, params.TextDocument.Uri)
+	if s.flakeLogging == lsproto.DiagnosticFlakeLogLevelOff {
+		return ls.ProvideDiagnostics(ctx, params.TextDocument.Uri)
+	}
+	direct, err := ls.ProvideDiagnostics(ctx, params.TextDocument.Uri)
+	if err != nil {
+		return direct, err
+	}
+	ls.GetProgram().Emit(ctx, compiler.EmitOptions{
+		WriteFile: func(fileName, text string, data *compiler.WriteFileData) error {
+			// do nothing
+			return nil
+		},
+	})
+	secondary, err2 := ls.ProvideDiagnostics(ctx, params.TextDocument.Uri)
+	if err2 != nil {
+		return direct, err
+	}
+	missingFromPre, missingFromPost := lsproto.CompareDiagnostics(direct.FullDocumentDiagnosticReport.Items, secondary.FullDocumentDiagnosticReport.Items)
+	if len(missingFromPre) == 0 && len(missingFromPost) == 0 {
+		return direct, err
+	}
+
+	diff := generateDiagnosticDiffString(missingFromPre, missingFromPost, (*lsproto.Diagnostic).AsString)
+
+	s.logger.Error(diff)
+
+	if s.telemetryEnabled {
+		sanitizedDiff := generateDiagnosticDiffString(missingFromPre, missingFromPost, (*lsproto.Diagnostic).CodeAsString)
+		_ = sendNotification(s, lsproto.TelemetryEventInfo, lsproto.TelemetryEvent{
+			RequestFailureTelemetryEvent: &lsproto.RequestFailureTelemetryEvent{
+				Properties: &lsproto.RequestFailureTelemetryProperties{
+					ErrorCode:     lsproto.ErrorCodeInternalError.String(),
+					RequestMethod: "textDocument.diagnostic.flakeLog",
+					Stack:         sanitizedDiff,
+				},
+			},
+		})
+	}
+
+	if s.flakeLogging == lsproto.DiagnosticFlakeLogLevelPanic {
+		panic("flaky diagnostic(s) logged:\n" + diff)
+	}
+	return direct, err
+}
+
+func generateDiagnosticDiffString(missingFromPre []*lsproto.Diagnostic, missingFromPost []*lsproto.Diagnostic, stringifier func(*lsproto.Diagnostic) string) string {
+	var b strings.Builder
+	for _, elem := range missingFromPre {
+		b.WriteString(fmt.Sprintf("Diagnostic %v was present after emit but not before emit\n", stringifier(elem)))
+	}
+	for _, elem := range missingFromPost {
+		b.WriteString(fmt.Sprintf("Diagnostic %v was present before emit but not after emit\n", stringifier(elem)))
+	}
+	return b.String()
 }
 
 func (s *Server) handleHover(ctx context.Context, ls *ls.LanguageService, params *lsproto.HoverParams) (lsproto.HoverResponse, error) {
@@ -1645,9 +1704,8 @@ func (s *Server) handleDocumentOnTypeFormat(ctx context.Context, ls *ls.Language
 func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.WorkspaceSymbolParams, reqMsg *lsproto.RequestMessage) (lsproto.WorkspaceSymbolResponse, error) {
 	var resp lsproto.WorkspaceSymbolResponse
 	var lsErr error
-	s.session.WithSnapshotLoadingProjectTree(ctx, nil, func(snapshot *project.Snapshot) {
+	provideSymbols := func(snapshot *project.Snapshot, programs []*compiler.Program) {
 		defer s.recover(reqMsg)
-		programs := core.Map(snapshot.ProjectCollection.Projects(), (*project.Project).GetProgram)
 		resp, lsErr = ls.ProvideWorkspaceSymbols(
 			ctx,
 			programs,
@@ -1655,7 +1713,19 @@ func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.Work
 			snapshot.UserPreferences(),
 			params.Query,
 		)
-	})
+	}
+	if params.TextDocument != nil && s.session.Config().WorkspaceSymbolsScope == lsutil.WorkspaceSymbolsScopeCurrentProject {
+		uri := params.TextDocument.Uri
+		s.session.WithSnapshotForDocument(ctx, uri, func(snapshot *project.Snapshot) {
+			programs := core.Map(snapshot.GetProjectsContainingFile(uri), ls.Project.GetProgram)
+			provideSymbols(snapshot, programs)
+		})
+	} else {
+		s.session.WithSnapshotLoadingProjectTree(ctx, nil, func(snapshot *project.Snapshot) {
+			programs := core.Map(snapshot.ProjectCollection.Projects(), (*project.Project).GetProgram)
+			provideSymbols(snapshot, programs)
+		})
+	}
 	return resp, lsErr
 }
 

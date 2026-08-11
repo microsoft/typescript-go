@@ -1954,7 +1954,7 @@
                     },
                     {
                         "name": "Types",
-                        "type": "ExpressionWithTypeArguments",
+                        "type": "HeritageClauseElement",
                         "list": "NodeList"
                     }
                 ],
@@ -5144,6 +5144,10 @@
             "TypeNode": {
                 "base": "TypeNodeBase"
             },
+            "HeritageClauseElement": [
+                "ExpressionWithTypeArguments",
+                "TypeReferenceNode"
+            ],
             "BlockOrExpression": [
                 "Block",
                 "Expression"
@@ -5481,6 +5485,7 @@
             "ClassElementList": "ClassElement",
             "TypeElementList": "TypeElement",
             "ExpressionWithTypeArgumentsList": "ExpressionWithTypeArguments",
+            "HeritageClauseElementList": "HeritageClauseElement",
             "EnumMemberList": "EnumMember",
             "ImportSpecifierList": "ImportSpecifier",
             "ExportSpecifierList": "ExportSpecifier",

@@ -68,6 +68,12 @@ const customStructures: Structure[] = [
                 optional: true,
                 documentation: "The initial log verbosity level, matching the client's output channel log level at startup. Subsequent changes are sent via custom/setLogVerbosity.",
             },
+            {
+                name: "trackFlakyDiagnostics",
+                type: { kind: "reference", name: "DiagnosticFlakeLogLevel" },
+                optional: true,
+                documentation: "The level at which we track flaky diagnostics, if at all.",
+            },
         ],
         documentation: "InitializationOptions contains user-provided initialization options.",
     },
@@ -701,6 +707,16 @@ const customEnumerations: Enumeration[] = [
         documentation: "Log verbosity level, mirroring the VS Code LogLevel enum values.",
     },
     {
+        name: "DiagnosticFlakeLogLevel",
+        type: { kind: "base", name: "integer" },
+        values: [
+            { name: "Off", value: 0, documentation: "All flake logging disabled." },
+            { name: "Log", value: 1, documentation: "Log flaky diagnostics to the error log." },
+            { name: "Panic", value: 2, documentation: "Panic on flaky diagnostics." },
+        ],
+        documentation: "Behavior for tracking and logging flaky diagnostics.",
+    },
+    {
         name: "VSReferenceKind",
         type: { kind: "base", name: "integer" },
         values: [
@@ -1032,6 +1048,17 @@ function patchAndPreprocessModel() {
                 type: { kind: "base", name: "integer" },
                 optional: true,
                 documentation: "Controls how many levels of type definitions will be expanded. Default is 0.",
+            });
+        }
+
+        // Patch WorkspaceSymbolParams to optionally scope the search to projects
+        // containing a document, matching Strada's currentProject mode.
+        if (structure.name === "WorkspaceSymbolParams") {
+            structure.properties.push({
+                name: "textDocument",
+                type: { kind: "reference", name: "TextDocumentIdentifier" },
+                optional: true,
+                documentation: "Scopes the workspace symbol search to projects containing this document.",
             });
         }
 
