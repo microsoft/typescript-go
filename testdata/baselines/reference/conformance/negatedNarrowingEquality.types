@@ -56,7 +56,7 @@ if (c === "foo") {
 
 } else {
     c; // "bar" | {}
->c : "bar" | {}
+>c : "bar" | ({} & not "foo")
 }
 
 // `== null` (double equals) removes both null and undefined.
@@ -89,6 +89,6 @@ if (e === 0) {
 
 } else {
     e; // {}
->e : {}
+>e : {} & not 0
 }
 

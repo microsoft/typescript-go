@@ -17,7 +17,31 @@
      }
      if (isX(obj) && isY(obj) && isZ(obj)) {
  >isX(obj) && isY(obj) && isZ(obj) : boolean
-@@= skipped -170, +170 lines =@@
+@@= skipped -142, +142 lines =@@
+             }
+             else if (beast.legs === 2) {
+ >beast.legs === 2 : boolean
+->beast.legs : number
++>beast.legs : number & not 4
+ >beast : Legged & Winged
+->legs : number
++>legs : number & not 4
+ >2 : 2
+
+                 log(`bird - 2 legs, wings`);
+@@= skipped -15, +15 lines =@@
+ >log(`unknown - ${beast.legs} legs, wings`) : void
+ >log : (s: string) => void
+ >`unknown - ${beast.legs} legs, wings` : string
+->beast.legs : number
++>beast.legs : number & not 4 & not 2
+ >beast : Legged & Winged
+->legs : number
++>legs : number & not 4 & not 2
+             }
+         }
+
+@@= skipped -13, +13 lines =@@
  >log : (s: string) => void
  >`manbearpig - ${beast.legs} legs, no wings` : string
  >beast.legs : number

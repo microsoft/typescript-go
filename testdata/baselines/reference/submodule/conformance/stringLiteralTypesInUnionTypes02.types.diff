@@ -1,0 +1,34 @@
+--- old.stringLiteralTypesInUnionTypes02.types
++++ new.stringLiteralTypesInUnionTypes02.types
+@@= skipped -22, +22 lines =@@
+ }
+ else if (x !== "bar") {
+ >x !== "bar" : boolean
+->x : string
++>x : string & not "foo"
+ >"bar" : "bar"
+
+     let b = x || y;
+ >b : string
+ >x || y : string
+->x : string
++>x : string & not "foo" & not "bar"
+ >y : string
+ }
+ else {
+     let c = x;
+ >c : string
+->x : "bar"
++>x : string & not "foo"
+
+     let d = y;
+ >d : string
+@@= skipped -20, +20 lines =@@
+
+     let e: (typeof x) | (typeof y) = c || d;
+ >e : string
+->x : "bar"
++>x : string & not "foo"
+ >y : string
+ >c || d : string
+ >c : string

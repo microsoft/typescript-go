@@ -1,0 +1,15 @@
+--- old.emptyThenWithoutWarning.types
++++ new.emptyThenWithoutWarning.types
+@@= skipped -11, +11 lines =@@
+ >a : number
+ >1 : 1
+ >a === 2 : boolean
+->a : number
++>a : number & not 1
+ >2 : 2
+ >a === 3 : boolean
+->a : number
++>a : number & not 1 & not 2
+ >3 : 3
+ }
+ else {

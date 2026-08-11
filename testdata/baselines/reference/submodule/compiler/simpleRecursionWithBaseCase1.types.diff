@@ -1,0 +1,11 @@
+--- old.simpleRecursionWithBaseCase1.types
++++ new.simpleRecursionWithBaseCase1.types
+@@= skipped -17, +17 lines =@@
+ >fn1(n - 1) : number
+ >fn1 : (n: number) => number
+ >n - 1 : number
+->n : number
++>n : number & not 0
+ >1 : 1
+     }
+ }

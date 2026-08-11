@@ -1,6 +1,15 @@
 --- old.stringLiteralCheckedInIf02.types
 +++ new.stringLiteralCheckedInIf02.types
-@@= skipped -35, +35 lines =@@
+@@= skipped -16, +16 lines =@@
+ >t : T
+ >"a" : "a"
+ >t === "b" : boolean
+->t : "b" | S[]
++>t : "b" | (S[] & not "a")
+ >"b" : "b"
+ }
+
+@@= skipped -19, +19 lines =@@
      else { 
          return foo[0];
  >foo[0] : S

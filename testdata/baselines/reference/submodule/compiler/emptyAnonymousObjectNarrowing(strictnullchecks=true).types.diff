@@ -1,0 +1,11 @@
+--- old.emptyAnonymousObjectNarrowing(strictnullchecks=true).types
++++ new.emptyAnonymousObjectNarrowing(strictnullchecks=true).types
+@@= skipped -13, +13 lines =@@
+ }
+ else {
+   nonNull;
+->nonNull : {}
++>nonNull : {} & not "foo"
+ }
+
+ declare let obj: { a: string };

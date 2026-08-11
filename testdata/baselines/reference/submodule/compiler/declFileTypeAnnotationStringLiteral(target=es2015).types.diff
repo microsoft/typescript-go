@@ -1,0 +1,9 @@
+--- old.declFileTypeAnnotationStringLiteral(target=es2015).types
++++ new.declFileTypeAnnotationStringLiteral(target=es2015).types
+@@= skipped -28, +28 lines =@@
+     }
+
+     return a;
+->a : string
++>a : string & not "hello"
+ }

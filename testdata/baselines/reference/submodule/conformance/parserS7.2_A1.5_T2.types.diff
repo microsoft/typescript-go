@@ -1,0 +1,12 @@
+--- old.parserS7.2_A1.5_T2.types
++++ new.parserS7.2_A1.5_T2.types
+@@= skipped -45, +45 lines =@@
+ >$ERROR : any
+ >'#2:  var x = 1 ; x === 1. Actual: ' + (x) : string
+ >'#2:  var x = 1 ; x === 1. Actual: ' : "#2:  var x = 1 ; x === 1. Actual: "
+->(x) : number
+->x : number
++>(x) : number & not 1
++>x : number & not 1
+ }
+

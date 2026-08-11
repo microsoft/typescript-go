@@ -1,6 +1,36 @@
 --- old.parserharness.types
 +++ new.parserharness.types
-@@= skipped -8335, +8335 lines =@@
+@@= skipped -755, +755 lines =@@
+ >"Expected array to match element only once (instead of " + foundCount + " times)" : string
+ >"Expected array to match element only once (instead of " + foundCount : string
+ >"Expected array to match element only once (instead of " : "Expected array to match element only once (instead of "
+->foundCount : number
++>foundCount : number & not 1
+ >" times)" : " times)"
+             }
+         }
+@@= skipped -2023, +2023 lines =@@
+ >'////[' + p + ']' : string
+ >'////[' + p : string
+ >'////[' : "////["
+->p : string
++>p : string & not "0.js"
+ >']' : "]"
+
+                             result.push({ filename: p, file: this.fileCollection[p] });
+@@= skipped -1314, +1314 lines =@@
+                 }
+                 else if (matchingIdentifiers.length > 1) {
+ >matchingIdentifiers.length > 1 : boolean
+->matchingIdentifiers.length : number
++>matchingIdentifiers.length : number & not 0
+ >matchingIdentifiers : Type[]
+->length : number
++>length : number & not 0
+ >1 : 1
+
+                     throw new Error("Found multiple matching identifiers for " + target);
+@@= skipped -4243, +4243 lines =@@
          }
 
          export function runBaseline(

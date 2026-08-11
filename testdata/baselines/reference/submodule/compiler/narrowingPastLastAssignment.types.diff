@@ -1,0 +1,19 @@
+--- old.narrowingPastLastAssignment.types
++++ new.narrowingPastLastAssignment.types
+@@= skipped -251, +251 lines =@@
+ >x : number
+ >1 : 1
+ >x === 2 : boolean
+->x : number
++>x : number & not 1
+ >2 : 2
+
+             action(() => { x /* 1 | 2 */ })
+ >action(() => { x /* 1 | 2 */ }) : void
+ >action : (f: Function) => void
+ >() => { x /* 1 | 2 */ } : () => void
+->x : 1 | 2
++>x : number
+         }
+     }
+ }

@@ -1,0 +1,38 @@
+--- old.weakTypesAndLiterals01.types
++++ new.weakTypesAndLiterals01.types
+@@= skipped -25, +25 lines =@@
+ >aOrB : "A" | "B"
+
+ const f = (arg: LiteralsOrWeakTypes) => {
+->f : (arg: LiteralsOrWeakTypes) => "A" | "B" | WeakTypes
+->(arg: LiteralsOrWeakTypes) => {    if (arg === "A") {        return arg;    }    else {        return arg;    }} : (arg: LiteralsOrWeakTypes) => "A" | "B" | WeakTypes
++>f : (arg: LiteralsOrWeakTypes) => "B" | { toLowerCase?(): string; } | { toUpperCase?(): string; otherOptionalProp?: number; } | ({ optional?: true; } & not "A")
++>(arg: LiteralsOrWeakTypes) => {    if (arg === "A") {        return arg;    }    else {        return arg;    }} : (arg: LiteralsOrWeakTypes) => "B" | { toLowerCase?(): string; } | { toUpperCase?(): string; otherOptionalProp?: number; } | ({ optional?: true; } & not "A")
+ >arg : LiteralsOrWeakTypes
+
+     if (arg === "A") {
+@@= skipped -14, +14 lines =@@
+     }
+     else {
+         return arg;
+->arg : "B" | WeakTypes
++>arg : ("B" | WeakTypes) & not "A"
+     }
+ }
+
+ const g = (arg: WeakTypes) => {
+->g : (arg: WeakTypes) => WeakTypes
+->(arg: WeakTypes) => {    if (arg === "A") {        return arg;    }    else {        return arg;    }} : (arg: WeakTypes) => WeakTypes
++>g : (arg: WeakTypes) => { toLowerCase?(): string; } | { toUpperCase?(): string; otherOptionalProp?: number; } | ({ optional?: true; } & not "A")
++>(arg: WeakTypes) => {    if (arg === "A") {        return arg;    }    else {        return arg;    }} : (arg: WeakTypes) => { toLowerCase?(): string; } | { toUpperCase?(): string; otherOptionalProp?: number; } | ({ optional?: true; } & not "A")
+ >arg : WeakTypes
+
+     if (arg === "A") {
+@@= skipped -19, +19 lines =@@
+     }
+     else {
+         return arg;
+->arg : WeakTypes
++>arg : WeakTypes & not "A"
+     }
+ }

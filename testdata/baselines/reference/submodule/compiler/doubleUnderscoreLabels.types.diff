@@ -1,0 +1,20 @@
+--- old.doubleUnderscoreLabels.types
++++ new.doubleUnderscoreLabels.types
+@@= skipped -15, +15 lines =@@
+ >i : number
+ >10 : 10
+ >i++ : number
+->i : number
++>i : number & not 3 & not 5
+
+             if (i === 3) {
+ >i === 3 : boolean
+@@= skipped -12, +12 lines =@@
+             }
+             if (i === 5) {
+ >i === 5 : boolean
+->i : number
++>i : number & not 3
+ >5 : 5
+
+                 break aLabel;

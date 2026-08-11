@@ -371,9 +371,9 @@ function isEmpty(value: string | EmptyString): value is EmptyString {
 >value : string | null | undefined
 >'' : ""
 >value === null : boolean
->value : string | null | undefined
+>value : (string & not "") | null | undefined
 >value === undefined : boolean
->value : string | undefined
+>value : (string & not "") | undefined
 >undefined : undefined
 }
 
@@ -435,7 +435,7 @@ function check2(x: unknown): x is ("hello" | 0) {
 >x : unknown
 >"hello" : "hello"
 >x === 0 : boolean
->x : unknown
+>x : not "hello"
 >0 : 0
 }
 
@@ -454,19 +454,19 @@ function test3(x: unknown) {
 >0 : 0
 
 		x;  // string | 0
->x : unknown
+>x : string | 0
 
 		if (x === "hello" || x === 0) {
 >x === "hello" || x === 0 : boolean
 >x === "hello" : boolean
->x : unknown
+>x : string | 0
 >"hello" : "hello"
 >x === 0 : boolean
->x : unknown
+>x : 0 | (string & not "hello")
 >0 : 0
 
 			x;  // 0 | "hello"
->x : "hello" | 0
+>x : string | 0
 		}
 	}
 	if (check1(x)) {

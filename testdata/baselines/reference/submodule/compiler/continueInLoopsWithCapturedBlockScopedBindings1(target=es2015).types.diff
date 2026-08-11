@@ -1,0 +1,19 @@
+--- old.continueInLoopsWithCapturedBlockScopedBindings1(target=es2015).types
++++ new.continueInLoopsWithCapturedBlockScopedBindings1(target=es2015).types
+@@= skipped -19, +19 lines =@@
+
+         // Trigger non-simple-loop emit
+         (() => {
+->(() => {            return i;        })() : number
+->(() => {            return i;        }) : () => number
+->() => {            return i;        } : () => number
++>(() => {            return i;        })() : number & not 0
++>(() => {            return i;        }) : () => number & not 0
++>() => {            return i;        } : () => number & not 0
+
+             return i;
+->i : number
++>i : number & not 0
+
+         })();
+     }

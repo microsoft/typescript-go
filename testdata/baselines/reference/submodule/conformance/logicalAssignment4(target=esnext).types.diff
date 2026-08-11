@@ -1,0 +1,20 @@
+--- old.logicalAssignment4(target=esnext).types
++++ new.logicalAssignment4(target=esnext).types
+@@= skipped -99, +99 lines =@@
+     }
+     else if (v === 2) {
+ >v === 2 : boolean
+->v : number
++>v : number & not 1
+ >2 : 2
+
+         if (thing &&= defaultValue) {
+@@= skipped -21, +21 lines =@@
+     }
+     else if (v === 3) {
+ >v === 3 : boolean
+->v : number
++>v : number & not 1 & not 2
+ >3 : 3
+
+         if (thing ||= defaultValue) {

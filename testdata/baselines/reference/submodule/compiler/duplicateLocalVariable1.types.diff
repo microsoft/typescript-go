@@ -1,0 +1,14 @@
+--- old.duplicateLocalVariable1.types
++++ new.duplicateLocalVariable1.types
+@@= skipped -144, +144 lines =@@
+ >regex : RegExp
+ >new RegExp(testcase.errorMessageRegEx) : RegExp
+ >RegExp : RegExpConstructor
+->testcase.errorMessageRegEx : string
++>testcase.errorMessageRegEx : string & not ""
+ >testcase : TestCase
+->errorMessageRegEx : string
++>errorMessageRegEx : string & not ""
+
+                         testResult = regex.test(e.message);
+ >testResult = regex.test(e.message) : boolean

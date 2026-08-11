@@ -210,7 +210,7 @@ function f20(x: unknown) {
     }
     if (x instanceof Error) {
 >x instanceof Error : boolean
->x : number | not number
+>x : unknown
 >Error : ErrorConstructor
 
         x;  // Error

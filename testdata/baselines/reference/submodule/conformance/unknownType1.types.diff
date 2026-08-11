@@ -9,12 +9,3 @@
  >"number" : "number"
 
          x;  // string | number
-@@= skipped -8, +8 lines =@@
-     }
-     if (x instanceof Error) {
- >x instanceof Error : boolean
-->x : unknown
-+>x : number | not number
- >Error : ErrorConstructor
-
-         x;  // Error

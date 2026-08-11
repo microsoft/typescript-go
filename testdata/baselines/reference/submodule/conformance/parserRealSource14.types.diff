@@ -1,6 +1,18 @@
 --- old.parserRealSource14.types
 +++ new.parserRealSource14.types
-@@= skipped -171, +171 lines =@@
+@@= skipped -26, +26 lines =@@
+ >items[items.length - 1] : any
+ >items : any[]
+ >items.length - 1 : number
+->items.length : number
++>items.length : number & not 0
+ >items : any[]
+->length : number
++>length : number & not 0
+ >1 : 1
+     }
+
+@@= skipped -145, +145 lines =@@
 
                  this.asts.pop();
  >this.asts.pop() : TypeScript.AST

@@ -481,10 +481,10 @@ func (c *Checker) narrowTypeByBinaryExpression(f *FlowState, t *Type, expr *ast.
 			return c.narrowTypeByTypeof(f, t, right.AsTypeOfExpression(), operator, left, assumeTrue)
 		}
 		if c.isMatchingReference(f.reference, left) {
-			return c.narrowTypeByEquality(t, operator, right, assumeTrue)
+			return c.narrowTypeByEquality(t, operator, right, assumeTrue, true /*introduceNegation*/)
 		}
 		if c.isMatchingReference(f.reference, right) {
-			return c.narrowTypeByEquality(t, operator, left, assumeTrue)
+			return c.narrowTypeByEquality(t, operator, left, assumeTrue, true /*introduceNegation*/)
 		}
 		if c.strictNullChecks {
 			if c.optionalChainContainsReference(left, f.reference) {
@@ -553,7 +553,27 @@ func (c *Checker) narrowTypeByBinaryExpression(f *FlowState, t *Type, expr *ast.
 	return t
 }
 
-func (c *Checker) narrowTypeByEquality(t *Type, operator ast.Kind, value *ast.Node, assumeTrue bool) *Type {
+// Returns true if the type includes the "top" of the type heirarchy, or close enough to it - `unknown`, `{}`, and negated types and intersections thereof
+// Used to determine if we should narrow to a literal type in `===` comparisons
+func (c *Checker) typeIsTopInclusive(t *Type) bool {
+	if t.flags&TypeFlagsUnknown != 0 || someType(t, c.IsEmptyAnonymousObjectType) {
+		return true
+	}
+	if t.flags&TypeFlagsNegated != 0 {
+		return true
+	}
+	if t.flags&TypeFlagsIntersection != 0 {
+		for _, t2 := range t.AsIntersectionType().Types() {
+			if !c.typeIsTopInclusive(t2) {
+				return false
+			}
+		}
+		return true
+	}
+	return false
+}
+
+func (c *Checker) narrowTypeByEquality(t *Type, operator ast.Kind, value *ast.Node, assumeTrue bool, introduceNegation bool) *Type {
 	if t.flags&TypeFlagsAny != 0 {
 		return t
 	}
@@ -578,7 +598,7 @@ func (c *Checker) narrowTypeByEquality(t *Type, operator ast.Kind, value *ast.No
 		return c.getAdjustedTypeWithFacts(t, facts)
 	}
 	if assumeTrue {
-		if !doubleEquals && (t.flags&TypeFlagsUnknown != 0 || someType(t, c.IsEmptyAnonymousObjectType)) {
+		if !doubleEquals && c.typeIsTopInclusive(t) {
 			if valueType.flags&(TypeFlagsPrimitive|TypeFlagsNonPrimitive) != 0 || c.IsEmptyAnonymousObjectType(valueType) {
 				return valueType
 			}
@@ -592,9 +612,19 @@ func (c *Checker) narrowTypeByEquality(t *Type, operator ast.Kind, value *ast.No
 		return c.replacePrimitivesWithLiterals(filteredType, valueType)
 	}
 	if isUnitType(valueType) {
-		return c.filterType(t, func(t *Type) bool {
+		filtered := c.filterType(t, func(t *Type) bool {
 			return !(c.isUnitLikeType(t) && c.areTypesComparable(t, valueType))
 		})
+		// In the false branch of a strict literal comparison, introduce a fresh negation so that a base
+		// type that overlaps the compared value records the exclusion. For example, the else branch of
+		// 'n === 0' where 'n: number' produces 'number & not 0'. The negation reduces away for
+		// constituents already disjoint from the value (e.g. 'string & not 0' -> 'string'). We restrict
+		// this to strict '==='/'!==' because loose '=='/'!=' coerces operands, so excluding a single
+		// literal would not soundly capture the comparison's semantics.
+		if introduceNegation && !doubleEquals {
+			return c.introduceNegationIntoNarrowedType(filtered, valueType)
+		}
+		return filtered
 	}
 	return t
 }
@@ -731,7 +761,12 @@ func (c *Checker) narrowTypeByDiscriminantProperty(t *Type, access *ast.Node, op
 		}
 	}
 	return c.narrowTypeByDiscriminant(t, access, func(t *Type) *Type {
-		return c.narrowTypeByEquality(t, operator, value, assumeTrue)
+		// When narrowing a discriminant property, the narrowed property type is only used for a
+		// comparability test against each constituent's discriminant. Introducing a negated type here
+		// would produce a structurally different (though semantically equivalent) negation that
+		// 'areTypesComparable' may fail to relate to a constituent's existing negated discriminant, so
+		// we suppress negation introduction on this path.
+		return c.narrowTypeByEquality(t, operator, value, assumeTrue, false /*introduceNegation*/)
 	})
 }
 

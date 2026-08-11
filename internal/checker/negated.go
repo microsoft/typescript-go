@@ -199,6 +199,12 @@ func (c *Checker) removeComplementaryFreshNegatedTypes(types []*Type) []*Type {
 			break
 		}
 	}
+	if core.Some(types, isNegatedType) {
+		// Union type construction does this reduction *before* this intersection one - it may need to be checked again with the updated type set.
+		if c.checkForSaturatedNegatedType(types) {
+			return []*Type{c.unknownType}
+		}
+	}
 	return types
 }
 

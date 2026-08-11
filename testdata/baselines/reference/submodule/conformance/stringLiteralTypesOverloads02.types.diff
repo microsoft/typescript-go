@@ -1,0 +1,20 @@
+--- old.stringLiteralTypesOverloads02.types
++++ new.stringLiteralTypesOverloads02.types
+@@= skipped -42, +42 lines =@@
+     }
+     if (x === "number") {
+ >x === "number" : boolean
+->x : string
++>x : string & not "string"
+ >"number" : "number"
+
+         return 0;
+@@= skipped -8, +8 lines =@@
+     }
+     if (x === "boolean") {
+ >x === "boolean" : boolean
+->x : string
++>x : string & not "string" & not "number"
+ >"boolean" : "boolean"
+
+         return false;

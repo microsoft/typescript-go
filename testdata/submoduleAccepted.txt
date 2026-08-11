@@ -1493,7 +1493,6 @@ compiler/narrowingAssignmentReadonlyRespectsAssertion.types.diff
 compiler/narrowingMutualSubtypes.errors.txt.diff
 compiler/narrowingMutualSubtypes.types.diff
 compiler/narrowingOfDottedNames.types.diff
-compiler/narrowUnknownByTypePredicate.types.diff
 compiler/noIterationTypeErrorsInCFA.types.diff
 compiler/observableInferenceCanBeMade.types.diff
 compiler/quickinfoTypeAtReturnPositionsInaccurate.types.diff
@@ -1502,8 +1501,6 @@ compiler/spreadBooleanRespectsFreshness.types.diff
 compiler/typePredicateStructuralMatch.types.diff
 compiler/typePredicateWithThisParameter.types.diff
 compiler/typeVariableTypeGuards.types.diff
-compiler/unreachableSwitchTypeofUnknown.types.diff
-conformance/assertionTypePredicates1.types.diff
 conformance/conditionalTypes1.types.diff
 conformance/controlFlowBinaryOrExpression.symbols.diff
 conformance/controlFlowBinaryOrExpression.types.diff
@@ -1523,4 +1520,3 @@ conformance/typeGuardsOnClassProperty.types.diff
 conformance/TypeGuardWithEnumUnion.types.diff
 conformance/unionAndIntersectionInference1.types.diff
 conformance/unknownControlFlow.types.diff
-conformance/unknownType1.types.diff

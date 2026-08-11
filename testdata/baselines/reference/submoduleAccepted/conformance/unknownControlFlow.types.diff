@@ -17,3 +17,81 @@
  >length : number
 
          return false;
+@@= skipped -132, +132 lines =@@
+     }
+     else {
+         value;  // T & ({} | null)
+->value : T & ({} | null)
++>value : (T & ({} | null)) & not 42
+     }
+ }
+
+@@= skipped -18, +18 lines =@@
+     }
+     else {
+         value;  // T & ({} | null)
+->value : T & ({} | null)
++>value : (T & ({} | null)) & not 42
+     }
+ }
+
+@@= skipped -18, +18 lines =@@
+     }
+     else {
+         value;  // T & ({} | null)
+->value : T
++>value : T & not 42
+     }
+ }
+
+@@= skipped -18, +18 lines =@@
+     }
+     else {
+         value;  // T & ({} | null)
+->value : T & {}
++>value : T & {} & not 42
+     }
+ }
+
+@@= skipped -18, +18 lines =@@
+     }
+     else {
+         value;  // T & ({} | null)
+->value : T
++>value : T & not 42
+     }
+ }
+
+@@= skipped -18, +18 lines =@@
+     }
+     else {
+         value;  // T & ({} | null)
+->value : T & ({} | null)
++>value : (T & ({} | null)) & not 42
+     }
+ }
+
+@@= skipped -85, +85 lines =@@
+ >'Meaning of life value' : "Meaning of life value"
+     }
+     return value;
+->value : T & ({} | null)
++>value : (T & ({} | null)) & not 42
+ }
+
+ function doSomething2(value: unknown): void {
+@@= skipped -112, +112 lines =@@
+     }
+     else if (value === 'right') {
+ >value === 'right' : boolean
+->value : Right
++>value : "right" & { right: 'right'; }
+ >'right' : "right"
+
+         const bar: 'right' = value;
+ >bar : "right"
+->value : Right
++>value : "right" & { right: 'right'; }
+     }
+     else {
+         assertNever(value);

@@ -1,0 +1,19 @@
+--- old.weakTypeAndPrimitiveNarrowing.types
++++ new.weakTypeAndPrimitiveNarrowing.types
+@@= skipped -31, +31 lines =@@
+
+     } else {
+       arg;
+->arg : "B" | { optional?: true; } | { toLowerCase?(): string; } | { toUpperCase?(): string; otherOptionalProp?: number; }
++>arg : ("B" | { optional?: true; } | { toLowerCase?(): string; } | { toUpperCase?(): string; otherOptionalProp?: number; }) & not "A"
+     }
+ }
+
+@@= skipped -35, +35 lines =@@
+
+     } else {
+       arg;
+->arg : PrimitivesAndWeakTypes
++>arg : PrimitivesAndWeakTypes & not "A"
+     }
+ }

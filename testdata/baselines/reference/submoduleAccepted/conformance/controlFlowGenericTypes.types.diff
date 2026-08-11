@@ -23,3 +23,11 @@
  >value : "A"
 
          return value;
+@@= skipped -8, +8 lines =@@
+     }
+     else {
+         return value;
+->value : AB
++>value : AB & not "A"
+     }
+ }
