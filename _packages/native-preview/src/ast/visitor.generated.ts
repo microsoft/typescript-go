@@ -400,6 +400,7 @@ import {
     isTemplateHead,
     isTemplateLiteral,
     isTemplateMiddleOrTail,
+    isTypeLiteralNode,
     isTypeNode,
     isTypeParameterDeclaration,
     isTypePredicateParameterName,
@@ -1343,7 +1344,8 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         const _modifiers = visitNodes(node.modifiers, visitor);
         const _name = visitNode(node.name, visitor, isModuleName);
         const _body = visitNode(node.body, visitor, isModuleBody);
-        return updateModuleDeclaration(node, _modifiers, _name, _body);
+        const _attributes = visitNode(node.attributes, visitor, isTypeLiteralNode);
+        return updateModuleDeclaration(node, _modifiers, _name, _body, _attributes);
     },
     [SyntaxKind.ImportEqualsDeclaration]: (node: ImportEqualsDeclaration, visitor: Visitor): ImportEqualsDeclaration => {
         const _modifiers = visitNodes(node.modifiers, visitor);

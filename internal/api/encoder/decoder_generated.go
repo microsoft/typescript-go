@@ -1063,7 +1063,8 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		modifiers := d.modifierListAt(it.nextIf(mask, 0))
 		name := d.nodeAt(it.nextIf(mask, 1))
 		body := d.nodeAt(it.nextIf(mask, 2))
-		return d.factory.NewModuleDeclaration(modifiers, keyword, name, body), nil
+		attributes := d.nodeAt(it.nextIf(mask, 3))
+		return d.factory.NewModuleDeclaration(modifiers, keyword, name, body, attributes), nil
 	case ast.KindImportEqualsDeclaration:
 		isTypeOnly := commonData&1 != 0
 		it := newChildIter(childIndices)

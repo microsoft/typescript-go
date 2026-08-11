@@ -1922,14 +1922,24 @@ func GetExternalModuleName(node *Node) *Expression {
 	panic("Unhandled case in getExternalModuleName")
 }
 
+func HasImportAttributes(node *Node) bool {
+	switch node.Kind {
+	case KindImportDeclaration, KindJSImportDeclaration, KindExportDeclaration, KindImportType:
+		return true
+	}
+	return false
+}
+
 func GetImportAttributes(node *Node) *Node {
 	switch node.Kind {
 	case KindImportDeclaration, KindJSImportDeclaration:
 		return node.AsImportDeclaration().Attributes
 	case KindExportDeclaration:
 		return node.AsExportDeclaration().Attributes
+	case KindImportType:
+		return node.AsImportTypeNode().Attributes
 	}
-	panic("Unhandled case in getImportAttributes")
+	panic("Unhandled case in getImportAttributes: " + node.Kind.String())
 }
 
 func getImportTypeNodeLiteral(node *Node) *Node {
@@ -3183,10 +3193,6 @@ func IsPartOfTypeOnlyImportOrExportDeclaration(node *Node) bool {
 	return FindAncestor(node, IsTypeOnlyImportOrExportDeclaration) != nil
 }
 
-func IsPartOfExclusivelyTypeOnlyImportOrExportDeclaration(node *Node) bool {
-	return FindAncestor(node, IsExclusivelyTypeOnlyImportOrExport) != nil
-}
-
 func IsEmittableImport(node *Node) bool {
 	switch node.Kind {
 	case KindImportDeclaration:
@@ -3224,7 +3230,7 @@ func HasResolutionModeOverride(node *Node) bool {
 		attributes = node.AsExportDeclaration().Attributes
 	}
 	if attributes != nil {
-		_, ok := attributes.GetResolutionModeOverride()
+		_, ok := attributes.GetResolutionModeOverride(nil)
 		return ok
 	}
 	return false
@@ -3507,6 +3513,7 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 			node.AsModuleDeclaration().Keyword,
 			node.Name(),
 			node.Body(),
+			node.Attributes(),
 		)
 	case KindImportEqualsDeclaration:
 		return factory.UpdateImportEqualsDeclaration(

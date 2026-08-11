@@ -764,6 +764,7 @@ type Checker struct {
 	anyBaseTypeIndexInfo                        *IndexInfo
 	patternAmbientModules                       []*ast.PatternAmbientModule
 	patternAmbientModuleAugmentations           ast.SymbolTable
+	moduleImportAttributesTypes                 map[*ast.Symbol]*Type
 	globalObjectType                            *Type
 	globalFunctionType                          *Type
 	globalCallableFunctionType                  *Type
@@ -1059,6 +1060,7 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.comparableRelation = &Relation{}
 	c.identityRelation = &Relation{}
 	c.enumRelation = make(map[EnumRelationKey]RelationComparisonResult)
+	c.moduleImportAttributesTypes = make(map[*ast.Symbol]*Type)
 	c.getGlobalESSymbolType = c.getGlobalTypeResolver("Symbol", 0 /*arity*/, false /*reportErrors*/)
 	c.getGlobalBigIntType = c.getGlobalTypeResolver("BigInt", 0 /*arity*/, false /*reportErrors*/)
 	c.getGlobalImportMetaType = c.getGlobalTypeResolver("ImportMeta", 0 /*arity*/, true /*reportErrors*/)
@@ -1412,7 +1414,8 @@ func (c *Checker) mergeModuleAugmentation(moduleName *ast.Node) {
 		if moduleName.Parent.Parent.Flags&ast.NodeFlagsAmbient == 0 {
 			moduleNotFoundError = diagnostics.Invalid_module_name_in_augmentation_module_0_cannot_be_found
 		}
-		mainModule := c.resolveExternalModuleNameWorker(moduleName, moduleName, moduleNotFoundError /*ignoreErrors*/, false /*isForAugmentation*/, true)
+		// We ban import attributes on module augmentation declarations.
+		mainModule := c.resolveExternalModuleNameWorker(moduleName, moduleName, moduleNotFoundError, false /*ignoreErrors*/, true /*isForAugmentation*/, nil /*importAttributesType*/)
 		if mainModule == nil {
 			return
 		}
@@ -3327,39 +3330,16 @@ func (c *Checker) checkImportType(node *ast.Node) {
 		c.getResolutionModeOverride(attributes.AsImportAttributes(), true /*reportErrors*/)
 	}
 	c.checkTypeReferenceOrImport(node)
+	c.checkImportAttributes(node)
 }
 
 func (c *Checker) getResolutionModeOverride(node *ast.ImportAttributes, reportErrors bool) core.ResolutionMode {
-	if len(node.Attributes.Nodes) != 1 {
-		if reportErrors {
-			c.grammarErrorOnNode(node.AsNode(), diagnostics.Type_import_attributes_should_have_exactly_one_key_resolution_mode_with_value_import_or_require)
-		}
-		return core.ResolutionModeNone
+	var grammarErrorOnNode func(node *ast.Node, message *diagnostics.Message, args ...any) bool
+	if reportErrors {
+		grammarErrorOnNode = c.grammarErrorOnNode
 	}
-	elem := node.Attributes.Nodes[0]
-	if !ast.IsStringLiteralLike(elem.Name()) {
-		return core.ResolutionModeNone
-	}
-	if elem.Name().Text() != "resolution-mode" {
-		if reportErrors {
-			c.grammarErrorOnNode(elem.Name(), diagnostics.X_resolution_mode_is_the_only_valid_key_for_type_import_attributes)
-		}
-		return core.ResolutionModeNone
-	}
-	value := elem.AsImportAttribute().Value
-	if !ast.IsStringLiteralLike(value) {
-		return core.ResolutionModeNone
-	}
-	if value.Text() != "import" && value.Text() != "require" {
-		if reportErrors {
-			c.grammarErrorOnNode(value, diagnostics.X_resolution_mode_should_be_either_require_or_import)
-		}
-		return core.ResolutionModeNone
-	}
-	if value.Text() == "import" {
-		return core.ResolutionModeESM
-	}
-	return core.ResolutionModeCommonJS
+	mode, _ := node.GetResolutionModeOverride(grammarErrorOnNode)
+	return mode
 }
 
 func (c *Checker) checkNamedTupleMember(node *ast.Node) {
@@ -5139,6 +5119,10 @@ func (c *Checker) checkModuleDeclaration(node *ast.Node) {
 	if isGlobalAugmentation && !inAmbientContext {
 		c.error(node.Name(), diagnostics.Augmentations_for_the_global_scope_should_have_declare_modifier_unless_they_appear_in_already_ambient_context)
 	}
+	attributes := node.AsModuleDeclaration().Attributes
+	if attributes != nil {
+		c.checkSourceElement(attributes)
+	}
 	isAmbientExternalModule := ast.IsAmbientModule(node)
 	contextErrorMessage := core.IfElse(isAmbientExternalModule,
 		diagnostics.An_ambient_module_declaration_is_only_allowed_at_the_top_level_in_a_file,
@@ -5214,7 +5198,33 @@ func (c *Checker) checkModuleDeclaration(node *ast.Node) {
 				c.error(node.Name(), diagnostics.Ambient_modules_cannot_be_nested_in_other_modules_or_namespaces)
 			}
 		}
+		if attributes != nil {
+			importAttributesType := c.getGlobalImportAttributesTypeChecked()
+			moduleAttributesType := c.getTypeOfModuleImportAttributes(symbol)
+			if importAttributesType != c.emptyObjectType {
+				c.checkTypeAssignableTo(moduleAttributesType, importAttributesType, attributes, nil)
+			}
+		}
 	}
+}
+
+// !!! HERE
+// ??? What symbol should we use to cache this?
+// there is the patternAmbientModules symbol,
+// but is that different from the symbol in `checkModuleDeclaration`?
+func (c *Checker) getTypeOfModuleImportAttributes(symbol *ast.Symbol) *Type {
+	if t, ok := c.moduleImportAttributesTypes[symbol]; ok {
+		return t
+	}
+	var result *Type
+	moduleDecl := core.Find(symbol.Declarations, ast.IsModuleWithStringLiteralName)
+	if moduleDecl == nil || moduleDecl.AsModuleDeclaration().Attributes == nil {
+		result = c.emptyObjectType
+	} else {
+		result = c.getTypeFromTypeNode(moduleDecl.AsModuleDeclaration().Attributes)
+	}
+	c.moduleImportAttributesTypes[symbol] = result
+	return result
 }
 
 func isInstantiatedModule(node *ast.Node, preserveConstEnums bool) bool {
@@ -5279,6 +5289,7 @@ func (c *Checker) checkImportDeclaration(node *ast.ImportDeclarationNode) {
 		c.grammarErrorOnFirstToken(node, diagnostics.An_import_declaration_cannot_have_modifiers)
 	}
 	if c.checkExternalImportOrExportDeclaration(node) {
+		attributes := ast.GetImportAttributes(node)
 		var resolvedModule *ast.Symbol
 		importClause := node.ImportClause()
 		moduleSpecifier := node.ModuleSpecifier()
@@ -5297,7 +5308,7 @@ func (c *Checker) checkImportDeclaration(node *ast.ImportDeclarationNode) {
 						c.checkExternalEmitHelpers(node, ExternalEmitHelpersImportStar)
 					}
 				} else {
-					resolvedModule = c.resolveExternalModuleName(node, node.ModuleSpecifier(), false)
+					resolvedModule = c.resolveExternalModuleName(node, node.ModuleSpecifier(), false, c.getTypeFromImportAttributes(attributes))
 					if resolvedModule != nil {
 						for _, binding := range namedBindings.Elements() {
 							c.checkImportBinding(binding)
@@ -5314,7 +5325,7 @@ func (c *Checker) checkImportDeclaration(node *ast.ImportDeclarationNode) {
 
 			if !importClause.IsTypeOnly() &&
 				core.ModuleKindNode18 <= c.moduleKind && c.moduleKind <= core.ModuleKindNodeNext &&
-				c.isOnlyImportableAsDefault(moduleSpecifier, resolvedModule) &&
+				c.isOnlyImportableAsDefault(moduleSpecifier, resolvedModule, c.getTypeFromImportAttributes(attributes)) &&
 				!hasTypeJsonImportAttribute(node) {
 				c.error(moduleSpecifier, diagnostics.Importing_a_JSON_file_into_an_ECMAScript_module_requires_a_type_Colon_json_import_attribute_when_module_is_set_to_0, c.moduleKind.String())
 			}
@@ -5324,7 +5335,7 @@ func (c *Checker) checkImportDeclaration(node *ast.ImportDeclarationNode) {
 			if !ignoreErrors {
 				errorMessage = diagnostics.Cannot_find_module_or_type_declarations_for_side_effect_import_of_0
 			}
-			c.resolveExternalModuleNameWorker(node, moduleSpecifier, errorMessage, ignoreErrors, false /*isForAugmentation*/)
+			c.resolveExternalModuleNameWorker(node, moduleSpecifier, errorMessage, ignoreErrors, false /*isForAugmentation*/, c.getTypeFromImportAttributes(attributes))
 		}
 	}
 	c.checkImportAttributes(node)
@@ -5414,10 +5425,10 @@ func (c *Checker) checkImportAttributes(declaration *ast.Node) {
 	if importAttributesType != c.emptyObjectType {
 		c.checkTypeAssignableTo(c.getTypeFromImportAttributes(node), c.getNullableType(importAttributesType, TypeFlagsUndefined), node, nil)
 	}
-	isTypeOnly := ast.IsExclusivelyTypeOnlyImportOrExport(declaration)
+	isTypeOnly := ast.IsExclusivelyTypeOnlyImportOrExport(declaration) || ast.IsImportTypeNode(declaration)
 	override := c.getResolutionModeOverride(node.AsImportAttributes(), isTypeOnly)
-	if isTypeOnly && override != core.ResolutionModeNone {
-		return // Other grammar checks do not apply to type-only imports with resolution mode attributes
+	if isTypeOnly {
+		return // Other grammar checks do not apply to type-only imports with import attributes
 	}
 
 	if !c.moduleKind.SupportsImportAttributes() {
@@ -5425,23 +5436,22 @@ func (c *Checker) checkImportAttributes(declaration *ast.Node) {
 		return
 	}
 
-	if moduleSpecifier := getModuleSpecifierFromNode(declaration); moduleSpecifier != nil {
+	if moduleSpecifier := ast.GetExternalModuleName(declaration); moduleSpecifier != nil {
 		if c.getEmitSyntaxForModuleSpecifierExpression(moduleSpecifier) == core.ModuleKindCommonJS {
 			c.grammarErrorOnNode(node, diagnostics.Import_attributes_are_not_allowed_on_statements_that_compile_to_CommonJS_require_calls)
 			return
 		}
 	}
 
-	if isTypeOnly {
-		c.grammarErrorOnNode(node, diagnostics.Import_attributes_cannot_be_used_with_type_only_imports_or_exports)
-		return
-	}
 	if override != core.ResolutionModeNone {
 		c.grammarErrorOnNode(node, diagnostics.X_resolution_mode_can_only_be_set_for_type_only_imports)
 	}
 }
 
 func (c *Checker) getTypeFromImportAttributes(node *ast.Node) *Type {
+	if node == nil {
+		return nil
+	}
 	links := c.typeNodeLinks.Get(node)
 	if links.resolvedType == nil {
 		symbol := c.newSymbol(ast.SymbolFlagsObjectLiteral, ast.InternalSymbolNameImportAttributes)
@@ -5456,6 +5466,20 @@ func (c *Checker) getTypeFromImportAttributes(node *ast.Node) *Type {
 		links.resolvedType = t
 	}
 	return links.resolvedType
+}
+
+func (c *Checker) getImportAttributesTypeForModuleSpecifier(moduleSpecifier *ast.Node) *Type {
+	parent := moduleSpecifier.Parent
+	switch {
+	case ast.IsImportDeclarationOrJSImportDeclaration(parent) || ast.IsExportDeclaration(parent):
+		return c.getTypeFromImportAttributes(ast.GetImportAttributes(parent))
+	case ast.IsLiteralTypeNode(parent) && ast.IsLiteralImportTypeNode(parent.Parent):
+		return c.getTypeFromImportAttributes(ast.GetImportAttributes(parent.Parent))
+	case ast.IsImportCall(parent) && len(parent.Arguments()) > 1:
+		optionsType := c.checkExpressionCached(parent.Arguments()[1])
+		return c.getTypeOfPropertyOfType(optionsType, "with")
+	}
+	return nil
 }
 
 func (c *Checker) checkImportEqualsDeclaration(node *ast.Node) {
@@ -5527,7 +5551,7 @@ func (c *Checker) checkExportDeclaration(node *ast.ExportDeclarationNode) {
 		} else {
 			// export * from "foo"
 			// export * as ns from "foo";
-			moduleSymbol := c.resolveExternalModuleName(node, exportDecl.ModuleSpecifier, false)
+			moduleSymbol := c.resolveExternalModuleName(node, exportDecl.ModuleSpecifier, false, c.getTypeFromImportAttributes(ast.GetImportAttributes(node)))
 			if moduleSymbol != nil && hasExportAssignmentSymbol(moduleSymbol) {
 				c.error(exportDecl.ModuleSpecifier, diagnostics.Module_0_uses_export_and_cannot_be_used_with_export_Asterisk, c.symbolToString(moduleSymbol))
 			} else if exportDecl.ExportClause != nil {
@@ -8285,6 +8309,7 @@ func (c *Checker) checkImportCallExpression(node *ast.Node) *Type {
 	if specifierType.flags&TypeFlagsNullable != 0 || !c.isTypeAssignableTo(specifierType, c.stringType) {
 		c.error(specifier, diagnostics.Dynamic_import_s_specifier_must_be_of_type_string_but_here_has_type_0, c.TypeToString(specifierType))
 	}
+	var importAttributesType *Type
 	if optionsType != nil {
 		importCallOptionsType := c.getGlobalImportCallOptionsTypeChecked()
 		if importCallOptionsType != c.emptyObjectType {
@@ -8298,13 +8323,14 @@ func (c *Checker) checkImportCallExpression(node *ast.Node) *Type {
 				}
 			}
 		}
+		importAttributesType = c.getTypeOfPropertyOfType(optionsType, "with")
 	}
 	// resolveExternalModuleName will return undefined if the moduleReferenceExpression is not a string literal
-	moduleSymbol := c.resolveExternalModuleName(node, specifier, false /*ignoreErrors*/)
+	moduleSymbol := c.resolveExternalModuleName(node, specifier, false /*ignoreErrors*/, importAttributesType)
 	if moduleSymbol != nil {
 		esModuleSymbol := c.resolveExternalModuleSymbol(moduleSymbol, true /*dontResolveAlias*/)
 		if esModuleSymbol != nil {
-			syntheticType := c.getTypeWithSyntheticDefaultOnly(c.getTypeOfSymbol(esModuleSymbol), esModuleSymbol, moduleSymbol, specifier)
+			syntheticType := c.getTypeWithSyntheticDefaultOnly(c.getTypeOfSymbol(esModuleSymbol), esModuleSymbol, moduleSymbol, specifier, importAttributesType)
 			if syntheticType == nil {
 				syntheticType = c.getTypeWithSyntheticDefaultImportType(c.getTypeOfSymbol(esModuleSymbol), esModuleSymbol, moduleSymbol, specifier)
 			}
@@ -14443,7 +14469,7 @@ func (c *Checker) getTargetOfImportEqualsDeclaration(node *ast.Node) *ast.Symbol
 		if moduleReference == nil {
 			moduleReference = ast.GetExternalModuleImportEqualsDeclarationExpression(node)
 		}
-		immediate := c.resolveExternalModuleName(node, moduleReference, false /*ignoreErrors*/)
+		immediate := c.resolveExternalModuleName(node, moduleReference, false /*ignoreErrors*/, nil /*importAttributesType*/)
 		resolved := c.resolveExternalModuleSymbol(immediate, true /*dontResolveAlias*/)
 		if resolved != nil && core.ModuleKindNode20 <= c.moduleKind && c.moduleKind <= core.ModuleKindNodeNext {
 			moduleExports := c.getExportOfModule(resolved, ast.InternalSymbolNameModuleExports, node, true /*dontResolveAlias*/)
@@ -14460,7 +14486,7 @@ func (c *Checker) getTargetOfImportEqualsDeclaration(node *ast.Node) *ast.Symbol
 }
 
 func (c *Checker) resolveExternalModuleTypeByLiteral(name *ast.Node) *Type {
-	moduleSym := c.resolveExternalModuleName(name, name, false /*ignoreErrors*/)
+	moduleSym := c.resolveExternalModuleName(name, name, false /*ignoreErrors*/, nil /*importAttributesType*/)
 	if moduleSym != nil {
 		resolvedModuleSymbol := c.resolveExternalModuleSymbol(moduleSym, false /*dontResolveAlias*/)
 		if resolvedModuleSymbol != nil {
@@ -14526,7 +14552,7 @@ func (c *Checker) getTypeOnlyDeclarationOfEntityName(name *ast.Node) *ast.Node {
 }
 
 func (c *Checker) getTargetOfImportClause(node *ast.Node) *ast.Symbol {
-	moduleSymbol := c.resolveExternalModuleName(node, getModuleSpecifierFromNode(node.Parent), false /*ignoreErrors*/)
+	moduleSymbol := c.resolveExternalModuleName(node, getModuleSpecifierFromNode(node.Parent), false /*ignoreErrors*/, c.getTypeFromImportAttributes(ast.GetImportAttributes(node.Parent)))
 	if moduleSymbol != nil {
 		return c.getTargetOfModuleDefault(moduleSymbol, node, true /*dontResolveAlias*/)
 	}
@@ -14561,7 +14587,16 @@ func (c *Checker) getTargetOfModuleDefault(moduleSymbol *ast.Symbol, node *ast.N
 	if specifier == nil {
 		return exportDefaultSymbol
 	}
-	hasDefaultOnly := c.isOnlyImportableAsDefault(specifier, moduleSymbol)
+	// node is ImportClause | ImportSpecifier | ExportSpecifier
+	var attributes *ast.ImportAttributesNode
+	if ast.IsImportClause(node) {
+		attributes = ast.GetImportAttributes(node.Parent)
+	} else if ast.IsImportSpecifier(node) {
+		attributes = ast.GetImportAttributes(node.Parent.Parent.Parent)
+	} else if ast.IsExportSpecifier(node) {
+		attributes = ast.GetImportAttributes(node.Parent.Parent)
+	}
+	hasDefaultOnly := c.isOnlyImportableAsDefault(specifier, moduleSymbol, c.getTypeFromImportAttributes(attributes))
 	hasSyntheticDefault := c.canHaveSyntheticDefault(file, moduleSymbol, dontResolveAlias, specifier)
 	if exportDefaultSymbol == nil && !hasSyntheticDefault && !hasDefaultOnly {
 		if ast.IsImportClause(node) {
@@ -14602,7 +14637,7 @@ func (c *Checker) reportNonDefaultExport(moduleSymbol *ast.Symbol, node *ast.Nod
 				if !(ast.IsExportDeclaration(decl) && decl.ModuleSpecifier() != nil) {
 					return false
 				}
-				resolvedExternalModuleName := c.resolveExternalModuleName(decl, decl.ModuleSpecifier(), false /*ignoreErrors*/)
+				resolvedExternalModuleName := c.resolveExternalModuleName(decl, decl.ModuleSpecifier(), false /*ignoreErrors*/, c.getTypeFromImportAttributes(ast.GetImportAttributes(decl)))
 				return resolvedExternalModuleName != nil && resolvedExternalModuleName.Exports[ast.InternalSymbolNameDefault] != nil
 			})
 			if defaultExport != nil {
@@ -14627,7 +14662,7 @@ func (c *Checker) resolveExportByName(moduleSymbol *ast.Symbol, name string, sou
 
 func (c *Checker) getTargetOfNamespaceImport(node *ast.Node) *ast.Symbol {
 	moduleSpecifier := c.getModuleSpecifierForImportOrExport(node)
-	immediate := c.resolveExternalModuleName(node, moduleSpecifier, false /*ignoreErrors*/)
+	immediate := c.resolveExternalModuleName(node, moduleSpecifier, false /*ignoreErrors*/, c.getTypeFromImportAttributes(ast.GetImportAttributes(node.Parent.Parent)))
 	resolved := c.resolveESModuleSymbol(immediate, node, moduleSpecifier)
 	c.markSymbolOfAliasDeclarationIfTypeOnly(node, nil)
 	return resolved
@@ -14636,7 +14671,7 @@ func (c *Checker) getTargetOfNamespaceImport(node *ast.Node) *ast.Symbol {
 func (c *Checker) getTargetOfNamespaceExport(node *ast.Node) *ast.Symbol {
 	moduleSpecifier := c.getModuleSpecifierForImportOrExport(node)
 	if moduleSpecifier != nil {
-		immediate := c.resolveExternalModuleName(node, moduleSpecifier, false /*ignoreErrors*/)
+		immediate := c.resolveExternalModuleName(node, moduleSpecifier, false /*ignoreErrors*/, c.getTypeFromImportAttributes(ast.GetImportAttributes(node.Parent)))
 		resolved := c.resolveESModuleSymbol(immediate, node, moduleSpecifier)
 		c.markSymbolOfAliasDeclarationIfTypeOnly(node, nil)
 		return resolved
@@ -14649,7 +14684,7 @@ func (c *Checker) getTargetOfImportSpecifier(node *ast.Node) *ast.Symbol {
 	if ast.IsImportSpecifier(node) && ast.ModuleExportNameIsDefault(name) {
 		specifier := c.getModuleSpecifierForImportOrExport(node)
 		if specifier != nil {
-			moduleSymbol := c.resolveExternalModuleName(node, specifier, false /*ignoreErrors*/)
+			moduleSymbol := c.resolveExternalModuleName(node, specifier, false /*ignoreErrors*/, c.getTypeFromImportAttributes(ast.GetImportAttributes(node.Parent.Parent.Parent)))
 			if moduleSymbol != nil {
 				return c.getTargetOfModuleDefault(moduleSymbol, node, true /*dontResolveAlias*/)
 			}
@@ -14671,7 +14706,12 @@ func (c *Checker) getExternalModuleMember(node *ast.Node, specifier *ast.Node, d
 	if moduleSpecifier == nil {
 		moduleSpecifier = ast.GetExternalModuleName(node)
 	}
-	moduleSymbol := c.resolveExternalModuleName(node, moduleSpecifier, false /*ignoreErrors*/)
+	var attributes *ast.ImportAttributesNode
+	if ast.HasImportAttributes(node) {
+		attributes = ast.GetImportAttributes(node)
+	}
+	importAttributesType := c.getTypeFromImportAttributes(attributes)
+	moduleSymbol := c.resolveExternalModuleName(node, moduleSpecifier, false /*ignoreErrors*/, importAttributesType)
 	var name *ast.Node
 	if !ast.IsPropertyAccessExpression(specifier) {
 		name = specifier.PropertyNameOrName()
@@ -14710,7 +14750,7 @@ func (c *Checker) getExternalModuleMember(node *ast.Node, specifier *ast.Node, d
 			symbolFromModule := c.getExportOfModule(exportContainer, nameText, specifier, dontResolveAlias)
 			if symbolFromModule == nil && nameText == ast.InternalSymbolNameDefault {
 				file := core.Find(moduleSymbol.Declarations, ast.IsSourceFile)
-				if c.isOnlyImportableAsDefault(moduleSpecifier, moduleSymbol) || c.canHaveSyntheticDefault(file, moduleSymbol, dontResolveAlias, moduleSpecifier) {
+				if c.isOnlyImportableAsDefault(moduleSpecifier, moduleSymbol, importAttributesType) || c.canHaveSyntheticDefault(file, moduleSymbol, dontResolveAlias, moduleSpecifier) {
 					symbolFromModule = c.resolveExternalModuleSymbol(moduleSymbol, dontResolveAlias)
 					if symbolFromModule == nil {
 						symbolFromModule = c.resolveSymbolEx(moduleSymbol, dontResolveAlias)
@@ -14724,7 +14764,7 @@ func (c *Checker) getExternalModuleMember(node *ast.Node, specifier *ast.Node, d
 					symbol = c.combineValueAndTypeSymbols(symbolFromVariable, symbolFromModule)
 				}
 			}
-			if ast.IsImportOrExportSpecifier(specifier) && c.isOnlyImportableAsDefault(moduleSpecifier, moduleSymbol) && nameText != ast.InternalSymbolNameDefault {
+			if ast.IsImportOrExportSpecifier(specifier) && c.isOnlyImportableAsDefault(moduleSpecifier, moduleSymbol, importAttributesType) && nameText != ast.InternalSymbolNameDefault {
 				c.error(name, diagnostics.Named_imports_from_a_JSON_file_into_an_ECMAScript_module_are_not_allowed_when_module_is_set_to_0, c.moduleKind.String())
 			} else if symbol == nil {
 				c.errorNoModuleMemberSymbol(moduleSymbol, targetSymbol, node, name)
@@ -14797,13 +14837,13 @@ func (c *Checker) getExportOfModule(symbol *ast.Symbol, nameText string, specifi
 	return nil
 }
 
-func (c *Checker) isOnlyImportableAsDefault(usage *ast.Node, resolvedModule *ast.Symbol) bool {
+func (c *Checker) isOnlyImportableAsDefault(usage *ast.Node, resolvedModule *ast.Symbol, importAttributesType *Type) bool {
 	// In Node.js, JSON modules don't get named exports
 	if core.ModuleKindNode16 <= c.moduleKind && c.moduleKind <= core.ModuleKindNodeNext {
 		usageMode := c.getEmitSyntaxForModuleSpecifierExpression(usage)
 		if usageMode == core.ModuleKindESNext {
 			if resolvedModule == nil {
-				resolvedModule = c.resolveExternalModuleName(usage, usage, true /*ignoreErrors*/)
+				resolvedModule = c.resolveExternalModuleName(usage, usage, true /*ignoreErrors*/, importAttributesType)
 			}
 			var targetFile *ast.SourceFile
 			if resolvedModule != nil {
@@ -14953,7 +14993,7 @@ func (c *Checker) getTargetOfExportSpecifier(node *ast.Node, meaning ast.SymbolF
 	if ast.ModuleExportNameIsDefault(name) {
 		specifier := c.getModuleSpecifierForImportOrExport(node)
 		if specifier != nil {
-			moduleSymbol := c.resolveExternalModuleName(node, specifier, false /*ignoreErrors*/)
+			moduleSymbol := c.resolveExternalModuleName(node, specifier, false /*ignoreErrors*/, c.getTypeFromImportAttributes(ast.GetImportAttributes(node.Parent.Parent)))
 			if moduleSymbol != nil {
 				return c.getTargetOfModuleDefault(moduleSymbol, node, dontResolveAlias)
 			}
@@ -15056,7 +15096,7 @@ func getModuleSpecifierFromNode(node *ast.Node) *ast.Node {
 	case ast.KindExportDeclaration:
 		return node.ModuleSpecifier()
 	}
-	panic("Unhandled case in getModuleSpecifierFromNode")
+	panic("Unhandled case in getModuleSpecifierFromNode: " + node.Kind.String())
 }
 
 /**
@@ -15098,13 +15138,13 @@ func (c *Checker) markSymbolOfAliasDeclarationIfTypeOnly(aliasDeclaration *ast.N
 	return links.typeOnlyDeclaration != nil
 }
 
-func (c *Checker) resolveExternalModuleName(location *ast.Node, moduleReferenceExpression *ast.Node, ignoreErrors bool) *ast.Symbol {
+func (c *Checker) resolveExternalModuleName(location *ast.Node, moduleReferenceExpression *ast.Node, ignoreErrors bool, importAttributesType *Type) *ast.Symbol {
 	errorMessage := c.getCannotResolveModuleNameErrorForSpecificModule(moduleReferenceExpression)
 	if errorMessage == nil {
 		errorMessage = diagnostics.Cannot_find_module_0_or_its_corresponding_type_declarations
 	}
 	ignoreErrors = ignoreErrors || c.compilerOptions.NoCheck.IsTrue()
-	return c.resolveExternalModuleNameWorker(location, moduleReferenceExpression, core.IfElse(ignoreErrors, nil, errorMessage), ignoreErrors, false /*isForAugmentation*/)
+	return c.resolveExternalModuleNameWorker(location, moduleReferenceExpression, core.IfElse(ignoreErrors, nil, errorMessage), ignoreErrors, false /*isForAugmentation*/, importAttributesType)
 }
 
 func (c *Checker) getCannotResolveModuleNameErrorForSpecificModule(moduleName *ast.Node) *diagnostics.Message {
@@ -15119,9 +15159,9 @@ func (c *Checker) getCannotResolveModuleNameErrorForSpecificModule(moduleName *a
 	return nil
 }
 
-func (c *Checker) resolveExternalModuleNameWorker(location *ast.Node, moduleReferenceExpression *ast.Node, moduleNotFoundError *diagnostics.Message, ignoreErrors bool, isForAugmentation bool) *ast.Symbol {
+func (c *Checker) resolveExternalModuleNameWorker(location *ast.Node, moduleReferenceExpression *ast.Node, moduleNotFoundError *diagnostics.Message, ignoreErrors bool, isForAugmentation bool, importAttributesType *Type) *ast.Symbol {
 	if ast.IsStringLiteralLike(moduleReferenceExpression) {
-		return c.resolveExternalModule(location, moduleReferenceExpression.Text(), moduleNotFoundError, core.IfElse(!ignoreErrors, moduleReferenceExpression, nil), isForAugmentation)
+		return c.resolveExternalModule(location, moduleReferenceExpression.Text(), moduleNotFoundError, core.IfElse(!ignoreErrors, moduleReferenceExpression, nil), isForAugmentation, importAttributesType)
 	}
 	return nil
 }
@@ -15135,7 +15175,11 @@ func (c *Checker) getExternalModuleFileFromDeclaration(declaration *ast.Node) *a
 	} else {
 		specifier = ast.GetExternalModuleName(declaration)
 	}
-	moduleSymbol := c.resolveExternalModuleNameWorker(specifier, specifier /*moduleNotFoundError*/, nil, false, false) // TODO: GH#18217
+	var importAttributesType *Type
+	if ast.HasImportAttributes(declaration) {
+		importAttributesType = c.getTypeFromImportAttributes(ast.GetImportAttributes(declaration))
+	}
+	moduleSymbol := c.resolveExternalModuleNameWorker(specifier, specifier /*moduleNotFoundError*/, nil, false, false, importAttributesType) // TODO: GH#18217
 	if moduleSymbol == nil {
 		return nil
 	}
@@ -15146,11 +15190,15 @@ func (c *Checker) getExternalModuleFileFromDeclaration(declaration *ast.Node) *a
 	return decl.AsSourceFile()
 }
 
-func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference string, moduleNotFoundError *diagnostics.Message, errorNode *ast.Node, isForAugmentation bool) *ast.Symbol {
+func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference string, moduleNotFoundError *diagnostics.Message, errorNode *ast.Node, isForAugmentation bool, importAttributesType *Type) *ast.Symbol {
 	if errorNode != nil && strings.HasPrefix(moduleReference, "@types/") {
 		withoutAtTypePrefix := moduleReference[len("@types/"):]
 		c.error(errorNode, diagnostics.Cannot_import_type_declaration_files_Consider_importing_0_instead_of_1, withoutAtTypePrefix, moduleReference)
 	}
+	if importAttributesType == nil {
+		importAttributesType = c.emptyObjectType
+	}
+
 	ambientModule := c.tryFindAmbientModule(moduleReference, true /*withAugmentations*/)
 	if ambientModule != nil {
 		return ambientModule
@@ -15362,9 +15410,41 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 	}
 
 	if len(c.patternAmbientModules) != 0 {
-		pattern := core.FindBestPatternMatch(c.patternAmbientModules, func(v *ast.PatternAmbientModule) core.Pattern { return v.Pattern }, moduleReference)
-		if pattern != nil {
+		// !!! HERE: use assignability?
+		candidates := core.Filter(c.patternAmbientModules, func(v *ast.PatternAmbientModule) bool {
+			moduleAttributesType := c.getTypeOfModuleImportAttributes(v.Symbol)
+			return v.Pattern.Matches(moduleReference) && c.isTypeAssignableTo(importAttributesType, moduleAttributesType)
+		})
+
+		if len(candidates) > 0 {
 			augmentation := c.patternAmbientModuleAugmentations[moduleReference]
+
+			if len(candidates) == 1 {
+				if augmentation != nil {
+					return c.getMergedSymbol(augmentation)
+				}
+				return c.getMergedSymbol(candidates[0].Symbol)
+			}
+
+			var bestTypeCandidates []*ast.PatternAmbientModule
+		outer:
+			for i, candidate := range candidates {
+				candidateType := c.getTypeOfModuleImportAttributes(candidate.Symbol)
+				for j, other := range candidates {
+					otherType := c.getTypeOfModuleImportAttributes(other.Symbol)
+					if i != j && c.isTypeStrictSubtypeOf(otherType, candidateType) && !c.isTypeIdenticalTo(otherType, candidateType) {
+						continue outer
+					}
+				}
+				bestTypeCandidates = append(bestTypeCandidates, candidate)
+			}
+			if len(bestTypeCandidates) == 1 {
+				if augmentation != nil {
+					return c.getMergedSymbol(augmentation)
+				}
+				return c.getMergedSymbol(bestTypeCandidates[0].Symbol)
+			}
+			pattern := core.FindBestPatternMatch(bestTypeCandidates, func(v *ast.PatternAmbientModule) core.Pattern { return v.Pattern }, moduleReference)
 			if augmentation != nil {
 				return c.getMergedSymbol(augmentation)
 			}
@@ -15585,7 +15665,7 @@ func (c *Checker) resolveESModuleSymbol(moduleSymbol *ast.Symbol, node *ast.Node
 				reference = referenceParent.ModuleSpecifier()
 			}
 			typ := c.getTypeOfSymbol(symbol)
-			defaultOnlyType := c.getTypeWithSyntheticDefaultOnly(typ, symbol, moduleSymbol, reference)
+			defaultOnlyType := c.getTypeWithSyntheticDefaultOnly(typ, symbol, moduleSymbol, reference, c.getImportAttributesTypeForModuleSpecifier(reference))
 			if defaultOnlyType != nil {
 				return c.cloneTypeAsModuleType(symbol, defaultOnlyType, referenceParent)
 			}
@@ -15629,8 +15709,8 @@ func isESMFormatImportImportingCommonjsFormatFile(usageMode core.ResolutionMode,
 	return usageMode == core.ModuleKindESNext && targetMode == core.ModuleKindCommonJS
 }
 
-func (c *Checker) getTypeWithSyntheticDefaultOnly(t *Type, symbol *ast.Symbol, originalSymbol *ast.Symbol, moduleSpecifier *ast.Node) *Type {
-	hasDefaultOnly := c.isOnlyImportableAsDefault(moduleSpecifier, nil)
+func (c *Checker) getTypeWithSyntheticDefaultOnly(t *Type, symbol *ast.Symbol, originalSymbol *ast.Symbol, moduleSpecifier *ast.Node, importAttributesType *Type) *Type {
+	hasDefaultOnly := c.isOnlyImportableAsDefault(moduleSpecifier, nil, importAttributesType)
 	if hasDefaultOnly && t != nil && !c.isErrorType(t) {
 		key := CachedTypeKey{kind: CachedTypeKindDefaultOnlyType, typeId: t.id}
 		if cached := c.cachedTypes[key]; cached != nil {
@@ -15840,7 +15920,7 @@ func (c *Checker) resolveQualifiedName(name *ast.Node, left *ast.Node, right *as
 		namespace.ValueDeclaration.Initializer() != nil &&
 		c.isCommonJSRequire(namespace.ValueDeclaration.Initializer()) {
 		moduleName := namespace.ValueDeclaration.Initializer().Arguments()[0]
-		moduleSym := c.resolveExternalModuleName(moduleName, moduleName, false /*ignoreErrors*/)
+		moduleSym := c.resolveExternalModuleName(moduleName, moduleName, false /*ignoreErrors*/, nil)
 		if moduleSym != nil {
 			resolvedModuleSymbol := c.resolveExternalModuleSymbol(moduleSym, false /*dontResolveAlias*/)
 			if resolvedModuleSymbol != nil {
@@ -16171,7 +16251,7 @@ func (c *Checker) getExportsOfModuleWorker(moduleSymbol *ast.Symbol) (exports as
 			nestedSymbols := make(ast.SymbolTable)
 			lookupTable := make(ExportCollisionTable)
 			for _, node := range exportStars.Declarations {
-				resolvedModule := c.resolveExternalModuleName(node, node.ModuleSpecifier(), false /*ignoreErrors*/)
+				resolvedModule := c.resolveExternalModuleName(node, node.ModuleSpecifier(), false /*ignoreErrors*/, c.getTypeFromImportAttributes(ast.GetImportAttributes(node)))
 				exportedSymbols := visit(resolvedModule, node, isTypeOnly || node.IsTypeOnly())
 				c.extendExportSymbols(nestedSymbols, exportedSymbols, lookupTable, node)
 			}
@@ -24584,7 +24664,7 @@ func (c *Checker) getTypeFromImportTypeNode(node *ast.Node) *Type {
 		}
 		targetMeaning := core.IfElse(n.IsTypeOf, ast.SymbolFlagsValue, ast.SymbolFlagsType)
 		// TODO: Future work: support unions/generics/whatever via a deferred import-type
-		innerModuleSymbol := c.resolveExternalModuleName(node, n.Argument.AsLiteralTypeNode().Literal, false /*ignoreErrors*/)
+		innerModuleSymbol := c.resolveExternalModuleName(node, n.Argument.AsLiteralTypeNode().Literal, false /*ignoreErrors*/, c.getTypeFromImportAttributes(ast.GetImportAttributes(node)))
 		if innerModuleSymbol == nil {
 			c.symbolNodeLinks.Get(node).resolvedSymbol = c.unknownSymbol
 			links.resolvedType = c.errorType
@@ -28674,7 +28754,7 @@ func (c *Checker) resolveHelpersModule(file *ast.SourceFile, errorNode *ast.Node
 	links := c.sourceFileLinks.Get(file)
 	if links.externalHelpersModule == nil {
 		location := c.program.GetImportHelpersImportSpecifier(file.Path())
-		helpersModule := c.resolveExternalModule(location, externalHelpersModuleNameText, diagnostics.This_syntax_requires_an_imported_helper_but_module_0_cannot_be_found, errorNode, false /*isForAugmentation*/)
+		helpersModule := c.resolveExternalModule(location, externalHelpersModuleNameText, diagnostics.This_syntax_requires_an_imported_helper_but_module_0_cannot_be_found, errorNode, false /*isForAugmentation*/, nil /*importAttributesType*/)
 		if helpersModule == nil {
 			helpersModule = c.unknownSymbol
 		}
@@ -31689,7 +31769,7 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 			((parent.Kind == ast.KindImportDeclaration || parent.Kind == ast.KindJSImportDeclaration || parent.Kind == ast.KindExportDeclaration) && ast.GetExternalModuleName(parent) == node) ||
 			ast.IsVariableDeclarationInitializedToRequire(grandParent) || ast.IsImportCall(parent) ||
 			(ast.IsLiteralTypeNode(parent) && ast.IsLiteralImportTypeNode(grandParent) && grandParent.AsImportTypeNode().Argument == parent) {
-			return c.resolveExternalModuleName(node, node, ignoreErrors)
+			return c.resolveExternalModuleName(node, node, ignoreErrors, c.getImportAttributesTypeForModuleSpecifier(node))
 		}
 		if ast.IsCallExpression(parent) && ast.IsBindableObjectDefinePropertyCall(parent) && parent.Arguments()[1] == node {
 			return c.getSymbolOfDeclaration(parent)

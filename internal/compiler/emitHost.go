@@ -96,10 +96,6 @@ func (host *emitHost) GetOutputPathsFor(file *ast.SourceFile, forceDtsPaths bool
 	return outputpaths.GetOutputPathsFor(file, host.Options(), host, outputpaths.ForceEmitPaths{Dts: forceDtsPaths})
 }
 
-func (host *emitHost) GetResolutionModeOverride(node *ast.Node) core.ResolutionMode {
-	return host.GetEmitResolver().GetResolutionModeOverride(node)
-}
-
 func (host *emitHost) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.FileReference) *ast.SourceFile {
 	return host.program.GetSourceFileFromReference(origin, ref)
 }

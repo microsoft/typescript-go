@@ -3,7 +3,6 @@ package printer
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
-	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/evaluator"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 )
@@ -82,7 +81,6 @@ type EmitResolver interface {
 	MarkLinkedReferencesRecursively(file *ast.SourceFile)
 	GetExternalModuleFileFromDeclaration(node *ast.Node) *ast.SourceFile
 	GetEffectiveDeclarationFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags
-	GetResolutionModeOverride(node *ast.Node) core.ResolutionMode
 
 	// decorator metadata
 	GetTypeReferenceSerializationKind(name *ast.EntityName, serialScope *ast.Node) TypeReferenceSerializationKind

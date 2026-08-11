@@ -296,6 +296,7 @@ func (f *isolatedDeclarationsFixer) createNamespaceForExpandoProperties(expandoF
 		ast.KindNamespaceKeyword,
 		factory.NewIdentifier(funcDecl.Name().Text()),
 		factory.NewModuleBlock(factory.NewNodeList(newProperties)),
+		nil, /*attributes*/
 	)
 	// Set the flags for namespace
 	namespace.Flags = ast.NodeFlagsAmbient | ast.NodeFlagsExportContext | ast.NodeFlagsContextFlags
