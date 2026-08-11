@@ -201,11 +201,10 @@ func TestRunnerTransform(t *testing.T) {
 	r := contentmapper.NewHost(t.Context(), &fakeSpawner{}, locale.Default)
 	defer r.Close()
 
-	mapper := &contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "vue", Version: "1.0.0", Exec: []string{"vue-mapper"}}}
+	mapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "vue", Version: "1.0.0", Exec: []string{"vue-mapper"}, Extensions: map[string]string{".vue": ".ts"}}}
 	result, err := r.Transform(mapper, contentmapper.Request{FileName: "/a.vue", Content: "export const x = 1;"})
 	assert.NilError(t, err)
 	assert.Equal(t, result.Text, "export const x = 1;")
-	assert.Equal(t, result.ScriptKind, core.ScriptKindTS)
 	assert.Assert(t, result.Mappings != nil)
 	assert.Equal(t, len(result.Diagnostics), 1)
 	assert.Equal(t, result.Diagnostics[0].Code(), int32(9999))
@@ -215,7 +214,7 @@ func TestRunnerTransform(t *testing.T) {
 func TestRunnerTransformResponseValidation(t *testing.T) {
 	t.Parallel()
 	request := contentmapper.Request{FileName: "/a.vue", Content: "a"}
-	mapper := &contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}}}
+	mapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}, Extensions: map[string]string{".vue": ".ts"}}}
 
 	t.Run("malformed result fails the request", func(t *testing.T) {
 		t.Parallel()
@@ -233,22 +232,36 @@ func TestRunnerTransformSupplementalOutputs(t *testing.T) {
 	host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: responseMapper{response: func(p contentmapper.TransformParams) any {
 		return contentmapper.TransformResult{
 			MappedOutput: contentmapper.MappedOutput{Text: "export default 1;"},
-			Supplemental: []contentmapper.MappedOutput{
-				{Text: "declare const first: string;"},
-				{Text: "declare const second: number;", ScriptKind: core.ScriptKindJS},
+			Supplemental: []contentmapper.SupplementalOutput{
+				{MappedOutput: contentmapper.MappedOutput{Text: "declare const first: string;"}, Extension: ".ts"},
+				{MappedOutput: contentmapper.MappedOutput{Text: "declare const second: number;"}, Extension: ".mjs"},
 			},
 		}
 	}}}, locale.Default)
 	defer host.Close()
-	mapper := &contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}}}
+	mapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}, Extensions: map[string]string{".vue": ".ts"}}}
 	result, err := host.Transform(mapper, contentmapper.Request{FileName: "/component.vue", Content: "component"})
 	assert.NilError(t, err)
 	assert.Equal(t, len(result.Supplemental), 2)
 	assert.Equal(t, result.Supplemental[0].Text, "declare const first: string;")
-	assert.Equal(t, result.Supplemental[0].ScriptKind, core.ScriptKindTS)
+	assert.Equal(t, result.Supplemental[0].VirtualExtension, ".ts")
 	assert.Assert(t, result.Supplemental[0].Mappings != nil)
-	assert.Equal(t, result.Supplemental[1].ScriptKind, core.ScriptKindJS)
+	assert.Equal(t, result.Supplemental[1].VirtualExtension, ".mjs")
 	assert.Assert(t, result.Supplemental[1].Mappings != nil)
+}
+
+func TestRunnerRejectsSupplementalOutputWithoutVirtualExtension(t *testing.T) {
+	t.Parallel()
+	host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: responseMapper{response: func(p contentmapper.TransformParams) any {
+		return contentmapper.TransformResult{
+			MappedOutput: contentmapper.MappedOutput{Text: "export {};"},
+			Supplemental: []contentmapper.SupplementalOutput{{MappedOutput: contentmapper.MappedOutput{Text: "export {};"}}},
+		}
+	}}}, locale.Default)
+	defer host.Close()
+	mapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}, Extensions: map[string]string{".vue": ".ts"}}}
+	_, err := host.Transform(mapper, contentmapper.Request{FileName: "/component.vue", Content: "component"})
+	assert.ErrorContains(t, err, "invalid supplemental virtual extension")
 }
 
 func TestRunnerPositionEncodings(t *testing.T) {

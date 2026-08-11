@@ -47,6 +47,7 @@ func testMapper() *contentmapper.Mapper {
 			Version:         "1.0.0",
 			Exec:            []string{contentmappertest.TransformingMapper},
 			CompilerOptions: contentmappertest.DeclaredOptions,
+			Extensions:      map[string]string{".box": ".ts"},
 		},
 		PackageDirectory: "/node_modules/" + contentmappertest.PackageName,
 	}
@@ -70,7 +71,6 @@ func TestInProcessSpanKinds(t *testing.T) {
 
 	result, err := host.Transform(testMapper(), transformRequest())
 	assert.NilError(t, err)
-	assert.Equal(t, result.ScriptKind, core.ScriptKindTS)
 	// The #{target} token was replaced by the es2020 target value (7).
 	assert.Assert(t, strings.Contains(result.Text, "export const version = 7;"), "got %q", result.Text)
 
@@ -170,7 +170,6 @@ func TestOutOfProcess(t *testing.T) {
 
 	result, err := host.Transform(testMapper(), transformRequest())
 	assert.NilError(t, err)
-	assert.Equal(t, result.ScriptKind, core.ScriptKindTS)
 	assert.Assert(t, strings.Contains(result.Text, "export const version = 7;"), "got %q", result.Text)
 	assert.Assert(t, result.Mappings != nil)
 }

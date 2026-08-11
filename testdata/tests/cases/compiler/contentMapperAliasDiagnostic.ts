@@ -15,7 +15,7 @@
 {
     "name": "mapper",
     "version": "1.0.0",
-    "tsContentMapper": { "exec": ["lisp-mapper"] }
+    "tsContentMapper": { "exec": ["lisp-mapper"], "extensions": { ".lisp": ".ts" } }
 }
 
 // @Filename: /expression.lisp

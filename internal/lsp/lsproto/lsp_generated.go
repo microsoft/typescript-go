@@ -9121,6 +9121,12 @@ type ContentMapperManifest struct {
 
 	// Whether the mapper uses project-scoped dynamic configuration.
 	DynamicConfig *bool `json:"dynamicConfig,omitzero"`
+
+	// Whether the mapper supports JavaScript emit.
+	SupportsEmit *bool `json:"supportsEmit,omitzero"`
+
+	// Maps source extensions to transformed virtual extensions.
+	Extensions map[string]string `json:"extensions" lsp:"required"`
 }
 
 var _ json.UnmarshalerFrom = (*ContentMapperManifest)(nil)

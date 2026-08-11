@@ -9,7 +9,7 @@ export const local = 1;
 {
     "name": "vue-ts-mapper",
     "version": "1.0.0",
-    "tsContentMapper": { "exec": ["verbatim-mapper"] }
+    "tsContentMapper": { "exec": ["verbatim-mapper"], "extensions": { ".vue": ".ts" } }
 }
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
 {
@@ -58,7 +58,7 @@ declare const console: { log(msg: any): void; };
 export const local = 1;
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":[[2,3]],"contentMapperIdentities":["vue-ts-mapper@1.0.0:73be0d73aaae2d96a1838e1c836ed877"],"fileNames":["lib.es2025.full.d.ts","./app.vue","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"8e06c0ee6938980d692eefcee0c71e42-export const app = 1;"},"652b2b5c9eb278600aaa728787469dc8-export const local = 1;"]}
+{"version":"FakeTSVersion","root":[[2,3]],"contentMapperIdentities":["vue-ts-mapper@1.0.0:5a4f530eec7a4c92e9ae5271dc973670"],"fileNames":["lib.es2025.full.d.ts","./app.vue","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"8e06c0ee6938980d692eefcee0c71e42-export const app = 1;","652b2b5c9eb278600aaa728787469dc8-export const local = 1;"]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -96,10 +96,7 @@ export const local = 1;
       "fileName": "./app.vue",
       "version": "8e06c0ee6938980d692eefcee0c71e42-export const app = 1;",
       "signature": "8e06c0ee6938980d692eefcee0c71e42-export const app = 1;",
-      "impliedNodeFormat": "None",
-      "original": {
-        "version": "8e06c0ee6938980d692eefcee0c71e42-export const app = 1;"
-      }
+      "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "./index.ts",
@@ -108,7 +105,7 @@ export const local = 1;
       "impliedNodeFormat": "CommonJS"
     }
   ],
-  "size": 1099
+  "size": 1087
 }
 
 tsconfig.json::
@@ -137,7 +134,7 @@ Edit [1]:: upgrade the content mapper package to a new version
 {
     "name": "vue-ts-mapper",
     "version": "2.0.0",
-    "tsContentMapper": { "exec": ["verbatim-mapper"] }
+    "tsContentMapper": { "exec": ["verbatim-mapper"], "extensions": { ".vue": ".ts" } }
 }
 
 tsgo --build --verbose --loadExternalPlugins
@@ -152,7 +149,7 @@ Output::
 
 //// [/home/src/workspaces/project/index.js] *rewrite with same content*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[2,3]],"contentMapperIdentities":["vue-ts-mapper@2.0.0:05b947849e920bdde4933cf4d8e7aea7"],"fileNames":["lib.es2025.full.d.ts","./app.vue","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"8e06c0ee6938980d692eefcee0c71e42-export const app = 1;"},"652b2b5c9eb278600aaa728787469dc8-export const local = 1;"]}
+{"version":"FakeTSVersion","root":[[2,3]],"contentMapperIdentities":["vue-ts-mapper@2.0.0:ba097ac8aefa63042a9c15b10781ca5c"],"fileNames":["lib.es2025.full.d.ts","./app.vue","./index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"8e06c0ee6938980d692eefcee0c71e42-export const app = 1;","652b2b5c9eb278600aaa728787469dc8-export const local = 1;"]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *rewrite with same content*
 
 tsconfig.json::

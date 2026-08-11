@@ -1,0 +1,16 @@
+//// [/component.mdx] (ScriptKind: ScriptKindTSX, ContentMapper: [.mdx])
+--- Original ---
+export default function Component() {
+    return <div />;
+}
+--- Transformed ---
+export default function Component() {
+    return <div />;
+}
+
+=== Diagnostics ===
+
+/component.mdx:2:12 - error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+
+2     return <div />;
+             ~~~~~~~

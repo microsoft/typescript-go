@@ -12,13 +12,16 @@
 package contentmapper
 
 import (
+	"maps"
 	"reflect"
+	"slices"
 	"strings"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/json"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/zeebo/xxh3"
 )
 
@@ -28,6 +31,7 @@ type Definition struct {
 	Package    string     `json:"package"`
 	Extensions []string   `json:"extensions"`
 	Options    json.Value `json:"options,omitempty"`
+	NoEmit     bool       `json:"noEmit,omitempty"`
 }
 
 // Manifest is the content-mapper information read from a package's package.json: its name and version
@@ -39,6 +43,9 @@ type Manifest struct {
 	Exec            []string
 	CompilerOptions []string
 	DynamicConfig   bool
+	SupportsEmit    bool
+	// Extensions maps source extensions handled by the mapper to virtual extensions produced by its canonical transform.
+	Extensions map[string]string
 }
 
 // Mapper is a resolved content mapper: its tsconfig Definition combined with the Manifest resolved from
@@ -49,6 +56,25 @@ type Mapper struct {
 	PackageDirectory string `json:"-"`
 	// ContributionID is provided by an LSP client extension for inferred project content mappers.
 	ContributionID string `json:"-"`
+}
+
+func (m *Mapper) EmitsJS() bool {
+	return m.SupportsEmit && !m.NoEmit
+}
+
+var supportedVirtualExtensions = collections.NewSetFromItems(
+	".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx", ".mts", ".cts", ".json",
+)
+
+const SupportedVirtualExtensionsDescription = "'.js', '.jsx', '.mjs', '.cjs', '.ts', '.tsx', '.mts', '.cts', '.json'"
+
+func IsSupportedVirtualExtension(extension string) bool {
+	return supportedVirtualExtensions.Has(extension)
+}
+
+func (m *Mapper) VirtualExtension(fileName string) string {
+	sourceExtension := tspath.GetLongestExtensionFromPath(fileName, m.Definition.Extensions, false)
+	return m.Manifest.Extensions[sourceExtension]
 }
 
 // Identity returns the mapper's "name@version" identity, or just the name when it declares no version,
@@ -85,6 +111,17 @@ func (m *Mapper) TransformIdentity(options *core.CompilerOptions) xxh3.Uint128 {
 	buf = append(buf, 0)
 	buf = append(buf, m.Options...)
 	buf = append(buf, 0)
+	if m.SupportsEmit || m.NoEmit {
+		buf = append(buf, core.IfElse(m.SupportsEmit, byte(1), byte(0)), core.IfElse(m.NoEmit, byte(1), byte(0)))
+		buf = append(buf, 0)
+	}
+	virtualExtensionKeys := slices.Sorted(maps.Keys(m.Manifest.Extensions))
+	for _, sourceExtension := range virtualExtensionKeys {
+		buf = append(buf, sourceExtension...)
+		buf = append(buf, '=')
+		buf = append(buf, m.Manifest.Extensions[sourceExtension]...)
+		buf = append(buf, 0)
+	}
 	buf = append(buf, optionsJSON...)
 	return xxh3.Hash128(buf)
 }

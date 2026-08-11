@@ -39,6 +39,15 @@ func (e *TransformError) Error() string {
 
 func (e *TransformError) Unwrap() error { return e.err }
 
+// InvalidSupplementalVirtualExtensionError reports an unsupported or missing virtual extension on a supplemental output.
+type InvalidSupplementalVirtualExtensionError struct {
+	Extension string
+}
+
+func (e *InvalidSupplementalVirtualExtensionError) Error() string {
+	return fmt.Sprintf("invalid supplemental virtual extension %q", e.Extension)
+}
+
 // ProjectErrorKind identifies why a mapper's openProject response was rejected.
 type ProjectErrorKind uint8
 
@@ -112,8 +121,6 @@ func (e *InitializeError) Error() string {
 type Result struct {
 	// Text is the transformed TypeScript source text that is parsed into the program.
 	Text string
-	// ScriptKind is how Text should be parsed.
-	ScriptKind core.ScriptKind
 	// Diagnostics are syntax errors in the original content.
 	Diagnostics []*ast.Diagnostic
 	// Mappings maps positions in Text back to the original content, so that diagnostics the compiler
@@ -126,9 +133,9 @@ type Result struct {
 
 // MappedResult is one generated output and its mapping to the original input.
 type MappedResult struct {
-	Text       string
-	ScriptKind core.ScriptKind
-	Mappings   *spanmap.SpanMap
+	Text             string
+	VirtualExtension string
+	Mappings         *spanmap.SpanMap
 }
 
 // Request carries the inputs for transforming one foreign file.

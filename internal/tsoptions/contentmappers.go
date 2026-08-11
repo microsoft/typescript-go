@@ -1,6 +1,8 @@
 package tsoptions
 
 import (
+	"strings"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -49,5 +51,18 @@ func resolveContentMapperManifest(host ParseConfigHost, containingFile string, p
 	}
 	compilerOptions, _ := cm.CompilerOptions.GetValue()
 	dynamicConfig, _ := cm.DynamicConfig.GetValue()
-	return contentmapper.Manifest{Name: name, Version: version, Exec: exec, CompilerOptions: compilerOptions, DynamicConfig: dynamicConfig}, packageDirectory, nil
+	supportsEmit, _ := cm.SupportsEmit.GetValue()
+	virtualExtensions, ok := cm.Extensions.GetValue()
+	if !ok || len(virtualExtensions) == 0 {
+		return contentmapper.Manifest{}, "", ast.NewCompilerDiagnostic(diagnostics.The_tsContentMapper_extensions_of_the_content_mapper_package_0_must_be_a_non_empty_object_mapping_source_extensions_to_virtual_extensions, packageName)
+	}
+	for sourceExtension, virtualExtension := range virtualExtensions {
+		if !strings.HasPrefix(sourceExtension, ".") {
+			return contentmapper.Manifest{}, "", ast.NewCompilerDiagnostic(diagnostics.The_source_extension_0_in_tsContentMapper_extensions_of_the_content_mapper_package_1_must_begin_with_a, sourceExtension, packageName)
+		}
+		if !contentmapper.IsSupportedVirtualExtension(virtualExtension) {
+			return contentmapper.Manifest{}, "", ast.NewCompilerDiagnostic(diagnostics.The_virtual_extension_0_for_source_extension_1_in_tsContentMapper_extensions_of_the_content_mapper_package_2_must_be_one_of_Colon_3, virtualExtension, sourceExtension, packageName, contentmapper.SupportedVirtualExtensionsDescription)
+		}
+	}
+	return contentmapper.Manifest{Name: name, Version: version, Exec: exec, CompilerOptions: compilerOptions, DynamicConfig: dynamicConfig, SupportsEmit: supportsEmit, Extensions: virtualExtensions}, packageDirectory, nil
 }

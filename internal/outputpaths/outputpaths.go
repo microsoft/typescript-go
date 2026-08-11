@@ -10,7 +10,7 @@ import (
 
 type OutputPathsHost interface {
 	CommonSourceDirectory() string
-	ContentMapperExtensions() []string
+	ContentMapperExtensionRewrites() []core.ExtensionRewrite
 	GetCurrentDirectory() string
 	UseCaseSensitiveFileNames() bool
 }
@@ -47,7 +47,7 @@ type ForceEmitPaths struct {
 }
 
 func GetOutputPathsFor(sourceFile *ast.SourceFile, options *core.CompilerOptions, host OutputPathsHost, force ForceEmitPaths) *OutputPaths {
-	ownOutputFilePath := getOwnEmitOutputFilePath(sourceFile.FileName(), options, host, GetOutputExtension(sourceFile.FileName(), options.Jsx))
+	ownOutputFilePath := getOwnEmitOutputFilePath(sourceFile.FileName(), options, host, GetOutputExtensionForSourceFile(sourceFile, options.Jsx))
 	isJsonFile := ast.IsJsonSourceFile(sourceFile)
 	// If json file emits to the same location skip writing it, if emitDeclarationOnly skip writing it
 	isJsonEmittedToSameLocation := isJsonFile &&
@@ -56,9 +56,10 @@ func GetOutputPathsFor(sourceFile *ast.SourceFile, options *core.CompilerOptions
 			UseCaseSensitiveFileNames: host.UseCaseSensitiveFileNames(),
 		}) == 0
 	paths := &OutputPaths{}
-	if sourceFile.ContentMapper() == "" && (force.Js || options.EmitDeclarationOnly != core.TSTrue) && !isJsonEmittedToSameLocation {
+	_, contentMapperEmit := core.GetEmitExtensionRewrite(sourceFile.OriginalFileName(), host.ContentMapperExtensionRewrites())
+	if (sourceFile.ContentMapper() == "" || contentMapperEmit) && (force.Js || options.EmitDeclarationOnly != core.TSTrue) && !isJsonEmittedToSameLocation {
 		paths.jsFilePath = ownOutputFilePath
-		if !ast.IsJsonSourceFile(sourceFile) {
+		if sourceFile.ContentMapper() == "" && !ast.IsJsonSourceFile(sourceFile) {
 			paths.sourceMapFilePath = GetSourceMapFilePath(paths.jsFilePath, options)
 		}
 	}
@@ -96,10 +97,7 @@ func GetOutputJSFileName(inputFileName string, options *core.CompilerOptions, ho
 }
 
 func GetOutputJSFileNameWorker(inputFileName string, options *core.CompilerOptions, host OutputPathsHost) string {
-	return tspath.ChangeExtension(
-		getOutputPathWithoutChangingExtension(inputFileName, options.OutDir, host),
-		GetOutputExtension(inputFileName, options.Jsx),
-	)
+	return getOwnEmitOutputFilePath(inputFileName, options, host, GetOutputExtension(inputFileName, options.Jsx))
 }
 
 func GetOutputDeclarationFileNameWorker(inputFileName string, options *core.CompilerOptions, host OutputPathsHost) string {
@@ -125,6 +123,13 @@ func GetOutputExtension(fileName string, jsx core.JsxEmit) string {
 	}
 }
 
+func GetOutputExtensionForSourceFile(sourceFile *ast.SourceFile, jsx core.JsxEmit) string {
+	if sourceFile.ContentMapper() != "" && sourceFile.VirtualExtension() != "" {
+		return GetOutputExtension(sourceFile.FileName()+sourceFile.VirtualExtension(), jsx)
+	}
+	return GetOutputExtension(sourceFile.FileName(), jsx)
+}
+
 func GetDeclarationEmitOutputFilePath(file string, options *core.CompilerOptions, host OutputPathsHost) string {
 	var outputDir *string
 	if len(options.DeclarationDir) > 0 {
@@ -143,8 +148,8 @@ func GetDeclarationEmitOutputFilePath(file string, options *core.CompilerOptions
 }
 
 func ChangeToDeclarationExtension(path string, host OutputPathsHost) string {
-	if extension := tspath.GetLongestExtensionFromPath(path, host.ContentMapperExtensions(), false); extension != "" {
-		return tspath.RemoveExtension(path, extension) + ".d" + extension + ".ts"
+	if rewrite, ok := core.GetExtensionRewrite(path, host.ContentMapperExtensionRewrites()); ok {
+		return tspath.RemoveExtension(path, rewrite.Source) + ".d" + rewrite.Source + ".ts"
 	}
 	pathWithoutExtension := tspath.RemoveFileExtension(path)
 	if pathWithoutExtension == path {
@@ -190,20 +195,23 @@ func GetSourceFilePathInNewDirWorker(fileName string, newDirPath string, current
 }
 
 func getOwnEmitOutputFilePath(fileName string, options *core.CompilerOptions, host OutputPathsHost, extension string) string {
-	var emitOutputFilePathWithoutExtension string
+	var emitOutputFilePath string
 	if len(options.OutDir) > 0 {
 		currentDirectory := host.GetCurrentDirectory()
-		emitOutputFilePathWithoutExtension = tspath.RemoveFileExtension(GetSourceFilePathInNewDir(
+		emitOutputFilePath = GetSourceFilePathInNewDir(
 			fileName,
 			options.OutDir,
 			currentDirectory,
 			host.CommonSourceDirectory(),
 			host.UseCaseSensitiveFileNames(),
-		))
+		)
 	} else {
-		emitOutputFilePathWithoutExtension = tspath.RemoveFileExtension(fileName)
+		emitOutputFilePath = fileName
 	}
-	return emitOutputFilePathWithoutExtension + extension
+	if _, ok := core.GetEmitExtensionRewrite(fileName, host.ContentMapperExtensionRewrites()); ok {
+		return emitOutputFilePath + extension
+	}
+	return tspath.RemoveFileExtension(emitOutputFilePath) + extension
 }
 
 func GetSourceMapFilePath(jsFilePath string, options *core.CompilerOptions) string {

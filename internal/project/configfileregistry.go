@@ -34,7 +34,7 @@ func collectConfiguredContentMappers(commandLines []*tsoptions.ParsedCommandLine
 	var extensions []string
 	for _, commandLine := range commandLines {
 		for _, mapper := range commandLine.ContentMappers() {
-			for _, extension := range mapper.Extensions {
+			for _, extension := range mapper.Definition.Extensions {
 				if seenExtensions.AddIfAbsent(extension) {
 					extensions = append(extensions, extension)
 				}

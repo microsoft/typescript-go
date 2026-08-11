@@ -17,7 +17,7 @@
 {
 	"name": "mapper",
 	"version": "1.0.0",
-	"tsContentMapper": { "exec": ["compiler-test-mapper"], "compilerOptions": ["target", "jsx"] }
+	"tsContentMapper": { "exec": ["compiler-test-mapper"], "extensions": { ".box": ".ts" }, "compilerOptions": ["target", "jsx"] }
 }
 
 // @Filename: /widget.box

@@ -31,6 +31,8 @@ const (
 	// VerbatimMapper selects a mapper that copies its input through unchanged with an identity span map. The
 	// input is expected to already be valid TypeScript.
 	VerbatimMapper = "verbatim-mapper"
+	// TSXVerbatimMapper copies its input unchanged and identifies the transformed output as TSX.
+	TSXVerbatimMapper = "tsx-verbatim-mapper"
 	// DynamicVerbatimMapper is the verbatim mapper with project-scoped dynamic configuration.
 	DynamicVerbatimMapper = "dynamic-verbatim-mapper"
 	// FailingMapper selects a mapper that initializes but fails every transform request, exercising the
@@ -116,8 +118,8 @@ func (supplementalGlobalsHandler) HandleRequest(ctx context.Context, method stri
 			return nil, fmt.Errorf("contentmappertest: unexpected supplemental global input %q", p.FileName)
 		}
 		return contentmapper.TransformResult{
-			MappedOutput: contentmapper.MappedOutput{Text: "export default shared.value;", ScriptKind: core.ScriptKindTS},
-			Supplemental: []contentmapper.MappedOutput{{Text: supplemental, ScriptKind: core.ScriptKindTS}},
+			MappedOutput: contentmapper.MappedOutput{Text: "export default shared.value;"},
+			Supplemental: []contentmapper.SupplementalOutput{{MappedOutput: contentmapper.MappedOutput{Text: supplemental}, Extension: ".ts"}},
 		}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
@@ -134,8 +136,8 @@ func (supplementalModuleHandler) HandleRequest(ctx context.Context, method strin
 			return nil, err
 		}
 		return contentmapper.TransformResult{
-			MappedOutput: contentmapper.MappedOutput{Text: "export default 1;", ScriptKind: core.ScriptKindTS},
-			Supplemental: []contentmapper.MappedOutput{{Text: `export const privateValue: number = "wrong";`, ScriptKind: core.ScriptKindTS}},
+			MappedOutput: contentmapper.MappedOutput{Text: "export default 1;"},
+			Supplemental: []contentmapper.SupplementalOutput{{MappedOutput: contentmapper.MappedOutput{Text: `export const privateValue: number = "wrong";`}, Extension: ".ts"}},
 		}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
@@ -164,7 +166,7 @@ func (supplementalDiagnosticsHandler) HandleRequest(ctx context.Context, method 
 		}
 		return contentmapper.TransformResult{
 			MappedOutput: contentmapper.MappedOutput{Text: "export {};"},
-			Supplemental: []contentmapper.MappedOutput{{Text: prefix + p.Content, ScriptKind: core.ScriptKindTS, Mappings: json.Value(mappings)}},
+			Supplemental: []contentmapper.SupplementalOutput{{MappedOutput: contentmapper.MappedOutput{Text: prefix + p.Content, Mappings: json.Value(mappings)}, Extension: ".ts"}},
 		}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
@@ -186,7 +188,7 @@ func (supplementalHandler) HandleRequest(ctx context.Context, method string, par
 		}
 		return contentmapper.TransformResult{
 			MappedOutput: contentmapper.MappedOutput{Text: "export {};"},
-			Supplemental: []contentmapper.MappedOutput{{Text: p.Content, ScriptKind: core.ScriptKindTS, Mappings: json.Value(mappings)}},
+			Supplemental: []contentmapper.SupplementalOutput{{MappedOutput: contentmapper.MappedOutput{Text: p.Content, Mappings: json.Value(mappings)}, Extension: ".ts"}},
 		}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
@@ -219,9 +221,8 @@ func (lispHandler) HandleRequest(ctx context.Context, method string, params json
 			return nil, err
 		}
 		return contentmapper.TransformResult{MappedOutput: contentmapper.MappedOutput{
-			Text:       `add(1, 2, "oops");`,
-			ScriptKind: core.ScriptKindTS,
-			Mappings:   json.Value(mappings),
+			Text:     `add(1, 2, "oops");`,
+			Mappings: json.Value(mappings),
 		}}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
@@ -258,7 +259,7 @@ func (h duplicateHandler) HandleRequest(ctx context.Context, method string, para
 		if err != nil {
 			return nil, err
 		}
-		return contentmapper.TransformResult{MappedOutput: contentmapper.MappedOutput{Text: generated, ScriptKind: core.ScriptKindTS, Mappings: json.Value(mappings)}}, nil
+		return contentmapper.TransformResult{MappedOutput: contentmapper.MappedOutput{Text: generated, Mappings: json.Value(mappings)}}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
 	}
@@ -288,7 +289,7 @@ func (Handler) HandleRequest(ctx context.Context, method string, params json.Val
 			return nil, err
 		}
 		return contentmapper.TransformResult{
-			MappedOutput: contentmapper.MappedOutput{Text: text, ScriptKind: core.ScriptKindTS, Mappings: mappings},
+			MappedOutput: contentmapper.MappedOutput{Text: text, Mappings: mappings},
 			Diagnostics:  diagnostics,
 		}, nil
 	default:
@@ -459,7 +460,7 @@ func (h dynamicVerbatimHandler) HandleRequest(ctx context.Context, method string
 	return h.verbatimHandler.HandleRequest(ctx, method, params)
 }
 
-func (verbatimHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
+func (h verbatimHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
 	case contentmapper.MethodInitialize:
 		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: contentmapper.PositionEncodingUTF8, DiagnosticSource: "mapper"}, nil
@@ -520,9 +521,8 @@ func (synthesizingHandler) HandleRequest(ctx context.Context, method string, par
 			return nil, err
 		}
 		return contentmapper.TransformResult{MappedOutput: contentmapper.MappedOutput{
-			Text:       synthesizedOutput,
-			ScriptKind: core.ScriptKindTS,
-			Mappings:   json.Value(mappings),
+			Text:     synthesizedOutput,
+			Mappings: json.Value(mappings),
 		}}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
@@ -545,9 +545,8 @@ func (componentHandler) HandleRequest(ctx context.Context, method string, params
 			return nil, err
 		}
 		return contentmapper.TransformResult{MappedOutput: contentmapper.MappedOutput{
-			Text:       text,
-			ScriptKind: core.ScriptKindTS,
-			Mappings:   mappings,
+			Text:     text,
+			Mappings: mappings,
 		}}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
@@ -673,6 +672,8 @@ func handlerForMapper(command []string, lifecycle *ProjectLifecycle) (ipc.Handle
 		return Handler{}, nil
 	case VerbatimMapper:
 		return verbatimHandler{}, nil
+	case TSXVerbatimMapper:
+		return verbatimHandler{}, nil
 	case DynamicVerbatimMapper:
 		return dynamicVerbatimHandler{lifecycle: lifecycle}, nil
 	case FailingMapper:
@@ -739,15 +740,19 @@ func (s spawner) Spawn(command []string, dir string) (io.ReadWriteCloser, error)
 func PackageJSON(mapper string) string {
 	compilerOptions := ""
 	dynamicConfig := ""
+	virtualExtension := ".ts"
 	if mapper == TransformingMapper {
 		compilerOptions = `, "compilerOptions": ["target", "jsx"]`
 	}
 	if mapper == DynamicVerbatimMapper {
 		dynamicConfig = `, "dynamicConfig": true`
 	}
+	if mapper == TSXVerbatimMapper {
+		virtualExtension = ".tsx"
+	}
 	return fmt.Sprintf(`{
 	"name": %q,
 	"version": "1.0.0",
-	"tsContentMapper": { "exec": [%q]%s%s }
-}`, PackageName, mapper, compilerOptions, dynamicConfig)
+	"tsContentMapper": { "exec": [%q], "extensions": { ".astro": %q, ".box": %q, ".dup": %q, ".lisp": %q, ".mdx": %q, ".panel": %q, ".svelte": %q, ".vue": %q, ".y.z": %q }%s%s }
+}`, PackageName, mapper, virtualExtension, virtualExtension, virtualExtension, virtualExtension, virtualExtension, virtualExtension, virtualExtension, virtualExtension, virtualExtension, compilerOptions, dynamicConfig)
 }

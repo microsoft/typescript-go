@@ -120,7 +120,7 @@ func parseContentMapper(value any) (*contentmapper.Mapper, []*ast.Diagnostic) {
 	}
 	if extensions, ok := v.Get("extensions"); ok {
 		if strs, isStringArray := parseStringArrayStrict(extensions); isStringArray {
-			mapper.Extensions = strs
+			mapper.Definition.Extensions = strs
 		} else {
 			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, "contentMapper.extensions", "string[]"))
 		}
@@ -132,6 +132,13 @@ func parseContentMapper(value any) (*contentmapper.Mapper, []*ast.Diagnostic) {
 			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, "contentMapper.options", "object"))
 		} else {
 			mapper.Options, _ = json.Marshal(options)
+		}
+	}
+	if noEmit, ok := v.Get("noEmit"); ok {
+		if value, isBool := noEmit.(bool); isBool {
+			mapper.NoEmit = value
+		} else {
+			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, "contentMapper.noEmit", "boolean"))
 		}
 	}
 	if len(errors) != 0 {

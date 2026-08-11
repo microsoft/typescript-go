@@ -113,8 +113,8 @@ func (host *emitHost) SourceFiles() []*ast.SourceFile { return host.program.Sour
 func (host *emitHost) GetCurrentDirectory() string    { return host.program.GetCurrentDirectory() }
 func (host *emitHost) CommonSourceDirectory() string  { return host.program.CommonSourceDirectory() }
 
-func (host *emitHost) ContentMapperExtensions() []string {
-	return host.program.ContentMapperExtensions()
+func (host *emitHost) ContentMapperExtensionRewrites() []core.ExtensionRewrite {
+	return host.program.ContentMapperExtensionRewrites()
 }
 
 func (host *emitHost) UseCaseSensitiveFileNames() bool {

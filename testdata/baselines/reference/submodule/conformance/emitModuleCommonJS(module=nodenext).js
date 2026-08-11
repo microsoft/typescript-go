@@ -17,8 +17,14 @@
 
 //// [a.js]
 "use strict";
-var __rewriteRelativeImportExtension = (this && this.__rewriteRelativeImportExtension) || function (path, preserveJsx) {
+var __rewriteRelativeImportExtension = (this && this.__rewriteRelativeImportExtension) || function (path, preserveJsx, extraExtensions) {
     if (typeof path === "string" && /^\.\.?\//.test(path)) {
+        if (extraExtensions) {
+            for (var extension in extraExtensions) {
+                var outputExtension = extraExtensions[extension];
+                if (path.length > extension.length && path.slice(-extension.length) === extension) return path + outputExtension;
+            }
+        }
         return path.replace(/\.(tsx)$|((?:\.d)?)((?:\.[^./]+?)?)\.([cm]?)ts$/i, function (m, tsx, d, ext, cm) {
             return tsx ? preserveJsx ? ".jsx" : ".js" : d && (!ext || !cm) ? m : (d + ext + "." + cm.toLowerCase() + "js");
         });
@@ -33,8 +39,14 @@ var __rewriteRelativeImportExtension = (this && this.__rewriteRelativeImportExte
 }
 //// [b.js]
 "use strict";
-var __rewriteRelativeImportExtension = (this && this.__rewriteRelativeImportExtension) || function (path, preserveJsx) {
+var __rewriteRelativeImportExtension = (this && this.__rewriteRelativeImportExtension) || function (path, preserveJsx, extraExtensions) {
     if (typeof path === "string" && /^\.\.?\//.test(path)) {
+        if (extraExtensions) {
+            for (var extension in extraExtensions) {
+                var outputExtension = extraExtensions[extension];
+                if (path.length > extension.length && path.slice(-extension.length) === extension) return path + outputExtension;
+            }
+        }
         return path.replace(/\.(tsx)$|((?:\.d)?)((?:\.[^./]+?)?)\.([cm]?)ts$/i, function (m, tsx, d, ext, cm) {
             return tsx ? preserveJsx ? ".jsx" : ".js" : d && (!ext || !cm) ? m : (d + ext + "." + cm.toLowerCase() + "js");
         });

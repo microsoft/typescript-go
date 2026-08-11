@@ -1,0 +1,17 @@
+//// [tests/cases/compiler/contentMapperEmitMts.ts] ////
+
+=== /value.component ===
+
+export default 1;
+
+=== /main.mts ===
+import value from "./value.component";
+>value : 1
+
+console.log(value);
+>console.log(value) : void
+>console.log : (...data: any[]) => void
+>console : Console
+>log : (...data: any[]) => void
+>value : 1
+

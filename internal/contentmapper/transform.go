@@ -52,10 +52,19 @@ func ParseResult(parseOptions ast.SourceFileParseOptions, content string, mapper
 	if problem := result.Mappings.Validate(result.Text, content); problem != nil {
 		return SourceFiles{}, problem
 	}
-	sourceFile := parser.ParseSourceFile(parseOptions, result.Text, result.ScriptKind)
+	virtualExtension := mapper.VirtualExtension(parseOptions.FileName)
+	if !IsSupportedVirtualExtension(virtualExtension) {
+		return SourceFiles{}, NewTransformError(TransformErrorKindResponse, nil)
+	}
+	virtualFileName := parseOptions.FileName + virtualExtension
+	if tspath.FileExtensionIsOneOf(virtualExtension, []string{tspath.ExtensionMts, tspath.ExtensionCts, tspath.ExtensionMjs, tspath.ExtensionCjs}) {
+		parseOptions.ExternalModuleIndicatorOptions.Force = true
+	}
+	sourceFile := parser.ParseSourceFile(parseOptions, result.Text, core.GetScriptKindFromFileName(virtualFileName))
 	sourceFile.SetOriginalText(content)
 	sourceFile.SetSpanMap(result.Mappings)
 	sourceFile.SetContentMapper(mapper.Identity())
+	sourceFile.SetVirtualExtension(virtualExtension)
 	if len(result.Diagnostics) > 0 {
 		// The runner produces diagnostics without a source file (it doesn't have one yet); associate
 		// them with the file now so they are reported against it.
@@ -73,14 +82,21 @@ func ParseResult(parseOptions ast.SourceFileParseOptions, content string, mapper
 			return SourceFiles{}, problem
 		}
 		supplementalOptions := parseOptions
-		suffix := "." + strconv.Itoa(i) + core.GetDefaultExtensionForScriptKind(supplemental.ScriptKind)
+		if !IsSupportedVirtualExtension(supplemental.VirtualExtension) {
+			return SourceFiles{}, NewTransformError(TransformErrorKindResponse, nil)
+		}
+		suffix := "." + strconv.Itoa(i) + supplemental.VirtualExtension
 		supplementalOptions.FileName += suffix
 		supplementalOptions.Path = tspath.Path(string(parseOptions.Path) + suffix)
-		file := parser.ParseSourceFile(supplementalOptions, supplemental.Text, supplemental.ScriptKind)
+		if tspath.FileExtensionIsOneOf(supplemental.VirtualExtension, []string{tspath.ExtensionMts, tspath.ExtensionCts, tspath.ExtensionMjs, tspath.ExtensionCjs}) {
+			supplementalOptions.ExternalModuleIndicatorOptions.Force = true
+		}
+		file := parser.ParseSourceFile(supplementalOptions, supplemental.Text, core.GetScriptKindFromFileName(supplementalOptions.FileName))
 
 		file.SetOriginalText(content)
 		file.SetSpanMap(supplemental.Mappings)
 		file.SetContentMapper(mapper.Identity())
+		file.SetVirtualExtension(supplemental.VirtualExtension)
 		files.Supplemental = append(files.Supplemental, file)
 	}
 	if len(files.Supplemental) != 0 {

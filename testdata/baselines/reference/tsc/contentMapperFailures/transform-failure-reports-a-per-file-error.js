@@ -9,7 +9,7 @@ import "./app.vue";
 {
     "name": "fail",
     "version": "1.0.0",
-    "tsContentMapper": { "exec": ["failing-mapper"] }
+    "tsContentMapper": { "exec": ["failing-mapper"], "extensions": { ".vue": ".ts" } }
 }
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
 {

@@ -1,0 +1,12 @@
+//// [tests/cases/compiler/contentMapperEmitCollision.ts] ////
+
+=== /component.mdx ===
+export const fromMdx = true;
+>fromMdx : true
+>true : true
+
+=== /component.mdx.ts ===
+export const fromTs = true;
+>fromTs : true
+>true : true
+

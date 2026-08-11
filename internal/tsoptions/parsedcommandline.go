@@ -339,8 +339,23 @@ func (p *ParsedCommandLine) ContentMappers() []*contentmapper.Mapper {
 // config's content mappers.
 func (p *ParsedCommandLine) ContentMapperExtensions() []string {
 	return core.FlatMap(p.ContentMappers(), func(m *contentmapper.Mapper) []string {
-		return m.Extensions
+		return m.Definition.Extensions
 	})
+}
+
+func (p *ParsedCommandLine) ContentMapperExtensionRewrites() []core.ExtensionRewrite {
+	var rewrites []core.ExtensionRewrite
+	for _, mapper := range p.ContentMappers() {
+		for _, sourceExtension := range mapper.Definition.Extensions {
+			var target string
+			if mapper.EmitsJS() {
+				virtualExtension := mapper.Manifest.Extensions[sourceExtension]
+				target = outputpaths.GetOutputExtension("virtual"+virtualExtension, p.CompilerOptions().Jsx)
+			}
+			rewrites = append(rewrites, core.ExtensionRewrite{Source: sourceExtension, Target: target})
+		}
+	}
+	return rewrites
 }
 
 // GetContentMapperForFileName returns the configured content mapper whose extensions include fileName,
@@ -348,7 +363,7 @@ func (p *ParsedCommandLine) ContentMapperExtensions() []string {
 func (p *ParsedCommandLine) GetContentMapperForFileName(fileName string) *contentmapper.Mapper {
 	extension := tspath.GetLongestExtensionFromPath(fileName, p.ContentMapperExtensions(), false)
 	for _, mapper := range p.ContentMappers() {
-		if slices.Contains(mapper.Extensions, extension) {
+		if slices.Contains(mapper.Definition.Extensions, extension) {
 			return mapper
 		}
 	}

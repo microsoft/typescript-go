@@ -1,0 +1,37 @@
+//// [tests/cases/compiler/contentMapperEmit.ts] ////
+
+=== /component.mdx ===
+export default function Component() {
+>Component : () => string
+
+    return "content";
+>"content" : "content"
+}
+
+=== /unsafe.mdx/index.ts ===
+export const unsafe = true;
+>unsafe : true
+>true : true
+
+=== /main.ts ===
+import Component from "./component.mdx";
+>Component : () => string
+
+import { unsafe } from "./unsafe.mdx";
+>unsafe : true
+
+const dynamicPath = "./component.mdx";
+>dynamicPath : "./component.mdx"
+>"./component.mdx" : "./component.mdx"
+
+console.log(Component(), unsafe, import(dynamicPath));
+>console.log(Component(), unsafe, import(dynamicPath)) : void
+>console.log : (...data: any[]) => void
+>console : Console
+>log : (...data: any[]) => void
+>Component() : string
+>Component : () => string
+>unsafe : true
+>import(dynamicPath) : Promise<any>
+>dynamicPath : "./component.mdx"
+

@@ -1363,14 +1363,14 @@ func parseJsonConfigFileContentWorker(
 	}
 	totalContentMapperExtensions := 0
 	for _, mapper := range contentMappers {
-		totalContentMapperExtensions += len(mapper.Extensions)
+		totalContentMapperExtensions += len(mapper.Definition.Extensions)
 	}
 	seenContentMapperExtensions := make(map[string]struct{}, totalContentMapperExtensions)
 	contentMapperExtensions := make([]string, 0, totalContentMapperExtensions)
 	nativeExtensions := core.Flatten(tspath.AllSupportedExtensionsWithJson)
 	for j, mapper := range contentMappers {
-		validExtensions := make([]string, 0, len(mapper.Extensions))
-		for _, ext := range mapper.Extensions {
+		validExtensions := make([]string, 0, len(mapper.Definition.Extensions))
+		for _, ext := range mapper.Definition.Extensions {
 			extNode := getContentMapperExtensionSyntax(contentMapperSourceFile, contentMapperIndices[j], ext)
 			switch {
 			case !strings.HasPrefix(ext, "."):
@@ -1387,7 +1387,7 @@ func parseJsonConfigFileContentWorker(
 				}
 			}
 		}
-		mapper.Extensions = validExtensions
+		mapper.Definition.Extensions = validExtensions
 	}
 	if len(contentMappers) > 0 && !(parsedConfig.options != nil && parsedConfig.options.LoadExternalPlugins.IsTrue()) {
 		errors = append(errors, setContentMapperDiagnosticLocation(ast.NewCompilerDiagnostic(diagnostics.Content_mappers_require_the_loadExternalPlugins_command_line_flag_to_be_enabled), contentMapperSourceFile, getContentMappersKeySyntax(contentMapperSourceFile)))
@@ -1410,6 +1410,15 @@ func parseJsonConfigFileContentWorker(
 			}
 			mapper.Manifest = manifest
 			mapper.PackageDirectory = packageDirectory
+			for _, extension := range mapper.Definition.Extensions {
+				if mapper.Manifest.Extensions[extension] == "" {
+					errors = append(errors, setContentMapperDiagnosticLocation(
+						ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, "tsContentMapper.extensions["+extension+"]", "virtual extension"),
+						contentMapperSourceFile,
+						getContentMapperExtensionSyntax(contentMapperSourceFile, contentMapperIndices[j], extension),
+					))
+				}
+			}
 		}
 	}
 

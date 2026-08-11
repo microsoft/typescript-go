@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ipc"
 	"github.com/microsoft/typescript-go/internal/json"
@@ -1149,7 +1150,7 @@ func (s *Session) handleParseConfigFile(ctx context.Context, params *ParseConfig
 }
 
 func (s *Session) handleTranspile(ctx context.Context, params *TranspileParams, declaration bool) (*TranspileOutputResponse, error) {
-	return transpileOutput(ctx, params.Input, params.Options, declaration)
+	return transpileOutput(ctx, s.projectSession.ContentMapperHost(), params.Input, params.Options, declaration)
 }
 
 func (s *Session) handleTranspileFromFile(ctx context.Context, params *TranspileFromFileParams, declaration bool) (*TranspileOutputResponse, error) {
@@ -1160,20 +1161,34 @@ func (s *Session) handleTranspileFromFile(ctx context.Context, params *Transpile
 	}
 	options := params.Options
 	options.FileName = fileName
-	return transpileOutput(ctx, input, options, declaration)
+	return transpileOutput(ctx, s.projectSession.ContentMapperHost(), input, options, declaration)
 }
 
-func transpileOutput(ctx context.Context, input string, options TranspileOptions, declaration bool) (*TranspileOutputResponse, error) {
+func transpileOutput(ctx context.Context, contentMapperHost contentmapper.Host, input string, options TranspileOptions, declaration bool) (*TranspileOutputResponse, error) {
 	transpileOptions := transpile.Options{
 		CompilerOptions:   options.CompilerOptions,
 		FileName:          options.FileName,
 		ReportDiagnostics: options.ReportDiagnostics,
 	}
+	if options.ContentMapper != nil {
+		transpileOptions.ContentMapper = &transpile.ContentMapperOptions{
+			Manifest: contentmapper.Manifest{
+				Name:            options.ContentMapper.Manifest.Name,
+				Version:         options.ContentMapper.Manifest.Version,
+				Exec:            options.ContentMapper.Manifest.Exec,
+				CompilerOptions: options.ContentMapper.Manifest.CompilerOptions,
+				DynamicConfig:   options.ContentMapper.Manifest.DynamicConfig,
+				SupportsEmit:    options.ContentMapper.Manifest.SupportsEmit,
+				Extensions:      options.ContentMapper.Manifest.Extensions,
+			},
+			Options: options.ContentMapper.Options,
+		}
+	}
 	var output *transpile.Output
 	if declaration {
-		output = transpile.TranspileDeclaration(ctx, input, transpileOptions)
+		output = transpile.TranspileDeclaration(ctx, input, transpileOptions, contentMapperHost)
 	} else {
-		output = transpile.TranspileModule(ctx, input, transpileOptions)
+		output = transpile.TranspileModule(ctx, input, transpileOptions, contentMapperHost)
 	}
 	if output == nil {
 		if err := ctx.Err(); err != nil {

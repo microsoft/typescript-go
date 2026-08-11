@@ -437,6 +437,8 @@ const customStructures: Structure[] = [
             { name: "cwd", type: { kind: "base", name: "string" }, optional: true, documentation: "Absolute working directory for the mapper process." },
             { name: "compilerOptions", type: { kind: "array", element: { kind: "base", name: "string" } }, optional: true, documentation: "Compiler option names forwarded to the mapper." },
             { name: "dynamicConfig", type: { kind: "base", name: "boolean" }, optional: true, documentation: "Whether the mapper uses project-scoped dynamic configuration." },
+            { name: "supportsEmit", type: { kind: "base", name: "boolean" }, optional: true, documentation: "Whether the mapper supports JavaScript emit." },
+            { name: "extensions", type: { kind: "map", key: { kind: "base", name: "string" }, value: { kind: "base", name: "string" } }, documentation: "Maps source extensions to transformed virtual extensions." },
         ],
         documentation: "Inline content mapper manifest supplied by a contributing extension.",
     },

@@ -501,7 +501,9 @@ func (p *Program) GetContentMapper(file *ast.SourceFile) *contentmapper.Mapper {
 	return nil
 }
 
-func (p *Program) ContentMapperExtensions() []string         { return p.opts.Config.ContentMapperExtensions() }
+func (p *Program) ContentMapperExtensionRewrites() []core.ExtensionRewrite {
+	return p.opts.Config.ContentMapperExtensionRewrites()
+}
 func (p *Program) CommandLine() *tsoptions.ParsedCommandLine { return p.opts.Config }
 func (p *Program) Host() CompilerHost                        { return p.opts.Host }
 func (p *Program) Tracing() *tracing.Tracing                 { return p.opts.Tracing }

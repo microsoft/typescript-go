@@ -104,11 +104,15 @@ type TransformParams struct {
 type MappedOutput struct {
 	// Text is the generated JavaScript or TypeScript source text.
 	Text string `json:"text"`
-	// ScriptKind selects how Text is parsed; omitted or unknown values default to TypeScript.
-	ScriptKind core.ScriptKind `json:"scriptKind,omitempty"`
 	// Mappings is the span map's tuple-array JSON (see spanmap.Marshal), expressed in the selected
 	// position encoding. Absent or empty means the output is fully synthesized.
 	Mappings json.Value `json:"mappings,omitempty"`
+}
+
+type SupplementalOutput struct {
+	MappedOutput
+	// Extension is the transformed virtual source extension.
+	Extension string `json:"extension"`
 }
 
 // TransformResult is the canonical output for one input file.
@@ -117,7 +121,7 @@ type TransformResult struct {
 	// Diagnostics are mapper-authored errors expressed in original-source coordinates.
 	Diagnostics []Diagnostic `json:"diagnostics,omitempty"`
 	// Supplemental contains additional unnamed compiler inputs associated with this source file.
-	Supplemental []MappedOutput `json:"supplemental,omitempty"`
+	Supplemental []SupplementalOutput `json:"supplemental,omitempty"`
 }
 
 // Diagnostic is an error reported by a mapper in original-source coordinates.
@@ -688,15 +692,18 @@ func decodeTransformResult(raw json.Value, originalText string, positionEncoding
 		return Result{}, err
 	}
 	result := Result{
-		Text:       mapped.Text,
-		ScriptKind: mapped.ScriptKind,
-		Mappings:   mapped.Mappings,
+		Text:     mapped.Text,
+		Mappings: mapped.Mappings,
 	}
 	for _, supplemental := range res.Supplemental {
-		mapped, _, err := decodeMappedOutput(supplemental, originalText, positionEncoding)
+		if !IsSupportedVirtualExtension(supplemental.Extension) {
+			return Result{}, &InvalidSupplementalVirtualExtensionError{Extension: supplemental.Extension}
+		}
+		mapped, _, err := decodeMappedOutput(supplemental.MappedOutput, originalText, positionEncoding)
 		if err != nil {
 			return Result{}, err
 		}
+		mapped.VirtualExtension = supplemental.Extension
 		result.Supplemental = append(result.Supplemental, mapped)
 	}
 	for _, d := range res.Diagnostics {
@@ -724,15 +731,8 @@ func decodeTransformResult(raw json.Value, originalText string, positionEncoding
 }
 
 func decodeMappedOutput(output MappedOutput, originalText string, positionEncoding PositionEncoding) (MappedResult, *positionNormalizer, error) {
-	// Any script kind the mapper does not produce a valid, non-Unknown value for defaults to a .ts file.
-	scriptKind := core.ScriptKindTS
-	switch output.ScriptKind {
-	case core.ScriptKindJS, core.ScriptKindJSX, core.ScriptKindTS, core.ScriptKindTSX, core.ScriptKindJSON:
-		scriptKind = output.ScriptKind
-	}
 	result := MappedResult{
-		Text:       output.Text,
-		ScriptKind: scriptKind,
+		Text: output.Text,
 	}
 	generatedPositions, err := newPositionNormalizer(output.Text, positionEncoding)
 	if err != nil {

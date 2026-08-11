@@ -18,7 +18,7 @@
 {
     "name": "mapper",
     "version": "1.0.0",
-    "tsContentMapper": { "exec": ["compiler-test-mapper"] }
+    "tsContentMapper": { "exec": ["compiler-test-mapper"], "extensions": { ".y.z": ".ts" } }
 }
 
 // @Filename: /component.y.z

@@ -149,6 +149,22 @@ export interface TranspileOptions {
     compilerOptions?: CompilerOptions;
     fileName?: string;
     reportDiagnostics?: boolean;
+    contentMapper?: TranspileContentMapperOptions;
+}
+
+export interface TranspileContentMapperOptions {
+    manifest: ContentMapperManifest;
+    options?: Record<string, unknown>;
+}
+
+export interface ContentMapperManifest {
+    name: string;
+    version?: string;
+    exec: readonly string[];
+    compilerOptions?: readonly (keyof CompilerOptions)[];
+    dynamicConfig?: boolean;
+    supportsEmit?: boolean;
+    extensions: Readonly<Record<string, string>>;
 }
 
 export interface TranspileOutput {

@@ -318,7 +318,7 @@ func TestBuildContentMapperIdentity(t *testing.T) {
 				{
 					"name": "vue-ts-mapper",
 					"version": "1.0.0",
-					"tsContentMapper": { "exec": ["verbatim-mapper"] }
+					"tsContentMapper": { "exec": ["verbatim-mapper"], "extensions": { ".vue": ".ts" } }
 				}`),
 			},
 			commandLineArgs: []string{"--build", "--verbose", "--loadExternalPlugins"},

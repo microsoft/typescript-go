@@ -1,0 +1,9 @@
+//// [/value.component] (ScriptKind: ScriptKindTS, ContentMapper: [.component])
+--- Original ---
+export default 1;
+--- Transformed ---
+export default 1;
+
+=== Diagnostics ===
+
+<no content>

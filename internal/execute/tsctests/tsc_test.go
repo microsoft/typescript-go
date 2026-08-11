@@ -4811,7 +4811,7 @@ func TestTscContentMapperEmit(t *testing.T) {
 			{
 				"name": "vue-ts-mapper",
 				"version": "1.0.0",
-				"tsContentMapper": { "exec": ["verbatim-mapper"] }
+				"tsContentMapper": { "exec": ["verbatim-mapper"], "extensions": { ".vue": ".ts" } }
 			}`),
 		},
 		commandLineArgs: []string{"--loadExternalPlugins"},
@@ -4824,7 +4824,7 @@ func TestTscContentMapperFailures(t *testing.T) {
 	{
 		"name": "fail",
 		"version": "1.0.0",
-		"tsContentMapper": { "exec": ["failing-mapper"] }
+		"tsContentMapper": { "exec": ["failing-mapper"], "extensions": { ".vue": ".ts" } }
 	}`)
 	failMapperTSConfig := stringtestutil.Dedent(`
 	{
@@ -4894,7 +4894,7 @@ func TestTscContentMapperSynthesized(t *testing.T) {
 			{
 				"name": "synth",
 				"version": "1.0.0",
-				"tsContentMapper": { "exec": ["synthesizing-mapper"] }
+				"tsContentMapper": { "exec": ["synthesizing-mapper"], "extensions": { ".vue": ".ts" } }
 			}`),
 		},
 		commandLineArgs: []string{"--loadExternalPlugins"},

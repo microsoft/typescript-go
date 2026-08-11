@@ -528,9 +528,25 @@ type ParseConfigFileParams struct {
 }
 
 type TranspileOptions struct {
-	CompilerOptions   *core.CompilerOptions `json:"compilerOptions,omitempty"`
-	FileName          string                `json:"fileName,omitempty"`
-	ReportDiagnostics bool                  `json:"reportDiagnostics,omitempty"`
+	CompilerOptions   *core.CompilerOptions          `json:"compilerOptions,omitempty"`
+	FileName          string                         `json:"fileName,omitempty"`
+	ReportDiagnostics bool                           `json:"reportDiagnostics,omitempty"`
+	ContentMapper     *TranspileContentMapperOptions `json:"contentMapper,omitempty"`
+}
+
+type TranspileContentMapperOptions struct {
+	Manifest ContentMapperManifest `json:"manifest"`
+	Options  map[string]any        `json:"options,omitempty"`
+}
+
+type ContentMapperManifest struct {
+	Name            string            `json:"name"`
+	Version         string            `json:"version,omitempty"`
+	Exec            []string          `json:"exec"`
+	CompilerOptions []string          `json:"compilerOptions,omitempty"`
+	DynamicConfig   bool              `json:"dynamicConfig,omitempty"`
+	SupportsEmit    bool              `json:"supportsEmit,omitempty"`
+	Extensions      map[string]string `json:"extensions"`
 }
 
 type TranspileParams struct {

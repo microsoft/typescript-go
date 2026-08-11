@@ -1065,6 +1065,11 @@ func (s *Session) Snapshot() *Snapshot {
 	return s.snapshot
 }
 
+// ContentMapperHost returns the session's shared content mapper host, or nil when external plugins are disabled.
+func (s *Session) ContentMapperHost() contentmapper.Host {
+	return s.contentMapperHost
+}
+
 // getSnapshot flushes pending changes and updates the session's snapshot
 // if needed for the given request. When callerRef is true, the returned
 // snapshot has an extra reference for the caller (taken atomically under

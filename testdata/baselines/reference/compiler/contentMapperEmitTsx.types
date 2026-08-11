@@ -1,0 +1,29 @@
+//// [tests/cases/compiler/contentMapperEmitTsx.ts] ////
+
+=== /component.mdx ===
+export default function Component() {
+>Component : () => any
+
+    return <div />;
+><div /> : any
+>div : any
+}
+
+=== /main.ts ===
+import Component from "./component.mdx";
+>Component : () => any
+
+const dynamicPath = "./component.mdx";
+>dynamicPath : "./component.mdx"
+>"./component.mdx" : "./component.mdx"
+
+console.log(Component(), import(dynamicPath));
+>console.log(Component(), import(dynamicPath)) : void
+>console.log : (...data: any[]) => void
+>console : Console
+>log : (...data: any[]) => void
+>Component() : any
+>Component : () => any
+>import(dynamicPath) : Promise<any>
+>dynamicPath : "./component.mdx"
+

@@ -723,8 +723,37 @@ func IndexAfter(s string, pattern string, startIndex int) int {
 	}
 }
 
-func ShouldRewriteModuleSpecifier(specifier string, compilerOptions *CompilerOptions) bool {
-	return compilerOptions.RewriteRelativeImportExtensions.IsTrue() && tspath.PathIsRelative(specifier) && !tspath.IsDeclarationFileName(specifier) && tspath.HasTSFileExtension(specifier)
+func ShouldRewriteModuleSpecifier(specifier string, compilerOptions *CompilerOptions, contentMapperExtensionRewrites []ExtensionRewrite) bool {
+	if !tspath.PathIsRelative(specifier) || tspath.IsDeclarationFileName(specifier) {
+		return false
+	}
+	_, mapperRewrite := GetEmitExtensionRewrite(specifier, contentMapperExtensionRewrites)
+	return compilerOptions.RewriteRelativeImportExtensions.IsTrue() && tspath.HasTSFileExtension(specifier) || mapperRewrite
+}
+
+type ExtensionRewrite struct {
+	Source string
+	Target string
+}
+
+func GetExtensionRewrite(path string, rewrites []ExtensionRewrite) (ExtensionRewrite, bool) {
+	var result ExtensionRewrite
+	for _, rewrite := range rewrites {
+		if len(rewrite.Source) > len(result.Source) && tspath.FileExtensionIs(path, rewrite.Source) {
+			result = rewrite
+		}
+	}
+	return result, result.Source != ""
+}
+
+func GetEmitExtensionRewrite(path string, rewrites []ExtensionRewrite) (ExtensionRewrite, bool) {
+	rewrite, ok := GetExtensionRewrite(path, rewrites)
+	return rewrite, ok && rewrite.Target != ""
+}
+
+func HasExtensionRewrite(path string, rewrites []ExtensionRewrite) bool {
+	_, ok := GetEmitExtensionRewrite(path, rewrites)
+	return ok
 }
 
 func SingleElementSlice[T any](element *T) []*T {

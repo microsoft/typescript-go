@@ -1,0 +1,13 @@
+//// [/component.mdx] (ScriptKind: ScriptKindTS, ContentMapper: [.mdx])
+--- Original ---
+export default function Component() {
+    return "content";
+}
+--- Transformed ---
+export default function Component() {
+    return "content";
+}
+
+=== Diagnostics ===
+
+<no content>

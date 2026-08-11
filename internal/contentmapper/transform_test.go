@@ -15,20 +15,21 @@ func TestParseResultSupplementalFileExtensions(t *testing.T) {
 	t.Parallel()
 	mappings := spanmap.New(nil)
 	result := contentmapper.Result{
-		ScriptKind: core.ScriptKindTS,
-		Mappings:   mappings,
+		Mappings: mappings,
 		Supplemental: []contentmapper.MappedResult{
-			{ScriptKind: core.ScriptKindJS, Mappings: mappings},
-			{ScriptKind: core.ScriptKindJSX, Mappings: mappings},
-			{ScriptKind: core.ScriptKindTS, Mappings: mappings},
-			{ScriptKind: core.ScriptKindTSX, Mappings: mappings},
-			{ScriptKind: core.ScriptKindJSON, Mappings: mappings},
+			{VirtualExtension: ".js", Mappings: mappings},
+			{VirtualExtension: ".jsx", Mappings: mappings},
+			{VirtualExtension: ".ts", Mappings: mappings},
+			{VirtualExtension: ".tsx", Mappings: mappings},
+			{VirtualExtension: ".mts", Mappings: mappings},
+			{VirtualExtension: ".cts", Mappings: mappings},
+			{VirtualExtension: ".json", Mappings: mappings},
 		},
 	}
 	files, err := contentmapper.ParseResult(
 		ast.SourceFileParseOptions{FileName: "/component.astro", Path: "/component.astro"},
 		"",
-		&contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "mapper"}},
+		&contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".astro"}}, Manifest: contentmapper.Manifest{Name: "mapper", Extensions: map[string]string{".astro": ".ts"}}},
 		result,
 	)
 	assert.NilError(t, err)
@@ -41,7 +42,9 @@ func TestParseResultSupplementalFileExtensions(t *testing.T) {
 		{"/component.astro.1.jsx", core.ScriptKindJSX},
 		{"/component.astro.2.ts", core.ScriptKindTS},
 		{"/component.astro.3.tsx", core.ScriptKindTSX},
-		{"/component.astro.4.json", core.ScriptKindJSON},
+		{"/component.astro.4.mts", core.ScriptKindTS},
+		{"/component.astro.5.cts", core.ScriptKindTS},
+		{"/component.astro.6.json", core.ScriptKindJSON},
 	}
 	assert.Equal(t, len(files.Supplemental), len(expected))
 	for i, expected := range expected {
@@ -57,15 +60,14 @@ func TestParseResultAllowsSupplementalModules(t *testing.T) {
 	files, err := contentmapper.ParseResult(
 		ast.SourceFileParseOptions{FileName: "/component.astro", Path: "/component.astro"},
 		"",
-		&contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "mapper"}},
+		&contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".astro"}}, Manifest: contentmapper.Manifest{Name: "mapper", Extensions: map[string]string{".astro": ".ts"}}},
 		contentmapper.Result{
-			Text:       "export {};",
-			ScriptKind: core.ScriptKindTS,
-			Mappings:   mappings,
+			Text:     "export {};",
+			Mappings: mappings,
 			Supplemental: []contentmapper.MappedResult{{
-				Text:       "export const value = 1;",
-				ScriptKind: core.ScriptKindTS,
-				Mappings:   mappings,
+				Text:             "export const value = 1;",
+				VirtualExtension: ".mts",
+				Mappings:         mappings,
 			}},
 		},
 	)

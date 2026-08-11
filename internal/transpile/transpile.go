@@ -7,8 +7,10 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -34,6 +36,17 @@ type Options struct {
 	// diagnostics produced while emitting (including declaration emit errors
 	// such as those produced by isolated declarations) are always included.
 	ReportDiagnostics bool
+
+	// ContentMapper provides an inline content mapper definition for the input file.
+	// A non-nil content mapper host must be passed to TranspileModule or
+	// TranspileDeclaration when this option is set.
+	ContentMapper *ContentMapperOptions
+}
+
+// ContentMapperOptions configures an inline content mapper for single-file transpilation.
+type ContentMapperOptions struct {
+	Manifest contentmapper.Manifest
+	Options  map[string]any
 }
 
 // Output contains the emitted text and any requested diagnostics.
@@ -78,9 +91,10 @@ interface Symbol {
 }`
 
 // TranspileModule transpiles a single file of source text to JavaScript
-// using the specified options. If no compiler options are provided, a
-// default set of compiler options is used. It returns nil if the context is
-// canceled before emission completes.
+// using the specified options. contentMapperHost is required when options
+// includes a content mapper and may otherwise be nil. If no compiler options
+// are provided, a default set of compiler options is used. It returns nil if
+// the context is canceled before emission completes.
 //
 // Extra compiler options that are unconditionally used by this function are:
 //   - IsolatedModules = true (unless VerbatimModuleSyntax is set, which makes
@@ -90,13 +104,14 @@ interface Symbol {
 //   - NoLib = true
 //   - Declaration = false
 //   - DeclarationMap = false
-func TranspileModule(ctx context.Context, input string, options Options) *Output {
-	return transpileWorker(ctx, input, options, false /*declaration*/)
+func TranspileModule(ctx context.Context, input string, options Options, contentMapperHost contentmapper.Host) *Output {
+	return transpileWorker(ctx, input, options, false /*declaration*/, contentMapperHost)
 }
 
 // TranspileDeclaration creates a declaration (.d.ts) file from a single file
-// of source text using the specified options. If no compiler options are
-// provided, a default set of compiler options is used.
+// of source text using the specified options. contentMapperHost is required
+// when options includes a content mapper and may otherwise be nil. If no
+// compiler options are provided, a default set of compiler options is used.
 //
 // Note that, because only the single input file is available, the resulting
 // declaration file may differ from the one a full program type-check and
@@ -111,11 +126,11 @@ func TranspileModule(ctx context.Context, input string, options Options) *Output
 //   - Declaration = true
 //   - EmitDeclarationOnly = true
 //   - IsolatedDeclarations = true
-func TranspileDeclaration(ctx context.Context, input string, options Options) *Output {
-	return transpileWorker(ctx, input, options, true /*declaration*/)
+func TranspileDeclaration(ctx context.Context, input string, options Options, contentMapperHost contentmapper.Host) *Output {
+	return transpileWorker(ctx, input, options, true /*declaration*/, contentMapperHost)
 }
 
-func transpileWorker(ctx context.Context, input string, options Options, declaration bool) *Output {
+func transpileWorker(ctx context.Context, input string, options Options, declaration bool, contentMapperHost contentmapper.Host) *Output {
 	var opts *core.CompilerOptions
 	if options.CompilerOptions != nil {
 		opts = options.CompilerOptions.Clone()
@@ -196,13 +211,40 @@ func transpileWorker(ctx context.Context, input string, options Options, declara
 	}
 
 	fs := vfstest.FromMap(files, true /*useCaseSensitiveFileNames*/)
-	host := compiler.NewCompilerHost(inputDirectory, fs, libDirectory, nil, nil, nil)
+
+	var contentMapperProject contentmapper.Project
+	var contentMappers []*contentmapper.Mapper
+	if options.ContentMapper != nil {
+		mapperOptions := json.Value("{}")
+		if options.ContentMapper.Options != nil {
+			mapperOptions, _ = json.Marshal(options.ContentMapper.Options)
+		}
+		mapper := &contentmapper.Mapper{
+			Definition: contentmapper.Definition{
+				Package:    options.ContentMapper.Manifest.Name,
+				Extensions: []string{tspath.GetAnyExtensionFromPath(inputFileName, nil, false)},
+				Options:    mapperOptions,
+			},
+			Manifest: options.ContentMapper.Manifest,
+		}
+		contentMappers = []*contentmapper.Mapper{mapper}
+		if contentMapperHost != nil {
+			contentMapperProject = contentMapperHost.Project(contentmapper.ProjectSpec{
+				Mappers:         contentMappers,
+				CompilerOptions: opts,
+			})
+			defer contentMapperProject.Close()
+		}
+	}
+
+	host := compiler.NewCompilerHost(inputDirectory, fs, libDirectory, nil, nil, contentMapperProject)
 
 	program := compiler.NewProgram(compiler.ProgramOptions{
 		Config: &tsoptions.ParsedCommandLine{
 			ParsedConfig: &tsoptions.ParsedOptions{
 				FileNames:       []string{inputFileName},
 				CompilerOptions: opts,
+				ContentMappers:  contentMappers,
 			},
 		},
 		Host: host,

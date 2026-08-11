@@ -50,7 +50,7 @@ func (p *fakeProgram) CommonSourceDirectory() string {
 	panic("unimplemented")
 }
 
-func (p *fakeProgram) ContentMapperExtensions() []string {
+func (p *fakeProgram) ContentMapperExtensionRewrites() []core.ExtensionRewrite {
 	return nil
 }
 

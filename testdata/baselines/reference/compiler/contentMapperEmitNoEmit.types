@@ -1,0 +1,22 @@
+//// [tests/cases/compiler/contentMapperEmitNoEmit.ts] ////
+
+=== /component.mdx ===
+export default function Component() {
+>Component : () => string
+
+    return "content";
+>"content" : "content"
+}
+
+=== /main.ts ===
+import Component from "./component.mdx";
+>Component : () => string
+
+console.log(Component());
+>console.log(Component()) : void
+>console.log : (...data: any[]) => void
+>console : Console
+>log : (...data: any[]) => void
+>Component() : string
+>Component : () => string
+

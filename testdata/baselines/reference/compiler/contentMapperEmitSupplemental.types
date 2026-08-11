@@ -1,0 +1,5 @@
+//// [tests/cases/compiler/contentMapperEmitSupplemental.ts] ////
+
+=== /component.mdx ===
+
+export default 1;

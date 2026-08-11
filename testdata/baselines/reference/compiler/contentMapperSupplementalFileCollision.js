@@ -4,7 +4,7 @@
 {
     "name": "mapper",
     "version": "1.0.0",
-    "tsContentMapper": { "exec": ["supplemental-mapper"] }
+    "tsContentMapper": { "exec": ["supplemental-mapper"], "extensions": { ".astro": ".ts" } }
 }
 
 //// [component.astro]

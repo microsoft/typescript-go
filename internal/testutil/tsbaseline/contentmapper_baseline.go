@@ -54,7 +54,7 @@ func getContentMapperBaseline(program compiler.ProgramLike, diagnostics []*ast.D
 	var b strings.Builder
 	for _, file := range files {
 		mapper := mapped[file.FileName()]
-		fmt.Fprintf(&b, "//// [%s] (ScriptKind: %s, ContentMapper: %v)\n", removeTestPathPrefixes(file.FileName(), false), file.ScriptKind, mapper.Extensions)
+		fmt.Fprintf(&b, "//// [%s] (ScriptKind: %s, ContentMapper: %v)\n", removeTestPathPrefixes(file.FileName(), false), file.ScriptKind, mapper.Definition.Extensions)
 		b.WriteString("--- Original ---\n")
 		b.WriteString(ensureTrailingNewline(file.OriginalText()))
 		b.WriteString("--- Transformed ---\n")

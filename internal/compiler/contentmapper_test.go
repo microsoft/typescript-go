@@ -52,7 +52,7 @@ func newContentMapperProgram(t *testing.T, contentMapperProject contentmapper.Pr
 				Module:           core.ModuleKindESNext,
 				ModuleResolution: core.ModuleResolutionKindBundler,
 			},
-			ContentMappers: []*contentmapper.Mapper{{Definition: contentmapper.Definition{Package: "vue", Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "vue-mapper", Version: "1.0.0"}}},
+			ContentMappers: []*contentmapper.Mapper{{Definition: contentmapper.Definition{Package: "vue", Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "vue-mapper", Version: "1.0.0", Extensions: map[string]string{".vue": ".ts"}}}},
 		},
 	}
 	return compiler.NewProgram(compiler.ProgramOptions{
@@ -78,13 +78,12 @@ func TestContentMapperSupplementalIncludeReason(t *testing.T) {
 		transform: func(fileName string, content string) (contentmapper.Result, error) {
 			mappings := spanmap.New(nil)
 			return contentmapper.Result{
-				Text:       "export {};",
-				ScriptKind: core.ScriptKindTS,
-				Mappings:   mappings,
+				Text:     "export {};",
+				Mappings: mappings,
 				Supplemental: []contentmapper.MappedResult{{
-					Text:       "export const supplemental = 1;",
-					ScriptKind: core.ScriptKindTS,
-					Mappings:   mappings,
+					Text:             "export const supplemental = 1;",
+					VirtualExtension: ".ts",
+					Mappings:         mappings,
 				}},
 			}, nil
 		},
@@ -155,9 +154,8 @@ func TestContentMapperInvalidMappings(t *testing.T) {
 			contentMapperHost := fakeContentMapperHost{
 				transform: func(fileName string, content string) (contentmapper.Result, error) {
 					return contentmapper.Result{
-						Text:       transformed,
-						ScriptKind: core.ScriptKindTS,
-						Mappings:   tc.mappings,
+						Text:     transformed,
+						Mappings: tc.mappings,
 					}, nil
 				},
 			}
@@ -176,7 +174,7 @@ func TestContentMapperSourceFileState(t *testing.T) {
 		t.Parallel()
 		program := newContentMapperProgram(t, fakeContentMapperHost{
 			transform: func(fileName string, content string) (contentmapper.Result, error) {
-				return contentmapper.Result{Text: "export {};", ScriptKind: core.ScriptKindTS, Mappings: spanmap.New(nil)}, nil
+				return contentmapper.Result{Text: "export {};", Mappings: spanmap.New(nil)}, nil
 			},
 		}, map[string]string{"/src/empty.vue": ""}, []string{"/src/empty.vue"})
 		file := program.GetSourceFile("/src/empty.vue")
