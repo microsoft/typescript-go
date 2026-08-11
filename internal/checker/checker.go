@@ -15268,14 +15268,13 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 						tsExtension,
 					)
 				}
-			} else if (c.compilerOptions.RewriteRelativeImportExtensions.IsTrue() ||
-				core.HasExtensionRewrite(moduleReference, c.program.ContentMapperExtensionRewrites())) &&
+			} else if c.compilerOptions.RewriteRelativeImportExtensions.IsTrue() &&
 				location.Flags&ast.NodeFlagsAmbient == 0 &&
 				!tspath.IsDeclarationFileName(moduleReference) &&
 				!ast.IsLiteralImportTypeNode(location) &&
 				!ast.IsPartOfTypeOnlyImportOrExportDeclaration(location) {
-				shouldRewrite := core.ShouldRewriteModuleSpecifier(moduleReference, c.compilerOptions, c.program.ContentMapperExtensionRewrites())
-				if !resolvedModule.ResolvedUsingTsExtension && !resolvedModule.ResolvedUsingExtraExtensions && shouldRewrite {
+				shouldRewrite := core.ShouldRewriteModuleSpecifier(moduleReference, c.compilerOptions)
+				if !resolvedModule.ResolvedUsingTsExtension && shouldRewrite {
 					relativeToSourceFile := tspath.GetRelativePathFromFile(
 						tspath.GetNormalizedAbsolutePath(importingSourceFile.FileName(), c.program.GetCurrentDirectory()),
 						resolvedModule.ResolvedFileName,
@@ -15295,7 +15294,7 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 						diagnostics.This_import_uses_a_0_extension_to_resolve_to_an_input_TypeScript_file_but_will_not_be_rewritten_during_emit_because_it_is_not_a_relative_path,
 						tspath.GetAnyExtensionFromPath(moduleReference, nil, false),
 					)
-				} else if (resolvedModule.ResolvedUsingTsExtension || resolvedModule.ResolvedUsingExtraExtensions) && shouldRewrite {
+				} else if resolvedModule.ResolvedUsingTsExtension && shouldRewrite {
 					if redirect := c.program.GetRedirectForResolution(sourceFile); redirect != nil {
 						ownRootDir := c.program.CommonSourceDirectory()
 						otherRootDir := redirect.CommonSourceDirectory()

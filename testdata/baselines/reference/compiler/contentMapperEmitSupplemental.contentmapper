@@ -1,9 +1,0 @@
-//// [/component.mdx] (ScriptKind: ScriptKindTS, ContentMapper: [.mdx])
---- Original ---
-component
---- Transformed ---
-export default 1;
-
-=== Diagnostics ===
-
-<no content>

@@ -24,12 +24,11 @@ func (ch *chainedTransformer) visit(node *ast.Node) *ast.Node {
 }
 
 type TransformOptions struct {
-	Context                        *printer.EmitContext
-	CompilerOptions                *core.CompilerOptions
-	Resolver                       binder.ReferenceResolver
-	EmitResolver                   printer.EmitResolver
-	GetEmitModuleFormatOfFile      func(file ast.HasFileName) core.ModuleKind
-	ContentMapperExtensionRewrites []core.ExtensionRewrite
+	Context                   *printer.EmitContext
+	CompilerOptions           *core.CompilerOptions
+	Resolver                  binder.ReferenceResolver
+	EmitResolver              printer.EmitResolver
+	GetEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind
 }
 
 type TransformerFactory = func(opt *TransformOptions) *Transformer

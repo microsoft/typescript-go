@@ -123,9 +123,9 @@ func (r *TranspileBaselineRunner) runKind(
 		}
 		var output *transpile.Output
 		if declaration {
-			output = transpile.TranspileDeclaration(t.Context(), unit.content, transpileOptions, nil)
+			output = transpile.TranspileDeclaration(t.Context(), unit.content, transpileOptions)
 		} else {
-			output = transpile.TranspileModule(t.Context(), unit.content, transpileOptions, nil)
+			output = transpile.TranspileModule(t.Context(), unit.content, transpileOptions)
 		}
 		if output == nil {
 			t.Fatal("transpilation was canceled")

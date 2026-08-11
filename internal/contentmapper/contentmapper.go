@@ -31,7 +31,6 @@ type Definition struct {
 	Package    string     `json:"package"`
 	Extensions []string   `json:"extensions"`
 	Options    json.Value `json:"options,omitempty"`
-	NoEmit     bool       `json:"noEmit,omitempty"`
 }
 
 // Manifest is the content-mapper information read from a package's package.json: its name and version
@@ -43,7 +42,6 @@ type Manifest struct {
 	Exec            []string
 	CompilerOptions []string
 	DynamicConfig   bool
-	SupportsEmit    bool
 	// Extensions maps source extensions handled by the mapper to virtual extensions produced by its canonical transform.
 	Extensions map[string]string
 }
@@ -56,10 +54,6 @@ type Mapper struct {
 	PackageDirectory string `json:"-"`
 	// ContributionID is provided by an LSP client extension for inferred project content mappers.
 	ContributionID string `json:"-"`
-}
-
-func (m *Mapper) EmitsJS() bool {
-	return m.SupportsEmit && !m.NoEmit
 }
 
 var supportedVirtualExtensions = collections.NewSetFromItems(
@@ -111,10 +105,6 @@ func (m *Mapper) TransformIdentity(options *core.CompilerOptions) xxh3.Uint128 {
 	buf = append(buf, 0)
 	buf = append(buf, m.Options...)
 	buf = append(buf, 0)
-	if m.SupportsEmit || m.NoEmit {
-		buf = append(buf, core.IfElse(m.SupportsEmit, byte(1), byte(0)), core.IfElse(m.NoEmit, byte(1), byte(0)))
-		buf = append(buf, 0)
-	}
 	virtualExtensionKeys := slices.Sorted(maps.Keys(m.Manifest.Extensions))
 	for _, sourceExtension := range virtualExtensionKeys {
 		buf = append(buf, sourceExtension...)

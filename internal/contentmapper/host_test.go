@@ -250,18 +250,23 @@ func TestRunnerTransformSupplementalOutputs(t *testing.T) {
 	assert.Assert(t, result.Supplemental[1].Mappings != nil)
 }
 
-func TestRunnerRejectsSupplementalOutputWithoutVirtualExtension(t *testing.T) {
+func TestRunnerRejectsInvalidSupplementalVirtualExtension(t *testing.T) {
 	t.Parallel()
-	host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: responseMapper{response: func(p contentmapper.TransformParams) any {
-		return contentmapper.TransformResult{
-			MappedOutput: contentmapper.MappedOutput{Text: "export {};"},
-			Supplemental: []contentmapper.SupplementalOutput{{MappedOutput: contentmapper.MappedOutput{Text: "export {};"}}},
-		}
-	}}}, locale.Default)
-	defer host.Close()
-	mapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}, Extensions: map[string]string{".vue": ".ts"}}}
-	_, err := host.Transform(mapper, contentmapper.Request{FileName: "/component.vue", Content: "component"})
-	assert.ErrorContains(t, err, "invalid supplemental virtual extension")
+	for _, extension := range []string{"", ".coffee"} {
+		t.Run(extension, func(t *testing.T) {
+			t.Parallel()
+			host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: responseMapper{response: func(p contentmapper.TransformParams) any {
+				return contentmapper.TransformResult{
+					MappedOutput: contentmapper.MappedOutput{Text: "export {};"},
+					Supplemental: []contentmapper.SupplementalOutput{{MappedOutput: contentmapper.MappedOutput{Text: "export {};"}, Extension: extension}},
+				}
+			}}}, locale.Default)
+			defer host.Close()
+			mapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}, Extensions: map[string]string{".vue": ".ts"}}}
+			_, err := host.Transform(mapper, contentmapper.Request{FileName: "/component.vue", Content: "component"})
+			assert.ErrorContains(t, err, "invalid supplemental virtual extension")
+		})
+	}
 }
 
 func TestRunnerPositionEncodings(t *testing.T) {

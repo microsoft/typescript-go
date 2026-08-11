@@ -14,10 +14,10 @@ import (
 
 // Mock host for testing
 type mockModuleSpecifierGenerationHost struct {
-	currentDir                     string
-	contentMapperExtensionRewrites []core.ExtensionRewrite
-	useCaseSensitiveFileNames      bool
-	symlinkCache                   *symlinks.KnownSymlinks
+	currentDir                string
+	contentMapperExtensions   []string
+	useCaseSensitiveFileNames bool
+	symlinkCache              *symlinks.KnownSymlinks
 }
 
 func (h *mockModuleSpecifierGenerationHost) GetCurrentDirectory() string {
@@ -44,8 +44,8 @@ func (h *mockModuleSpecifierGenerationHost) CommonSourceDirectory() string {
 	return h.currentDir
 }
 
-func (h *mockModuleSpecifierGenerationHost) ContentMapperExtensionRewrites() []core.ExtensionRewrite {
-	return h.contentMapperExtensionRewrites
+func (h *mockModuleSpecifierGenerationHost) ContentMapperExtensions() []string {
+	return h.contentMapperExtensions
 }
 
 func (h *mockModuleSpecifierGenerationHost) GetProjectReferenceFromSource(path tspath.Path) *tsoptions.SourceOutputAndProjectReference {

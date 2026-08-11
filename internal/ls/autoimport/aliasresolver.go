@@ -154,8 +154,8 @@ func (r *aliasResolver) CommonSourceDirectory() string {
 	panic("unimplemented")
 }
 
-// ContentMapperExtensionRewrites implements checker.Program.
-func (r *aliasResolver) ContentMapperExtensionRewrites() []core.ExtensionRewrite {
+// ContentMapperExtensions implements checker.Program.
+func (r *aliasResolver) ContentMapperExtensions() []string {
 	return nil
 }
 

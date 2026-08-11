@@ -343,21 +343,6 @@ func (p *ParsedCommandLine) ContentMapperExtensions() []string {
 	})
 }
 
-func (p *ParsedCommandLine) ContentMapperExtensionRewrites() []core.ExtensionRewrite {
-	var rewrites []core.ExtensionRewrite
-	for _, mapper := range p.ContentMappers() {
-		for _, sourceExtension := range mapper.Definition.Extensions {
-			var target string
-			if mapper.EmitsJS() {
-				virtualExtension := mapper.Manifest.Extensions[sourceExtension]
-				target = outputpaths.GetOutputExtension("virtual"+virtualExtension, p.CompilerOptions().Jsx)
-			}
-			rewrites = append(rewrites, core.ExtensionRewrite{Source: sourceExtension, Target: target})
-		}
-	}
-	return rewrites
-}
-
 // GetContentMapperForFileName returns the configured content mapper whose extensions include fileName,
 // or nil if no content mapper is registered for the file's extension.
 func (p *ParsedCommandLine) GetContentMapperForFileName(fileName string) *contentmapper.Mapper {

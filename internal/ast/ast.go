@@ -2469,7 +2469,6 @@ type SourceFile struct {
 	originalText            string           // For content-mapped files, the untransformed source text.
 	spanMap                 *spanmap.SpanMap // For content-mapped files, maps transformed positions back to the original text.
 	contentMapper           string           // For content-mapped files, the identity of the mapper that produced this file.
-	virtualExtension        string           // For content-mapped files, the transformed virtual source extension.
 	supplementalSourceFiles []*SourceFile
 	canonicalSourceFile     *SourceFile
 	Statements              *NodeList  // NodeList[*Statement]
@@ -2606,14 +2605,6 @@ func (node *SourceFile) IsContentMapperFailureStub() bool {
 // SetContentMapper records the identity of the content mapper that produced this file.
 func (node *SourceFile) SetContentMapper(identity string) {
 	node.contentMapper = identity
-}
-
-func (node *SourceFile) VirtualExtension() string {
-	return node.virtualExtension
-}
-
-func (node *SourceFile) SetVirtualExtension(extension string) {
-	node.virtualExtension = extension
 }
 
 // SetSpanMap records the span map that maps positions in this file's transformed Text() back to its

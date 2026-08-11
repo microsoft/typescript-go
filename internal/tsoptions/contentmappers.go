@@ -51,7 +51,6 @@ func resolveContentMapperManifest(host ParseConfigHost, containingFile string, p
 	}
 	compilerOptions, _ := cm.CompilerOptions.GetValue()
 	dynamicConfig, _ := cm.DynamicConfig.GetValue()
-	supportsEmit, _ := cm.SupportsEmit.GetValue()
 	virtualExtensions, ok := cm.Extensions.GetValue()
 	if !ok || len(virtualExtensions) == 0 {
 		return contentmapper.Manifest{}, "", ast.NewCompilerDiagnostic(diagnostics.The_tsContentMapper_extensions_of_the_content_mapper_package_0_must_be_a_non_empty_object_mapping_source_extensions_to_virtual_extensions, packageName)
@@ -64,5 +63,5 @@ func resolveContentMapperManifest(host ParseConfigHost, containingFile string, p
 			return contentmapper.Manifest{}, "", ast.NewCompilerDiagnostic(diagnostics.The_virtual_extension_0_for_source_extension_1_in_tsContentMapper_extensions_of_the_content_mapper_package_2_must_be_one_of_Colon_3, virtualExtension, sourceExtension, packageName, contentmapper.SupportedVirtualExtensionsDescription)
 		}
 	}
-	return contentmapper.Manifest{Name: name, Version: version, Exec: exec, CompilerOptions: compilerOptions, DynamicConfig: dynamicConfig, SupportsEmit: supportsEmit, Extensions: virtualExtensions}, packageDirectory, nil
+	return contentmapper.Manifest{Name: name, Version: version, Exec: exec, CompilerOptions: compilerOptions, DynamicConfig: dynamicConfig, Extensions: virtualExtensions}, packageDirectory, nil
 }

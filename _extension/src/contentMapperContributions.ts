@@ -7,7 +7,6 @@ export interface ContentMapperManifest {
     readonly cwd?: vscode.Uri;
     readonly compilerOptions?: readonly string[];
     readonly dynamicConfig?: boolean;
-    readonly supportsEmit?: boolean;
     readonly extensions: Readonly<Record<string, string>>;
 }
 
@@ -31,7 +30,6 @@ export interface SerializedContentMapperContribution {
             readonly cwd?: string;
             readonly compilerOptions?: readonly string[];
             readonly dynamicConfig?: boolean;
-            readonly supportsEmit?: boolean;
             readonly extensions: Readonly<Record<string, string>>;
         };
     };

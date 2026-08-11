@@ -134,13 +134,6 @@ func parseContentMapper(value any) (*contentmapper.Mapper, []*ast.Diagnostic) {
 			mapper.Options, _ = json.Marshal(options)
 		}
 	}
-	if noEmit, ok := v.Get("noEmit"); ok {
-		if value, isBool := noEmit.(bool); isBool {
-			mapper.NoEmit = value
-		} else {
-			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, "contentMapper.noEmit", "boolean"))
-		}
-	}
 	if len(errors) != 0 {
 		return nil, errors
 	}

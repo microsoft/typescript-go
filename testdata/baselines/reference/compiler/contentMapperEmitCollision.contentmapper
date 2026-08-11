@@ -1,9 +1,0 @@
-//// [/component.mdx] (ScriptKind: ScriptKindTS, ContentMapper: [.mdx])
---- Original ---
-export const fromMdx = true;
---- Transformed ---
-export const fromMdx = true;
-
-=== Diagnostics ===
-
-<no content>

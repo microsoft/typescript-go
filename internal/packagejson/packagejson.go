@@ -118,7 +118,6 @@ type ContentMapperFields struct {
 	Exec            Expected[[]string]          `json:"exec"`
 	CompilerOptions Expected[[]string]          `json:"compilerOptions"`
 	DynamicConfig   Expected[bool]              `json:"dynamicConfig"`
-	SupportsEmit    Expected[bool]              `json:"supportsEmit"`
 	Extensions      Expected[map[string]string] `json:"extensions"`
 }
 

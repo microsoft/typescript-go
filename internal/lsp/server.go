@@ -2346,7 +2346,6 @@ func parseContentMapperContributions(values []*lsproto.ContentMapperContribution
 				Exec:            slices.Clone(manifest.Exec),
 				CompilerOptions: slices.Clone(valueOrZero(manifest.CompilerOptions)),
 				DynamicConfig:   valueOrZero(manifest.DynamicConfig),
-				SupportsEmit:    valueOrZero(manifest.SupportsEmit),
 				Extensions:      maps.Clone(manifest.Extensions),
 			},
 			ContributionID: identity,

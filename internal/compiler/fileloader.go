@@ -364,12 +364,6 @@ func (p *fileLoader) getDefaultLibFilePriority(a *ast.SourceFile) int {
 }
 
 func (p *fileLoader) loadSourceFileMetaData(fileName string) ast.SourceFileMetaData {
-	metadataFileName := fileName
-	if mapper := p.opts.Config.GetContentMapperForFileName(fileName); mapper != nil {
-		if virtualExtension := mapper.VirtualExtension(fileName); virtualExtension != "" {
-			metadataFileName += virtualExtension
-		}
-	}
 	packageJsonScope := p.resolver.GetPackageScopeForPath(tspath.GetDirectoryPath(fileName))
 	moduleResolutionKind := p.opts.Config.CompilerOptions().GetModuleResolutionKind()
 
@@ -377,14 +371,14 @@ func (p *fileLoader) loadSourceFileMetaData(fileName string) ast.SourceFileMetaD
 	if packageJsonScope.Exists() {
 		packageJsonDirectory = packageJsonScope.PackageDirectory
 		if value, ok := packageJsonScope.Contents.Type.GetValue(); ok {
-			if !tspath.FileExtensionIsOneOf(metadataFileName, []string{tspath.ExtensionMts, tspath.ExtensionCts, tspath.ExtensionMjs, tspath.ExtensionCjs}) &&
+			if !tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionMts, tspath.ExtensionCts, tspath.ExtensionMjs, tspath.ExtensionCjs}) &&
 				core.ModuleResolutionKindNode16 <= moduleResolutionKind && moduleResolutionKind <= core.ModuleResolutionKindNodeNext || strings.Contains(fileName, "/node_modules/") {
 				packageJsonType = value
 			}
 		}
 	}
 
-	impliedNodeFormat := ast.GetImpliedNodeFormatForFile(metadataFileName, packageJsonType)
+	impliedNodeFormat := ast.GetImpliedNodeFormatForFile(fileName, packageJsonType)
 	return ast.SourceFileMetaData{
 		PackageJsonType:      packageJsonType,
 		PackageJsonDirectory: packageJsonDirectory,
@@ -470,9 +464,6 @@ func contentMapperTransformDiagnostic(file *ast.SourceFile, label string, err er
 		case contentmapper.TransformErrorKindRequest:
 			return contentMapperTransformDiagnosticChain(file, label, diagnostics.The_content_mapper_process_failed_while_handling_the_transform_request)
 		case contentmapper.TransformErrorKindResponse:
-			if extensionError, ok := errors.AsType[*contentmapper.InvalidSupplementalVirtualExtensionError](transformError); ok {
-				return contentMapperTransformDiagnosticChain(file, label, diagnostics.The_content_mapper_returned_a_supplemental_output_with_unsupported_virtual_extension_0, extensionError.Extension)
-			}
 			return contentMapperTransformDiagnosticChain(file, label, diagnostics.The_content_mapper_returned_an_invalid_transform_response)
 		case contentmapper.TransformErrorKindMappings:
 			return ast.NewDiagnostic(file, core.NewTextRange(0, 0), diagnostics.The_content_mapper_0_did_not_provide_the_required_position_mappings, label)

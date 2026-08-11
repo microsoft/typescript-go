@@ -127,12 +127,11 @@ func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 	}
 
 	opts := transformers.TransformOptions{
-		Context:                        emitContext,
-		CompilerOptions:                options,
-		Resolver:                       referenceResolver,
-		EmitResolver:                   emitResolver,
-		GetEmitModuleFormatOfFile:      host.GetEmitModuleFormatOfFile,
-		ContentMapperExtensionRewrites: host.ContentMapperExtensionRewrites(),
+		Context:                   emitContext,
+		CompilerOptions:           options,
+		Resolver:                  referenceResolver,
+		EmitResolver:              emitResolver,
+		GetEmitModuleFormatOfFile: host.GetEmitModuleFormatOfFile,
 	}
 
 	// transform TypeScript syntax
@@ -373,7 +372,6 @@ func (e *emitter) writeText(fileName string, text string, data *WriteFileData) e
 
 func shouldEmitSourceMaps(mapOptions *core.CompilerOptions, sourceFile *ast.SourceFile) bool {
 	return (mapOptions.SourceMap.IsTrue() || mapOptions.InlineSourceMap.IsTrue()) &&
-		sourceFile.ContentMapper() == "" &&
 		!tspath.FileExtensionIs(sourceFile.FileName(), tspath.ExtensionJson)
 }
 
@@ -456,7 +454,6 @@ func (e *emitter) getSourceMappingURL(mapOptions *core.CompilerOptions, sourceMa
 
 type SourceFileMayBeEmittedHost interface {
 	Options() *core.CompilerOptions
-	ContentMapperExtensionRewrites() []core.ExtensionRewrite
 	GetProjectReferenceFromSource(path tspath.Path) *tsoptions.SourceOutputAndProjectReference
 	IsSourceFileFromExternalLibrary(file *ast.SourceFile) bool
 	GetCurrentDirectory() string
@@ -477,10 +474,9 @@ func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host SourceFileMayBeEmit
 		return false
 	}
 
-	// Runtime output for content-mapped files is emitted only when the mapper declares support and the
-	// project definition does not suppress it. Declaration emit remains independently supported.
-	_, contentMapperEmit := core.GetEmitExtensionRewrite(sourceFile.OriginalFileName(), host.ContentMapperExtensionRewrites())
-	if sourceFile.ContentMapper() != "" && !contentMapperEmit && !forceDtsEmit && !options.GetEmitDeclarations() {
+	// Runtime output for content-mapped files is owned by the external content mapper or build tool. Only
+	// include them in the emit set when their transformed TypeScript can produce declarations.
+	if sourceFile.ContentMapper() != "" && !forceDtsEmit && !options.GetEmitDeclarations() {
 		return false
 	}
 
