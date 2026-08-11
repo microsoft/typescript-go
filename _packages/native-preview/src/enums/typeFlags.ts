@@ -69,6 +69,5 @@ export var TypeFlags: any;
     TypeFlags[TypeFlags["IncludesWildcard"] = 67108864] = "IncludesWildcard";
     TypeFlags[TypeFlags["IncludesEmptyObject"] = 134217728] = "IncludesEmptyObject";
     TypeFlags[TypeFlags["IncludesInstantiable"] = 16777216] = "IncludesInstantiable";
-    TypeFlags[TypeFlags["IncludesNegated"] = Reserved3] = "IncludesNegated";
     TypeFlags[TypeFlags["NotPrimitiveUnion"] = 554958867] = "NotPrimitiveUnion";
 })(TypeFlags || (TypeFlags = {}));

@@ -336,7 +336,7 @@ export const generateExtension = task({
 const enumDefs = [
     { name: "SymbolFlags", goPrefix: "SymbolFlags", goFile: "internal/ast/symbolflags.go", outDir: "_packages/native-preview/src/enums" },
     { name: "CheckFlags", goPrefix: "CheckFlags", goFile: "internal/ast/checkflags.go", outDir: "_packages/native-preview/src/enums" },
-    { name: "TypeFlags", goPrefix: "TypeFlags", goFile: "internal/checker/types.go", outDir: "_packages/native-preview/src/enums", excludeMembers: ["Reserved1", "Reserved2", "Reserved3", "IncludesConstrainedTypeVariable", "IncludesError", "TypeFlagsIncludesNegated"] },
+    { name: "TypeFlags", goPrefix: "TypeFlags", goFile: "internal/checker/types.go", outDir: "_packages/native-preview/src/enums", excludeMembers: ["Reserved1", "Reserved2", "Reserved3", "IncludesConstrainedTypeVariable", "IncludesError", "IncludesNegated"] },
     { name: "ObjectFlags", goPrefix: "ObjectFlags", goFile: "internal/checker/types.go", outDir: "_packages/native-preview/src/enums" },
     { name: "SignatureFlags", goPrefix: "SignatureFlags", goFile: "internal/checker/types.go", outDir: "_packages/native-preview/src/enums" },
     { name: "SignatureKind", goPrefix: "SignatureKind", goFile: "internal/checker/types.go", outDir: "_packages/native-preview/src/enums" },
