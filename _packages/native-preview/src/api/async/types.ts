@@ -191,12 +191,6 @@ export interface TupleType extends InterfaceType {
     readonly readonly: boolean;
 }
 
-/** Tuple type references (Checker#isTupleType) */
-export interface TupleTypeReference extends TypeReference {
-    /** Get the target type */
-    getTarget(): Promise<TupleType>;
-}
-
 /** Union or intersection types (TypeFlags.Union | TypeFlags.Intersection) */
 export interface UnionOrIntersectionType extends Type {
     /** Get the constituent types */

@@ -119,7 +119,6 @@ import type {
     TemplateLiteralType,
     ThisTypePredicate,
     TupleType,
-    TupleTypeReference,
     Type,
     TypeParameter,
     TypePredicate,
@@ -131,7 +130,7 @@ import type {
 
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 export { CheckFlags, CompletionItemKind, DiagnosticCategory, ElementFlags, EmitOnly, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
-export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutput, EmitOutputFile, EmitResult, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ParsedCommandLine, ProjectReference, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, StructuredType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, TupleTypeReference, Type, TypeAcquisition, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutput, EmitOutputFile, EmitResult, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ParsedCommandLine, ProjectReference, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, StructuredType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeAcquisition, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 
 interface EmitOutputResponse {
     readonly emitSkipped: boolean;
