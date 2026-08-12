@@ -290,5 +290,29 @@
     "The content mapper returned a supplemental output with unsupported virtual extension '{0}'.": {
         "category": "Message",
         "code": 100062
+    },
+    "The content mapper '{0}' could not be initialized.": {
+        "category": "Error",
+        "code": 100063
+    },
+    "The content mapper command '{0}' could not be started: {1}": {
+        "category": "Message",
+        "code": 100064
+    },
+    "The content mapper process exited before responding to the 'initialize' request (exit code {0}).": {
+        "category": "Message",
+        "code": 100065
+    },
+    "The content mapper did not respond to the 'initialize' request within {0} seconds.": {
+        "category": "Message",
+        "code": 100066
+    },
+    "The content mapper returned an 'initialize' response that could not be decoded: {0}": {
+        "category": "Message",
+        "code": 100067
+    },
+    "The content mapper's 'initialize' request failed: {0}": {
+        "category": "Message",
+        "code": 100068
     }
 }

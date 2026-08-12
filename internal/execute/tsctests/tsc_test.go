@@ -4834,6 +4834,37 @@ func TestTscContentMapperFailures(t *testing.T) {
 	}`)
 	testCases := []*tscInput{
 		{
+			subScenario: "initialization failure reports one project error",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"contentMappers": [
+						{ "package": "missing", "extensions": [".vue"] }
+					]
+				}`),
+				"/home/src/workspaces/project/index.ts": stringtestutil.Dedent(`
+					import "./a.vue";
+					import "./b.vue";
+					import "./c.vue";
+					import "./d.vue";
+					import "./e.vue";
+					import "./f.vue";`),
+				"/home/src/workspaces/project/a.vue": `<template>a</template>`,
+				"/home/src/workspaces/project/b.vue": `<template>b</template>`,
+				"/home/src/workspaces/project/c.vue": `<template>c</template>`,
+				"/home/src/workspaces/project/d.vue": `<template>d</template>`,
+				"/home/src/workspaces/project/e.vue": `<template>e</template>`,
+				"/home/src/workspaces/project/f.vue": `<template>f</template>`,
+				"/home/src/workspaces/project/node_modules/missing/package.json": stringtestutil.Dedent(`
+				{
+					"name": "missing",
+					"version": "1.0.0",
+					"tsContentMapper": { "exec": ["missing-mapper"], "extensions": { ".vue": ".ts" } }
+				}`),
+			},
+			commandLineArgs: []string{"--loadExternalPlugins", "--singleThreaded"},
+		},
+		{
 			subScenario: "transform failure reports a per-file error",
 			files: FileMap{
 				"/home/src/workspaces/project/tsconfig.json":                  failMapperTSConfig,

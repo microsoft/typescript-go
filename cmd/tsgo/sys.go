@@ -96,6 +96,13 @@ type childProcess struct {
 func (p *childProcess) Read(b []byte) (int, error)  { return p.stdout.Read(b) }
 func (p *childProcess) Write(b []byte) (int, error) { return p.stdin.Write(b) }
 
+func (p *childProcess) ExitCode() (int, bool) {
+	if p.cmd.ProcessState == nil {
+		return 0, false
+	}
+	return p.cmd.ProcessState.ExitCode(), true
+}
+
 func (p *childProcess) Close() error {
 	// Kill guarantees the process is gone even if it is ignoring stdin's EOF; Wait then reaps it and
 	// closes the stdio pipes it created. Kill is best-effort because Wait reports the real outcome, and a

@@ -190,7 +190,7 @@ func (w *Watcher) contentMapperWatchedFiles() []string {
 	}
 	files, err := w.contentMapperProject.WatchedFiles()
 	if err != nil {
-		w.reportDiagnostic(ast.NewCompilerDiagnostic(compiler.ContentMapperProjectErrorDiagnostic(err)))
+		w.reportDiagnostic(compiler.ContentMapperProjectDiagnostic(err))
 		return nil
 	}
 	return files

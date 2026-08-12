@@ -71,6 +71,7 @@ type fileLoader struct {
 	// content-mapped files are parsed across worker goroutines.
 	contentMapperMu          sync.Mutex
 	contentMapperFailures    map[*contentmapper.Mapper]int
+	contentMapperInitFailed  collections.Set[*contentmapper.Mapper]
 	contentMapperDiagnostics []*ast.Diagnostic
 }
 
@@ -407,22 +408,24 @@ func (p *fileLoader) parseSourceFile(t *parseTask) *ast.SourceFile {
 // mapper, preserving the original file name and retaining the untransformed text on the
 // source file. Content mapper extensions only reach the parser when content mappers are configured.
 //
-// When the host reports a failure the file is added with empty content and a per-file diagnostic
-// describing the failure. To avoid drowning the output when a mapper is systematically broken (e.g. a
-// version mismatch that makes it fail on every file), a mapper is disabled after maxContentMapperFailures
-// failures: at that point a single program diagnostic reports that the mapper was disabled, and every
-// subsequent file it would have handled is silently substituted with an empty file. It returns nil only
-// if the file cannot be read.
+// When initialization fails, one program diagnostic is reported and the mapper is not attempted for
+// subsequent files. Other failures produce per-file diagnostics and count toward a failure budget; after
+// maxContentMapperFailures, one program diagnostic reports that the mapper was disabled and subsequent
+// files are silently substituted with empty files. It returns nil only if the file cannot be read.
 func (p *fileLoader) parseContentMappedFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
 	mapper := p.opts.Config.GetContentMapperForFileName(opts.FileName)
 	label := mapper.Name
-	if p.contentMapperDisabled(mapper) {
-		// The mapper already exceeded its failure budget; add the file empty without re-reporting.
+	if p.contentMapperUnavailable(mapper) {
+		// The mapper failed initialization or exceeded its failure budget; add the file empty without re-reporting.
 		return p.emptyContentMappedFile(opts, mapper.Identity())
 	}
 	files, err := p.opts.Host.GetContentMappedSourceFiles(opts, mapper, p.opts.Config.CompilerOptions())
 	if err != nil {
 		sourceFile := p.emptyContentMappedFile(opts, mapper.Identity())
+		if transformError, ok := errors.AsType[*contentmapper.TransformError](err); ok && transformError.Kind == contentmapper.TransformErrorKindInitialize {
+			p.recordContentMapperInitializationFailure(mapper, label, transformError)
+			return sourceFile
+		}
 		if p.recordContentMapperFailure(mapper, label) {
 			var diagnostic *ast.Diagnostic
 			if problem, ok := errors.AsType[*spanmap.MappingError](err); ok {
@@ -530,14 +533,63 @@ func (p *fileLoader) emptyContentMappedFile(opts ast.SourceFileParseOptions, map
 	return sourceFile
 }
 
-// contentMapperDisabled reports whether mapper has exceeded its failure budget and been disabled.
-func (p *fileLoader) contentMapperDisabled(mapper *contentmapper.Mapper) bool {
+// ContentMapperInitializationDiagnostic returns a fileless diagnostic for a mapper initialization failure.
+func ContentMapperInitializationDiagnostic(label string, err error) *ast.Diagnostic {
+	if initializeError, ok := errors.AsType[*contentmapper.InitializeError](err); ok && label == "" {
+		label = initializeError.MapperName
+	}
+	diagnostic := ast.NewCompilerDiagnostic(diagnostics.The_content_mapper_0_could_not_be_initialized, label)
+	if initializeError, ok := errors.AsType[*contentmapper.InitializeError](err); ok {
+		switch initializeError.Kind {
+		case contentmapper.InitializeErrorKindProcessStart:
+			return diagnostic.AddMessageChain(ast.NewCompilerDiagnostic(diagnostics.The_content_mapper_command_0_could_not_be_started_Colon_1, initializeError.Command, initializeError.Detail))
+		case contentmapper.InitializeErrorKindProcessExit:
+			return diagnostic.AddMessageChain(ast.NewCompilerDiagnostic(diagnostics.The_content_mapper_process_exited_before_responding_to_the_initialize_request_exit_code_0, initializeError.ExitCode))
+		case contentmapper.InitializeErrorKindNoResponse:
+			return diagnostic.AddMessageChain(ast.NewCompilerDiagnostic(diagnostics.The_content_mapper_did_not_respond_to_the_initialize_request_within_0_seconds, initializeError.TimeoutSeconds))
+		case contentmapper.InitializeErrorKindInvalidResponse:
+			return diagnostic.AddMessageChain(ast.NewCompilerDiagnostic(diagnostics.The_content_mapper_returned_an_initialize_response_that_could_not_be_decoded_Colon_0, initializeError.Detail))
+		case contentmapper.InitializeErrorKindRequest:
+			return diagnostic.AddMessageChain(ast.NewCompilerDiagnostic(diagnostics.The_content_mapper_s_initialize_request_failed_Colon_0, initializeError.Detail))
+		case contentmapper.InitializeErrorKindProtocolVersion:
+			return diagnostic.AddMessageChain(ast.NewCompilerDiagnostic(diagnostics.The_content_mapper_uses_unsupported_protocol_version_0_expected_version_1, initializeError.ProtocolVersion, contentmapper.ProtocolVersion))
+		case contentmapper.InitializeErrorKindPositionEncoding:
+			return diagnostic.AddMessageChain(ast.NewCompilerDiagnostic(diagnostics.The_content_mapper_selected_unsupported_position_encoding_0, initializeError.PositionEncoding))
+		case contentmapper.InitializeErrorKindEmptyDiagnosticSource:
+			return diagnostic.AddMessageChain(ast.NewCompilerDiagnostic(diagnostics.The_content_mapper_diagnostic_source_must_not_be_empty))
+		case contentmapper.InitializeErrorKindReservedDiagnosticSource:
+			return diagnostic.AddMessageChain(ast.NewCompilerDiagnostic(diagnostics.The_content_mapper_diagnostic_source_0_is_reserved_by_TypeScript, initializeError.DiagnosticSource))
+		}
+	}
+	return diagnostic.AddMessageChain(ast.NewCompilerDiagnostic(diagnostics.The_content_mapper_process_could_not_be_started_or_initialized))
+}
+
+// ContentMapperProjectDiagnostic returns a fileless diagnostic for project setup or mapper initialization.
+func ContentMapperProjectDiagnostic(err error) *ast.Diagnostic {
+	if _, ok := errors.AsType[*contentmapper.InitializeError](err); ok {
+		return ContentMapperInitializationDiagnostic("", err)
+	}
+	return ast.NewCompilerDiagnostic(ContentMapperProjectErrorDiagnostic(err))
+}
+
+// contentMapperUnavailable reports whether mapper failed initialization or exceeded its failure budget.
+func (p *fileLoader) contentMapperUnavailable(mapper *contentmapper.Mapper) bool {
 	if mapper == nil {
 		return false
 	}
 	p.contentMapperMu.Lock()
 	defer p.contentMapperMu.Unlock()
-	return p.contentMapperFailures[mapper] >= maxContentMapperFailures
+	return p.contentMapperInitFailed.Has(mapper) || p.contentMapperFailures[mapper] >= maxContentMapperFailures
+}
+
+func (p *fileLoader) recordContentMapperInitializationFailure(mapper *contentmapper.Mapper, label string, err error) {
+	p.contentMapperMu.Lock()
+	defer p.contentMapperMu.Unlock()
+	if p.contentMapperInitFailed.Has(mapper) {
+		return
+	}
+	p.contentMapperInitFailed.Add(mapper)
+	p.contentMapperDiagnostics = append(p.contentMapperDiagnostics, ContentMapperInitializationDiagnostic(label, err))
 }
 
 // recordContentMapperFailure counts a transform failure for mapper. It returns whether the failure

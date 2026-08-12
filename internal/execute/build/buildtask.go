@@ -226,7 +226,7 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 	var oldProgram *incremental.Program
 	contentMapperProject, err := t.getContentMapperProject(orchestrator)
 	if err != nil {
-		t.reportDiagnostic(ast.NewCompilerDiagnostic(compiler.ContentMapperProjectErrorDiagnostic(err)))
+		t.reportDiagnostic(compiler.ContentMapperProjectDiagnostic(err))
 		t.status = &upToDateStatus{kind: upToDateStatusTypeBuildErrors}
 		return
 	}

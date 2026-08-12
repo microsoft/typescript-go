@@ -4388,6 +4388,18 @@ var The_virtual_extension_0_for_source_extension_1_in_tsContentMapper_extensions
 
 var The_content_mapper_returned_a_supplemental_output_with_unsupported_virtual_extension_0 = &Message{code: 100062, category: CategoryMessage, key: "The_content_mapper_returned_a_supplemental_output_with_unsupported_virtual_extension_0_100062", text: "The content mapper returned a supplemental output with unsupported virtual extension '{0}'."}
 
+var The_content_mapper_0_could_not_be_initialized = &Message{code: 100063, category: CategoryError, key: "The_content_mapper_0_could_not_be_initialized_100063", text: "The content mapper '{0}' could not be initialized."}
+
+var The_content_mapper_command_0_could_not_be_started_Colon_1 = &Message{code: 100064, category: CategoryMessage, key: "The_content_mapper_command_0_could_not_be_started_Colon_1_100064", text: "The content mapper command '{0}' could not be started: {1}"}
+
+var The_content_mapper_process_exited_before_responding_to_the_initialize_request_exit_code_0 = &Message{code: 100065, category: CategoryMessage, key: "The_content_mapper_process_exited_before_responding_to_the_initialize_request_exit_code_0_100065", text: "The content mapper process exited before responding to the 'initialize' request (exit code {0})."}
+
+var The_content_mapper_did_not_respond_to_the_initialize_request_within_0_seconds = &Message{code: 100066, category: CategoryMessage, key: "The_content_mapper_did_not_respond_to_the_initialize_request_within_0_seconds_100066", text: "The content mapper did not respond to the 'initialize' request within {0} seconds."}
+
+var The_content_mapper_returned_an_initialize_response_that_could_not_be_decoded_Colon_0 = &Message{code: 100067, category: CategoryMessage, key: "The_content_mapper_returned_an_initialize_response_that_could_not_be_decoded_Colon_0_100067", text: "The content mapper returned an 'initialize' response that could not be decoded: {0}"}
+
+var The_content_mapper_s_initialize_request_failed_Colon_0 = &Message{code: 100068, category: CategoryMessage, key: "The_content_mapper_s_initialize_request_failed_Colon_0_100068", text: "The content mapper's 'initialize' request failed: {0}"}
+
 func keyToMessage(key Key) *Message {
 	switch key {
 	case "Unterminated_string_literal_1002":
@@ -8776,6 +8788,18 @@ func keyToMessage(key Key) *Message {
 		return The_virtual_extension_0_for_source_extension_1_in_tsContentMapper_extensions_of_the_content_mapper_package_2_must_be_one_of_Colon_3
 	case "The_content_mapper_returned_a_supplemental_output_with_unsupported_virtual_extension_0_100062":
 		return The_content_mapper_returned_a_supplemental_output_with_unsupported_virtual_extension_0
+	case "The_content_mapper_0_could_not_be_initialized_100063":
+		return The_content_mapper_0_could_not_be_initialized
+	case "The_content_mapper_command_0_could_not_be_started_Colon_1_100064":
+		return The_content_mapper_command_0_could_not_be_started_Colon_1
+	case "The_content_mapper_process_exited_before_responding_to_the_initialize_request_exit_code_0_100065":
+		return The_content_mapper_process_exited_before_responding_to_the_initialize_request_exit_code_0
+	case "The_content_mapper_did_not_respond_to_the_initialize_request_within_0_seconds_100066":
+		return The_content_mapper_did_not_respond_to_the_initialize_request_within_0_seconds
+	case "The_content_mapper_returned_an_initialize_response_that_could_not_be_decoded_Colon_0_100067":
+		return The_content_mapper_returned_an_initialize_response_that_could_not_be_decoded_Colon_0
+	case "The_content_mapper_s_initialize_request_failed_Colon_0_100068":
+		return The_content_mapper_s_initialize_request_failed_Colon_0
 	default:
 		return nil
 	}

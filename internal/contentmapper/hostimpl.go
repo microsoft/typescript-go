@@ -9,6 +9,7 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"time"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -25,6 +26,10 @@ import (
 
 // ProtocolVersion is the content mapper protocol version this host speaks.
 const ProtocolVersion = 1
+
+const initializeTimeoutSeconds = 5
+
+const initializeTimeout = initializeTimeoutSeconds * time.Second
 
 // Content mapper protocol method names.
 const (
@@ -185,6 +190,10 @@ type Spawner interface {
 	Spawn(command []string, dir string) (io.ReadWriteCloser, error)
 }
 
+type processExitState interface {
+	ExitCode() (int, bool)
+}
+
 // SpawnerFunc adapts a spawn function to the Spawner interface.
 type SpawnerFunc func(command []string, dir string) (io.ReadWriteCloser, error)
 
@@ -203,14 +212,29 @@ func NewHost(ctx context.Context, spawner Spawner, diagnosticLocale locale.Local
 		}
 		rwc, err := spawner.Spawn(mapper.Exec, mapper.PackageDirectory)
 		if err != nil {
-			return nil, nil, "", "", err
+			return nil, nil, "", "", &InitializeError{Kind: InitializeErrorKindProcessStart, MapperName: mapper.Name, Command: mapper.Exec[0], Detail: err.Error()}
 		}
 		conn := ipc.NewAsyncConn(rwc, rejectHandler{})
 		go func() { _ = conn.Run(ctx) }()
-		positionEncoding, diagnosticSource, err := handshake(ctx, conn, diagnosticLocale)
+		initializeCtx, cancel := context.WithTimeout(ctx, initializeTimeout)
+		positionEncoding, diagnosticSource, err := handshake(initializeCtx, conn, diagnosticLocale)
+		initializeCtxErr := initializeCtx.Err()
+		cancel()
 		if err != nil {
 			_ = rwc.Close()
-			return nil, nil, "", "", fmt.Errorf("content mapper %q failed to initialize: %w", mapper.Package, err)
+			if initializeError, ok := errors.AsType[*InitializeError](err); ok {
+				initializeError.MapperName = mapper.Name
+				return nil, nil, "", "", initializeError
+			}
+			if exitState, ok := rwc.(processExitState); ok {
+				if exitCode, exited := exitState.ExitCode(); exited {
+					return nil, nil, "", "", &InitializeError{Kind: InitializeErrorKindProcessExit, MapperName: mapper.Name, ExitCode: exitCode}
+				}
+			}
+			if initializeCtxErr != nil || errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+				return nil, nil, "", "", &InitializeError{Kind: InitializeErrorKindNoResponse, MapperName: mapper.Name, TimeoutSeconds: initializeTimeoutSeconds}
+			}
+			return nil, nil, "", "", &InitializeError{Kind: InitializeErrorKindRequest, MapperName: mapper.Name, Detail: err.Error()}
 		}
 		return conn, rwc, positionEncoding, diagnosticSource, nil
 	})
@@ -569,6 +593,9 @@ func (p *projectLease) Transform(mapper *Mapper, request Request) (Result, error
 	if mapper.DynamicConfig {
 		if err := p.host.openProjectLocked(p.host.ctx, entry); err != nil {
 			p.host.mu.Unlock()
+			if _, ok := errors.AsType[*InitializeError](err); ok {
+				return Result{}, NewTransformError(TransformErrorKindInitialize, err)
+			}
 			return Result{}, NewTransformError(TransformErrorKindProject, err)
 		}
 		handle = entry.projectHandle
@@ -659,7 +686,7 @@ func handshake(ctx context.Context, conn ipc.Conn, diagnosticLocale locale.Local
 	}
 	var res InitializeResult
 	if err := json.Unmarshal(raw, &res); err != nil {
-		return "", "", err
+		return "", "", &InitializeError{Kind: InitializeErrorKindInvalidResponse, Detail: err.Error()}
 	}
 	if res.ProtocolVersion != ProtocolVersion {
 		return "", "", &InitializeError{Kind: InitializeErrorKindProtocolVersion, ProtocolVersion: res.ProtocolVersion}

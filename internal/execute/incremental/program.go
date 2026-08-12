@@ -350,7 +350,7 @@ func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOption
 		return &compiler.EmitResult{
 			EmitSkipped: true,
 			Diagnostics: []*ast.Diagnostic{
-				ast.NewCompilerDiagnostic(compiler.ContentMapperProjectErrorDiagnostic(err)),
+				compiler.ContentMapperProjectDiagnostic(err),
 			},
 		}
 	}
