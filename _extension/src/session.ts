@@ -50,9 +50,11 @@ export class SessionManager implements vscode.Disposable {
         this.telemetryReporter = telemetryReporter;
         this.initializedEventEmitter = initializedEventEmitter;
 
-        // Workspace trust gates content mappers (external plugin processes), which are passed to the
-        // server as an initialization option. Restart when trust is granted so they become active.
-        this.disposables.push(vscode.workspace.onDidGrantWorkspaceTrust(() => this.restart(context)));
+        this.disposables.push(vscode.workspace.onDidChangeConfiguration(event => {
+            if (this.currentSession && event.affectsConfiguration("js/ts.contentMappers.enabled")) {
+                void this.restart(context);
+            }
+        }));
     }
 
     start(context: vscode.ExtensionContext): Promise<void> {

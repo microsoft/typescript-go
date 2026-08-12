@@ -31,6 +31,7 @@ import { registerOnAutoInsertFeature } from "./languageFeatures/onAutoInsert";
 import { registerSourceDefinitionFeature } from "./languageFeatures/sourceDefinition";
 import * as tr from "./telemetryReporting";
 import {
+    contentMappersEnabled,
     ExeInfo,
     getExe,
     jsTsLanguageModes,
@@ -113,8 +114,7 @@ export class Client implements vscode.Disposable {
                 codeLensShowLocationsCommandName,
                 enableTelemetry: true,
                 logVerbosity: this.outputChannel.logLevel,
-                // Content mappers run external plugin processes, so they are only enabled in a trusted workspace.
-                loadExternalPlugins: vscode.workspace.isTrusted,
+                loadExternalPlugins: contentMappersEnabled(),
             },
             errorHandler: this.errorHandler,
             middleware: {
@@ -247,7 +247,7 @@ export class Client implements vscode.Disposable {
 
         // Refresh options in case they changed between construction and start.
         this.clientOptions.initializationOptions.logVerbosity = this.outputChannel.logLevel;
-        this.clientOptions.initializationOptions.loadExternalPlugins = vscode.workspace.isTrusted;
+        this.clientOptions.initializationOptions.loadExternalPlugins = contentMappersEnabled();
         this.clientOptions.initializationOptions.trackFlakyDiagnostics = effectiveflakesFlag !== "never" ? (effectiveflakesFlag === "panic" ? 2 : 1) : 0;
 
         this.client = new NativePreviewLanguageClient(
@@ -527,7 +527,7 @@ export class Client implements vscode.Disposable {
             return;
         }
         await this.client.sendRequest("custom/setContentMapperContributions", {
-            contributions: vscode.workspace.isTrusted ? contributions : [],
+            contributions: contentMappersEnabled() ? contributions : [],
             openDocuments: openDocuments.map(uri => ({ uri: uri.toString() })),
         });
     }
