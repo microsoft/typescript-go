@@ -1,0 +1,18 @@
+//// [tests/cases/compiler/jsdocAugmentsAliasExtends.ts] ////
+
+=== jsdocAugmentsAliasExtends.ts ===
+declare class Base {
+>Base : Base
+}
+declare const StateDependencies_base: typeof Base;
+>StateDependencies_base : typeof Base
+>Base : typeof Base
+
+/**
+ * @augments {Base}
+ */
+export declare class StateDependencies extends StateDependencies_base {
+>StateDependencies : StateDependencies
+>StateDependencies_base : Base
+}
+
