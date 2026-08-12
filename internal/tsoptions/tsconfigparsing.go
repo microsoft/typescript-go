@@ -24,7 +24,7 @@ import (
 type extendsResult struct {
 	options             *core.CompilerOptions
 	watchOptions        *core.WatchOptions
-	watchOptionsCopied  bool
+	watchOptionsSet     *collections.Set[string]
 	include             []any
 	exclude             []any
 	files               []any
@@ -180,6 +180,7 @@ type parsedTsconfig struct {
 	raw             any
 	options         *core.CompilerOptions
 	watchOptions    *core.WatchOptions
+	watchOptionsSet *collections.Set[string]
 	typeAcquisition *core.TypeAcquisition
 	// Note that the case of the config path has not yet been normalized, as no files have been imported into the project yet
 	extendedConfigPath any
@@ -294,6 +295,7 @@ func parseOwnConfigOfJsonSourceFile(
 		raw:                json,
 		options:            compilerOptions,
 		watchOptions:       watchOptions,
+		watchOptionsSet:    getWatchOptionsSet(json),
 		typeAcquisition:    typeAcquisition,
 		extendedConfigPath: extendedConfigPath,
 	}, errors
@@ -672,25 +674,10 @@ func convertOptionsFromJson[O optionParser](optionsNameMap CommandLineOptionName
 			continue
 		}
 
-		commandLineOptionEnumMapVal := opt.EnumMap()
-		if commandLineOptionEnumMapVal != nil {
-			if value, ok := value.(string); ok {
-				val, ok := commandLineOptionEnumMapVal.Get(strings.ToLower(value))
-				if ok {
-					errors = result.ParseOption(key, val)
-				}
-			} else {
-				convertJson, err := convertJsonOption(opt, value, basePath, nil, nil, nil)
-				errors = append(errors, err...)
-				compilerOptionsErr := result.ParseOption(key, convertJson)
-				errors = append(errors, compilerOptionsErr...)
-			}
-		} else {
-			convertJson, err := convertJsonOption(opt, value, basePath, nil, nil, nil)
-			errors = append(errors, err...)
-			compilerOptionsErr := result.ParseOption(key, convertJson)
-			errors = append(errors, compilerOptionsErr...)
-		}
+		convertJson, err := convertJsonOption(opt, value, basePath, nil, nil, nil)
+		errors = append(errors, err...)
+		compilerOptionsErr := result.ParseOption(key, convertJson)
+		errors = append(errors, compilerOptionsErr...)
 	}
 	return result, errors
 }
@@ -930,7 +917,18 @@ func normalizeJsonValue(value any) any {
 		}
 		return result
 	default:
-		return value
+		reflected := reflect.ValueOf(value)
+		if !reflected.IsValid() || (reflected.Kind() != reflect.Slice && reflected.Kind() != reflect.Array) {
+			return value
+		}
+		if reflected.Kind() == reflect.Slice && reflected.IsNil() {
+			return nil
+		}
+		result := make([]any, reflected.Len())
+		for i := range reflected.Len() {
+			result[i] = normalizeJsonValue(reflected.Index(i).Interface())
+		}
+		return result
 	}
 }
 
@@ -989,35 +987,64 @@ func convertWatchOptionsFromJsonWorker(jsonOptions any, basePath string) (*core.
 	return options, errors
 }
 
-func mergeWatchOptions(target, source *core.WatchOptions) *core.WatchOptions {
-	if source == nil {
-		return target
+func getWatchOptionsSet(raw any) *collections.Set[string] {
+	rawMap, ok := raw.(*collections.OrderedMap[string, any])
+	if !ok {
+		return nil
+	}
+	rawWatchOptions, exists := rawMap.Get("watchOptions")
+	if !exists {
+		return nil
+	}
+	watchOptionsMap, ok := rawWatchOptions.(*collections.OrderedMap[string, any])
+	if !ok {
+		return nil
+	}
+	result := collections.NewSetWithSizeHint[string](watchOptionsMap.Size())
+	for key := range watchOptionsMap.Keys() {
+		option := CommandLineWatchOptionsMap.Get(key)
+		if option != nil && option.Name == key {
+			result.Add(key)
+		}
+	}
+	return result
+}
+
+func mergeWatchOptions(
+	target *core.WatchOptions,
+	targetSet *collections.Set[string],
+	source *core.WatchOptions,
+	sourceSet *collections.Set[string],
+) (*core.WatchOptions, *collections.Set[string]) {
+	if sourceSet == nil {
+		return target, targetSet
 	}
 	if target == nil {
 		target = &core.WatchOptions{}
 	}
-	if source.Interval != nil {
-		target.Interval = source.Interval
+	if targetSet == nil {
+		targetSet = collections.NewSetWithSizeHint[string](sourceSet.Len())
 	}
-	if source.FileKind != core.WatchFileKindNone {
-		target.FileKind = source.FileKind
+	for key := range sourceSet.Keys() {
+		switch key {
+		case "watchInterval":
+			target.Interval = source.Interval
+		case "watchFile":
+			target.FileKind = source.FileKind
+		case "watchDirectory":
+			target.DirectoryKind = source.DirectoryKind
+		case "fallbackPolling":
+			target.FallbackPolling = source.FallbackPolling
+		case "synchronousWatchDirectory":
+			target.SyncWatchDir = source.SyncWatchDir
+		case "excludeDirectories":
+			target.ExcludeDir = source.ExcludeDir
+		case "excludeFiles":
+			target.ExcludeFiles = source.ExcludeFiles
+		}
+		targetSet.Add(key)
 	}
-	if source.DirectoryKind != core.WatchDirectoryKindNone {
-		target.DirectoryKind = source.DirectoryKind
-	}
-	if source.FallbackPolling != core.PollingKindNone {
-		target.FallbackPolling = source.FallbackPolling
-	}
-	if !source.SyncWatchDir.IsUnknown() {
-		target.SyncWatchDir = source.SyncWatchDir
-	}
-	if source.ExcludeDir != nil {
-		target.ExcludeDir = source.ExcludeDir
-	}
-	if source.ExcludeFiles != nil {
-		target.ExcludeFiles = source.ExcludeFiles
-	}
-	return target
+	return target, targetSet
 }
 
 func parseOwnConfigOfJson(
@@ -1048,6 +1075,7 @@ func parseOwnConfigOfJson(
 		raw:                json,
 		options:            options,
 		watchOptions:       watchOptions,
+		watchOptionsSet:    getWatchOptionsSet(json),
 		typeAcquisition:    typeAcquisition,
 		extendedConfigPath: extendedConfigPath,
 	}
@@ -1234,7 +1262,12 @@ func parseConfig(
 				}
 			}
 			mergeCompilerOptions(result.options, extendedConfig.options, extendsRaw)
-			result.watchOptions = mergeWatchOptions(result.watchOptions, extendedConfig.watchOptions)
+			result.watchOptions, result.watchOptionsSet = mergeWatchOptions(
+				result.watchOptions,
+				result.watchOptionsSet,
+				extendedConfig.watchOptions,
+				extendedConfig.watchOptionsSet,
+			)
 		}
 	}
 
@@ -1269,7 +1302,12 @@ func parseConfig(
 			}
 		}
 		ownConfig.options = mergeCompilerOptions(result.options, ownConfig.options, ownConfig.raw)
-		ownConfig.watchOptions = mergeWatchOptions(result.watchOptions, ownConfig.watchOptions)
+		ownConfig.watchOptions, ownConfig.watchOptionsSet = mergeWatchOptions(
+			result.watchOptions,
+			result.watchOptionsSet,
+			ownConfig.watchOptions,
+			ownConfig.watchOptionsSet,
+		)
 	}
 	return ownConfig, errors
 }

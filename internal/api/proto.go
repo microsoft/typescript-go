@@ -578,7 +578,7 @@ func (v *OrderedJSONValue) UnmarshalJSONFrom(dec *json.Decoder) error {
 		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
-		var array []any
+		array := []any{}
 		for dec.PeekKind() != ']' {
 			var child OrderedJSONValue
 			if err := json.UnmarshalDecode(dec, &child); err != nil {
@@ -654,8 +654,8 @@ type WatchOptionsResponse struct {
 	DirectoryKind   *core.WatchDirectoryKind `json:"watchDirectory,omitempty"`
 	FallbackPolling *core.PollingKind        `json:"fallbackPolling,omitempty"`
 	SyncWatchDir    *bool                    `json:"synchronousWatchDirectory,omitempty"`
-	ExcludeDir      []string                 `json:"excludeDirectories,omitempty"`
-	ExcludeFiles    []string                 `json:"excludeFiles,omitempty"`
+	ExcludeDir      []string                 `json:"excludeDirectories,omitzero"`
+	ExcludeFiles    []string                 `json:"excludeFiles,omitzero"`
 }
 
 type ReadConfigFileResponse struct {
@@ -760,8 +760,8 @@ func NewWatchOptionsResponse(options *core.WatchOptions) *WatchOptionsResponse {
 		response.DirectoryKind == nil &&
 		response.FallbackPolling == nil &&
 		response.SyncWatchDir == nil &&
-		len(response.ExcludeDir) == 0 &&
-		len(response.ExcludeFiles) == 0 {
+		response.ExcludeDir == nil &&
+		response.ExcludeFiles == nil {
 		return nil
 	}
 	return response

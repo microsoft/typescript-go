@@ -237,6 +237,7 @@ describe("API", () => {
                     watchFile: "useFsEvents",
                     watchInterval: 250,
                     synchronousWatchDirectory: false,
+                    excludeFiles: [],
                 },
             };
             const config = api.parseJsonConfigFileContent(input, { configDirectory: "/src" });
@@ -246,7 +247,24 @@ describe("API", () => {
                 watchInterval: 250,
                 watchFile: 4,
                 synchronousWatchDirectory: false,
+                excludeFiles: [],
             });
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("parseJsonConfigFileContent preserves an empty files list", () => {
+        const api = spawnAPI();
+        try {
+            const config = api.parseJsonConfigFileContent(
+                { files: [] },
+                { configDirectory: "/src" },
+            );
+            assert.deepEqual(config.fileNames, []);
+            assert.equal(config.errors.length, 1);
+            assert.equal(config.errors[0].code, 18002);
         }
         finally {
             api.close();

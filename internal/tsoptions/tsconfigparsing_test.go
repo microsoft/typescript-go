@@ -850,6 +850,13 @@ func TestParseJsonConfigFileContentAcceptsJsonRepresentations(t *testing.T) {
 			"compilerOptions": map[string]any{"strict": true},
 			"files":           []any{"index.ts"},
 		},
+		"typed slices": map[string]any{
+			"compilerOptions": map[string]any{"strict": true},
+			"files":           []string{"index.ts"},
+			"watchOptions": map[string]any{
+				"excludeFiles": []string{},
+			},
+		},
 	}
 	for name, json := range tests {
 		t.Run(name, func(t *testing.T) {
@@ -919,6 +926,58 @@ func TestParseJsonConfigFileContentPreservesRawAndParsesWatchOptions(t *testing.
 	assert.DeepEqual(t, slices.Collect(raw.Keys()), []string{"compileOnSave", "customSetting", "extends", "files", "watchOptions"})
 	assert.Assert(t, raw.Has("customSetting"))
 	assert.Assert(t, raw.Has("watchOptions"))
+
+	cleared := tsoptions.ParseJsonConfigFileContent(
+		map[string]any{
+			"extends": "./config/base.json",
+			"files":   []any{"index.ts"},
+			"watchOptions": map[string]any{
+				"watchInterval":             float64(250),
+				"watchFile":                 nil,
+				"synchronousWatchDirectory": nil,
+				"excludeDirectories":        nil,
+				"excludeFiles":              nil,
+			},
+		},
+		host,
+		"/project",
+		nil,
+		"/project/tsconfig.json",
+		nil, /*resolutionStack*/
+		nil, /*extraFileExtensions*/
+		nil, /*extendedConfigCache*/
+	)
+	assert.Equal(t, len(cleared.Errors), 0)
+	assert.Equal(t, *cleared.ParsedConfig.WatchOptions.Interval, 250)
+	assert.Equal(t, cleared.ParsedConfig.WatchOptions.FileKind, core.WatchFileKindNone)
+	assert.Assert(t, cleared.ParsedConfig.WatchOptions.SyncWatchDir.IsUnknown())
+	assert.Assert(t, cleared.ParsedConfig.WatchOptions.ExcludeDir == nil)
+	assert.Assert(t, cleared.ParsedConfig.WatchOptions.ExcludeFiles == nil)
+}
+
+func TestParseJsonConfigFileContentReportsInvalidWatchOption(t *testing.T) {
+	t.Parallel()
+
+	host := tsoptionstest.NewVFSParseConfigHost(map[string]string{
+		"/project/index.ts": "export {};",
+	}, "/project", true /*useCaseSensitiveFileNames*/)
+	parsed := tsoptions.ParseJsonConfigFileContent(
+		map[string]any{
+			"files": []any{"index.ts"},
+			"watchOptions": map[string]any{
+				"watchFile": "invalid",
+			},
+		},
+		host,
+		"/project",
+		nil,
+		"/project/tsconfig.json",
+		nil, /*resolutionStack*/
+		nil, /*extraFileExtensions*/
+		nil, /*extendedConfigCache*/
+	)
+	assert.Equal(t, len(parsed.Errors), 1)
+	assert.Equal(t, parsed.Errors[0].Code(), diagnostics.Argument_for_0_option_must_be_Colon_1.Code())
 }
 
 func getParsedWithJsonApi(config testConfig, host tsoptions.ParseConfigHost, basePath string) *tsoptions.ParsedCommandLine {

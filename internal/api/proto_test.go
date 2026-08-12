@@ -19,16 +19,29 @@ func TestOrderedJSONValueUnmarshalJSON(t *testing.T) {
 	t.Parallel()
 
 	var value api.OrderedJSONValue
-	err := json.Unmarshal([]byte(`{"z":1,"a":{"y":2,"x":3},"m":[{"b":4,"a":5}]}`), &value)
+	err := json.Unmarshal([]byte(`{"z":1,"a":{"y":2,"x":3},"m":[{"b":4,"a":5}],"e":[]}`), &value)
 	assert.NilError(t, err)
 
 	root := value.Value.(*collections.OrderedMap[string, any])
-	assert.DeepEqual(t, slices.Collect(root.Keys()), []string{"z", "a", "m"})
+	assert.DeepEqual(t, slices.Collect(root.Keys()), []string{"z", "a", "m", "e"})
 	nested := root.GetOrZero("a").(*collections.OrderedMap[string, any])
 	assert.DeepEqual(t, slices.Collect(nested.Keys()), []string{"y", "x"})
 	array := root.GetOrZero("m").([]any)
 	arrayObject := array[0].(*collections.OrderedMap[string, any])
 	assert.DeepEqual(t, slices.Collect(arrayObject.Keys()), []string{"b", "a"})
+	empty := root.GetOrZero("e").([]any)
+	assert.Assert(t, empty != nil)
+	assert.Equal(t, len(empty), 0)
+}
+
+func TestNewWatchOptionsResponsePreservesEmptyArrays(t *testing.T) {
+	t.Parallel()
+
+	response := api.NewWatchOptionsResponse(&core.WatchOptions{ExcludeFiles: []string{}})
+	assert.Assert(t, response != nil)
+	data, err := json.Marshal(response)
+	assert.NilError(t, err)
+	assert.Equal(t, string(data), `{"excludeFiles":[]}`)
 }
 
 func TestDocumentIdentifierUnmarshalJSON(t *testing.T) {
