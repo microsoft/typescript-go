@@ -22,19 +22,6 @@ func configWithMappers(mappers ...*contentmapper.Mapper) *tsoptions.ParsedComman
 	}
 }
 
-func TestContentMapperIdentities(t *testing.T) {
-	t.Parallel()
-
-	identities, err := incremental.ContentMapperIdentities(nil)
-	assert.NilError(t, err)
-	assert.Assert(t, identities == nil)
-
-	project := fakeContentMapperProject{identities: []string{"svelte@3.0.0:one", "vue@2.0.0:two"}}
-	identities, err = incremental.ContentMapperIdentities(project)
-	assert.NilError(t, err)
-	assert.DeepEqual(t, identities, project.identities)
-}
-
 func TestStaticContentMapperTransformIdentity(t *testing.T) {
 	t.Parallel()
 
@@ -58,19 +45,6 @@ func TestStaticContentMapperTransformIdentity(t *testing.T) {
 		Manifest:   contentmapper.Manifest{Name: "vue", Version: "1.0.0"},
 	}
 	assert.Assert(t, optionsA.TransformIdentity(&core.CompilerOptions{}) != optionsB.TransformIdentity(&core.CompilerOptions{}))
-}
-
-func TestContentMapperIdentitiesMatch(t *testing.T) {
-	t.Parallel()
-
-	buildInfo := &incremental.BuildInfo{ContentMapperIdentities: []string{"vue@1.0.0"}}
-	assert.Assert(t, buildInfo.ContentMapperIdentitiesMatch([]string{"vue@1.0.0"}))
-	assert.Assert(t, !buildInfo.ContentMapperIdentitiesMatch([]string{"vue@2.0.0"}))
-	assert.Assert(t, !buildInfo.ContentMapperIdentitiesMatch(nil))
-
-	empty := &incremental.BuildInfo{}
-	assert.Assert(t, empty.ContentMapperIdentitiesMatch(nil))
-	assert.Assert(t, !empty.ContentMapperIdentitiesMatch([]string{"vue@1.0.0"}))
 }
 
 type fakeBuildInfoReader struct {

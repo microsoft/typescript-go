@@ -6,7 +6,9 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
+	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/testutil/contentmappertest"
 )
@@ -112,6 +114,62 @@ export const profileTitle = help/**/;
 		},
 	})
 	f.BaselineAutoImportsCompletions(t, []string{""})
+}
+
+func TestContentMapperSupplementalAutoImports(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	f, done := newContentMapperFourslash(t, `// @Filename: /dep.ts
+export const helper = 1;
+
+// @Filename: /app.astro
+const value = help/**/;
+`, contentmappertest.SupplementalMapper, ".astro")
+	defer done()
+
+	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
+		UserPreferences: &lsutil.UserPreferences{
+			IncludeCompletionsForModuleExports:    core.TSTrue,
+			IncludeCompletionsForImportStatements: core.TSTrue,
+		},
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
+		},
+		Items: &fourslash.CompletionsExpectedItems{Includes: []fourslash.CompletionsExpectedItem{
+			&lsproto.CompletionItem{
+				Label:               "helper",
+				SortText:            new(string(ls.SortTextAutoImportSuggestions)),
+				Data:                &lsproto.CompletionItemData{AutoImport: &lsproto.AutoImportFix{ModuleSpecifier: "./dep"}},
+				AdditionalTextEdits: fourslash.AnyTextEdits,
+			},
+		}},
+	})
+}
+
+func TestContentMapperFiltersAutoImportsInVirtualCode(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	f, done := newContentMapperFourslash(t, `// @Filename: /dep.ts
+export const helper = 1;
+
+// @Filename: /app.box
+export const version = #{target};
+const value = help/**/;
+`, contentmappertest.TransformingMapper, ".box")
+	defer done()
+
+	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
+		UserPreferences: &lsutil.UserPreferences{
+			IncludeCompletionsForModuleExports:    core.TSTrue,
+			IncludeCompletionsForImportStatements: core.TSTrue,
+		},
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
+		},
+		Items: &fourslash.CompletionsExpectedItems{Excludes: []string{"helper"}},
+	})
 }
 
 func TestContentMapperNodeModulesAutoImports(t *testing.T) {

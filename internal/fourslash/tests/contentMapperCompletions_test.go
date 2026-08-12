@@ -69,6 +69,27 @@ settings./*boundary*/</script>
 	})
 }
 
+func TestContentMapperCompletionEditRange(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	f, done := newContentMapperFourslash(t, `// @Filename: /app.box
+export const foo = 1;
+[|foo|]/*completion*/
+`, contentmappertest.TransformingMapper, ".box")
+	defer done()
+
+	f.VerifyCompletions(t, "completion", &fourslash.CompletionsExpectedList{
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange: &fourslash.EditRange{
+				Insert:  f.Ranges()[0],
+				Replace: f.Ranges()[0],
+			},
+		},
+		Items: &fourslash.CompletionsExpectedItems{Includes: []fourslash.CompletionsExpectedItem{"foo"}},
+	})
+}
+
 func TestContentMapperModulePathCompletions(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")

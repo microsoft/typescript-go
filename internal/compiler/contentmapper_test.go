@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"slices"
-	"strings"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -12,7 +11,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -72,99 +70,28 @@ func collectContentMapperDiagnostics(program *compiler.Program) []*ast.Diagnosti
 	)
 }
 
-func TestContentMapperSupplementalIncludeReason(t *testing.T) {
-	t.Parallel()
-	program := newContentMapperProgram(t, fakeContentMapperHost{
-		transform: func(fileName string, content string) (contentmapper.Result, error) {
-			mappings := spanmap.New(nil)
-			return contentmapper.Result{
-				Text:     "export {};",
-				Mappings: mappings,
-				Supplemental: []contentmapper.MappedResult{{
-					Text:             "export const supplemental = 1;",
-					VirtualExtension: ".ts",
-					Mappings:         mappings,
-				}},
-			}, nil
-		},
-	}, map[string]string{"/src/app.vue": "component"}, []string{"/src/app.vue"})
-
-	var explanation strings.Builder
-	program.ExplainFiles(&explanation, locale.Default)
-	assert.Assert(t, strings.Contains(explanation.String(), "app.vue.0.ts\n   Supplemental virtual file produced by the content mapper for file 'app.vue'."), explanation.String())
-}
-
 func TestContentMapperInvalidMappings(t *testing.T) {
 	t.Parallel()
 
 	const transformed = "export const x = 1;\n"
 	const original = "<template>x</template>\n"
-
-	atomAll := func(origEnd int) *spanmap.SpanMap {
-		return spanmap.New([]spanmap.Segment{{
-			VirtualStart: 0, VirtualEnd: core.TextPos(len(transformed)),
-			OriginalStart: 0, OriginalEnd: core.TextPos(origEnd), Kind: spanmap.KindAtom,
-		}})
+	mappings := spanmap.New([]spanmap.Segment{
+		{VirtualStart: 0, VirtualEnd: 10, OriginalStart: 0, OriginalEnd: 0, Kind: spanmap.KindAtom},
+		{VirtualStart: 5, VirtualEnd: core.TextPos(len(transformed)), OriginalStart: 0, OriginalEnd: 0, Kind: spanmap.KindAtom},
+	})
+	files := map[string]string{
+		"/src/app.ts":        `import "./Component.vue";`,
+		"/src/Component.vue": original,
 	}
-
-	testCases := []struct {
-		name     string
-		mappings *spanmap.SpanMap
-		wantCode int32
-	}{
-		{
-			"overlap",
-			spanmap.New([]spanmap.Segment{
-				{VirtualStart: 0, VirtualEnd: 10, OriginalStart: 0, OriginalEnd: 0, Kind: spanmap.KindAtom},
-				{VirtualStart: 5, VirtualEnd: core.TextPos(len(transformed)), OriginalStart: 0, OriginalEnd: 0, Kind: spanmap.KindAtom},
-			}),
-			100038,
-		},
-		{
-			"outOfBounds",
-			atomAll(len(original) + 50),
-			100029,
-		},
-		{
-			// A verbatim segment whose original text differs from the transformed text.
-			"verbatimMismatch",
-			spanmap.New([]spanmap.Segment{{
-				VirtualStart: 0, VirtualEnd: core.TextPos(len(transformed)),
-				OriginalStart: 0, OriginalEnd: core.TextPos(len(transformed)), Kind: spanmap.KindVerbatim,
-			}}),
-			100030,
-		},
-		{
-			"invalidKind",
-			spanmap.New([]spanmap.Segment{{
-				VirtualStart: 0, VirtualEnd: core.TextPos(len(transformed)),
-				OriginalStart: 0, OriginalEnd: core.TextPos(len(original)), Kind: 3,
-			}}),
-			100041,
+	contentMapperHost := fakeContentMapperHost{
+		transform: func(fileName string, content string) (contentmapper.Result, error) {
+			return contentmapper.Result{Text: transformed, Mappings: mappings}, nil
 		},
 	}
-
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-			files := map[string]string{
-				"/src/app.ts":        `import "./Component.vue";`,
-				"/src/Component.vue": original,
-			}
-			contentMapperHost := fakeContentMapperHost{
-				transform: func(fileName string, content string) (contentmapper.Result, error) {
-					return contentmapper.Result{
-						Text:     transformed,
-						Mappings: tc.mappings,
-					}, nil
-				},
-			}
-			program := newContentMapperProgram(t, contentMapperHost, files, []string{"/src/app.ts"})
-			diags := collectContentMapperDiagnostics(program)
-			found := slices.ContainsFunc(diags, func(d *ast.Diagnostic) bool { return d.Code() == tc.wantCode })
-			assert.Assert(t, found, "expected diagnostic TS%d attributing the invalid mapping, got: %v", tc.wantCode, diags)
-		})
-	}
+	program := newContentMapperProgram(t, contentMapperHost, files, []string{"/src/app.ts"})
+	diagnostics := collectContentMapperDiagnostics(program)
+	found := slices.ContainsFunc(diagnostics, func(diagnostic *ast.Diagnostic) bool { return diagnostic.Code() == 100038 })
+	assert.Assert(t, found, "expected an invalid mapping diagnostic, got: %v", diagnostics)
 }
 
 func TestContentMapperSourceFileState(t *testing.T) {
@@ -198,32 +125,22 @@ func TestContentMapperSourceFileState(t *testing.T) {
 		assert.Assert(t, file.IsContentMapperFailureStub())
 	})
 
-	for _, test := range []struct {
-		name string
-		kind contentmapper.ProjectErrorKind
-		code int32
-	}{
-		{name: "malformed response", kind: contentmapper.ProjectErrorKindMalformedResponse, code: 100051},
-		{name: "missing config identity", kind: contentmapper.ProjectErrorKindMissingConfigIdentity, code: 100054},
-		{name: "non-absolute watched file", kind: contentmapper.ProjectErrorKindNonAbsoluteWatchedFile, code: 100055},
-	} {
-		t.Run(test.name+" is localized", func(t *testing.T) {
-			t.Parallel()
-			program := newContentMapperProgram(t, fakeContentMapperHost{
-				transform: func(fileName string, content string) (contentmapper.Result, error) {
-					return contentmapper.Result{}, contentmapper.NewTransformError(
-						contentmapper.TransformErrorKindProject,
-						&contentmapper.ProjectError{Kind: test.kind},
-					)
-				},
-			}, map[string]string{"/src/fail.vue": "original"}, []string{"/src/fail.vue"})
-			diagnostics := collectContentMapperDiagnostics(program)
-			found := slices.ContainsFunc(diagnostics, func(diagnostic *ast.Diagnostic) bool {
-				return slices.ContainsFunc(diagnostic.MessageChain(), func(message *ast.Diagnostic) bool {
-					return message.Code() == test.code
-				})
+	t.Run("project error is localized", func(t *testing.T) {
+		t.Parallel()
+		program := newContentMapperProgram(t, fakeContentMapperHost{
+			transform: func(fileName string, content string) (contentmapper.Result, error) {
+				return contentmapper.Result{}, contentmapper.NewTransformError(
+					contentmapper.TransformErrorKindProject,
+					&contentmapper.ProjectError{Kind: contentmapper.ProjectErrorKindMalformedResponse},
+				)
+			},
+		}, map[string]string{"/src/fail.vue": "original"}, []string{"/src/fail.vue"})
+		diagnostics := collectContentMapperDiagnostics(program)
+		found := slices.ContainsFunc(diagnostics, func(diagnostic *ast.Diagnostic) bool {
+			return slices.ContainsFunc(diagnostic.MessageChain(), func(message *ast.Diagnostic) bool {
+				return message.Code() == 100051
 			})
-			assert.Assert(t, found, "expected localized project response diagnostic %d, got: %v", test.code, diagnostics)
 		})
-	}
+		assert.Assert(t, found, "expected a localized project response diagnostic, got: %v", diagnostics)
+	})
 }

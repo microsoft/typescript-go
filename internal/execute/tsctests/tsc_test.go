@@ -4818,6 +4818,29 @@ func TestTscContentMapperEmit(t *testing.T) {
 	}).run(t, "contentMapperEmit")
 }
 
+func TestTscContentMapperExplainFiles(t *testing.T) {
+	t.Parallel()
+	(&tscInput{
+		subScenario: "supplemental virtual file include reason",
+		files: FileMap{
+			"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+			{
+				"contentMappers": [
+					{ "package": "mapper", "extensions": [".vue"] }
+				]
+			}`),
+			"/home/src/workspaces/project/app.vue": `export const value = 1;`,
+			"/home/src/workspaces/project/node_modules/mapper/package.json": stringtestutil.Dedent(`
+			{
+				"name": "mapper",
+				"version": "1.0.0",
+				"tsContentMapper": { "exec": ["supplemental-mapper"], "extensions": { ".vue": ".ts" } }
+			}`),
+		},
+		commandLineArgs: []string{"--loadExternalPlugins", "--explainFiles"},
+	}).run(t, "contentMapperExplainFiles")
+}
+
 func TestTscContentMapperFailures(t *testing.T) {
 	t.Parallel()
 	failMapperPackageJSON := stringtestutil.Dedent(`

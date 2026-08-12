@@ -1,0 +1,46 @@
+package contentmappertest
+
+import (
+	"context"
+	"fmt"
+	"strings"
+
+	"github.com/microsoft/typescript-go/internal/contentmapper"
+	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/json"
+	"github.com/microsoft/typescript-go/internal/spanmap"
+)
+
+type duplicateHandler struct{ noNotifications }
+
+func (duplicateHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
+	switch method {
+	case contentmapper.MethodInitialize:
+		return initializeResult("mapper"), nil
+	case contentmapper.MethodTransform:
+		var p contentmapper.TransformParams
+		if err := json.Unmarshal(params, &p); err != nil {
+			return nil, err
+		}
+		virtual := "export const " + p.Content + " = 1;\n" + p.Content + ";\n"
+		first := len("export const ")
+		second := first + len(p.Content) + len(" = 1;\n")
+		disabled := strings.Contains(p.FileName, "disabled")
+		semanticFeatures := spanmap.FeatureHover | spanmap.FeatureDefinition | spanmap.FeatureReferences
+		navigationFeatures := spanmap.FeatureDefinition | spanmap.FeatureReferences
+		if disabled {
+			semanticFeatures = spanmap.FeatureNone
+			navigationFeatures = spanmap.FeatureNone
+		}
+		mappings, err := spanmap.New([]spanmap.Segment{
+			{VirtualStart: core.TextPos(first), VirtualEnd: core.TextPos(first + len(p.Content)), OriginalStart: 0, OriginalEnd: core.TextPos(len(p.Content)), Kind: spanmap.KindVerbatim, Features: semanticFeatures},
+			{VirtualStart: core.TextPos(second), VirtualEnd: core.TextPos(second + len(p.Content)), OriginalStart: 0, OriginalEnd: core.TextPos(len(p.Content)), Kind: spanmap.KindVerbatim, Features: navigationFeatures},
+		}).Marshal()
+		if err != nil {
+			return nil, err
+		}
+		return contentmapper.TransformResult{MappedOutput: contentmapper.MappedOutput{Text: virtual, Mappings: json.Value(mappings)}}, nil
+	default:
+		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
+	}
+}

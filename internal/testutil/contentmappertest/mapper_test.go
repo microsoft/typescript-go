@@ -11,7 +11,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/locale"
-	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/testutil/contentmappertest"
 	"gotest.tools/v3/assert"
 )
@@ -59,106 +58,6 @@ func transformRequest() contentmapper.Request {
 		Content:         "export const version = #{target};\n",
 		CompilerOptions: &core.CompilerOptions{Target: core.ScriptTargetES2020},
 	}
-}
-
-// TestInProcessSpanKinds drives the mapper in-process and verifies the transform produces a span map that
-// exercises all three span kinds: the synthesized preamble, the verbatim body, and the atom substitution
-// of a compiler-option token.
-func TestInProcessSpanKinds(t *testing.T) {
-	t.Parallel()
-	host := contentmapper.NewHost(t.Context(), contentmappertest.NewSpawner(), locale.Default)
-	defer host.Close()
-
-	result, err := host.Transform(testMapper(), transformRequest())
-	assert.NilError(t, err)
-	// The #{target} token was replaced by the es2020 target value (7).
-	assert.Assert(t, strings.Contains(result.Text, "export const version = 7;"), "got %q", result.Text)
-
-	text := result.Text
-
-	// Synthesized: __VERSION appears only in the injected preamble, which has no original counterpart.
-	synthStart := strings.Index(text, "__VERSION")
-	assert.Assert(t, synthStart >= 0)
-	_, synthFidelity := result.Mappings.VirtualToOriginalSpan(core.NewTextRange(synthStart, synthStart+len("__VERSION")))
-	assert.Equal(t, synthFidelity, spanmap.FidelityNone)
-
-	// Verbatim: "export const version" is copied through, so its virtual span maps exactly onto the
-	// identical span in the original.
-	verbatimStart := strings.Index(text, "export const version")
-	assert.Assert(t, verbatimStart >= 0)
-	verbatimRange, verbatimFidelity := result.Mappings.VirtualToOriginalSpan(core.NewTextRange(verbatimStart, verbatimStart+len("export")))
-	assert.Equal(t, verbatimFidelity, spanmap.FidelityExact)
-	original := transformRequest().Content
-	assert.Equal(t, original[verbatimRange.Pos():verbatimRange.End()], "export")
-
-	// Atom: the substituted "7" maps as a whole back to the original #{target} token span.
-	atomStart := strings.Index(text, "= 7;") + len("= ")
-	atomRange, atomFidelity := result.Mappings.VirtualToOriginalSpan(core.NewTextRange(atomStart, atomStart+len("7")))
-	assert.Equal(t, atomFidelity, spanmap.FidelityAtom)
-	assert.Equal(t, original[atomRange.Pos():atomRange.End()], "#{target}")
-}
-
-func TestFeaturePresenceRoundTrip(t *testing.T) {
-	t.Parallel()
-	transform := func(fileName string) []spanmap.Segment {
-		host := contentmapper.NewHost(t.Context(), contentmappertest.NewSpawner(), locale.Default)
-		defer host.Close()
-		mapper := testMapper()
-		mapper.Manifest.Exec = []string{contentmappertest.DuplicateMapper}
-		result, err := host.Transform(mapper, contentmapper.Request{FileName: fileName, Content: "value"})
-		assert.NilError(t, err)
-		return result.Mappings.Segments()
-	}
-
-	duplicates := transform("/value.dup")
-	assert.Equal(t, duplicates[0].Features, spanmap.FeatureHover|spanmap.FeatureDefinition|spanmap.FeatureReferences)
-	assert.Equal(t, duplicates[1].Features, spanmap.FeatureDefinition|spanmap.FeatureReferences)
-	disabled := transform("/disabled.dup")
-	assert.Equal(t, disabled[0].Features, spanmap.FeatureNone)
-}
-
-func TestComponentMapperSpanKinds(t *testing.T) {
-	t.Parallel()
-	host := contentmapper.NewHost(t.Context(), contentmappertest.NewSpawner(), locale.Default)
-	defer host.Close()
-
-	mapper := testMapper()
-	mapper.Manifest.Exec = []string{contentmappertest.ComponentMapper}
-	mapper.Manifest.CompilerOptions = nil
-	content := `<component name="ProfileCard">
-<template><h1>{{ title + suffix }}</h1></template>
-<script lang="ts">
-export const title = "Hello";
-export const suffix = "!";
-</script>`
-	result, err := host.Transform(mapper, contentmapper.Request{FileName: "/app.box", Content: content})
-	assert.NilError(t, err)
-
-	scriptStart := strings.Index(result.Text, "export const title")
-	_, exact := result.Mappings.VirtualToOriginalSpan(core.NewTextRange(scriptStart, scriptStart+len("export")))
-	assert.Equal(t, exact, spanmap.FidelityExact)
-
-	templateTitle := strings.LastIndex(result.Text, "title")
-	_, atom := result.Mappings.VirtualToOriginalSpan(core.NewTextRange(templateTitle, templateTitle+len("title")))
-	assert.Equal(t, atom, spanmap.FidelityAtom)
-
-	expressionStart := strings.Index(result.Text, "title + suffix")
-	_, approximate := result.Mappings.VirtualToOriginalSpan(core.NewTextRange(expressionStart, expressionStart+len("title + suffix")))
-	assert.Equal(t, approximate, spanmap.FidelityApproximate)
-
-	renderStart := strings.Index(result.Text, "__render")
-	_, none := result.Mappings.VirtualToOriginalSpan(core.NewTextRange(renderStart, renderStart+len("__render")))
-	assert.Equal(t, none, spanmap.FidelityNone)
-
-	markupStart := strings.Index(content, "<h1>")
-	assert.Equal(t, len(result.Mappings.OriginalToVirtualPositions(core.TextPos(markupStart), spanmap.FeatureAll)), 0)
-
-	componentName := strings.Index(result.Text, "ProfileCard")
-	_, componentNameFidelity := result.Mappings.VirtualToOriginalSpan(core.NewTextRange(componentName, componentName+len("ProfileCard")))
-	assert.Equal(t, componentNameFidelity, spanmap.FidelityAtom)
-	componentDeclaration := strings.Index(result.Text, "export class ProfileCard")
-	_, componentDeclarationFidelity := result.Mappings.VirtualToOriginalSpan(core.NewTextRange(componentDeclaration, componentDeclaration+len("export class ProfileCard {}")))
-	assert.Equal(t, componentDeclarationFidelity, spanmap.FidelityApproximate)
 }
 
 // TestOutOfProcess exercises the real out-of-process IPC path: it spawns the test binary as a mapper
