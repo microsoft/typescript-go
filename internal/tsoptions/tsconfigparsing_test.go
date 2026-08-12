@@ -985,6 +985,51 @@ func TestParseJsonConfigFileContentReportsInvalidWatchOption(t *testing.T) {
 	assert.Equal(t, parsed.Errors[0].Code(), diagnostics.Argument_for_0_option_must_be_Colon_1.Code())
 }
 
+func TestParseJsonConfigFileContentHandlesNullArrayElements(t *testing.T) {
+	t.Parallel()
+
+	host := tsoptionstest.NewVFSParseConfigHost(map[string]string{
+		"/project/index.ts": "export {};",
+	}, "/project", true /*useCaseSensitiveFileNames*/)
+	for _, property := range []string{"files", "include", "exclude"} {
+		t.Run(property, func(t *testing.T) {
+			t.Parallel()
+			parsed := tsoptions.ParseJsonConfigFileContent(
+				map[string]any{property: []any{nil}},
+				host,
+				"/project",
+				nil,
+				"/project/tsconfig.json",
+				nil, /*resolutionStack*/
+				nil, /*extraFileExtensions*/
+				nil, /*extendedConfigCache*/
+			)
+			assert.Assert(t, len(parsed.Errors) > 0)
+			assert.Equal(t, parsed.Errors[0].Code(), diagnostics.Compiler_option_0_requires_a_value_of_type_1.Code())
+		})
+	}
+}
+
+func TestParseJsonConfigFileContentDefaultsCompileOnSaveToFalse(t *testing.T) {
+	t.Parallel()
+
+	host := tsoptionstest.NewVFSParseConfigHost(map[string]string{
+		"/project/index.ts": "export {};",
+	}, "/project", true /*useCaseSensitiveFileNames*/)
+	parsed := tsoptions.ParseJsonConfigFileContent(
+		map[string]any{"files": []any{"index.ts"}},
+		host,
+		"/project",
+		nil,
+		"/project/tsconfig.json",
+		nil, /*resolutionStack*/
+		nil, /*extraFileExtensions*/
+		nil, /*extendedConfigCache*/
+	)
+	assert.Assert(t, parsed.CompileOnSave != nil)
+	assert.Equal(t, *parsed.CompileOnSave, false)
+}
+
 func getParsedWithJsonApi(config testConfig, host tsoptions.ParseConfigHost, basePath string) *tsoptions.ParsedCommandLine {
 	configFileName := tspath.GetNormalizedAbsolutePath(config.configFileName, basePath)
 	path := tspath.ToPath(config.configFileName, basePath, host.FS().UseCaseSensitiveFileNames())

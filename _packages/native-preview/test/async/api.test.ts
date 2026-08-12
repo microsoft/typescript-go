@@ -179,6 +179,7 @@ describe("API", () => {
             assert.deepEqual(config.fileNames, ["/src/index.ts"]);
             assert.equal(config.options.strict, true);
             assert.equal("configFilePath" in config.options, false);
+            assert.equal(config.compileOnSave, false);
             assert.deepEqual(config.errors, []);
         }
         finally {
@@ -263,6 +264,21 @@ describe("API", () => {
         }
     });
 
+    test("parseJsonConfigFileContent reports null array elements", async () => {
+        const api = spawnAPI();
+        try {
+            const config = await api.parseJsonConfigFileContent(
+                { files: [null], include: [null], exclude: [null] },
+                { configDirectory: "/src" },
+            );
+            assert.equal(config.errors.length, 3);
+            assert.ok(config.errors.every(diagnostic => diagnostic.code === 5024));
+        }
+        finally {
+            await api.close();
+        }
+    });
+
     test("transpile", async () => {
         const api = spawnAPI({
             "/input.ts": "export const x: number = 1;",
@@ -295,7 +311,7 @@ describe("API", () => {
             const config = await api.parseConfigFile("/tsconfig.json");
             assert.deepEqual(config.fileNames, ["/src/index.ts", "/src/foo.ts"]);
             assert.deepEqual(config.options, { configFilePath: "/tsconfig.json" });
-            assert.equal(config.compileOnSave, undefined);
+            assert.equal(config.compileOnSave, false);
             assert.equal(config.typeAcquisition, undefined);
             assert.equal(config.projectReferences, undefined);
         }

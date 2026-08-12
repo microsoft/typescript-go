@@ -1324,6 +1324,11 @@ type propOfRaw struct {
 	wrongValue string
 }
 
+func isStringValue(value any) bool {
+	_, ok := value.(string)
+	return ok
+}
+
 // parseJsonConfigFileContentWorker parses the contents of a config file from json or json source file (tsconfig.json).
 // json: The contents of the config file to parse
 // sourceFile: sourceFile corresponding to the Json
@@ -1378,7 +1383,7 @@ func parseJsonConfigFileContentWorker(
 		return propOfRaw{sliceValue: nil, wrongValue: "no-prop"}
 	}
 	referencesOfRaw := getPropFromRaw("references", func(element any) bool { return reflect.TypeOf(element) == orderedMapType }, "object")
-	fileSpecs := getPropFromRaw("files", func(element any) bool { return reflect.TypeOf(element).Kind() == reflect.String }, "string")
+	fileSpecs := getPropFromRaw("files", isStringValue, "string")
 	if fileSpecs.sliceValue != nil || fileSpecs.wrongValue == "" {
 		hasZeroOrNoReferences := false
 		if referencesOfRaw.wrongValue == "no-prop" || referencesOfRaw.wrongValue == "not-array" || len(referencesOfRaw.sliceValue) == 0 {
@@ -1401,8 +1406,8 @@ func parseJsonConfigFileContentWorker(
 			}
 		}
 	}
-	includeSpecs := getPropFromRaw("include", func(element any) bool { return reflect.TypeOf(element).Kind() == reflect.String }, "string")
-	excludeSpecs := getPropFromRaw("exclude", func(element any) bool { return reflect.TypeOf(element).Kind() == reflect.String }, "string")
+	includeSpecs := getPropFromRaw("include", isStringValue, "string")
+	excludeSpecs := getPropFromRaw("exclude", isStringValue, "string")
 	isDefaultIncludeSpec := false
 	if excludeSpecs.wrongValue == "no-prop" && parsedConfig.options != nil {
 		outDir := parsedConfig.options.OutDir
@@ -1447,7 +1452,7 @@ func parseJsonConfigFileContentWorker(
 		}
 	}
 	if fileSpecs.sliceValue != nil {
-		fileSpecs := core.Filter(fileSpecs.sliceValue, func(spec any) bool { return reflect.TypeOf(spec).Kind() == reflect.String })
+		fileSpecs := core.Filter(fileSpecs.sliceValue, isStringValue)
 		for _, spec := range fileSpecs {
 			if spec, ok := spec.(string); ok {
 				validatedFilesSpecBeforeSubstitution = append(validatedFilesSpecBeforeSubstitution, spec)
@@ -1523,7 +1528,7 @@ func parseJsonConfigFileContentWorker(
 	}
 
 	fileNames, literalFileNamesLen := getFileNames(basePathForFileNames)
-	var compileOnSave *bool
+	compileOnSave := new(false)
 	if raw, ok := parsedConfig.raw.(*collections.OrderedMap[string, any]); ok {
 		if value, ok := raw.GetOrZero("compileOnSave").(bool); ok {
 			compileOnSave = &value
@@ -1584,15 +1589,16 @@ func validateSpecs(specs any, disallowTrailingRecursion bool, jsonSourceFile *as
 	}
 	var errors []*ast.Diagnostic
 	var finalSpecs []string
-	for _, spec := range specs.([]any) {
-		if reflect.TypeOf(spec).Kind() != reflect.String {
+	for _, value := range specs.([]any) {
+		spec, ok := value.(string)
+		if !ok {
 			continue
 		}
-		diag := specToDiagnostic(spec.(string), disallowTrailingRecursion)
+		diag := specToDiagnostic(spec, disallowTrailingRecursion)
 		if diag != nil {
-			errors = append(errors, createDiagnostic(diag, spec.(string)))
+			errors = append(errors, createDiagnostic(diag, spec))
 		} else {
-			finalSpecs = append(finalSpecs, spec.(string))
+			finalSpecs = append(finalSpecs, spec)
 		}
 	}
 	return finalSpecs, errors
