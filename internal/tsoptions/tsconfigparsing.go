@@ -903,6 +903,11 @@ func ParseJsonConfigFileContent(json any, host ParseConfigHost, basePath string,
 
 func normalizeJsonValue(value any) any {
 	switch value := value.(type) {
+	case *collections.OrderedMap[string, any]:
+		for key, child := range value.Entries() {
+			value.Set(key, normalizeJsonValue(child))
+		}
+		return value
 	case map[string]any:
 		result := collections.NewOrderedMapWithSizeHint[string, any](len(value))
 		for _, key := range slices.Sorted(maps.Keys(value)) {

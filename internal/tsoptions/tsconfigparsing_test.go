@@ -844,8 +844,13 @@ func TestParseJsonConfigFileContentAcceptsJsonRepresentations(t *testing.T) {
 	)
 	assert.Equal(t, len(parseErrors), 0)
 
+	orderedMapWithTypedSlices := &collections.OrderedMap[string, any]{}
+	orderedMapWithTypedSlices.Set("compilerOptions", map[string]any{"strict": true})
+	orderedMapWithTypedSlices.Set("files", []string{"index.ts"})
+
 	tests := map[string]any{
-		"ordered map": orderedMap,
+		"ordered map":                   orderedMap,
+		"ordered map with typed slices": orderedMapWithTypedSlices,
 		"plain map": map[string]any{
 			"compilerOptions": map[string]any{"strict": true},
 			"files":           []any{"index.ts"},
