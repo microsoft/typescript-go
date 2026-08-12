@@ -1422,35 +1422,57 @@ function generateIsGenerated(): string {
         out.push(`    ${t},`);
     }
     out.push(`} from "./ast.ts";`);
+    out.push(`import type { NodeHandle as AsyncNodeHandle } from "../api/async/api.ts";`);
+    out.push(`import type { NodeHandle as SyncNodeHandle } from "../api/sync/api.ts";`);
+    out.push(`type NodeHandleLike<out T extends Node> = { kind: SyntaxKind; resolve(...args: any): any; };`);
+    // Note that we must `& T` to satisfy the requirements of a type guard, and it must be _second_ so the narrowed `resolve` overload from the specialization is selected (order matters)
+    out.push(`type SpecializeNodeHandle<T extends NodeHandleLike<Node>, U extends Node> = T extends AsyncNodeHandle<any> ? AsyncNodeHandle<U> & T : SyncNodeHandle<U> & T;`);
     out.push(``);
 
     // ── Simple guards ──
     for (const g of guards) {
         out.push(`export function ${g.funcName}(node: Node): node is ${g.typeName} {`);
+        const functionContent = []
         if (g.kindAliasConstraint) {
             // Use the kind-level guard for nodes with a kind alias constraint
-            out.push(`    return ${kindGuardName(g.kindAliasConstraint)}(node.kind);`);
+            functionContent.push(`    return ${kindGuardName(g.kindAliasConstraint)}(node.kind);`);
         }
         else if (g.kindChecks.length === 1) {
-            out.push(`    return node.kind === ${g.kindChecks[0]};`);
+            functionContent.push(`    return node.kind === ${g.kindChecks[0]};`);
         }
         else {
-            out.push(`    switch (node.kind) {`);
+            functionContent.push(`    switch (node.kind) {`);
             for (const kindCheck of g.kindChecks) {
-                out.push(`        case ${kindCheck}:`);
+                functionContent.push(`        case ${kindCheck}:`);
             }
-            out.push(`            return true;`);
-            out.push(`        default:`);
-            out.push(`            return false;`);
-            out.push(`    }`);
+            functionContent.push(`            return true;`);
+            functionContent.push(`        default:`);
+            functionContent.push(`            return false;`);
+            functionContent.push(`    }`);
         }
+        out.push(...functionContent);
         out.push(`}`);
+        out.push(``);
+        out.push(`export declare namespace ${g.funcName} {`);
+        out.push(`    function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ${g.typeName}>;`);
+        out.push(`}`);
+        out.push(`${g.funcName}.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ${g.typeName}> => {`);
+        out.push(...functionContent);
+        out.push(`}`)
         out.push(``);
     }
 
     // ── Composite guards ──
     for (const g of compositeGuards) {
         out.push(`export function ${g.funcName}(node: Node): node is ${g.typeName} {`);
+        out.push(`    ${g.body}`);
+        out.push(`}`);
+        out.push(``);
+        out.push(`export declare namespace ${g.funcName} {`);
+        out.push(`    function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ${g.typeName}>;`);
+        out.push(`}`);
+        out.push(``);
+        out.push(`${g.funcName}.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ${g.typeName}> => {`);
         out.push(`    ${g.body}`);
         out.push(`}`);
         out.push(``);
@@ -1480,7 +1502,16 @@ function generateIsGenerated(): string {
     // ── Token alias guards ──
     for (const g of tokenAliasGuards) {
         const returnType = g.isRangeBased ? `boolean` : `node is ${g.typeName}`;
+        const handleReturnType = g.isRangeBased ? `boolean` : `node is SpecializeNodeHandle<T, ${g.typeName}>`;
         out.push(`export function ${g.funcName}(node: Node): ${returnType} {`);
+        out.push(`    ${g.body}`);
+        out.push(`}`);
+        out.push(``);
+        out.push(`export declare namespace ${g.funcName} {`);
+        out.push(`    function Handle<T extends NodeHandleLike<Node>>(node: T): ${handleReturnType};`);
+        out.push(`}`);
+        out.push(``);
+        out.push(`${g.funcName}.Handle = <T extends NodeHandleLike<Node>>(node: T): ${handleReturnType} => {`);
         out.push(`    ${g.body}`);
         out.push(`}`);
         out.push(``);
