@@ -71,16 +71,17 @@ relative to normal order, again with four checkers. Therefore stream order is pa
 of the policy below, rather than an incidental implementation detail.
 */
 
-// Count 100 bytes of source text as one AST-node unit. NodeCount captures normal
-// syntax well; the text term keeps large literals, comments, and generated files
-// from appearing artificially cheap without allowing raw byte length to dominate.
-const checkerAssociationTextWeightDivisor = 100
-
 /*
-The remaining constants are empirical safety factors for a work proxy that cannot
-observe future semantic cache construction. They were swept across VS Code,
-TypeScript, MUI docs, and XState with 2, 4, and 8 checkers:
+The constants below are empirical safety factors for a work proxy that cannot
+observe future semantic cache construction. They were swept across representative
+projects including VS Code, TypeScript, MUI docs, XState, and Bluesky, with 2, 4,
+and 8 checkers:
 
+  - 100-byte text weight divisor: among 25, 50, 75, 80, 90, 100, 110, 125, 150,
+    200, and 400, this kept large literals, comments, and generated files from
+    appearing artificially cheap without allowing raw byte length to dominate.
+    Nearby values occasionally improved one project, but 100 was the most robust
+    setting, particularly on VS Code and MUI docs.
   - 4x source-file weight: among 2x, 3x, 4x, 5x, and 8x, this best balanced
     declaration-heavy projects without losing the locality benefit.
   - 16x FENNEL penalty: 1x, 2x, 4x, 8x, 12x, 16x, 20x, 24x, 32x, and 64x were
@@ -97,6 +98,7 @@ Rebenchmark the vscode, self-compiler, mui-docs, and xstate-main scenarios in th
 TypeScript-benchmarking repository at 2, 4, and 8 checkers before changing them.
 */
 const (
+	checkerAssociationTextWeightDivisor            = 100
 	checkerAssociationSourceFileWeightMultiplier   = 4
 	checkerAssociationBalancePenaltyMultiplier     = 16
 	checkerAssociationPrioritizedSourcePenalty     = 12
