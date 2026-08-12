@@ -147,6 +147,18 @@ interface EmitOutputResponse {
     readonly outputFiles: readonly (EmitOutputFile & { readonly fileName: string; })[];
 }
 
+export interface TranspileOptions {
+    compilerOptions?: CompilerOptions;
+    fileName?: string;
+    reportDiagnostics?: boolean;
+}
+
+export interface TranspileOutput {
+    outputText: string;
+    diagnostics?: readonly Diagnostic[];
+    sourceMapText?: string;
+}
+
 export class API<FromLSP extends boolean = false> {
     private client: Client;
     private sourceFileCache: SourceFileCache;
@@ -205,6 +217,26 @@ export class API<FromLSP extends boolean = false> {
     ): ParsedCommandLine {
         this.ensureInitialized();
         return this.client.apiRequest<ParsedCommandLine>("parseJsonConfigFileContent", { json, ...options });
+    }
+
+    transpileModule(input: string, options: TranspileOptions = {}): TranspileOutput {
+        this.ensureInitialized();
+        return this.client.apiRequest<TranspileOutput>("transpileModule", { input, options });
+    }
+
+    transpileModuleFromFile(fileName: string, options: TranspileOptions = {}): TranspileOutput {
+        this.ensureInitialized();
+        return this.client.apiRequest<TranspileOutput>("transpileModuleFromFile", { fileName, options });
+    }
+
+    transpileDeclaration(input: string, options: TranspileOptions = {}): TranspileOutput {
+        this.ensureInitialized();
+        return this.client.apiRequest<TranspileOutput>("transpileDeclaration", { input, options });
+    }
+
+    transpileDeclarationFromFile(fileName: string, options: TranspileOptions = {}): TranspileOutput {
+        this.ensureInitialized();
+        return this.client.apiRequest<TranspileOutput>("transpileDeclarationFromFile", { fileName, options });
     }
 
     updateSnapshot(params?: FromLSP extends true ? LSPUpdateSnapshotParams : UpdateSnapshotParams): Snapshot {
