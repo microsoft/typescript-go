@@ -4753,6 +4753,26 @@ func (f *FourslashTest) VerifyRenameSucceeded(t *testing.T, preferences *lsutil.
 	}
 }
 
+func (f *FourslashTest) VerifyRenameRange(t *testing.T, expectedRange lsproto.Range, expectedPlaceholder string, preferences *lsutil.UserPreferences) {
+	t.Helper()
+	if preferences != nil {
+		defer f.ConfigureWithReset(t, *preferences)()
+	}
+	params := &lsproto.PrepareRenameParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+	}
+
+	result := sendRequest(t, f, lsproto.TextDocumentPrepareRenameInfo, params)
+	if result.PrepareRenamePlaceholder == nil {
+		t.Fatal(f.getCurrentPositionPrefix() + "Expected prepareRename to return a range and placeholder")
+	}
+	assert.DeepEqual(t, result.PrepareRenamePlaceholder.Range, expectedRange)
+	assert.Equal(t, result.PrepareRenamePlaceholder.Placeholder, expectedPlaceholder)
+}
+
 func (f *FourslashTest) RenameAtCaret(t *testing.T, newName string) lsproto.RenameResponse {
 	t.Helper()
 	result := sendRequest(t, f, lsproto.TextDocumentRenameInfo, &lsproto.RenameParams{
@@ -5571,7 +5591,12 @@ func (f *FourslashTest) VerifyWorkspaceSymbol(t *testing.T, cases []*VerifyWorks
 			preferences = new(lsutil.NewDefaultUserPreferences())
 		}
 		f.Configure(t, *preferences)
-		result := sendRequest(t, f, lsproto.WorkspaceSymbolInfo, &lsproto.WorkspaceSymbolParams{Query: testCase.Pattern})
+		result := sendRequest(t, f, lsproto.WorkspaceSymbolInfo, &lsproto.WorkspaceSymbolParams{
+			Query: testCase.Pattern,
+			TextDocument: &lsproto.TextDocumentIdentifier{
+				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+			},
+		})
 		if result.SymbolInformations == nil {
 			t.Fatalf("Expected non-nil symbol information array from workspace symbol request")
 		}

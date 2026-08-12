@@ -27,6 +27,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/project"
+	"github.com/microsoft/typescript-go/internal/transpile"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -589,6 +590,14 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleUpdateTemporarySnapshot(ctx, parsed.(*UpdateTemporarySnapshotParams))
 	case string(MethodParseConfigFile):
 		return s.handleParseConfigFile(ctx, parsed.(*ParseConfigFileParams))
+	case string(MethodTranspileModule):
+		return s.handleTranspile(ctx, parsed.(*TranspileParams), false)
+	case string(MethodTranspileModuleFromFile):
+		return s.handleTranspileFromFile(ctx, parsed.(*TranspileFromFileParams), false)
+	case string(MethodTranspileDeclaration):
+		return s.handleTranspile(ctx, parsed.(*TranspileParams), true)
+	case string(MethodTranspileDeclarationFromFile):
+		return s.handleTranspileFromFile(ctx, parsed.(*TranspileFromFileParams), true)
 	case string(MethodGetDefaultProjectForFile):
 		return s.handleGetDefaultProjectForFile(ctx, parsed.(*GetDefaultProjectForFileParams))
 	case string(MethodGetSourceFile):
@@ -597,6 +606,10 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetSourceFileNames(ctx, parsed.(*GetSourceFileNamesParams))
 	case string(MethodGetSourceFileMetadata):
 		return s.handleGetSourceFileMetadata(ctx, parsed.(*GetSourceFileParams))
+	case string(MethodGetConfigFileNames):
+		return s.handleGetConfigFileNames(ctx, parsed.(*GetProjectDiagnosticsParams))
+	case string(MethodGetConfigSourceFile):
+		return s.handleGetConfigSourceFile(ctx, parsed.(*GetSourceFileParams))
 	case string(MethodGetSymbolAtPosition):
 		return s.handleGetSymbolAtPosition(ctx, parsed.(*GetSymbolAtPositionParams))
 	case string(MethodGetSymbolsAtPositions):
@@ -1131,11 +1144,46 @@ func (s *Session) handleParseConfigFile(ctx context.Context, params *ParseConfig
 		nil, /*extraFileExtensions*/
 		nil, /*extendedConfigCache*/
 	)
+	return NewConfigFileResponse(parsedCommandLine), nil
+}
 
-	return &ConfigFileResponse{
-		FileNames:         parsedCommandLine.FileNames(),
-		Options:           parsedCommandLine.CompilerOptions(),
-		ProjectReferences: parsedCommandLine.ProjectReferences(),
+func (s *Session) handleTranspile(ctx context.Context, params *TranspileParams, declaration bool) (*TranspileOutputResponse, error) {
+	return transpileOutput(ctx, params.Input, params.Options, declaration)
+}
+
+func (s *Session) handleTranspileFromFile(ctx context.Context, params *TranspileFromFileParams, declaration bool) (*TranspileOutputResponse, error) {
+	fileName := tspath.GetNormalizedAbsolutePath(params.FileName, s.projectSession.GetCurrentDirectory())
+	input, ok := s.projectSession.FS().ReadFile(fileName)
+	if !ok {
+		return nil, fmt.Errorf("%w: could not read file %q", ErrClientError, fileName)
+	}
+	options := params.Options
+	options.FileName = fileName
+	return transpileOutput(ctx, input, options, declaration)
+}
+
+func transpileOutput(ctx context.Context, input string, options TranspileOptions, declaration bool) (*TranspileOutputResponse, error) {
+	transpileOptions := transpile.Options{
+		CompilerOptions:   options.CompilerOptions,
+		FileName:          options.FileName,
+		ReportDiagnostics: options.ReportDiagnostics,
+	}
+	var output *transpile.Output
+	if declaration {
+		output = transpile.TranspileDeclaration(ctx, input, transpileOptions)
+	} else {
+		output = transpile.TranspileModule(ctx, input, transpileOptions)
+	}
+	if output == nil {
+		if err := ctx.Err(); err != nil {
+			return nil, err
+		}
+		return nil, errors.New("transpilation produced no output")
+	}
+	return &TranspileOutputResponse{
+		OutputText:    output.OutputText,
+		Diagnostics:   NewDiagnosticResponses(output.Diagnostics),
+		SourceMapText: output.SourceMapText,
 	}, nil
 }
 
@@ -1151,7 +1199,74 @@ func (s *Session) handleGetSourceFile(ctx context.Context, params *GetSourceFile
 		return nil, err
 	}
 
-	sourceFile := program.GetSourceFile(params.File.ToFileName())
+	return s.encodeSourceFileResponse(program.GetSourceFile(params.File.ToFileName()))
+}
+
+// handleGetConfigFileNames returns tsconfig file names associated with the project's command line.
+func (s *Session) handleGetConfigFileNames(ctx context.Context, params *GetProjectDiagnosticsParams) ([]string, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	commandLine := program.CommandLine()
+	if commandLine == nil || commandLine.ConfigFile == nil || commandLine.ConfigFile.SourceFile == nil {
+		return nil, nil
+	}
+
+	extendedFiles := commandLine.ExtendedSourceFiles()
+	configFiles := make([]string, 0, len(extendedFiles)+1)
+	configFiles = append(configFiles, commandLine.ConfigFile.SourceFile.FileName())
+	configFiles = append(configFiles, extendedFiles...)
+	return configFiles, nil
+}
+
+// handleGetConfigSourceFile returns a tsconfig source file associated with the project's command line.
+func (s *Session) handleGetConfigSourceFile(ctx context.Context, params *GetSourceFileParams) (any, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	commandLine := program.CommandLine()
+	if commandLine == nil || commandLine.ConfigFile == nil || commandLine.ConfigFile.SourceFile == nil {
+		return s.encodeSourceFileResponse(nil)
+	}
+
+	requestedPath := tspath.ToPath(params.File.ToFileName(), program.GetCurrentDirectory(), program.UseCaseSensitiveFileNames())
+	rootConfigSourceFile := commandLine.ConfigFile.SourceFile
+	if rootConfigSourceFile.Path() == requestedPath {
+		return s.encodeSourceFileResponse(rootConfigSourceFile)
+	}
+
+	for _, configFileName := range commandLine.ExtendedSourceFiles() {
+		if tspath.ToPath(configFileName, program.GetCurrentDirectory(), program.UseCaseSensitiveFileNames()) != requestedPath {
+			continue
+		}
+
+		configFileContent, ok := sd.snapshot.ReadFile(configFileName)
+		if !ok {
+			return s.encodeSourceFileResponse(nil)
+		}
+
+		configSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(configFileName, requestedPath, configFileContent)
+		return s.encodeSourceFileResponse(configSourceFile.SourceFile)
+	}
+
+	return s.encodeSourceFileResponse(nil)
+}
+
+func (s *Session) encodeSourceFileResponse(sourceFile *ast.SourceFile) (any, error) {
 	if sourceFile == nil {
 		if s.useBinaryResponses {
 			return RawBinary(nil), nil
@@ -1165,7 +1280,6 @@ func (s *Session) handleGetSourceFile(ctx context.Context, params *GetSourceFile
 		return nil, fmt.Errorf("failed to encode source file: %w", err)
 	}
 
-	// Return raw binary for msgpack protocol, or base64 for JSON
 	if s.useBinaryResponses {
 		return RawBinary(data), nil
 	}
