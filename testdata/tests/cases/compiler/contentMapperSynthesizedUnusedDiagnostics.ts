@@ -1,0 +1,27 @@
+// @loadExternalPlugins: true
+// @noTypesAndSymbols: true
+
+// @Filename: /tsconfig.json
+{
+    "compilerOptions": {
+        "target": "es2020",
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "strict": true,
+        "noUnusedLocals": true
+    },
+    "contentMappers": [
+        { "package": "mapper", "extensions": [".box"] }
+    ]
+}
+
+// @Filename: /node_modules/mapper/package.json
+{
+    "name": "mapper",
+    "version": "1.0.0",
+    "tsContentMapper": { "exec": ["compiler-test-mapper"], "extensions": { ".box": ".ts" }, "compilerOptions": ["target", "jsx"] }
+}
+
+// @Filename: /widget.box
+const mappedUnused = 1;
+export {};

@@ -27,6 +27,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/symlinks"
 	"github.com/microsoft/typescript-go/internal/tracing"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -644,7 +645,7 @@ func (p *Program) collectDiagnostics(ctx context.Context, sourceFile *ast.Source
 		diagnostics := p.collectDiagnosticsFromFiles(ctx, p.files, concurrent, collect)
 		result = slices.Concat(diagnostics...)
 	}
-	return SortAndDeduplicateDiagnostics(result)
+	return filterAndSortDiagnostics(result)
 }
 
 func (p *Program) collectDiagnosticsFromFiles(ctx context.Context, sourceFiles []*ast.SourceFile, concurrent bool, collect func(context.Context, *ast.SourceFile) []*ast.Diagnostic) [][]*ast.Diagnostic {
@@ -672,9 +673,20 @@ func (p *Program) collectCheckerDiagnostics(ctx context.Context, sourceFile *ast
 		c, done := p.GetTypeCheckerForFileExclusive(ctx, sourceFile)
 		result := collect(ctx, c, sourceFile)
 		done()
-		return SortAndDeduplicateDiagnostics(result)
+		return filterAndSortDiagnostics(result)
 	}
-	return SortAndDeduplicateDiagnostics(slices.Concat(p.collectCheckerDiagnosticsFromFiles(ctx, p.files, collect)...))
+	return filterAndSortDiagnostics(slices.Concat(p.collectCheckerDiagnosticsFromFiles(ctx, p.files, collect)...))
+}
+
+func filterAndSortDiagnostics(diags []*ast.Diagnostic) []*ast.Diagnostic {
+	return SortAndDeduplicateDiagnostics(core.Filter(diags, func(diag *ast.Diagnostic) bool {
+		file := diag.File()
+		if !diag.ReportsUnnecessary() || file == nil || file.SpanMap() == nil || diag.Source() != "" {
+			return true
+		}
+		_, fidelity := file.SpanMap().VirtualToOriginalSpan(diag.Loc())
+		return fidelity != spanmap.FidelityNone
+	}))
 }
 
 // collectCheckerDiagnosticsFromFiles collects checker diagnostics for a list of files.
@@ -764,7 +776,7 @@ func (p *Program) GetSemanticDiagnosticsWithoutNoEmitFiltering(ctx context.Conte
 	allDiags := p.collectCheckerDiagnosticsFromFiles(ctx, sourceFiles, p.getBindAndCheckDiagnosticsWithChecker)
 	result := make(map[*ast.SourceFile][]*ast.Diagnostic, len(sourceFiles))
 	for i, diags := range allDiags {
-		result[sourceFiles[i]] = SortAndDeduplicateDiagnostics(diags)
+		result[sourceFiles[i]] = filterAndSortDiagnostics(diags)
 	}
 	return result
 }
