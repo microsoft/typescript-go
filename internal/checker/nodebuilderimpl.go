@@ -2461,7 +2461,7 @@ func (b *NodeBuilderImpl) getPropertyNameNodeForSymbolFromNameType(symbol *ast.S
 		return nil
 	}
 	enumEnclosingDeclaration := enclosingDeclaration
-	if b.ctx.enclosingFile != nil {
+	if enumEnclosingDeclaration == nil && b.ctx.enclosingFile != nil {
 		enumEnclosingDeclaration = b.ctx.enclosingFile.AsNode()
 	}
 	if nameType.flags&TypeFlagsEnumLiteral != 0 {
@@ -2469,8 +2469,8 @@ func (b *NodeBuilderImpl) getPropertyNameNodeForSymbolFromNameType(symbol *ast.S
 		if enumSymbol == nil {
 			enumSymbol = nameType.symbol
 		}
-		if enumEnclosingDeclaration == nil ||
-			len(b.ch.getAccessibleSymbolChain(enumSymbol, enumEnclosingDeclaration, ast.SymbolFlagsValue, false)) > 0 {
+		if enumEnclosingDeclaration != nil &&
+			b.ch.IsSymbolAccessibleByFlags(enumSymbol, enumEnclosingDeclaration, ast.SymbolFlagsValue) {
 			saveEnclosingDeclaration := b.ctx.enclosingDeclaration
 			b.ctx.enclosingDeclaration = enumEnclosingDeclaration
 			result := b.f.NewComputedPropertyName(b.symbolToExpression(nameType.symbol, ast.SymbolFlagsValue))

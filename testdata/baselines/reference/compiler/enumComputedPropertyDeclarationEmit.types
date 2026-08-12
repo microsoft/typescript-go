@@ -101,3 +101,41 @@ export type StringDemo<T extends StringKey> = Assignability<T>;
 export type NumericDemo<T extends NumericKey> = Assignability<T>;
 >NumericDemo : T
 
+export namespace Namespace {
+>Namespace : typeof Namespace
+
+    enum NamespaceEnum {
+>NamespaceEnum : NamespaceEnum
+
+        A = "a",
+>A : NamespaceEnum.A
+>"a" : "a"
+    }
+
+    export const record = {
+>record : { readonly [NamespaceEnum.A]: NamespaceEnum; }
+>{        [NamespaceEnum.A]: NamespaceEnum.A,    } as const : { readonly [NamespaceEnum.A]: NamespaceEnum; }
+>{        [NamespaceEnum.A]: NamespaceEnum.A,    } : { readonly [NamespaceEnum.A]: NamespaceEnum; }
+
+        [NamespaceEnum.A]: NamespaceEnum.A,
+>[NamespaceEnum.A] : NamespaceEnum
+>NamespaceEnum.A : NamespaceEnum
+>NamespaceEnum : typeof NamespaceEnum
+>A : NamespaceEnum
+>NamespaceEnum.A : NamespaceEnum
+>NamespaceEnum : typeof NamespaceEnum
+>A : NamespaceEnum
+
+    } as const;
+
+    export type Key = keyof typeof record;
+>Key : NamespaceEnum.A
+>record : { readonly [NamespaceEnum.A]: NamespaceEnum; }
+
+    type NamespaceAssignability<T extends NamespaceEnum> = T;
+>NamespaceAssignability : T
+
+    export type Demo<T extends Key> = NamespaceAssignability<T>;
+>Demo : T
+}
+

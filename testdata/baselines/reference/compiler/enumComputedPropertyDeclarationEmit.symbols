@@ -104,3 +104,46 @@ export type NumericDemo<T extends NumericKey> = Assignability<T>;
 >Assignability : Symbol(Assignability, Decl(enumComputedPropertyDeclarationEmit.ts, 24, 52))
 >T : Symbol(T, Decl(enumComputedPropertyDeclarationEmit.ts, 28, 24))
 
+export namespace Namespace {
+>Namespace : Symbol(Namespace, Decl(enumComputedPropertyDeclarationEmit.ts, 28, 65))
+
+    enum NamespaceEnum {
+>NamespaceEnum : Symbol(NamespaceEnum, Decl(enumComputedPropertyDeclarationEmit.ts, 30, 28))
+
+        A = "a",
+>A : Symbol(NamespaceEnum.A, Decl(enumComputedPropertyDeclarationEmit.ts, 31, 24))
+    }
+
+    export const record = {
+>record : Symbol(record, Decl(enumComputedPropertyDeclarationEmit.ts, 35, 16))
+
+        [NamespaceEnum.A]: NamespaceEnum.A,
+>[NamespaceEnum.A] : Symbol([NamespaceEnum.A], Decl(enumComputedPropertyDeclarationEmit.ts, 35, 27))
+>NamespaceEnum.A : Symbol(NamespaceEnum.A, Decl(enumComputedPropertyDeclarationEmit.ts, 31, 24))
+>NamespaceEnum : Symbol(NamespaceEnum, Decl(enumComputedPropertyDeclarationEmit.ts, 30, 28))
+>A : Symbol(NamespaceEnum.A, Decl(enumComputedPropertyDeclarationEmit.ts, 31, 24))
+>NamespaceEnum.A : Symbol(NamespaceEnum.A, Decl(enumComputedPropertyDeclarationEmit.ts, 31, 24))
+>NamespaceEnum : Symbol(NamespaceEnum, Decl(enumComputedPropertyDeclarationEmit.ts, 30, 28))
+>A : Symbol(NamespaceEnum.A, Decl(enumComputedPropertyDeclarationEmit.ts, 31, 24))
+
+    } as const;
+>const : Symbol(const)
+
+    export type Key = keyof typeof record;
+>Key : Symbol(Key, Decl(enumComputedPropertyDeclarationEmit.ts, 37, 15))
+>record : Symbol(record, Decl(enumComputedPropertyDeclarationEmit.ts, 35, 16))
+
+    type NamespaceAssignability<T extends NamespaceEnum> = T;
+>NamespaceAssignability : Symbol(NamespaceAssignability, Decl(enumComputedPropertyDeclarationEmit.ts, 39, 42))
+>T : Symbol(T, Decl(enumComputedPropertyDeclarationEmit.ts, 41, 32))
+>NamespaceEnum : Symbol(NamespaceEnum, Decl(enumComputedPropertyDeclarationEmit.ts, 30, 28))
+>T : Symbol(T, Decl(enumComputedPropertyDeclarationEmit.ts, 41, 32))
+
+    export type Demo<T extends Key> = NamespaceAssignability<T>;
+>Demo : Symbol(Demo, Decl(enumComputedPropertyDeclarationEmit.ts, 41, 61))
+>T : Symbol(T, Decl(enumComputedPropertyDeclarationEmit.ts, 42, 21))
+>Key : Symbol(Key, Decl(enumComputedPropertyDeclarationEmit.ts, 37, 15))
+>NamespaceAssignability : Symbol(NamespaceAssignability, Decl(enumComputedPropertyDeclarationEmit.ts, 39, 42))
+>T : Symbol(T, Decl(enumComputedPropertyDeclarationEmit.ts, 42, 21))
+}
+

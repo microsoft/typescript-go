@@ -31,6 +31,21 @@ type Assignability<T extends StringEnum | NumericEnum> = T;
 export type StringDemo<T extends StringKey> = Assignability<T>;
 export type NumericDemo<T extends NumericKey> = Assignability<T>;
 
+export namespace Namespace {
+    enum NamespaceEnum {
+        A = "a",
+    }
+
+    export const record = {
+        [NamespaceEnum.A]: NamespaceEnum.A,
+    } as const;
+
+    export type Key = keyof typeof record;
+
+    type NamespaceAssignability<T extends NamespaceEnum> = T;
+    export type Demo<T extends Key> = NamespaceAssignability<T>;
+}
+
 
 //// [enumComputedPropertyDeclarationEmit.js]
 export var StringEnum;
@@ -53,6 +68,16 @@ export const numericRecord = {
     [NumericEnum.Zero]: NumericEnum.Zero,
     [NumericEnum.Negative]: NumericEnum.Negative,
 };
+export var Namespace;
+(function (Namespace) {
+    let NamespaceEnum;
+    (function (NamespaceEnum) {
+        NamespaceEnum["A"] = "a";
+    })(NamespaceEnum || (NamespaceEnum = {}));
+    Namespace.record = {
+        [NamespaceEnum.A]: NamespaceEnum.A,
+    };
+})(Namespace || (Namespace = {}));
 
 
 //// [enumComputedPropertyDeclarationEmit.d.ts]
@@ -79,4 +104,16 @@ export type NumericKey = keyof typeof numericRecord;
 type Assignability<T extends StringEnum | NumericEnum> = T;
 export type StringDemo<T extends StringKey> = Assignability<T>;
 export type NumericDemo<T extends NumericKey> = Assignability<T>;
+export declare namespace Namespace {
+    enum NamespaceEnum {
+        A = "a"
+    }
+    export const record: {
+        readonly [NamespaceEnum.A]: NamespaceEnum;
+    };
+    export type Key = keyof typeof record;
+    type NamespaceAssignability<T extends NamespaceEnum> = T;
+    export type Demo<T extends Key> = NamespaceAssignability<T>;
+    export {};
+}
 export {};
