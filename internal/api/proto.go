@@ -72,6 +72,9 @@ const (
 	MethodInitialize               Method = "initialize"
 	MethodUpdateSnapshot           Method = "updateSnapshot"
 	MethodUpdateTemporarySnapshot  Method = "updateTemporarySnapshot"
+	MethodParseCommandLine         Method = "parseCommandLine"
+	MethodReadConfigFile           Method = "readConfigFile"
+	MethodParseJsonConfigFile      Method = "parseJsonConfigFileContent"
 	MethodParseConfigFile          Method = "parseConfigFile"
 	MethodGetDefaultProjectForFile Method = "getDefaultProjectForFile"
 	MethodGetSymbolAtPosition      Method = "getSymbolAtPosition"
@@ -389,6 +392,9 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodInitialize:               noParams,
 	MethodUpdateSnapshot:           unmarshallerFor[UpdateSnapshotParams],
 	MethodUpdateTemporarySnapshot:  unmarshallerFor[UpdateTemporarySnapshotParams],
+	MethodParseCommandLine:         unmarshallerFor[ParseCommandLineParams],
+	MethodReadConfigFile:           unmarshallerFor[ReadConfigFileParams],
+	MethodParseJsonConfigFile:      unmarshallerFor[ParseJsonConfigFileContentParams],
 	MethodParseConfigFile:          unmarshallerFor[ParseConfigFileParams],
 	MethodGetDefaultProjectForFile: unmarshallerFor[GetDefaultProjectForFileParams],
 	MethodGetSourceFile:            unmarshallerFor[GetSourceFileParams],
@@ -519,6 +525,75 @@ type ParseConfigFileParams struct {
 	File DocumentIdentifier `json:"file"`
 }
 
+type ParseCommandLineParams struct {
+	CommandLine []string `json:"commandLine"`
+}
+
+type ReadConfigFileParams struct {
+	File DocumentIdentifier `json:"file"`
+}
+
+type OrderedJSONValue struct {
+	Value any
+}
+
+var _ json.UnmarshalerFrom = (*OrderedJSONValue)(nil)
+
+func (v *OrderedJSONValue) UnmarshalJSONFrom(dec *json.Decoder) error {
+	switch dec.PeekKind() {
+	case 'n':
+		_, err := dec.ReadToken()
+		v.Value = nil
+		return err
+	case '{':
+		if _, err := dec.ReadToken(); err != nil {
+			return err
+		}
+		object := &collections.OrderedMap[string, any]{}
+		for dec.PeekKind() != '}' {
+			var key string
+			if err := json.UnmarshalDecode(dec, &key); err != nil {
+				return err
+			}
+			var child OrderedJSONValue
+			if err := json.UnmarshalDecode(dec, &child); err != nil {
+				return err
+			}
+			object.Set(key, child.Value)
+		}
+		if _, err := dec.ReadToken(); err != nil {
+			return err
+		}
+		v.Value = object
+		return nil
+	case '[':
+		if _, err := dec.ReadToken(); err != nil {
+			return err
+		}
+		var array []any
+		for dec.PeekKind() != ']' {
+			var child OrderedJSONValue
+			if err := json.UnmarshalDecode(dec, &child); err != nil {
+				return err
+			}
+			array = append(array, child.Value)
+		}
+		if _, err := dec.ReadToken(); err != nil {
+			return err
+		}
+		v.Value = array
+		return nil
+	default:
+		return json.UnmarshalDecode(dec, &v.Value)
+	}
+}
+
+type ParseJsonConfigFileContentParams struct {
+	JSON            OrderedJSONValue    `json:"json"`
+	ConfigDirectory *string             `json:"configDirectory,omitempty"`
+	ConfigFileName  *DocumentIdentifier `json:"configFileName,omitempty"`
+}
+
 // ReleaseParams are the parameters for the release method.
 type ReleaseParams struct {
 	Snapshot SnapshotID `json:"snapshot"`
@@ -535,9 +610,27 @@ type ProfileResult struct {
 type ConfigFileResponse struct {
 	FileNames         []string                 `json:"fileNames"`
 	Options           *core.CompilerOptions    `json:"options"`
+	WatchOptions      *WatchOptionsResponse    `json:"watchOptions,omitempty"`
 	ProjectReferences []*core.ProjectReference `json:"projectReferences,omitempty"`
 	TypeAcquisition   *core.TypeAcquisition    `json:"typeAcquisition,omitempty"`
 	CompileOnSave     *bool                    `json:"compileOnSave,omitempty"`
+	Raw               any                      `json:"raw,omitempty"`
+	Errors            []*DiagnosticResponse    `json:"errors"`
+}
+
+type WatchOptionsResponse struct {
+	Interval        *int                     `json:"watchInterval,omitempty"`
+	FileKind        *core.WatchFileKind      `json:"watchFile,omitempty"`
+	DirectoryKind   *core.WatchDirectoryKind `json:"watchDirectory,omitempty"`
+	FallbackPolling *core.PollingKind        `json:"fallbackPolling,omitempty"`
+	SyncWatchDir    *bool                    `json:"synchronousWatchDirectory,omitempty"`
+	ExcludeDir      []string                 `json:"excludeDirectories,omitempty"`
+	ExcludeFiles    []string                 `json:"excludeFiles,omitempty"`
+}
+
+type ReadConfigFileResponse struct {
+	Config any                 `json:"config"`
+	Error  *DiagnosticResponse `json:"error,omitempty"`
 }
 
 type GetDefaultProjectForFileParams struct {
@@ -566,13 +659,82 @@ func NewConfigFileResponse(parsedCommandLine *tsoptions.ParsedCommandLine) *Conf
 		}
 	}
 	compilerOptions := parsedCommandLine.CompilerOptions()
+	errors := NewDiagnosticResponses(parsedCommandLine.Errors)
+	if errors == nil {
+		errors = []*DiagnosticResponse{}
+	}
 	return &ConfigFileResponse{
 		FileNames:         parsedCommandLine.FileNames(),
 		Options:           compilerOptions,
+		WatchOptions:      NewWatchOptionsResponse(parsedCommandLine.ParsedConfig.WatchOptions),
 		ProjectReferences: parsedCommandLine.ProjectReferences(),
 		TypeAcquisition:   parsedCommandLine.TypeAcquisition(),
 		CompileOnSave:     compileOnSave,
+		Raw:               toProtocolJSONValue(parsedCommandLine.Raw),
+		Errors:            errors,
 	}
+}
+
+func toProtocolJSONValue(value any) any {
+	switch value := value.(type) {
+	case core.WatchFileKind:
+		return int(value) - 1
+	case core.WatchDirectoryKind:
+		return int(value) - 1
+	case core.PollingKind:
+		return int(value) - 1
+	case *collections.OrderedMap[string, any]:
+		result := collections.NewOrderedMapWithSizeHint[string, any](value.Size())
+		for key, child := range value.Entries() {
+			result.Set(key, toProtocolJSONValue(child))
+		}
+		return result
+	case []any:
+		result := make([]any, len(value))
+		for i, child := range value {
+			result[i] = toProtocolJSONValue(child)
+		}
+		return result
+	default:
+		return value
+	}
+}
+
+func NewWatchOptionsResponse(options *core.WatchOptions) *WatchOptionsResponse {
+	if options == nil {
+		return nil
+	}
+	response := &WatchOptionsResponse{
+		Interval:     options.Interval,
+		ExcludeDir:   options.ExcludeDir,
+		ExcludeFiles: options.ExcludeFiles,
+	}
+	if options.FileKind != core.WatchFileKindNone {
+		fileKind := options.FileKind - 1
+		response.FileKind = &fileKind
+	}
+	if options.DirectoryKind != core.WatchDirectoryKindNone {
+		directoryKind := options.DirectoryKind - 1
+		response.DirectoryKind = &directoryKind
+	}
+	if options.FallbackPolling != core.PollingKindNone {
+		fallbackPolling := options.FallbackPolling - 1
+		response.FallbackPolling = &fallbackPolling
+	}
+	if !options.SyncWatchDir.IsUnknown() {
+		syncWatchDir := options.SyncWatchDir.IsTrue()
+		response.SyncWatchDir = &syncWatchDir
+	}
+	if response.Interval == nil &&
+		response.FileKind == nil &&
+		response.DirectoryKind == nil &&
+		response.FallbackPolling == nil &&
+		response.SyncWatchDir == nil &&
+		len(response.ExcludeDir) == 0 &&
+		len(response.ExcludeFiles) == 0 {
+		return nil
+	}
+	return response
 }
 
 func NewProjectResponse(p *project.Project) *ProjectResponse {

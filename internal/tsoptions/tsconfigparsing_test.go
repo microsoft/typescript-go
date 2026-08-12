@@ -6,11 +6,13 @@ import (
 	"io/fs"
 	"maps"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
@@ -826,6 +828,97 @@ func TestParseJsonConfigFileContent(t *testing.T) {
 			baselineParseConfigWith(t, rec.title+" with json api.js", rec.noSubmoduleBaseline, rec.input, getParsedWithJsonApi)
 		})
 	}
+}
+
+func TestParseJsonConfigFileContentAcceptsJsonRepresentations(t *testing.T) {
+	t.Parallel()
+
+	host := tsoptionstest.NewVFSParseConfigHost(map[string]string{
+		"/project/index.ts": "export {};",
+	}, "/project", true /*useCaseSensitiveFileNames*/)
+
+	orderedMap, parseErrors := tsoptions.ParseConfigFileTextToJson(
+		"/project/tsconfig.json",
+		"/project/tsconfig.json",
+		`{"compilerOptions":{"strict":true},"files":["index.ts"]}`,
+	)
+	assert.Equal(t, len(parseErrors), 0)
+
+	tests := map[string]any{
+		"ordered map": orderedMap,
+		"plain map": map[string]any{
+			"compilerOptions": map[string]any{"strict": true},
+			"files":           []any{"index.ts"},
+		},
+	}
+	for name, json := range tests {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			parsed := tsoptions.ParseJsonConfigFileContent(
+				json,
+				host,
+				"/project",
+				nil,
+				"/project/tsconfig.json",
+				nil, /*resolutionStack*/
+				nil, /*extraFileExtensions*/
+				nil, /*extendedConfigCache*/
+			)
+			assert.DeepEqual(t, parsed.FileNames(), []string{"/project/index.ts"})
+			assert.Assert(t, parsed.CompilerOptions().Strict.IsTrue())
+			assert.Equal(t, len(parsed.Errors), 0)
+		})
+	}
+}
+
+func TestParseJsonConfigFileContentPreservesRawAndParsesWatchOptions(t *testing.T) {
+	t.Parallel()
+
+	host := tsoptionstest.NewVFSParseConfigHost(map[string]string{
+		"/project/index.ts": "export {};",
+		"/project/config/base.json": `{
+			"watchOptions": {
+				"watchFile": "useFsEvents",
+				"synchronousWatchDirectory": true,
+				"excludeDirectories": ["${configDir}/generated"],
+				"excludeFiles": ["${configDir}/base.ts"]
+			}
+		}`,
+	}, "/project", true /*useCaseSensitiveFileNames*/)
+
+	parsed := tsoptions.ParseJsonConfigFileContent(
+		map[string]any{
+			"watchOptions": map[string]any{
+				"watchInterval":             float64(250),
+				"synchronousWatchDirectory": false,
+				"excludeFiles":              []any{},
+			},
+			"files":         []any{"index.ts"},
+			"extends":       "./config/base.json",
+			"customSetting": map[string]any{"enabled": true},
+			"compileOnSave": true,
+		},
+		host,
+		"/project",
+		nil,
+		"/project/tsconfig.json",
+		nil, /*resolutionStack*/
+		nil, /*extraFileExtensions*/
+		nil, /*extendedConfigCache*/
+	)
+
+	assert.Equal(t, len(parsed.Errors), 0)
+	assert.Assert(t, parsed.CompileOnSave != nil && *parsed.CompileOnSave)
+	assert.Equal(t, *parsed.ParsedConfig.WatchOptions.Interval, 250)
+	assert.Equal(t, parsed.ParsedConfig.WatchOptions.FileKind, core.WatchFileKindUseFsEvents)
+	assert.Assert(t, parsed.ParsedConfig.WatchOptions.SyncWatchDir.IsFalse())
+	assert.DeepEqual(t, parsed.ParsedConfig.WatchOptions.ExcludeDir, []string{"/project/config/generated"})
+	assert.DeepEqual(t, parsed.ParsedConfig.WatchOptions.ExcludeFiles, []string{})
+
+	raw := parsed.Raw.(*collections.OrderedMap[string, any])
+	assert.DeepEqual(t, slices.Collect(raw.Keys()), []string{"compileOnSave", "customSetting", "extends", "files", "watchOptions"})
+	assert.Assert(t, raw.Has("customSetting"))
+	assert.Assert(t, raw.Has("watchOptions"))
 }
 
 func getParsedWithJsonApi(config testConfig, host tsoptions.ParseConfigHost, basePath string) *tsoptions.ParsedCommandLine {

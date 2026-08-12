@@ -97,6 +97,162 @@ const defaultFiles = {
 };
 
 describe("API", () => {
+    test("parseCommandLine", () => {
+        const api = spawnAPI();
+        try {
+            const commandLine = api.parseCommandLine([
+                "--strict",
+                "--watchFile",
+                "useFsEvents",
+                "--outDir",
+                "dist",
+                "/src/index.ts",
+            ]);
+            assert.deepEqual(commandLine.fileNames, ["/src/index.ts"]);
+            assert.equal(commandLine.options.strict, true);
+            assert.equal(commandLine.options.outDir, "dist");
+            assert.deepEqual(commandLine.watchOptions, { watchFile: 4 });
+            assert.deepEqual(commandLine.raw, {
+                strict: true,
+                watchFile: 4,
+                outDir: "dist",
+            });
+            assert.deepEqual(commandLine.errors, []);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("parseCommandLine reports diagnostics", () => {
+        const api = spawnAPI();
+        try {
+            const commandLine = api.parseCommandLine(["--notAnOption"]);
+            assert.deepEqual(commandLine.fileNames, []);
+            assert.equal(commandLine.watchOptions, undefined);
+            assert.equal(commandLine.errors.length, 1);
+            assert.equal(commandLine.errors[0].code, 5023);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("readConfigFile", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": `{
+                // Comments and trailing commas are supported.
+                "compilerOptions": { "strict": true, },
+            }`,
+        });
+        try {
+            const result = api.readConfigFile("/tsconfig.json");
+            assert.deepEqual(result, {
+                config: { compilerOptions: { strict: true } },
+            });
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("readConfigFile reports read and parse errors", () => {
+        const api = spawnAPI({
+            "/invalid.json": `{ "compilerOptions": { "strict": true,, } }`,
+        });
+        try {
+            const invalid = api.readConfigFile("/invalid.json");
+            assert.deepEqual(invalid.config, { compilerOptions: { strict: true } });
+            assert.ok(invalid.error);
+
+            const missing = api.readConfigFile("/missing.json");
+            assert.deepEqual(missing.config, {});
+            assert.equal(missing.error?.code, 5083);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("parseJsonConfigFileContent with configDirectory", () => {
+        const api = spawnAPI();
+        try {
+            const config = api.parseJsonConfigFileContent(
+                {
+                    compilerOptions: { strict: true },
+                    files: ["index.ts"],
+                },
+                { configDirectory: "/src" },
+            );
+            assert.deepEqual(config.fileNames, ["/src/index.ts"]);
+            assert.equal(config.options.strict, true);
+            assert.equal("configFilePath" in config.options, false);
+            assert.deepEqual(config.errors, []);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("parseJsonConfigFileContent accepts non-object JSON", () => {
+        const api = spawnAPI();
+        try {
+            const config = api.parseJsonConfigFileContent(null, { configDirectory: "/src" });
+            assert.deepEqual(config.fileNames, ["/src/index.ts", "/src/foo.ts"]);
+            assert.deepEqual(config.errors, []);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("parseJsonConfigFileContent with configFileName", () => {
+        const api = spawnAPI();
+        try {
+            const config = api.parseJsonConfigFileContent(
+                {
+                    compilerOptions: { strict: true },
+                    files: ["index.ts"],
+                },
+                { configFileName: "/src/tsconfig.json" },
+            );
+            assert.deepEqual(config.fileNames, ["/src/index.ts"]);
+            assert.equal(config.options.strict, true);
+            assert.equal((config.options as Record<string, unknown>).configFilePath, "/src/tsconfig.json");
+            assert.deepEqual(config.errors, []);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("parseJsonConfigFileContent preserves raw config and parses watch options", () => {
+        const api = spawnAPI();
+        try {
+            const input = {
+                compileOnSave: true,
+                customSetting: { enabled: true },
+                files: ["index.ts"],
+                watchOptions: {
+                    watchFile: "useFsEvents",
+                    watchInterval: 250,
+                    synchronousWatchDirectory: false,
+                },
+            };
+            const config = api.parseJsonConfigFileContent(input, { configDirectory: "/src" });
+            assert.deepEqual(config.raw, input);
+            assert.equal(config.compileOnSave, true);
+            assert.deepEqual(config.watchOptions, {
+                watchInterval: 250,
+                watchFile: 4,
+                synchronousWatchDirectory: false,
+            });
+        }
+        finally {
+            api.close();
+        }
+    });
+
     test("parseConfigFile", () => {
         const api = spawnAPI();
         try {
@@ -124,6 +280,43 @@ describe("API", () => {
                 { circular: false, originalPath: "./harness", path: "/harness" },
                 { circular: false, originalPath: "./server", path: "/server" },
             ]);
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("parseConfigFile parses watch options and preserves raw config", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({
+                compileOnSave: true,
+                customSetting: { enabled: true },
+                files: ["/src/index.ts"],
+                watchOptions: {
+                    watchDirectory: "fixedPollingInterval",
+                    fallbackPolling: "dynamicPriority",
+                    excludeFiles: ["${configDir}/generated.ts"],
+                },
+            }),
+        });
+        try {
+            const config = api.parseConfigFile("/tsconfig.json");
+            assert.deepEqual(config.watchOptions, {
+                watchDirectory: 1,
+                fallbackPolling: 2,
+                excludeFiles: ["/generated.ts"],
+            });
+            assert.equal(config.compileOnSave, true);
+            assert.deepEqual(config.raw, {
+                compileOnSave: true,
+                customSetting: { enabled: true },
+                files: ["/src/index.ts"],
+                watchOptions: {
+                    watchDirectory: "fixedPollingInterval",
+                    fallbackPolling: "dynamicPriority",
+                    excludeFiles: ["${configDir}/generated.ts"],
+                },
+            });
         }
         finally {
             api.close();
