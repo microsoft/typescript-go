@@ -588,7 +588,7 @@ func encodeSemanticTokens(ctx context.Context, tokens []semanticToken, converter
 		line := startPos.Line
 		char := startPos.Character
 
-		// Multiple generated projections can describe the same original token; LSP requires one entry per
+		// Multiple virtual projections can describe the same original token; LSP requires one entry per
 		// start position, so retain the first after sorting.
 		if len(encoded) > 0 && line == prevLine && char == prevChar {
 			continue

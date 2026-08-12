@@ -4908,7 +4908,7 @@ func TestTscContentMapperFailures(t *testing.T) {
 func TestTscContentMapperSynthesized(t *testing.T) {
 	t.Parallel()
 	(&tscInput{
-		subScenario: "diagnostics in synthesized code render on the generated text",
+		subScenario: "diagnostics in synthesized code render on the virtual text",
 		files: FileMap{
 			"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
 			{

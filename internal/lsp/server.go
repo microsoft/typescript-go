@@ -360,7 +360,7 @@ func (s *Server) supportsContentMapperRegistration(id string) bool {
 }
 
 // RegisterContentMapperExtensions implements project.Client. It dynamically registers text document
-// synchronization and pull diagnostics for the given foreign file extensions so the editor forwards their
+// synchronization and pull diagnostics for the given otherwise unsupported file extensions so the editor forwards their
 // open/change/close notifications to the server and requests diagnostics for them. It is called with the
 // full desired set each time it changes; an empty slice removes any prior registration.
 func (s *Server) RegisterContentMapperExtensions(ctx context.Context, extensions []string) error {

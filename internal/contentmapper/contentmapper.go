@@ -1,5 +1,5 @@
 // Package contentmapper defines the types describing an external content mapper: a plugin that
-// transforms foreign file content (e.g. .vue) into TypeScript during program construction.
+// transforms otherwise unsupported file content (e.g. .vue) into virtual TypeScript during program construction.
 //
 // A mapper is declared in tsconfig (Definition), its implementation is described by fields in its npm
 // package's package.json (Manifest), and the two are combined once the package is resolved (Mapper).
@@ -7,7 +7,7 @@
 //
 // The package also drives the configured content mappers at build time (Host): it spawns each mapper's
 // package as a child process and talks to it over a JSON-RPC connection (reusing internal/ipc), turning
-// foreign file content into TypeScript. Processes are consolidated by mapper identity, so many projects
+// content-mapped source files into virtual TypeScript. Processes are consolidated by mapper identity, so many projects
 // that use the same mapper version share a single process.
 package contentmapper
 
@@ -26,7 +26,7 @@ import (
 )
 
 // Definition is a content mapper as declared in a tsconfig's "contentMappers": the npm package that
-// implements the mapper and the foreign file extensions it registers.
+// implements the mapper and the otherwise unsupported file extensions it registers.
 type Definition struct {
 	Package    string     `json:"package"`
 	Extensions []string   `json:"extensions"`

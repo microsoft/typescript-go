@@ -215,7 +215,7 @@ func (r *FileIncludeReason) computeDiagnostic(program *Program, toFileName func(
 		}
 	case fileIncludeKindContentMapperSupplemental:
 		canonical := program.GetSourceFileByPath(r.data.(tspath.Path))
-		return ast.NewCompilerDiagnostic(diagnostics.Supplemental_output_generated_by_the_content_mapper_for_file_0, toFileName(canonical.FileName()))
+		return ast.NewCompilerDiagnostic(diagnostics.Supplemental_virtual_file_produced_by_the_content_mapper_for_file_0, toFileName(canonical.FileName()))
 	default:
 		panic(fmt.Sprintf("unknown reason: %v", r.kind))
 	}

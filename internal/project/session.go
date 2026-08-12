@@ -35,7 +35,7 @@ import (
 
 type UpdateReason int
 
-// ErrNoProjectForUnknownScriptKind identifies requests for unsupported foreign files.
+// ErrNoProjectForUnknownScriptKind identifies requests for otherwise unsupported files.
 var ErrNoProjectForUnknownScriptKind = errors.New("no project for unknown script kind")
 
 const (
@@ -443,7 +443,7 @@ func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, ve
 	s.pendingFileChangesMu.Unlock()
 
 	// Editing a content-mapped file changes the program like any source edit, but the client's
-	// pull-diagnostics machinery won't re-request diagnostics for dependent files: the foreign file is not
+	// pull-diagnostics machinery won't re-request diagnostics for dependent files: the content-mapped file is not
 	// in the diagnostic provider's document selector, so a change to it never triggers the client's
 	// inter-file re-pull. Prompt a workspace refresh so dependents update. We skip the debounce here so the
 	// edit doesn't feel sluggish (normal source edits are pulled per-keystroke client-side); the refresh is
@@ -456,7 +456,7 @@ func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, ve
 	}
 }
 
-// isContentMapperFile reports whether uri is a foreign file handled by a configured content mapper, based
+// isContentMapperFile reports whether uri is a content-mapped file handled by a configured content mapper, based
 // on the extensions currently registered with the client for text document synchronization.
 func (s *Session) isContentMapperFile(uri lsproto.DocumentUri) bool {
 	snapshot := s.Snapshot()
@@ -1593,7 +1593,7 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 
 // updateContentMapperRegistrations computes the union of content mapper extensions across all loaded
 // configs in the new snapshot and, when the set changes, asks the client to synchronize text documents
-// with those extensions. This is how a foreign file (e.g. a `.vue`) begins flowing to the server once a
+// with those extensions. This is how an otherwise unsupported file (e.g. a `.vue`) begins flowing to the server once a
 // config that maps it is discovered.
 func (s *Session) updateContentMapperRegistrations(ctx context.Context, snapshot *Snapshot) error {
 	contentMappers := snapshot.ConfigFileRegistry.contentMappers()

@@ -404,7 +404,7 @@ func (p *fileLoader) parseSourceFile(t *parseTask) *ast.SourceFile {
 	return p.opts.Host.GetSourceFile(parseOptions)
 }
 
-// parseContentMappedFile produces a foreign file's TypeScript source file via the host's content
+// parseContentMappedFile produces a content-mapped virtual source file via the host's content
 // mapper, preserving the original file name and retaining the untransformed text on the
 // source file. Content mapper extensions only reach the parser when content mappers are configured.
 //
@@ -505,17 +505,17 @@ func contentMapperMappingDiagnostic(file *ast.SourceFile, label string, problem 
 	loc := core.NewTextRange(0, 0)
 	switch problem.Kind {
 	case spanmap.MappingErrorKindOverlap:
-		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_overlapping_or_out_of_order_position_mappings_near_output_offset_1, label, int(problem.GenPos))
+		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_overlapping_or_out_of_order_position_mappings_near_virtual_offset_1, label, int(problem.VirtualPos))
 	case spanmap.MappingErrorKindOutOfBounds:
-		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_a_position_mapping_that_points_outside_the_original_content_original_offset_1, label, int(problem.OrigPos))
+		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_a_position_mapping_that_points_outside_the_original_content_original_offset_1, label, int(problem.OriginalPos))
 	case spanmap.MappingErrorKindVerbatimMismatch:
-		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_a_verbatim_mapping_that_does_not_match_the_original_content_output_offset_1_original_offset_2, label, int(problem.GenPos), int(problem.OrigPos))
+		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_a_verbatim_mapping_that_does_not_match_the_original_content_virtual_offset_1_original_offset_2, label, int(problem.VirtualPos), int(problem.OriginalPos))
 	case spanmap.MappingErrorKindKind:
-		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_a_position_mapping_with_an_invalid_kind_near_output_offset_1, label, int(problem.GenPos))
+		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_a_position_mapping_with_an_invalid_kind_near_virtual_offset_1, label, int(problem.VirtualPos))
 	case spanmap.MappingErrorKindOriginalOverlap:
-		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_overlapping_original_position_mappings_that_are_not_identical_near_original_offset_1, label, int(problem.OrigPos))
+		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_overlapping_original_position_mappings_that_are_not_identical_near_original_offset_1, label, int(problem.OriginalPos))
 	case spanmap.MappingErrorKindFeature:
-		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_invalid_mapping_features_near_original_offset_1, label, int(problem.OrigPos))
+		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_produced_invalid_mapping_features_near_original_offset_1, label, int(problem.OriginalPos))
 	default:
 		return ast.NewDiagnostic(file, loc, diagnostics.The_content_mapper_0_did_not_provide_the_required_position_mappings, label)
 	}

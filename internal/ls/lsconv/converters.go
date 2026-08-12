@@ -38,8 +38,8 @@ type MappedPosition[T Script] struct {
 }
 
 // Script is a source text the converters operate over. For a content-mapped file, Text() is the content
-// mapper's transformed output and SpanMap() returns the map from that output back to the original text
-// (OriginalText()); output ranges are then automatically converted to original coordinates (see
+// mapper's virtual output and SpanMap() returns the map from that output back to the original text
+// (OriginalText()); virtual ranges are then automatically converted to original coordinates (see
 // ToLSPRange). For an ordinary file SpanMap() is nil and OriginalText() equals Text().
 type Script interface {
 	FileName() string
@@ -64,7 +64,7 @@ func NewConverters(
 // through the file's span map and the fidelity of that mapping is returned. For normal files, the second
 // return value is FidelityExact.
 func (c *Converters) ToLSPRange(script Script, textRange core.TextRange) (lsproto.Range, spanmap.Fidelity) {
-	script, textRange, fidelity := generatedRangeToOriginal(script, textRange, nil)
+	script, textRange, fidelity := virtualRangeToOriginal(script, textRange, nil)
 	return lsproto.Range{
 		Start: c.positionToLineAndCharacter(script, core.TextPos(textRange.Pos())),
 		End:   c.positionToLineAndCharacter(script, core.TextPos(textRange.End())),
@@ -72,11 +72,11 @@ func (c *Converters) ToLSPRange(script Script, textRange core.TextRange) (lsprot
 }
 
 // ToLSPRangeForFeature is [Converters.ToLSPRange] for an LS feature. For a content-mapped file, it returns
-// FidelityNone unless the entire generated range is covered by contiguous segments that participate in
+// FidelityNone unless the entire virtual range is covered by contiguous segments that participate in
 // feature; the returned range is still the best-effort mapped range. For normal files, it behaves like
 // [Converters.ToLSPRange].
 func (c *Converters) ToLSPRangeForFeature(script Script, textRange core.TextRange, feature spanmap.Feature) (lsproto.Range, spanmap.Fidelity) {
-	script, textRange, fidelity := generatedRangeToOriginal(script, textRange, &feature)
+	script, textRange, fidelity := virtualRangeToOriginal(script, textRange, &feature)
 	return lsproto.Range{
 		Start: c.positionToLineAndCharacter(script, core.TextPos(textRange.Pos())),
 		End:   c.positionToLineAndCharacter(script, core.TextPos(textRange.End())),
@@ -87,16 +87,16 @@ func (c *Converters) ToLSPRangeForFeature(script Script, textRange core.TextRang
 // declaration mapping) to an lsproto.Position. Positions in content-mapped files are mapped through
 // the file's span map; positions in normal files return FidelityExact.
 func (c *Converters) ToLSPPosition(script Script, position core.TextPos) (lsproto.Position, spanmap.Fidelity) {
-	script, position, fidelity := generatedPositionToOriginal(script, position, nil)
+	script, position, fidelity := virtualPositionToOriginal(script, position, nil)
 	return c.positionToLineAndCharacter(script, position), fidelity
 }
 
 // ToLSPPositionForFeature is [Converters.ToLSPPosition] for an LS feature. For a content-mapped file, it returns
-// FidelityNone when the generated position is not in a segment that participates in feature; the
+// FidelityNone when the virtual position is not in a segment that participates in feature; the
 // returned position is still the best-effort mapped position. For normal files, it behaves like
 // [Converters.ToLSPPosition].
 func (c *Converters) ToLSPPositionForFeature(script Script, position core.TextPos, feature spanmap.Feature) (lsproto.Position, spanmap.Fidelity) {
-	script, position, fidelity := generatedPositionToOriginal(script, position, &feature)
+	script, position, fidelity := virtualPositionToOriginal(script, position, &feature)
 	return c.positionToLineAndCharacter(script, position), fidelity
 }
 
@@ -113,7 +113,7 @@ func (c *Converters) ToLSPLocation(script Script, rng core.TextRange) (lsproto.L
 }
 
 // ToLSPLocationForFeature is [Converters.ToLSPLocation] for an LS feature. For a content-mapped file, it returns
-// FidelityNone when the generated position is not in a segment that participates in feature; the
+// FidelityNone when the virtual position is not in a segment that participates in feature; the
 // returned position is still the best-effort mapped position. For normal files, it behaves like
 // [Converters.ToLSPLocation].
 func (c *Converters) ToLSPLocationForFeature(script Script, rng core.TextRange, feature spanmap.Feature) (lsproto.Location, spanmap.Fidelity) {
@@ -122,31 +122,31 @@ func (c *Converters) ToLSPLocationForFeature(script Script, rng core.TextRange, 
 }
 
 // FromLSPRange converts an lsproto.Range to offsets in one Script. For a content-mapped script, results
-// include each generated projection covered by segments that participate in feature; it returns no
+// include each virtual projection covered by segments that participate in feature; it returns no
 // results when no projection qualifies. Normal scripts return one exact span.
 func FromLSPRange[T Script](c *Converters, script T, textRange lsproto.Range, feature spanmap.Feature) []MappedSpan[T] {
-	return lspRangeToGenerated(c, []T{script}, textRange, feature)
+	return lspRangeToVirtual(c, []T{script}, textRange, feature)
 }
 
 // FromLSPRangeForSourceFile converts an lsproto.Range to offsets in a SourceFile. When the file has
-// supplemental content-mapper outputs, results include every qualifying generated projection across the
+// supplemental content-mapper outputs, results include every qualifying virtual projection across the
 // canonical and supplemental files. Projections not participating in feature are omitted.
 func FromLSPRangeForSourceFile(c *Converters, file *ast.SourceFile, textRange lsproto.Range, feature spanmap.Feature) []MappedSpan[*ast.SourceFile] {
 	files := sourceFileProjections(file)
-	return lspRangeToGenerated(c, files, textRange, feature)
+	return lspRangeToVirtual(c, files, textRange, feature)
 }
 
-func lspRangeToGenerated[T Script](c *Converters, scripts []T, textRange lsproto.Range, feature spanmap.Feature) []MappedSpan[T] {
+func lspRangeToVirtual[T Script](c *Converters, scripts []T, textRange lsproto.Range, feature spanmap.Feature) []MappedSpan[T] {
 	result := make([]MappedSpan[T], 0, len(scripts))
 	for _, script := range scripts {
-		for _, mapped := range c.lspRangeToGenerated(script, textRange, feature) {
+		for _, mapped := range c.lspRangeToVirtual(script, textRange, feature) {
 			result = append(result, MappedSpan[T]{Script: script, MappedSpan: mapped})
 		}
 	}
 	return result
 }
 
-func (c *Converters) lspRangeToGenerated(script Script, textRange lsproto.Range, feature spanmap.Feature) []spanmap.MappedSpan {
+func (c *Converters) lspRangeToVirtual(script Script, textRange lsproto.Range, feature spanmap.Feature) []spanmap.MappedSpan {
 	spans := script.SpanMap()
 	if spans == nil {
 		return []spanmap.MappedSpan{{
@@ -158,28 +158,28 @@ func (c *Converters) lspRangeToGenerated(script Script, textRange lsproto.Range,
 		}}
 	}
 	// A content-mapped script's line map is its original text's, so convert against that text and then map
-	// the resulting original range forward into the transformed text.
+	// the resulting original range forward into the virtual text.
 	original := originalTextScript{fileName: script.OriginalFileName(), text: script.OriginalText()}
 	origRange := core.NewTextRange(
 		int(c.lineAndCharacterToPosition(original, textRange.Start)),
 		int(c.lineAndCharacterToPosition(original, textRange.End)),
 	)
-	return spans.OriginalToGeneratedSpans(origRange, feature)
+	return spans.OriginalToVirtualSpans(origRange, feature)
 }
 
 // FromLSPPosition converts an lsproto.Position to offsets in one Script. For a content-mapped script,
-// results include each generated projection whose segment participates in feature; it returns no results
+// results include each virtual projection whose segment participates in feature; it returns no results
 // when no projection qualifies. Normal scripts return one exact position.
 func FromLSPPosition[T Script](c *Converters, script T, position lsproto.Position, feature spanmap.Feature) []MappedPosition[T] {
-	return lspPositionToGenerated(c, []T{script}, position, feature)
+	return lspPositionToVirtual(c, []T{script}, position, feature)
 }
 
 // FromLSPPositionForSourceFile converts an lsproto.Position to offsets in a SourceFile. When the file has
-// supplemental content-mapper outputs, results include every qualifying generated projection across the
+// supplemental content-mapper outputs, results include every qualifying virtual projection across the
 // canonical and supplemental files. Projections not participating in feature are omitted.
 func FromLSPPositionForSourceFile(c *Converters, file *ast.SourceFile, position lsproto.Position, feature spanmap.Feature) []MappedPosition[*ast.SourceFile] {
 	files := sourceFileProjections(file)
-	return lspPositionToGenerated(c, files, position, feature)
+	return lspPositionToVirtual(c, files, position, feature)
 }
 
 func sourceFileProjections(file *ast.SourceFile) []*ast.SourceFile {
@@ -189,53 +189,53 @@ func sourceFileProjections(file *ast.SourceFile) []*ast.SourceFile {
 	return append(files, supplemental...)
 }
 
-func lspPositionToGenerated[T Script](c *Converters, scripts []T, position lsproto.Position, feature spanmap.Feature) []MappedPosition[T] {
+func lspPositionToVirtual[T Script](c *Converters, scripts []T, position lsproto.Position, feature spanmap.Feature) []MappedPosition[T] {
 	result := make([]MappedPosition[T], 0, len(scripts))
 	for _, script := range scripts {
-		for _, mapped := range c.lspPositionToGenerated(script, position, feature) {
+		for _, mapped := range c.lspPositionToVirtual(script, position, feature) {
 			result = append(result, MappedPosition[T]{Script: script, MappedPosition: mapped})
 		}
 	}
 	return result
 }
 
-func (c *Converters) lspPositionToGenerated(script Script, position lsproto.Position, feature spanmap.Feature) []spanmap.MappedPosition {
+func (c *Converters) lspPositionToVirtual(script Script, position lsproto.Position, feature spanmap.Feature) []spanmap.MappedPosition {
 	spans := script.SpanMap()
 	if spans == nil {
 		return []spanmap.MappedPosition{{Position: c.lineAndCharacterToPosition(script, position), Fidelity: spanmap.FidelityExact}}
 	}
 	original := originalTextScript{fileName: script.OriginalFileName(), text: script.OriginalText()}
 	origOffset := c.lineAndCharacterToPosition(original, position)
-	return spans.OriginalToGeneratedPositions(origOffset, feature)
+	return spans.OriginalToVirtualPositions(origOffset, feature)
 }
 
-// generatedRangeToOriginal maps a content mapper's generated range back to its original text.
+// virtualRangeToOriginal maps a content mapper's virtual range back to its original text.
 // A nil feature bypasses feature filtering for diagnostics and edits.
-func generatedRangeToOriginal(script Script, textRange core.TextRange, feature *spanmap.Feature) (Script, core.TextRange, spanmap.Fidelity) {
+func virtualRangeToOriginal(script Script, textRange core.TextRange, feature *spanmap.Feature) (Script, core.TextRange, spanmap.Fidelity) {
 	if script.SpanMap() == nil {
 		return script, textRange, spanmap.FidelityExact
 	}
 	var mapped core.TextRange
 	var fidelity spanmap.Fidelity
 	if feature == nil {
-		mapped, fidelity = script.SpanMap().GeneratedToOriginalSpan(textRange)
+		mapped, fidelity = script.SpanMap().VirtualToOriginalSpan(textRange)
 	} else {
-		mapped, fidelity = script.SpanMap().GeneratedToOriginalSpanForFeature(textRange, *feature)
+		mapped, fidelity = script.SpanMap().VirtualToOriginalSpanForFeature(textRange, *feature)
 	}
 	return originalTextScript{fileName: script.OriginalFileName(), text: script.OriginalText()}, mapped, fidelity
 }
 
-// generatedPositionToOriginal is the single-position analog of generatedRangeToOriginal.
-func generatedPositionToOriginal(script Script, position core.TextPos, feature *spanmap.Feature) (Script, core.TextPos, spanmap.Fidelity) {
+// virtualPositionToOriginal is the single-position analog of virtualRangeToOriginal.
+func virtualPositionToOriginal(script Script, position core.TextPos, feature *spanmap.Feature) (Script, core.TextPos, spanmap.Fidelity) {
 	if script.SpanMap() == nil {
 		return script, position, spanmap.FidelityExact
 	}
 	var mapped core.TextPos
 	var fidelity spanmap.Fidelity
 	if feature == nil {
-		mapped, fidelity = script.SpanMap().GeneratedToOriginalPosition(position)
+		mapped, fidelity = script.SpanMap().VirtualToOriginalPosition(position)
 	} else {
-		mapped, fidelity = script.SpanMap().GeneratedToOriginalPositionForFeature(position, *feature)
+		mapped, fidelity = script.SpanMap().VirtualToOriginalPositionForFeature(position, *feature)
 	}
 	return originalTextScript{fileName: script.OriginalFileName(), text: script.OriginalText()}, mapped, fidelity
 }
@@ -523,7 +523,7 @@ func diagnosticToLSP(ctx context.Context, converters *Converters, diagnostic *as
 }
 
 // diagnosticScriptAndRange resolves the text basis and range to report a diagnostic against. For a
-// content-mapped file it maps the diagnostic's transformed range back to the original text so
+// content-mapped file it maps the diagnostic's virtual range back to the original text so
 // the range lines up with what the editor shows; the original text's line map is already what
 // getLineMap returns for the file. A range in synthesized code has no original counterpart, so it is
 // surfaced at the top of the file. Non-mapped files are returned unchanged.
@@ -536,7 +536,7 @@ func diagnosticScriptAndRange(file *ast.SourceFile, loc core.TextRange, source s
 		// A content mapper's own diagnostics already carry original-text ranges.
 		return original, loc
 	}
-	mapped, fidelity := file.SpanMap().GeneratedToOriginalSpan(loc)
+	mapped, fidelity := file.SpanMap().VirtualToOriginalSpan(loc)
 	if fidelity == spanmap.FidelityNone {
 		// Entirely synthesized code has no original location; surface it at the top of the file.
 		return original, core.NewTextRange(0, 0)

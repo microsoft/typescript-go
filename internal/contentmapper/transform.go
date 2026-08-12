@@ -15,7 +15,7 @@ type SourceFiles struct {
 	Supplemental []*ast.SourceFile
 }
 
-// TransformAndParse runs the given content mapper's transform for a foreign file and
+// TransformAndParse runs the given content mapper's transform for a content-mapped source file and
 // parses the resulting TypeScript, preserving the original file name and retaining the untransformed text
 // on the source file. The mapper is supplied by the caller (which also owns the failure accounting) so it
 // is neither re-resolved nor substituted here. It returns an error if the transform fails or the mapper

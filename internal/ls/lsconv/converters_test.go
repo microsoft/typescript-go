@@ -125,13 +125,13 @@ func TestConvertersSourceFileProjectionExpansion(t *testing.T) {
 	canonical := parser.ParseSourceFile(parseOptions, " x", core.ScriptKindTS)
 	canonical.SetOriginalText(original)
 	canonical.SetContentMapper("mapper")
-	canonical.SetSpanMap(spanmap.New([]spanmap.Segment{{GenStart: 1, GenEnd: 2, OrigEnd: 1, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll}}))
+	canonical.SetSpanMap(spanmap.New([]spanmap.Segment{{VirtualStart: 1, VirtualEnd: 2, OriginalEnd: 1, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll}}))
 	supplementalOptions := parseOptions
 	supplementalOptions.Path = "/component.vue::supplemental"
 	supplemental := parser.ParseSourceFile(supplementalOptions, "  x", core.ScriptKindTS)
 	supplemental.SetOriginalText(original)
 	supplemental.SetContentMapper("mapper")
-	supplemental.SetSpanMap(spanmap.New([]spanmap.Segment{{GenStart: 2, GenEnd: 3, OrigEnd: 1, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll}}))
+	supplemental.SetSpanMap(spanmap.New([]spanmap.Segment{{VirtualStart: 2, VirtualEnd: 3, OriginalEnd: 1, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll}}))
 	canonical.SetSupplementalSourceFiles([]*ast.SourceFile{supplemental})
 	lineMap := lsconv.ComputeLSPLineStarts(original)
 	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *lsconv.LSPLineMap { return lineMap })

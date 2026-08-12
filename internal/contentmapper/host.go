@@ -138,32 +138,32 @@ func (e *InitializeError) Error() string {
 	}
 }
 
-// Result is the outcome of transforming a foreign file's content into TypeScript.
+// Result is the outcome of transforming a content-mapped source file into virtual TypeScript.
 type Result struct {
-	// Text is the transformed TypeScript source text that is parsed into the program.
+	// Text is the virtual TypeScript source text that is parsed into the program.
 	Text string
 	// Diagnostics are syntax errors in the original content.
 	Diagnostics []*ast.Diagnostic
 	// Mappings maps positions in Text back to the original content, so that diagnostics the compiler
-	// produces against the transformed text can be reported at their original locations. A successful
+	// produces against the virtual text can be reported at their original locations. A successful
 	// transform must return a non-nil map; an empty map describes fully synthesized output.
 	Mappings *spanmap.SpanMap
 	// Supplemental contains additional unnamed outputs associated with the canonical result.
 	Supplemental []MappedResult
 }
 
-// MappedResult is one generated output and its mapping to the original input.
+// MappedResult is one virtual source file and its mapping to the original input.
 type MappedResult struct {
 	Text             string
 	VirtualExtension string
 	Mappings         *spanmap.SpanMap
 }
 
-// Request carries the inputs for transforming one foreign file.
+// Request carries the inputs for transforming one content-mapped source file.
 type Request struct {
-	// FileName is the foreign file being transformed.
+	// FileName is the content-mapped source file being transformed.
 	FileName string
-	// Content is the foreign file's text.
+	// Content is the content-mapped source file's text.
 	Content string
 	// CompilerOptions is the project's compiler options. The host marshals and forwards only the subset
 	// each mapper declared it depends on; a mapper that declares none receives an empty object.
@@ -242,13 +242,13 @@ type Project interface {
 	// WatchedFiles returns the absolute files on which dynamic mapper configuration depends. It returns an
 	// error if dynamic project configuration cannot be opened or validated.
 	WatchedFiles() ([]string, error)
-	// Transform transforms one foreign file using mapper in this project's configuration.
+	// Transform transforms one content-mapped source file using mapper in this project's configuration.
 	Transform(mapper *Mapper, request Request) (result Result, err error)
 	// Close releases this project reference and closes mapper project handles when no references remain.
 	Close() error
 }
 
-// Host transforms foreign file content into TypeScript during program construction, by driving the
+// Host transforms otherwise unsupported file content into virtual TypeScript during program construction, by driving the
 // configured content mappers. Create one with NewHost; Close tears down every mapper it spawned.
 type Host interface {
 	// Timings returns a cumulative snapshot of mapper process and protocol activity.
@@ -262,7 +262,7 @@ type Host interface {
 	// SetLocale updates the locale used to initialize mapper processes. Existing processes are stopped
 	// and respawned lazily so subsequent transforms use the new locale.
 	SetLocale(locale locale.Locale)
-	// Transform maps a foreign file's content to TypeScript using the given content mapper.
+	// Transform maps a content-mapped source file to virtual TypeScript using the given content mapper.
 	//
 	// A non-nil error indicates the mapper itself failed to produce a result — for example the
 	// host hit a broken pipe, a process crash, or could not deserialize the mapper's response.

@@ -79,26 +79,26 @@ func (l *LanguageService) toLSPDiagnostics(ctx context.Context, diagnostics ...[
 }
 
 // isSynthesizedContentMappedDiagnostic reports whether diag is a compiler diagnostic on a content-mapped
-// file whose location lies entirely in synthesized (generated) code with no counterpart in the original
+// file whose location lies entirely in synthesized virtual code with no counterpart in the original
 // file, and so has no meaningful position to report against the original file.
 func isSynthesizedContentMappedDiagnostic(diag *ast.Diagnostic) bool {
 	file := diag.File()
 	if file == nil || file.SpanMap() == nil || diag.Source() != "" {
 		return false
 	}
-	_, fidelity := file.SpanMap().GeneratedToOriginalSpan(diag.Loc())
+	_, fidelity := file.SpanMap().VirtualToOriginalSpan(diag.Loc())
 	return fidelity == spanmap.FidelityNone
 }
 
 // aggregateSynthesizedDiagnostics builds a single diagnostic at the top of a content-mapped file standing
 // in for compiler diagnostics located in synthesized code with no original location. The originals are
 // attached as related information so their messages are surfaced rather than silently dropped. (A later
-// change will point the related locations at a read-only view of the file's generated TypeScript.)
+// change will point the related locations at a read-only view of the file's virtual TypeScript.)
 func aggregateSynthesizedDiagnostics(file *ast.SourceFile, diags []*ast.Diagnostic) *ast.Diagnostic {
 	aggregate := ast.NewDiagnostic(
 		file,
 		core.NewTextRange(0, 0),
-		diagnostics.Code_generated_by_the_content_mapper_0_has_problems_with_no_corresponding_location_in_this_file,
+		diagnostics.Virtual_code_produced_by_the_content_mapper_0_has_problems_with_no_corresponding_location_in_this_file,
 		file.ContentMapper(),
 	)
 	aggregate.SetRelatedInfo(diags)

@@ -339,7 +339,7 @@ func (p *Project) getCommandLineWithTypingsFiles() *tsoptions.ParsedCommandLine 
 				},
 			)
 			// Preserve the original command line's content mappers: without them the augmented
-			// command line would treat content-mapped root files as unknown foreign files.
+			// command line would treat content-mapped root files as unsupported files.
 			p.commandLineWithTypingsFiles.ParsedConfig.ContentMappers = p.CommandLine.ContentMappers()
 		}
 	})

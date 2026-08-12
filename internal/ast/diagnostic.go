@@ -122,26 +122,26 @@ func (d *Diagnostic) String() string {
 }
 
 // displayMessageArgs substitutes the original text for a complete alias span when a diagnostic argument
-// exactly matches the generated alias. Stored arguments remain unchanged for code fixes and serialization.
+// exactly matches the virtual alias. Stored arguments remain unchanged for code fixes and serialization.
 func (d *Diagnostic) displayMessageArgs() []string {
 	if d.file == nil || d.source != "" {
 		return d.messageArgs
 	}
-	segment, ok := d.file.SpanMap().AliasForGeneratedSpan(d.loc)
+	segment, ok := d.file.SpanMap().AliasForVirtualSpan(d.loc)
 	if !ok {
 		return d.messageArgs
 	}
-	generatedText := d.file.Text()
+	virtualText := d.file.Text()
 	originalText := d.file.OriginalText()
-	if segment.GenStart < 0 || segment.GenEnd > core.TextPos(len(generatedText)) ||
-		segment.OrigStart < 0 || segment.OrigEnd > core.TextPos(len(originalText)) {
+	if segment.VirtualStart < 0 || segment.VirtualEnd > core.TextPos(len(virtualText)) ||
+		segment.OriginalStart < 0 || segment.OriginalEnd > core.TextPos(len(originalText)) {
 		return d.messageArgs
 	}
-	generatedName := generatedText[segment.GenStart:segment.GenEnd]
-	originalName := originalText[segment.OrigStart:segment.OrigEnd]
+	virtualName := virtualText[segment.VirtualStart:segment.VirtualEnd]
+	originalName := originalText[segment.OriginalStart:segment.OriginalEnd]
 	var result []string
 	for i, arg := range d.messageArgs {
-		if arg != generatedName {
+		if arg != virtualName {
 			continue
 		}
 		if result == nil {

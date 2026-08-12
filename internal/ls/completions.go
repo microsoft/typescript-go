@@ -72,7 +72,7 @@ func (l *LanguageService) ProvideCompletion(
 
 // filterContentMappedAutoImports eagerly resolves auto-import edits for a content-mapped file and drops any
 // completion whose import edit cannot be placed entirely within verbatim spans (it would otherwise insert
-// an import into generated code with no counterpart in the original file). Surviving auto-imports carry
+// an import into synthesized virtual code with no counterpart in the original file). Surviving auto-imports carry
 // their additional edits directly so the client applies correct original-text positions on commit.
 func (l *LanguageService) filterContentMappedAutoImports(ctx context.Context, program *compiler.Program, file *ast.SourceFile, list *lsproto.CompletionList) {
 	if list == nil {

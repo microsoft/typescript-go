@@ -168,7 +168,7 @@ const (
 //
 // Span maps are msgpack arrays of tuples in UTF-16 coordinates:
 //
-//	[generatedStart: uint, generatedLength: uint, originalStart: uint, originalLength: uint, kind: uint, features?: uint]
+//	[virtualStart: uint, virtualLength: uint, originalStart: uint, originalLength: uint, kind: uint, features?: uint]
 //
 // An offset of 0xFFFFFFFF indicates no data (empty array).
 //
@@ -776,7 +776,7 @@ func encodeStringArray(strs []string, buf *[]byte) uint32 {
 	return offset
 }
 
-func encodeSpanMap(m *spanmap.SpanMap, generatedPositions *ast.PositionMap, originalPositions *ast.PositionMap, buf *[]byte) uint32 {
+func encodeSpanMap(m *spanmap.SpanMap, virtualPositions *ast.PositionMap, originalPositions *ast.PositionMap, buf *[]byte) uint32 {
 	if m == nil {
 		return noStructuredData
 	}
@@ -789,12 +789,12 @@ func encodeSpanMap(m *spanmap.SpanMap, generatedPositions *ast.PositionMap, orig
 			tupleLength = 6
 		}
 		*buf = msgpackWriteArrayHeader(*buf, tupleLength)
-		generatedStart := generatedPositions.UTF8ToUTF16(int(segment.GenStart))
-		generatedEnd := generatedPositions.UTF8ToUTF16(int(segment.GenEnd))
-		originalStart := originalPositions.UTF8ToUTF16(int(segment.OrigStart))
-		originalEnd := originalPositions.UTF8ToUTF16(int(segment.OrigEnd))
-		*buf = msgpackWriteUint(*buf, uint32(generatedStart))
-		*buf = msgpackWriteUint(*buf, uint32(generatedEnd-generatedStart))
+		virtualStart := virtualPositions.UTF8ToUTF16(int(segment.VirtualStart))
+		virtualEnd := virtualPositions.UTF8ToUTF16(int(segment.VirtualEnd))
+		originalStart := originalPositions.UTF8ToUTF16(int(segment.OriginalStart))
+		originalEnd := originalPositions.UTF8ToUTF16(int(segment.OriginalEnd))
+		*buf = msgpackWriteUint(*buf, uint32(virtualStart))
+		*buf = msgpackWriteUint(*buf, uint32(virtualEnd-virtualStart))
 		*buf = msgpackWriteUint(*buf, uint32(originalStart))
 		*buf = msgpackWriteUint(*buf, uint32(originalEnd-originalStart))
 		*buf = msgpackWriteUint(*buf, uint32(segment.Kind))

@@ -94,9 +94,9 @@ const (
 
 // TransformParams is the parameter object for the transform request.
 type TransformParams struct {
-	// FileName is the absolute name of the foreign file being transformed.
+	// FileName is the absolute name of the content-mapped source file being transformed.
 	FileName string `json:"fileName"`
-	// Content is the foreign file's source text.
+	// Content is the content-mapped source file's text.
 	Content string `json:"content"`
 	// Options is the mapper entry's options from the project's contentMappers configuration.
 	Options json.Value `json:"options,omitempty"`
@@ -107,9 +107,9 @@ type TransformParams struct {
 	CompilerOptions *collections.OrderedMap[string, json.Value] `json:"compilerOptions"`
 }
 
-// MappedOutput is generated source text and its mapping to an original input.
+// MappedOutput is virtual source text and its mapping to an original input.
 type MappedOutput struct {
-	// Text is the generated JavaScript or TypeScript source text.
+	// Text is the virtual JavaScript or TypeScript source text.
 	Text string `json:"text"`
 	// Mappings is the span map's tuple-array JSON (see spanmap.Marshal), expressed in the selected
 	// position encoding. Absent or empty means the output is fully synthesized.
@@ -118,7 +118,7 @@ type MappedOutput struct {
 
 type SupplementalOutput struct {
 	MappedOutput
-	// Extension is the transformed virtual source extension.
+	// Extension determines the virtual source file's syntax.
 	Extension string `json:"extension"`
 }
 
@@ -871,7 +871,7 @@ func decodeMappedOutput(output MappedOutput, originalText string, positionEncodi
 	result := MappedResult{
 		Text: output.Text,
 	}
-	generatedPositions, err := newPositionNormalizer(output.Text, positionEncoding)
+	virtualPositions, err := newPositionNormalizer(output.Text, positionEncoding)
 	if err != nil {
 		return MappedResult{}, nil, err
 	}
@@ -887,7 +887,7 @@ func decodeMappedOutput(output MappedOutput, originalText string, positionEncodi
 		if err != nil {
 			return MappedResult{}, nil, err
 		}
-		result.Mappings, err = normalizeMappings(mappings, generatedPositions, originalPositions)
+		result.Mappings, err = normalizeMappings(mappings, virtualPositions, originalPositions)
 		if err != nil {
 			return MappedResult{}, nil, err
 		}
@@ -897,24 +897,24 @@ func decodeMappedOutput(output MappedOutput, originalText string, positionEncodi
 	return result, originalPositions, nil
 }
 
-func normalizeMappings(mappings *spanmap.SpanMap, generatedPositions *positionNormalizer, originalPositions *positionNormalizer) (*spanmap.SpanMap, error) {
+func normalizeMappings(mappings *spanmap.SpanMap, virtualPositions *positionNormalizer, originalPositions *positionNormalizer) (*spanmap.SpanMap, error) {
 	segments := mappings.Segments()
 	for i := range segments {
 		segment := &segments[i]
 		var err error
-		segment.GenStart, err = generatedPositions.normalizeTextPos(segment.GenStart)
+		segment.VirtualStart, err = virtualPositions.normalizeTextPos(segment.VirtualStart)
 		if err != nil {
-			return nil, fmt.Errorf("invalid content mapper mapping %d generated start: %w", i, err)
+			return nil, fmt.Errorf("invalid content mapper mapping %d virtual start: %w", i, err)
 		}
-		segment.GenEnd, err = generatedPositions.normalizeTextPos(segment.GenEnd)
+		segment.VirtualEnd, err = virtualPositions.normalizeTextPos(segment.VirtualEnd)
 		if err != nil {
-			return nil, fmt.Errorf("invalid content mapper mapping %d generated end: %w", i, err)
+			return nil, fmt.Errorf("invalid content mapper mapping %d virtual end: %w", i, err)
 		}
-		segment.OrigStart, err = originalPositions.normalizeTextPos(segment.OrigStart)
+		segment.OriginalStart, err = originalPositions.normalizeTextPos(segment.OriginalStart)
 		if err != nil {
 			return nil, fmt.Errorf("invalid content mapper mapping %d original start: %w", i, err)
 		}
-		segment.OrigEnd, err = originalPositions.normalizeTextPos(segment.OrigEnd)
+		segment.OriginalEnd, err = originalPositions.normalizeTextPos(segment.OriginalEnd)
 		if err != nil {
 			return nil, fmt.Errorf("invalid content mapper mapping %d original end: %w", i, err)
 		}

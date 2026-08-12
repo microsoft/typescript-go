@@ -7,10 +7,10 @@ export { SpanMapFeature, SpanMapFidelity, SpanMapKind };
 
 // Keep this in sync with spanmap.go
 
-/** Maps one half-open generated range to one half-open original range. */
+/** Maps one half-open virtual range to one half-open original range. */
 export interface SpanMapSegment {
-    readonly generatedStart: number;
-    readonly generatedEnd: number;
+    readonly virtualStart: number;
+    readonly virtualEnd: number;
     readonly originalStart: number;
     readonly originalEnd: number;
     readonly kind: SpanMapKind;
@@ -20,28 +20,28 @@ export interface SpanMapSegment {
 /** Internal segment representation after omitted features have been normalized to `All`. */
 type NormalizedSpanMapSegment = SpanMapSegment & { readonly features: SpanMapFeature; };
 
-/** One generated projection of an original position and its mapping fidelity. */
+/** One virtual projection of an original position and its mapping fidelity. */
 export interface MappedPosition {
     readonly position: number;
     readonly fidelity: SpanMapFidelity;
 }
 
-/** One generated projection of an original range and its mapping fidelity. */
+/** One virtual projection of an original range and its mapping fidelity. */
 export interface MappedRange {
     readonly range: ReadonlyTextRange;
     readonly fidelity: SpanMapFidelity;
 }
 
-/** Provides bidirectional span-aware mapping between generated and original text. */
+/** Provides bidirectional span-aware mapping between virtual and original text. */
 export class SpanMap {
     readonly segments: readonly NormalizedSpanMapSegment[];
     private originalSegments: readonly NormalizedSpanMapSegment[] | undefined;
 
-    /** Copies and sorts segments by generated start, normalizing omitted features to `All`. */
+    /** Copies and sorts segments by virtual start, normalizing omitted features to `All`. */
     constructor(segments: readonly SpanMapSegment[]) {
         this.segments = segments
             .map(segment => ({ ...segment, features: segment.features ?? SpanMapFeature.All }))
-            .sort((left, right) => left.generatedStart - right.generatedStart);
+            .sort((left, right) => left.virtualStart - right.virtualStart);
     }
 
     /** Reports whether a mapping is a precise, edit-safe projection through one verbatim segment. */
@@ -60,36 +60,36 @@ export class SpanMap {
     }
 
     /**
-     * Maps a generated range to original text. Gaps map to insertion points with `None` fidelity,
+     * Maps a virtual range to original text. Gaps map to insertion points with `None` fidelity,
      * and ranges crossing segment boundaries map their endpoints with `Approximate` fidelity.
      */
-    generatedToOriginalSpan(range: ReadonlyTextRange): MappedRange {
+    virtualToOriginalSpan(range: ReadonlyTextRange): MappedRange {
         return this.mapRange(range, this.segments, false);
     }
 
     /** Maps a visible LS result only when every covered segment participates in `feature`. */
-    generatedToOriginalSpanForFeature(range: ReadonlyTextRange, feature: SpanMapFeature): MappedRange {
-        const mapped = this.generatedToOriginalSpan(range);
-        return this.generatedRangeSupportsFeature(range, feature) ? mapped : { ...mapped, fidelity: SpanMapFidelity.None };
+    virtualToOriginalSpanForFeature(range: ReadonlyTextRange, feature: SpanMapFeature): MappedRange {
+        const mapped = this.virtualToOriginalSpan(range);
+        return this.virtualRangeSupportsFeature(range, feature) ? mapped : { ...mapped, fidelity: SpanMapFidelity.None };
     }
 
-    /** Maps a generated position to original text, using `None` fidelity for synthesized gaps. */
-    generatedToOriginalPosition(position: number): MappedPosition {
+    /** Maps a virtual position to original text, using `None` fidelity for synthesized gaps. */
+    virtualToOriginalPosition(position: number): MappedPosition {
         return this.mapPoint(position, this.segments, false);
     }
 
-    generatedToOriginalPositionForFeature(position: number, feature: SpanMapFeature): MappedPosition {
-        const mapped = this.generatedToOriginalPosition(position);
+    virtualToOriginalPositionForFeature(position: number, feature: SpanMapFeature): MappedPosition {
+        const mapped = this.virtualToOriginalPosition(position);
         const [index, inside] = segmentIndexAt(this.segments, position, false);
         return inside && supportsFeature(this.segments[index], feature) ? mapped : { ...mapped, fidelity: SpanMapFidelity.None };
     }
 
     /**
-     * Returns every generated projection of an original position whose segment participates in `feature`.
+     * Returns every virtual projection of an original position whose segment participates in `feature`.
      * Segment ends are inclusive for point mapping, so adjacent spans may both produce projections.
-     * Results are ordered by generated position; uncovered or disabled positions produce no results.
+     * Results are ordered by virtual position; uncovered or disabled positions produce no results.
      */
-    originalToGeneratedPositions(position: number, feature: SpanMapFeature): readonly MappedPosition[] {
+    originalToVirtualPositions(position: number, feature: SpanMapFeature): readonly MappedPosition[] {
         const groups = originalSegmentGroupsAtPoint(this.getOriginalSegments(), position);
         const results: MappedPosition[] = [];
         for (const group of groups) {
@@ -97,7 +97,7 @@ export class SpanMap {
                 if (!supportsFeature(segment, feature)) continue;
                 const mapped = segment.kind === SpanMapKind.Verbatim
                     ? { position: mapVerbatimPosition(segment, position, true), fidelity: SpanMapFidelity.Exact }
-                    : { position: group.atEnd ? segment.generatedEnd : segment.generatedStart, fidelity: SpanMapFidelity.Atom };
+                    : { position: group.atEnd ? segment.virtualEnd : segment.virtualStart, fidelity: SpanMapFidelity.Atom };
                 if (!results.some(result => result.position === mapped.position && result.fidelity === mapped.fidelity)) {
                     results.push(mapped);
                 }
@@ -107,17 +107,17 @@ export class SpanMap {
     }
 
     /**
-     * Returns every feature-compatible generated projection of an original range.
+     * Returns every feature-compatible virtual projection of an original range.
      * A range contained by one duplicate group produces one exact or atom result per matching group member.
      *
-     * A range that starts in one group and ends in another can have several possible generated ranges. For
-     * example, suppose two original segments are each copied twice into the generated text:
+     * A range that starts in one group and ends in another can have several possible virtual ranges. For
+     * example, suppose two original segments are each copied twice into the virtual text:
      *
      * ```text
      * original:   [ A ][ B ]
      *                [---)       range from inside A to inside B
      *
-     * generated:  [ A ][ B ]      [ A ][ B ]
+     * virtual:    [ A ][ B ]      [ A ][ B ]
      *                ^   ^          ^   ^
      *              start end      start end
      *                1   3          11  13
@@ -128,7 +128,7 @@ export class SpanMap {
      * and [11,13). We do not return [1,13), because it contains both smaller candidates and would include code
      * that may be unrelated to the original range. These cross-group results have approximate fidelity.
      */
-    originalToGeneratedSpans(range: ReadonlyTextRange, feature: SpanMapFeature): readonly MappedRange[] {
+    originalToVirtualSpans(range: ReadonlyTextRange, feature: SpanMapFeature): readonly MappedRange[] {
         const start = range.pos;
         const end = Math.max(range.end, start);
         const lastCharacter = end > start ? end - 1 : end;
@@ -137,16 +137,16 @@ export class SpanMap {
         const endSegments = originalSegmentsAt(originalSegments, lastCharacter);
         if (!startSegments || !endSegments) return [];
         if (sameOriginalRange(startSegments[0], endSegments[0])) {
-            return originalToGeneratedSpansInGroup(startSegments, start, end, feature);
+            return originalToVirtualSpansInGroup(startSegments, start, end, feature);
         }
         const starts = originalStartProjections(startSegments, start, feature);
         const ends = originalEndProjections(endSegments, end, feature);
         if (starts.length === 0 || ends.length === 0) return [];
-        return starts.flatMap((generatedStart, index) => {
-            const generatedEnd = ends.find(end => end >= generatedStart);
-            return generatedEnd === undefined || index + 1 < starts.length && starts[index + 1] <= generatedEnd
+        return starts.flatMap((virtualStart, index) => {
+            const virtualEnd = ends.find(end => end >= virtualStart);
+            return virtualEnd === undefined || index + 1 < starts.length && starts[index + 1] <= virtualEnd
                 ? []
-                : [{ range: { pos: generatedStart, end: generatedEnd }, fidelity: SpanMapFidelity.Approximate }];
+                : [{ range: { pos: virtualStart, end: virtualEnd }, fidelity: SpanMapFidelity.Approximate }];
         });
     }
 
@@ -188,7 +188,7 @@ export class SpanMap {
             return { position: mapVerbatimPosition(segment, position, reverse), fidelity: SpanMapFidelity.Exact };
         }
         return {
-            position: reverse ? segment.generatedStart : segment.originalStart,
+            position: reverse ? segment.virtualStart : segment.originalStart,
             fidelity: SpanMapFidelity.Atom,
         };
     }
@@ -198,11 +198,11 @@ export class SpanMap {
         return this.originalSegments ??= [...this.segments].sort((left, right) =>
             left.originalStart - right.originalStart
             || left.originalEnd - right.originalEnd
-            || left.generatedStart - right.generatedStart
+            || left.virtualStart - right.virtualStart
         );
     }
 
-    private generatedRangeSupportsFeature(range: ReadonlyTextRange, feature: SpanMapFeature): boolean {
+    private virtualRangeSupportsFeature(range: ReadonlyTextRange, feature: SpanMapFeature): boolean {
         const start = range.pos;
         const end = Math.max(range.end, start);
         if (start === end) {
@@ -214,8 +214,8 @@ export class SpanMap {
         let coveredThrough = start;
         while (index < this.segments.length && coveredThrough < end) {
             const segment = this.segments[index];
-            if (segment.generatedStart > coveredThrough || segment.generatedEnd <= coveredThrough || !supportsFeature(segment, feature)) return false;
-            coveredThrough = segment.generatedEnd;
+            if (segment.virtualStart > coveredThrough || segment.virtualEnd <= coveredThrough || !supportsFeature(segment, feature)) return false;
+            coveredThrough = segment.virtualEnd;
             index++;
         }
         return coveredThrough >= end;
@@ -224,13 +224,13 @@ export class SpanMap {
 
 /**
  * Maps the inclusive start of an original range through every matching segment. Verbatim segments preserve
- * the offset within the segment; atoms map to their generated start.
+ * the offset within the segment; atoms map to their virtual start.
  *
  * ```text
  * original:       [---------)
  *                    ^ start
  *
- * generated:  [---------)   [---------)
+ * virtual:    [---------)   [---------)
  *                ^             ^
  *              result        result
  * ```
@@ -241,7 +241,7 @@ function originalStartProjections(segments: readonly NormalizedSpanMapSegment[],
         .map(segment =>
             segment.kind === SpanMapKind.Verbatim
                 ? mapVerbatimPosition(segment, start, true)
-                : segment.generatedStart
+                : segment.virtualStart
         );
 }
 
@@ -254,7 +254,7 @@ function originalStartProjections(segments: readonly NormalizedSpanMapSegment[],
  *                          ^`-- end
  *                          `--- end - 1
  *
- * generated:  [---------)   [---------)
+ * virtual:    [---------)   [---------)
  *                       ^             ^
  *                     result        result
  * ```
@@ -265,12 +265,12 @@ function originalEndProjections(segments: readonly NormalizedSpanMapSegment[], e
         .map(segment =>
             segment.kind === SpanMapKind.Verbatim
                 ? mapVerbatimPosition(segment, end, true)
-                : segment.generatedEnd
+                : segment.virtualEnd
         );
 }
 
 /** Maps a range whose boundaries are known to lie in one duplicate group. */
-function originalToGeneratedSpansInGroup(segments: readonly NormalizedSpanMapSegment[], start: number, end: number, feature: SpanMapFeature): readonly MappedRange[] {
+function originalToVirtualSpansInGroup(segments: readonly NormalizedSpanMapSegment[], start: number, end: number, feature: SpanMapFeature): readonly MappedRange[] {
     return segments
         .filter(segment => supportsFeature(segment, feature))
         .map(segment => {
@@ -279,7 +279,7 @@ function originalToGeneratedSpansInGroup(segments: readonly NormalizedSpanMapSeg
                 const mappedEnd = Math.max(mappedStart, mapVerbatimPosition(segment, end, true));
                 return { range: { pos: mappedStart, end: mappedEnd }, fidelity: SpanMapFidelity.Exact };
             }
-            return { range: { pos: segment.generatedStart, end: segment.generatedEnd }, fidelity: SpanMapFidelity.Atom };
+            return { range: { pos: segment.virtualStart, end: segment.virtualEnd }, fidelity: SpanMapFidelity.Atom };
         });
 }
 
@@ -291,7 +291,7 @@ function sameOriginalRange(left: SpanMapSegment, right: SpanMapSegment): boolean
 /**
  * Returns the complete duplicate group containing `position`. Segment ends are exclusive; starts, including
  * zero-length segment starts, are included. It finds a candidate in O(log n), then scans only the duplicate
- * group. `segments` must be ordered by original start, original end, and generated start.
+ * group. `segments` must be ordered by original start, original end, and virtual start.
  */
 function originalSegmentsAt(segments: readonly NormalizedSpanMapSegment[], position: number): readonly NormalizedSpanMapSegment[] | undefined {
     let low = 0;
@@ -347,30 +347,30 @@ function originalSegmentGroupsAtPoint(segments: readonly NormalizedSpanMapSegmen
     return [{ segments: segments.slice(start, low), atEnd: position === left.originalEnd }];
 }
 
-/** Reports whether a segment participates in an original-to-generated query for `features`. */
+/** Reports whether a segment participates in an original-to-virtual query for `features`. */
 function supportsFeature(segment: NormalizedSpanMapSegment, feature: SpanMapFeature): boolean {
     return (segment.features & feature) !== 0;
 }
 
 /**
  * Finds the segment containing `position`, or the preceding segment when `position` is in a gap.
- * The boolean distinguishes containment from a gap; `reverse` selects original rather than generated coordinates.
+ * The boolean distinguishes containment from a gap; `reverse` selects original rather than virtual coordinates.
  */
 function segmentIndexAt(segments: readonly SpanMapSegment[], position: number, reverse: boolean): [number, boolean] {
     let low = 0;
     let high = segments.length;
     while (low < high) {
         const middle = (low + high) >>> 1;
-        const start = reverse ? segments[middle].originalStart : segments[middle].generatedStart;
+        const start = reverse ? segments[middle].originalStart : segments[middle].virtualStart;
         if (start < position) low = middle + 1;
         else high = middle;
     }
-    if (low < segments.length && (reverse ? segments[low].originalStart : segments[low].generatedStart) === position) {
+    if (low < segments.length && (reverse ? segments[low].originalStart : segments[low].virtualStart) === position) {
         return [low, true];
     }
     const previous = low - 1;
     if (previous >= 0) {
-        const end = reverse ? segments[previous].originalEnd : segments[previous].generatedEnd;
+        const end = reverse ? segments[previous].originalEnd : segments[previous].virtualEnd;
         if (position < end || previous === segments.length - 1 && position === end) return [previous, true];
     }
     return [previous, false];
@@ -379,14 +379,14 @@ function segmentIndexAt(segments: readonly SpanMapSegment[], position: number, r
 /** Returns the target insertion point for a gap following `previous`, or zero before the first segment. */
 function insertionPoint(segments: readonly SpanMapSegment[], previous: number, reverse: boolean): number {
     if (previous < 0) return 0;
-    return reverse ? segments[previous].generatedEnd : segments[previous].originalEnd;
+    return reverse ? segments[previous].virtualEnd : segments[previous].originalEnd;
 }
 
 /** Linearly maps and clamps a position within a length-preserving verbatim segment. */
 function mapVerbatimPosition(segment: SpanMapSegment, position: number, reverse: boolean): number {
-    const sourceStart = reverse ? segment.originalStart : segment.generatedStart;
-    const targetStart = reverse ? segment.generatedStart : segment.originalStart;
-    const targetEnd = reverse ? segment.generatedEnd : segment.originalEnd;
+    const sourceStart = reverse ? segment.originalStart : segment.virtualStart;
+    const targetStart = reverse ? segment.virtualStart : segment.originalStart;
+    const targetEnd = reverse ? segment.virtualEnd : segment.originalEnd;
     return clamp(targetStart + position - sourceStart, targetStart, targetEnd);
 }
 
@@ -395,14 +395,14 @@ function mapBoundary(segments: readonly SpanMapSegment[], position: number, inde
     if (!inside) return insertionPoint(segments, index, reverse);
     const segment = segments[index];
     if (segment.kind === SpanMapKind.Verbatim) return mapVerbatimPosition(segment, position, reverse);
-    if (reverse) return high ? segment.generatedEnd : segment.generatedStart;
+    if (reverse) return high ? segment.virtualEnd : segment.virtualStart;
     return high ? segment.originalEnd : segment.originalStart;
 }
 
 /** Returns the complete target range of a segment in the selected direction. */
 function targetRange(segment: SpanMapSegment, reverse: boolean): ReadonlyTextRange {
     return reverse
-        ? { pos: segment.generatedStart, end: segment.generatedEnd }
+        ? { pos: segment.virtualStart, end: segment.virtualEnd }
         : { pos: segment.originalStart, end: segment.originalEnd };
 }
 

@@ -58,9 +58,9 @@ func (fakeMapper) HandleRequest(ctx context.Context, method string, params json.
 			return nil, err
 		}
 		mappings, err := spanmap.New([]spanmap.Segment{{
-			GenEnd:  core.TextPos(len(p.Content)),
-			OrigEnd: core.TextPos(len(p.Content)),
-			Kind:    spanmap.KindVerbatim,
+			VirtualEnd:  core.TextPos(len(p.Content)),
+			OriginalEnd: core.TextPos(len(p.Content)),
+			Kind:        spanmap.KindVerbatim,
 		}}).Marshal()
 		if err != nil {
 			return nil, err
@@ -299,14 +299,14 @@ func TestRunnerPositionEncodings(t *testing.T) {
 			assert.NilError(t, err)
 			segments := result.Mappings.Segments()
 			assert.Equal(t, len(segments), 2)
-			assert.Equal(t, int(segments[0].GenEnd), 2)
-			assert.Equal(t, int(segments[0].OrigEnd), 2)
-			assert.Equal(t, int(segments[1].GenStart), 2)
-			assert.Equal(t, int(segments[1].OrigStart), 2)
+			assert.Equal(t, int(segments[0].VirtualEnd), 2)
+			assert.Equal(t, int(segments[0].OriginalEnd), 2)
+			assert.Equal(t, int(segments[1].VirtualStart), 2)
+			assert.Equal(t, int(segments[1].OriginalStart), 2)
 			assert.Equal(t, result.Text, "éx")
 			problem := result.Mappings.Validate(result.Text, "éx")
 			assert.Assert(t, problem == nil, "%v", problem)
-			mapped, fidelity := result.Mappings.GeneratedToOriginalPosition(2)
+			mapped, fidelity := result.Mappings.VirtualToOriginalPosition(2)
 			assert.Equal(t, int(mapped), 2)
 			assert.Equal(t, fidelity, spanmap.FidelityExact)
 			assert.Equal(t, result.Diagnostics[0].Pos(), 2)

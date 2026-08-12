@@ -43,7 +43,7 @@ import { workspaceSymbolSendRequestMiddleware } from "./workspaceSymbolMiddlewar
 
 // Registration IDs the server uses for content mapper capabilities all share this prefix (see
 // RegisterContentMapperExtensions in internal/lsp/server.go). The extension watches for these dynamic
-// registrations to learn which foreign file extensions are content-mapped.
+// registrations to learn which file extensions are content-mapped.
 const contentMapperRegistrationPrefix = "content-mapper-";
 
 // ContentMapperRegisterOptions is the subset of a dynamic registration's options that our server sends

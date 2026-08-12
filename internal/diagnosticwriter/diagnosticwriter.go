@@ -62,7 +62,7 @@ func (d *ASTDiagnostic) File() FileLike {
 	if d.resolve().useOriginal {
 		// The mapper's own diagnostics (Source != "") already carry original ranges; compiler
 		// diagnostics have their transformed ranges mapped back. Both render against the original,
-		// untransformed text. Diagnostics in generated code (see resolve) keep the transformed text.
+		// untransformed text. Diagnostics in synthesized code (see resolve) keep the virtual text.
 		return newOriginalTextFile(file)
 	}
 	return file
@@ -80,13 +80,13 @@ func (d *ASTDiagnostic) Len() int { return d.resolve().loc.Len() }
 type resolvedLocation struct {
 	loc         core.TextRange
 	useOriginal bool // render against the file's original, untransformed text
-	generated   bool // the range is in generated code with no corresponding original location
+	synthesized bool // the range is in virtual code with no corresponding original location
 }
 
 // resolve determines where and against which text a diagnostic should be reported. A content mapper's
 // own diagnostics already carry original ranges. A compiler diagnostic on a content-mapped file has its
-// transformed range mapped back to the original; if it falls entirely within generated code, there is no
-// original location, so it is shown against the transformed text and flagged as generated.
+// virtual range mapped back to the original; if it falls entirely within synthesized code, there is no
+// original location, so it is shown against the virtual text and flagged as synthesized.
 func (d *ASTDiagnostic) resolve() resolvedLocation {
 	loc := d.Diagnostic.Loc()
 	file := d.Diagnostic.File()
@@ -96,9 +96,9 @@ func (d *ASTDiagnostic) resolve() resolvedLocation {
 	case d.Diagnostic.Source() != "":
 		return resolvedLocation{loc: loc, useOriginal: true}
 	case file.SpanMap() != nil:
-		mapped, fidelity := file.SpanMap().GeneratedToOriginalSpan(loc)
+		mapped, fidelity := file.SpanMap().VirtualToOriginalSpan(loc)
 		if fidelity == spanmap.FidelityNone {
-			return resolvedLocation{loc: loc, generated: true}
+			return resolvedLocation{loc: loc, synthesized: true}
 		}
 		return resolvedLocation{loc: mapped, useOriginal: true}
 	default:
@@ -133,11 +133,11 @@ func (d *ASTDiagnostic) MessageChain() []Diagnostic {
 	for _, c := range chain {
 		result = append(result, &ASTDiagnostic{c})
 	}
-	if d.resolve().generated {
-		// The diagnostic points into generated code; make clear the shown location is not in the
-		// original file, and which content mapper generated it.
+	if d.resolve().synthesized {
+		// The diagnostic points into synthesized virtual code; make clear the shown location is not in the
+		// original file, and which content mapper produced it.
 		note := ast.NewCompilerDiagnostic(
-			diagnostics.This_location_is_in_code_generated_by_the_content_mapper_0_and_has_no_corresponding_location_in_the_original_file,
+			diagnostics.This_location_is_in_virtual_code_produced_by_the_content_mapper_0_and_has_no_corresponding_location_in_the_original_file,
 			d.Diagnostic.File().ContentMapper(),
 		)
 		result = append(result, WrapASTDiagnostic(note))

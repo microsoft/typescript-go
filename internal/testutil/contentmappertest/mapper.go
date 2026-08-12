@@ -37,18 +37,18 @@ const (
 	// per-file failure and mapper-disabled paths.
 	FailingMapper = "failing-mapper"
 	// SynthesizingMapper selects a mapper that emits synthesized TypeScript with no original counterpart, so
-	// compiler diagnostics in it are reported against the generated text.
+	// compiler diagnostics in it are reported against the virtual text.
 	SynthesizingMapper = "synthesizing-mapper"
 	// ComponentMapper selects a Vue-like mapper that extracts <script> contents verbatim, lowers identifiers
 	// in {{ template expressions }} as atom mappings, omits markup, and synthesizes component glue.
 	ComponentMapper = "component-mapper"
 	// DuplicateMapper maps one original identifier to separate semantic and navigation projections.
 	DuplicateMapper = "duplicate-mapper"
-	// LispMapper transforms one small Lisp expression and maps its operator to a generated helper as an alias.
+	// LispMapper transforms one small Lisp expression and maps its operator to a virtual helper as an alias.
 	LispMapper = "lisp-mapper"
 	// SupplementalMapper emits a synthesized canonical module and the original text as a supplemental script.
 	SupplementalMapper = "supplemental-mapper"
-	// SupplementalDiagnosticsMapper prefixes the supplemental script with unmapped generated code before
+	// SupplementalDiagnosticsMapper prefixes the supplemental script with unmapped virtual code before
 	// copying the original text verbatim, exercising both supplemental diagnostic rendering modes.
 	SupplementalDiagnosticsMapper = "supplemental-diagnostics-mapper"
 	// SupplementalGlobalsMapper emits supplemental declarations that depend on other mapped roots through
@@ -153,11 +153,11 @@ func (supplementalDiagnosticsHandler) HandleRequest(ctx context.Context, method 
 		}
 		const prefix = "missingSupplementalGlobal;\n"
 		mappings, err := spanmap.New([]spanmap.Segment{{
-			GenStart: core.TextPos(len(prefix)),
-			GenEnd:   core.TextPos(len(prefix) + len(p.Content)),
-			OrigEnd:  core.TextPos(len(p.Content)),
-			Kind:     spanmap.KindVerbatim,
-			Features: spanmap.FeatureAll,
+			VirtualStart: core.TextPos(len(prefix)),
+			VirtualEnd:   core.TextPos(len(prefix) + len(p.Content)),
+			OriginalEnd:  core.TextPos(len(p.Content)),
+			Kind:         spanmap.KindVerbatim,
+			Features:     spanmap.FeatureAll,
 		}}).Marshal()
 		if err != nil {
 			return nil, err
@@ -180,7 +180,7 @@ func (supplementalHandler) HandleRequest(ctx context.Context, method string, par
 		if err := json.Unmarshal(params, &p); err != nil {
 			return nil, err
 		}
-		mappings, err := spanmap.New([]spanmap.Segment{{GenEnd: core.TextPos(len(p.Content)), OrigEnd: core.TextPos(len(p.Content)), Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll}}).Marshal()
+		mappings, err := spanmap.New([]spanmap.Segment{{VirtualEnd: core.TextPos(len(p.Content)), OriginalEnd: core.TextPos(len(p.Content)), Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll}}).Marshal()
 		if err != nil {
 			return nil, err
 		}
@@ -210,10 +210,10 @@ func (lispHandler) HandleRequest(ctx context.Context, method string, params json
 			return nil, fmt.Errorf("contentmappertest: unsupported Lisp expression %q", p.Content)
 		}
 		mappings, err := spanmap.New([]spanmap.Segment{
-			{GenStart: 0, GenEnd: 3, OrigStart: 1, OrigEnd: 2, Kind: spanmap.KindAlias, Features: spanmap.FeatureAll},
-			{GenStart: 4, GenEnd: 5, OrigStart: 3, OrigEnd: 4, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll},
-			{GenStart: 7, GenEnd: 8, OrigStart: 5, OrigEnd: 6, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll},
-			{GenStart: 10, GenEnd: 16, OrigStart: 7, OrigEnd: 13, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll},
+			{VirtualStart: 0, VirtualEnd: 3, OriginalStart: 1, OriginalEnd: 2, Kind: spanmap.KindAlias, Features: spanmap.FeatureAll},
+			{VirtualStart: 4, VirtualEnd: 5, OriginalStart: 3, OriginalEnd: 4, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll},
+			{VirtualStart: 7, VirtualEnd: 8, OriginalStart: 5, OriginalEnd: 6, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll},
+			{VirtualStart: 10, VirtualEnd: 16, OriginalStart: 7, OriginalEnd: 13, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll},
 		}).Marshal()
 		if err != nil {
 			return nil, err
@@ -240,7 +240,7 @@ func (h duplicateHandler) HandleRequest(ctx context.Context, method string, para
 		if err := json.Unmarshal(params, &p); err != nil {
 			return nil, err
 		}
-		generated := "export const " + p.Content + " = 1;\n" + p.Content + ";\n"
+		virtual := "export const " + p.Content + " = 1;\n" + p.Content + ";\n"
 		first := len("export const ")
 		second := first + len(p.Content) + len(" = 1;\n")
 		disabled := strings.Contains(p.FileName, "disabled")
@@ -251,20 +251,20 @@ func (h duplicateHandler) HandleRequest(ctx context.Context, method string, para
 			navigationFeatures = spanmap.FeatureNone
 		}
 		mappings, err := spanmap.New([]spanmap.Segment{
-			{GenStart: core.TextPos(first), GenEnd: core.TextPos(first + len(p.Content)), OrigStart: 0, OrigEnd: core.TextPos(len(p.Content)), Kind: spanmap.KindVerbatim, Features: semanticFeatures},
-			{GenStart: core.TextPos(second), GenEnd: core.TextPos(second + len(p.Content)), OrigStart: 0, OrigEnd: core.TextPos(len(p.Content)), Kind: spanmap.KindVerbatim, Features: navigationFeatures},
+			{VirtualStart: core.TextPos(first), VirtualEnd: core.TextPos(first + len(p.Content)), OriginalStart: 0, OriginalEnd: core.TextPos(len(p.Content)), Kind: spanmap.KindVerbatim, Features: semanticFeatures},
+			{VirtualStart: core.TextPos(second), VirtualEnd: core.TextPos(second + len(p.Content)), OriginalStart: 0, OriginalEnd: core.TextPos(len(p.Content)), Kind: spanmap.KindVerbatim, Features: navigationFeatures},
 		}).Marshal()
 		if err != nil {
 			return nil, err
 		}
-		return contentmapper.TransformResult{MappedOutput: contentmapper.MappedOutput{Text: generated, Mappings: json.Value(mappings)}}, nil
+		return contentmapper.TransformResult{MappedOutput: contentmapper.MappedOutput{Text: virtual, Mappings: json.Value(mappings)}}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
 	}
 }
 
 // Handler implements the content mapper protocol (see internal/contentmapper). It answers the
-// initialize handshake and transforms foreign file content into TypeScript.
+// initialize handshake and transforms content-mapped source files into virtual TypeScript.
 type Handler struct{ noNotifications }
 
 var _ ipc.Handler = Handler{}
@@ -295,48 +295,48 @@ func (Handler) HandleRequest(ctx context.Context, method string, params json.Val
 	}
 }
 
-// transform turns foreign content into TypeScript and records how the generated text maps back to the
+// transform turns otherwise unsupported content into virtual TypeScript and records how the virtual text maps back to the
 // original. It emits three kinds of segments: a synthesized preamble, verbatim copies of the body, and
 // atom substitutions for #{option} tokens whose value comes from a declared compiler option. An
 // interpolation token that is never closed on its line is reported as a mapper syntax error (in original
-// coordinates) and substituted with `undefined` so the generated TypeScript stays well-formed.
+// coordinates) and substituted with `undefined` so the virtual TypeScript stays well-formed.
 func transform(content string, options *collections.OrderedMap[string, json.Value]) (string, json.Value, []contentmapper.Diagnostic, error) {
-	var gen strings.Builder
+	var virtual strings.Builder
 	var segments []spanmap.Segment
 	var diagnostics []contentmapper.Diagnostic
 
 	// The preamble is synthesized glue with no original counterpart; it is left uncovered (a gap), which
 	// the span map treats as synthesized.
-	gen.WriteString(preamble)
+	virtual.WriteString(preamble)
 
 	writeVerbatim := func(from, to int) {
 		if to <= from {
 			return
 		}
-		genStart := core.TextPos(gen.Len())
-		gen.WriteString(content[from:to])
+		virtualStart := core.TextPos(virtual.Len())
+		virtual.WriteString(content[from:to])
 		segments = append(segments, spanmap.Segment{
-			GenStart:  genStart,
-			GenEnd:    core.TextPos(gen.Len()),
-			OrigStart: core.TextPos(from),
-			OrigEnd:   core.TextPos(to),
-			Kind:      spanmap.KindVerbatim,
-			Features:  spanmap.FeatureAll,
+			VirtualStart:  virtualStart,
+			VirtualEnd:    core.TextPos(virtual.Len()),
+			OriginalStart: core.TextPos(from),
+			OriginalEnd:   core.TextPos(to),
+			Kind:          spanmap.KindVerbatim,
+			Features:      spanmap.FeatureAll,
 		})
 	}
 
-	// writeAtom substitutes generated text for the original span [from, to), recording an atom segment so
+	// writeAtom substitutes virtual text for the original span [from, to), recording an atom segment so
 	// positions within map back to that original span as a whole.
 	writeAtom := func(value string, from, to int) {
-		genStart := core.TextPos(gen.Len())
-		gen.WriteString(value)
+		virtualStart := core.TextPos(virtual.Len())
+		virtual.WriteString(value)
 		segments = append(segments, spanmap.Segment{
-			GenStart:  genStart,
-			GenEnd:    core.TextPos(gen.Len()),
-			OrigStart: core.TextPos(from),
-			OrigEnd:   core.TextPos(to),
-			Kind:      spanmap.KindAtom,
-			Features:  spanmap.FeatureAll,
+			VirtualStart:  virtualStart,
+			VirtualEnd:    core.TextPos(virtual.Len()),
+			OriginalStart: core.TextPos(from),
+			OriginalEnd:   core.TextPos(to),
+			Kind:          spanmap.KindAtom,
+			Features:      spanmap.FeatureAll,
 		})
 	}
 
@@ -379,7 +379,7 @@ func transform(content string, options *collections.OrderedMap[string, json.Valu
 	if err != nil {
 		return "", nil, nil, err
 	}
-	return gen.String(), json.Value(mappings), diagnostics, nil
+	return virtual.String(), json.Value(mappings), diagnostics, nil
 }
 
 // renderOption renders the value of a declared compiler option as a TypeScript expression, or "undefined"
@@ -468,10 +468,10 @@ func (verbatimHandler) HandleRequest(ctx context.Context, method string, params 
 			return nil, err
 		}
 		mappings, err := spanmap.New([]spanmap.Segment{{
-			GenEnd:   core.TextPos(len(p.Content)),
-			OrigEnd:  core.TextPos(len(p.Content)),
-			Kind:     spanmap.KindVerbatim,
-			Features: spanmap.FeatureAll,
+			VirtualEnd:  core.TextPos(len(p.Content)),
+			OriginalEnd: core.TextPos(len(p.Content)),
+			Kind:        spanmap.KindVerbatim,
+			Features:    spanmap.FeatureAll,
 		}}).Marshal()
 		if err != nil {
 			return nil, err
@@ -552,22 +552,22 @@ func (componentHandler) HandleRequest(ctx context.Context, method string, params
 }
 
 func transformComponent(content string) (string, json.Value, error) {
-	var gen strings.Builder
+	var virtual strings.Builder
 	var segments []spanmap.Segment
 
 	writeSynthesized := func(text string) {
-		gen.WriteString(text)
+		virtual.WriteString(text)
 	}
 	writeMapped := func(text string, origStart, origEnd int, kind spanmap.Kind) {
-		genStart := core.TextPos(gen.Len())
-		gen.WriteString(text)
+		virtualStart := core.TextPos(virtual.Len())
+		virtual.WriteString(text)
 		segments = append(segments, spanmap.Segment{
-			GenStart:  genStart,
-			GenEnd:    core.TextPos(gen.Len()),
-			OrigStart: core.TextPos(origStart),
-			OrigEnd:   core.TextPos(origEnd),
-			Kind:      kind,
-			Features:  spanmap.FeatureAll,
+			VirtualStart:  virtualStart,
+			VirtualEnd:    core.TextPos(virtual.Len()),
+			OriginalStart: core.TextPos(origStart),
+			OriginalEnd:   core.TextPos(origEnd),
+			Kind:          kind,
+			Features:      spanmap.FeatureAll,
 		})
 	}
 
@@ -627,7 +627,7 @@ func transformComponent(content string) (string, json.Value, error) {
 	if err != nil {
 		return "", nil, err
 	}
-	return gen.String(), json.Value(mappings), nil
+	return virtual.String(), json.Value(mappings), nil
 }
 
 func componentNameRange(content string) (start, end int, ok bool) {

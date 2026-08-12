@@ -129,7 +129,7 @@ func TestContentMapperInProject(t *testing.T) {
 
 		ctx := context.Background()
 		session.DidOpenFile(ctx, "file:///home/project/main.ts", 1, files["/home/project/main.ts"].(string), lsproto.LanguageKindTypeScript)
-		// Open the .box with a foreign language id so its overlay script kind is Unknown, matching how an
+		// Open the .box with its content-mapped language id so its overlay script kind is Unknown, matching how an
 		// editor opens a content-mapped file. This is what made the incremental reparse panic.
 		session.DidOpenFile(ctx, "file:///home/project/app.box", 1, files["/home/project/app.box"].(string), lsproto.LanguageKind("box"))
 		_, err := session.GetLanguageService(ctx, "file:///home/project/main.ts")
@@ -137,7 +137,7 @@ func TestContentMapperInProject(t *testing.T) {
 
 		// Editing the open .box file drives the single-file incremental reparse path
 		// (Program.UpdateProgram), which must re-run the content mapper transform rather than parse the
-		// raw foreign text.
+		// raw source text.
 		session.DidChangeFile(ctx, "file:///home/project/app.box", 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
 			{WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{Text: "export const version = #{target};\nexport const extra = 1;\n"}},
 		})
@@ -631,7 +631,7 @@ func TestContentMapperRemovalWithOpenFile(t *testing.T) {
 	_, err = session.GetLanguageService(ctx, boxURI)
 	assert.ErrorContains(t, err, "no project found")
 	assert.Assert(t, session.Snapshot().GetFile("/home/project/app.box") != nil, "overlay should remain until didClose")
-	assert.Assert(t, session.Snapshot().GetDefaultProject(boxURI) == nil, "unsupported foreign file should not be in a project")
+	assert.Assert(t, session.Snapshot().GetDefaultProject(boxURI) == nil, "unsupported file should not be in a project")
 
 	session.WaitForBackgroundTasks()
 	assert.Equal(t, spawner.closes.Load(), int32(0), "live old snapshot should retain the mapper process")
@@ -752,10 +752,10 @@ func TestContentMapperInferredProjectUsesExtensionContributions(t *testing.T) {
 
 func TestContentMapperInferredProjectSurvivesTypingsInstall(t *testing.T) {
 	t.Parallel()
-	// A loose foreign file lands in the inferred project with an extension content mapper.
+	// A loose content-mapped file lands in the inferred project with an extension content mapper.
 	// When ATA finishes installing typings, the inferred program rebuilds with the
 	// typings-augmented command line; if that command line drops the content mappers, the
-	// foreign root file is parsed as plain TypeScript with an unknown script kind and the
+	// otherwise unsupported root file is parsed as plain TypeScript with an unknown script kind and the
 	// server panics.
 	files := map[string]any{
 		"/home/configured/tsconfig.json": `{
@@ -910,7 +910,7 @@ func TestContentMapperSynthesizedDocumentSymbols(t *testing.T) {
 
 // TestContentMapperCompletions verifies that completions are offered inside verbatim spans of a
 // content-mapped file (mapped to the original position) but declined outside them, and that auto-import
-// completions whose import edit would land in generated code are filtered out of the list.
+// completions whose import edit would land in virtual code are filtered out of the list.
 func TestContentMapperCompletions(t *testing.T) {
 	t.Parallel()
 	if !bundled.Embedded {
@@ -1001,7 +1001,7 @@ func TestContentMapperCompletions(t *testing.T) {
 		assert.Assert(t, resp.List == nil && resp.Items == nil, "expected no completions inside an atom span")
 	})
 
-	t.Run("filters auto-imports that would edit generated code", func(t *testing.T) {
+	t.Run("filters auto-imports that would edit virtual code", func(t *testing.T) {
 		t.Parallel()
 		files := baseFiles("export const version = #{target};\nconst x = help;\n")
 		files["/home/project/dep.ts"] = "export const helper = 1;\n"
@@ -1014,7 +1014,7 @@ func TestContentMapperCompletions(t *testing.T) {
 		assert.Assert(t, resp.List != nil, "expected a completion list")
 		for _, item := range resp.List.Items {
 			if item.Data != nil && item.Data.AutoImport != nil {
-				t.Fatalf("auto-import completion %q should have been filtered out (edit lands in generated code)", item.Label)
+				t.Fatalf("auto-import completion %q should have been filtered out (edit lands in virtual code)", item.Label)
 			}
 		}
 	})
