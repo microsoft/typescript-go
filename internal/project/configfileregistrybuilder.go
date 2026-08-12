@@ -442,7 +442,7 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 	createdFiles := make(map[tspath.Path]string, summary.Created.Len())
 	deletedFiles := make(map[tspath.Path]string, summary.Deleted.Len())
 	createdOrDeletedConfigFiles := make(map[tspath.Path]struct{})
-	createdOrChangedOrDeletedFiles := make(map[tspath.Path]struct{}, summary.Changed.Len()+summary.Deleted.Len())
+	createdOrChangedOrDeletedFiles := make(map[tspath.Path]struct{}, summary.Changed.Len()+summary.Created.Len()+summary.Deleted.Len())
 	for uri := range summary.Changed.Keys() {
 		if tspath.ContainsIgnoredPath(string(uri)) {
 			continue
@@ -491,8 +491,8 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 		c.didCloseFile(path)
 	}
 
-	// Handle changes to stored config files
-	logger.Log("Checking if any changed files are config files")
+	// Handle changes to stored config files and their content mapper package manifests.
+	logger.Log("Checking if any changed files are configuration files")
 	for path := range createdOrChangedOrDeletedFiles {
 		if entry, ok := c.configs.Load(path); ok {
 			if hasExcessiveChanges {
@@ -507,6 +507,18 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 			}
 			// This was a config file, so assume it's not also a root file
 			delete(createdFiles, path)
+		} else if tspath.GetBaseFileName(string(path)) == "package.json" {
+			manifestChanged := false
+			c.configs.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *configFileEntry]) bool {
+				if contentMapperManifestPath(entry.Value().commandLine, c.fs.toPath, path) {
+					affectedProjects = core.CopyMapInto(affectedProjects, c.handleConfigChange(entry, logger))
+					manifestChanged = true
+				}
+				return true
+			})
+			if manifestChanged {
+				c.invalidateContentMappers()
+			}
 		}
 	}
 
@@ -618,6 +630,19 @@ func (c *configFileRegistryBuilder) handleConfigChange(entry *dirty.SyncMapEntry
 	}
 
 	return affectedProjects
+}
+
+func contentMapperManifestPath(commandLine *tsoptions.ParsedCommandLine, toPath func(string) tspath.Path, path tspath.Path) bool {
+	if commandLine == nil {
+		return false
+	}
+	for _, mapper := range commandLine.ContentMappers() {
+		if mapper.Package != "" && mapper.ContributionID == "" && mapper.PackageDirectory != "" &&
+			toPath(tspath.CombinePaths(mapper.PackageDirectory, "package.json")) == path {
+			return true
+		}
+	}
+	return false
 }
 
 func (c *configFileRegistryBuilder) computeConfigFileName(fileName string, skipSearchInDirectoryOfFile bool, logger *logging.LogTree) string {

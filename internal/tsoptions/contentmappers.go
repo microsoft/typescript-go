@@ -27,15 +27,15 @@ func resolveContentMapperManifest(host ParseConfigHost, containingFile string, p
 	packageJsonPath := tspath.CombinePaths(packageDirectory, "package.json")
 	contents, ok := host.FS().ReadFile(packageJsonPath)
 	if !ok {
-		return contentmapper.Manifest{}, "", ast.NewCompilerDiagnostic(diagnostics.The_content_mapper_package_0_could_not_be_resolved, packageName)
+		return contentmapper.Manifest{}, packageDirectory, ast.NewCompilerDiagnostic(diagnostics.The_content_mapper_package_0_could_not_be_resolved, packageName)
 	}
 	fields, err := packagejson.Parse([]byte(contents))
 	if err != nil {
-		return contentmapper.Manifest{}, "", ast.NewCompilerDiagnostic(diagnostics.The_package_json_of_the_content_mapper_package_0_could_not_be_parsed, packageName)
+		return contentmapper.Manifest{}, packageDirectory, ast.NewCompilerDiagnostic(diagnostics.The_package_json_of_the_content_mapper_package_0_could_not_be_parsed, packageName)
 	}
 	name, _ := fields.Name.GetValue()
 	if name == "" {
-		return contentmapper.Manifest{}, "", ast.NewCompilerDiagnostic(diagnostics.The_package_json_of_the_content_mapper_package_0_does_not_specify_a_name, packageName)
+		return contentmapper.Manifest{}, packageDirectory, ast.NewCompilerDiagnostic(diagnostics.The_package_json_of_the_content_mapper_package_0_does_not_specify_a_name, packageName)
 	}
 	version, _ := fields.Version.GetValue()
 
@@ -43,24 +43,24 @@ func resolveContentMapperManifest(host ParseConfigHost, containingFile string, p
 	// "exec" array of strings.
 	cm, ok := fields.ContentMapper.GetValue()
 	if !ok {
-		return contentmapper.Manifest{}, "", ast.NewCompilerDiagnostic(diagnostics.The_package_json_of_the_content_mapper_package_0_does_not_declare_a_tsContentMapper_object, packageName)
+		return contentmapper.Manifest{}, packageDirectory, ast.NewCompilerDiagnostic(diagnostics.The_package_json_of_the_content_mapper_package_0_does_not_declare_a_tsContentMapper_object, packageName)
 	}
 	exec, ok := cm.Exec.GetValue()
 	if !ok || len(exec) == 0 {
-		return contentmapper.Manifest{}, "", ast.NewCompilerDiagnostic(diagnostics.The_tsContentMapper_exec_of_the_content_mapper_package_0_must_be_a_non_empty_array_of_strings, packageName)
+		return contentmapper.Manifest{}, packageDirectory, ast.NewCompilerDiagnostic(diagnostics.The_tsContentMapper_exec_of_the_content_mapper_package_0_must_be_a_non_empty_array_of_strings, packageName)
 	}
 	compilerOptions, _ := cm.CompilerOptions.GetValue()
 	dynamicConfig, _ := cm.DynamicConfig.GetValue()
 	virtualExtensions, ok := cm.Extensions.GetValue()
 	if !ok || len(virtualExtensions) == 0 {
-		return contentmapper.Manifest{}, "", ast.NewCompilerDiagnostic(diagnostics.The_tsContentMapper_extensions_of_the_content_mapper_package_0_must_be_a_non_empty_object_mapping_source_extensions_to_virtual_extensions, packageName)
+		return contentmapper.Manifest{}, packageDirectory, ast.NewCompilerDiagnostic(diagnostics.The_tsContentMapper_extensions_of_the_content_mapper_package_0_must_be_a_non_empty_object_mapping_source_extensions_to_virtual_extensions, packageName)
 	}
 	for sourceExtension, virtualExtension := range virtualExtensions {
 		if !strings.HasPrefix(sourceExtension, ".") {
-			return contentmapper.Manifest{}, "", ast.NewCompilerDiagnostic(diagnostics.The_source_extension_0_in_tsContentMapper_extensions_of_the_content_mapper_package_1_must_begin_with_a, sourceExtension, packageName)
+			return contentmapper.Manifest{}, packageDirectory, ast.NewCompilerDiagnostic(diagnostics.The_source_extension_0_in_tsContentMapper_extensions_of_the_content_mapper_package_1_must_begin_with_a, sourceExtension, packageName)
 		}
 		if !contentmapper.IsSupportedVirtualExtension(virtualExtension) {
-			return contentmapper.Manifest{}, "", ast.NewCompilerDiagnostic(diagnostics.The_virtual_extension_0_for_source_extension_1_in_tsContentMapper_extensions_of_the_content_mapper_package_2_must_be_one_of_Colon_3, virtualExtension, sourceExtension, packageName, contentmapper.SupportedVirtualExtensionsDescription)
+			return contentmapper.Manifest{}, packageDirectory, ast.NewCompilerDiagnostic(diagnostics.The_virtual_extension_0_for_source_extension_1_in_tsContentMapper_extensions_of_the_content_mapper_package_2_must_be_one_of_Colon_3, virtualExtension, sourceExtension, packageName, contentmapper.SupportedVirtualExtensionsDescription)
 		}
 	}
 	return contentmapper.Manifest{Name: name, Version: version, Exec: exec, CompilerOptions: compilerOptions, DynamicConfig: dynamicConfig, Extensions: virtualExtensions}, packageDirectory, nil

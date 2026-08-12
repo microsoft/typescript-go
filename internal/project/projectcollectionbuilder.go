@@ -1186,14 +1186,23 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 				oldCheckerPool := project.checkerPool
 				project.host = newCompilerHost(project.currentDirectory, project, b, logger.Fork("CompilerHost"))
 				result := project.CreateProgram()
+				var watchedFiles []string
+				for _, mapper := range project.CommandLine.ContentMappers() {
+					if mapper.Package != "" && mapper.ContributionID == "" && mapper.PackageDirectory != "" {
+						watchedFiles = append(watchedFiles, tspath.CombinePaths(mapper.PackageDirectory, "package.json"))
+					}
+				}
 				contentMapperProject := project.host.ContentMapperProject()
 				if contentMapperProject != nil {
-					watchedFiles, _ := contentMapperProject.WatchedFiles()
-					project.contentMapperWatch = project.contentMapperWatch.Clone(watchedFiles)
-					project.contentMapperWatchedFiles = collections.NewSetWithSizeHint[tspath.Path](len(watchedFiles))
-					for _, fileName := range watchedFiles {
-						project.contentMapperWatchedFiles.Add(b.toPath(fileName))
-					}
+					dynamicWatchedFiles, _ := contentMapperProject.WatchedFiles()
+					watchedFiles = append(watchedFiles, dynamicWatchedFiles...)
+				}
+				slices.Sort(watchedFiles)
+				watchedFiles = slices.Compact(watchedFiles)
+				project.contentMapperWatch = project.contentMapperWatch.Clone(watchedFiles)
+				project.contentMapperWatchedFiles = collections.NewSetWithSizeHint[tspath.Path](len(watchedFiles))
+				for _, fileName := range watchedFiles {
+					project.contentMapperWatchedFiles.Add(b.toPath(fileName))
 				}
 				project.Program = result.Program
 				project.checkerPool = result.Program.GetCheckerPool().(*checkerPool)

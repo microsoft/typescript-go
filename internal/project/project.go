@@ -180,13 +180,13 @@ func NewProject(
 			core.Identity,
 		)
 	}
-	project.contentMapperWatch = NewWatchedFiles(
+	project.contentMapperWatch = NewWatchedFilesForPaths(
 		"content mapper configuration files for "+configFileName,
 		lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
 		lsproto.GetClientCapabilities(builder.ctx).Workspace.DidChangeWatchedFiles.RelativePatternSupport,
-		func(files []string) PatternsAndIgnored {
-			return PatternsAndIgnored{patternsInsideWorkspace: files}
-		},
+		builder.sessionOptions.CurrentDirectory,
+		builder.sessionOptions.CurrentDirectory,
+		builder.fs.fs.UseCaseSensitiveFileNames(),
 	)
 	return project
 }

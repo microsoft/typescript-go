@@ -1404,12 +1404,12 @@ func parseJsonConfigFileContentWorker(
 		}
 		for j, mapper := range contentMappers {
 			manifest, packageDirectory, diagnostic := resolveContentMapperManifest(host, containingFile, mapper.Package)
+			mapper.PackageDirectory = packageDirectory
 			if diagnostic != nil {
 				errors = append(errors, setContentMapperDiagnosticLocation(diagnostic, contentMapperSourceFile, getContentMapperSyntax(contentMapperSourceFile, contentMapperIndices[j], "package")))
 				continue
 			}
 			mapper.Manifest = manifest
-			mapper.PackageDirectory = packageDirectory
 			for _, extension := range mapper.Definition.Extensions {
 				if mapper.Manifest.Extensions[extension] == "" {
 					errors = append(errors, setContentMapperDiagnosticLocation(

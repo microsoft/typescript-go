@@ -89,8 +89,9 @@ func TestResolveContentMapperManifest(t *testing.T) {
 	assert.Equal(t, diagnostic.Code(), diagnostics.The_content_mapper_package_0_could_not_be_resolved.Code())
 
 	// A package whose package.json has no name reports a diagnostic.
-	_, _, diagnostic = resolveContentMapperManifest(host, "/home/project/tsconfig.json", "no-name")
+	_, packageDirectory, diagnostic = resolveContentMapperManifest(host, "/home/project/tsconfig.json", "no-name")
 	assert.Assert(t, diagnostic != nil)
+	assert.Equal(t, packageDirectory, "/home/project/node_modules/no-name")
 	assert.Equal(t, diagnostic.Code(), diagnostics.The_package_json_of_the_content_mapper_package_0_does_not_specify_a_name.Code())
 
 	// A package that does not declare a "tsContentMapper" object reports a diagnostic.
