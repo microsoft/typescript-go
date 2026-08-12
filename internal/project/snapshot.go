@@ -79,6 +79,83 @@ func NewSnapshot(
 	return s
 }
 
+// cloneForProgram creates a snapshot whose project collection contains
+// only a synthetic project described by rootFileNames and options.
+func (s *Snapshot) cloneForProgram(ctx context.Context, rootFileNames []string, options *core.CompilerOptions, session *Session) *Snapshot {
+	var logger *logging.LogTree
+	if session.options.LoggingEnabled {
+		logger = logging.NewLogTree(fmt.Sprintf("Creating program snapshot from snapshot %d", s.id))
+	}
+
+	start := time.Now()
+	fs := newSnapshotFSBuilder(
+		session.fs.fs,
+		s.fs.overlays,
+		s.fs.overlays,
+		s.fs.diskFiles,
+		s.fs.diskDirectories,
+		s.fs.nodeModulesRealpathAliases,
+		session.options.PositionEncoding,
+		s.toPath,
+	)
+	configFileRegistry := &ConfigFileRegistry{}
+	projectCollection := &ProjectCollection{
+		toPath:              s.toPath,
+		configFileRegistry:  configFileRegistry,
+		configuredProjects:  make(map[tspath.Path]*Project),
+		openFiles:           openFilePaths(s.fs.overlays),
+		fileDefaultProjects: make(map[tspath.Path]tspath.Path),
+		apiState: APIState{
+			openProjects: make(map[tspath.Path]int),
+			openFiles:    make(map[tspath.Path]apiOpenedFile),
+		},
+	}
+	newSnapshotID := session.snapshotID.Add(1)
+	builder := newProjectCollectionBuilder(
+		ctx,
+		newSnapshotID,
+		fs,
+		projectCollection,
+		configFileRegistry,
+		projectCollection.apiState,
+		options,
+		s.sessionOptions,
+		"",
+		session.parseCache,
+		session.extendedConfigCache,
+		session.client,
+	)
+	builder.inferredProject.Set(NewInferredProject(s.sessionOptions.CurrentDirectory, options, rootFileNames, builder, logger))
+	builder.updateProgram(builder.inferredProject, logger.Fork("CreateProgram"))
+	projectCollection, configFileRegistry = builder.Finalize(logger)
+
+	snapshotFS, _ := fs.Finalize()
+	newSnapshot := NewSnapshot(
+		newSnapshotID,
+		snapshotFS,
+		s.sessionOptions,
+		configFileRegistry,
+		options,
+		s.userPreferences,
+		nil,
+		nil,
+		s.toPath,
+	)
+	newSnapshot.parentId = s.id
+	newSnapshot.ProjectCollection = projectCollection
+	newSnapshot.builderLogs = logger
+
+	for _, project := range newSnapshot.ProjectCollection.Projects() {
+		if project.Program != nil {
+			session.programCounter.Ref(project.Program)
+			project.host.freeze(snapshotFS, configFileRegistry)
+		}
+	}
+
+	logger.Logf("Finished creating program snapshot %d from snapshot %d in %v", newSnapshot.id, s.id, time.Since(start))
+	return newSnapshot
+}
+
 func (s *Snapshot) GetDefaultProject(uri lsproto.DocumentUri) *Project {
 	return s.ProjectCollection.GetDefaultProject(uri.Path(s.UseCaseSensitiveFileNames()))
 }

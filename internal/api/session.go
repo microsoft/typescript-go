@@ -587,6 +587,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleUpdateSnapshot(ctx, parsed.(*UpdateSnapshotParams))
 	case string(MethodUpdateTemporarySnapshot):
 		return s.handleUpdateTemporarySnapshot(ctx, parsed.(*UpdateTemporarySnapshotParams))
+	case string(MethodCreateProgram):
+		return s.handleCreateProgram(ctx, parsed.(*CreateProgramParams))
 	case string(MethodParseConfigFile):
 		return s.handleParseConfigFile(ctx, parsed.(*ParseConfigFileParams))
 	case string(MethodGetDefaultProjectForFile):
@@ -1077,6 +1079,44 @@ func (s *Session) handleUpdateTemporarySnapshot(ctx context.Context, params *Upd
 		Snapshot: handle,
 		Projects: projectResponses,
 		Changes:  changes,
+	}, nil
+}
+
+func (s *Session) handleCreateProgram(ctx context.Context, params *CreateProgramParams) (*CreateProgramResponse, error) {
+	rootFileNames := make([]string, len(params.RootFiles))
+	for i, rootFile := range params.RootFiles {
+		rootFileNames[i] = rootFile.ToAbsoluteFileName(s.projectSession.GetCurrentDirectory())
+	}
+
+	snapshot := s.projectSession.APICreateProgram(ctx, rootFileNames, &params.Options)
+	project := snapshot.ProjectCollection.InferredProject()
+	if project == nil {
+		snapshot.Deref(s.projectSession)
+		return nil, fmt.Errorf("%w: failed to create synthetic project", ErrClientError)
+	}
+
+	handle := snapshotHandle(snapshot)
+	s.snapshotsMu.Lock()
+	if sd, exists := s.snapshots[handle]; exists {
+		// Same snapshot already stored — release the caller's ref since
+		// the stored snapshot already has one, and bump the API refcount.
+		snapshot.Deref(s.projectSession)
+		sd.refCount++
+	} else {
+		sd = &snapshotData{
+			snapshot:                snapshot,
+			refCount:                1,
+			symbolRegistry:          make(map[SymbolID]*ast.Symbol),
+			symbolCanonicalProjects: make(map[SymbolID]ProjectID),
+			projectRegistries:       make(map[ProjectID]*projectRegistryData),
+		}
+		s.snapshots[handle] = sd
+	}
+	s.snapshotsMu.Unlock()
+
+	return &CreateProgramResponse{
+		Snapshot: handle,
+		Project:  NewProjectResponse(project),
 	}, nil
 }
 

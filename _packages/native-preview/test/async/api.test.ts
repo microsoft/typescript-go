@@ -89,6 +89,25 @@ const defaultFiles = {
 };
 
 describe("API", () => {
+    test("createProgram", async () => {
+        const api = spawnAPI({
+            "/src/index.ts": `export const value: string = 1;`,
+        });
+        try {
+            const program = await api.createProgram(["/src/index.ts"], { noLib: true, strict: true });
+
+            assert.deepEqual(program.getCompilerOptions(), { noLib: true, strict: true });
+            assert.deepEqual(await program.getSourceFileNames(), ["/src/index.ts"]);
+            assert.equal((await program.getSemanticDiagnostics("/src/index.ts")).length, 1);
+
+            await program.dispose();
+            await assert.rejects(program.getSourceFileNames(), /snapshot .* not found/); // @sync: assert.throws(() => program.getSourceFileNames(), /snapshot .* not found/);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
     test("parseConfigFile", async () => {
         const api = spawnAPI();
         try {

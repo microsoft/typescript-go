@@ -217,6 +217,13 @@ export interface UpdateSnapshotResponse {
     changes?: SnapshotChanges;
 }
 
+export interface CreateProgramResponse {
+    /** Handle for the snapshot that owns the program. */
+    snapshot: number;
+    /** The synthetic project containing the program. */
+    project: ProjectResponse;
+}
+
 export interface ProjectResponse {
     id: Path;
     configFileName: string;

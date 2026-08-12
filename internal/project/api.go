@@ -67,3 +67,12 @@ func (s *Session) APIUpdateTemporary(ctx context.Context, baseSnapshot *Snapshot
 	}, overlays, s)
 	return newSnapshot, nil
 }
+
+// APICreateProgram creates an isolated snapshot containing one synthetic project
+// with the supplied root files and compiler options. The caller owns the returned
+// snapshot reference and must call snapshot.Deref(s) when done.
+func (s *Session) APICreateProgram(ctx context.Context, rootFileNames []string, options *core.CompilerOptions) *Snapshot {
+	baseSnapshot := s.getSnapshot(ctx, ResourceRequest{}, true)
+	defer baseSnapshot.Deref(s)
+	return baseSnapshot.cloneForProgram(ctx, rootFileNames, options, s)
+}

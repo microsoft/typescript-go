@@ -49,6 +49,7 @@ import {
 import type {
     CompilerOptions,
     CompletionInfoResponse,
+    CreateProgramResponse,
     DocumentIdentifier,
     DocumentPosition,
     ImportAdderActionRequest,
@@ -278,6 +279,30 @@ export class API<FromLSP extends boolean = false> {
     /** Clears all accumulated timing totals and recent-request history, on both the client and the server. */
     resetTimingInfo(): Promise<void> {
         return this.client.resetTimingInfo();
+    }
+
+    // !!! projectReferences
+    // !!! FileChangeSummary, old program
+    // do we expect clients to send us a FileChangeSummary like for `updateSnapshot`?
+    // or somehow check the FS again?
+    async createProgram(rootFiles: DocumentIdentifier[], options: CompilerOptions): Promise<Program> {
+        await this.ensureInitialized();
+
+        const data = await this.client.apiRequest<CreateProgramResponse>("createProgram", { rootFiles, options });
+        const snapshot = new Snapshot(
+            { snapshot: data.snapshot, projects: [data.project] },
+            this.client,
+            this.sourceFileCache,
+            this.toPath!,
+            () => {
+                this.activeSnapshots.delete(snapshot);
+                this.sourceFileCache.releaseSnapshot(snapshot.id);
+            },
+        );
+        const program = snapshot.getProjects()[0].program;
+        program.setOwnedSnapshot(snapshot);
+        this.activeSnapshots.add(snapshot);
+        return program;
     }
 }
 
@@ -764,6 +789,7 @@ export class Program {
     private toPath: (fileName: string) => Path;
     private decoder = new Wtf8Decoder();
     private sourceFileMetadataCache = new Map<Path, Promise<SourceFileMetadata | undefined>>();
+    private ownedSnapshot: Snapshot | undefined;
 
     constructor(
         snapshotId: number,
@@ -777,6 +803,21 @@ export class Program {
         this.client = client;
         this.sourceFileCache = sourceFileCache;
         this.toPath = toPath;
+    }
+
+    /** @internal */
+    setOwnedSnapshot(snapshot: Snapshot): void {
+        this.ownedSnapshot = snapshot;
+    }
+
+    [globalThis.Symbol.dispose](): void {
+        this.dispose();
+    }
+
+    async dispose(): Promise<void> {
+        const snapshot = this.ownedSnapshot;
+        this.ownedSnapshot = undefined;
+        await snapshot?.dispose();
     }
 
     getCompilerOptions(): CompilerOptions {

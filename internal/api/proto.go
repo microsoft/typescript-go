@@ -72,6 +72,7 @@ const (
 	MethodInitialize               Method = "initialize"
 	MethodUpdateSnapshot           Method = "updateSnapshot"
 	MethodUpdateTemporarySnapshot  Method = "updateTemporarySnapshot"
+	MethodCreateProgram            Method = "createProgram"
 	MethodParseConfigFile          Method = "parseConfigFile"
 	MethodGetDefaultProjectForFile Method = "getDefaultProjectForFile"
 	MethodGetSymbolAtPosition      Method = "getSymbolAtPosition"
@@ -353,6 +354,16 @@ type UpdateTemporarySnapshotParams struct {
 	NewText string `json:"newText"`
 }
 
+type CreateProgramParams struct {
+	RootFiles []DocumentIdentifier `json:"rootFiles"`
+	Options   core.CompilerOptions `json:"options"`
+}
+
+type CreateProgramResponse struct {
+	Snapshot SnapshotID       `json:"snapshot"`
+	Project  *ProjectResponse `json:"project"`
+}
+
 // ProjectFileChanges describes what source files changed within a single project.
 type ProjectFileChanges struct {
 	// ChangedFiles lists source file paths whose content differs.
@@ -389,6 +400,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodInitialize:               noParams,
 	MethodUpdateSnapshot:           unmarshallerFor[UpdateSnapshotParams],
 	MethodUpdateTemporarySnapshot:  unmarshallerFor[UpdateTemporarySnapshotParams],
+	MethodCreateProgram:            unmarshallerFor[CreateProgramParams],
 	MethodParseConfigFile:          unmarshallerFor[ParseConfigFileParams],
 	MethodGetDefaultProjectForFile: unmarshallerFor[GetDefaultProjectForFileParams],
 	MethodGetSourceFile:            unmarshallerFor[GetSourceFileParams],
