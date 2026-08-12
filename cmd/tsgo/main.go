@@ -27,16 +27,14 @@ func runMain() int {
 		}
 	}
 
-	// Use signal.Notify with our own channel rather than signal.NotifyContext: the
-	// latter's context can't tell us which signal fired, and we need it to exit like
-	// the JS tsc, which installs no handler and lets node terminate via the signal.
+	// Not signal.NotifyContext: we need to know which signal fired so we can exit by
+	// re-raising it, the way the JS tsc terminates under node's default handler.
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
 	defer signal.Stop(sigCh)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	// canceledBy carries the interrupting signal (if any) to the code below. It is
-	// written before cancel() and thus before CommandLine can observe cancellation.
+	// Written before cancel(), so a canceled CommandLine always finds the signal here.
 	canceledBy := make(chan os.Signal, 1)
 	go func() {
 		select {
@@ -50,18 +48,26 @@ func runMain() int {
 	result := execute.CommandLine(ctx, newSystem(), args, nil)
 
 	if result.Status == tsc.ExitStatusCanceled {
-		// A signal canceled the run. Re-raise it so we terminate via the signal itself,
-		// yielding the conventional exit code (130 for SIGINT, 143 for SIGTERM) and the
-		// terminal reset an unhandled signal would produce. On platforms that cannot
-		// re-deliver the signal (e.g. Windows), reRaiseSignal returns 0 and we exit with
-		// the numeric status instead.
+		// Terminate via the signal itself, for the conventional exit code (130 for
+		// SIGINT, 143 for SIGTERM) and the terminal reset an unhandled signal produces.
 		select {
 		case sig := <-canceledBy:
-			if signo := reRaiseSignal(sig); signo != 0 {
-				return 128 + signo // fallback in case the signal doesn't land promptly
+			// Does not return if the signal is re-delivered; otherwise (e.g. Windows)
+			// fall through to the same exit code numerically.
+			reRaiseSignal(sig)
+			if signo := signalNumber(sig); signo != 0 {
+				return 128 + signo
 			}
 		default:
 		}
 	}
 	return int(result.Status)
+}
+
+// signalNumber returns the platform signal number for sig, or 0 if it has none.
+func signalNumber(sig os.Signal) int {
+	if s, ok := sig.(syscall.Signal); ok {
+		return int(s)
+	}
+	return 0
 }

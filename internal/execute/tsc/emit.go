@@ -111,8 +111,7 @@ func EmitFilesAndReportErrors(ctx context.Context, input EmitInput) (result Comp
 		},
 	)
 
-	// On cancellation the diagnostics above are incomplete; abort rather than emit
-	// or report them as a complete result.
+	// The diagnostics above are incomplete when canceled; do not emit or report them.
 	if ctx.Err() != nil {
 		result.Status = ExitStatusCanceled
 		return result
@@ -125,9 +124,8 @@ func EmitFilesAndReportErrors(ctx context.Context, input EmitInput) (result Comp
 			WriteFile: input.WriteFile,
 		})
 		result.times.emitTime += input.Sys.Now().Sub(emitStart)
-		// Emit returns nil if it was canceled partway through (e.g. cancellation
-		// during the internal no-emit-on-error recheck). Abort rather than report a
-		// nil result as success.
+		// Emit returns nil if canceled partway through (e.g. during its internal
+		// no-emit-on-error recheck), which must not be reported as success.
 		if ctx.Err() != nil {
 			result.Status = ExitStatusCanceled
 			return result

@@ -286,9 +286,8 @@ func TestBuildWatchStopsWhenContextIsCancelled(t *testing.T) {
 
 	select {
 	case result := <-resultCh:
-		// Cancellation is honored during the initial build: it aborts promptly without
-		// establishing a watcher. But cancellation is the expected way to end a watch,
-		// so it still reports success -- Ctrl-C is not a build failure.
+		// Success, because cancellation is the expected way to end a watch; no watcher,
+		// because the initial build aborted before establishing one.
 		assert.Equal(t, result.Status, tsc.ExitStatusSuccess)
 		assert.Assert(t, result.Watcher == nil)
 	case <-time.After(2 * time.Second):

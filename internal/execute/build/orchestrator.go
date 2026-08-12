@@ -121,9 +121,13 @@ func (o *Orchestrator) getTask(path tspath.Path) *BuildTask {
 	return task
 }
 
-func (o *Orchestrator) createBuildTasks(oldTasks *collections.SyncMap[tspath.Path, *BuildTask], configs []string, wg core.WorkGroup) {
+func (o *Orchestrator) createBuildTasks(ctx context.Context, oldTasks *collections.SyncMap[tspath.Path, *BuildTask], configs []string, wg core.WorkGroup) {
 	for _, config := range configs {
 		wg.Queue(func() {
+			if ctx.Err() != nil {
+				// Stop early when canceled, our caller will report status.
+				return
+			}
 			path := o.toPath(config)
 			var task *BuildTask
 			var buildInfo *buildInfoEntry
@@ -148,7 +152,7 @@ func (o *Orchestrator) createBuildTasks(oldTasks *collections.SyncMap[tspath.Pat
 			task.resolved = o.host.GetResolvedProjectReference(config, path)
 			task.upStream = nil
 			if task.resolved != nil {
-				o.createBuildTasks(oldTasks, task.resolved.ResolvedProjectReferencePaths(), wg)
+				o.createBuildTasks(ctx, oldTasks, task.resolved.ResolvedProjectReferencePaths(), wg)
 			}
 		})
 	}
@@ -200,20 +204,27 @@ func (o *Orchestrator) setupBuildTask(
 	return task
 }
 
-func (o *Orchestrator) GenerateGraphReusingOldTasks() {
+func (o *Orchestrator) GenerateGraphReusingOldTasks(ctx context.Context) {
 	tasks := o.tasks
 	o.tasks = &collections.SyncMap[tspath.Path, *BuildTask]{}
 	o.order = nil
 	o.errors = nil
-	o.GenerateGraph(tasks)
+	o.GenerateGraph(ctx, tasks)
 }
 
-func (o *Orchestrator) GenerateGraph(oldTasks *collections.SyncMap[tspath.Path, *BuildTask]) {
+func (o *Orchestrator) GenerateGraph(ctx context.Context, oldTasks *collections.SyncMap[tspath.Path, *BuildTask]) {
 	projects := o.opts.Command.ResolvedProjectPaths()
 	// Parse all config files in parallel
 	wg := core.NewWorkGroup(o.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
-	o.createBuildTasks(oldTasks, projects, wg)
+	o.createBuildTasks(ctx, oldTasks, projects, wg)
 	wg.RunAndWait()
+
+	// Cancellation leaves tasks missing for projects we never resolved, and
+	// setupBuildTask panics on a referenced project that has none. Leave the order
+	// empty; buildOrClean turns that into ExitStatusCanceled.
+	if ctx.Err() != nil {
+		return
+	}
 
 	// Generate the graph
 	completed := collections.Set[tspath.Path]{}
@@ -228,11 +239,10 @@ func (o *Orchestrator) Start(ctx context.Context) tsc.CommandLineResult {
 	if o.opts.Command.CompilerOptions.Watch.IsTrue() {
 		o.watchStatusReporter(ast.NewCompilerDiagnostic(diagnostics.Starting_compilation_in_watch_mode))
 	}
-	o.GenerateGraph(nil)
+	o.GenerateGraph(ctx, nil)
 	result := o.buildOrClean(ctx)
 	if o.opts.Command.CompilerOptions.Watch.IsTrue() {
-		// If we were already canceled return now, but treat it as success.
-		// In watch mode this is the only way to exit.
+		// Cancellation is the only way to exit a watch, so it is not a failure.
 		if result.Status == tsc.ExitStatusCanceled {
 			result.Status = tsc.ExitStatusSuccess
 			return result
@@ -241,7 +251,6 @@ func (o *Orchestrator) Start(ctx context.Context) tsc.CommandLineResult {
 		result.Watcher = o
 		return result
 	}
-	// Non-watch `tsc -b`: honor cancellation so a long build responds to SIGINT.
 	return result
 }
 
@@ -570,13 +579,14 @@ func (o *Orchestrator) DoCycle() {
 	}
 
 	o.watchStatusReporter(ast.NewCompilerDiagnostic(diagnostics.File_change_detected_Starting_incremental_compilation))
-	if needsConfigUpdate.Load() {
-		// Generate new tasks
-		o.GenerateGraphReusingOldTasks()
-	}
 
 	// TODO: propagate a proper context here and support cancellation within a cycle
 	ctx := context.Background()
+	if needsConfigUpdate.Load() {
+		// Generate new tasks
+		o.GenerateGraphReusingOldTasks(ctx)
+	}
+
 	o.buildOrClean(ctx)
 	o.updateWatch(ctx)
 	desiredDirs := o.computeDesiredWatches()
@@ -589,6 +599,11 @@ func (o *Orchestrator) DoCycle() {
 }
 
 func (o *Orchestrator) buildOrClean(ctx context.Context) tsc.CommandLineResult {
+	// Cancellation during GenerateGraph leaves the order empty, so no task exists to
+	// report the canceled status.
+	if ctx.Err() != nil && len(o.order) == 0 {
+		return tsc.CommandLineResult{Status: tsc.ExitStatusCanceled}
+	}
 	if !o.opts.Command.BuildOptions.Clean.IsTrue() && o.opts.Command.BuildOptions.Verbose.IsTrue() {
 		o.createBuilderStatusReporter(nil)(ast.NewCompilerDiagnostic(
 			diagnostics.Projects_in_this_build_Colon_0,
@@ -603,8 +618,8 @@ func (o *Orchestrator) buildOrClean(ctx context.Context) tsc.CommandLineResult {
 		o.rangeTask(ctx, func(ctx context.Context, path tspath.Path, task *BuildTask) {
 			o.buildOrCleanProject(ctx, task, path, &buildResult)
 		})
-		// A canceled task surfaces ExitStatusCanceled through its own report(), so the
-		// aggregated status reflects cancellation without a separate override here.
+		// No cancellation override needed here: a canceled task reports
+		// ExitStatusCanceled through its own report().
 	} else {
 		// Circularity errors prevent any project from being built
 		buildResult.result.Status = tsc.ExitStatusProjectReferenceCycle_OutputsSkipped
@@ -639,10 +654,9 @@ func (o *Orchestrator) rangeTask(ctx context.Context, f func(ctx context.Context
 	}
 	runTask := func() {
 		for path, task, ok := getNextTask(); ok; path, task, ok = getNextTask() {
-			// f is called for every task, even after cancellation: each task must
-			// complete its lifecycle (close its done/reportDone channels) or the
-			// upstream/report waiters of other tasks deadlock. Cancellation is observed
-			// inside buildProject, which skips the compile but still completes the task.
+			// Every task runs even after cancellation: each must close its
+			// done/reportDone channels or other tasks' waiters deadlock. buildProject
+			// skips the compile but still completes the task.
 			f(ctx, path, task)
 		}
 	}

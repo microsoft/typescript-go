@@ -13,9 +13,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
 
-// cancelAfterNPolls reports itself canceled only after Err has been polled
-// pollThreshold times while still uncanceled, so cancellation lands after checking
-// has begun rather than before it starts. Once tripped it stays canceled.
+// cancelAfterNPolls cancels itself after Err has been polled pollThreshold times,
+// then stays canceled, so cancellation lands after checking has begun.
 type cancelAfterNPolls struct {
 	context.Context
 	pollThreshold int32
@@ -43,11 +42,10 @@ func (c *cancelAfterNPolls) Err() error {
 
 func (c *cancelAfterNPolls) Done() <-chan struct{} { return c.done }
 
-// TestGetGlobalDiagnosticsAfterCancellation pins the checker-pool behavior that a
-// checker canceled mid-check is skipped by GetGlobalDiagnostics rather than reused
-// (which panics in checkNotCanceled). This is the source-level guard that protects
-// every GetGlobalDiagnostics caller, including emitBuildInfo's error-state probe,
-// which has no surrounding cancellation check.
+// TestGetGlobalDiagnosticsAfterCancellation pins the checker-pool behavior that
+// GetGlobalDiagnostics skips a checker canceled mid-check rather than reusing it
+// (which panics in checkNotCanceled). This guards every caller, including
+// emitBuildInfo's error-state probe, which has no cancellation check of its own.
 func TestGetGlobalDiagnosticsAfterCancellation(t *testing.T) {
 	t.Parallel()
 
@@ -69,8 +67,8 @@ func TestGetGlobalDiagnosticsAfterCancellation(t *testing.T) {
 		_ = fs.WriteFile(name, src.String())
 	}
 
-	// One checker so a single mid-check cancellation marks the checker the subsequent
-	// GetGlobalDiagnostics will visit.
+	// One checker, so the mid-check cancellation marks the same checker that the
+	// subsequent GetGlobalDiagnostics will visit.
 	oneChecker := 1
 	program := compiler.NewProgram(compiler.ProgramOptions{
 		Config: &tsoptions.ParsedCommandLine{
@@ -84,8 +82,7 @@ func TestGetGlobalDiagnosticsAfterCancellation(t *testing.T) {
 
 	ctx := newCancelAfterNPolls(5)
 
-	// Drive checking under the canceling context to cancel the checker. Discard the
-	// (partial) result; we only care that the checker is now canceled.
+	// Drive checking only to leave the checker canceled; the result is discarded.
 	_ = program.GetSemanticDiagnostics(ctx, nil)
 	if !ctx.tripped.Load() {
 		t.Fatal("expected cancellation to trip during checking, but it never did")

@@ -74,14 +74,12 @@ type BuildTask struct {
 	dirty              bool
 }
 
-// Returns true when upstream is done, false when cancelled
+// Returns true when upstream is done, false when canceled.
 func (t *BuildTask) waitOnUpstream(ctx context.Context) bool {
 	for _, upstream := range t.upStream {
 		select {
 		case <-upstream.task.done:
 		case <-ctx.Done():
-			// Canceled while waiting: stop blocking. buildProject observes the
-			// cancellation and completes this task without building.
 			return false
 		}
 	}
@@ -130,13 +128,10 @@ func (t *BuildTask) report(orchestrator *Orchestrator, configPath tspath.Path, b
 }
 
 func (t *BuildTask) buildProject(ctx context.Context, orchestrator *Orchestrator, path tspath.Path) {
-	// Honor cancellation before doing any work. waitOnUpstream only observes the
-	// context while it has upstream tasks to wait on, so a task with no upstream
-	// (e.g. a root project that is already up to date) would otherwise take the
-	// no-build success path and swallow an interrupt that arrived before we started.
+	// The ctx.Err() check is not redundant: waitOnUpstream only observes the context
+	// while it has upstream to wait on, so a task with none (e.g. an up-to-date root)
+	// would take the no-build success path and swallow the interrupt.
 	if ctx.Err() != nil || !t.waitOnUpstream(ctx) {
-		// Canceled before starting or while waiting on upstream: set the status and
-		// unblockDownstream without building.
 		t.result.exitStatus = tsc.ExitStatusCanceled
 	} else if t.pending.Load() {
 		t.status = t.getUpToDateStatus(orchestrator, path)
@@ -167,12 +162,7 @@ func (t *BuildTask) buildProject(ctx context.Context, orchestrator *Orchestrator
 }
 
 func (t *BuildTask) updateDownstream(ctx context.Context, orchestrator *Orchestrator, path tspath.Path) {
-	// Skip notifying downstream if we are canceled. Canceled builds may have partial results
-	// which could be otherwise handled improperly by downstream tasks.
-	//
-	// In one-shot `tsc -b`, downStream is empty so the body below is a no-op.
-	// In watch mode, downStream is populated and this runs on subsequent rebuild cycles.
-	// Once DoCycle threads a cancelable context, the early-return here becomes load-bearing.
+	// A canceled build has partial results; downstream tasks must not consume them.
 	if ctx.Err() != nil {
 		return
 	}
@@ -258,8 +248,7 @@ func (t *BuildTask) compileAndEmit(ctx context.Context, orchestrator *Orchestrat
 	t.result.exitStatus = result.Status
 	t.result.statistics = statistics
 	if result.Status == tsc.ExitStatusCanceled {
-		// Canceled: the result is incomplete (EmitResult is nil). Leave the task
-		// partial on purpose. Only ExitStatusCanceled propagates.
+		// EmitResult is nil when canceled; the code below would dereference it.
 		return
 	}
 	t.packageJsons = t.result.program.PackageJsonLookupPaths()
@@ -752,8 +741,7 @@ func (t *BuildTask) cleanProject(ctx context.Context, orchestrator *Orchestrator
 
 	inputs := collections.NewSetFromItems(core.Map(t.resolved.FileNames(), orchestrator.toPath)...)
 	for outputFile := range t.resolved.GetOutputFileNames() {
-		// Stop deleting outputs if we were canceled. Report cancellation so the CLI
-		// can re-raise the signal rather than exiting with success mid-clean.
+		// Stop mid-clean rather than exiting with success, so the CLI re-raises.
 		if ctx.Err() != nil {
 			t.result.exitStatus = tsc.ExitStatusCanceled
 			return

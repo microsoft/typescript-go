@@ -137,8 +137,7 @@ func (p *checkerPool) GetGlobalDiagnostics() []*ast.Diagnostic {
 	p.createCheckers()
 	globalDiagnostics := make([][]*ast.Diagnostic, len(p.checkers))
 	p.forEachCheckerParallel(func(idx int, checker *checker.Checker) {
-		// A canceled checker panics if asked for diagnostics (checkNotCanceled), and
-		// its results are discarded once canceled anyway. Skip it.
+		// A canceled checker panics in checkNotCanceled if asked for diagnostics.
 		if checker.WasCanceled() {
 			return
 		}
@@ -160,8 +159,8 @@ func (p *checkerPool) forEachCheckerGroupDo(ctx context.Context, files []*ast.So
 			p.locks[checkerIdx].Lock()
 			defer p.locks[checkerIdx].Unlock()
 			for i, file := range files {
-				// Stop once canceled: feeding another file to a checker that already
-				// canceled mid-check would panic in checkNotCanceled.
+				// Feeding another file to a checker that canceled mid-check panics in
+				// checkNotCanceled.
 				if ctx.Err() != nil {
 					break
 				}
