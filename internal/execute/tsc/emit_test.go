@@ -132,7 +132,7 @@ export const make = (): Box => ({ value: "ok" });
 		}
 		incrementalProgram := incremental.NewProgram(program, oldProgram, incremental.CreateHost(host), clock.NestedEmitNow, false)
 		times := &CompileTimes{}
-		EmitFilesAndReportErrors(EmitInput{
+		EmitFilesAndReportErrors(t.Context(), EmitInput{
 			Sys:                sys,
 			ProgramLike:        incrementalProgram,
 			Program:            program,
