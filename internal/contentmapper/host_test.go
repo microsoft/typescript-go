@@ -211,6 +211,21 @@ func TestRunnerTransform(t *testing.T) {
 	assert.Equal(t, result.Diagnostics[0].Source(), "vue")
 }
 
+func TestMapperDiagnosticName(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		mapper *contentmapper.Mapper
+		want   string
+	}{
+		{mapper: &contentmapper.Mapper{Definition: contentmapper.Definition{Package: "configured"}, Manifest: contentmapper.Manifest{Name: "resolved"}, ContributionID: "contributed"}, want: "resolved"},
+		{mapper: &contentmapper.Mapper{Definition: contentmapper.Definition{Package: "configured"}, ContributionID: "contributed"}, want: "configured"},
+		{mapper: &contentmapper.Mapper{ContributionID: "contributed"}, want: "contributed"},
+	}
+	for _, test := range tests {
+		assert.Equal(t, test.mapper.DiagnosticName(), test.want)
+	}
+}
+
 func TestRunnerTransformResponseValidation(t *testing.T) {
 	t.Parallel()
 	request := contentmapper.Request{FileName: "/a.vue", Content: "a"}
@@ -559,6 +574,14 @@ func TestProjectLifecycle(t *testing.T) {
 	assert.NilError(t, projectAAgain.Close())
 	assert.NilError(t, projectA.Close())
 	assert.NilError(t, projectB.Close())
+	timings := host.Timings()
+	dynamicTimings := timings.Mappers[dynamicA.Identity()]
+	assert.Equal(t, dynamicTimings.Spawn.Count, uint64(1))
+	assert.Equal(t, dynamicTimings.Initialize.Count, uint64(1))
+	assert.Equal(t, dynamicTimings.OpenProject.Count, uint64(3))
+	assert.Equal(t, dynamicTimings.Transform.Count, uint64(1))
+	assert.Equal(t, dynamicTimings.CloseProject.Count, uint64(3))
+	assert.Assert(t, timings.RequestWait > 0)
 	mapperProcess.mu.Lock()
 	defer mapperProcess.mu.Unlock()
 	assert.Equal(t, len(mapperProcess.projectHandles), 3)

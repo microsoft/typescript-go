@@ -316,6 +316,9 @@ func performIncrementalCompilation(
 	changesComputeStart := sys.Now()
 	incrementalProgram := incremental.NewProgram(program, oldProgram, incremental.CreateHost(host), sys.Now, testing != nil)
 	compileTimes.ChangesComputeTime = sys.Now().Sub(changesComputeStart)
+	if contentMapperHost != nil {
+		compileTimes.ContentMapperTimes = contentMapperHost.Timings()
+	}
 	result, _ := tsc.EmitAndReportStatistics(tsc.EmitInput{
 		Sys:                sys,
 		ProgramLike:        incrementalProgram,
@@ -365,6 +368,9 @@ func performCompilation(
 		Tracing: tr,
 	})
 	compileTimes.ParseTime = sys.Now().Sub(parseStart)
+	if contentMapperHost != nil {
+		compileTimes.ContentMapperTimes = contentMapperHost.Timings()
+	}
 	result, _ := tsc.EmitAndReportStatistics(tsc.EmitInput{
 		Sys:                sys,
 		ProgramLike:        program,

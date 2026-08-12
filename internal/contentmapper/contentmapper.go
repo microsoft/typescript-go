@@ -71,6 +71,18 @@ func (m *Mapper) VirtualExtension(fileName string) string {
 	return m.Manifest.Extensions[sourceExtension]
 }
 
+// DiagnosticName returns the best available user-facing name, including when manifest resolution failed.
+func (m *Mapper) DiagnosticName() string {
+	switch {
+	case m.Name != "":
+		return m.Name
+	case m.Package != "":
+		return m.Package
+	default:
+		return m.ContributionID
+	}
+}
+
 // Identity returns the mapper's "name@version" identity, or just the name when it declares no version,
 // or an empty string when the mapper has not been resolved to a name.
 func (m *Mapper) Identity() string {

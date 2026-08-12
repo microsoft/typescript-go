@@ -81,6 +81,7 @@ func NewContentMapperHost(ctx context.Context, sys System, options *core.Compile
 type CompileTimes struct {
 	ConfigTime         time.Duration
 	ParseTime          time.Duration
+	ContentMapperTimes contentmapper.Timings
 	bindTime           time.Duration
 	checkTime          time.Duration
 	totalTime          time.Duration

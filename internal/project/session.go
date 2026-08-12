@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"maps"
 	"math"
 	"runtime"
 	gometrics "runtime/metrics"
@@ -111,7 +112,10 @@ type Session struct {
 	// the workspace is trusted (LoadExternalPlugins) and a spawner is available. It is shared so
 	// projects that use the same mapper share a single process, and is closed when the session ends.
 	contentMapperHost contentmapper.Host
-	fs                *overlayFS
+	// contentMapperTimings is the cumulative host snapshot at the most recent session snapshot adoption.
+	contentMapperTimings   contentmapper.Timings
+	contentMapperTimingsMu sync.Mutex
+	fs                     *overlayFS
 
 	// registeredContentMapperSnapshotID is the ID of the newest snapshot whose registration has been
 	// applied. Registration runs from background tasks that may finish out of order, so
@@ -293,6 +297,9 @@ func NewSession(init *SessionInit) *Session {
 			TypingsLocation: init.Options.TypingsLocation,
 			ThrottleLimit:   5,
 		}, session)
+	}
+	if session.contentMapperHost != nil {
+		session.contentMapperTimings = session.contentMapperHost.Timings()
 	}
 
 	return session
@@ -1372,10 +1379,12 @@ func (s *Session) adoptSnapshotChange(baseSnapshot, newSnapshot *Snapshot) {
 		// ref is transferred to become the session's ref for its current snapshot.
 		s.snapshot = newSnapshot
 		oldSnapshot.Deref(s)
+		contentMapperTimings := s.takeContentMapperTimingDelta()
 		s.snapshotMu.Unlock()
 		if s.options.LoggingEnabled {
 			s.logger.Logf("Adopted snapshot %d (parent %d) as current session snapshot (replacing %d)", newSnapshot.id, newSnapshot.parentId, oldSnapshot.id)
 			s.logger.Log(newSnapshot.builderLogs.String())
+			s.logContentMapperTimings(contentMapperTimings)
 		}
 	} else {
 		// Session has moved on to a newer snapshot; discard this one.
@@ -1414,12 +1423,14 @@ func (s *Session) updateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 	if callerRef {
 		newSnapshot.ref()
 	}
+	var contentMapperTimings contentmapper.Timings
 	if newSnapshot != oldSnapshot {
 		// Release the session's reference to the old snapshot. The new snapshot's
 		// clone ref (1) is transferred to become the session's ref for its current
 		// snapshot. Other holders (e.g. active handlers) keep the old snapshot alive
 		// via their own refs until they complete.
 		oldSnapshot.Deref(s)
+		contentMapperTimings = s.takeContentMapperTimingDelta()
 	}
 	s.snapshotMu.Unlock()
 
@@ -1435,6 +1446,7 @@ func (s *Session) updateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 			s.logger.Logf("Adopted snapshot %d (parent %d) as current session snapshot (replacing %d)", newSnapshot.id, newSnapshot.parentId, oldSnapshot.id)
 			s.logger.Log(newSnapshot.builderLogs.String())
 			s.logProjectChanges(oldSnapshot, newSnapshot)
+			s.logContentMapperTimings(contentMapperTimings)
 			s.logger.Log("")
 		}
 		if s.options.WatchEnabled {
@@ -1449,6 +1461,47 @@ func (s *Session) updateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 	})
 
 	return newSnapshot
+}
+
+func (s *Session) takeContentMapperTimingDelta() contentmapper.Timings {
+	if s.contentMapperHost == nil {
+		return contentmapper.Timings{}
+	}
+	current := s.contentMapperHost.Timings()
+	s.contentMapperTimingsMu.Lock()
+	delta := current.Since(s.contentMapperTimings)
+	s.contentMapperTimings = current
+	s.contentMapperTimingsMu.Unlock()
+	return delta
+}
+
+func (s *Session) logContentMapperTimings(timings contentmapper.Timings) {
+	if timings.RequestWait == 0 {
+		return
+	}
+	s.logger.Log("Content mapper timings since previous snapshot adoption:")
+	if timings.RequestWait != 0 {
+		s.logger.Logf("  Request wait time: %v", timings.RequestWait)
+	}
+	for _, identity := range slices.Sorted(maps.Keys(timings.Mappers)) {
+		mapper := timings.Mappers[identity]
+		if mapper.Spawn.Count == 0 && mapper.OpenProject.Count == 0 && mapper.CloseProject.Count == 0 && mapper.Transform.Count == 0 {
+			continue
+		}
+		s.logger.Logf("  %s:", identity)
+		if mapper.Spawn.Count != 0 {
+			s.logger.Logf("    Initializations: %d (%v)", mapper.Spawn.Count, mapper.Spawn.Duration+mapper.Initialize.Duration)
+		}
+		if mapper.OpenProject.Count != 0 {
+			s.logger.Logf("    openProject requests: %d (%v)", mapper.OpenProject.Count, mapper.OpenProject.Duration)
+		}
+		if mapper.CloseProject.Count != 0 {
+			s.logger.Logf("    closeProject requests: %d (%v)", mapper.CloseProject.Count, mapper.CloseProject.Duration)
+		}
+		if mapper.Transform.Count != 0 {
+			s.logger.Logf("    Transforms: %d (%v)", mapper.Transform.Count, mapper.Transform.Duration)
+		}
+	}
 }
 
 // WaitForBackgroundTasks waits for all background tasks to complete.

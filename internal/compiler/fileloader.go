@@ -414,7 +414,7 @@ func (p *fileLoader) parseSourceFile(t *parseTask) *ast.SourceFile {
 // files are silently substituted with empty files. It returns nil only if the file cannot be read.
 func (p *fileLoader) parseContentMappedFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
 	mapper := p.opts.Config.GetContentMapperForFileName(opts.FileName)
-	label := mapper.Name
+	label := mapper.DiagnosticName()
 	if p.contentMapperUnavailable(mapper) {
 		// The mapper failed initialization or exceeded its failure budget; add the file empty without re-reporting.
 		return p.emptyContentMappedFile(opts, mapper.Identity())

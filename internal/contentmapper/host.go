@@ -2,6 +2,7 @@ package contentmapper
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -179,6 +180,53 @@ type ProjectSpec struct {
 	CompilerOptions *core.CompilerOptions
 }
 
+// OperationTiming is the cumulative wall time and invocation count for one mapper operation.
+type OperationTiming struct {
+	Count    uint64
+	Duration time.Duration
+}
+
+// MapperTimings is cumulative process and protocol activity for one resolved mapper identity.
+type MapperTimings struct {
+	Spawn        OperationTiming
+	Initialize   OperationTiming
+	OpenProject  OperationTiming
+	CloseProject OperationTiming
+	Transform    OperationTiming
+}
+
+// Timings is a cumulative snapshot of content mapper process and protocol activity.
+type Timings struct {
+	Mappers     map[string]MapperTimings
+	RequestWait time.Duration
+}
+
+// Since returns the non-negative operation delta since previous.
+func (t Timings) Since(previous Timings) Timings {
+	result := Timings{
+		Mappers:     make(map[string]MapperTimings, len(t.Mappers)),
+		RequestWait: max(t.RequestWait-previous.RequestWait, 0),
+	}
+	for identity, current := range t.Mappers {
+		before := previous.Mappers[identity]
+		result.Mappers[identity] = MapperTimings{
+			Spawn:        operationTimingSince(current.Spawn, before.Spawn),
+			Initialize:   operationTimingSince(current.Initialize, before.Initialize),
+			OpenProject:  operationTimingSince(current.OpenProject, before.OpenProject),
+			CloseProject: operationTimingSince(current.CloseProject, before.CloseProject),
+			Transform:    operationTimingSince(current.Transform, before.Transform),
+		}
+	}
+	return result
+}
+
+func operationTimingSince(current OperationTiming, previous OperationTiming) OperationTiming {
+	return OperationTiming{
+		Count:    current.Count - min(current.Count, previous.Count),
+		Duration: max(current.Duration-previous.Duration, 0),
+	}
+}
+
 // Project is the project-scoped view of a Host. It owns mapper configuration handles and provides the
 // identities and watch dependencies needed for caching and incremental builds. Dynamic-config mapper projects
 // are opened lazily when an identity, watch dependency, or transform is first requested.
@@ -203,6 +251,8 @@ type Project interface {
 // Host transforms foreign file content into TypeScript during program construction, by driving the
 // configured content mappers. Create one with NewHost; Close tears down every mapper it spawned.
 type Host interface {
+	// Timings returns a cumulative snapshot of mapper process and protocol activity.
+	Timings() Timings
 	// Project returns a retained project-scoped view for spec. Equivalent specs share underlying mapper
 	// configuration state; the caller must close the returned Project.
 	Project(spec ProjectSpec) Project

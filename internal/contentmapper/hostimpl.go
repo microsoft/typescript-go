@@ -6,9 +6,11 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"maps"
 	"slices"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 	"unicode/utf8"
 
@@ -149,6 +151,7 @@ type host struct {
 	cancel context.CancelFunc
 	stop   func() bool
 	dial   dialFunc
+	timing *timingCollector
 
 	lifecycleMu      sync.RWMutex
 	diagnosticLocale locale.Locale
@@ -181,6 +184,90 @@ type mapperConn struct {
 	refs int
 }
 
+type operationTiming struct {
+	count    atomic.Uint64
+	duration atomic.Int64
+}
+
+func (t *operationTiming) record(start time.Time) {
+	t.count.Add(1)
+	t.duration.Add(int64(time.Since(start)))
+}
+
+func (t *operationTiming) snapshot() OperationTiming {
+	return OperationTiming{Count: t.count.Load(), Duration: time.Duration(t.duration.Load())}
+}
+
+type timingCollector struct {
+	mu                 sync.Mutex
+	mappers            map[string]*mapperTimingCollector
+	activeRequests     uint64
+	requestWaitStart   time.Time
+	requestWaitElapsed time.Duration
+}
+
+type mapperTimingCollector struct {
+	spawn        operationTiming
+	initialize   operationTiming
+	openProject  operationTiming
+	closeProject operationTiming
+	transform    operationTiming
+	owner        *timingCollector
+}
+
+func (t *timingCollector) mapper(identity string) *mapperTimingCollector {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	if timing := t.mappers[identity]; timing != nil {
+		return timing
+	}
+	timing := &mapperTimingCollector{owner: t}
+	t.mappers[identity] = timing
+	return timing
+}
+
+func (t *timingCollector) snapshot() Timings {
+	t.mu.Lock()
+	requestWait := t.requestWaitElapsed
+	if t.activeRequests != 0 {
+		requestWait += time.Since(t.requestWaitStart)
+	}
+	mappers := make(map[string]*mapperTimingCollector, len(t.mappers))
+	maps.Copy(mappers, t.mappers)
+	t.mu.Unlock()
+	result := Timings{Mappers: make(map[string]MapperTimings, len(mappers)), RequestWait: requestWait}
+	for identity, timing := range mappers {
+		result.Mappers[identity] = MapperTimings{
+			Spawn:        timing.spawn.snapshot(),
+			Initialize:   timing.initialize.snapshot(),
+			OpenProject:  timing.openProject.snapshot(),
+			CloseProject: timing.closeProject.snapshot(),
+			Transform:    timing.transform.snapshot(),
+		}
+	}
+	return result
+}
+
+func (t *mapperTimingCollector) startRequest() time.Time {
+	t.owner.mu.Lock()
+	if t.owner.activeRequests == 0 {
+		t.owner.requestWaitStart = time.Now()
+	}
+	t.owner.activeRequests++
+	t.owner.mu.Unlock()
+	return time.Now()
+}
+
+func (t *mapperTimingCollector) finishRequest(operation *operationTiming, start time.Time) {
+	operation.record(start)
+	t.owner.mu.Lock()
+	t.owner.activeRequests--
+	if t.owner.activeRequests == 0 {
+		t.owner.requestWaitElapsed += time.Since(t.owner.requestWaitStart)
+	}
+	t.owner.mu.Unlock()
+}
+
 var _ Host = (*host)(nil)
 
 // Spawner starts a child process, returning its stdio as an io.ReadWriteCloser (Read is the
@@ -206,45 +293,56 @@ func (f SpawnerFunc) Spawn(command []string, dir string) (io.ReadWriteCloser, er
 // on SIGINT, or a build/watch session ending) tears every mapper process down, so owners of a session
 // context need not close the host explicitly. Close does the same synchronously.
 func NewHost(ctx context.Context, spawner Spawner, diagnosticLocale locale.Locale) Host {
-	return newWithDial(ctx, diagnosticLocale, func(ctx context.Context, mapper *Mapper, diagnosticLocale locale.Locale) (ipc.Conn, io.Closer, PositionEncoding, string, error) {
+	timing := &timingCollector{mappers: make(map[string]*mapperTimingCollector)}
+	return newWithDial(ctx, diagnosticLocale, timing, func(ctx context.Context, mapper *Mapper, diagnosticLocale locale.Locale) (ipc.Conn, io.Closer, PositionEncoding, string, error) {
 		if len(mapper.Exec) == 0 {
 			return nil, nil, "", "", fmt.Errorf("content mapper %q declares no command to run", mapper.Package)
 		}
+		mapperTiming := timing.mapper(mapper.Identity())
+		diagnosticName := mapper.DiagnosticName()
+		spawnStart := time.Now()
 		rwc, err := spawner.Spawn(mapper.Exec, mapper.PackageDirectory)
+		mapperTiming.spawn.record(spawnStart)
 		if err != nil {
-			return nil, nil, "", "", &InitializeError{Kind: InitializeErrorKindProcessStart, MapperName: mapper.Name, Command: mapper.Exec[0], Detail: err.Error()}
+			return nil, nil, "", "", &InitializeError{Kind: InitializeErrorKindProcessStart, MapperName: diagnosticName, Command: mapper.Exec[0], Detail: err.Error()}
 		}
 		conn := ipc.NewAsyncConn(rwc, rejectHandler{})
 		go func() { _ = conn.Run(ctx) }()
 		initializeCtx, cancel := context.WithTimeout(ctx, initializeTimeout)
+		initializeStart := mapperTiming.startRequest()
 		positionEncoding, diagnosticSource, err := handshake(initializeCtx, conn, diagnosticLocale)
+		mapperTiming.finishRequest(&mapperTiming.initialize, initializeStart)
 		initializeCtxErr := initializeCtx.Err()
 		cancel()
 		if err != nil {
 			_ = rwc.Close()
 			if initializeError, ok := errors.AsType[*InitializeError](err); ok {
-				initializeError.MapperName = mapper.Name
+				initializeError.MapperName = diagnosticName
 				return nil, nil, "", "", initializeError
 			}
 			if exitState, ok := rwc.(processExitState); ok {
 				if exitCode, exited := exitState.ExitCode(); exited {
-					return nil, nil, "", "", &InitializeError{Kind: InitializeErrorKindProcessExit, MapperName: mapper.Name, ExitCode: exitCode}
+					return nil, nil, "", "", &InitializeError{Kind: InitializeErrorKindProcessExit, MapperName: diagnosticName, ExitCode: exitCode}
 				}
 			}
 			if initializeCtxErr != nil || errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
-				return nil, nil, "", "", &InitializeError{Kind: InitializeErrorKindNoResponse, MapperName: mapper.Name, TimeoutSeconds: initializeTimeoutSeconds}
+				return nil, nil, "", "", &InitializeError{Kind: InitializeErrorKindNoResponse, MapperName: diagnosticName, TimeoutSeconds: initializeTimeoutSeconds}
 			}
-			return nil, nil, "", "", &InitializeError{Kind: InitializeErrorKindRequest, MapperName: mapper.Name, Detail: err.Error()}
+			return nil, nil, "", "", &InitializeError{Kind: InitializeErrorKindRequest, MapperName: diagnosticName, Detail: err.Error()}
 		}
 		return conn, rwc, positionEncoding, diagnosticSource, nil
 	})
 }
 
-func newWithDial(ctx context.Context, diagnosticLocale locale.Locale, dial dialFunc) *host {
+func newWithDial(ctx context.Context, diagnosticLocale locale.Locale, timing *timingCollector, dial dialFunc) *host {
 	hostCtx, cancel := context.WithCancel(ctx)
-	h := &host{ctx: hostCtx, cancel: cancel, dial: dial, diagnosticLocale: diagnosticLocale, conns: make(map[string]*mapperConn), projects: make(map[string]*projectEntry), projectLeases: make(map[string]*projectLease)}
+	h := &host{ctx: hostCtx, cancel: cancel, dial: dial, timing: timing, diagnosticLocale: diagnosticLocale, conns: make(map[string]*mapperConn), projects: make(map[string]*projectEntry), projectLeases: make(map[string]*projectLease)}
 	h.stop = context.AfterFunc(ctx, func() { _ = h.Close() })
 	return h
+}
+
+func (h *host) Timings() Timings {
+	return h.timing.snapshot()
 }
 
 func (h *host) SetLocale(diagnosticLocale locale.Locale) {
@@ -340,12 +438,15 @@ func (h *host) openProjectLocked(ctx context.Context, entry *projectEntry) error
 	if err != nil {
 		return err
 	}
+	mapperTiming := h.timing.mapper(entry.mapper.Identity())
+	start := mapperTiming.startRequest()
 	raw, err := conn.Call(ctx, MethodOpenProject, OpenProjectParams{
 		ConfigFileName:  entry.spec.ConfigFileName,
 		ProjectHandle:   entry.projectHandle,
 		Options:         entry.mapper.Options,
 		CompilerOptions: compilerOptions,
 	})
+	mapperTiming.finishRequest(&mapperTiming.openProject, start)
 	if err != nil {
 		return err
 	}
@@ -365,6 +466,14 @@ func (h *host) openProjectLocked(ctx context.Context, entry *projectEntry) error
 	entry.watchedFiles = slices.Clone(result.WatchedFiles)
 	entry.opened = true
 	return nil
+}
+
+func (h *host) closeProject(mapper *Mapper, conn ipc.Conn, projectHandle string) error {
+	mapperTiming := h.timing.mapper(mapper.Identity())
+	start := mapperTiming.startRequest()
+	_, err := conn.Call(h.ctx, MethodCloseProject, CloseProjectParams{ProjectHandle: projectHandle})
+	mapperTiming.finishRequest(&mapperTiming.closeProject, start)
+	return err
 }
 
 func (h *host) Acquire(mappers []*Mapper) func() {
@@ -409,6 +518,8 @@ func (h *host) transformLocked(mapper *Mapper, request Request, projectHandle st
 	if err != nil {
 		return Result{}, NewTransformError(TransformErrorKindCompilerOptions, err)
 	}
+	mapperTiming := h.timing.mapper(mapper.Identity())
+	start := mapperTiming.startRequest()
 	raw, err := conn.Call(h.ctx, MethodTransform, TransformParams{
 		FileName:        request.FileName,
 		Content:         request.Content,
@@ -416,6 +527,7 @@ func (h *host) transformLocked(mapper *Mapper, request Request, projectHandle st
 		ProjectHandle:   projectHandle,
 		CompilerOptions: options,
 	})
+	mapperTiming.finishRequest(&mapperTiming.transform, start)
 	if err != nil {
 		return Result{}, NewTransformError(TransformErrorKindRequest, err)
 	}
@@ -518,8 +630,7 @@ func (p *projectLease) Refresh() error {
 			continue
 		}
 		if connEntry := p.host.conns[entry.mapper.Identity()]; connEntry != nil && connEntry.conn != nil {
-			_, err := connEntry.conn.Call(p.host.ctx, MethodCloseProject, CloseProjectParams{ProjectHandle: entry.projectHandle})
-			result = errors.Join(result, err)
+			result = errors.Join(result, p.host.closeProject(entry.mapper, connEntry.conn, entry.projectHandle))
 		}
 		entry.opened = false
 	}
@@ -638,8 +749,7 @@ func (p *projectLease) release() error {
 			}
 			if entry.opened {
 				if connEntry := p.host.conns[entry.mapper.Identity()]; connEntry != nil && connEntry.conn != nil {
-					_, err := connEntry.conn.Call(p.host.ctx, MethodCloseProject, CloseProjectParams{ProjectHandle: entry.projectHandle})
-					result = errors.Join(result, err)
+					result = errors.Join(result, p.host.closeProject(entry.mapper, connEntry.conn, entry.projectHandle))
 				}
 			}
 			delete(p.host.projects, key)
