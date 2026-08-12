@@ -1432,7 +1432,7 @@ function generateIsGenerated(): string {
     // ── Simple guards ──
     for (const g of guards) {
         out.push(`export function ${g.funcName}(node: Node): node is ${g.typeName} {`);
-        const functionContent = []
+        const functionContent = [];
         if (g.kindAliasConstraint) {
             // Use the kind-level guard for nodes with a kind alias constraint
             functionContent.push(`    return ${kindGuardName(g.kindAliasConstraint)}(node.kind);`);
@@ -1458,7 +1458,7 @@ function generateIsGenerated(): string {
         out.push(`}`);
         out.push(`${g.funcName}.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ${g.typeName}> => {`);
         out.push(...functionContent);
-        out.push(`}`)
+        out.push(`}`);
         out.push(``);
     }
 

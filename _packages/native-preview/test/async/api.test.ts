@@ -80,8 +80,8 @@ import {
     test,
 } from "node:test";
 import { fileURLToPath } from "node:url";
-import { runBenchmarks } from "./api.bench.ts";
 import { isSignatureDeclaration } from "../../src/ast/is.ts";
+import { runBenchmarks } from "./api.bench.ts";
 
 const defaultFiles = {
     "/tsconfig.json": "{}",
@@ -1532,7 +1532,7 @@ export class Cache {
             assert.ok(callSigs.length > 0);
             const sig = callSigs[0];
             assert.ok(sig.declaration);
-            assert.ok(isSignatureDeclaration.Handle(sig.declaration))
+            assert.ok(isSignatureDeclaration.Handle(sig.declaration));
             const node = await sig.declaration.resolve(project);
             assert.ok(node);
             assert.ok(node.parameters);
