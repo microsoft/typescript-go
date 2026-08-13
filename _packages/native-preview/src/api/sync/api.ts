@@ -1345,8 +1345,7 @@ export class Checker {
     }
 
     /**
-     * Returns all symbols with the given meaning that are visible at `location`,
-     * e.g. for building completion lists.
+     * Returns all symbols with the given meaning that are visible at `location`.
      */
     getSymbolsInScope(location: Node | DocumentPosition, meaning: SymbolFlags): readonly Symbol[] {
         // Distinguish Node (has `kind`) from DocumentPosition (has `document` and `position`)

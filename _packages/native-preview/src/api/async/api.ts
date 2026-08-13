@@ -1337,8 +1337,7 @@ export class Checker {
     }
 
     /**
-     * Returns all symbols with the given meaning that are visible at `location`,
-     * e.g. for building completion lists.
+     * Returns all symbols with the given meaning that are visible at `location`.
      */
     async getSymbolsInScope(location: Node | DocumentPosition, meaning: SymbolFlags): Promise<readonly Symbol[]> {
         // Distinguish Node (has `kind`) from DocumentPosition (has `document` and `position`)
