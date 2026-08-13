@@ -252,7 +252,13 @@ func (ch *PseudoChecker) typeFromSingleReturnExpression(fn *ast.Node) *PseudoTyp
 				return NewPseudoTypeDirect(t)
 			}
 		} else {
-			return ch.typeFromExpression(candidateExpr)
+			result := ch.typeFromExpression(candidateExpr)
+			if ast.IsFunctionDeclaration(fn) &&
+				result.Kind == PseudoTypeKindInferred &&
+				len(result.AsPseudoTypeInferred().ErrorNodes) == 0 {
+				return NewPseudoTypeInferred(fn, true)
+			}
+			return result
 		}
 	}
 	return NewPseudoTypeInferred(fn, true)

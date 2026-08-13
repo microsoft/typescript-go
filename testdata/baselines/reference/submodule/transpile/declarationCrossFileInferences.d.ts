@@ -21,17 +21,16 @@ export declare function create(): any;
 
 
 //// [Diagnostics reported]
-consumes.ts(3,12): error TS9013: Expression type can't be inferred with --isolatedDeclarations.
+consumes.ts(2,17): error TS9007: Function must have an explicit return type annotation with --isolatedDeclarations.
 
 
 ==== consumes.ts (1 errors) ====
     import {A} from "./defines.js";
     export function create() {
-        return new A();
-               ~~~~~~~
-!!! error TS9013: Expression type can't be inferred with --isolatedDeclarations.
+                    ~~~~~~
+!!! error TS9007: Function must have an explicit return type annotation with --isolatedDeclarations.
 !!! related TS9031 consumes.ts:2:17: Add a return type to the function declaration.
-!!! related TS9035 consumes.ts:3:12: Add satisfies and a type assertion to this expression (satisfies T as T) to make the type explicit.
+        return new A();
     }
 //// [exposes.d.ts] ////
 export declare const value: any;
