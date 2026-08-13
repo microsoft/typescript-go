@@ -209,7 +209,7 @@ describe("API", () => {
             );
             assert.deepEqual(config.fileNames, ["/src/index.ts"]);
             assert.equal(config.options.strict, true);
-            assert.equal((config.options as Record<string, unknown>).configFilePath, "/src/tsconfig.json");
+            assert.equal(config.options.configFilePath, "/src/tsconfig.json");
             assert.deepEqual(config.errors, []);
         }
         finally {
