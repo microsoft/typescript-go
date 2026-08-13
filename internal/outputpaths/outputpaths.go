@@ -146,16 +146,7 @@ func GetDeclarationEmitOutputFilePath(file string, options *core.CompilerOptions
 }
 
 func GetSourceFilePathInNewDir(fileName string, newDirPath string, currentDirectory string, commonSourceDirectory string, useCaseSensitiveFileNames bool) string {
-	sourceFilePath := tspath.GetNormalizedAbsolutePath(fileName, currentDirectory)
-	commonSourceDirectory = tspath.EnsureTrailingDirectorySeparator(commonSourceDirectory)
-	isSourceFileInCommonSourceDirectory := tspath.ContainsPath(commonSourceDirectory, sourceFilePath, tspath.ComparePathsOptions{
-		UseCaseSensitiveFileNames: useCaseSensitiveFileNames,
-		CurrentDirectory:          currentDirectory,
-	})
-	if isSourceFileInCommonSourceDirectory {
-		sourceFilePath = sourceFilePath[len(commonSourceDirectory):]
-	}
-	return tspath.CombinePaths(newDirPath, sourceFilePath)
+	return GetSourceFilePathInNewDirWorker(fileName, newDirPath, currentDirectory, commonSourceDirectory, useCaseSensitiveFileNames)
 }
 
 func getOutputPathWithoutChangingExtension(inputFileName string, outputDirectory string, host OutputPathsHost) string {

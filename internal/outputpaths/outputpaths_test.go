@@ -8,6 +8,6 @@ import (
 )
 
 func TestGetSourceFilePathInNewDirSourceMatchesCommonDirectory(t *testing.T) {
-	actual := outputpaths.GetSourceFilePathInNewDir("/project/src", "/project/out", "/project", "/project/src", true)
+	actual := outputpaths.GetSourceFilePathInNewDir("/project/src", "/project/out", "/project", "/project/src/", true)
 	assert.Equal(t, actual, "/project/src")
 }
