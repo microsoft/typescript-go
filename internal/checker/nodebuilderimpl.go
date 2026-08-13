@@ -120,7 +120,7 @@ func newNodeBuilderImpl(ch *Checker, e *printer.EmitContext, idToSymbol map[*ast
 	if idToSymbol == nil {
 		idToSymbol = make(map[*ast.IdentifierNode]*ast.Symbol)
 	}
-	b := &NodeBuilderImpl{f: e.Factory.AsNodeFactory(), ch: ch, e: e, idToSymbol: idToSymbol, pc: pseudochecker.NewPseudoChecker(ch.strictNullChecks, ch.exactOptionalPropertyTypes)}
+	b := &NodeBuilderImpl{f: e.Factory.AsNodeFactory(), ch: ch, e: e, idToSymbol: idToSymbol, pc: pseudochecker.NewPseudoChecker(ch.strictNullChecks, ch.exactOptionalPropertyTypes, ch.compilerOptions)}
 	b.cloneBindingNameVisitor = ast.NewNodeVisitor(b.cloneBindingName, b.f, ast.NodeVisitorHooks{})
 	return b
 }
@@ -1166,7 +1166,27 @@ func (b_ *NodeBuilderImpl) sortByBestName(a sortedSymbolNamePair, b sortedSymbol
 		// A is relative, B is non-relative: prefer B
 		return 1
 	}
-	return b_.ch.compareSymbols(a.sym, b.sym) // must sort symbols for stable ordering
+	aIsValueContainer := b_.isValueContainerForTypeOnlyContainer(a.sym, b.sym)
+	bIsValueContainer := b_.isValueContainerForTypeOnlyContainer(b.sym, a.sym)
+	if aIsValueContainer != bIsValueContainer {
+		if aIsValueContainer {
+			return -1
+		}
+		return 1
+	}
+	return b_.ch.compareSymbols(a.sym, b.sym)
+}
+
+func (b *NodeBuilderImpl) isValueContainerForTypeOnlyContainer(value *ast.Symbol, container *ast.Symbol) bool {
+	// Strada's stable sort preserves the variable-before-type ordering from
+	// getWithAlternativeContainers during declaration emit. Corsa otherwise
+	// uses compareSymbols to make ties deterministic.
+	return b.ctx.flags&nodebuilder.FlagsUseStructuralFallback != 0 &&
+		value.Flags&ast.SymbolFlagsValue != 0 &&
+		container.Flags&ast.SymbolFlagsValue == 0 &&
+		container.Flags&ast.SymbolFlagsType != 0 &&
+		b.ch.getDeclaredTypeOfSymbol(container).flags&TypeFlagsObject != 0 &&
+		b.ch.getTypeOfSymbol(value) == b.ch.getDeclaredTypeOfSymbol(container)
 }
 
 func canHaveModuleSpecifier(node *ast.Node) bool {

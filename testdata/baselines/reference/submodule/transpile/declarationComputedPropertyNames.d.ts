@@ -96,7 +96,7 @@ export declare const D: {
     [x: string]: number;
     [x: number]: number;
     [presentNs.a]: number;
-    [SymbolConstructor.toStringTag]: number;
+    [aliasing.toStringTag]: number;
     1: number;
     "2": number;
 };
@@ -122,15 +122,13 @@ declarationComputedPropertyNames.ts(46,5): error TS9038: Computed property names
 declarationComputedPropertyNames.ts(50,5): error TS9038: Computed property names on class or object literals cannot be inferred with --isolatedDeclarations.
 declarationComputedPropertyNames.ts(51,5): error TS9038: Computed property names on class or object literals cannot be inferred with --isolatedDeclarations.
 declarationComputedPropertyNames.ts(52,5): error TS9038: Computed property names on class or object literals cannot be inferred with --isolatedDeclarations.
-declarationComputedPropertyNames.ts(53,5): error TS9038: Computed property names on class or object literals cannot be inferred with --isolatedDeclarations.
-declarationComputedPropertyNames.ts(54,5): error TS9038: Computed property names on class or object literals cannot be inferred with --isolatedDeclarations.
 declarationComputedPropertyNames.ts(55,5): error TS9038: Computed property names on class or object literals cannot be inferred with --isolatedDeclarations.
 declarationComputedPropertyNames.ts(56,5): error TS9038: Computed property names on class or object literals cannot be inferred with --isolatedDeclarations.
 declarationComputedPropertyNames.ts(59,5): error TS9038: Computed property names on class or object literals cannot be inferred with --isolatedDeclarations.
 declarationComputedPropertyNames.ts(60,5): error TS9038: Computed property names on class or object literals cannot be inferred with --isolatedDeclarations.
 
 
-==== declarationComputedPropertyNames.ts (24 errors) ====
+==== declarationComputedPropertyNames.ts (22 errors) ====
     export namespace presentNs {
         export const a = Symbol();
                      ~
@@ -225,13 +223,7 @@ declarationComputedPropertyNames.ts(60,5): error TS9038: Computed property names
 !!! error TS9038: Computed property names on class or object literals cannot be inferred with --isolatedDeclarations.
 !!! related TS9027 declarationComputedPropertyNames.ts:49:14: Add a type annotation to the variable D.
         [Symbol.iterator]: 1,
-        ~~~~~~~~~~~~~~~~~
-!!! error TS9038: Computed property names on class or object literals cannot be inferred with --isolatedDeclarations.
-!!! related TS9027 declarationComputedPropertyNames.ts:49:14: Add a type annotation to the variable D.
         [globalThis.Symbol.toStringTag]: 1,
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS9038: Computed property names on class or object literals cannot be inferred with --isolatedDeclarations.
-!!! related TS9027 declarationComputedPropertyNames.ts:49:14: Add a type annotation to the variable D.
         [(globalThis.Symbol).unscopables]: 1,
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS9038: Computed property names on class or object literals cannot be inferred with --isolatedDeclarations.

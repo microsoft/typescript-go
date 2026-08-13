@@ -550,7 +550,8 @@ func (r *EmitResolver) IsDefinitelyReferenceToGlobalSymbolObject(node *ast.Node)
 		r.checkerMu.Lock()
 		defer r.checkerMu.Unlock()
 		// Exactly `Symbol.something` and `Symbol` either does not resolve or definitely resolves to the global Symbol
-		return r.checker.getResolvedSymbol(node.Expression()) == r.checker.getGlobalSymbol("Symbol", ast.SymbolFlagsValue|ast.SymbolFlagsExportValue, nil /*diagnostic*/)
+		globalSymbol := core.OrElse(r.checker.getGlobalSymbol("Symbol", ast.SymbolFlagsValue|ast.SymbolFlagsExportValue, nil /*diagnostic*/), r.checker.unknownSymbol)
+		return r.checker.getResolvedSymbol(node.Expression()) == globalSymbol
 	}
 	if node.Expression().Expression().Kind != ast.KindIdentifier || node.Expression().Expression().Text() != "globalThis" || node.Expression().Name().Text() != "Symbol" {
 		return false

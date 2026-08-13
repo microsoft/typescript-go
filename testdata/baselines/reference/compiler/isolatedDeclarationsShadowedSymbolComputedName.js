@@ -29,6 +29,10 @@ export const aliasedSymbol = {
 
 
 
+//// [global.d.ts]
+export declare const globalSymbol: {
+    [Symbol.iterator]: number;
+};
 //// [symbols.d.ts]
 export declare const symbolValue: {
     iterator: string;

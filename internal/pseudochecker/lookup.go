@@ -427,12 +427,38 @@ func (ch *PseudoChecker) canGetTypeFromObjectLiteral(node *ast.ObjectLiteralExpr
 		}
 		if e.Name().Kind == ast.KindComputedPropertyName {
 			expression := e.Name().Expression()
-			if !ast.IsPrimitiveLiteralValue(expression, false) {
+			if !ast.IsPrimitiveLiteralValue(expression, false) && !ch.isDefinitelyReferenceToGlobalSymbolObject(expression) {
 				errorNodes = append(errorNodes, e.Name())
 			}
 		}
 	}
 	return errorNodes
+}
+
+func (ch *PseudoChecker) isDefinitelyReferenceToGlobalSymbolObject(node *ast.Node) bool {
+	if !ast.IsPropertyAccessExpression(node) ||
+		!ast.IsIdentifier(node.Name()) ||
+		!ast.IsPropertyAccessExpression(node.Expression()) && !ast.IsIdentifier(node.Expression()) {
+		return false
+	}
+	if ast.IsIdentifier(node.Expression()) {
+		return node.Expression().Text() == "Symbol" && ch.isUnshadowedGlobalName(node.Expression())
+	}
+	return ast.IsIdentifier(node.Expression().Expression()) &&
+		node.Expression().Expression().Text() == "globalThis" &&
+		node.Expression().Name().Text() == "Symbol" &&
+		ch.isUnshadowedGlobalName(node.Expression().Expression())
+}
+
+func (ch *PseudoChecker) isUnshadowedGlobalName(identifier *ast.Node) bool {
+	return ch.nameResolver.Resolve(
+		identifier,
+		identifier.Text(),
+		ast.SymbolFlagsValue|ast.SymbolFlagsExportValue|ast.SymbolFlagsAlias,
+		nil,   /*nameNotFoundMessage*/
+		false, /*isUse*/
+		true,  /*excludeGlobals*/
+	) == nil
 }
 
 func (ch *PseudoChecker) typeFromArrayLiteral(node *ast.ArrayLiteralExpression) *PseudoType {
