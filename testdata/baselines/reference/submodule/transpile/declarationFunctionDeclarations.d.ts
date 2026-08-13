@@ -140,6 +140,7 @@ export {};
 
 
 //// [Diagnostics reported]
+fnDecl.ts(12,27): error TS9025: Declaration emit for this parameter requires implicitly adding undefined to its type. This is not supported with --isolatedDeclarations.
 fnDecl.ts(16,36): error TS9025: Declaration emit for this parameter requires implicitly adding undefined to its type. This is not supported with --isolatedDeclarations.
 fnDecl.ts(20,26): error TS9025: Declaration emit for this parameter requires implicitly adding undefined to its type. This is not supported with --isolatedDeclarations.
 fnDecl.ts(24,56): error TS9025: Declaration emit for this parameter requires implicitly adding undefined to its type. This is not supported with --isolatedDeclarations.
@@ -147,9 +148,11 @@ fnDecl.ts(28,46): error TS9025: Declaration emit for this parameter requires imp
 fnDecl.ts(32,45): error TS9025: Declaration emit for this parameter requires implicitly adding undefined to its type. This is not supported with --isolatedDeclarations.
 fnDecl.ts(37,47): error TS9025: Declaration emit for this parameter requires implicitly adding undefined to its type. This is not supported with --isolatedDeclarations.
 fnDecl.ts(41,37): error TS9025: Declaration emit for this parameter requires implicitly adding undefined to its type. This is not supported with --isolatedDeclarations.
+fnDecl.ts(45,35): error TS9025: Declaration emit for this parameter requires implicitly adding undefined to its type. This is not supported with --isolatedDeclarations.
+fnDecl.ts(51,5): error TS9025: Declaration emit for this parameter requires implicitly adding undefined to its type. This is not supported with --isolatedDeclarations.
 
 
-==== fnDecl.ts (7 errors) ====
+==== fnDecl.ts (10 errors) ====
     type T = number[]
     export function fnDeclBasic1(p: number[] | string[] | [T] = [], rParam: string): void { };
     export function fnDeclBasic2(p: (n: T) => T = () => null!, rParam: string): void { };
@@ -162,6 +165,9 @@ fnDecl.ts(41,37): error TS9025: Declaration emit for this parameter requires imp
     
     export function fnDeclHasUndefined(p: T | undefined = [], rParam: string): void { };
     export function fnDeclBad(p: T = [], rParam: string): void { };
+                              ~~~~~~~~~
+!!! error TS9025: Declaration emit for this parameter requires implicitly adding undefined to its type. This is not supported with --isolatedDeclarations.
+!!! related TS9028 fnDecl.ts:12:27: Add a type annotation to the parameter p.
     
     export const fnExprOk1 = function (array: number[] = [], rParam: string): void { };
     export const fnExprOk2 = function (array: T | undefined = [], rParam: string): void { };
@@ -216,12 +222,18 @@ fnDecl.ts(41,37): error TS9025: Declaration emit for this parameter requires imp
     export class InClassMethodOk1 { o(array: number[] = [], rParam: string): void { } };
     export class InClassMethodOk2 { o(array: T | undefined = [], rParam: string): void { } };
     export class InClassMethodBad { o(array: T = [], rParam: string): void { } };
+                                      ~~~~~~~~~~~~~
+!!! error TS9025: Declaration emit for this parameter requires implicitly adding undefined to its type. This is not supported with --isolatedDeclarations.
+!!! related TS9028 fnDecl.ts:45:35: Add a type annotation to the parameter array.
     
     // https://github.com/microsoft/TypeScript/issues/60976
     class Bar {}
     export class ClsWithRequiredInitializedParameter {
       constructor(
         private arr: Bar = new Bar(),
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS9025: Declaration emit for this parameter requires implicitly adding undefined to its type. This is not supported with --isolatedDeclarations.
+!!! related TS9028 fnDecl.ts:51:5: Add a type annotation to the parameter arr.
         private bool: boolean,
       ) {}
     }

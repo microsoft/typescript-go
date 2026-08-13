@@ -2266,6 +2266,12 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 			}
 		}
 		reportErrors := !b.ctx.suppressReportInferenceFallback
+		if reportErrors &&
+			requiresAddingUndefined &&
+			pt.Kind == pseudochecker.PseudoTypeKindDirect &&
+			!pseudochecker.CanAddUndefinedToTypeNode(pt.AsPseudoTypeDirect().TypeNode) {
+			b.ctx.tracker.ReportInferenceFallback(declaration)
+		}
 		if b.pseudoTypeEquivalentToType(pt, t, !requiresAddingUndefined && (ast.IsParameterDeclaration(declaration) || ast.IsPropertySignatureDeclaration(declaration) || ast.IsPropertyDeclaration(declaration)) && isOptionalDeclaration(declaration), reportErrors) {
 			// !!! TODO: If annotated type node is a reference with insufficient type arguments, we should still fall back to type serialization
 			// see: canReuseTypeNodeAnnotation in strada for context

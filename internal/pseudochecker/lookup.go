@@ -600,6 +600,41 @@ func typeNodeCouldReferToUndefined(node *ast.Node) bool {
 	}
 }
 
+func CanAddUndefinedToTypeNode(node *ast.Node) bool {
+	if ast.IsKeywordTypeKind(node.Kind) {
+		return true
+	}
+	switch node.Kind {
+	case ast.KindLiteralType,
+		ast.KindFunctionType,
+		ast.KindConstructorType,
+		ast.KindArrayType,
+		ast.KindTupleType,
+		ast.KindTypeLiteral,
+		ast.KindTemplateLiteralType,
+		ast.KindThisType:
+		return true
+	case ast.KindParenthesizedType:
+		return CanAddUndefinedToTypeNode(node.AsParenthesizedTypeNode().Type)
+	case ast.KindUnionType:
+		for _, t := range node.AsUnionTypeNode().Types.Nodes {
+			if !CanAddUndefinedToTypeNode(t) {
+				return false
+			}
+		}
+		return true
+	case ast.KindIntersectionType:
+		for _, t := range node.AsIntersectionTypeNode().Types.Nodes {
+			if !CanAddUndefinedToTypeNode(t) {
+				return false
+			}
+		}
+		return true
+	default:
+		return false
+	}
+}
+
 // see this as the inverse of `canAddUndefined` in `expressionToTypeNode` in strada
 func CouldAlreadyReferToUndefinedType(t *PseudoType) bool {
 	if t.Kind == PseudoTypeKindNoResult || t.Kind == PseudoTypeKindInferred || isUndefinedPseudoType(t) {
