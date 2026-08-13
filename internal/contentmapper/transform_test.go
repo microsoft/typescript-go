@@ -15,7 +15,8 @@ func TestParseResultSupplementalFileExtensions(t *testing.T) {
 	t.Parallel()
 	mappings := spanmap.New(nil)
 	result := contentmapper.Result{
-		Mappings: mappings,
+		VirtualExtension: ".ts",
+		Mappings:         mappings,
 		Supplemental: []contentmapper.MappedResult{
 			{VirtualExtension: ".js", Mappings: mappings},
 			{VirtualExtension: ".jsx", Mappings: mappings},
@@ -29,7 +30,7 @@ func TestParseResultSupplementalFileExtensions(t *testing.T) {
 	files, err := contentmapper.ParseResult(
 		ast.SourceFileParseOptions{FileName: "/component.astro", Path: "/component.astro"},
 		"",
-		&contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".astro"}}, Manifest: contentmapper.Manifest{Name: "mapper", Extensions: map[string]string{".astro": ".ts"}}},
+		&contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".astro"}}, Manifest: contentmapper.Manifest{Name: "mapper"}},
 		result,
 	)
 	assert.NilError(t, err)
@@ -60,10 +61,11 @@ func TestParseResultAllowsSupplementalModules(t *testing.T) {
 	files, err := contentmapper.ParseResult(
 		ast.SourceFileParseOptions{FileName: "/component.astro", Path: "/component.astro"},
 		"",
-		&contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".astro"}}, Manifest: contentmapper.Manifest{Name: "mapper", Extensions: map[string]string{".astro": ".ts"}}},
+		&contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".astro"}}, Manifest: contentmapper.Manifest{Name: "mapper"}},
 		contentmapper.Result{
-			Text:     "export {};",
-			Mappings: mappings,
+			Text:             "export {};",
+			VirtualExtension: ".ts",
+			Mappings:         mappings,
 			Supplemental: []contentmapper.MappedResult{{
 				Text:             "export const value = 1;",
 				VirtualExtension: ".mts",

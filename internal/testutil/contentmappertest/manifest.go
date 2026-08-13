@@ -17,6 +17,6 @@ func PackageJSON(mapper string) string {
 	return fmt.Sprintf(`{
 	"name": %q,
 	"version": "1.0.0",
-	"tsContentMapper": { "exec": [%q], "extensions": { ".astro": ".ts", ".box": ".ts", ".dup": ".ts", ".lisp": ".ts", ".mdx": ".ts", ".panel": ".ts", ".svelte": ".ts", ".vue": ".ts", ".y.z": ".ts" }%s%s }
+	"tsContentMapper": { "exec": [%q]%s%s }
 }`, PackageName, mapper, compilerOptions, dynamicConfig)
 }

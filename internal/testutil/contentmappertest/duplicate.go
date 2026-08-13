@@ -39,7 +39,7 @@ func (duplicateHandler) HandleRequest(ctx context.Context, method string, params
 		if err != nil {
 			return nil, err
 		}
-		return contentmapper.TransformResult{MappedOutput: contentmapper.MappedOutput{Text: virtual, Mappings: json.Value(mappings)}}, nil
+		return contentmapper.TransformResult{MappedOutput: contentmapper.MappedOutput{Text: virtual, Extension: ".ts", Mappings: json.Value(mappings)}}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
 	}

@@ -24,8 +24,8 @@ func (supplementalHandler) HandleRequest(ctx context.Context, method string, par
 			return nil, err
 		}
 		return contentmapper.TransformResult{
-			MappedOutput: contentmapper.MappedOutput{Text: "export {};"},
-			Supplemental: []contentmapper.SupplementalOutput{{MappedOutput: mappedOutput, Extension: ".ts"}},
+			MappedOutput: contentmapper.MappedOutput{Text: "export {};", Extension: ".ts"},
+			Supplemental: []contentmapper.SupplementalOutput{{MappedOutput: mappedOutput}},
 		}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)

@@ -35,7 +35,7 @@ func identityMappedOutput(content string) (contentmapper.MappedOutput, error) {
 	if err != nil {
 		return contentmapper.MappedOutput{}, err
 	}
-	return contentmapper.MappedOutput{Text: content, Mappings: json.Value(mappings)}, nil
+	return contentmapper.MappedOutput{Text: content, Extension: ".ts", Mappings: json.Value(mappings)}, nil
 }
 
 type staticProjectHandler struct{ ipc.Handler }

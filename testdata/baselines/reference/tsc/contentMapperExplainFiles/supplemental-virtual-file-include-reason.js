@@ -7,7 +7,7 @@ export const value = 1;
 {
     "name": "mapper",
     "version": "1.0.0",
-    "tsContentMapper": { "exec": ["supplemental-mapper"], "extensions": { ".vue": ".ts" } }
+    "tsContentMapper": { "exec": ["supplemental-mapper"] }
 }
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
 {

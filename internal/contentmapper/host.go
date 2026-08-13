@@ -62,13 +62,13 @@ func (e *DiagnosticDirectiveError) Error() string {
 	return fmt.Sprintf("invalid content mapper diagnostic directive %d", e.Index)
 }
 
-// InvalidSupplementalVirtualExtensionError reports an unsupported or missing virtual extension on a supplemental output.
-type InvalidSupplementalVirtualExtensionError struct {
+// InvalidVirtualExtensionError reports an unsupported or missing virtual extension on a mapped output.
+type InvalidVirtualExtensionError struct {
 	Extension string
 }
 
-func (e *InvalidSupplementalVirtualExtensionError) Error() string {
-	return fmt.Sprintf("invalid supplemental virtual extension %q", e.Extension)
+func (e *InvalidVirtualExtensionError) Error() string {
+	return fmt.Sprintf("invalid virtual extension %q", e.Extension)
 }
 
 // ProjectErrorKind identifies why a mapper's openProject response was rejected.
@@ -164,6 +164,8 @@ func (e *InitializeError) Error() string {
 type Result struct {
 	// Text is the virtual TypeScript source text that is parsed into the program.
 	Text string
+	// VirtualExtension determines how Text is parsed.
+	VirtualExtension string
 	// Diagnostics are syntax errors in the original content.
 	Diagnostics []*ast.Diagnostic
 	// Mappings maps positions in Text back to the original content, so that diagnostics the compiler

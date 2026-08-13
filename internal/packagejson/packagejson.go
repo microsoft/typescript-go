@@ -115,10 +115,9 @@ type Fields struct {
 }
 
 type ContentMapperFields struct {
-	Exec            Expected[[]string]          `json:"exec"`
-	CompilerOptions Expected[[]string]          `json:"compilerOptions"`
-	DynamicConfig   Expected[bool]              `json:"dynamicConfig"`
-	Extensions      Expected[map[string]string] `json:"extensions"`
+	Exec            Expected[[]string] `json:"exec"`
+	CompilerOptions Expected[[]string] `json:"compilerOptions"`
+	DynamicConfig   Expected[bool]     `json:"dynamicConfig"`
 }
 
 func Parse(data []byte) (Fields, error) {

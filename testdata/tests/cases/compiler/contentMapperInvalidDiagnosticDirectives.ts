@@ -23,12 +23,6 @@
     "version": "1.0.0",
     "tsContentMapper": {
         "exec": ["compiler-test-mapper"],
-        "extensions": {
-            ".invalidrange": ".ts",
-            ".invalidpolicy": ".ts",
-            ".expectmissing": ".ts",
-            ".overlap": ".ts"
-        },
         "compilerOptions": ["target", "jsx"]
     }
 }

@@ -112,6 +112,8 @@ type TransformParams struct {
 type MappedOutput struct {
 	// Text is the virtual JavaScript or TypeScript source text.
 	Text string `json:"text"`
+	// Extension determines the virtual source file's syntax.
+	Extension string `json:"extension"`
 	// Mappings is the span map's tuple-array JSON (see spanmap.Marshal), expressed in the selected
 	// position encoding. Absent or empty means the output is fully synthesized.
 	Mappings json.Value `json:"mappings,omitempty"`
@@ -143,8 +145,6 @@ type MappedDiagnosticDirective struct {
 
 type SupplementalOutput struct {
 	MappedOutput
-	// Extension determines the virtual source file's syntax.
-	Extension string `json:"extension"`
 }
 
 // TransformResult is the canonical output for one input file.
@@ -855,13 +855,11 @@ func decodeTransformResult(raw json.Value, originalText string, positionEncoding
 	}
 	result := Result{
 		Text:                 mapped.Text,
+		VirtualExtension:     mapped.VirtualExtension,
 		Mappings:             mapped.Mappings,
 		DiagnosticDirectives: mapped.DiagnosticDirectives,
 	}
 	for supplementalIndex, supplemental := range res.Supplemental {
-		if !IsSupportedVirtualExtension(supplemental.Extension) {
-			return Result{}, &InvalidSupplementalVirtualExtensionError{Extension: supplemental.Extension}
-		}
 		mapped, _, err := decodeMappedOutput(supplemental.MappedOutput, originalText, positionEncoding, diagnosticSource)
 		if err != nil {
 			if directiveError, ok := errors.AsType[*DiagnosticDirectiveError](err); ok {
@@ -869,7 +867,6 @@ func decodeTransformResult(raw json.Value, originalText string, positionEncoding
 			}
 			return Result{}, err
 		}
-		mapped.VirtualExtension = supplemental.Extension
 		result.Supplemental = append(result.Supplemental, mapped)
 	}
 	for _, d := range res.Diagnostics {
@@ -897,8 +894,12 @@ func decodeTransformResult(raw json.Value, originalText string, positionEncoding
 }
 
 func decodeMappedOutput(output MappedOutput, originalText string, positionEncoding PositionEncoding, diagnosticSource string) (MappedResult, *positionNormalizer, error) {
+	if !IsSupportedVirtualExtension(output.Extension) {
+		return MappedResult{}, nil, &InvalidVirtualExtensionError{Extension: output.Extension}
+	}
 	result := MappedResult{
-		Text: output.Text,
+		Text:             output.Text,
+		VirtualExtension: output.Extension,
 	}
 	virtualPositions, err := newPositionNormalizer(output.Text, positionEncoding)
 	if err != nil {

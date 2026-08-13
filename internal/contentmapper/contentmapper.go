@@ -12,16 +12,13 @@
 package contentmapper
 
 import (
-	"maps"
 	"reflect"
-	"slices"
 	"strings"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/json"
-	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/zeebo/xxh3"
 )
 
@@ -42,8 +39,6 @@ type Manifest struct {
 	Exec            []string
 	CompilerOptions []string
 	DynamicConfig   bool
-	// Extensions maps source extensions handled by the mapper to virtual extensions produced by its canonical transform.
-	Extensions map[string]string
 }
 
 // Mapper is a resolved content mapper: its tsconfig Definition combined with the Manifest resolved from
@@ -60,15 +55,8 @@ var supportedVirtualExtensions = collections.NewSetFromItems(
 	".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx", ".mts", ".cts", ".json",
 )
 
-const SupportedVirtualExtensionsDescription = "'.js', '.jsx', '.mjs', '.cjs', '.ts', '.tsx', '.mts', '.cts', '.json'"
-
 func IsSupportedVirtualExtension(extension string) bool {
 	return supportedVirtualExtensions.Has(extension)
-}
-
-func (m *Mapper) VirtualExtension(fileName string) string {
-	sourceExtension := tspath.GetLongestExtensionFromPath(fileName, m.Definition.Extensions, false)
-	return m.Manifest.Extensions[sourceExtension]
 }
 
 // DiagnosticName returns the best available user-facing name, including when manifest resolution failed.
@@ -117,13 +105,6 @@ func (m *Mapper) TransformIdentity(options *core.CompilerOptions) xxh3.Uint128 {
 	buf = append(buf, 0)
 	buf = append(buf, m.Options...)
 	buf = append(buf, 0)
-	virtualExtensionKeys := slices.Sorted(maps.Keys(m.Manifest.Extensions))
-	for _, sourceExtension := range virtualExtensionKeys {
-		buf = append(buf, sourceExtension...)
-		buf = append(buf, '=')
-		buf = append(buf, m.Manifest.Extensions[sourceExtension]...)
-		buf = append(buf, 0)
-	}
 	buf = append(buf, optionsJSON...)
 	return xxh3.Hash128(buf)
 }

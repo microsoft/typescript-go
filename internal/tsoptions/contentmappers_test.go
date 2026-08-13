@@ -33,11 +33,11 @@ func TestResolveContentMapperManifest(t *testing.T) {
 		"/home/project/node_modules/vue-ts-mapper/package.json": `{
 			"name": "vue-ts-mapper",
 			"version": "1.2.3",
-			"tsContentMapper": { "exec": ["node", "./dist/mapper.js"], "extensions": { ".vue": ".tsx" }, "compilerOptions": ["target", "jsx"] }
+			"tsContentMapper": { "exec": ["node", "./dist/mapper.js"], "compilerOptions": ["target", "jsx"] }
 		}`,
 		"/home/node_modules/@scope/noversion/package.json": `{
 			"name": "@scope/noversion",
-			"tsContentMapper": { "exec": ["run"], "extensions": { ".component": ".mts" } }
+			"tsContentMapper": { "exec": ["run"] }
 		}`,
 		"/home/project/node_modules/no-name/package.json": `{
 			"version": "1.0.0"
@@ -53,18 +53,6 @@ func TestResolveContentMapperManifest(t *testing.T) {
 			"name": "bad-exec",
 			"tsContentMapper": { "exec": "node ./mapper.js" }
 		}`,
-		"/home/project/node_modules/no-extensions/package.json": `{
-			"name": "no-extensions",
-			"tsContentMapper": { "exec": ["run"] }
-		}`,
-		"/home/project/node_modules/bad-source-extension/package.json": `{
-			"name": "bad-source-extension",
-			"tsContentMapper": { "exec": ["run"], "extensions": { "vue": ".ts" } }
-		}`,
-		"/home/project/node_modules/bad-virtual-extension/package.json": `{
-			"name": "bad-virtual-extension",
-			"tsContentMapper": { "exec": ["run"], "extensions": { ".vue": ".coffee" } }
-		}`,
 	}, true /*useCaseSensitiveFileNames*/)}
 
 	// Name, version, and the verbatim exec argv are preserved.
@@ -75,7 +63,6 @@ func TestResolveContentMapperManifest(t *testing.T) {
 	assert.Equal(t, packageDirectory, "/home/project/node_modules/vue-ts-mapper")
 	assert.DeepEqual(t, manifest.Exec, []string{"node", "./dist/mapper.js"})
 	assert.DeepEqual(t, manifest.CompilerOptions, []string{"target", "jsx"})
-	assert.DeepEqual(t, manifest.Extensions, map[string]string{".vue": ".tsx"})
 
 	// Resolution walks up node_modules; a package with no version resolves to a name and empty version.
 	manifest, _, diagnostic = resolveContentMapperManifest(host, "/home/project/src/tsconfig.json", "@scope/noversion")
@@ -105,16 +92,4 @@ func TestResolveContentMapperManifest(t *testing.T) {
 		assert.Assert(t, diagnostic != nil, "expected a diagnostic for %s", pkg)
 		assert.Equal(t, diagnostic.Code(), diagnostics.The_tsContentMapper_exec_of_the_content_mapper_package_0_must_be_a_non_empty_array_of_strings.Code())
 	}
-
-	_, _, diagnostic = resolveContentMapperManifest(host, "/home/project/tsconfig.json", "no-extensions")
-	assert.Assert(t, diagnostic != nil)
-	assert.Equal(t, diagnostic.Code(), diagnostics.The_tsContentMapper_extensions_of_the_content_mapper_package_0_must_be_a_non_empty_object_mapping_source_extensions_to_virtual_extensions.Code())
-
-	_, _, diagnostic = resolveContentMapperManifest(host, "/home/project/tsconfig.json", "bad-source-extension")
-	assert.Assert(t, diagnostic != nil)
-	assert.Equal(t, diagnostic.Code(), diagnostics.The_source_extension_0_in_tsContentMapper_extensions_of_the_content_mapper_package_1_must_begin_with_a.Code())
-
-	_, _, diagnostic = resolveContentMapperManifest(host, "/home/project/tsconfig.json", "bad-virtual-extension")
-	assert.Assert(t, diagnostic != nil)
-	assert.Equal(t, diagnostic.Code(), diagnostics.The_virtual_extension_0_for_source_extension_1_in_tsContentMapper_extensions_of_the_content_mapper_package_2_must_be_one_of_Colon_3.Code())
 }

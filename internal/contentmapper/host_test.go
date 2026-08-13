@@ -67,7 +67,7 @@ func (fakeMapper) HandleRequest(ctx context.Context, method string, params json.
 			return nil, err
 		}
 		return contentmapper.TransformResult{
-			MappedOutput: contentmapper.MappedOutput{Text: p.Content, Mappings: json.Value(mappings)},
+			MappedOutput: contentmapper.MappedOutput{Text: p.Content, Extension: ".ts", Mappings: json.Value(mappings)},
 			Diagnostics: []contentmapper.Diagnostic{{
 				MessageText: "boom",
 				Start:       0,
@@ -113,7 +113,7 @@ func (m unicodeMapper) HandleRequest(ctx context.Context, method string, params 
 		case contentmapper.PositionEncodingUTF16:
 			emojiLength, textLength = 1, 2
 		default:
-			return contentmapper.TransformResult{MappedOutput: contentmapper.MappedOutput{Text: p.Content}}, nil
+			return contentmapper.TransformResult{MappedOutput: contentmapper.MappedOutput{Text: p.Content, Extension: ".ts"}}, nil
 		}
 		mappings, err := json.Marshal([][5]int{
 			{0, emojiLength, 0, emojiLength, int(spanmap.KindVerbatim)},
@@ -124,8 +124,9 @@ func (m unicodeMapper) HandleRequest(ctx context.Context, method string, params 
 		}
 		return contentmapper.TransformResult{
 			MappedOutput: contentmapper.MappedOutput{
-				Text:     p.Content,
-				Mappings: mappings,
+				Text:      p.Content,
+				Extension: ".ts",
+				Mappings:  mappings,
 				DiagnosticDirectives: []contentmapper.MappedDiagnosticDirective{{
 					OriginalStart:  emojiLength,
 					OriginalLength: textLength - emojiLength,
@@ -159,6 +160,7 @@ func (m invalidDiagnosticMapper) HandleRequest(ctx context.Context, method strin
 		return contentmapper.InitializeResult{ProtocolVersion: contentmapper.ProtocolVersion, PositionEncoding: m.encoding, DiagnosticSource: "mapper"}, nil
 	case contentmapper.MethodTransform:
 		return contentmapper.TransformResult{
+			MappedOutput: contentmapper.MappedOutput{Extension: ".ts"},
 			Diagnostics: []contentmapper.Diagnostic{{
 				MessageText: "invalid boundary",
 				Start:       1,
@@ -212,10 +214,11 @@ func TestRunnerTransform(t *testing.T) {
 	r := contentmapper.NewHost(t.Context(), &fakeSpawner{}, locale.Default)
 	defer r.Close()
 
-	mapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "vue", Version: "1.0.0", Exec: []string{"vue-mapper"}, Extensions: map[string]string{".vue": ".ts"}}}
+	mapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "vue", Version: "1.0.0", Exec: []string{"vue-mapper"}}}
 	result, err := r.Transform(mapper, contentmapper.Request{FileName: "/a.vue", Content: "export const x = 1;"})
 	assert.NilError(t, err)
 	assert.Equal(t, result.Text, "export const x = 1;")
+	assert.Equal(t, result.VirtualExtension, ".ts")
 	assert.Assert(t, result.Mappings != nil)
 	assert.Equal(t, len(result.Diagnostics), 1)
 	assert.Equal(t, result.Diagnostics[0].Code(), int32(9999))
@@ -240,7 +243,7 @@ func TestMapperDiagnosticName(t *testing.T) {
 func TestRunnerTransformResponseValidation(t *testing.T) {
 	t.Parallel()
 	request := contentmapper.Request{FileName: "/a.vue", Content: "a"}
-	mapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}, Extensions: map[string]string{".vue": ".ts"}}}
+	mapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}}}
 
 	t.Run("malformed result fails the request", func(t *testing.T) {
 		t.Parallel()
@@ -256,7 +259,7 @@ func TestRunnerTransformResponseValidation(t *testing.T) {
 func TestRunnerTransformDiagnosticDirectives(t *testing.T) {
 	t.Parallel()
 	request := contentmapper.Request{FileName: "/a.vue", Content: "directive\nsource"}
-	mapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}, Extensions: map[string]string{".vue": ".ts"}}}
+	mapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}}}
 	transform := func(output contentmapper.MappedOutput) (contentmapper.Result, error) {
 		host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: responseMapper{response: func(p contentmapper.TransformParams) any {
 			return contentmapper.TransformResult{MappedOutput: output}
@@ -266,7 +269,7 @@ func TestRunnerTransformDiagnosticDirectives(t *testing.T) {
 	}
 
 	result, err := transform(contentmapper.MappedOutput{
-		Text: "virtual source",
+		Text: "virtual source", Extension: ".ts",
 		DiagnosticDirectives: []contentmapper.MappedDiagnosticDirective{{
 			OriginalStart:  0,
 			OriginalLength: 9,
@@ -291,7 +294,7 @@ func TestRunnerTransformDiagnosticDirectives(t *testing.T) {
 	assert.Equal(t, directive.UnusedMessageText, "Unused framework directive.")
 	assert.Equal(t, directive.Source, "mapper")
 	_, err = transform(contentmapper.MappedOutput{
-		Text: "x",
+		Text: "x", Extension: ".ts",
 		DiagnosticDirectives: []contentmapper.MappedDiagnosticDirective{{
 			OriginalStart:    -1,
 			Policy:           contentmapper.DiagnosticDirectivePolicyIgnore,
@@ -363,7 +366,7 @@ func TestRunnerTransformDiagnosticDirectives(t *testing.T) {
 	for _, test := range invalid {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
-			_, transformErr := transform(contentmapper.MappedOutput{Text: test.text, DiagnosticDirectives: test.directives})
+			_, transformErr := transform(contentmapper.MappedOutput{Text: test.text, Extension: ".ts", DiagnosticDirectives: test.directives})
 			directiveError, ok := errors.AsType[*contentmapper.DiagnosticDirectiveError](transformErr)
 			assert.Assert(t, ok)
 			assert.Equal(t, directiveError.Kind, test.kind)
@@ -375,21 +378,21 @@ func TestRunnerTransformSupplementalOutputs(t *testing.T) {
 	t.Parallel()
 	host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: responseMapper{response: func(p contentmapper.TransformParams) any {
 		return contentmapper.TransformResult{
-			MappedOutput: contentmapper.MappedOutput{Text: "export default 1;"},
+			MappedOutput: contentmapper.MappedOutput{Text: "export default 1;", Extension: ".ts"},
 			Supplemental: []contentmapper.SupplementalOutput{
 				{MappedOutput: contentmapper.MappedOutput{
-					Text: "declare const first: string;",
+					Text: "declare const first: string;", Extension: ".ts",
 					DiagnosticDirectives: []contentmapper.MappedDiagnosticDirective{{
 						VirtualLength: 7,
 						Policy:        contentmapper.DiagnosticDirectivePolicyIgnore,
 					}},
-				}, Extension: ".ts"},
-				{MappedOutput: contentmapper.MappedOutput{Text: "declare const second: number;"}, Extension: ".mjs"},
+				}},
+				{MappedOutput: contentmapper.MappedOutput{Text: "declare const second: number;", Extension: ".mjs"}},
 			},
 		}
 	}}}, locale.Default)
 	defer host.Close()
-	mapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}, Extensions: map[string]string{".vue": ".ts"}}}
+	mapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}}}
 	result, err := host.Transform(mapper, contentmapper.Request{FileName: "/component.vue", Content: "component"})
 	assert.NilError(t, err)
 	assert.Equal(t, len(result.Supplemental), 2)
@@ -406,23 +409,22 @@ func TestRunnerTransformInvalidSupplementalDiagnosticDirective(t *testing.T) {
 	t.Parallel()
 	host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: responseMapper{response: func(p contentmapper.TransformParams) any {
 		return contentmapper.TransformResult{
-			MappedOutput: contentmapper.MappedOutput{Text: "export {};"},
+			MappedOutput: contentmapper.MappedOutput{Text: "export {};", Extension: ".ts"},
 			Supplemental: []contentmapper.SupplementalOutput{
-				{MappedOutput: contentmapper.MappedOutput{Text: "export {};"}, Extension: ".ts"},
+				{MappedOutput: contentmapper.MappedOutput{Text: "export {};", Extension: ".ts"}},
 				{
 					MappedOutput: contentmapper.MappedOutput{
-						Text: "export {};",
+						Text: "export {};", Extension: ".ts",
 						DiagnosticDirectives: []contentmapper.MappedDiagnosticDirective{{
 							Policy: contentmapper.DiagnosticDirectivePolicyExpect,
 						}},
 					},
-					Extension: ".ts",
 				},
 			},
 		}
 	}}}, locale.Default)
 	defer host.Close()
-	mapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}, Extensions: map[string]string{".vue": ".ts"}}}
+	mapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}}}
 	_, err := host.Transform(mapper, contentmapper.Request{FileName: "/component.vue", Content: "component"})
 	directiveError, ok := errors.AsType[*contentmapper.DiagnosticDirectiveError](err)
 	assert.Assert(t, ok)
@@ -431,22 +433,30 @@ func TestRunnerTransformInvalidSupplementalDiagnosticDirective(t *testing.T) {
 	assert.Equal(t, directiveError.SupplementalIndex, 1)
 }
 
-func TestRunnerRejectsInvalidSupplementalVirtualExtension(t *testing.T) {
+func TestRunnerRejectsInvalidVirtualExtension(t *testing.T) {
 	t.Parallel()
-	for _, extension := range []string{"", ".coffee"} {
-		t.Run(extension, func(t *testing.T) {
-			t.Parallel()
-			host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: responseMapper{response: func(p contentmapper.TransformParams) any {
-				return contentmapper.TransformResult{
-					MappedOutput: contentmapper.MappedOutput{Text: "export {};"},
-					Supplemental: []contentmapper.SupplementalOutput{{MappedOutput: contentmapper.MappedOutput{Text: "export {};"}, Extension: extension}},
-				}
-			}}}, locale.Default)
-			defer host.Close()
-			mapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}, Extensions: map[string]string{".vue": ".ts"}}}
-			_, err := host.Transform(mapper, contentmapper.Request{FileName: "/component.vue", Content: "component"})
-			assert.ErrorContains(t, err, "invalid supplemental virtual extension")
-		})
+	for _, supplemental := range []bool{false, true} {
+		for _, extension := range []string{"", ".coffee"} {
+			t.Run(fmt.Sprintf("supplemental=%t/%s", supplemental, extension), func(t *testing.T) {
+				t.Parallel()
+				host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: responseMapper{response: func(p contentmapper.TransformParams) any {
+					canonicalExtension := extension
+					var supplementalOutputs []contentmapper.SupplementalOutput
+					if supplemental {
+						canonicalExtension = ".ts"
+						supplementalOutputs = []contentmapper.SupplementalOutput{{MappedOutput: contentmapper.MappedOutput{Text: "export {};", Extension: extension}}}
+					}
+					return contentmapper.TransformResult{
+						MappedOutput: contentmapper.MappedOutput{Text: "export {};", Extension: canonicalExtension},
+						Supplemental: supplementalOutputs,
+					}
+				}}}, locale.Default)
+				defer host.Close()
+				mapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}}}
+				_, err := host.Transform(mapper, contentmapper.Request{FileName: "/component.vue", Content: "component"})
+				assert.ErrorContains(t, err, "invalid virtual extension")
+			})
+		}
 	}
 }
 
@@ -668,7 +678,7 @@ func (m *recordingMapper) HandleRequest(ctx context.Context, method string, para
 		m.receivedOptions = string(p.Options)
 		m.transformHandle = p.ProjectHandle
 		m.mu.Unlock()
-		return contentmapper.TransformResult{MappedOutput: contentmapper.MappedOutput{Text: p.Content}}, nil
+		return contentmapper.TransformResult{MappedOutput: contentmapper.MappedOutput{Text: p.Content, Extension: ".ts"}}, nil
 	default:
 		return nil, fmt.Errorf("unexpected method %s", method)
 	}

@@ -18,7 +18,7 @@
 {
     "name": "mapper",
     "version": "1.0.0",
-    "tsContentMapper": { "exec": ["supplemental-globals-mapper"], "extensions": { ".vue": ".ts" } }
+    "tsContentMapper": { "exec": ["supplemental-globals-mapper"] }
 }
 
 // @Filename: /a.vue

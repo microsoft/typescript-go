@@ -25,7 +25,6 @@ func TestParseContentMapperContributions(t *testing.T) {
 					Exec:            []string{"node", "mapper.js"},
 					Cwd:             &cwd,
 					CompilerOptions: &compilerOptions,
-					Extensions:      map[string]string{".vue": ".ts"},
 				},
 			},
 		},
@@ -46,7 +45,7 @@ func TestParseContentMapperContributions(t *testing.T) {
 func TestParseContentMapperContributionsRejectsConflictingInlineMappers(t *testing.T) {
 	t.Parallel()
 	inferredProjectContribution := func(name string) *lsproto.InferredProjectContentMapperContribution {
-		return &lsproto.InferredProjectContentMapperContribution{Manifest: &lsproto.ContentMapperManifest{Name: name, Exec: []string{name}, Extensions: map[string]string{".vue": ".ts"}}}
+		return &lsproto.InferredProjectContentMapperContribution{Manifest: &lsproto.ContentMapperManifest{Name: name, Exec: []string{name}}}
 	}
 	_, err := parseContentMapperContributions([]*lsproto.ContentMapperContribution{
 		{ContributorId: "first", Extensions: []string{".vue"}, InferredProjectContribution: inferredProjectContribution("first")},
@@ -61,34 +60,9 @@ func TestParseContentMapperContributionsDefaultsOptionsToObject(t *testing.T) {
 		ContributorId: "publisher.extension",
 		Extensions:    []string{".vue"},
 		InferredProjectContribution: &lsproto.InferredProjectContentMapperContribution{
-			Manifest: &lsproto.ContentMapperManifest{Name: "mapper", Exec: []string{"mapper"}, Extensions: map[string]string{".vue": ".ts"}},
+			Manifest: &lsproto.ContentMapperManifest{Name: "mapper", Exec: []string{"mapper"}},
 		},
 	}})
 	assert.NilError(t, err)
 	assert.Equal(t, string(contributions.Mappers[0].Definition.Options), `{}`)
-}
-
-func TestParseContentMapperContributionsRejectsInvalidExtensionMappings(t *testing.T) {
-	t.Parallel()
-	for _, test := range []struct {
-		name       string
-		extensions map[string]string
-		message    string
-	}{
-		{name: "invalid source extension", extensions: map[string]string{"vue": ".ts"}, message: `invalid extension mapping "vue" to ".ts"`},
-		{name: "invalid virtual extension", extensions: map[string]string{".vue": ".coffee"}, message: `invalid extension mapping ".vue" to ".coffee"`},
-		{name: "missing source extension", extensions: map[string]string{".svelte": ".ts"}, message: `has no virtual extension for ".vue"`},
-	} {
-		t.Run(test.name, func(t *testing.T) {
-			t.Parallel()
-			_, err := parseContentMapperContributions([]*lsproto.ContentMapperContribution{{
-				ContributorId: "publisher.extension",
-				Extensions:    []string{".vue"},
-				InferredProjectContribution: &lsproto.InferredProjectContentMapperContribution{
-					Manifest: &lsproto.ContentMapperManifest{Name: "mapper", Exec: []string{"mapper"}, Extensions: test.extensions},
-				},
-			}})
-			assert.ErrorContains(t, err, test.message)
-		})
-	}
 }

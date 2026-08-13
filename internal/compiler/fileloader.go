@@ -467,6 +467,9 @@ func contentMapperTransformDiagnostic(file *ast.SourceFile, label string, err er
 		case contentmapper.TransformErrorKindRequest:
 			return contentMapperTransformDiagnosticChain(file, label, diagnostics.The_content_mapper_process_failed_while_handling_the_transform_request)
 		case contentmapper.TransformErrorKindResponse:
+			if extensionError, ok := errors.AsType[*contentmapper.InvalidVirtualExtensionError](transformError); ok {
+				return contentMapperTransformDiagnosticChain(file, label, diagnostics.The_content_mapper_returned_an_output_with_unsupported_virtual_extension_0, extensionError.Extension)
+			}
 			if directiveError, ok := errors.AsType[*contentmapper.DiagnosticDirectiveError](transformError); ok {
 				var detail *ast.Diagnostic
 				switch directiveError.Kind {

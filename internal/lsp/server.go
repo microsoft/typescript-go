@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"iter"
-	"maps"
 	"math/rand/v2"
 	"runtime/debug"
 	"slices"
@@ -2308,13 +2307,8 @@ func parseContentMapperContributions(values []*lsproto.ContentMapperContribution
 		}
 		inferredProject := value.InferredProjectContribution
 		manifest := inferredProject.Manifest
-		if manifest.Name == "" || len(manifest.Exec) == 0 || len(manifest.Extensions) == 0 {
-			return result, fmt.Errorf("content mapper contribution %q requires a manifest name, exec, and extensions", identity)
-		}
-		for sourceExtension, virtualExtension := range manifest.Extensions {
-			if !isValidContributedContentMapperExtension(sourceExtension) || !contentmapper.IsSupportedVirtualExtension(virtualExtension) {
-				return result, fmt.Errorf("content mapper contribution %q has invalid extension mapping %q to %q", identity, sourceExtension, virtualExtension)
-			}
+		if manifest.Name == "" || len(manifest.Exec) == 0 {
+			return result, fmt.Errorf("content mapper contribution %q requires a manifest name and exec", identity)
 		}
 		for _, option := range valueOrZero(manifest.CompilerOptions) {
 			if tsoptions.CommandLineCompilerOptionsMap.Get(option) == nil {
@@ -2322,9 +2316,6 @@ func parseContentMapperContributions(values []*lsproto.ContentMapperContribution
 			}
 		}
 		for _, extension := range validExtensions {
-			if manifest.Extensions[extension] == "" {
-				return result, fmt.Errorf("content mapper contribution %q has no virtual extension for %q", identity, extension)
-			}
 			if !claimedExtensions.AddIfAbsent(extension) {
 				return result, fmt.Errorf("content mapper contributions both claim extension %q", extension)
 			}
@@ -2346,7 +2337,6 @@ func parseContentMapperContributions(values []*lsproto.ContentMapperContribution
 				Exec:            slices.Clone(manifest.Exec),
 				CompilerOptions: slices.Clone(valueOrZero(manifest.CompilerOptions)),
 				DynamicConfig:   valueOrZero(manifest.DynamicConfig),
-				Extensions:      maps.Clone(manifest.Extensions),
 			},
 			ContributionID: identity,
 		}

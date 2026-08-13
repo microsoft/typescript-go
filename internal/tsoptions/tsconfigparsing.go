@@ -1410,15 +1410,6 @@ func parseJsonConfigFileContentWorker(
 				continue
 			}
 			mapper.Manifest = manifest
-			for _, extension := range mapper.Definition.Extensions {
-				if mapper.Manifest.Extensions[extension] == "" {
-					errors = append(errors, setContentMapperDiagnosticLocation(
-						ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, "tsContentMapper.extensions["+extension+"]", "virtual extension"),
-						contentMapperSourceFile,
-						getContentMapperExtensionSyntax(contentMapperSourceFile, contentMapperIndices[j], extension),
-					))
-				}
-			}
 		}
 	}
 

@@ -50,7 +50,7 @@ func newContentMapperProgram(t *testing.T, contentMapperProject contentmapper.Pr
 				Module:           core.ModuleKindESNext,
 				ModuleResolution: core.ModuleResolutionKindBundler,
 			},
-			ContentMappers: []*contentmapper.Mapper{{Definition: contentmapper.Definition{Package: "vue", Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "vue-mapper", Version: "1.0.0", Extensions: map[string]string{".vue": ".ts"}}}},
+			ContentMappers: []*contentmapper.Mapper{{Definition: contentmapper.Definition{Package: "vue", Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "vue-mapper", Version: "1.0.0"}}},
 		},
 	}
 	return compiler.NewProgram(compiler.ProgramOptions{
@@ -85,7 +85,7 @@ func TestContentMapperInvalidMappings(t *testing.T) {
 	}
 	contentMapperHost := fakeContentMapperHost{
 		transform: func(fileName string, content string) (contentmapper.Result, error) {
-			return contentmapper.Result{Text: transformed, Mappings: mappings}, nil
+			return contentmapper.Result{Text: transformed, VirtualExtension: ".ts", Mappings: mappings}, nil
 		},
 	}
 	program := newContentMapperProgram(t, contentMapperHost, files, []string{"/src/app.ts"})
@@ -101,7 +101,7 @@ func TestContentMapperSourceFileState(t *testing.T) {
 		t.Parallel()
 		program := newContentMapperProgram(t, fakeContentMapperHost{
 			transform: func(fileName string, content string) (contentmapper.Result, error) {
-				return contentmapper.Result{Text: "export {};", Mappings: spanmap.New(nil)}, nil
+				return contentmapper.Result{Text: "export {};", VirtualExtension: ".ts", Mappings: spanmap.New(nil)}, nil
 			},
 		}, map[string]string{"/src/empty.vue": ""}, []string{"/src/empty.vue"})
 		file := program.GetSourceFile("/src/empty.vue")

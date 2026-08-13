@@ -1033,7 +1033,7 @@ func TestContentMappers(t *testing.T) {
 		allFileList: map[string]string{
 			"/src/app.ts":                           "export {}",
 			"/src/Component.vue":                    "<template></template>",
-			"/node_modules/vue-mapper/package.json": `{ "name": "vue-mapper", "version": "1.2.3", "tsContentMapper": { "exec": ["node", "./mapper.js"], "extensions": { ".vue": ".ts" }, "dynamicConfig": true } }`,
+			"/node_modules/vue-mapper/package.json": `{ "name": "vue-mapper", "version": "1.2.3", "tsContentMapper": { "exec": ["node", "./mapper.js"], "dynamicConfig": true } }`,
 		},
 		existingOptions: &core.CompilerOptions{LoadExternalPlugins: core.TSTrue},
 	}

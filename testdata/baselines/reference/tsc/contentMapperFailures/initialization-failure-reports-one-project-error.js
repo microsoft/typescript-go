@@ -24,7 +24,7 @@ import "./f.vue";
 {
     "name": "missing",
     "version": "1.0.0",
-    "tsContentMapper": { "exec": ["missing-mapper"], "extensions": { ".vue": ".ts" } }
+    "tsContentMapper": { "exec": ["missing-mapper"] }
 }
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
 {

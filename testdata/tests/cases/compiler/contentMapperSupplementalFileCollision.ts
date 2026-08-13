@@ -17,7 +17,7 @@
 {
     "name": "mapper",
     "version": "1.0.0",
-    "tsContentMapper": { "exec": ["supplemental-mapper"], "extensions": { ".astro": ".ts" } }
+    "tsContentMapper": { "exec": ["supplemental-mapper"] }
 }
 
 // @Filename: /component.astro

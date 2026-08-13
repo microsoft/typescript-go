@@ -4380,13 +4380,7 @@ var Content_mapper_supplemental_output_file_0_conflicts_with_an_existing_file = 
 
 var Supplemental_virtual_file_produced_by_the_content_mapper_for_file_0 = &Message{code: 100058, category: CategoryMessage, key: "Supplemental_virtual_file_produced_by_the_content_mapper_for_file_0_100058", text: "Supplemental virtual file produced by the content mapper for file '{0}'."}
 
-var The_tsContentMapper_extensions_of_the_content_mapper_package_0_must_be_a_non_empty_object_mapping_source_extensions_to_virtual_extensions = &Message{code: 100059, category: CategoryError, key: "The_tsContentMapper_extensions_of_the_content_mapper_package_0_must_be_a_non_empty_object_mapping_so_100059", text: "The 'tsContentMapper.extensions' of the content mapper package '{0}' must be a non-empty object mapping source extensions to virtual extensions."}
-
-var The_source_extension_0_in_tsContentMapper_extensions_of_the_content_mapper_package_1_must_begin_with_a = &Message{code: 100060, category: CategoryError, key: "The_source_extension_0_in_tsContentMapper_extensions_of_the_content_mapper_package_1_must_begin_with_100060", text: "The source extension '{0}' in 'tsContentMapper.extensions' of the content mapper package '{1}' must begin with a '.'."}
-
-var The_virtual_extension_0_for_source_extension_1_in_tsContentMapper_extensions_of_the_content_mapper_package_2_must_be_one_of_Colon_3 = &Message{code: 100061, category: CategoryError, key: "The_virtual_extension_0_for_source_extension_1_in_tsContentMapper_extensions_of_the_content_mapper_p_100061", text: "The virtual extension '{0}' for source extension '{1}' in 'tsContentMapper.extensions' of the content mapper package '{2}' must be one of: {3}."}
-
-var The_content_mapper_returned_a_supplemental_output_with_unsupported_virtual_extension_0 = &Message{code: 100062, category: CategoryMessage, key: "The_content_mapper_returned_a_supplemental_output_with_unsupported_virtual_extension_0_100062", text: "The content mapper returned a supplemental output with unsupported virtual extension '{0}'."}
+var The_content_mapper_returned_an_output_with_unsupported_virtual_extension_0 = &Message{code: 100062, category: CategoryMessage, key: "The_content_mapper_returned_an_output_with_unsupported_virtual_extension_0_100062", text: "The content mapper returned an output with unsupported virtual extension '{0}'."}
 
 var The_content_mapper_0_could_not_be_initialized = &Message{code: 100063, category: CategoryError, key: "The_content_mapper_0_could_not_be_initialized_100063", text: "The content mapper '{0}' could not be initialized."}
 
@@ -8790,14 +8784,8 @@ func keyToMessage(key Key) *Message {
 		return Content_mapper_supplemental_output_file_0_conflicts_with_an_existing_file
 	case "Supplemental_virtual_file_produced_by_the_content_mapper_for_file_0_100058":
 		return Supplemental_virtual_file_produced_by_the_content_mapper_for_file_0
-	case "The_tsContentMapper_extensions_of_the_content_mapper_package_0_must_be_a_non_empty_object_mapping_so_100059":
-		return The_tsContentMapper_extensions_of_the_content_mapper_package_0_must_be_a_non_empty_object_mapping_source_extensions_to_virtual_extensions
-	case "The_source_extension_0_in_tsContentMapper_extensions_of_the_content_mapper_package_1_must_begin_with_100060":
-		return The_source_extension_0_in_tsContentMapper_extensions_of_the_content_mapper_package_1_must_begin_with_a
-	case "The_virtual_extension_0_for_source_extension_1_in_tsContentMapper_extensions_of_the_content_mapper_p_100061":
-		return The_virtual_extension_0_for_source_extension_1_in_tsContentMapper_extensions_of_the_content_mapper_package_2_must_be_one_of_Colon_3
-	case "The_content_mapper_returned_a_supplemental_output_with_unsupported_virtual_extension_0_100062":
-		return The_content_mapper_returned_a_supplemental_output_with_unsupported_virtual_extension_0
+	case "The_content_mapper_returned_an_output_with_unsupported_virtual_extension_0_100062":
+		return The_content_mapper_returned_an_output_with_unsupported_virtual_extension_0
 	case "The_content_mapper_0_could_not_be_initialized_100063":
 		return The_content_mapper_0_could_not_be_initialized
 	case "The_content_mapper_command_0_could_not_be_started_Colon_1_100064":

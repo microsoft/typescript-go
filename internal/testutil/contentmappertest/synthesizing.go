@@ -27,8 +27,9 @@ func (synthesizingHandler) HandleRequest(ctx context.Context, method string, par
 			return nil, err
 		}
 		return contentmapper.TransformResult{MappedOutput: contentmapper.MappedOutput{
-			Text:     synthesizedOutput,
-			Mappings: json.Value(mappings),
+			Text:      synthesizedOutput,
+			Extension: ".ts",
+			Mappings:  json.Value(mappings),
 		}}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)

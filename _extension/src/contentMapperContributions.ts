@@ -7,7 +7,6 @@ export interface ContentMapperManifest {
     readonly cwd?: vscode.Uri;
     readonly compilerOptions?: readonly string[];
     readonly dynamicConfig?: boolean;
-    readonly extensions: Readonly<Record<string, string>>;
 }
 
 export interface ContentMapperContribution {
@@ -30,7 +29,6 @@ export interface SerializedContentMapperContribution {
             readonly cwd?: string;
             readonly compilerOptions?: readonly string[];
             readonly dynamicConfig?: boolean;
-            readonly extensions: Readonly<Record<string, string>>;
         };
     };
 }
@@ -73,9 +71,6 @@ export function validateContentMapperRegistration(contributorId: string, contrib
         }
         if (inferredProject && (!inferredProject.manifest.name || inferredProject.manifest.exec.length === 0)) {
             throw new TypeError("Content mapper contribution manifests require a name and non-empty exec.");
-        }
-        if (inferredProject && contribution.extensions.some(extension => !inferredProject.manifest.extensions[extension])) {
-            throw new TypeError("Content mapper contribution manifests require a virtual extension for every source extension.");
         }
         if (inferredProject?.manifest.cwd && inferredProject.manifest.cwd.scheme !== "file") {
             throw new TypeError("Content mapper contribution cwd must be a file URI.");

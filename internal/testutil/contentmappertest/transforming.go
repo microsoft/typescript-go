@@ -41,12 +41,20 @@ func (Handler) HandleRequest(ctx context.Context, method string, params json.Val
 			return nil, err
 		}
 		return contentmapper.TransformResult{
-			MappedOutput: contentmapper.MappedOutput{Text: text, Mappings: mappings, DiagnosticDirectives: diagnosticDirectives},
+			MappedOutput: contentmapper.MappedOutput{Text: text, Extension: mappedExtension(p.Content), Mappings: mappings, DiagnosticDirectives: diagnosticDirectives},
 			Diagnostics:  diagnostics,
 		}, nil
 	default:
 		return nil, fmt.Errorf("contentmappertest: unexpected method %q", method)
 	}
+}
+
+func mappedExtension(content string) string {
+	const prefix = "// @box-extension:"
+	if firstLine, _, ok := strings.Cut(content, "\n"); ok && strings.HasPrefix(firstLine, prefix) {
+		return strings.TrimSpace(strings.TrimPrefix(firstLine, prefix))
+	}
+	return ".ts"
 }
 
 func transform(content string, options *collections.OrderedMap[string, json.Value]) (string, json.Value, []contentmapper.Diagnostic, []contentmapper.MappedDiagnosticDirective, error) {

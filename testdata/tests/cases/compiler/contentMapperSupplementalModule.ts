@@ -18,7 +18,7 @@
 {
     "name": "mapper",
     "version": "1.0.0",
-    "tsContentMapper": { "exec": ["supplemental-module-mapper"], "extensions": { ".vue": ".ts" } }
+    "tsContentMapper": { "exec": ["supplemental-module-mapper"] }
 }
 
 // @Filename: /component.vue

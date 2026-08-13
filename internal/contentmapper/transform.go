@@ -52,7 +52,7 @@ func ParseResult(parseOptions ast.SourceFileParseOptions, content string, mapper
 	if problem := result.Mappings.Validate(result.Text, content); problem != nil {
 		return SourceFiles{}, problem
 	}
-	virtualExtension := mapper.VirtualExtension(parseOptions.FileName)
+	virtualExtension := result.VirtualExtension
 	if !IsSupportedVirtualExtension(virtualExtension) {
 		return SourceFiles{}, NewTransformError(TransformErrorKindResponse, nil)
 	}

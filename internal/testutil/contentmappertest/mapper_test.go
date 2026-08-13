@@ -46,7 +46,6 @@ func testMapper() *contentmapper.Mapper {
 			Version:         "1.0.0",
 			Exec:            []string{contentmappertest.TransformingMapper},
 			CompilerOptions: contentmappertest.DeclaredOptions,
-			Extensions:      map[string]string{".box": ".ts"},
 		},
 		PackageDirectory: "/node_modules/" + contentmappertest.PackageName,
 	}
