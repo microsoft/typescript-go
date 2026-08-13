@@ -28,7 +28,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/project"
-	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/transpile"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -1860,25 +1859,42 @@ func (s *Session) handleGetImportAdderEdits(ctx context.Context, params *GetImpo
 	if !importAdder.HasFixes() {
 		return []*TextEdit{}, nil
 	}
-	return toAPITextEdits(sourceFile, workingSnapshot.Converters(), importAdder.Edits()), nil
+	return toAPITextEdits(sourceFile, importAdder.Edits()), nil
 }
 
-func toAPITextEdits(sourceFile *ast.SourceFile, converters *lsconv.Converters, edits []*lsproto.TextEdit) []*TextEdit {
-	positionMap := sourceFile.GetPositionMap()
+func toAPITextEdits(sourceFile *ast.SourceFile, edits []*lsproto.TextEdit) []*TextEdit {
+	originalText := sourceFile.OriginalText()
+	lineMap := lsconv.ComputeLSPLineStarts(originalText)
+	positionMap := ast.ComputePositionMap(originalText)
 	result := make([]*TextEdit, len(edits))
 	for i, edit := range edits {
-		starts := lsconv.FromLSPPositionForSourceFile(converters, sourceFile, edit.Range.Start, spanmap.FeatureAll)
-		ends := lsconv.FromLSPPositionForSourceFile(converters, sourceFile, edit.Range.End, spanmap.FeatureAll)
-		if len(starts) != 1 || len(ends) != 1 {
+		start, ok := originalTextOffset(lineMap, edit.Range.Start, len(originalText))
+		if !ok {
+			return nil
+		}
+		end, ok := originalTextOffset(lineMap, edit.Range.End, len(originalText))
+		if !ok {
 			return nil
 		}
 		result[i] = &TextEdit{
-			Pos:     positionMap.UTF8ToUTF16(int(starts[0].Position)),
-			End:     positionMap.UTF8ToUTF16(int(ends[0].Position)),
+			Pos:     positionMap.UTF8ToUTF16(start),
+			End:     positionMap.UTF8ToUTF16(end),
 			NewText: edit.NewText,
 		}
 	}
 	return result
+}
+
+func originalTextOffset(lineMap *lsconv.LSPLineMap, position lsproto.Position, textLength int) (int, bool) {
+	line := int(position.Line)
+	if line < 0 || line >= len(lineMap.LineStarts) {
+		return 0, false
+	}
+	offset := int(lineMap.LineStarts[line]) + int(position.Character)
+	if offset < int(lineMap.LineStarts[line]) || offset > textLength {
+		return 0, false
+	}
+	return offset, true
 }
 
 // resolveTypePropertyOfType resolves a type property of type `Type` and returns a type response.

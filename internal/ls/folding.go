@@ -84,7 +84,7 @@ func (l *LanguageService) addNodeOutliningSpans(ctx context.Context, sourceFile 
 		lastImport := current - 1
 		if lastImport != firstImport {
 			foldingRangeKind := lsproto.FoldingRangeKindImports
-			foldingRange = append(foldingRange, createFoldingRangeFromBounds(
+			imports := createFoldingRangeFromBounds(
 				ctx,
 				astnav.GetStartOfNode(astnav.FindChildOfKind(statements.Nodes[firstImport],
 					ast.KindImportKeyword, sourceFile), sourceFile, false /*includeJSDoc*/),
@@ -92,7 +92,10 @@ func (l *LanguageService) addNodeOutliningSpans(ctx context.Context, sourceFile 
 				foldingRangeKind,
 				sourceFile,
 				l,
-			))
+			)
+			if imports != nil {
+				foldingRange = append(foldingRange, imports)
+			}
 		}
 	}
 
@@ -301,7 +304,10 @@ func addOutliningForLeadingCommentsForPos(ctx context.Context, pos int, sourceFi
 			if comments != nil {
 				foldingRange = append(foldingRange, comments)
 			}
-			foldingRange = append(foldingRange, createFoldingRangeFromBounds(ctx, commentPos, commentEnd, foldingRangeKindComment, sourceFile, l))
+			comment := createFoldingRangeFromBounds(ctx, commentPos, commentEnd, foldingRangeKindComment, sourceFile, l)
+			if comment != nil {
+				foldingRange = append(foldingRange, comment)
+			}
 			singleLineCommentCount = 0
 			break
 		default:

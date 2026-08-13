@@ -157,7 +157,7 @@ func (t *Tracker) toLSPEditRange(sourceFile *ast.SourceFile, textRange core.Text
 		// The range does not map into a single verbatim span, so the edit cannot be represented safely in
 		// the original text. Record the file so GetChanges drops its edits, keeping the best-effort range so
 		// the accumulated edits stay well-formed.
-		t.unmappableFiles.Add(sourceFile.FileName())
+		t.unmappableFiles.Add(sourceFile.OriginalFileName())
 	}
 	return r
 }

@@ -23,7 +23,7 @@ import (
 func (t *Tracker) getTextChangesFromChanges() map[string][]*lsproto.TextEdit {
 	changes := map[string][]*lsproto.TextEdit{}
 	for sourceFile, changesInFile := range t.changes.M {
-		if t.unmappableFiles.Has(sourceFile.FileName()) {
+		if t.unmappableFiles.Has(sourceFile.OriginalFileName()) {
 			continue
 		}
 		// order changes by start position
@@ -54,6 +54,9 @@ func (t *Tracker) getTextChangesFromChanges() map[string][]*lsproto.TextEdit {
 
 		if len(textChanges) > 0 {
 			fileName := sourceFile.OriginalFileName()
+			if t.unmappableFiles.Has(fileName) {
+				continue
+			}
 			changes[fileName] = append(changes[fileName], textChanges...)
 		}
 	}
@@ -103,14 +106,14 @@ func (t *Tracker) computeNewText(change *trackerEdit, targetSourceFile *ast.Sour
 		}
 		candidate := change.options.Prefix + noIndent + core.IfElse(strings.HasSuffix(noIndent, change.options.Suffix), "", change.options.Suffix)
 		if found && candidate != result {
-			t.unmappableFiles.Add(sourceFile.FileName())
+			t.unmappableFiles.Add(sourceFile.OriginalFileName())
 			return ""
 		}
 		result = candidate
 		found = true
 	}
 	if !found {
-		t.unmappableFiles.Add(sourceFile.FileName())
+		t.unmappableFiles.Add(sourceFile.OriginalFileName())
 	}
 	return result
 }

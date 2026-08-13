@@ -219,7 +219,11 @@ func newContentMapperHost(init *SessionInit) contentmapper.Host {
 	if !init.Options.LoadExternalPlugins || init.Spawner == nil {
 		return nil
 	}
-	return contentmapper.NewHost(init.BackgroundCtx, init.Spawner, init.Client.GetLocale())
+	diagnosticLocale := locale.Default
+	if init.Client != nil {
+		diagnosticLocale = init.Client.GetLocale()
+	}
+	return contentmapper.NewHost(init.BackgroundCtx, init.Spawner, diagnosticLocale)
 }
 
 func NewSession(init *SessionInit) *Session {
@@ -1155,6 +1159,9 @@ func (s *Session) getSnapshotAndDefaultProject(ctx context.Context, uri lsproto.
 	)
 	project := snapshot.GetDefaultProject(uri)
 	if project == nil {
+		if callerRef {
+			snapshot.Deref(s)
+		}
 		if file := snapshot.GetFile(uri.FileName()); file != nil && file.Kind() == core.ScriptKindUnknown {
 			return nil, nil, nil, fmt.Errorf("%w: no project found for URI %s", ErrNoProjectForUnknownScriptKind, uri)
 		}
@@ -1596,6 +1603,9 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 // with those extensions. This is how an otherwise unsupported file (e.g. a `.vue`) begins flowing to the server once a
 // config that maps it is discovered.
 func (s *Session) updateContentMapperRegistrations(ctx context.Context, snapshot *Snapshot) error {
+	if s.client == nil {
+		return nil
+	}
 	contentMappers := snapshot.ConfigFileRegistry.contentMappers()
 	extensions := append(slices.Clone(contentMappers.extensions), snapshot.inferredProjectContentMapperExtensions...)
 	slices.Sort(extensions)

@@ -20,6 +20,8 @@ const (
 	SupplementalDiagnosticsMapper = "supplemental-diagnostics-mapper"
 	SupplementalGlobalsMapper     = "supplemental-globals-mapper"
 	SupplementalModuleMapper      = "supplemental-module-mapper"
+	PrefixedSupplementalMapper    = "prefixed-supplemental-mapper"
+	UnmappedFoldingMapper         = "unmapped-folding-mapper"
 )
 
 type handlerConstructor func(*ProjectLifecycle) ipc.Handler
@@ -37,6 +39,8 @@ var mapperHandlers = map[string]handlerConstructor{
 	SupplementalDiagnosticsMapper: func(*ProjectLifecycle) ipc.Handler { return supplementalDiagnosticsHandler{} },
 	SupplementalGlobalsMapper:     func(*ProjectLifecycle) ipc.Handler { return supplementalGlobalsHandler{} },
 	SupplementalModuleMapper:      func(*ProjectLifecycle) ipc.Handler { return supplementalModuleHandler{} },
+	PrefixedSupplementalMapper:    func(*ProjectLifecycle) ipc.Handler { return prefixedSupplementalHandler{} },
+	UnmappedFoldingMapper:         func(*ProjectLifecycle) ipc.Handler { return unmappedFoldingHandler{} },
 }
 
 func handlerForMapper(command []string, lifecycle *ProjectLifecycle) (ipc.Handler, error) {
