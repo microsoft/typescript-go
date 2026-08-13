@@ -338,9 +338,7 @@ export function isToken(node: Node): node is Token {
 export declare namespace isToken {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, Token>;
 }
-isToken.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, Token> => {
-    return isTokenKind(node.kind);
-};
+isToken.Handle = isToken as any;
 
 export function isIdentifier(node: Node): node is Identifier {
     return node.kind === SyntaxKind.Identifier;
@@ -349,9 +347,7 @@ export function isIdentifier(node: Node): node is Identifier {
 export declare namespace isIdentifier {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, Identifier>;
 }
-isIdentifier.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, Identifier> => {
-    return node.kind === SyntaxKind.Identifier;
-};
+isIdentifier.Handle = isIdentifier as any;
 
 export function isPrivateIdentifier(node: Node): node is PrivateIdentifier {
     return node.kind === SyntaxKind.PrivateIdentifier;
@@ -360,9 +356,7 @@ export function isPrivateIdentifier(node: Node): node is PrivateIdentifier {
 export declare namespace isPrivateIdentifier {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PrivateIdentifier>;
 }
-isPrivateIdentifier.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PrivateIdentifier> => {
-    return node.kind === SyntaxKind.PrivateIdentifier;
-};
+isPrivateIdentifier.Handle = isPrivateIdentifier as any;
 
 export function isQualifiedName(node: Node): node is QualifiedName {
     return node.kind === SyntaxKind.QualifiedName;
@@ -371,9 +365,7 @@ export function isQualifiedName(node: Node): node is QualifiedName {
 export declare namespace isQualifiedName {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, QualifiedName>;
 }
-isQualifiedName.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, QualifiedName> => {
-    return node.kind === SyntaxKind.QualifiedName;
-};
+isQualifiedName.Handle = isQualifiedName as any;
 
 export function isComputedPropertyName(node: Node): node is ComputedPropertyName {
     return node.kind === SyntaxKind.ComputedPropertyName;
@@ -382,9 +374,7 @@ export function isComputedPropertyName(node: Node): node is ComputedPropertyName
 export declare namespace isComputedPropertyName {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ComputedPropertyName>;
 }
-isComputedPropertyName.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ComputedPropertyName> => {
-    return node.kind === SyntaxKind.ComputedPropertyName;
-};
+isComputedPropertyName.Handle = isComputedPropertyName as any;
 
 export function isDecorator(node: Node): node is Decorator {
     return node.kind === SyntaxKind.Decorator;
@@ -393,9 +383,7 @@ export function isDecorator(node: Node): node is Decorator {
 export declare namespace isDecorator {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, Decorator>;
 }
-isDecorator.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, Decorator> => {
-    return node.kind === SyntaxKind.Decorator;
-};
+isDecorator.Handle = isDecorator as any;
 
 export function isEmptyStatement(node: Node): node is EmptyStatement {
     return node.kind === SyntaxKind.EmptyStatement;
@@ -404,9 +392,7 @@ export function isEmptyStatement(node: Node): node is EmptyStatement {
 export declare namespace isEmptyStatement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, EmptyStatement>;
 }
-isEmptyStatement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, EmptyStatement> => {
-    return node.kind === SyntaxKind.EmptyStatement;
-};
+isEmptyStatement.Handle = isEmptyStatement as any;
 
 export function isIfStatement(node: Node): node is IfStatement {
     return node.kind === SyntaxKind.IfStatement;
@@ -415,9 +401,7 @@ export function isIfStatement(node: Node): node is IfStatement {
 export declare namespace isIfStatement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, IfStatement>;
 }
-isIfStatement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, IfStatement> => {
-    return node.kind === SyntaxKind.IfStatement;
-};
+isIfStatement.Handle = isIfStatement as any;
 
 export function isDoStatement(node: Node): node is DoStatement {
     return node.kind === SyntaxKind.DoStatement;
@@ -426,9 +410,7 @@ export function isDoStatement(node: Node): node is DoStatement {
 export declare namespace isDoStatement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, DoStatement>;
 }
-isDoStatement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, DoStatement> => {
-    return node.kind === SyntaxKind.DoStatement;
-};
+isDoStatement.Handle = isDoStatement as any;
 
 export function isWhileStatement(node: Node): node is WhileStatement {
     return node.kind === SyntaxKind.WhileStatement;
@@ -437,9 +419,7 @@ export function isWhileStatement(node: Node): node is WhileStatement {
 export declare namespace isWhileStatement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, WhileStatement>;
 }
-isWhileStatement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, WhileStatement> => {
-    return node.kind === SyntaxKind.WhileStatement;
-};
+isWhileStatement.Handle = isWhileStatement as any;
 
 export function isForStatement(node: Node): node is ForStatement {
     return node.kind === SyntaxKind.ForStatement;
@@ -448,9 +428,7 @@ export function isForStatement(node: Node): node is ForStatement {
 export declare namespace isForStatement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ForStatement>;
 }
-isForStatement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ForStatement> => {
-    return node.kind === SyntaxKind.ForStatement;
-};
+isForStatement.Handle = isForStatement as any;
 
 export function isBreakStatement(node: Node): node is BreakStatement {
     return node.kind === SyntaxKind.BreakStatement;
@@ -459,9 +437,7 @@ export function isBreakStatement(node: Node): node is BreakStatement {
 export declare namespace isBreakStatement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, BreakStatement>;
 }
-isBreakStatement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, BreakStatement> => {
-    return node.kind === SyntaxKind.BreakStatement;
-};
+isBreakStatement.Handle = isBreakStatement as any;
 
 export function isContinueStatement(node: Node): node is ContinueStatement {
     return node.kind === SyntaxKind.ContinueStatement;
@@ -470,9 +446,7 @@ export function isContinueStatement(node: Node): node is ContinueStatement {
 export declare namespace isContinueStatement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ContinueStatement>;
 }
-isContinueStatement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ContinueStatement> => {
-    return node.kind === SyntaxKind.ContinueStatement;
-};
+isContinueStatement.Handle = isContinueStatement as any;
 
 export function isReturnStatement(node: Node): node is ReturnStatement {
     return node.kind === SyntaxKind.ReturnStatement;
@@ -481,9 +455,7 @@ export function isReturnStatement(node: Node): node is ReturnStatement {
 export declare namespace isReturnStatement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ReturnStatement>;
 }
-isReturnStatement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ReturnStatement> => {
-    return node.kind === SyntaxKind.ReturnStatement;
-};
+isReturnStatement.Handle = isReturnStatement as any;
 
 export function isWithStatement(node: Node): node is WithStatement {
     return node.kind === SyntaxKind.WithStatement;
@@ -492,9 +464,7 @@ export function isWithStatement(node: Node): node is WithStatement {
 export declare namespace isWithStatement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, WithStatement>;
 }
-isWithStatement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, WithStatement> => {
-    return node.kind === SyntaxKind.WithStatement;
-};
+isWithStatement.Handle = isWithStatement as any;
 
 export function isSwitchStatement(node: Node): node is SwitchStatement {
     return node.kind === SyntaxKind.SwitchStatement;
@@ -503,9 +473,7 @@ export function isSwitchStatement(node: Node): node is SwitchStatement {
 export declare namespace isSwitchStatement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SwitchStatement>;
 }
-isSwitchStatement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SwitchStatement> => {
-    return node.kind === SyntaxKind.SwitchStatement;
-};
+isSwitchStatement.Handle = isSwitchStatement as any;
 
 export function isCaseBlock(node: Node): node is CaseBlock {
     return node.kind === SyntaxKind.CaseBlock;
@@ -514,9 +482,7 @@ export function isCaseBlock(node: Node): node is CaseBlock {
 export declare namespace isCaseBlock {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, CaseBlock>;
 }
-isCaseBlock.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, CaseBlock> => {
-    return node.kind === SyntaxKind.CaseBlock;
-};
+isCaseBlock.Handle = isCaseBlock as any;
 
 export function isThrowStatement(node: Node): node is ThrowStatement {
     return node.kind === SyntaxKind.ThrowStatement;
@@ -525,9 +491,7 @@ export function isThrowStatement(node: Node): node is ThrowStatement {
 export declare namespace isThrowStatement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ThrowStatement>;
 }
-isThrowStatement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ThrowStatement> => {
-    return node.kind === SyntaxKind.ThrowStatement;
-};
+isThrowStatement.Handle = isThrowStatement as any;
 
 export function isTryStatement(node: Node): node is TryStatement {
     return node.kind === SyntaxKind.TryStatement;
@@ -536,9 +500,7 @@ export function isTryStatement(node: Node): node is TryStatement {
 export declare namespace isTryStatement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TryStatement>;
 }
-isTryStatement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TryStatement> => {
-    return node.kind === SyntaxKind.TryStatement;
-};
+isTryStatement.Handle = isTryStatement as any;
 
 export function isCatchClause(node: Node): node is CatchClause {
     return node.kind === SyntaxKind.CatchClause;
@@ -547,9 +509,7 @@ export function isCatchClause(node: Node): node is CatchClause {
 export declare namespace isCatchClause {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, CatchClause>;
 }
-isCatchClause.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, CatchClause> => {
-    return node.kind === SyntaxKind.CatchClause;
-};
+isCatchClause.Handle = isCatchClause as any;
 
 export function isDebuggerStatement(node: Node): node is DebuggerStatement {
     return node.kind === SyntaxKind.DebuggerStatement;
@@ -558,9 +518,7 @@ export function isDebuggerStatement(node: Node): node is DebuggerStatement {
 export declare namespace isDebuggerStatement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, DebuggerStatement>;
 }
-isDebuggerStatement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, DebuggerStatement> => {
-    return node.kind === SyntaxKind.DebuggerStatement;
-};
+isDebuggerStatement.Handle = isDebuggerStatement as any;
 
 export function isLabeledStatement(node: Node): node is LabeledStatement {
     return node.kind === SyntaxKind.LabeledStatement;
@@ -569,9 +527,7 @@ export function isLabeledStatement(node: Node): node is LabeledStatement {
 export declare namespace isLabeledStatement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, LabeledStatement>;
 }
-isLabeledStatement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, LabeledStatement> => {
-    return node.kind === SyntaxKind.LabeledStatement;
-};
+isLabeledStatement.Handle = isLabeledStatement as any;
 
 export function isExpressionStatement(node: Node): node is ExpressionStatement {
     return node.kind === SyntaxKind.ExpressionStatement;
@@ -580,9 +536,7 @@ export function isExpressionStatement(node: Node): node is ExpressionStatement {
 export declare namespace isExpressionStatement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ExpressionStatement>;
 }
-isExpressionStatement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ExpressionStatement> => {
-    return node.kind === SyntaxKind.ExpressionStatement;
-};
+isExpressionStatement.Handle = isExpressionStatement as any;
 
 export function isBlock(node: Node): node is Block {
     return node.kind === SyntaxKind.Block;
@@ -591,9 +545,7 @@ export function isBlock(node: Node): node is Block {
 export declare namespace isBlock {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, Block>;
 }
-isBlock.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, Block> => {
-    return node.kind === SyntaxKind.Block;
-};
+isBlock.Handle = isBlock as any;
 
 export function isVariableStatement(node: Node): node is VariableStatement {
     return node.kind === SyntaxKind.VariableStatement;
@@ -602,9 +554,7 @@ export function isVariableStatement(node: Node): node is VariableStatement {
 export declare namespace isVariableStatement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, VariableStatement>;
 }
-isVariableStatement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, VariableStatement> => {
-    return node.kind === SyntaxKind.VariableStatement;
-};
+isVariableStatement.Handle = isVariableStatement as any;
 
 export function isVariableDeclaration(node: Node): node is VariableDeclaration {
     return node.kind === SyntaxKind.VariableDeclaration;
@@ -613,9 +563,7 @@ export function isVariableDeclaration(node: Node): node is VariableDeclaration {
 export declare namespace isVariableDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, VariableDeclaration>;
 }
-isVariableDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, VariableDeclaration> => {
-    return node.kind === SyntaxKind.VariableDeclaration;
-};
+isVariableDeclaration.Handle = isVariableDeclaration as any;
 
 export function isVariableDeclarationList(node: Node): node is VariableDeclarationList {
     return node.kind === SyntaxKind.VariableDeclarationList;
@@ -624,9 +572,7 @@ export function isVariableDeclarationList(node: Node): node is VariableDeclarati
 export declare namespace isVariableDeclarationList {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, VariableDeclarationList>;
 }
-isVariableDeclarationList.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, VariableDeclarationList> => {
-    return node.kind === SyntaxKind.VariableDeclarationList;
-};
+isVariableDeclarationList.Handle = isVariableDeclarationList as any;
 
 export function isParameterDeclaration(node: Node): node is ParameterDeclaration {
     return node.kind === SyntaxKind.Parameter;
@@ -635,9 +581,7 @@ export function isParameterDeclaration(node: Node): node is ParameterDeclaration
 export declare namespace isParameterDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ParameterDeclaration>;
 }
-isParameterDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ParameterDeclaration> => {
-    return node.kind === SyntaxKind.Parameter;
-};
+isParameterDeclaration.Handle = isParameterDeclaration as any;
 
 export function isBindingElement(node: Node): node is BindingElement {
     return node.kind === SyntaxKind.BindingElement;
@@ -646,9 +590,7 @@ export function isBindingElement(node: Node): node is BindingElement {
 export declare namespace isBindingElement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, BindingElement>;
 }
-isBindingElement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, BindingElement> => {
-    return node.kind === SyntaxKind.BindingElement;
-};
+isBindingElement.Handle = isBindingElement as any;
 
 export function isMissingDeclaration(node: Node): node is MissingDeclaration {
     return node.kind === SyntaxKind.MissingDeclaration;
@@ -657,9 +599,7 @@ export function isMissingDeclaration(node: Node): node is MissingDeclaration {
 export declare namespace isMissingDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, MissingDeclaration>;
 }
-isMissingDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, MissingDeclaration> => {
-    return node.kind === SyntaxKind.MissingDeclaration;
-};
+isMissingDeclaration.Handle = isMissingDeclaration as any;
 
 export function isFunctionDeclaration(node: Node): node is FunctionDeclaration {
     return node.kind === SyntaxKind.FunctionDeclaration;
@@ -668,9 +608,7 @@ export function isFunctionDeclaration(node: Node): node is FunctionDeclaration {
 export declare namespace isFunctionDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, FunctionDeclaration>;
 }
-isFunctionDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, FunctionDeclaration> => {
-    return node.kind === SyntaxKind.FunctionDeclaration;
-};
+isFunctionDeclaration.Handle = isFunctionDeclaration as any;
 
 export function isClassDeclaration(node: Node): node is ClassDeclaration {
     return node.kind === SyntaxKind.ClassDeclaration;
@@ -679,9 +617,7 @@ export function isClassDeclaration(node: Node): node is ClassDeclaration {
 export declare namespace isClassDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ClassDeclaration>;
 }
-isClassDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ClassDeclaration> => {
-    return node.kind === SyntaxKind.ClassDeclaration;
-};
+isClassDeclaration.Handle = isClassDeclaration as any;
 
 export function isClassExpression(node: Node): node is ClassExpression {
     return node.kind === SyntaxKind.ClassExpression;
@@ -690,9 +626,7 @@ export function isClassExpression(node: Node): node is ClassExpression {
 export declare namespace isClassExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ClassExpression>;
 }
-isClassExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ClassExpression> => {
-    return node.kind === SyntaxKind.ClassExpression;
-};
+isClassExpression.Handle = isClassExpression as any;
 
 export function isHeritageClause(node: Node): node is HeritageClause {
     return node.kind === SyntaxKind.HeritageClause;
@@ -701,9 +635,7 @@ export function isHeritageClause(node: Node): node is HeritageClause {
 export declare namespace isHeritageClause {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, HeritageClause>;
 }
-isHeritageClause.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, HeritageClause> => {
-    return node.kind === SyntaxKind.HeritageClause;
-};
+isHeritageClause.Handle = isHeritageClause as any;
 
 export function isInterfaceDeclaration(node: Node): node is InterfaceDeclaration {
     return node.kind === SyntaxKind.InterfaceDeclaration;
@@ -712,9 +644,7 @@ export function isInterfaceDeclaration(node: Node): node is InterfaceDeclaration
 export declare namespace isInterfaceDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, InterfaceDeclaration>;
 }
-isInterfaceDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, InterfaceDeclaration> => {
-    return node.kind === SyntaxKind.InterfaceDeclaration;
-};
+isInterfaceDeclaration.Handle = isInterfaceDeclaration as any;
 
 export function isTypeAliasDeclaration(node: Node): node is TypeAliasDeclaration {
     switch (node.kind) {
@@ -729,15 +659,7 @@ export function isTypeAliasDeclaration(node: Node): node is TypeAliasDeclaration
 export declare namespace isTypeAliasDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TypeAliasDeclaration>;
 }
-isTypeAliasDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TypeAliasDeclaration> => {
-    switch (node.kind) {
-        case SyntaxKind.TypeAliasDeclaration:
-        case SyntaxKind.JSTypeAliasDeclaration:
-            return true;
-        default:
-            return false;
-    }
-};
+isTypeAliasDeclaration.Handle = isTypeAliasDeclaration as any;
 
 export function isEnumMember(node: Node): node is EnumMember {
     return node.kind === SyntaxKind.EnumMember;
@@ -746,9 +668,7 @@ export function isEnumMember(node: Node): node is EnumMember {
 export declare namespace isEnumMember {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, EnumMember>;
 }
-isEnumMember.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, EnumMember> => {
-    return node.kind === SyntaxKind.EnumMember;
-};
+isEnumMember.Handle = isEnumMember as any;
 
 export function isEnumDeclaration(node: Node): node is EnumDeclaration {
     return node.kind === SyntaxKind.EnumDeclaration;
@@ -757,9 +677,7 @@ export function isEnumDeclaration(node: Node): node is EnumDeclaration {
 export declare namespace isEnumDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, EnumDeclaration>;
 }
-isEnumDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, EnumDeclaration> => {
-    return node.kind === SyntaxKind.EnumDeclaration;
-};
+isEnumDeclaration.Handle = isEnumDeclaration as any;
 
 export function isModuleBlock(node: Node): node is ModuleBlock {
     return node.kind === SyntaxKind.ModuleBlock;
@@ -768,9 +686,7 @@ export function isModuleBlock(node: Node): node is ModuleBlock {
 export declare namespace isModuleBlock {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ModuleBlock>;
 }
-isModuleBlock.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ModuleBlock> => {
-    return node.kind === SyntaxKind.ModuleBlock;
-};
+isModuleBlock.Handle = isModuleBlock as any;
 
 export function isNotEmittedStatement(node: Node): node is NotEmittedStatement {
     return node.kind === SyntaxKind.NotEmittedStatement;
@@ -779,9 +695,7 @@ export function isNotEmittedStatement(node: Node): node is NotEmittedStatement {
 export declare namespace isNotEmittedStatement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NotEmittedStatement>;
 }
-isNotEmittedStatement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NotEmittedStatement> => {
-    return node.kind === SyntaxKind.NotEmittedStatement;
-};
+isNotEmittedStatement.Handle = isNotEmittedStatement as any;
 
 export function isNotEmittedTypeElement(node: Node): node is NotEmittedTypeElement {
     return node.kind === SyntaxKind.NotEmittedTypeElement;
@@ -790,9 +704,7 @@ export function isNotEmittedTypeElement(node: Node): node is NotEmittedTypeEleme
 export declare namespace isNotEmittedTypeElement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NotEmittedTypeElement>;
 }
-isNotEmittedTypeElement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NotEmittedTypeElement> => {
-    return node.kind === SyntaxKind.NotEmittedTypeElement;
-};
+isNotEmittedTypeElement.Handle = isNotEmittedTypeElement as any;
 
 export function isImportDeclaration(node: Node): node is ImportDeclaration {
     switch (node.kind) {
@@ -807,15 +719,7 @@ export function isImportDeclaration(node: Node): node is ImportDeclaration {
 export declare namespace isImportDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ImportDeclaration>;
 }
-isImportDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ImportDeclaration> => {
-    switch (node.kind) {
-        case SyntaxKind.ImportDeclaration:
-        case SyntaxKind.JSImportDeclaration:
-            return true;
-        default:
-            return false;
-    }
-};
+isImportDeclaration.Handle = isImportDeclaration as any;
 
 export function isExternalModuleReference(node: Node): node is ExternalModuleReference {
     return node.kind === SyntaxKind.ExternalModuleReference;
@@ -824,9 +728,7 @@ export function isExternalModuleReference(node: Node): node is ExternalModuleRef
 export declare namespace isExternalModuleReference {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ExternalModuleReference>;
 }
-isExternalModuleReference.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ExternalModuleReference> => {
-    return node.kind === SyntaxKind.ExternalModuleReference;
-};
+isExternalModuleReference.Handle = isExternalModuleReference as any;
 
 export function isNamespaceImport(node: Node): node is NamespaceImport {
     return node.kind === SyntaxKind.NamespaceImport;
@@ -835,9 +737,7 @@ export function isNamespaceImport(node: Node): node is NamespaceImport {
 export declare namespace isNamespaceImport {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NamespaceImport>;
 }
-isNamespaceImport.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NamespaceImport> => {
-    return node.kind === SyntaxKind.NamespaceImport;
-};
+isNamespaceImport.Handle = isNamespaceImport as any;
 
 export function isNamedImports(node: Node): node is NamedImports {
     return node.kind === SyntaxKind.NamedImports;
@@ -846,9 +746,7 @@ export function isNamedImports(node: Node): node is NamedImports {
 export declare namespace isNamedImports {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NamedImports>;
 }
-isNamedImports.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NamedImports> => {
-    return node.kind === SyntaxKind.NamedImports;
-};
+isNamedImports.Handle = isNamedImports as any;
 
 export function isExportAssignment(node: Node): node is ExportAssignment {
     return node.kind === SyntaxKind.ExportAssignment;
@@ -857,9 +755,7 @@ export function isExportAssignment(node: Node): node is ExportAssignment {
 export declare namespace isExportAssignment {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ExportAssignment>;
 }
-isExportAssignment.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ExportAssignment> => {
-    return node.kind === SyntaxKind.ExportAssignment;
-};
+isExportAssignment.Handle = isExportAssignment as any;
 
 export function isNamespaceExportDeclaration(node: Node): node is NamespaceExportDeclaration {
     return node.kind === SyntaxKind.NamespaceExportDeclaration;
@@ -868,9 +764,7 @@ export function isNamespaceExportDeclaration(node: Node): node is NamespaceExpor
 export declare namespace isNamespaceExportDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NamespaceExportDeclaration>;
 }
-isNamespaceExportDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NamespaceExportDeclaration> => {
-    return node.kind === SyntaxKind.NamespaceExportDeclaration;
-};
+isNamespaceExportDeclaration.Handle = isNamespaceExportDeclaration as any;
 
 export function isNamespaceExport(node: Node): node is NamespaceExport {
     return node.kind === SyntaxKind.NamespaceExport;
@@ -879,9 +773,7 @@ export function isNamespaceExport(node: Node): node is NamespaceExport {
 export declare namespace isNamespaceExport {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NamespaceExport>;
 }
-isNamespaceExport.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NamespaceExport> => {
-    return node.kind === SyntaxKind.NamespaceExport;
-};
+isNamespaceExport.Handle = isNamespaceExport as any;
 
 export function isNamedExports(node: Node): node is NamedExports {
     return node.kind === SyntaxKind.NamedExports;
@@ -890,9 +782,7 @@ export function isNamedExports(node: Node): node is NamedExports {
 export declare namespace isNamedExports {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NamedExports>;
 }
-isNamedExports.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NamedExports> => {
-    return node.kind === SyntaxKind.NamedExports;
-};
+isNamedExports.Handle = isNamedExports as any;
 
 export function isExportSpecifier(node: Node): node is ExportSpecifier {
     return node.kind === SyntaxKind.ExportSpecifier;
@@ -901,9 +791,7 @@ export function isExportSpecifier(node: Node): node is ExportSpecifier {
 export declare namespace isExportSpecifier {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ExportSpecifier>;
 }
-isExportSpecifier.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ExportSpecifier> => {
-    return node.kind === SyntaxKind.ExportSpecifier;
-};
+isExportSpecifier.Handle = isExportSpecifier as any;
 
 export function isCallSignatureDeclaration(node: Node): node is CallSignatureDeclaration {
     return node.kind === SyntaxKind.CallSignature;
@@ -912,9 +800,7 @@ export function isCallSignatureDeclaration(node: Node): node is CallSignatureDec
 export declare namespace isCallSignatureDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, CallSignatureDeclaration>;
 }
-isCallSignatureDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, CallSignatureDeclaration> => {
-    return node.kind === SyntaxKind.CallSignature;
-};
+isCallSignatureDeclaration.Handle = isCallSignatureDeclaration as any;
 
 export function isConstructSignatureDeclaration(node: Node): node is ConstructSignatureDeclaration {
     return node.kind === SyntaxKind.ConstructSignature;
@@ -923,9 +809,7 @@ export function isConstructSignatureDeclaration(node: Node): node is ConstructSi
 export declare namespace isConstructSignatureDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ConstructSignatureDeclaration>;
 }
-isConstructSignatureDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ConstructSignatureDeclaration> => {
-    return node.kind === SyntaxKind.ConstructSignature;
-};
+isConstructSignatureDeclaration.Handle = isConstructSignatureDeclaration as any;
 
 export function isConstructorDeclaration(node: Node): node is ConstructorDeclaration {
     return node.kind === SyntaxKind.Constructor;
@@ -934,9 +818,7 @@ export function isConstructorDeclaration(node: Node): node is ConstructorDeclara
 export declare namespace isConstructorDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ConstructorDeclaration>;
 }
-isConstructorDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ConstructorDeclaration> => {
-    return node.kind === SyntaxKind.Constructor;
-};
+isConstructorDeclaration.Handle = isConstructorDeclaration as any;
 
 export function isGetAccessorDeclaration(node: Node): node is GetAccessorDeclaration {
     return node.kind === SyntaxKind.GetAccessor;
@@ -945,9 +827,7 @@ export function isGetAccessorDeclaration(node: Node): node is GetAccessorDeclara
 export declare namespace isGetAccessorDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, GetAccessorDeclaration>;
 }
-isGetAccessorDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, GetAccessorDeclaration> => {
-    return node.kind === SyntaxKind.GetAccessor;
-};
+isGetAccessorDeclaration.Handle = isGetAccessorDeclaration as any;
 
 export function isSetAccessorDeclaration(node: Node): node is SetAccessorDeclaration {
     return node.kind === SyntaxKind.SetAccessor;
@@ -956,9 +836,7 @@ export function isSetAccessorDeclaration(node: Node): node is SetAccessorDeclara
 export declare namespace isSetAccessorDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SetAccessorDeclaration>;
 }
-isSetAccessorDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SetAccessorDeclaration> => {
-    return node.kind === SyntaxKind.SetAccessor;
-};
+isSetAccessorDeclaration.Handle = isSetAccessorDeclaration as any;
 
 export function isIndexSignatureDeclaration(node: Node): node is IndexSignatureDeclaration {
     return node.kind === SyntaxKind.IndexSignature;
@@ -967,9 +845,7 @@ export function isIndexSignatureDeclaration(node: Node): node is IndexSignatureD
 export declare namespace isIndexSignatureDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, IndexSignatureDeclaration>;
 }
-isIndexSignatureDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, IndexSignatureDeclaration> => {
-    return node.kind === SyntaxKind.IndexSignature;
-};
+isIndexSignatureDeclaration.Handle = isIndexSignatureDeclaration as any;
 
 export function isMethodSignatureDeclaration(node: Node): node is MethodSignatureDeclaration {
     return node.kind === SyntaxKind.MethodSignature;
@@ -978,9 +854,7 @@ export function isMethodSignatureDeclaration(node: Node): node is MethodSignatur
 export declare namespace isMethodSignatureDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, MethodSignatureDeclaration>;
 }
-isMethodSignatureDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, MethodSignatureDeclaration> => {
-    return node.kind === SyntaxKind.MethodSignature;
-};
+isMethodSignatureDeclaration.Handle = isMethodSignatureDeclaration as any;
 
 export function isMethodDeclaration(node: Node): node is MethodDeclaration {
     return node.kind === SyntaxKind.MethodDeclaration;
@@ -989,9 +863,7 @@ export function isMethodDeclaration(node: Node): node is MethodDeclaration {
 export declare namespace isMethodDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, MethodDeclaration>;
 }
-isMethodDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, MethodDeclaration> => {
-    return node.kind === SyntaxKind.MethodDeclaration;
-};
+isMethodDeclaration.Handle = isMethodDeclaration as any;
 
 export function isPropertySignatureDeclaration(node: Node): node is PropertySignatureDeclaration {
     return node.kind === SyntaxKind.PropertySignature;
@@ -1000,9 +872,7 @@ export function isPropertySignatureDeclaration(node: Node): node is PropertySign
 export declare namespace isPropertySignatureDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PropertySignatureDeclaration>;
 }
-isPropertySignatureDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PropertySignatureDeclaration> => {
-    return node.kind === SyntaxKind.PropertySignature;
-};
+isPropertySignatureDeclaration.Handle = isPropertySignatureDeclaration as any;
 
 export function isPropertyDeclaration(node: Node): node is PropertyDeclaration {
     return node.kind === SyntaxKind.PropertyDeclaration;
@@ -1011,9 +881,7 @@ export function isPropertyDeclaration(node: Node): node is PropertyDeclaration {
 export declare namespace isPropertyDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PropertyDeclaration>;
 }
-isPropertyDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PropertyDeclaration> => {
-    return node.kind === SyntaxKind.PropertyDeclaration;
-};
+isPropertyDeclaration.Handle = isPropertyDeclaration as any;
 
 export function isSemicolonClassElement(node: Node): node is SemicolonClassElement {
     return node.kind === SyntaxKind.SemicolonClassElement;
@@ -1022,9 +890,7 @@ export function isSemicolonClassElement(node: Node): node is SemicolonClassEleme
 export declare namespace isSemicolonClassElement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SemicolonClassElement>;
 }
-isSemicolonClassElement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SemicolonClassElement> => {
-    return node.kind === SyntaxKind.SemicolonClassElement;
-};
+isSemicolonClassElement.Handle = isSemicolonClassElement as any;
 
 export function isClassStaticBlockDeclaration(node: Node): node is ClassStaticBlockDeclaration {
     return node.kind === SyntaxKind.ClassStaticBlockDeclaration;
@@ -1033,9 +899,7 @@ export function isClassStaticBlockDeclaration(node: Node): node is ClassStaticBl
 export declare namespace isClassStaticBlockDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ClassStaticBlockDeclaration>;
 }
-isClassStaticBlockDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ClassStaticBlockDeclaration> => {
-    return node.kind === SyntaxKind.ClassStaticBlockDeclaration;
-};
+isClassStaticBlockDeclaration.Handle = isClassStaticBlockDeclaration as any;
 
 export function isOmittedExpression(node: Node): node is OmittedExpression {
     return node.kind === SyntaxKind.OmittedExpression;
@@ -1044,9 +908,7 @@ export function isOmittedExpression(node: Node): node is OmittedExpression {
 export declare namespace isOmittedExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, OmittedExpression>;
 }
-isOmittedExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, OmittedExpression> => {
-    return node.kind === SyntaxKind.OmittedExpression;
-};
+isOmittedExpression.Handle = isOmittedExpression as any;
 
 export function isKeywordExpression(node: Node): node is KeywordExpression {
     return isKeywordExpressionKind(node.kind);
@@ -1055,9 +917,7 @@ export function isKeywordExpression(node: Node): node is KeywordExpression {
 export declare namespace isKeywordExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, KeywordExpression>;
 }
-isKeywordExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, KeywordExpression> => {
-    return isKeywordExpressionKind(node.kind);
-};
+isKeywordExpression.Handle = isKeywordExpression as any;
 
 export function isStringLiteral(node: Node): node is StringLiteral {
     return node.kind === SyntaxKind.StringLiteral;
@@ -1066,9 +926,7 @@ export function isStringLiteral(node: Node): node is StringLiteral {
 export declare namespace isStringLiteral {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, StringLiteral>;
 }
-isStringLiteral.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, StringLiteral> => {
-    return node.kind === SyntaxKind.StringLiteral;
-};
+isStringLiteral.Handle = isStringLiteral as any;
 
 export function isNumericLiteral(node: Node): node is NumericLiteral {
     return node.kind === SyntaxKind.NumericLiteral;
@@ -1077,9 +935,7 @@ export function isNumericLiteral(node: Node): node is NumericLiteral {
 export declare namespace isNumericLiteral {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NumericLiteral>;
 }
-isNumericLiteral.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NumericLiteral> => {
-    return node.kind === SyntaxKind.NumericLiteral;
-};
+isNumericLiteral.Handle = isNumericLiteral as any;
 
 export function isBigIntLiteral(node: Node): node is BigIntLiteral {
     return node.kind === SyntaxKind.BigIntLiteral;
@@ -1088,9 +944,7 @@ export function isBigIntLiteral(node: Node): node is BigIntLiteral {
 export declare namespace isBigIntLiteral {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, BigIntLiteral>;
 }
-isBigIntLiteral.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, BigIntLiteral> => {
-    return node.kind === SyntaxKind.BigIntLiteral;
-};
+isBigIntLiteral.Handle = isBigIntLiteral as any;
 
 export function isRegularExpressionLiteral(node: Node): node is RegularExpressionLiteral {
     return node.kind === SyntaxKind.RegularExpressionLiteral;
@@ -1099,9 +953,7 @@ export function isRegularExpressionLiteral(node: Node): node is RegularExpressio
 export declare namespace isRegularExpressionLiteral {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, RegularExpressionLiteral>;
 }
-isRegularExpressionLiteral.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, RegularExpressionLiteral> => {
-    return node.kind === SyntaxKind.RegularExpressionLiteral;
-};
+isRegularExpressionLiteral.Handle = isRegularExpressionLiteral as any;
 
 export function isNoSubstitutionTemplateLiteral(node: Node): node is NoSubstitutionTemplateLiteral {
     return node.kind === SyntaxKind.NoSubstitutionTemplateLiteral;
@@ -1110,9 +962,7 @@ export function isNoSubstitutionTemplateLiteral(node: Node): node is NoSubstitut
 export declare namespace isNoSubstitutionTemplateLiteral {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NoSubstitutionTemplateLiteral>;
 }
-isNoSubstitutionTemplateLiteral.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NoSubstitutionTemplateLiteral> => {
-    return node.kind === SyntaxKind.NoSubstitutionTemplateLiteral;
-};
+isNoSubstitutionTemplateLiteral.Handle = isNoSubstitutionTemplateLiteral as any;
 
 export function isBinaryExpression(node: Node): node is BinaryExpression {
     return node.kind === SyntaxKind.BinaryExpression;
@@ -1121,9 +971,7 @@ export function isBinaryExpression(node: Node): node is BinaryExpression {
 export declare namespace isBinaryExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, BinaryExpression>;
 }
-isBinaryExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, BinaryExpression> => {
-    return node.kind === SyntaxKind.BinaryExpression;
-};
+isBinaryExpression.Handle = isBinaryExpression as any;
 
 export function isPrefixUnaryExpression(node: Node): node is PrefixUnaryExpression {
     return node.kind === SyntaxKind.PrefixUnaryExpression;
@@ -1132,9 +980,7 @@ export function isPrefixUnaryExpression(node: Node): node is PrefixUnaryExpressi
 export declare namespace isPrefixUnaryExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PrefixUnaryExpression>;
 }
-isPrefixUnaryExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PrefixUnaryExpression> => {
-    return node.kind === SyntaxKind.PrefixUnaryExpression;
-};
+isPrefixUnaryExpression.Handle = isPrefixUnaryExpression as any;
 
 export function isPostfixUnaryExpression(node: Node): node is PostfixUnaryExpression {
     return node.kind === SyntaxKind.PostfixUnaryExpression;
@@ -1143,9 +989,7 @@ export function isPostfixUnaryExpression(node: Node): node is PostfixUnaryExpres
 export declare namespace isPostfixUnaryExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PostfixUnaryExpression>;
 }
-isPostfixUnaryExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PostfixUnaryExpression> => {
-    return node.kind === SyntaxKind.PostfixUnaryExpression;
-};
+isPostfixUnaryExpression.Handle = isPostfixUnaryExpression as any;
 
 export function isYieldExpression(node: Node): node is YieldExpression {
     return node.kind === SyntaxKind.YieldExpression;
@@ -1154,9 +998,7 @@ export function isYieldExpression(node: Node): node is YieldExpression {
 export declare namespace isYieldExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, YieldExpression>;
 }
-isYieldExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, YieldExpression> => {
-    return node.kind === SyntaxKind.YieldExpression;
-};
+isYieldExpression.Handle = isYieldExpression as any;
 
 export function isArrowFunction(node: Node): node is ArrowFunction {
     return node.kind === SyntaxKind.ArrowFunction;
@@ -1165,9 +1007,7 @@ export function isArrowFunction(node: Node): node is ArrowFunction {
 export declare namespace isArrowFunction {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ArrowFunction>;
 }
-isArrowFunction.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ArrowFunction> => {
-    return node.kind === SyntaxKind.ArrowFunction;
-};
+isArrowFunction.Handle = isArrowFunction as any;
 
 export function isFunctionExpression(node: Node): node is FunctionExpression {
     return node.kind === SyntaxKind.FunctionExpression;
@@ -1176,9 +1016,7 @@ export function isFunctionExpression(node: Node): node is FunctionExpression {
 export declare namespace isFunctionExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, FunctionExpression>;
 }
-isFunctionExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, FunctionExpression> => {
-    return node.kind === SyntaxKind.FunctionExpression;
-};
+isFunctionExpression.Handle = isFunctionExpression as any;
 
 export function isAsExpression(node: Node): node is AsExpression {
     return node.kind === SyntaxKind.AsExpression;
@@ -1187,9 +1025,7 @@ export function isAsExpression(node: Node): node is AsExpression {
 export declare namespace isAsExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AsExpression>;
 }
-isAsExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AsExpression> => {
-    return node.kind === SyntaxKind.AsExpression;
-};
+isAsExpression.Handle = isAsExpression as any;
 
 export function isSatisfiesExpression(node: Node): node is SatisfiesExpression {
     return node.kind === SyntaxKind.SatisfiesExpression;
@@ -1198,9 +1034,7 @@ export function isSatisfiesExpression(node: Node): node is SatisfiesExpression {
 export declare namespace isSatisfiesExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SatisfiesExpression>;
 }
-isSatisfiesExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SatisfiesExpression> => {
-    return node.kind === SyntaxKind.SatisfiesExpression;
-};
+isSatisfiesExpression.Handle = isSatisfiesExpression as any;
 
 export function isConditionalExpression(node: Node): node is ConditionalExpression {
     return node.kind === SyntaxKind.ConditionalExpression;
@@ -1209,9 +1043,7 @@ export function isConditionalExpression(node: Node): node is ConditionalExpressi
 export declare namespace isConditionalExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ConditionalExpression>;
 }
-isConditionalExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ConditionalExpression> => {
-    return node.kind === SyntaxKind.ConditionalExpression;
-};
+isConditionalExpression.Handle = isConditionalExpression as any;
 
 export function isPropertyAccessExpression(node: Node): node is PropertyAccessExpression {
     return node.kind === SyntaxKind.PropertyAccessExpression;
@@ -1220,9 +1052,7 @@ export function isPropertyAccessExpression(node: Node): node is PropertyAccessEx
 export declare namespace isPropertyAccessExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PropertyAccessExpression>;
 }
-isPropertyAccessExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PropertyAccessExpression> => {
-    return node.kind === SyntaxKind.PropertyAccessExpression;
-};
+isPropertyAccessExpression.Handle = isPropertyAccessExpression as any;
 
 export function isElementAccessExpression(node: Node): node is ElementAccessExpression {
     return node.kind === SyntaxKind.ElementAccessExpression;
@@ -1231,9 +1061,7 @@ export function isElementAccessExpression(node: Node): node is ElementAccessExpr
 export declare namespace isElementAccessExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ElementAccessExpression>;
 }
-isElementAccessExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ElementAccessExpression> => {
-    return node.kind === SyntaxKind.ElementAccessExpression;
-};
+isElementAccessExpression.Handle = isElementAccessExpression as any;
 
 export function isCallExpression(node: Node): node is CallExpression {
     return node.kind === SyntaxKind.CallExpression;
@@ -1242,9 +1070,7 @@ export function isCallExpression(node: Node): node is CallExpression {
 export declare namespace isCallExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, CallExpression>;
 }
-isCallExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, CallExpression> => {
-    return node.kind === SyntaxKind.CallExpression;
-};
+isCallExpression.Handle = isCallExpression as any;
 
 export function isNewExpression(node: Node): node is NewExpression {
     return node.kind === SyntaxKind.NewExpression;
@@ -1253,9 +1079,7 @@ export function isNewExpression(node: Node): node is NewExpression {
 export declare namespace isNewExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NewExpression>;
 }
-isNewExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NewExpression> => {
-    return node.kind === SyntaxKind.NewExpression;
-};
+isNewExpression.Handle = isNewExpression as any;
 
 export function isMetaProperty(node: Node): node is MetaProperty {
     return node.kind === SyntaxKind.MetaProperty;
@@ -1264,9 +1088,7 @@ export function isMetaProperty(node: Node): node is MetaProperty {
 export declare namespace isMetaProperty {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, MetaProperty>;
 }
-isMetaProperty.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, MetaProperty> => {
-    return node.kind === SyntaxKind.MetaProperty;
-};
+isMetaProperty.Handle = isMetaProperty as any;
 
 export function isNonNullExpression(node: Node): node is NonNullExpression {
     return node.kind === SyntaxKind.NonNullExpression;
@@ -1275,9 +1097,7 @@ export function isNonNullExpression(node: Node): node is NonNullExpression {
 export declare namespace isNonNullExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NonNullExpression>;
 }
-isNonNullExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NonNullExpression> => {
-    return node.kind === SyntaxKind.NonNullExpression;
-};
+isNonNullExpression.Handle = isNonNullExpression as any;
 
 export function isSpreadElement(node: Node): node is SpreadElement {
     return node.kind === SyntaxKind.SpreadElement;
@@ -1286,9 +1106,7 @@ export function isSpreadElement(node: Node): node is SpreadElement {
 export declare namespace isSpreadElement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SpreadElement>;
 }
-isSpreadElement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SpreadElement> => {
-    return node.kind === SyntaxKind.SpreadElement;
-};
+isSpreadElement.Handle = isSpreadElement as any;
 
 export function isTemplateExpression(node: Node): node is TemplateExpression {
     return node.kind === SyntaxKind.TemplateExpression;
@@ -1297,9 +1115,7 @@ export function isTemplateExpression(node: Node): node is TemplateExpression {
 export declare namespace isTemplateExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TemplateExpression>;
 }
-isTemplateExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TemplateExpression> => {
-    return node.kind === SyntaxKind.TemplateExpression;
-};
+isTemplateExpression.Handle = isTemplateExpression as any;
 
 export function isTemplateSpan(node: Node): node is TemplateSpan {
     return node.kind === SyntaxKind.TemplateSpan;
@@ -1308,9 +1124,7 @@ export function isTemplateSpan(node: Node): node is TemplateSpan {
 export declare namespace isTemplateSpan {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TemplateSpan>;
 }
-isTemplateSpan.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TemplateSpan> => {
-    return node.kind === SyntaxKind.TemplateSpan;
-};
+isTemplateSpan.Handle = isTemplateSpan as any;
 
 export function isTaggedTemplateExpression(node: Node): node is TaggedTemplateExpression {
     return node.kind === SyntaxKind.TaggedTemplateExpression;
@@ -1319,9 +1133,7 @@ export function isTaggedTemplateExpression(node: Node): node is TaggedTemplateEx
 export declare namespace isTaggedTemplateExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TaggedTemplateExpression>;
 }
-isTaggedTemplateExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TaggedTemplateExpression> => {
-    return node.kind === SyntaxKind.TaggedTemplateExpression;
-};
+isTaggedTemplateExpression.Handle = isTaggedTemplateExpression as any;
 
 export function isParenthesizedExpression(node: Node): node is ParenthesizedExpression {
     return node.kind === SyntaxKind.ParenthesizedExpression;
@@ -1330,9 +1142,7 @@ export function isParenthesizedExpression(node: Node): node is ParenthesizedExpr
 export declare namespace isParenthesizedExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ParenthesizedExpression>;
 }
-isParenthesizedExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ParenthesizedExpression> => {
-    return node.kind === SyntaxKind.ParenthesizedExpression;
-};
+isParenthesizedExpression.Handle = isParenthesizedExpression as any;
 
 export function isArrayLiteralExpression(node: Node): node is ArrayLiteralExpression {
     return node.kind === SyntaxKind.ArrayLiteralExpression;
@@ -1341,9 +1151,7 @@ export function isArrayLiteralExpression(node: Node): node is ArrayLiteralExpres
 export declare namespace isArrayLiteralExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ArrayLiteralExpression>;
 }
-isArrayLiteralExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ArrayLiteralExpression> => {
-    return node.kind === SyntaxKind.ArrayLiteralExpression;
-};
+isArrayLiteralExpression.Handle = isArrayLiteralExpression as any;
 
 export function isObjectLiteralExpression(node: Node): node is ObjectLiteralExpression {
     return node.kind === SyntaxKind.ObjectLiteralExpression;
@@ -1352,9 +1160,7 @@ export function isObjectLiteralExpression(node: Node): node is ObjectLiteralExpr
 export declare namespace isObjectLiteralExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ObjectLiteralExpression>;
 }
-isObjectLiteralExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ObjectLiteralExpression> => {
-    return node.kind === SyntaxKind.ObjectLiteralExpression;
-};
+isObjectLiteralExpression.Handle = isObjectLiteralExpression as any;
 
 export function isSpreadAssignment(node: Node): node is SpreadAssignment {
     return node.kind === SyntaxKind.SpreadAssignment;
@@ -1363,9 +1169,7 @@ export function isSpreadAssignment(node: Node): node is SpreadAssignment {
 export declare namespace isSpreadAssignment {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SpreadAssignment>;
 }
-isSpreadAssignment.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SpreadAssignment> => {
-    return node.kind === SyntaxKind.SpreadAssignment;
-};
+isSpreadAssignment.Handle = isSpreadAssignment as any;
 
 export function isPropertyAssignment(node: Node): node is PropertyAssignment {
     return node.kind === SyntaxKind.PropertyAssignment;
@@ -1374,9 +1178,7 @@ export function isPropertyAssignment(node: Node): node is PropertyAssignment {
 export declare namespace isPropertyAssignment {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PropertyAssignment>;
 }
-isPropertyAssignment.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PropertyAssignment> => {
-    return node.kind === SyntaxKind.PropertyAssignment;
-};
+isPropertyAssignment.Handle = isPropertyAssignment as any;
 
 export function isShorthandPropertyAssignment(node: Node): node is ShorthandPropertyAssignment {
     return node.kind === SyntaxKind.ShorthandPropertyAssignment;
@@ -1385,9 +1187,7 @@ export function isShorthandPropertyAssignment(node: Node): node is ShorthandProp
 export declare namespace isShorthandPropertyAssignment {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ShorthandPropertyAssignment>;
 }
-isShorthandPropertyAssignment.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ShorthandPropertyAssignment> => {
-    return node.kind === SyntaxKind.ShorthandPropertyAssignment;
-};
+isShorthandPropertyAssignment.Handle = isShorthandPropertyAssignment as any;
 
 export function isDeleteExpression(node: Node): node is DeleteExpression {
     return node.kind === SyntaxKind.DeleteExpression;
@@ -1396,9 +1196,7 @@ export function isDeleteExpression(node: Node): node is DeleteExpression {
 export declare namespace isDeleteExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, DeleteExpression>;
 }
-isDeleteExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, DeleteExpression> => {
-    return node.kind === SyntaxKind.DeleteExpression;
-};
+isDeleteExpression.Handle = isDeleteExpression as any;
 
 export function isTypeOfExpression(node: Node): node is TypeOfExpression {
     return node.kind === SyntaxKind.TypeOfExpression;
@@ -1407,9 +1205,7 @@ export function isTypeOfExpression(node: Node): node is TypeOfExpression {
 export declare namespace isTypeOfExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TypeOfExpression>;
 }
-isTypeOfExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TypeOfExpression> => {
-    return node.kind === SyntaxKind.TypeOfExpression;
-};
+isTypeOfExpression.Handle = isTypeOfExpression as any;
 
 export function isVoidExpression(node: Node): node is VoidExpression {
     return node.kind === SyntaxKind.VoidExpression;
@@ -1418,9 +1214,7 @@ export function isVoidExpression(node: Node): node is VoidExpression {
 export declare namespace isVoidExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, VoidExpression>;
 }
-isVoidExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, VoidExpression> => {
-    return node.kind === SyntaxKind.VoidExpression;
-};
+isVoidExpression.Handle = isVoidExpression as any;
 
 export function isAwaitExpression(node: Node): node is AwaitExpression {
     return node.kind === SyntaxKind.AwaitExpression;
@@ -1429,9 +1223,7 @@ export function isAwaitExpression(node: Node): node is AwaitExpression {
 export declare namespace isAwaitExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AwaitExpression>;
 }
-isAwaitExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AwaitExpression> => {
-    return node.kind === SyntaxKind.AwaitExpression;
-};
+isAwaitExpression.Handle = isAwaitExpression as any;
 
 export function isTypeAssertion(node: Node): node is TypeAssertion {
     return node.kind === SyntaxKind.TypeAssertionExpression;
@@ -1440,9 +1232,7 @@ export function isTypeAssertion(node: Node): node is TypeAssertion {
 export declare namespace isTypeAssertion {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TypeAssertion>;
 }
-isTypeAssertion.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TypeAssertion> => {
-    return node.kind === SyntaxKind.TypeAssertionExpression;
-};
+isTypeAssertion.Handle = isTypeAssertion as any;
 
 export function isKeywordTypeNode(node: Node): node is KeywordTypeNode {
     return isKeywordTypeKind(node.kind);
@@ -1451,9 +1241,7 @@ export function isKeywordTypeNode(node: Node): node is KeywordTypeNode {
 export declare namespace isKeywordTypeNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, KeywordTypeNode>;
 }
-isKeywordTypeNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, KeywordTypeNode> => {
-    return isKeywordTypeKind(node.kind);
-};
+isKeywordTypeNode.Handle = isKeywordTypeNode as any;
 
 export function isUnionTypeNode(node: Node): node is UnionTypeNode {
     return node.kind === SyntaxKind.UnionType;
@@ -1462,9 +1250,7 @@ export function isUnionTypeNode(node: Node): node is UnionTypeNode {
 export declare namespace isUnionTypeNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, UnionTypeNode>;
 }
-isUnionTypeNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, UnionTypeNode> => {
-    return node.kind === SyntaxKind.UnionType;
-};
+isUnionTypeNode.Handle = isUnionTypeNode as any;
 
 export function isIntersectionTypeNode(node: Node): node is IntersectionTypeNode {
     return node.kind === SyntaxKind.IntersectionType;
@@ -1473,9 +1259,7 @@ export function isIntersectionTypeNode(node: Node): node is IntersectionTypeNode
 export declare namespace isIntersectionTypeNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, IntersectionTypeNode>;
 }
-isIntersectionTypeNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, IntersectionTypeNode> => {
-    return node.kind === SyntaxKind.IntersectionType;
-};
+isIntersectionTypeNode.Handle = isIntersectionTypeNode as any;
 
 export function isConditionalTypeNode(node: Node): node is ConditionalTypeNode {
     return node.kind === SyntaxKind.ConditionalType;
@@ -1484,9 +1268,7 @@ export function isConditionalTypeNode(node: Node): node is ConditionalTypeNode {
 export declare namespace isConditionalTypeNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ConditionalTypeNode>;
 }
-isConditionalTypeNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ConditionalTypeNode> => {
-    return node.kind === SyntaxKind.ConditionalType;
-};
+isConditionalTypeNode.Handle = isConditionalTypeNode as any;
 
 export function isTypeOperatorNode(node: Node): node is TypeOperatorNode {
     return node.kind === SyntaxKind.TypeOperator;
@@ -1495,9 +1277,7 @@ export function isTypeOperatorNode(node: Node): node is TypeOperatorNode {
 export declare namespace isTypeOperatorNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TypeOperatorNode>;
 }
-isTypeOperatorNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TypeOperatorNode> => {
-    return node.kind === SyntaxKind.TypeOperator;
-};
+isTypeOperatorNode.Handle = isTypeOperatorNode as any;
 
 export function isInferTypeNode(node: Node): node is InferTypeNode {
     return node.kind === SyntaxKind.InferType;
@@ -1506,9 +1286,7 @@ export function isInferTypeNode(node: Node): node is InferTypeNode {
 export declare namespace isInferTypeNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, InferTypeNode>;
 }
-isInferTypeNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, InferTypeNode> => {
-    return node.kind === SyntaxKind.InferType;
-};
+isInferTypeNode.Handle = isInferTypeNode as any;
 
 export function isArrayTypeNode(node: Node): node is ArrayTypeNode {
     return node.kind === SyntaxKind.ArrayType;
@@ -1517,9 +1295,7 @@ export function isArrayTypeNode(node: Node): node is ArrayTypeNode {
 export declare namespace isArrayTypeNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ArrayTypeNode>;
 }
-isArrayTypeNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ArrayTypeNode> => {
-    return node.kind === SyntaxKind.ArrayType;
-};
+isArrayTypeNode.Handle = isArrayTypeNode as any;
 
 export function isIndexedAccessTypeNode(node: Node): node is IndexedAccessTypeNode {
     return node.kind === SyntaxKind.IndexedAccessType;
@@ -1528,9 +1304,7 @@ export function isIndexedAccessTypeNode(node: Node): node is IndexedAccessTypeNo
 export declare namespace isIndexedAccessTypeNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, IndexedAccessTypeNode>;
 }
-isIndexedAccessTypeNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, IndexedAccessTypeNode> => {
-    return node.kind === SyntaxKind.IndexedAccessType;
-};
+isIndexedAccessTypeNode.Handle = isIndexedAccessTypeNode as any;
 
 export function isTypeReferenceNode(node: Node): node is TypeReferenceNode {
     return node.kind === SyntaxKind.TypeReference;
@@ -1539,9 +1313,7 @@ export function isTypeReferenceNode(node: Node): node is TypeReferenceNode {
 export declare namespace isTypeReferenceNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TypeReferenceNode>;
 }
-isTypeReferenceNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TypeReferenceNode> => {
-    return node.kind === SyntaxKind.TypeReference;
-};
+isTypeReferenceNode.Handle = isTypeReferenceNode as any;
 
 export function isExpressionWithTypeArguments(node: Node): node is ExpressionWithTypeArguments {
     return node.kind === SyntaxKind.ExpressionWithTypeArguments;
@@ -1550,9 +1322,7 @@ export function isExpressionWithTypeArguments(node: Node): node is ExpressionWit
 export declare namespace isExpressionWithTypeArguments {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ExpressionWithTypeArguments>;
 }
-isExpressionWithTypeArguments.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ExpressionWithTypeArguments> => {
-    return node.kind === SyntaxKind.ExpressionWithTypeArguments;
-};
+isExpressionWithTypeArguments.Handle = isExpressionWithTypeArguments as any;
 
 export function isLiteralTypeNode(node: Node): node is LiteralTypeNode {
     return node.kind === SyntaxKind.LiteralType;
@@ -1561,9 +1331,7 @@ export function isLiteralTypeNode(node: Node): node is LiteralTypeNode {
 export declare namespace isLiteralTypeNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, LiteralTypeNode>;
 }
-isLiteralTypeNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, LiteralTypeNode> => {
-    return node.kind === SyntaxKind.LiteralType;
-};
+isLiteralTypeNode.Handle = isLiteralTypeNode as any;
 
 export function isThisTypeNode(node: Node): node is ThisTypeNode {
     return node.kind === SyntaxKind.ThisType;
@@ -1572,9 +1340,7 @@ export function isThisTypeNode(node: Node): node is ThisTypeNode {
 export declare namespace isThisTypeNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ThisTypeNode>;
 }
-isThisTypeNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ThisTypeNode> => {
-    return node.kind === SyntaxKind.ThisType;
-};
+isThisTypeNode.Handle = isThisTypeNode as any;
 
 export function isTypePredicateNode(node: Node): node is TypePredicateNode {
     return node.kind === SyntaxKind.TypePredicate;
@@ -1583,9 +1349,7 @@ export function isTypePredicateNode(node: Node): node is TypePredicateNode {
 export declare namespace isTypePredicateNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TypePredicateNode>;
 }
-isTypePredicateNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TypePredicateNode> => {
-    return node.kind === SyntaxKind.TypePredicate;
-};
+isTypePredicateNode.Handle = isTypePredicateNode as any;
 
 export function isImportAttribute(node: Node): node is ImportAttribute {
     return node.kind === SyntaxKind.ImportAttribute;
@@ -1594,9 +1358,7 @@ export function isImportAttribute(node: Node): node is ImportAttribute {
 export declare namespace isImportAttribute {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ImportAttribute>;
 }
-isImportAttribute.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ImportAttribute> => {
-    return node.kind === SyntaxKind.ImportAttribute;
-};
+isImportAttribute.Handle = isImportAttribute as any;
 
 export function isImportAttributes(node: Node): node is ImportAttributes {
     return node.kind === SyntaxKind.ImportAttributes;
@@ -1605,9 +1367,7 @@ export function isImportAttributes(node: Node): node is ImportAttributes {
 export declare namespace isImportAttributes {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ImportAttributes>;
 }
-isImportAttributes.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ImportAttributes> => {
-    return node.kind === SyntaxKind.ImportAttributes;
-};
+isImportAttributes.Handle = isImportAttributes as any;
 
 export function isTypeQueryNode(node: Node): node is TypeQueryNode {
     return node.kind === SyntaxKind.TypeQuery;
@@ -1616,9 +1376,7 @@ export function isTypeQueryNode(node: Node): node is TypeQueryNode {
 export declare namespace isTypeQueryNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TypeQueryNode>;
 }
-isTypeQueryNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TypeQueryNode> => {
-    return node.kind === SyntaxKind.TypeQuery;
-};
+isTypeQueryNode.Handle = isTypeQueryNode as any;
 
 export function isMappedTypeNode(node: Node): node is MappedTypeNode {
     return node.kind === SyntaxKind.MappedType;
@@ -1627,9 +1385,7 @@ export function isMappedTypeNode(node: Node): node is MappedTypeNode {
 export declare namespace isMappedTypeNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, MappedTypeNode>;
 }
-isMappedTypeNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, MappedTypeNode> => {
-    return node.kind === SyntaxKind.MappedType;
-};
+isMappedTypeNode.Handle = isMappedTypeNode as any;
 
 export function isTypeLiteralNode(node: Node): node is TypeLiteralNode {
     return node.kind === SyntaxKind.TypeLiteral;
@@ -1638,9 +1394,7 @@ export function isTypeLiteralNode(node: Node): node is TypeLiteralNode {
 export declare namespace isTypeLiteralNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TypeLiteralNode>;
 }
-isTypeLiteralNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TypeLiteralNode> => {
-    return node.kind === SyntaxKind.TypeLiteral;
-};
+isTypeLiteralNode.Handle = isTypeLiteralNode as any;
 
 export function isTupleTypeNode(node: Node): node is TupleTypeNode {
     return node.kind === SyntaxKind.TupleType;
@@ -1649,9 +1403,7 @@ export function isTupleTypeNode(node: Node): node is TupleTypeNode {
 export declare namespace isTupleTypeNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TupleTypeNode>;
 }
-isTupleTypeNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TupleTypeNode> => {
-    return node.kind === SyntaxKind.TupleType;
-};
+isTupleTypeNode.Handle = isTupleTypeNode as any;
 
 export function isNamedTupleMember(node: Node): node is NamedTupleMember {
     return node.kind === SyntaxKind.NamedTupleMember;
@@ -1660,9 +1412,7 @@ export function isNamedTupleMember(node: Node): node is NamedTupleMember {
 export declare namespace isNamedTupleMember {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NamedTupleMember>;
 }
-isNamedTupleMember.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NamedTupleMember> => {
-    return node.kind === SyntaxKind.NamedTupleMember;
-};
+isNamedTupleMember.Handle = isNamedTupleMember as any;
 
 export function isOptionalTypeNode(node: Node): node is OptionalTypeNode {
     return node.kind === SyntaxKind.OptionalType;
@@ -1671,9 +1421,7 @@ export function isOptionalTypeNode(node: Node): node is OptionalTypeNode {
 export declare namespace isOptionalTypeNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, OptionalTypeNode>;
 }
-isOptionalTypeNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, OptionalTypeNode> => {
-    return node.kind === SyntaxKind.OptionalType;
-};
+isOptionalTypeNode.Handle = isOptionalTypeNode as any;
 
 export function isRestTypeNode(node: Node): node is RestTypeNode {
     return node.kind === SyntaxKind.RestType;
@@ -1682,9 +1430,7 @@ export function isRestTypeNode(node: Node): node is RestTypeNode {
 export declare namespace isRestTypeNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, RestTypeNode>;
 }
-isRestTypeNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, RestTypeNode> => {
-    return node.kind === SyntaxKind.RestType;
-};
+isRestTypeNode.Handle = isRestTypeNode as any;
 
 export function isParenthesizedTypeNode(node: Node): node is ParenthesizedTypeNode {
     return node.kind === SyntaxKind.ParenthesizedType;
@@ -1693,9 +1439,7 @@ export function isParenthesizedTypeNode(node: Node): node is ParenthesizedTypeNo
 export declare namespace isParenthesizedTypeNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ParenthesizedTypeNode>;
 }
-isParenthesizedTypeNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ParenthesizedTypeNode> => {
-    return node.kind === SyntaxKind.ParenthesizedType;
-};
+isParenthesizedTypeNode.Handle = isParenthesizedTypeNode as any;
 
 export function isFunctionTypeNode(node: Node): node is FunctionTypeNode {
     return node.kind === SyntaxKind.FunctionType;
@@ -1704,9 +1448,7 @@ export function isFunctionTypeNode(node: Node): node is FunctionTypeNode {
 export declare namespace isFunctionTypeNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, FunctionTypeNode>;
 }
-isFunctionTypeNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, FunctionTypeNode> => {
-    return node.kind === SyntaxKind.FunctionType;
-};
+isFunctionTypeNode.Handle = isFunctionTypeNode as any;
 
 export function isConstructorTypeNode(node: Node): node is ConstructorTypeNode {
     return node.kind === SyntaxKind.ConstructorType;
@@ -1715,9 +1457,7 @@ export function isConstructorTypeNode(node: Node): node is ConstructorTypeNode {
 export declare namespace isConstructorTypeNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ConstructorTypeNode>;
 }
-isConstructorTypeNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ConstructorTypeNode> => {
-    return node.kind === SyntaxKind.ConstructorType;
-};
+isConstructorTypeNode.Handle = isConstructorTypeNode as any;
 
 export function isTemplateHead(node: Node): node is TemplateHead {
     return node.kind === SyntaxKind.TemplateHead;
@@ -1726,9 +1466,7 @@ export function isTemplateHead(node: Node): node is TemplateHead {
 export declare namespace isTemplateHead {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TemplateHead>;
 }
-isTemplateHead.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TemplateHead> => {
-    return node.kind === SyntaxKind.TemplateHead;
-};
+isTemplateHead.Handle = isTemplateHead as any;
 
 export function isTemplateMiddle(node: Node): node is TemplateMiddle {
     return node.kind === SyntaxKind.TemplateMiddle;
@@ -1737,9 +1475,7 @@ export function isTemplateMiddle(node: Node): node is TemplateMiddle {
 export declare namespace isTemplateMiddle {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TemplateMiddle>;
 }
-isTemplateMiddle.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TemplateMiddle> => {
-    return node.kind === SyntaxKind.TemplateMiddle;
-};
+isTemplateMiddle.Handle = isTemplateMiddle as any;
 
 export function isTemplateTail(node: Node): node is TemplateTail {
     return node.kind === SyntaxKind.TemplateTail;
@@ -1748,9 +1484,7 @@ export function isTemplateTail(node: Node): node is TemplateTail {
 export declare namespace isTemplateTail {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TemplateTail>;
 }
-isTemplateTail.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TemplateTail> => {
-    return node.kind === SyntaxKind.TemplateTail;
-};
+isTemplateTail.Handle = isTemplateTail as any;
 
 export function isTemplateLiteralTypeNode(node: Node): node is TemplateLiteralTypeNode {
     return node.kind === SyntaxKind.TemplateLiteralType;
@@ -1759,9 +1493,7 @@ export function isTemplateLiteralTypeNode(node: Node): node is TemplateLiteralTy
 export declare namespace isTemplateLiteralTypeNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TemplateLiteralTypeNode>;
 }
-isTemplateLiteralTypeNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TemplateLiteralTypeNode> => {
-    return node.kind === SyntaxKind.TemplateLiteralType;
-};
+isTemplateLiteralTypeNode.Handle = isTemplateLiteralTypeNode as any;
 
 export function isTemplateLiteralTypeSpan(node: Node): node is TemplateLiteralTypeSpan {
     return node.kind === SyntaxKind.TemplateLiteralTypeSpan;
@@ -1770,9 +1502,7 @@ export function isTemplateLiteralTypeSpan(node: Node): node is TemplateLiteralTy
 export declare namespace isTemplateLiteralTypeSpan {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TemplateLiteralTypeSpan>;
 }
-isTemplateLiteralTypeSpan.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TemplateLiteralTypeSpan> => {
-    return node.kind === SyntaxKind.TemplateLiteralTypeSpan;
-};
+isTemplateLiteralTypeSpan.Handle = isTemplateLiteralTypeSpan as any;
 
 export function isSyntheticExpression(node: Node): node is SyntheticExpression {
     return node.kind === SyntaxKind.SyntheticExpression;
@@ -1781,9 +1511,7 @@ export function isSyntheticExpression(node: Node): node is SyntheticExpression {
 export declare namespace isSyntheticExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SyntheticExpression>;
 }
-isSyntheticExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SyntheticExpression> => {
-    return node.kind === SyntaxKind.SyntheticExpression;
-};
+isSyntheticExpression.Handle = isSyntheticExpression as any;
 
 export function isPartiallyEmittedExpression(node: Node): node is PartiallyEmittedExpression {
     return node.kind === SyntaxKind.PartiallyEmittedExpression;
@@ -1792,9 +1520,7 @@ export function isPartiallyEmittedExpression(node: Node): node is PartiallyEmitt
 export declare namespace isPartiallyEmittedExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PartiallyEmittedExpression>;
 }
-isPartiallyEmittedExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PartiallyEmittedExpression> => {
-    return node.kind === SyntaxKind.PartiallyEmittedExpression;
-};
+isPartiallyEmittedExpression.Handle = isPartiallyEmittedExpression as any;
 
 export function isJsxElement(node: Node): node is JsxElement {
     return node.kind === SyntaxKind.JsxElement;
@@ -1803,9 +1529,7 @@ export function isJsxElement(node: Node): node is JsxElement {
 export declare namespace isJsxElement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxElement>;
 }
-isJsxElement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxElement> => {
-    return node.kind === SyntaxKind.JsxElement;
-};
+isJsxElement.Handle = isJsxElement as any;
 
 export function isJsxAttributes(node: Node): node is JsxAttributes {
     return node.kind === SyntaxKind.JsxAttributes;
@@ -1814,9 +1538,7 @@ export function isJsxAttributes(node: Node): node is JsxAttributes {
 export declare namespace isJsxAttributes {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxAttributes>;
 }
-isJsxAttributes.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxAttributes> => {
-    return node.kind === SyntaxKind.JsxAttributes;
-};
+isJsxAttributes.Handle = isJsxAttributes as any;
 
 export function isJsxNamespacedName(node: Node): node is JsxNamespacedName {
     return node.kind === SyntaxKind.JsxNamespacedName;
@@ -1825,9 +1547,7 @@ export function isJsxNamespacedName(node: Node): node is JsxNamespacedName {
 export declare namespace isJsxNamespacedName {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxNamespacedName>;
 }
-isJsxNamespacedName.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxNamespacedName> => {
-    return node.kind === SyntaxKind.JsxNamespacedName;
-};
+isJsxNamespacedName.Handle = isJsxNamespacedName as any;
 
 export function isJsxOpeningElement(node: Node): node is JsxOpeningElement {
     return node.kind === SyntaxKind.JsxOpeningElement;
@@ -1836,9 +1556,7 @@ export function isJsxOpeningElement(node: Node): node is JsxOpeningElement {
 export declare namespace isJsxOpeningElement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxOpeningElement>;
 }
-isJsxOpeningElement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxOpeningElement> => {
-    return node.kind === SyntaxKind.JsxOpeningElement;
-};
+isJsxOpeningElement.Handle = isJsxOpeningElement as any;
 
 export function isJsxSelfClosingElement(node: Node): node is JsxSelfClosingElement {
     return node.kind === SyntaxKind.JsxSelfClosingElement;
@@ -1847,9 +1565,7 @@ export function isJsxSelfClosingElement(node: Node): node is JsxSelfClosingEleme
 export declare namespace isJsxSelfClosingElement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxSelfClosingElement>;
 }
-isJsxSelfClosingElement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxSelfClosingElement> => {
-    return node.kind === SyntaxKind.JsxSelfClosingElement;
-};
+isJsxSelfClosingElement.Handle = isJsxSelfClosingElement as any;
 
 export function isJsxFragment(node: Node): node is JsxFragment {
     return node.kind === SyntaxKind.JsxFragment;
@@ -1858,9 +1574,7 @@ export function isJsxFragment(node: Node): node is JsxFragment {
 export declare namespace isJsxFragment {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxFragment>;
 }
-isJsxFragment.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxFragment> => {
-    return node.kind === SyntaxKind.JsxFragment;
-};
+isJsxFragment.Handle = isJsxFragment as any;
 
 export function isJsxOpeningFragment(node: Node): node is JsxOpeningFragment {
     return node.kind === SyntaxKind.JsxOpeningFragment;
@@ -1869,9 +1583,7 @@ export function isJsxOpeningFragment(node: Node): node is JsxOpeningFragment {
 export declare namespace isJsxOpeningFragment {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxOpeningFragment>;
 }
-isJsxOpeningFragment.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxOpeningFragment> => {
-    return node.kind === SyntaxKind.JsxOpeningFragment;
-};
+isJsxOpeningFragment.Handle = isJsxOpeningFragment as any;
 
 export function isJsxClosingFragment(node: Node): node is JsxClosingFragment {
     return node.kind === SyntaxKind.JsxClosingFragment;
@@ -1880,9 +1592,7 @@ export function isJsxClosingFragment(node: Node): node is JsxClosingFragment {
 export declare namespace isJsxClosingFragment {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxClosingFragment>;
 }
-isJsxClosingFragment.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxClosingFragment> => {
-    return node.kind === SyntaxKind.JsxClosingFragment;
-};
+isJsxClosingFragment.Handle = isJsxClosingFragment as any;
 
 export function isJsxAttribute(node: Node): node is JsxAttribute {
     return node.kind === SyntaxKind.JsxAttribute;
@@ -1891,9 +1601,7 @@ export function isJsxAttribute(node: Node): node is JsxAttribute {
 export declare namespace isJsxAttribute {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxAttribute>;
 }
-isJsxAttribute.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxAttribute> => {
-    return node.kind === SyntaxKind.JsxAttribute;
-};
+isJsxAttribute.Handle = isJsxAttribute as any;
 
 export function isJsxSpreadAttribute(node: Node): node is JsxSpreadAttribute {
     return node.kind === SyntaxKind.JsxSpreadAttribute;
@@ -1902,9 +1610,7 @@ export function isJsxSpreadAttribute(node: Node): node is JsxSpreadAttribute {
 export declare namespace isJsxSpreadAttribute {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxSpreadAttribute>;
 }
-isJsxSpreadAttribute.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxSpreadAttribute> => {
-    return node.kind === SyntaxKind.JsxSpreadAttribute;
-};
+isJsxSpreadAttribute.Handle = isJsxSpreadAttribute as any;
 
 export function isJsxClosingElement(node: Node): node is JsxClosingElement {
     return node.kind === SyntaxKind.JsxClosingElement;
@@ -1913,9 +1619,7 @@ export function isJsxClosingElement(node: Node): node is JsxClosingElement {
 export declare namespace isJsxClosingElement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxClosingElement>;
 }
-isJsxClosingElement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxClosingElement> => {
-    return node.kind === SyntaxKind.JsxClosingElement;
-};
+isJsxClosingElement.Handle = isJsxClosingElement as any;
 
 export function isJsxExpression(node: Node): node is JsxExpression {
     return node.kind === SyntaxKind.JsxExpression;
@@ -1924,9 +1628,7 @@ export function isJsxExpression(node: Node): node is JsxExpression {
 export declare namespace isJsxExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxExpression>;
 }
-isJsxExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxExpression> => {
-    return node.kind === SyntaxKind.JsxExpression;
-};
+isJsxExpression.Handle = isJsxExpression as any;
 
 export function isJsxText(node: Node): node is JsxText {
     return node.kind === SyntaxKind.JsxText;
@@ -1935,9 +1637,7 @@ export function isJsxText(node: Node): node is JsxText {
 export declare namespace isJsxText {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxText>;
 }
-isJsxText.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxText> => {
-    return node.kind === SyntaxKind.JsxText;
-};
+isJsxText.Handle = isJsxText as any;
 
 export function isSyntaxList(node: Node): node is SyntaxList {
     return node.kind === SyntaxKind.SyntaxList;
@@ -1946,9 +1646,7 @@ export function isSyntaxList(node: Node): node is SyntaxList {
 export declare namespace isSyntaxList {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SyntaxList>;
 }
-isSyntaxList.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SyntaxList> => {
-    return node.kind === SyntaxKind.SyntaxList;
-};
+isSyntaxList.Handle = isSyntaxList as any;
 
 export function isJSDoc(node: Node): node is JSDoc {
     return node.kind === SyntaxKind.JSDoc;
@@ -1957,9 +1655,7 @@ export function isJSDoc(node: Node): node is JSDoc {
 export declare namespace isJSDoc {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDoc>;
 }
-isJSDoc.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDoc> => {
-    return node.kind === SyntaxKind.JSDoc;
-};
+isJSDoc.Handle = isJSDoc as any;
 
 export function isJSDocTypeExpression(node: Node): node is JSDocTypeExpression {
     return node.kind === SyntaxKind.JSDocTypeExpression;
@@ -1968,9 +1664,7 @@ export function isJSDocTypeExpression(node: Node): node is JSDocTypeExpression {
 export declare namespace isJSDocTypeExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocTypeExpression>;
 }
-isJSDocTypeExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocTypeExpression> => {
-    return node.kind === SyntaxKind.JSDocTypeExpression;
-};
+isJSDocTypeExpression.Handle = isJSDocTypeExpression as any;
 
 export function isJSDocNonNullableType(node: Node): node is JSDocNonNullableType {
     return node.kind === SyntaxKind.JSDocNonNullableType;
@@ -1979,9 +1673,7 @@ export function isJSDocNonNullableType(node: Node): node is JSDocNonNullableType
 export declare namespace isJSDocNonNullableType {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocNonNullableType>;
 }
-isJSDocNonNullableType.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocNonNullableType> => {
-    return node.kind === SyntaxKind.JSDocNonNullableType;
-};
+isJSDocNonNullableType.Handle = isJSDocNonNullableType as any;
 
 export function isJSDocNullableType(node: Node): node is JSDocNullableType {
     return node.kind === SyntaxKind.JSDocNullableType;
@@ -1990,9 +1682,7 @@ export function isJSDocNullableType(node: Node): node is JSDocNullableType {
 export declare namespace isJSDocNullableType {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocNullableType>;
 }
-isJSDocNullableType.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocNullableType> => {
-    return node.kind === SyntaxKind.JSDocNullableType;
-};
+isJSDocNullableType.Handle = isJSDocNullableType as any;
 
 export function isJSDocAllType(node: Node): node is JSDocAllType {
     return node.kind === SyntaxKind.JSDocAllType;
@@ -2001,9 +1691,7 @@ export function isJSDocAllType(node: Node): node is JSDocAllType {
 export declare namespace isJSDocAllType {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocAllType>;
 }
-isJSDocAllType.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocAllType> => {
-    return node.kind === SyntaxKind.JSDocAllType;
-};
+isJSDocAllType.Handle = isJSDocAllType as any;
 
 export function isJSDocVariadicType(node: Node): node is JSDocVariadicType {
     return node.kind === SyntaxKind.JSDocVariadicType;
@@ -2012,9 +1700,7 @@ export function isJSDocVariadicType(node: Node): node is JSDocVariadicType {
 export declare namespace isJSDocVariadicType {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocVariadicType>;
 }
-isJSDocVariadicType.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocVariadicType> => {
-    return node.kind === SyntaxKind.JSDocVariadicType;
-};
+isJSDocVariadicType.Handle = isJSDocVariadicType as any;
 
 export function isJSDocOptionalType(node: Node): node is JSDocOptionalType {
     return node.kind === SyntaxKind.JSDocOptionalType;
@@ -2023,9 +1709,7 @@ export function isJSDocOptionalType(node: Node): node is JSDocOptionalType {
 export declare namespace isJSDocOptionalType {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocOptionalType>;
 }
-isJSDocOptionalType.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocOptionalType> => {
-    return node.kind === SyntaxKind.JSDocOptionalType;
-};
+isJSDocOptionalType.Handle = isJSDocOptionalType as any;
 
 export function isJSDocTypeTag(node: Node): node is JSDocTypeTag {
     return node.kind === SyntaxKind.JSDocTypeTag;
@@ -2034,9 +1718,7 @@ export function isJSDocTypeTag(node: Node): node is JSDocTypeTag {
 export declare namespace isJSDocTypeTag {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocTypeTag>;
 }
-isJSDocTypeTag.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocTypeTag> => {
-    return node.kind === SyntaxKind.JSDocTypeTag;
-};
+isJSDocTypeTag.Handle = isJSDocTypeTag as any;
 
 export function isJSDocUnknownTag(node: Node): node is JSDocUnknownTag {
     return node.kind === SyntaxKind.JSDocUnknownTag;
@@ -2045,9 +1727,7 @@ export function isJSDocUnknownTag(node: Node): node is JSDocUnknownTag {
 export declare namespace isJSDocUnknownTag {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocUnknownTag>;
 }
-isJSDocUnknownTag.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocUnknownTag> => {
-    return node.kind === SyntaxKind.JSDocUnknownTag;
-};
+isJSDocUnknownTag.Handle = isJSDocUnknownTag as any;
 
 export function isJSDocTemplateTag(node: Node): node is JSDocTemplateTag {
     return node.kind === SyntaxKind.JSDocTemplateTag;
@@ -2056,9 +1736,7 @@ export function isJSDocTemplateTag(node: Node): node is JSDocTemplateTag {
 export declare namespace isJSDocTemplateTag {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocTemplateTag>;
 }
-isJSDocTemplateTag.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocTemplateTag> => {
-    return node.kind === SyntaxKind.JSDocTemplateTag;
-};
+isJSDocTemplateTag.Handle = isJSDocTemplateTag as any;
 
 export function isJSDocReturnTag(node: Node): node is JSDocReturnTag {
     return node.kind === SyntaxKind.JSDocReturnTag;
@@ -2067,9 +1745,7 @@ export function isJSDocReturnTag(node: Node): node is JSDocReturnTag {
 export declare namespace isJSDocReturnTag {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocReturnTag>;
 }
-isJSDocReturnTag.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocReturnTag> => {
-    return node.kind === SyntaxKind.JSDocReturnTag;
-};
+isJSDocReturnTag.Handle = isJSDocReturnTag as any;
 
 export function isJSDocPublicTag(node: Node): node is JSDocPublicTag {
     return node.kind === SyntaxKind.JSDocPublicTag;
@@ -2078,9 +1754,7 @@ export function isJSDocPublicTag(node: Node): node is JSDocPublicTag {
 export declare namespace isJSDocPublicTag {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocPublicTag>;
 }
-isJSDocPublicTag.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocPublicTag> => {
-    return node.kind === SyntaxKind.JSDocPublicTag;
-};
+isJSDocPublicTag.Handle = isJSDocPublicTag as any;
 
 export function isJSDocPrivateTag(node: Node): node is JSDocPrivateTag {
     return node.kind === SyntaxKind.JSDocPrivateTag;
@@ -2089,9 +1763,7 @@ export function isJSDocPrivateTag(node: Node): node is JSDocPrivateTag {
 export declare namespace isJSDocPrivateTag {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocPrivateTag>;
 }
-isJSDocPrivateTag.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocPrivateTag> => {
-    return node.kind === SyntaxKind.JSDocPrivateTag;
-};
+isJSDocPrivateTag.Handle = isJSDocPrivateTag as any;
 
 export function isJSDocProtectedTag(node: Node): node is JSDocProtectedTag {
     return node.kind === SyntaxKind.JSDocProtectedTag;
@@ -2100,9 +1772,7 @@ export function isJSDocProtectedTag(node: Node): node is JSDocProtectedTag {
 export declare namespace isJSDocProtectedTag {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocProtectedTag>;
 }
-isJSDocProtectedTag.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocProtectedTag> => {
-    return node.kind === SyntaxKind.JSDocProtectedTag;
-};
+isJSDocProtectedTag.Handle = isJSDocProtectedTag as any;
 
 export function isJSDocReadonlyTag(node: Node): node is JSDocReadonlyTag {
     return node.kind === SyntaxKind.JSDocReadonlyTag;
@@ -2111,9 +1781,7 @@ export function isJSDocReadonlyTag(node: Node): node is JSDocReadonlyTag {
 export declare namespace isJSDocReadonlyTag {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocReadonlyTag>;
 }
-isJSDocReadonlyTag.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocReadonlyTag> => {
-    return node.kind === SyntaxKind.JSDocReadonlyTag;
-};
+isJSDocReadonlyTag.Handle = isJSDocReadonlyTag as any;
 
 export function isJSDocOverrideTag(node: Node): node is JSDocOverrideTag {
     return node.kind === SyntaxKind.JSDocOverrideTag;
@@ -2122,9 +1790,7 @@ export function isJSDocOverrideTag(node: Node): node is JSDocOverrideTag {
 export declare namespace isJSDocOverrideTag {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocOverrideTag>;
 }
-isJSDocOverrideTag.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocOverrideTag> => {
-    return node.kind === SyntaxKind.JSDocOverrideTag;
-};
+isJSDocOverrideTag.Handle = isJSDocOverrideTag as any;
 
 export function isJSDocDeprecatedTag(node: Node): node is JSDocDeprecatedTag {
     return node.kind === SyntaxKind.JSDocDeprecatedTag;
@@ -2133,9 +1799,7 @@ export function isJSDocDeprecatedTag(node: Node): node is JSDocDeprecatedTag {
 export declare namespace isJSDocDeprecatedTag {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocDeprecatedTag>;
 }
-isJSDocDeprecatedTag.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocDeprecatedTag> => {
-    return node.kind === SyntaxKind.JSDocDeprecatedTag;
-};
+isJSDocDeprecatedTag.Handle = isJSDocDeprecatedTag as any;
 
 export function isJSDocSeeTag(node: Node): node is JSDocSeeTag {
     return node.kind === SyntaxKind.JSDocSeeTag;
@@ -2144,9 +1808,7 @@ export function isJSDocSeeTag(node: Node): node is JSDocSeeTag {
 export declare namespace isJSDocSeeTag {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocSeeTag>;
 }
-isJSDocSeeTag.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocSeeTag> => {
-    return node.kind === SyntaxKind.JSDocSeeTag;
-};
+isJSDocSeeTag.Handle = isJSDocSeeTag as any;
 
 export function isJSDocImplementsTag(node: Node): node is JSDocImplementsTag {
     return node.kind === SyntaxKind.JSDocImplementsTag;
@@ -2155,9 +1817,7 @@ export function isJSDocImplementsTag(node: Node): node is JSDocImplementsTag {
 export declare namespace isJSDocImplementsTag {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocImplementsTag>;
 }
-isJSDocImplementsTag.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocImplementsTag> => {
-    return node.kind === SyntaxKind.JSDocImplementsTag;
-};
+isJSDocImplementsTag.Handle = isJSDocImplementsTag as any;
 
 export function isJSDocAugmentsTag(node: Node): node is JSDocAugmentsTag {
     return node.kind === SyntaxKind.JSDocAugmentsTag;
@@ -2166,9 +1826,7 @@ export function isJSDocAugmentsTag(node: Node): node is JSDocAugmentsTag {
 export declare namespace isJSDocAugmentsTag {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocAugmentsTag>;
 }
-isJSDocAugmentsTag.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocAugmentsTag> => {
-    return node.kind === SyntaxKind.JSDocAugmentsTag;
-};
+isJSDocAugmentsTag.Handle = isJSDocAugmentsTag as any;
 
 export function isJSDocSatisfiesTag(node: Node): node is JSDocSatisfiesTag {
     return node.kind === SyntaxKind.JSDocSatisfiesTag;
@@ -2177,9 +1835,7 @@ export function isJSDocSatisfiesTag(node: Node): node is JSDocSatisfiesTag {
 export declare namespace isJSDocSatisfiesTag {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocSatisfiesTag>;
 }
-isJSDocSatisfiesTag.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocSatisfiesTag> => {
-    return node.kind === SyntaxKind.JSDocSatisfiesTag;
-};
+isJSDocSatisfiesTag.Handle = isJSDocSatisfiesTag as any;
 
 export function isJSDocThrowsTag(node: Node): node is JSDocThrowsTag {
     return node.kind === SyntaxKind.JSDocThrowsTag;
@@ -2188,9 +1844,7 @@ export function isJSDocThrowsTag(node: Node): node is JSDocThrowsTag {
 export declare namespace isJSDocThrowsTag {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocThrowsTag>;
 }
-isJSDocThrowsTag.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocThrowsTag> => {
-    return node.kind === SyntaxKind.JSDocThrowsTag;
-};
+isJSDocThrowsTag.Handle = isJSDocThrowsTag as any;
 
 export function isJSDocThisTag(node: Node): node is JSDocThisTag {
     return node.kind === SyntaxKind.JSDocThisTag;
@@ -2199,9 +1853,7 @@ export function isJSDocThisTag(node: Node): node is JSDocThisTag {
 export declare namespace isJSDocThisTag {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocThisTag>;
 }
-isJSDocThisTag.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocThisTag> => {
-    return node.kind === SyntaxKind.JSDocThisTag;
-};
+isJSDocThisTag.Handle = isJSDocThisTag as any;
 
 export function isJSDocImportTag(node: Node): node is JSDocImportTag {
     return node.kind === SyntaxKind.JSDocImportTag;
@@ -2210,9 +1862,7 @@ export function isJSDocImportTag(node: Node): node is JSDocImportTag {
 export declare namespace isJSDocImportTag {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocImportTag>;
 }
-isJSDocImportTag.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocImportTag> => {
-    return node.kind === SyntaxKind.JSDocImportTag;
-};
+isJSDocImportTag.Handle = isJSDocImportTag as any;
 
 export function isJSDocCallbackTag(node: Node): node is JSDocCallbackTag {
     return node.kind === SyntaxKind.JSDocCallbackTag;
@@ -2221,9 +1871,7 @@ export function isJSDocCallbackTag(node: Node): node is JSDocCallbackTag {
 export declare namespace isJSDocCallbackTag {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocCallbackTag>;
 }
-isJSDocCallbackTag.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocCallbackTag> => {
-    return node.kind === SyntaxKind.JSDocCallbackTag;
-};
+isJSDocCallbackTag.Handle = isJSDocCallbackTag as any;
 
 export function isJSDocOverloadTag(node: Node): node is JSDocOverloadTag {
     return node.kind === SyntaxKind.JSDocOverloadTag;
@@ -2232,9 +1880,7 @@ export function isJSDocOverloadTag(node: Node): node is JSDocOverloadTag {
 export declare namespace isJSDocOverloadTag {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocOverloadTag>;
 }
-isJSDocOverloadTag.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocOverloadTag> => {
-    return node.kind === SyntaxKind.JSDocOverloadTag;
-};
+isJSDocOverloadTag.Handle = isJSDocOverloadTag as any;
 
 export function isJSDocTypedefTag(node: Node): node is JSDocTypedefTag {
     return node.kind === SyntaxKind.JSDocTypedefTag;
@@ -2243,9 +1889,7 @@ export function isJSDocTypedefTag(node: Node): node is JSDocTypedefTag {
 export declare namespace isJSDocTypedefTag {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocTypedefTag>;
 }
-isJSDocTypedefTag.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocTypedefTag> => {
-    return node.kind === SyntaxKind.JSDocTypedefTag;
-};
+isJSDocTypedefTag.Handle = isJSDocTypedefTag as any;
 
 export function isJSDocSignature(node: Node): node is JSDocSignature {
     return node.kind === SyntaxKind.JSDocSignature;
@@ -2254,9 +1898,7 @@ export function isJSDocSignature(node: Node): node is JSDocSignature {
 export declare namespace isJSDocSignature {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocSignature>;
 }
-isJSDocSignature.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocSignature> => {
-    return node.kind === SyntaxKind.JSDocSignature;
-};
+isJSDocSignature.Handle = isJSDocSignature as any;
 
 export function isJSDocNameReference(node: Node): node is JSDocNameReference {
     return node.kind === SyntaxKind.JSDocNameReference;
@@ -2265,9 +1907,7 @@ export function isJSDocNameReference(node: Node): node is JSDocNameReference {
 export declare namespace isJSDocNameReference {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocNameReference>;
 }
-isJSDocNameReference.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocNameReference> => {
-    return node.kind === SyntaxKind.JSDocNameReference;
-};
+isJSDocNameReference.Handle = isJSDocNameReference as any;
 
 export function isSourceFile(node: Node): node is SourceFile {
     return node.kind === SyntaxKind.SourceFile;
@@ -2276,9 +1916,7 @@ export function isSourceFile(node: Node): node is SourceFile {
 export declare namespace isSourceFile {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SourceFile>;
 }
-isSourceFile.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SourceFile> => {
-    return node.kind === SyntaxKind.SourceFile;
-};
+isSourceFile.Handle = isSourceFile as any;
 
 export function isModuleDeclaration(node: Node): node is ModuleDeclaration {
     return node.kind === SyntaxKind.ModuleDeclaration;
@@ -2287,9 +1925,7 @@ export function isModuleDeclaration(node: Node): node is ModuleDeclaration {
 export declare namespace isModuleDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ModuleDeclaration>;
 }
-isModuleDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ModuleDeclaration> => {
-    return node.kind === SyntaxKind.ModuleDeclaration;
-};
+isModuleDeclaration.Handle = isModuleDeclaration as any;
 
 export function isImportEqualsDeclaration(node: Node): node is ImportEqualsDeclaration {
     return node.kind === SyntaxKind.ImportEqualsDeclaration;
@@ -2298,9 +1934,7 @@ export function isImportEqualsDeclaration(node: Node): node is ImportEqualsDecla
 export declare namespace isImportEqualsDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ImportEqualsDeclaration>;
 }
-isImportEqualsDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ImportEqualsDeclaration> => {
-    return node.kind === SyntaxKind.ImportEqualsDeclaration;
-};
+isImportEqualsDeclaration.Handle = isImportEqualsDeclaration as any;
 
 export function isExportDeclaration(node: Node): node is ExportDeclaration {
     return node.kind === SyntaxKind.ExportDeclaration;
@@ -2309,9 +1943,7 @@ export function isExportDeclaration(node: Node): node is ExportDeclaration {
 export declare namespace isExportDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ExportDeclaration>;
 }
-isExportDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ExportDeclaration> => {
-    return node.kind === SyntaxKind.ExportDeclaration;
-};
+isExportDeclaration.Handle = isExportDeclaration as any;
 
 export function isImportTypeNode(node: Node): node is ImportTypeNode {
     return node.kind === SyntaxKind.ImportType;
@@ -2320,9 +1952,7 @@ export function isImportTypeNode(node: Node): node is ImportTypeNode {
 export declare namespace isImportTypeNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ImportTypeNode>;
 }
-isImportTypeNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ImportTypeNode> => {
-    return node.kind === SyntaxKind.ImportType;
-};
+isImportTypeNode.Handle = isImportTypeNode as any;
 
 export function isImportClause(node: Node): node is ImportClause {
     return node.kind === SyntaxKind.ImportClause;
@@ -2331,9 +1961,7 @@ export function isImportClause(node: Node): node is ImportClause {
 export declare namespace isImportClause {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ImportClause>;
 }
-isImportClause.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ImportClause> => {
-    return node.kind === SyntaxKind.ImportClause;
-};
+isImportClause.Handle = isImportClause as any;
 
 export function isImportSpecifier(node: Node): node is ImportSpecifier {
     return node.kind === SyntaxKind.ImportSpecifier;
@@ -2342,9 +1970,7 @@ export function isImportSpecifier(node: Node): node is ImportSpecifier {
 export declare namespace isImportSpecifier {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ImportSpecifier>;
 }
-isImportSpecifier.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ImportSpecifier> => {
-    return node.kind === SyntaxKind.ImportSpecifier;
-};
+isImportSpecifier.Handle = isImportSpecifier as any;
 
 export function isJSDocText(node: Node): node is JSDocText {
     return node.kind === SyntaxKind.JSDocText;
@@ -2353,9 +1979,7 @@ export function isJSDocText(node: Node): node is JSDocText {
 export declare namespace isJSDocText {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocText>;
 }
-isJSDocText.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocText> => {
-    return node.kind === SyntaxKind.JSDocText;
-};
+isJSDocText.Handle = isJSDocText as any;
 
 export function isJSDocLink(node: Node): node is JSDocLink {
     return node.kind === SyntaxKind.JSDocLink;
@@ -2364,9 +1988,7 @@ export function isJSDocLink(node: Node): node is JSDocLink {
 export declare namespace isJSDocLink {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocLink>;
 }
-isJSDocLink.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocLink> => {
-    return node.kind === SyntaxKind.JSDocLink;
-};
+isJSDocLink.Handle = isJSDocLink as any;
 
 export function isJSDocLinkPlain(node: Node): node is JSDocLinkPlain {
     return node.kind === SyntaxKind.JSDocLinkPlain;
@@ -2375,9 +1997,7 @@ export function isJSDocLinkPlain(node: Node): node is JSDocLinkPlain {
 export declare namespace isJSDocLinkPlain {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocLinkPlain>;
 }
-isJSDocLinkPlain.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocLinkPlain> => {
-    return node.kind === SyntaxKind.JSDocLinkPlain;
-};
+isJSDocLinkPlain.Handle = isJSDocLinkPlain as any;
 
 export function isJSDocLinkCode(node: Node): node is JSDocLinkCode {
     return node.kind === SyntaxKind.JSDocLinkCode;
@@ -2386,9 +2006,7 @@ export function isJSDocLinkCode(node: Node): node is JSDocLinkCode {
 export declare namespace isJSDocLinkCode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocLinkCode>;
 }
-isJSDocLinkCode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocLinkCode> => {
-    return node.kind === SyntaxKind.JSDocLinkCode;
-};
+isJSDocLinkCode.Handle = isJSDocLinkCode as any;
 
 export function isTypeParameterDeclaration(node: Node): node is TypeParameterDeclaration {
     return node.kind === SyntaxKind.TypeParameter;
@@ -2397,9 +2015,7 @@ export function isTypeParameterDeclaration(node: Node): node is TypeParameterDec
 export declare namespace isTypeParameterDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TypeParameterDeclaration>;
 }
-isTypeParameterDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TypeParameterDeclaration> => {
-    return node.kind === SyntaxKind.TypeParameter;
-};
+isTypeParameterDeclaration.Handle = isTypeParameterDeclaration as any;
 
 export function isSyntheticReferenceExpression(node: Node): node is SyntheticReferenceExpression {
     return node.kind === SyntaxKind.SyntheticReferenceExpression;
@@ -2408,9 +2024,7 @@ export function isSyntheticReferenceExpression(node: Node): node is SyntheticRef
 export declare namespace isSyntheticReferenceExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SyntheticReferenceExpression>;
 }
-isSyntheticReferenceExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SyntheticReferenceExpression> => {
-    return node.kind === SyntaxKind.SyntheticReferenceExpression;
-};
+isSyntheticReferenceExpression.Handle = isSyntheticReferenceExpression as any;
 
 export function isJSDocTypeLiteral(node: Node): node is JSDocTypeLiteral {
     return node.kind === SyntaxKind.JSDocTypeLiteral;
@@ -2419,9 +2033,7 @@ export function isJSDocTypeLiteral(node: Node): node is JSDocTypeLiteral {
 export declare namespace isJSDocTypeLiteral {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocTypeLiteral>;
 }
-isJSDocTypeLiteral.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocTypeLiteral> => {
-    return node.kind === SyntaxKind.JSDocTypeLiteral;
-};
+isJSDocTypeLiteral.Handle = isJSDocTypeLiteral as any;
 
 export function isForInStatement(node: Node): node is ForInStatement {
     return node.kind === SyntaxKind.ForInStatement;
@@ -2430,9 +2042,7 @@ export function isForInStatement(node: Node): node is ForInStatement {
 export declare namespace isForInStatement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ForInStatement>;
 }
-isForInStatement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ForInStatement> => {
-    return node.kind === SyntaxKind.ForInStatement;
-};
+isForInStatement.Handle = isForInStatement as any;
 
 export function isForOfStatement(node: Node): node is ForOfStatement {
     return node.kind === SyntaxKind.ForOfStatement;
@@ -2441,9 +2051,7 @@ export function isForOfStatement(node: Node): node is ForOfStatement {
 export declare namespace isForOfStatement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ForOfStatement>;
 }
-isForOfStatement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ForOfStatement> => {
-    return node.kind === SyntaxKind.ForOfStatement;
-};
+isForOfStatement.Handle = isForOfStatement as any;
 
 export function isCaseClause(node: Node): node is CaseClause {
     return node.kind === SyntaxKind.CaseClause;
@@ -2452,9 +2060,7 @@ export function isCaseClause(node: Node): node is CaseClause {
 export declare namespace isCaseClause {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, CaseClause>;
 }
-isCaseClause.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, CaseClause> => {
-    return node.kind === SyntaxKind.CaseClause;
-};
+isCaseClause.Handle = isCaseClause as any;
 
 export function isDefaultClause(node: Node): node is DefaultClause {
     return node.kind === SyntaxKind.DefaultClause;
@@ -2463,9 +2069,7 @@ export function isDefaultClause(node: Node): node is DefaultClause {
 export declare namespace isDefaultClause {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, DefaultClause>;
 }
-isDefaultClause.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, DefaultClause> => {
-    return node.kind === SyntaxKind.DefaultClause;
-};
+isDefaultClause.Handle = isDefaultClause as any;
 
 export function isObjectBindingPattern(node: Node): node is ObjectBindingPattern {
     return node.kind === SyntaxKind.ObjectBindingPattern;
@@ -2474,9 +2078,7 @@ export function isObjectBindingPattern(node: Node): node is ObjectBindingPattern
 export declare namespace isObjectBindingPattern {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ObjectBindingPattern>;
 }
-isObjectBindingPattern.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ObjectBindingPattern> => {
-    return node.kind === SyntaxKind.ObjectBindingPattern;
-};
+isObjectBindingPattern.Handle = isObjectBindingPattern as any;
 
 export function isArrayBindingPattern(node: Node): node is ArrayBindingPattern {
     return node.kind === SyntaxKind.ArrayBindingPattern;
@@ -2485,9 +2087,7 @@ export function isArrayBindingPattern(node: Node): node is ArrayBindingPattern {
 export declare namespace isArrayBindingPattern {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ArrayBindingPattern>;
 }
-isArrayBindingPattern.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ArrayBindingPattern> => {
-    return node.kind === SyntaxKind.ArrayBindingPattern;
-};
+isArrayBindingPattern.Handle = isArrayBindingPattern as any;
 
 export function isJSDocParameterTag(node: Node): node is JSDocParameterTag {
     return node.kind === SyntaxKind.JSDocParameterTag;
@@ -2496,9 +2096,7 @@ export function isJSDocParameterTag(node: Node): node is JSDocParameterTag {
 export declare namespace isJSDocParameterTag {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocParameterTag>;
 }
-isJSDocParameterTag.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocParameterTag> => {
-    return node.kind === SyntaxKind.JSDocParameterTag;
-};
+isJSDocParameterTag.Handle = isJSDocParameterTag as any;
 
 export function isJSDocPropertyTag(node: Node): node is JSDocPropertyTag {
     return node.kind === SyntaxKind.JSDocPropertyTag;
@@ -2507,9 +2105,7 @@ export function isJSDocPropertyTag(node: Node): node is JSDocPropertyTag {
 export declare namespace isJSDocPropertyTag {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocPropertyTag>;
 }
-isJSDocPropertyTag.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocPropertyTag> => {
-    return node.kind === SyntaxKind.JSDocPropertyTag;
-};
+isJSDocPropertyTag.Handle = isJSDocPropertyTag as any;
 
 export function isHeritageClauseElement(node: Node): node is HeritageClauseElement {
     return node.kind === SyntaxKind.ExpressionWithTypeArguments || node.kind === SyntaxKind.TypeReference;
@@ -2519,9 +2115,7 @@ export declare namespace isHeritageClauseElement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, HeritageClauseElement>;
 }
 
-isHeritageClauseElement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, HeritageClauseElement> => {
-    return node.kind === SyntaxKind.ExpressionWithTypeArguments || node.kind === SyntaxKind.TypeReference;
-};
+isHeritageClauseElement.Handle = isHeritageClauseElement as any;
 
 export function isAccessExpression(node: Node): node is AccessExpression {
     return node.kind === SyntaxKind.PropertyAccessExpression || node.kind === SyntaxKind.ElementAccessExpression;
@@ -2531,9 +2125,7 @@ export declare namespace isAccessExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AccessExpression>;
 }
 
-isAccessExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AccessExpression> => {
-    return node.kind === SyntaxKind.PropertyAccessExpression || node.kind === SyntaxKind.ElementAccessExpression;
-};
+isAccessExpression.Handle = isAccessExpression as any;
 
 export function isDeclarationName(node: Node): node is DeclarationName {
     const kind = node.kind;
@@ -2544,10 +2136,7 @@ export declare namespace isDeclarationName {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, DeclarationName>;
 }
 
-isDeclarationName.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, DeclarationName> => {
-    const kind = node.kind;
-    return kind === SyntaxKind.Identifier || kind === SyntaxKind.PrivateIdentifier || kind === SyntaxKind.StringLiteral || kind === SyntaxKind.NumericLiteral || kind === SyntaxKind.BigIntLiteral || kind === SyntaxKind.NoSubstitutionTemplateLiteral || kind === SyntaxKind.ComputedPropertyName || kind === SyntaxKind.ObjectBindingPattern || kind === SyntaxKind.ArrayBindingPattern || kind === SyntaxKind.ElementAccessExpression;
-};
+isDeclarationName.Handle = isDeclarationName as any;
 
 export function isModuleName(node: Node): node is ModuleName {
     return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.StringLiteral;
@@ -2557,9 +2146,7 @@ export declare namespace isModuleName {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ModuleName>;
 }
 
-isModuleName.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ModuleName> => {
-    return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.StringLiteral;
-};
+isModuleName.Handle = isModuleName as any;
 
 export function isModuleExportName(node: Node): node is ModuleExportName {
     return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.StringLiteral;
@@ -2569,9 +2156,7 @@ export declare namespace isModuleExportName {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ModuleExportName>;
 }
 
-isModuleExportName.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ModuleExportName> => {
-    return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.StringLiteral;
-};
+isModuleExportName.Handle = isModuleExportName as any;
 
 export function isPropertyName(node: Node): node is PropertyName {
     const kind = node.kind;
@@ -2582,10 +2167,7 @@ export declare namespace isPropertyName {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PropertyName>;
 }
 
-isPropertyName.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PropertyName> => {
-    const kind = node.kind;
-    return kind === SyntaxKind.Identifier || kind === SyntaxKind.StringLiteral || kind === SyntaxKind.NoSubstitutionTemplateLiteral || kind === SyntaxKind.NumericLiteral || kind === SyntaxKind.ComputedPropertyName || kind === SyntaxKind.PrivateIdentifier || kind === SyntaxKind.BigIntLiteral;
-};
+isPropertyName.Handle = isPropertyName as any;
 
 export function isModuleBody(node: Node): node is ModuleBody {
     return node.kind === SyntaxKind.ModuleBlock || node.kind === SyntaxKind.ModuleDeclaration;
@@ -2595,9 +2177,7 @@ export declare namespace isModuleBody {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ModuleBody>;
 }
 
-isModuleBody.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ModuleBody> => {
-    return node.kind === SyntaxKind.ModuleBlock || node.kind === SyntaxKind.ModuleDeclaration;
-};
+isModuleBody.Handle = isModuleBody as any;
 
 export function isJSDocFullName(node: Node): node is JSDocFullName {
     return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.ModuleDeclaration;
@@ -2607,9 +2187,7 @@ export declare namespace isJSDocFullName {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocFullName>;
 }
 
-isJSDocFullName.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocFullName> => {
-    return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.ModuleDeclaration;
-};
+isJSDocFullName.Handle = isJSDocFullName as any;
 
 export function isModuleReference(node: Node): node is ModuleReference {
     return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.QualifiedName || node.kind === SyntaxKind.ExternalModuleReference;
@@ -2619,9 +2197,7 @@ export declare namespace isModuleReference {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ModuleReference>;
 }
 
-isModuleReference.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ModuleReference> => {
-    return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.QualifiedName || node.kind === SyntaxKind.ExternalModuleReference;
-};
+isModuleReference.Handle = isModuleReference as any;
 
 export function isNamedImportBindings(node: Node): node is NamedImportBindings {
     return node.kind === SyntaxKind.NamespaceImport || node.kind === SyntaxKind.NamedImports;
@@ -2631,9 +2207,7 @@ export declare namespace isNamedImportBindings {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NamedImportBindings>;
 }
 
-isNamedImportBindings.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NamedImportBindings> => {
-    return node.kind === SyntaxKind.NamespaceImport || node.kind === SyntaxKind.NamedImports;
-};
+isNamedImportBindings.Handle = isNamedImportBindings as any;
 
 export function isNamedExportBindings(node: Node): node is NamedExportBindings {
     return node.kind === SyntaxKind.NamespaceExport || node.kind === SyntaxKind.NamedExports;
@@ -2643,9 +2217,7 @@ export declare namespace isNamedExportBindings {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NamedExportBindings>;
 }
 
-isNamedExportBindings.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NamedExportBindings> => {
-    return node.kind === SyntaxKind.NamespaceExport || node.kind === SyntaxKind.NamedExports;
-};
+isNamedExportBindings.Handle = isNamedExportBindings as any;
 
 export function isMemberName(node: Node): node is MemberName {
     return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.PrivateIdentifier;
@@ -2655,9 +2227,7 @@ export declare namespace isMemberName {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, MemberName>;
 }
 
-isMemberName.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, MemberName> => {
-    return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.PrivateIdentifier;
-};
+isMemberName.Handle = isMemberName as any;
 
 export function isEntityName(node: Node): node is EntityName {
     return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.QualifiedName;
@@ -2667,9 +2237,7 @@ export declare namespace isEntityName {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, EntityName>;
 }
 
-isEntityName.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, EntityName> => {
-    return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.QualifiedName;
-};
+isEntityName.Handle = isEntityName as any;
 
 export function isBindingName(node: Node): node is BindingName {
     return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.ObjectBindingPattern || node.kind === SyntaxKind.ArrayBindingPattern;
@@ -2679,9 +2247,7 @@ export declare namespace isBindingName {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, BindingName>;
 }
 
-isBindingName.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, BindingName> => {
-    return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.ObjectBindingPattern || node.kind === SyntaxKind.ArrayBindingPattern;
-};
+isBindingName.Handle = isBindingName as any;
 
 export function isModifierLike(node: Node): node is ModifierLike {
     const kind = node.kind;
@@ -2692,10 +2258,7 @@ export declare namespace isModifierLike {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ModifierLike>;
 }
 
-isModifierLike.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ModifierLike> => {
-    const kind = node.kind;
-    return kind === SyntaxKind.AbstractKeyword || kind === SyntaxKind.AccessorKeyword || kind === SyntaxKind.AsyncKeyword || kind === SyntaxKind.ConstKeyword || kind === SyntaxKind.DeclareKeyword || kind === SyntaxKind.DefaultKeyword || kind === SyntaxKind.ExportKeyword || kind === SyntaxKind.InKeyword || kind === SyntaxKind.PrivateKeyword || kind === SyntaxKind.ProtectedKeyword || kind === SyntaxKind.PublicKeyword || kind === SyntaxKind.ReadonlyKeyword || kind === SyntaxKind.OutKeyword || kind === SyntaxKind.OverrideKeyword || kind === SyntaxKind.StaticKeyword || kind === SyntaxKind.Decorator;
-};
+isModifierLike.Handle = isModifierLike as any;
 
 export function isJsxChild(node: Node): node is JsxChild {
     const kind = node.kind;
@@ -2706,10 +2269,7 @@ export declare namespace isJsxChild {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxChild>;
 }
 
-isJsxChild.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxChild> => {
-    const kind = node.kind;
-    return kind === SyntaxKind.JsxText || kind === SyntaxKind.JsxExpression || kind === SyntaxKind.JsxElement || kind === SyntaxKind.JsxSelfClosingElement || kind === SyntaxKind.JsxFragment;
-};
+isJsxChild.Handle = isJsxChild as any;
 
 export function isJsxAttributeLike(node: Node): node is JsxAttributeLike {
     return node.kind === SyntaxKind.JsxAttribute || node.kind === SyntaxKind.JsxSpreadAttribute;
@@ -2719,9 +2279,7 @@ export declare namespace isJsxAttributeLike {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxAttributeLike>;
 }
 
-isJsxAttributeLike.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxAttributeLike> => {
-    return node.kind === SyntaxKind.JsxAttribute || node.kind === SyntaxKind.JsxSpreadAttribute;
-};
+isJsxAttributeLike.Handle = isJsxAttributeLike as any;
 
 export function isJsxAttributeName(node: Node): node is JsxAttributeName {
     return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.JsxNamespacedName;
@@ -2731,9 +2289,7 @@ export declare namespace isJsxAttributeName {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxAttributeName>;
 }
 
-isJsxAttributeName.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxAttributeName> => {
-    return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.JsxNamespacedName;
-};
+isJsxAttributeName.Handle = isJsxAttributeName as any;
 
 export function isJsxAttributeValue(node: Node): node is JsxAttributeValue {
     const kind = node.kind;
@@ -2744,10 +2300,7 @@ export declare namespace isJsxAttributeValue {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxAttributeValue>;
 }
 
-isJsxAttributeValue.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxAttributeValue> => {
-    const kind = node.kind;
-    return kind === SyntaxKind.StringLiteral || kind === SyntaxKind.JsxExpression || kind === SyntaxKind.JsxElement || kind === SyntaxKind.JsxSelfClosingElement || kind === SyntaxKind.JsxFragment;
-};
+isJsxAttributeValue.Handle = isJsxAttributeValue as any;
 
 export function isClassLikeDeclaration(node: Node): node is ClassLikeDeclaration {
     return node.kind === SyntaxKind.ClassDeclaration || node.kind === SyntaxKind.ClassExpression;
@@ -2757,9 +2310,7 @@ export declare namespace isClassLikeDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ClassLikeDeclaration>;
 }
 
-isClassLikeDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ClassLikeDeclaration> => {
-    return node.kind === SyntaxKind.ClassDeclaration || node.kind === SyntaxKind.ClassExpression;
-};
+isClassLikeDeclaration.Handle = isClassLikeDeclaration as any;
 
 export function isAccessorDeclaration(node: Node): node is AccessorDeclaration {
     return node.kind === SyntaxKind.GetAccessor || node.kind === SyntaxKind.SetAccessor;
@@ -2769,9 +2320,7 @@ export declare namespace isAccessorDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AccessorDeclaration>;
 }
 
-isAccessorDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AccessorDeclaration> => {
-    return node.kind === SyntaxKind.GetAccessor || node.kind === SyntaxKind.SetAccessor;
-};
+isAccessorDeclaration.Handle = isAccessorDeclaration as any;
 
 export function isLiteralLikeNode(node: Node): node is LiteralLikeNode {
     const kind = node.kind;
@@ -2782,10 +2331,7 @@ export declare namespace isLiteralLikeNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, LiteralLikeNode>;
 }
 
-isLiteralLikeNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, LiteralLikeNode> => {
-    const kind = node.kind;
-    return kind === SyntaxKind.StringLiteral || kind === SyntaxKind.NumericLiteral || kind === SyntaxKind.BigIntLiteral || kind === SyntaxKind.RegularExpressionLiteral || kind === SyntaxKind.TemplateHead || kind === SyntaxKind.TemplateMiddle || kind === SyntaxKind.TemplateTail || kind === SyntaxKind.JsxText;
-};
+isLiteralLikeNode.Handle = isLiteralLikeNode as any;
 
 export function isLiteralExpression(node: Node): node is LiteralExpression {
     const kind = node.kind;
@@ -2796,10 +2342,7 @@ export declare namespace isLiteralExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, LiteralExpression>;
 }
 
-isLiteralExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, LiteralExpression> => {
-    const kind = node.kind;
-    return kind === SyntaxKind.StringLiteral || kind === SyntaxKind.NumericLiteral || kind === SyntaxKind.BigIntLiteral || kind === SyntaxKind.RegularExpressionLiteral || kind === SyntaxKind.NoSubstitutionTemplateLiteral;
-};
+isLiteralExpression.Handle = isLiteralExpression as any;
 
 export function isUnionOrIntersectionTypeNode(node: Node): node is UnionOrIntersectionTypeNode {
     return node.kind === SyntaxKind.UnionType || node.kind === SyntaxKind.IntersectionType;
@@ -2809,9 +2352,7 @@ export declare namespace isUnionOrIntersectionTypeNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, UnionOrIntersectionTypeNode>;
 }
 
-isUnionOrIntersectionTypeNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, UnionOrIntersectionTypeNode> => {
-    return node.kind === SyntaxKind.UnionType || node.kind === SyntaxKind.IntersectionType;
-};
+isUnionOrIntersectionTypeNode.Handle = isUnionOrIntersectionTypeNode as any;
 
 export function isTemplateLiteralLikeNode(node: Node): node is TemplateLiteralLikeNode {
     const kind = node.kind;
@@ -2822,10 +2363,7 @@ export declare namespace isTemplateLiteralLikeNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TemplateLiteralLikeNode>;
 }
 
-isTemplateLiteralLikeNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TemplateLiteralLikeNode> => {
-    const kind = node.kind;
-    return isPseudoLiteralKind(kind);
-};
+isTemplateLiteralLikeNode.Handle = isTemplateLiteralLikeNode as any;
 
 export function isTemplateMiddleOrTail(node: Node): node is TemplateMiddleOrTail {
     return node.kind === SyntaxKind.TemplateMiddle || node.kind === SyntaxKind.TemplateTail;
@@ -2835,9 +2373,7 @@ export declare namespace isTemplateMiddleOrTail {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TemplateMiddleOrTail>;
 }
 
-isTemplateMiddleOrTail.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TemplateMiddleOrTail> => {
-    return node.kind === SyntaxKind.TemplateMiddle || node.kind === SyntaxKind.TemplateTail;
-};
+isTemplateMiddleOrTail.Handle = isTemplateMiddleOrTail as any;
 
 export function isTemplateLiteral(node: Node): node is TemplateLiteral {
     return node.kind === SyntaxKind.TemplateExpression || node.kind === SyntaxKind.NoSubstitutionTemplateLiteral;
@@ -2847,9 +2383,7 @@ export declare namespace isTemplateLiteral {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TemplateLiteral>;
 }
 
-isTemplateLiteral.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TemplateLiteral> => {
-    return node.kind === SyntaxKind.TemplateExpression || node.kind === SyntaxKind.NoSubstitutionTemplateLiteral;
-};
+isTemplateLiteral.Handle = isTemplateLiteral as any;
 
 export function isTypePredicateParameterName(node: Node): node is TypePredicateParameterName {
     return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.ThisType;
@@ -2859,9 +2393,7 @@ export declare namespace isTypePredicateParameterName {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TypePredicateParameterName>;
 }
 
-isTypePredicateParameterName.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TypePredicateParameterName> => {
-    return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.ThisType;
-};
+isTypePredicateParameterName.Handle = isTypePredicateParameterName as any;
 
 export function isImportAttributeName(node: Node): node is ImportAttributeName {
     return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.StringLiteral;
@@ -2871,9 +2403,7 @@ export declare namespace isImportAttributeName {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ImportAttributeName>;
 }
 
-isImportAttributeName.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ImportAttributeName> => {
-    return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.StringLiteral;
-};
+isImportAttributeName.Handle = isImportAttributeName as any;
 
 export function isJSDocComment(node: Node): node is JSDocComment {
     const kind = node.kind;
@@ -2884,10 +2414,7 @@ export declare namespace isJSDocComment {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocComment>;
 }
 
-isJSDocComment.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JSDocComment> => {
-    const kind = node.kind;
-    return kind === SyntaxKind.JSDocText || kind === SyntaxKind.JSDocLink || kind === SyntaxKind.JSDocLinkCode || kind === SyntaxKind.JSDocLinkPlain;
-};
+isJSDocComment.Handle = isJSDocComment as any;
 
 export function isSignatureDeclaration(node: Node): node is SignatureDeclaration {
     const kind = node.kind;
@@ -2898,10 +2425,7 @@ export declare namespace isSignatureDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SignatureDeclaration>;
 }
 
-isSignatureDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SignatureDeclaration> => {
-    const kind = node.kind;
-    return kind === SyntaxKind.CallSignature || kind === SyntaxKind.ConstructSignature || kind === SyntaxKind.MethodSignature || kind === SyntaxKind.IndexSignature || kind === SyntaxKind.FunctionType || kind === SyntaxKind.ConstructorType || kind === SyntaxKind.FunctionDeclaration || kind === SyntaxKind.MethodDeclaration || kind === SyntaxKind.Constructor || kind === SyntaxKind.GetAccessor || kind === SyntaxKind.SetAccessor || kind === SyntaxKind.FunctionExpression || kind === SyntaxKind.ArrowFunction;
-};
+isSignatureDeclaration.Handle = isSignatureDeclaration as any;
 
 export function isStringLiteralLikeNode(node: Node): node is StringLiteralLikeNode {
     return node.kind === SyntaxKind.StringLiteral || node.kind === SyntaxKind.NoSubstitutionTemplateLiteral;
@@ -2911,9 +2435,7 @@ export declare namespace isStringLiteralLikeNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, StringLiteralLikeNode>;
 }
 
-isStringLiteralLikeNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, StringLiteralLikeNode> => {
-    return node.kind === SyntaxKind.StringLiteral || node.kind === SyntaxKind.NoSubstitutionTemplateLiteral;
-};
+isStringLiteralLikeNode.Handle = isStringLiteralLikeNode as any;
 
 export function isNumericOrStringLikeLiteral(node: Node): node is NumericOrStringLikeLiteral {
     return node.kind === SyntaxKind.StringLiteral || node.kind === SyntaxKind.NoSubstitutionTemplateLiteral || node.kind === SyntaxKind.NumericLiteral;
@@ -2923,9 +2445,7 @@ export declare namespace isNumericOrStringLikeLiteral {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NumericOrStringLikeLiteral>;
 }
 
-isNumericOrStringLikeLiteral.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NumericOrStringLikeLiteral> => {
-    return node.kind === SyntaxKind.StringLiteral || node.kind === SyntaxKind.NoSubstitutionTemplateLiteral || node.kind === SyntaxKind.NumericLiteral;
-};
+isNumericOrStringLikeLiteral.Handle = isNumericOrStringLikeLiteral as any;
 
 export function isObjectLiteralLikeNode(node: Node): node is ObjectLiteralLikeNode {
     return node.kind === SyntaxKind.ObjectLiteralExpression || node.kind === SyntaxKind.ObjectBindingPattern;
@@ -2935,9 +2455,7 @@ export declare namespace isObjectLiteralLikeNode {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ObjectLiteralLikeNode>;
 }
 
-isObjectLiteralLikeNode.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ObjectLiteralLikeNode> => {
-    return node.kind === SyntaxKind.ObjectLiteralExpression || node.kind === SyntaxKind.ObjectBindingPattern;
-};
+isObjectLiteralLikeNode.Handle = isObjectLiteralLikeNode as any;
 
 export function isObjectTypeDeclaration(node: Node): node is ObjectTypeDeclaration {
     const kind = node.kind;
@@ -2948,10 +2466,7 @@ export declare namespace isObjectTypeDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ObjectTypeDeclaration>;
 }
 
-isObjectTypeDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ObjectTypeDeclaration> => {
-    const kind = node.kind;
-    return kind === SyntaxKind.ClassDeclaration || kind === SyntaxKind.ClassExpression || kind === SyntaxKind.InterfaceDeclaration || kind === SyntaxKind.TypeLiteral;
-};
+isObjectTypeDeclaration.Handle = isObjectTypeDeclaration as any;
 
 export function isJsxOpeningLikeElement(node: Node): node is JsxOpeningLikeElement {
     return node.kind === SyntaxKind.JsxOpeningElement || node.kind === SyntaxKind.JsxSelfClosingElement;
@@ -2961,9 +2476,7 @@ export declare namespace isJsxOpeningLikeElement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxOpeningLikeElement>;
 }
 
-isJsxOpeningLikeElement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, JsxOpeningLikeElement> => {
-    return node.kind === SyntaxKind.JsxOpeningElement || node.kind === SyntaxKind.JsxSelfClosingElement;
-};
+isJsxOpeningLikeElement.Handle = isJsxOpeningLikeElement as any;
 
 export function isNamedImportsOrExports(node: Node): node is NamedImportsOrExports {
     return node.kind === SyntaxKind.NamedImports || node.kind === SyntaxKind.NamedExports;
@@ -2973,9 +2486,7 @@ export declare namespace isNamedImportsOrExports {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NamedImportsOrExports>;
 }
 
-isNamedImportsOrExports.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NamedImportsOrExports> => {
-    return node.kind === SyntaxKind.NamedImports || node.kind === SyntaxKind.NamedExports;
-};
+isNamedImportsOrExports.Handle = isNamedImportsOrExports as any;
 
 export function isBreakOrContinueStatement(node: Node): node is BreakOrContinueStatement {
     return node.kind === SyntaxKind.BreakStatement || node.kind === SyntaxKind.ContinueStatement;
@@ -2985,9 +2496,7 @@ export declare namespace isBreakOrContinueStatement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, BreakOrContinueStatement>;
 }
 
-isBreakOrContinueStatement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, BreakOrContinueStatement> => {
-    return node.kind === SyntaxKind.BreakStatement || node.kind === SyntaxKind.ContinueStatement;
-};
+isBreakOrContinueStatement.Handle = isBreakOrContinueStatement as any;
 
 export function isCallLikeExpression(node: Node): node is CallLikeExpression {
     const kind = node.kind;
@@ -2998,10 +2507,7 @@ export declare namespace isCallLikeExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, CallLikeExpression>;
 }
 
-isCallLikeExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, CallLikeExpression> => {
-    const kind = node.kind;
-    return kind === SyntaxKind.CallExpression || kind === SyntaxKind.NewExpression || kind === SyntaxKind.TaggedTemplateExpression || kind === SyntaxKind.Decorator || kind === SyntaxKind.JsxOpeningElement || kind === SyntaxKind.JsxSelfClosingElement || kind === SyntaxKind.BinaryExpression;
-};
+isCallLikeExpression.Handle = isCallLikeExpression as any;
 
 export function isFunctionLikeDeclaration(node: Node): node is FunctionLikeDeclaration {
     const kind = node.kind;
@@ -3012,10 +2518,7 @@ export declare namespace isFunctionLikeDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, FunctionLikeDeclaration>;
 }
 
-isFunctionLikeDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, FunctionLikeDeclaration> => {
-    const kind = node.kind;
-    return kind === SyntaxKind.FunctionDeclaration || kind === SyntaxKind.MethodDeclaration || kind === SyntaxKind.GetAccessor || kind === SyntaxKind.SetAccessor || kind === SyntaxKind.Constructor || kind === SyntaxKind.FunctionExpression || kind === SyntaxKind.ArrowFunction;
-};
+isFunctionLikeDeclaration.Handle = isFunctionLikeDeclaration as any;
 
 export function isVariableOrParameterDeclaration(node: Node): node is VariableOrParameterDeclaration {
     return node.kind === SyntaxKind.VariableDeclaration || node.kind === SyntaxKind.Parameter;
@@ -3025,9 +2528,7 @@ export declare namespace isVariableOrParameterDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, VariableOrParameterDeclaration>;
 }
 
-isVariableOrParameterDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, VariableOrParameterDeclaration> => {
-    return node.kind === SyntaxKind.VariableDeclaration || node.kind === SyntaxKind.Parameter;
-};
+isVariableOrParameterDeclaration.Handle = isVariableOrParameterDeclaration as any;
 
 export function isVariableOrPropertyDeclaration(node: Node): node is VariableOrPropertyDeclaration {
     return node.kind === SyntaxKind.VariableDeclaration || node.kind === SyntaxKind.PropertyDeclaration;
@@ -3037,9 +2538,7 @@ export declare namespace isVariableOrPropertyDeclaration {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, VariableOrPropertyDeclaration>;
 }
 
-isVariableOrPropertyDeclaration.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, VariableOrPropertyDeclaration> => {
-    return node.kind === SyntaxKind.VariableDeclaration || node.kind === SyntaxKind.PropertyDeclaration;
-};
+isVariableOrPropertyDeclaration.Handle = isVariableOrPropertyDeclaration as any;
 
 export function isCallOrNewExpression(node: Node): node is CallOrNewExpression {
     return node.kind === SyntaxKind.CallExpression || node.kind === SyntaxKind.NewExpression;
@@ -3049,9 +2548,7 @@ export declare namespace isCallOrNewExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, CallOrNewExpression>;
 }
 
-isCallOrNewExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, CallOrNewExpression> => {
-    return node.kind === SyntaxKind.CallExpression || node.kind === SyntaxKind.NewExpression;
-};
+isCallOrNewExpression.Handle = isCallOrNewExpression as any;
 
 export function isImportClauseOrBindingPattern(node: Node): node is ImportClauseOrBindingPattern {
     return node.kind === SyntaxKind.ImportClause || node.kind === SyntaxKind.ObjectBindingPattern || node.kind === SyntaxKind.ArrayBindingPattern;
@@ -3061,9 +2558,7 @@ export declare namespace isImportClauseOrBindingPattern {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ImportClauseOrBindingPattern>;
 }
 
-isImportClauseOrBindingPattern.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ImportClauseOrBindingPattern> => {
-    return node.kind === SyntaxKind.ImportClause || node.kind === SyntaxKind.ObjectBindingPattern || node.kind === SyntaxKind.ArrayBindingPattern;
-};
+isImportClauseOrBindingPattern.Handle = isImportClauseOrBindingPattern as any;
 
 export function isAnyImportSyntax(node: Node): node is AnyImportSyntax {
     return node.kind === SyntaxKind.ImportDeclaration || node.kind === SyntaxKind.JSImportDeclaration || node.kind === SyntaxKind.ImportEqualsDeclaration;
@@ -3073,9 +2568,7 @@ export declare namespace isAnyImportSyntax {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AnyImportSyntax>;
 }
 
-isAnyImportSyntax.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AnyImportSyntax> => {
-    return node.kind === SyntaxKind.ImportDeclaration || node.kind === SyntaxKind.JSImportDeclaration || node.kind === SyntaxKind.ImportEqualsDeclaration;
-};
+isAnyImportSyntax.Handle = isAnyImportSyntax as any;
 
 export function isArrayBindingElement(node: Node): node is ArrayBindingElement {
     return node.kind === SyntaxKind.BindingElement || node.kind === SyntaxKind.OmittedExpression;
@@ -3085,9 +2578,7 @@ export declare namespace isArrayBindingElement {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ArrayBindingElement>;
 }
 
-isArrayBindingElement.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ArrayBindingElement> => {
-    return node.kind === SyntaxKind.BindingElement || node.kind === SyntaxKind.OmittedExpression;
-};
+isArrayBindingElement.Handle = isArrayBindingElement as any;
 
 export function isAssertionExpression(node: Node): node is AssertionExpression {
     return node.kind === SyntaxKind.TypeAssertionExpression || node.kind === SyntaxKind.AsExpression;
@@ -3097,9 +2588,7 @@ export declare namespace isAssertionExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AssertionExpression>;
 }
 
-isAssertionExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AssertionExpression> => {
-    return node.kind === SyntaxKind.TypeAssertionExpression || node.kind === SyntaxKind.AsExpression;
-};
+isAssertionExpression.Handle = isAssertionExpression as any;
 
 export function isBooleanLiteral(node: Node): node is BooleanLiteral {
     return node.kind === SyntaxKind.TrueKeyword || node.kind === SyntaxKind.FalseKeyword;
@@ -3109,9 +2598,7 @@ export declare namespace isBooleanLiteral {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, BooleanLiteral>;
 }
 
-isBooleanLiteral.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, BooleanLiteral> => {
-    return node.kind === SyntaxKind.TrueKeyword || node.kind === SyntaxKind.FalseKeyword;
-};
+isBooleanLiteral.Handle = isBooleanLiteral as any;
 
 export function isDestructuringAssignment(node: Node): node is DestructuringAssignment {
     return node.kind === SyntaxKind.BinaryExpression;
@@ -3121,9 +2608,7 @@ export declare namespace isDestructuringAssignment {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, DestructuringAssignment>;
 }
 
-isDestructuringAssignment.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, DestructuringAssignment> => {
-    return node.kind === SyntaxKind.BinaryExpression;
-};
+isDestructuringAssignment.Handle = isDestructuringAssignment as any;
 
 export function isLiteralToken(node: Node): node is LiteralToken {
     const kind = node.kind;
@@ -3134,10 +2619,7 @@ export declare namespace isLiteralToken {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, LiteralToken>;
 }
 
-isLiteralToken.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, LiteralToken> => {
-    const kind = node.kind;
-    return kind === SyntaxKind.NumericLiteral || kind === SyntaxKind.BigIntLiteral || kind === SyntaxKind.StringLiteral || kind === SyntaxKind.JsxText || kind === SyntaxKind.RegularExpressionLiteral || kind === SyntaxKind.NoSubstitutionTemplateLiteral;
-};
+isLiteralToken.Handle = isLiteralToken as any;
 
 export function isModifier(node: Node): node is Modifier {
     const kind = node.kind;
@@ -3148,10 +2630,7 @@ export declare namespace isModifier {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, Modifier>;
 }
 
-isModifier.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, Modifier> => {
-    const kind = node.kind;
-    return isModifierKind(kind);
-};
+isModifier.Handle = isModifier as any;
 
 export function isObjectLiteralElementLike(node: Node): node is ObjectLiteralElementLike {
     const kind = node.kind;
@@ -3162,10 +2641,7 @@ export declare namespace isObjectLiteralElementLike {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ObjectLiteralElementLike>;
 }
 
-isObjectLiteralElementLike.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ObjectLiteralElementLike> => {
-    const kind = node.kind;
-    return kind === SyntaxKind.PropertyAssignment || kind === SyntaxKind.ShorthandPropertyAssignment || kind === SyntaxKind.SpreadAssignment || kind === SyntaxKind.MethodDeclaration || kind === SyntaxKind.GetAccessor || kind === SyntaxKind.SetAccessor;
-};
+isObjectLiteralElementLike.Handle = isObjectLiteralElementLike as any;
 
 export function isPropertyNameLiteral(node: Node): node is PropertyNameLiteral {
     return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.StringLiteral || node.kind === SyntaxKind.NumericLiteral;
@@ -3175,9 +2651,7 @@ export declare namespace isPropertyNameLiteral {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PropertyNameLiteral>;
 }
 
-isPropertyNameLiteral.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PropertyNameLiteral> => {
-    return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.StringLiteral || node.kind === SyntaxKind.NumericLiteral;
-};
+isPropertyNameLiteral.Handle = isPropertyNameLiteral as any;
 
 export function isPseudoLiteralToken(node: Node): node is PseudoLiteralToken {
     const kind = node.kind;
@@ -3188,10 +2662,7 @@ export declare namespace isPseudoLiteralToken {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PseudoLiteralToken>;
 }
 
-isPseudoLiteralToken.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PseudoLiteralToken> => {
-    const kind = node.kind;
-    return isPseudoLiteralKind(kind);
-};
+isPseudoLiteralToken.Handle = isPseudoLiteralToken as any;
 
 export function isTemplateLiteralToken(node: Node): node is TemplateLiteralToken {
     const kind = node.kind;
@@ -3202,10 +2673,7 @@ export declare namespace isTemplateLiteralToken {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TemplateLiteralToken>;
 }
 
-isTemplateLiteralToken.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TemplateLiteralToken> => {
-    const kind = node.kind;
-    return kind === SyntaxKind.NoSubstitutionTemplateLiteral || kind === SyntaxKind.TemplateHead || kind === SyntaxKind.TemplateMiddle || kind === SyntaxKind.TemplateTail;
-};
+isTemplateLiteralToken.Handle = isTemplateLiteralToken as any;
 
 export function isArrayDestructuringAssignment(node: Node): node is ArrayDestructuringAssignment {
     return node.kind === SyntaxKind.BinaryExpression;
@@ -3215,9 +2683,7 @@ export declare namespace isArrayDestructuringAssignment {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ArrayDestructuringAssignment>;
 }
 
-isArrayDestructuringAssignment.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ArrayDestructuringAssignment> => {
-    return node.kind === SyntaxKind.BinaryExpression;
-};
+isArrayDestructuringAssignment.Handle = isArrayDestructuringAssignment as any;
 
 export function isObjectDestructuringAssignment(node: Node): node is ObjectDestructuringAssignment {
     return node.kind === SyntaxKind.BinaryExpression;
@@ -3227,9 +2693,7 @@ export declare namespace isObjectDestructuringAssignment {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ObjectDestructuringAssignment>;
 }
 
-isObjectDestructuringAssignment.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ObjectDestructuringAssignment> => {
-    return node.kind === SyntaxKind.BinaryExpression;
-};
+isObjectDestructuringAssignment.Handle = isObjectDestructuringAssignment as any;
 
 export function isFunctionBody(node: Node): node is FunctionBody {
     return node.kind === SyntaxKind.Block;
@@ -3239,9 +2703,7 @@ export declare namespace isFunctionBody {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, FunctionBody>;
 }
 
-isFunctionBody.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, FunctionBody> => {
-    return node.kind === SyntaxKind.Block;
-};
+isFunctionBody.Handle = isFunctionBody as any;
 
 export function isTriviaKind(kind: SyntaxKind): kind is TriviaSyntaxKind {
     return kind === SyntaxKind.SingleLineCommentTrivia
@@ -3479,9 +2941,7 @@ export declare namespace isEndOfFile {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, EndOfFile>;
 }
 
-isEndOfFile.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, EndOfFile> => {
-    return node.kind === SyntaxKind.EndOfFile;
-};
+isEndOfFile.Handle = isEndOfFile as any;
 
 export function isDotToken(node: Node): node is DotToken {
     return node.kind === SyntaxKind.DotToken;
@@ -3491,9 +2951,7 @@ export declare namespace isDotToken {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, DotToken>;
 }
 
-isDotToken.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, DotToken> => {
-    return node.kind === SyntaxKind.DotToken;
-};
+isDotToken.Handle = isDotToken as any;
 
 export function isDotDotDotToken(node: Node): node is DotDotDotToken {
     return node.kind === SyntaxKind.DotDotDotToken;
@@ -3503,9 +2961,7 @@ export declare namespace isDotDotDotToken {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, DotDotDotToken>;
 }
 
-isDotDotDotToken.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, DotDotDotToken> => {
-    return node.kind === SyntaxKind.DotDotDotToken;
-};
+isDotDotDotToken.Handle = isDotDotDotToken as any;
 
 export function isQuestionToken(node: Node): node is QuestionToken {
     return node.kind === SyntaxKind.QuestionToken;
@@ -3515,9 +2971,7 @@ export declare namespace isQuestionToken {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, QuestionToken>;
 }
 
-isQuestionToken.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, QuestionToken> => {
-    return node.kind === SyntaxKind.QuestionToken;
-};
+isQuestionToken.Handle = isQuestionToken as any;
 
 export function isExclamationToken(node: Node): node is ExclamationToken {
     return node.kind === SyntaxKind.ExclamationToken;
@@ -3527,9 +2981,7 @@ export declare namespace isExclamationToken {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ExclamationToken>;
 }
 
-isExclamationToken.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ExclamationToken> => {
-    return node.kind === SyntaxKind.ExclamationToken;
-};
+isExclamationToken.Handle = isExclamationToken as any;
 
 export function isColonToken(node: Node): node is ColonToken {
     return node.kind === SyntaxKind.ColonToken;
@@ -3539,9 +2991,7 @@ export declare namespace isColonToken {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ColonToken>;
 }
 
-isColonToken.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ColonToken> => {
-    return node.kind === SyntaxKind.ColonToken;
-};
+isColonToken.Handle = isColonToken as any;
 
 export function isEqualsToken(node: Node): node is EqualsToken {
     return node.kind === SyntaxKind.EqualsToken;
@@ -3551,9 +3001,7 @@ export declare namespace isEqualsToken {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, EqualsToken>;
 }
 
-isEqualsToken.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, EqualsToken> => {
-    return node.kind === SyntaxKind.EqualsToken;
-};
+isEqualsToken.Handle = isEqualsToken as any;
 
 export function isAsteriskToken(node: Node): node is AsteriskToken {
     return node.kind === SyntaxKind.AsteriskToken;
@@ -3563,9 +3011,7 @@ export declare namespace isAsteriskToken {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AsteriskToken>;
 }
 
-isAsteriskToken.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AsteriskToken> => {
-    return node.kind === SyntaxKind.AsteriskToken;
-};
+isAsteriskToken.Handle = isAsteriskToken as any;
 
 export function isEqualsGreaterThanToken(node: Node): node is EqualsGreaterThanToken {
     return node.kind === SyntaxKind.EqualsGreaterThanToken;
@@ -3575,9 +3021,7 @@ export declare namespace isEqualsGreaterThanToken {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, EqualsGreaterThanToken>;
 }
 
-isEqualsGreaterThanToken.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, EqualsGreaterThanToken> => {
-    return node.kind === SyntaxKind.EqualsGreaterThanToken;
-};
+isEqualsGreaterThanToken.Handle = isEqualsGreaterThanToken as any;
 
 export function isPlusToken(node: Node): node is PlusToken {
     return node.kind === SyntaxKind.PlusToken;
@@ -3587,9 +3031,7 @@ export declare namespace isPlusToken {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PlusToken>;
 }
 
-isPlusToken.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PlusToken> => {
-    return node.kind === SyntaxKind.PlusToken;
-};
+isPlusToken.Handle = isPlusToken as any;
 
 export function isMinusToken(node: Node): node is MinusToken {
     return node.kind === SyntaxKind.MinusToken;
@@ -3599,9 +3041,7 @@ export declare namespace isMinusToken {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, MinusToken>;
 }
 
-isMinusToken.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, MinusToken> => {
-    return node.kind === SyntaxKind.MinusToken;
-};
+isMinusToken.Handle = isMinusToken as any;
 
 export function isQuestionDotToken(node: Node): node is QuestionDotToken {
     return node.kind === SyntaxKind.QuestionDotToken;
@@ -3611,9 +3051,7 @@ export declare namespace isQuestionDotToken {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, QuestionDotToken>;
 }
 
-isQuestionDotToken.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, QuestionDotToken> => {
-    return node.kind === SyntaxKind.QuestionDotToken;
-};
+isQuestionDotToken.Handle = isQuestionDotToken as any;
 
 export function isAssertsKeyword(node: Node): node is AssertsKeyword {
     return node.kind === SyntaxKind.AssertsKeyword;
@@ -3623,9 +3061,7 @@ export declare namespace isAssertsKeyword {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AssertsKeyword>;
 }
 
-isAssertsKeyword.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AssertsKeyword> => {
-    return node.kind === SyntaxKind.AssertsKeyword;
-};
+isAssertsKeyword.Handle = isAssertsKeyword as any;
 
 export function isAssertKeyword(node: Node): node is AssertKeyword {
     return node.kind === SyntaxKind.AssertKeyword;
@@ -3635,9 +3071,7 @@ export declare namespace isAssertKeyword {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AssertKeyword>;
 }
 
-isAssertKeyword.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AssertKeyword> => {
-    return node.kind === SyntaxKind.AssertKeyword;
-};
+isAssertKeyword.Handle = isAssertKeyword as any;
 
 export function isAwaitKeyword(node: Node): node is AwaitKeyword {
     return node.kind === SyntaxKind.AwaitKeyword;
@@ -3647,9 +3081,7 @@ export declare namespace isAwaitKeyword {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AwaitKeyword>;
 }
 
-isAwaitKeyword.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AwaitKeyword> => {
-    return node.kind === SyntaxKind.AwaitKeyword;
-};
+isAwaitKeyword.Handle = isAwaitKeyword as any;
 
 export function isCaseKeyword(node: Node): node is CaseKeyword {
     return node.kind === SyntaxKind.CaseKeyword;
@@ -3659,9 +3091,7 @@ export declare namespace isCaseKeyword {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, CaseKeyword>;
 }
 
-isCaseKeyword.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, CaseKeyword> => {
-    return node.kind === SyntaxKind.CaseKeyword;
-};
+isCaseKeyword.Handle = isCaseKeyword as any;
 
 export function isAbstractKeyword(node: Node): node is AbstractKeyword {
     return node.kind === SyntaxKind.AbstractKeyword;
@@ -3671,9 +3101,7 @@ export declare namespace isAbstractKeyword {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AbstractKeyword>;
 }
 
-isAbstractKeyword.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AbstractKeyword> => {
-    return node.kind === SyntaxKind.AbstractKeyword;
-};
+isAbstractKeyword.Handle = isAbstractKeyword as any;
 
 export function isAccessorKeyword(node: Node): node is AccessorKeyword {
     return node.kind === SyntaxKind.AccessorKeyword;
@@ -3683,9 +3111,7 @@ export declare namespace isAccessorKeyword {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AccessorKeyword>;
 }
 
-isAccessorKeyword.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AccessorKeyword> => {
-    return node.kind === SyntaxKind.AccessorKeyword;
-};
+isAccessorKeyword.Handle = isAccessorKeyword as any;
 
 export function isAsyncKeyword(node: Node): node is AsyncKeyword {
     return node.kind === SyntaxKind.AsyncKeyword;
@@ -3695,9 +3121,7 @@ export declare namespace isAsyncKeyword {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AsyncKeyword>;
 }
 
-isAsyncKeyword.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AsyncKeyword> => {
-    return node.kind === SyntaxKind.AsyncKeyword;
-};
+isAsyncKeyword.Handle = isAsyncKeyword as any;
 
 export function isConstKeyword(node: Node): node is ConstKeyword {
     return node.kind === SyntaxKind.ConstKeyword;
@@ -3707,9 +3131,7 @@ export declare namespace isConstKeyword {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ConstKeyword>;
 }
 
-isConstKeyword.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ConstKeyword> => {
-    return node.kind === SyntaxKind.ConstKeyword;
-};
+isConstKeyword.Handle = isConstKeyword as any;
 
 export function isDeclareKeyword(node: Node): node is DeclareKeyword {
     return node.kind === SyntaxKind.DeclareKeyword;
@@ -3719,9 +3141,7 @@ export declare namespace isDeclareKeyword {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, DeclareKeyword>;
 }
 
-isDeclareKeyword.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, DeclareKeyword> => {
-    return node.kind === SyntaxKind.DeclareKeyword;
-};
+isDeclareKeyword.Handle = isDeclareKeyword as any;
 
 export function isDefaultKeyword(node: Node): node is DefaultKeyword {
     return node.kind === SyntaxKind.DefaultKeyword;
@@ -3731,9 +3151,7 @@ export declare namespace isDefaultKeyword {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, DefaultKeyword>;
 }
 
-isDefaultKeyword.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, DefaultKeyword> => {
-    return node.kind === SyntaxKind.DefaultKeyword;
-};
+isDefaultKeyword.Handle = isDefaultKeyword as any;
 
 export function isExportKeyword(node: Node): node is ExportKeyword {
     return node.kind === SyntaxKind.ExportKeyword;
@@ -3743,9 +3161,7 @@ export declare namespace isExportKeyword {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ExportKeyword>;
 }
 
-isExportKeyword.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ExportKeyword> => {
-    return node.kind === SyntaxKind.ExportKeyword;
-};
+isExportKeyword.Handle = isExportKeyword as any;
 
 export function isInKeyword(node: Node): node is InKeyword {
     return node.kind === SyntaxKind.InKeyword;
@@ -3755,9 +3171,7 @@ export declare namespace isInKeyword {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, InKeyword>;
 }
 
-isInKeyword.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, InKeyword> => {
-    return node.kind === SyntaxKind.InKeyword;
-};
+isInKeyword.Handle = isInKeyword as any;
 
 export function isPrivateKeyword(node: Node): node is PrivateKeyword {
     return node.kind === SyntaxKind.PrivateKeyword;
@@ -3767,9 +3181,7 @@ export declare namespace isPrivateKeyword {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PrivateKeyword>;
 }
 
-isPrivateKeyword.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PrivateKeyword> => {
-    return node.kind === SyntaxKind.PrivateKeyword;
-};
+isPrivateKeyword.Handle = isPrivateKeyword as any;
 
 export function isProtectedKeyword(node: Node): node is ProtectedKeyword {
     return node.kind === SyntaxKind.ProtectedKeyword;
@@ -3779,9 +3191,7 @@ export declare namespace isProtectedKeyword {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ProtectedKeyword>;
 }
 
-isProtectedKeyword.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ProtectedKeyword> => {
-    return node.kind === SyntaxKind.ProtectedKeyword;
-};
+isProtectedKeyword.Handle = isProtectedKeyword as any;
 
 export function isPublicKeyword(node: Node): node is PublicKeyword {
     return node.kind === SyntaxKind.PublicKeyword;
@@ -3791,9 +3201,7 @@ export declare namespace isPublicKeyword {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PublicKeyword>;
 }
 
-isPublicKeyword.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, PublicKeyword> => {
-    return node.kind === SyntaxKind.PublicKeyword;
-};
+isPublicKeyword.Handle = isPublicKeyword as any;
 
 export function isReadonlyKeyword(node: Node): node is ReadonlyKeyword {
     return node.kind === SyntaxKind.ReadonlyKeyword;
@@ -3803,9 +3211,7 @@ export declare namespace isReadonlyKeyword {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ReadonlyKeyword>;
 }
 
-isReadonlyKeyword.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ReadonlyKeyword> => {
-    return node.kind === SyntaxKind.ReadonlyKeyword;
-};
+isReadonlyKeyword.Handle = isReadonlyKeyword as any;
 
 export function isOutKeyword(node: Node): node is OutKeyword {
     return node.kind === SyntaxKind.OutKeyword;
@@ -3815,9 +3221,7 @@ export declare namespace isOutKeyword {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, OutKeyword>;
 }
 
-isOutKeyword.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, OutKeyword> => {
-    return node.kind === SyntaxKind.OutKeyword;
-};
+isOutKeyword.Handle = isOutKeyword as any;
 
 export function isOverrideKeyword(node: Node): node is OverrideKeyword {
     return node.kind === SyntaxKind.OverrideKeyword;
@@ -3827,9 +3231,7 @@ export declare namespace isOverrideKeyword {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, OverrideKeyword>;
 }
 
-isOverrideKeyword.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, OverrideKeyword> => {
-    return node.kind === SyntaxKind.OverrideKeyword;
-};
+isOverrideKeyword.Handle = isOverrideKeyword as any;
 
 export function isStaticKeyword(node: Node): node is StaticKeyword {
     return node.kind === SyntaxKind.StaticKeyword;
@@ -3839,9 +3241,7 @@ export declare namespace isStaticKeyword {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, StaticKeyword>;
 }
 
-isStaticKeyword.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, StaticKeyword> => {
-    return node.kind === SyntaxKind.StaticKeyword;
-};
+isStaticKeyword.Handle = isStaticKeyword as any;
 
 export function isBinaryOperatorToken(node: Node): node is BinaryOperatorToken {
     return isBinaryOperator(node.kind);
@@ -3851,9 +3251,7 @@ export declare namespace isBinaryOperatorToken {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, BinaryOperatorToken>;
 }
 
-isBinaryOperatorToken.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, BinaryOperatorToken> => {
-    return isBinaryOperator(node.kind);
-};
+isBinaryOperatorToken.Handle = isBinaryOperatorToken as any;
 
 export function isAssignmentOperatorToken(node: Node): node is AssignmentOperatorToken {
     return isAssignmentOperator(node.kind);
@@ -3863,9 +3261,7 @@ export declare namespace isAssignmentOperatorToken {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AssignmentOperatorToken>;
 }
 
-isAssignmentOperatorToken.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, AssignmentOperatorToken> => {
-    return isAssignmentOperator(node.kind);
-};
+isAssignmentOperatorToken.Handle = isAssignmentOperatorToken as any;
 
 export function isNullLiteral(node: Node): node is NullLiteral {
     return node.kind === SyntaxKind.NullKeyword;
@@ -3875,9 +3271,7 @@ export declare namespace isNullLiteral {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NullLiteral>;
 }
 
-isNullLiteral.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, NullLiteral> => {
-    return node.kind === SyntaxKind.NullKeyword;
-};
+isNullLiteral.Handle = isNullLiteral as any;
 
 export function isTrueLiteral(node: Node): node is TrueLiteral {
     return node.kind === SyntaxKind.TrueKeyword;
@@ -3887,9 +3281,7 @@ export declare namespace isTrueLiteral {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TrueLiteral>;
 }
 
-isTrueLiteral.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, TrueLiteral> => {
-    return node.kind === SyntaxKind.TrueKeyword;
-};
+isTrueLiteral.Handle = isTrueLiteral as any;
 
 export function isFalseLiteral(node: Node): node is FalseLiteral {
     return node.kind === SyntaxKind.FalseKeyword;
@@ -3899,9 +3291,7 @@ export declare namespace isFalseLiteral {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, FalseLiteral>;
 }
 
-isFalseLiteral.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, FalseLiteral> => {
-    return node.kind === SyntaxKind.FalseKeyword;
-};
+isFalseLiteral.Handle = isFalseLiteral as any;
 
 export function isThisExpression(node: Node): node is ThisExpression {
     return node.kind === SyntaxKind.ThisKeyword;
@@ -3911,9 +3301,7 @@ export declare namespace isThisExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ThisExpression>;
 }
 
-isThisExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ThisExpression> => {
-    return node.kind === SyntaxKind.ThisKeyword;
-};
+isThisExpression.Handle = isThisExpression as any;
 
 export function isSuperExpression(node: Node): node is SuperExpression {
     return node.kind === SyntaxKind.SuperKeyword;
@@ -3923,9 +3311,7 @@ export declare namespace isSuperExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SuperExpression>;
 }
 
-isSuperExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, SuperExpression> => {
-    return node.kind === SyntaxKind.SuperKeyword;
-};
+isSuperExpression.Handle = isSuperExpression as any;
 
 export function isImportExpression(node: Node): node is ImportExpression {
     return node.kind === SyntaxKind.ImportKeyword;
@@ -3935,6 +3321,4 @@ export declare namespace isImportExpression {
     function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ImportExpression>;
 }
 
-isImportExpression.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ImportExpression> => {
-    return node.kind === SyntaxKind.ImportKeyword;
-};
+isImportExpression.Handle = isImportExpression as any;

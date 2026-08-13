@@ -1432,33 +1432,29 @@ function generateIsGenerated(): string {
     // ── Simple guards ──
     for (const g of guards) {
         out.push(`export function ${g.funcName}(node: Node): node is ${g.typeName} {`);
-        const functionContent = [];
         if (g.kindAliasConstraint) {
             // Use the kind-level guard for nodes with a kind alias constraint
-            functionContent.push(`    return ${kindGuardName(g.kindAliasConstraint)}(node.kind);`);
+            out.push(`    return ${kindGuardName(g.kindAliasConstraint)}(node.kind);`);
         }
         else if (g.kindChecks.length === 1) {
-            functionContent.push(`    return node.kind === ${g.kindChecks[0]};`);
+            out.push(`    return node.kind === ${g.kindChecks[0]};`);
         }
         else {
-            functionContent.push(`    switch (node.kind) {`);
+            out.push(`    switch (node.kind) {`);
             for (const kindCheck of g.kindChecks) {
-                functionContent.push(`        case ${kindCheck}:`);
+                out.push(`        case ${kindCheck}:`);
             }
-            functionContent.push(`            return true;`);
-            functionContent.push(`        default:`);
-            functionContent.push(`            return false;`);
-            functionContent.push(`    }`);
+            out.push(`            return true;`);
+            out.push(`        default:`);
+            out.push(`            return false;`);
+            out.push(`    }`);
         }
-        out.push(...functionContent);
         out.push(`}`);
         out.push(``);
         out.push(`export declare namespace ${g.funcName} {`);
         out.push(`    function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ${g.typeName}>;`);
         out.push(`}`);
-        out.push(`${g.funcName}.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ${g.typeName}> => {`);
-        out.push(...functionContent);
-        out.push(`}`);
+        out.push(`${g.funcName}.Handle = ${g.funcName} as any;`);
         out.push(``);
     }
 
@@ -1472,9 +1468,7 @@ function generateIsGenerated(): string {
         out.push(`    function Handle<T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ${g.typeName}>;`);
         out.push(`}`);
         out.push(``);
-        out.push(`${g.funcName}.Handle = <T extends NodeHandleLike<Node>>(node: T): node is SpecializeNodeHandle<T, ${g.typeName}> => {`);
-        out.push(`    ${g.body}`);
-        out.push(`}`);
+        out.push(`${g.funcName}.Handle = ${g.funcName} as any;`);
         out.push(``);
     }
 
@@ -1511,9 +1505,7 @@ function generateIsGenerated(): string {
         out.push(`    function Handle<T extends NodeHandleLike<Node>>(node: T): ${handleReturnType};`);
         out.push(`}`);
         out.push(``);
-        out.push(`${g.funcName}.Handle = <T extends NodeHandleLike<Node>>(node: T): ${handleReturnType} => {`);
-        out.push(`    ${g.body}`);
-        out.push(`}`);
+        out.push(`${g.funcName}.Handle = ${g.funcName} as any;`);
         out.push(``);
     }
 
