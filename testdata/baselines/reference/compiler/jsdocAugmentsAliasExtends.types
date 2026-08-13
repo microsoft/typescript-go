@@ -4,6 +4,9 @@
 declare class Base {
 >Base : Base
 }
+declare class Other {
+>Other : Other
+}
 declare const StateDependencies_base: typeof Base;
 >StateDependencies_base : typeof Base
 >Base : typeof Base
@@ -14,5 +17,12 @@ declare const StateDependencies_base: typeof Base;
 export declare class StateDependencies extends StateDependencies_base {
 >StateDependencies : StateDependencies
 >StateDependencies_base : Base
+}
+/**
+ * @augments {Base}
+ */
+export declare class TypeScriptStateDependencies extends Other {
+>TypeScriptStateDependencies : TypeScriptStateDependencies
+>Other : Other
 }
 

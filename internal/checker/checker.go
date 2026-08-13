@@ -4401,6 +4401,9 @@ func (c *Checker) checkClassLikeDeclaration(node *ast.Node) {
 }
 
 func (c *Checker) checkJSDocAugmentsTagMatchesExtends(node *ast.Node, baseTypeNode *ast.ExpressionWithTypeArgumentsNode, baseType *Type) {
+	if !ast.IsInJSFile(node) {
+		return
+	}
 	file := ast.GetSourceFileOfNode(node)
 	for _, j := range node.EagerJSDoc(file) {
 		if j.AsJSDoc().Tags == nil {
