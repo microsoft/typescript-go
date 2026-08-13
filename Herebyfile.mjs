@@ -1609,7 +1609,7 @@ const getPlatforms = memoize(() => {
     const publishTag = getPublishTag();
     let supportedPlatforms = publishAsTypescript && publishTag !== "next"
         ? platforms
-        : platforms.filter(({ os, vsix }) => vsix || os === "android");
+        : platforms.filter(({ vsix }) => vsix);
 
     if (!options.forRelease) {
         supportedPlatforms = supportedPlatforms.filter(({ os, arch }) => os === process.platform && arch === process.arch);
