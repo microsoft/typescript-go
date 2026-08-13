@@ -329,18 +329,7 @@ func (p *Project) getCommandLineWithTypingsFiles() *tsoptions.ParsedCommandLine 
 			newRootNames = append(newRootNames, originalRootNames...)
 			newRootNames = append(newRootNames, p.typingsFiles...)
 
-			// Create a new ParsedCommandLine with the augmented root file names
-			p.commandLineWithTypingsFiles = tsoptions.NewParsedCommandLine(
-				p.CommandLine.CompilerOptions(),
-				newRootNames,
-				tspath.ComparePathsOptions{
-					UseCaseSensitiveFileNames: p.host.FS().UseCaseSensitiveFileNames(),
-					CurrentDirectory:          p.currentDirectory,
-				},
-			)
-			// Preserve the original command line's content mappers: without them the augmented
-			// command line would treat content-mapped root files as unsupported files.
-			p.commandLineWithTypingsFiles.ParsedConfig.ContentMappers = p.CommandLine.ContentMappers()
+			p.commandLineWithTypingsFiles = p.CommandLine.WithFileNames(newRootNames)
 		}
 	})
 	return p.commandLineWithTypingsFiles

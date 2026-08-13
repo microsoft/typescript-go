@@ -412,7 +412,7 @@ func (h *host) Project(spec ProjectSpec) Project {
 	if lease := h.projectLeases[key]; lease != nil {
 		return lease.retainLocked()
 	}
-	lease := &projectLease{host: h, key: key, entries: make(map[*Mapper]string, len(spec.Mappers))}
+	lease := &projectLease{host: h, key: key, mappers: slices.Clone(spec.Mappers), entries: make(map[*Mapper]string, len(spec.Mappers))}
 	lease.refs = 1
 	for _, mapper := range spec.Mappers {
 		entryKey := fmt.Sprintf("%s:%d", mapper.Identity(), h.nextProjectID)
@@ -623,6 +623,7 @@ func (h *host) connForLocked(mapper *Mapper) (ipc.Conn, PositionEncoding, string
 type projectLease struct {
 	host    *host
 	key     string
+	mappers []*Mapper
 	entries map[*Mapper]string
 	refs    int
 	once    sync.Once
@@ -666,7 +667,8 @@ func (p *projectLease) Identities() ([]string, error) {
 	p.host.mu.Lock()
 	defer p.host.mu.Unlock()
 	identities := make([]string, 0, len(p.entries))
-	for mapper, key := range p.entries {
+	for _, mapper := range p.mappers {
+		key := p.entries[mapper]
 		entry := p.host.projects[key]
 		if mapper.DynamicConfig {
 			if err := p.host.openProjectLocked(p.host.ctx, entry); err != nil {
@@ -678,7 +680,6 @@ func (p *projectLease) Identities() ([]string, error) {
 			identities = append(identities, mapper.Identity()+":"+hex.EncodeToString(hash[:]))
 		}
 	}
-	slices.Sort(identities)
 	return identities, nil
 }
 

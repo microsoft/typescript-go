@@ -1,10 +1,13 @@
 package tsoptions
 
 import (
+	"slices"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/contentmapper"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
@@ -23,6 +26,41 @@ func TestGetContentMapperForFileNameUsesLongestExtension(t *testing.T) {
 	assert.Equal(t, commandLine.GetContentMapperForFileName("/src/Component.y.z"), yzMapper)
 	assert.Equal(t, commandLine.GetContentMapperForFileName("/src/Component.z"), zMapper)
 }
+
+func TestGetContentMapperForFileNameUsesHostCaseSensitivity(t *testing.T) {
+	t.Parallel()
+	mapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".vue"}}}
+	insensitive := &ParsedCommandLine{
+		ParsedConfig:        &ParsedOptions{ContentMappers: []*contentmapper.Mapper{mapper}},
+		comparePathsOptions: tspath.ComparePathsOptions{UseCaseSensitiveFileNames: false},
+	}
+	sensitive := &ParsedCommandLine{
+		ParsedConfig:        &ParsedOptions{ContentMappers: []*contentmapper.Mapper{mapper}},
+		comparePathsOptions: tspath.ComparePathsOptions{UseCaseSensitiveFileNames: true},
+	}
+
+	assert.Equal(t, insensitive.GetContentMapperForFileName("/src/Component.VUE"), mapper)
+	assert.Assert(t, sensitive.GetContentMapperForFileName("/src/Component.VUE") == nil)
+}
+
+func TestGetOutputFileNamesExcludesMapperOwnedOutputs(t *testing.T) {
+	t.Parallel()
+	mapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".vue"}}}
+	commandLine := NewParsedCommandLine(
+		&core.CompilerOptions{
+			OutDir:         "/dist",
+			Declaration:    core.TSTrue,
+			DeclarationMap: core.TSTrue,
+			SourceMap:      core.TSTrue,
+		},
+		[]string{"/src/Component.vue"},
+		tspath.ComparePathsOptions{CurrentDirectory: "/", UseCaseSensitiveFileNames: true},
+	)
+	commandLine.ParsedConfig.ContentMappers = []*contentmapper.Mapper{mapper}
+
+	assert.DeepEqual(t, slices.Collect(commandLine.GetOutputFileNames()), []string{"/dist/Component.d.vue.ts"})
+}
+
 func (h resolveContentMapperHost) FS() vfs.FS                  { return h.fs }
 func (h resolveContentMapperHost) GetCurrentDirectory() string { return "/home/project" }
 

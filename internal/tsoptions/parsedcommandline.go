@@ -88,6 +88,22 @@ func NewParsedCommandLine(
 	}
 }
 
+func (p *ParsedCommandLine) WithFileNames(fileNames []string) *ParsedCommandLine {
+	parsedConfig := *p.ParsedConfig
+	parsedConfig.FileNames = fileNames
+	return &ParsedCommandLine{
+		ParsedConfig:        &parsedConfig,
+		ConfigFile:          p.ConfigFile,
+		Errors:              p.Errors,
+		Raw:                 p.Raw,
+		CompileOnSave:       p.CompileOnSave,
+		comparePathsOptions: p.comparePathsOptions,
+		wildcardDirectories: p.wildcardDirectories,
+		includeGlobs:        p.includeGlobs,
+		literalFileNamesLen: p.literalFileNamesLen,
+	}
+}
+
 type SourceOutputAndProjectReference struct {
 	Source    string
 	OutputDts string
@@ -220,7 +236,7 @@ func (p *ParsedCommandLine) GetOutputFileNames() iter.Seq[string] {
 					if !yield(dtsFileName) {
 						return
 					}
-					if p.CompilerOptions().GetAreDeclarationMapsEnabled() {
+					if p.GetContentMapperForFileName(fileName) == nil && p.CompilerOptions().GetAreDeclarationMapsEnabled() {
 						declarationMap := dtsFileName + ".map"
 						if !yield(declarationMap) {
 							return
@@ -346,9 +362,12 @@ func (p *ParsedCommandLine) ContentMapperExtensions() []string {
 // GetContentMapperForFileName returns the configured content mapper whose extensions include fileName,
 // or nil if no content mapper is registered for the file's extension.
 func (p *ParsedCommandLine) GetContentMapperForFileName(fileName string) *contentmapper.Mapper {
-	extension := tspath.GetLongestExtensionFromPath(fileName, p.ContentMapperExtensions(), false)
+	ignoreCase := !p.UseCaseSensitiveFileNames()
+	extension := tspath.GetLongestExtensionFromPath(fileName, p.ContentMapperExtensions(), ignoreCase)
 	for _, mapper := range p.ContentMappers() {
-		if slices.Contains(mapper.Definition.Extensions, extension) {
+		if slices.ContainsFunc(mapper.Definition.Extensions, func(mapperExtension string) bool {
+			return extension == mapperExtension || ignoreCase && strings.EqualFold(extension, mapperExtension)
+		}) {
 			return mapper
 		}
 	}
@@ -391,6 +410,12 @@ func (p *ParsedCommandLine) PossiblyMatchesFileName(fileName string) bool {
 			if includePath == path {
 				return true
 			}
+		}
+	}
+	if p.GetContentMapperForFileName(fileName) != nil {
+		directoryPath := path.GetDirectoryPath()
+		if p.PossiblyMatchesDirectoryName(directoryPath) {
+			return true
 		}
 	}
 	if wildcardDirectoryGlobs := p.WildcardDirectoryGlobs(); len(wildcardDirectoryGlobs) > 0 {

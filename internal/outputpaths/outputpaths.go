@@ -81,7 +81,7 @@ func ForEachEmittedFile(host OutputPathsHost, options *core.CompilerOptions, act
 }
 
 func GetOutputJSFileName(inputFileName string, options *core.CompilerOptions, host OutputPathsHost) string {
-	if options.EmitDeclarationOnly.IsTrue() {
+	if options.EmitDeclarationOnly.IsTrue() || isContentMappedFileName(inputFileName, host) {
 		return ""
 	}
 	outputFileName := GetOutputJSFileNameWorker(inputFileName, options, host)
@@ -92,7 +92,12 @@ func GetOutputJSFileName(inputFileName string, options *core.CompilerOptions, ho
 		}) != 0 {
 		return outputFileName
 	}
+
 	return ""
+}
+
+func isContentMappedFileName(fileName string, host OutputPathsHost) bool {
+	return tspath.GetLongestExtensionFromPath(fileName, host.ContentMapperExtensions(), !host.UseCaseSensitiveFileNames()) != ""
 }
 
 func GetOutputJSFileNameWorker(inputFileName string, options *core.CompilerOptions, host OutputPathsHost) string {

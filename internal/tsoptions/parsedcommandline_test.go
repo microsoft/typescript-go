@@ -7,6 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tsoptions/tsoptionstest"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
@@ -169,7 +170,9 @@ func TestParsedCommandLine(t *testing.T) {
 		t.Run("PossiblyMatchesFileName with content mapper extensions", func(t *testing.T) {
 			t.Parallel()
 
-			host := tsoptionstest.NewVFSParseConfigHost(map[string]string{}, "/dev", true)
+			host := tsoptionstest.NewVFSParseConfigHost(map[string]string{
+				"/dev/node_modules/mapper/package.json": `{ "name": "mapper", "version": "1.0.0", "tsContentMapper": { "exec": ["mapper"] } }`,
+			}, "/dev", true)
 			configFileName := "/dev/tsconfig.json"
 			jsonText := `{
 			"include": ["src"],
@@ -193,6 +196,42 @@ func TestParsedCommandLine(t *testing.T) {
 			assert.Assert(t, parsedCommandLine.PossiblyMatchesFileName("/dev/src/new.ts"))
 			assert.Assert(t, !parsedCommandLine.PossiblyMatchesFileName("/dev/src/new.vue"))
 			assert.Assert(t, !parsedCommandLine.PossiblyMatchesFileName("/dev/other/new.box"))
+
+			insensitiveHost := tsoptionstest.NewVFSParseConfigHost(map[string]string{
+				"/dev/node_modules/mapper/package.json": `{ "name": "mapper", "version": "1.0.0", "tsContentMapper": { "exec": ["mapper"] } }`,
+			}, "/dev", false)
+			insensitiveCommandLine := tsoptions.ParseJsonSourceFileConfigFileContent(
+				tsconfigSourceFile,
+				insensitiveHost,
+				"/dev",
+				&core.CompilerOptions{LoadExternalPlugins: core.TSTrue},
+				nil,
+				configFileName,
+				nil,
+				nil,
+			)
+			assert.Assert(t, insensitiveCommandLine.PossiblyMatchesFileName("/dev/src/new.BOX"))
+		})
+
+		t.Run("WithFileNames preserves config identity", func(t *testing.T) {
+			t.Parallel()
+
+			configFileName := "/dev/tsconfig.json"
+			tsconfigSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(configFileName, tspath.Path(configFileName), `{}`)
+			parsedCommandLine := tsoptions.ParseJsonSourceFileConfigFileContent(
+				tsconfigSourceFile,
+				tsoptionstest.NewVFSParseConfigHost(map[string]string{}, "/dev", true),
+				"/dev",
+				nil,
+				nil,
+				configFileName,
+				nil,
+				nil,
+			)
+
+			withTypings := parsedCommandLine.WithFileNames([]string{"/dev/index.ts", "/cache/@types/pkg/index.d.ts"})
+			assert.Equal(t, withTypings.ConfigName(), configFileName)
+			assert.DeepEqual(t, withTypings.FileNames(), []string{"/dev/index.ts", "/cache/@types/pkg/index.d.ts"})
 		})
 	})
 }

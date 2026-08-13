@@ -1102,6 +1102,33 @@ func TestContentMappersRequireFlag(t *testing.T) {
 	}
 }
 
+func TestUnresolvedContentMapperDoesNotRegisterExtensions(t *testing.T) {
+	t.Parallel()
+
+	config := testConfig{
+		jsonText:        `{ "contentMappers": [{ "package": "missing-mapper", "extensions": [".vue"] }], "include": ["src"] }`,
+		configFileName:  "tsconfig.json",
+		basePath:        "/",
+		allFileList:     map[string]string{"/src/app.ts": "export {}", "/src/Component.vue": "<template />"},
+		existingOptions: &core.CompilerOptions{LoadExternalPlugins: core.TSTrue},
+	}
+	for name, getParsed := range map[string]func(testConfig, tsoptions.ParseConfigHost, string) *tsoptions.ParsedCommandLine{
+		"json api":           getParsedWithJsonApi,
+		"jsonSourceFile api": getParsedWithJsonSourceFileApi,
+	} {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			host := tsoptionstest.NewVFSParseConfigHost(config.allFileList, config.basePath, true)
+			parsed := getParsed(config, host, config.basePath)
+
+			assert.Equal(t, len(parsed.ContentMappers()), 0)
+			assert.Equal(t, len(parsed.ContentMapperExtensions()), 0)
+			assert.Assert(t, !slices.Contains(parsed.FileNames(), "/src/Component.vue"))
+			assert.Assert(t, slices.Contains(parsed.FileNames(), "/src/app.ts"))
+		})
+	}
+}
+
 func TestContentMappersValidation(t *testing.T) {
 	t.Parallel()
 
@@ -1167,6 +1194,10 @@ func TestContentMappersValidation(t *testing.T) {
 				allFileList:     map[string]string{"/app.ts": "export {}"},
 				existingOptions: &core.CompilerOptions{LoadExternalPlugins: core.TSTrue},
 			}
+			if test.name == "duplicate extension across mappers" {
+				config.allFileList["/node_modules/a/package.json"] = `{ "name": "a", "version": "1.0.0", "tsContentMapper": { "exec": ["a"] } }`
+				config.allFileList["/node_modules/b/package.json"] = `{ "name": "b", "version": "1.0.0", "tsContentMapper": { "exec": ["b"] } }`
+			}
 			for apiName, getParsed := range map[string]func(testConfig, tsoptions.ParseConfigHost, string) *tsoptions.ParsedCommandLine{
 				"json api":           getParsedWithJsonApi,
 				"jsonSourceFile api": getParsedWithJsonSourceFileApi,
@@ -1183,8 +1214,7 @@ func TestContentMappersValidation(t *testing.T) {
 					assert.Assert(t, diagnostic != nil, "expected diagnostic %d, got errors: %v", test.expectedCode, parsed.Errors)
 					switch test.name {
 					case "built-in extension":
-						assert.Equal(t, len(parsed.ContentMappers()), 1)
-						assert.Equal(t, len(parsed.ContentMappers()[0].Definition.Extensions), 0)
+						assert.Equal(t, len(parsed.ContentMappers()), 0)
 						assert.Equal(t, len(parsed.ContentMapperExtensions()), 0)
 					case "duplicate extension across mappers":
 						assert.Equal(t, len(parsed.ContentMappers()), 2)

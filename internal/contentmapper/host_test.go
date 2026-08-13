@@ -720,6 +720,11 @@ func TestProjectLifecycle(t *testing.T) {
 		Mappers:         []*contentmapper.Mapper{dynamicA, dynamicB},
 		CompilerOptions: dynamicAOptions,
 	})
+	projectAReversed := host.Project(contentmapper.ProjectSpec{
+		ConfigFileName:  "/repo/reversed/tsconfig.json",
+		Mappers:         []*contentmapper.Mapper{dynamicB, dynamicA},
+		CompilerOptions: dynamicAOptions,
+	})
 	projectB := host.Project(contentmapper.ProjectSpec{
 		ConfigFileName:  "/repo/b/tsconfig.json",
 		Mappers:         []*contentmapper.Mapper{dynamicA},
@@ -733,9 +738,14 @@ func TestProjectLifecycle(t *testing.T) {
 	assert.Equal(t, spawner.spawns.Load(), int32(0), "getting dynamic projects should not start the mapper")
 	projectAIdentities, err := projectA.Identities()
 	assert.NilError(t, err)
+	projectAReversedIdentities, err := projectAReversed.Identities()
+	assert.NilError(t, err)
 	projectBIdentities, err := projectB.Identities()
 	assert.NilError(t, err)
 	assert.Equal(t, len(projectAIdentities), 2)
+	assert.Equal(t, len(projectAReversedIdentities), 2)
+	assert.Equal(t, projectAIdentities[0], projectAReversedIdentities[1])
+	assert.Equal(t, projectAIdentities[1], projectAReversedIdentities[0])
 	assert.Equal(t, len(projectBIdentities), 1)
 	assert.Equal(t, spawner.spawns.Load(), int32(1), "dynamic projects should share one mapper process")
 	projectAWatchedFiles, err := projectA.WatchedFiles()
@@ -753,19 +763,20 @@ func TestProjectLifecycle(t *testing.T) {
 
 	assert.NilError(t, projectAAgain.Close())
 	assert.NilError(t, projectA.Close())
+	assert.NilError(t, projectAReversed.Close())
 	assert.NilError(t, projectB.Close())
 	timings := host.Timings()
 	dynamicTimings := timings.Mappers[dynamicA.Identity()]
 	assert.Equal(t, dynamicTimings.Spawn.Count, uint64(1))
 	assert.Equal(t, dynamicTimings.Initialize.Count, uint64(1))
-	assert.Equal(t, dynamicTimings.OpenProject.Count, uint64(3))
+	assert.Equal(t, dynamicTimings.OpenProject.Count, uint64(5))
 	assert.Equal(t, dynamicTimings.Transform.Count, uint64(1))
-	assert.Equal(t, dynamicTimings.CloseProject.Count, uint64(3))
+	assert.Equal(t, dynamicTimings.CloseProject.Count, uint64(5))
 	assert.Assert(t, timings.RequestWait > 0)
 	mapperProcess.mu.Lock()
 	defer mapperProcess.mu.Unlock()
-	assert.Equal(t, len(mapperProcess.projectHandles), 3)
-	assert.Equal(t, len(mapperProcess.closedHandles), 3)
+	assert.Equal(t, len(mapperProcess.projectHandles), 5)
+	assert.Equal(t, len(mapperProcess.closedHandles), 5)
 }
 
 func TestProjectRejectsRelativeWatchedFiles(t *testing.T) {

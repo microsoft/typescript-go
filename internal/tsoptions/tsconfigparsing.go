@@ -1402,6 +1402,7 @@ func parseJsonConfigFileContentWorker(
 		if containingFile == "" {
 			containingFile = tspath.CombinePaths(basePathForFileNames, "tsconfig.json")
 		}
+		resolvedContentMappers := make([]*contentmapper.Mapper, 0, len(contentMappers))
 		for j, mapper := range contentMappers {
 			manifest, packageDirectory, diagnostic := resolveContentMapperManifest(host, containingFile, mapper.Package)
 			mapper.PackageDirectory = packageDirectory
@@ -1410,7 +1411,12 @@ func parseJsonConfigFileContentWorker(
 				continue
 			}
 			mapper.Manifest = manifest
+			resolvedContentMappers = append(resolvedContentMappers, mapper)
 		}
+		contentMappers = resolvedContentMappers
+		contentMapperExtensions = core.FlatMap(contentMappers, func(mapper *contentmapper.Mapper) []string {
+			return mapper.Definition.Extensions
+		})
 	}
 
 	getFileNames := func(basePath string) ([]string, int) {
