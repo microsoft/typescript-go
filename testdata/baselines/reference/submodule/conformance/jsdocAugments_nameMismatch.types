@@ -1,20 +1,11 @@
 //// [tests/cases/conformance/jsdoc/jsdocAugments_nameMismatch.ts] ////
 
 === /b.js ===
-class A {
+class A {}
 >A : A
 
-    a = 1;
->a : number
->1 : 1
-}
-class B {
+class B {}
 >B : B
-
-    b = 2;
->b : number
->2 : 2
-}
 
 /** @augments A */
 class C extends B {}

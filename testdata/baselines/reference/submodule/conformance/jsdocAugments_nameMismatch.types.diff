@@ -1,26 +1,6 @@
 --- old.jsdocAugments_nameMismatch.types
 +++ new.jsdocAugments_nameMismatch.types
-@@= skipped -0, +0 lines =@@
- //// [tests/cases/conformance/jsdoc/jsdocAugments_nameMismatch.ts] ////
-
- === /b.js ===
--class A {}
-+class A {
- >A : A
-
--class B {}
-+    a = 1;
-+>a : number
-+>1 : 1
-+}
-+class B {
- >B : B
-+
-+    b = 2;
-+>b : number
-+>2 : 2
-+}
-
+@@= skipped -9, +9 lines =@@
  /** @augments A */
  class C extends B {}
  >C : C
