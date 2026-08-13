@@ -39,6 +39,8 @@ export class SessionManager implements vscode.Disposable {
     private initializedEventEmitter: vscode.EventEmitter<void>;
     private telemetryReporter: TelemetryReporter;
     private readonly contentMapperRegistrations = new Map<string, readonly ContentMapperContribution[]>();
+    private lifecycleOperation = Promise.resolve();
+    private contentMapperSyncOperation = Promise.resolve();
 
     constructor(
         context: vscode.ExtensionContext,
@@ -52,8 +54,18 @@ export class SessionManager implements vscode.Disposable {
 
         this.disposables.push(vscode.workspace.onDidChangeConfiguration(event => {
             if (this.currentSession && event.affectsConfiguration("js/ts.contentMappers.enabled")) {
-                void this.restart(context);
+                void this.restart(context).catch(error => {
+                    this.outputChannel.error(`TypeScript language server restart failed: ${String(error)}`);
+                });
             }
+        }));
+        this.disposables.push(vscode.workspace.onDidOpenTextDocument(document => {
+            if (documentMatchesContentMapperContributions(document, this.contentMapperRegistrations)) {
+                void this.syncContentMapperContributions();
+            }
+        }));
+        this.disposables.push(initializedEventEmitter.event(() => {
+            void this.syncContentMapperContributions();
         }));
     }
 
@@ -61,21 +73,37 @@ export class SessionManager implements vscode.Disposable {
         return this.restart(context);
     }
 
-    async restart(context: vscode.ExtensionContext): Promise<void> {
+    restart(context: vscode.ExtensionContext): Promise<void> {
+        return this.enqueueLifecycleOperation(() => this.restartNow(context));
+    }
+
+    private async restartNow(context: vscode.ExtensionContext): Promise<void> {
         if (this.currentSession) {
             this.outputChannel.appendLine("Restarting TypeScript language server...");
             await this.currentSession.stop();
         }
-        this.currentSession = new Session(context, this.outputChannel, this.initializedEventEmitter, this.telemetryReporter, () => this.stop(), () => this.restart(context));
-        await this.currentSession.start(context);
-        await this.syncContentMapperContributions();
+        const session = new Session(context, this.outputChannel, this.initializedEventEmitter, this.telemetryReporter, () => this.stop(), () => this.restart(context));
+        this.currentSession = session;
+        try {
+            await session.start(context);
+            await this.syncContentMapperContributions();
+        }
+        catch (error) {
+            if (this.currentSession === session) {
+                this.currentSession = undefined;
+            }
+            await session.dispose();
+            throw error;
+        }
     }
 
-    async stop(): Promise<void> {
-        if (this.currentSession) {
-            await this.currentSession.stop();
-            this.currentSession = undefined;
-        }
+    stop(): Promise<void> {
+        return this.enqueueLifecycleOperation(async () => {
+            if (this.currentSession) {
+                await this.currentSession.stop();
+                this.currentSession = undefined;
+            }
+        });
     }
 
     async initializeAPIConnection(pipe?: string): Promise<string> {
@@ -102,12 +130,18 @@ export class SessionManager implements vscode.Disposable {
         });
     }
 
-    private async syncContentMapperContributions(): Promise<void> {
-        if (!this.currentSession?.client.isInitialized) return;
-        const openDocuments = vscode.workspace.textDocuments
-            .filter(document => documentMatchesContentMapperContributions(document, this.contentMapperRegistrations))
-            .map(document => document.uri);
+    private syncContentMapperContributions(): Promise<void> {
+        const operation = this.contentMapperSyncOperation.then(() => this.syncContentMapperContributionsNow());
+        this.contentMapperSyncOperation = operation.catch(() => {});
+        return operation;
+    }
+
+    private async syncContentMapperContributionsNow(): Promise<void> {
         try {
+            if (!this.currentSession?.client.isInitialized) return;
+            const openDocuments = vscode.workspace.textDocuments
+                .filter(document => documentMatchesContentMapperContributions(document, this.contentMapperRegistrations))
+                .map(document => document.uri);
             await this.currentSession.client.setContentMapperContributions(
                 serializeContentMapperContributions(this.contentMapperRegistrations),
                 openDocuments,
@@ -118,9 +152,18 @@ export class SessionManager implements vscode.Disposable {
         }
     }
 
-    async dispose(): Promise<void> {
-        await this.currentSession?.dispose();
-        await Promise.all(this.disposables.map(d => d.dispose()));
+    private enqueueLifecycleOperation(operation: () => Promise<void>): Promise<void> {
+        const result = this.lifecycleOperation.then(operation);
+        this.lifecycleOperation = result.catch(() => {});
+        return result;
+    }
+
+    dispose(): Promise<void> {
+        return this.enqueueLifecycleOperation(async () => {
+            await this.currentSession?.dispose();
+            this.currentSession = undefined;
+            await Promise.all(this.disposables.splice(0).map(d => d.dispose()));
+        });
     }
 }
 
