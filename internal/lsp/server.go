@@ -113,6 +113,14 @@ type lspWriter struct {
 	w *lsproto.BaseWriter
 }
 
+// MessageMarshalError indicates that an outgoing message could not be serialized to JSON
+type MessageMarshalError struct {
+	err error
+}
+
+func (e *MessageMarshalError) Error() string { return "failed to marshal message: " + e.err.Error() }
+func (e *MessageMarshalError) Unwrap() error { return e.err }
+
 func (r *lspReader) Read() (*lsproto.Message, error) {
 	data, err := r.r.Read()
 	if err != nil {
@@ -137,7 +145,7 @@ func ToReader(r io.Reader) Reader {
 func (w *lspWriter) Write(msg *lsproto.Message) error {
 	data, err := json.Marshal(msg)
 	if err != nil {
-		return fmt.Errorf("failed to marshal message: %w", err)
+		return &MessageMarshalError{err: err}
 	}
 	return w.w.Write(data)
 }
@@ -626,6 +634,16 @@ func (s *Server) writeLoop(ctx context.Context) error {
 			return err
 		}
 		if err := s.w.Write(msg); err != nil {
+			var marshalErr *MessageMarshalError
+			if errors.As(err, &marshalErr) && msg.Kind == jsonrpc.MessageKindResponse {
+				if resp := msg.AsResponse(); resp.ID != nil && resp.Error == nil {
+					s.logger.Errorf("failed to marshal response for request %s: %v", resp.ID, marshalErr)
+					if sendErr := s.sendError(resp.ID, marshalErr); sendErr != nil {
+						return sendErr
+					}
+					continue
+				}
+			}
 			return fmt.Errorf("failed to write message: %w", err)
 		}
 	}
