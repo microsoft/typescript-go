@@ -467,6 +467,25 @@ func contentMapperTransformDiagnostic(file *ast.SourceFile, label string, err er
 		case contentmapper.TransformErrorKindRequest:
 			return contentMapperTransformDiagnosticChain(file, label, diagnostics.The_content_mapper_process_failed_while_handling_the_transform_request)
 		case contentmapper.TransformErrorKindResponse:
+			if directiveError, ok := errors.AsType[*contentmapper.DiagnosticDirectiveError](transformError); ok {
+				var detail *ast.Diagnostic
+				switch directiveError.Kind {
+				case contentmapper.DiagnosticDirectiveErrorKindInvalidRange:
+					detail = ast.NewCompilerDiagnostic(diagnostics.Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_range, directiveError.Index)
+				case contentmapper.DiagnosticDirectiveErrorKindInvalidPolicy:
+					detail = ast.NewCompilerDiagnostic(diagnostics.The_content_mapper_returned_a_diagnostic_directive_with_invalid_policy_0, directiveError.Policy)
+				case contentmapper.DiagnosticDirectiveErrorKindExpectMissingUnusedDiagnostic:
+					detail = ast.NewCompilerDiagnostic(diagnostics.Diagnostic_directive_0_returned_by_the_content_mapper_has_policy_expect_and_must_provide_unusedDiagnostic, directiveError.Index)
+				case contentmapper.DiagnosticDirectiveErrorKindOverlap:
+					detail = ast.NewCompilerDiagnostic(diagnostics.The_content_mapper_returned_diagnostic_directives_with_overlapping_virtual_ranges)
+				}
+				if detail != nil {
+					if directiveError.SupplementalIndex >= 0 {
+						detail = ast.NewDiagnosticChain(detail, diagnostics.The_invalid_diagnostic_directive_is_in_supplemental_output_0_returned_by_the_content_mapper, directiveError.SupplementalIndex)
+					}
+					return contentMapperTransformDiagnosticWithDetail(file, label, detail)
+				}
+			}
 			return contentMapperTransformDiagnosticChain(file, label, diagnostics.The_content_mapper_returned_an_invalid_transform_response)
 		case contentmapper.TransformErrorKindMappings:
 			return ast.NewDiagnostic(file, core.NewTextRange(0, 0), diagnostics.The_content_mapper_0_did_not_provide_the_required_position_mappings, label)
@@ -491,12 +510,16 @@ func ContentMapperProjectErrorDiagnostic(err error) *diagnostics.Message {
 }
 
 func contentMapperTransformDiagnosticChain(file *ast.SourceFile, label string, message *diagnostics.Message, args ...any) *ast.Diagnostic {
+	return contentMapperTransformDiagnosticWithDetail(file, label, ast.NewCompilerDiagnostic(message, args...))
+}
+
+func contentMapperTransformDiagnosticWithDetail(file *ast.SourceFile, label string, detail *ast.Diagnostic) *ast.Diagnostic {
 	return ast.NewDiagnostic(
 		file,
 		core.NewTextRange(0, 0),
 		diagnostics.The_content_mapper_0_failed_to_transform_this_file,
 		label,
-	).AddMessageChain(ast.NewCompilerDiagnostic(message, args...))
+	).AddMessageChain(detail)
 }
 
 // contentMapperMappingDiagnostic builds the diagnostic reported against a mapper that produced an

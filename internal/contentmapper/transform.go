@@ -64,6 +64,7 @@ func ParseResult(parseOptions ast.SourceFileParseOptions, content string, mapper
 	sourceFile.SetOriginalText(content)
 	sourceFile.SetSpanMap(result.Mappings)
 	sourceFile.SetContentMapper(mapper.Identity())
+	sourceFile.SetDiagnosticDirectives(result.DiagnosticDirectives)
 	if len(result.Diagnostics) > 0 {
 		// The runner produces diagnostics without a source file (it doesn't have one yet); associate
 		// them with the file now so they are reported against it.
@@ -95,6 +96,7 @@ func ParseResult(parseOptions ast.SourceFileParseOptions, content string, mapper
 		file.SetOriginalText(content)
 		file.SetSpanMap(supplemental.Mappings)
 		file.SetContentMapper(mapper.Identity())
+		file.SetDiagnosticDirectives(supplemental.DiagnosticDirectives)
 		files.Supplemental = append(files.Supplemental, file)
 	}
 	if len(files.Supplemental) != 0 {

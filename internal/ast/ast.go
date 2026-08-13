@@ -2463,16 +2463,12 @@ type SourceFile struct {
 	CompositeBase
 
 	// Fields set by NewSourceFile
-	fileName                string // For debugging convenience
-	parseOptions            SourceFileParseOptions
-	text                    string
-	originalText            string           // For content-mapped files, the untransformed source text.
-	spanMap                 *spanmap.SpanMap // For content-mapped files, maps transformed positions back to the original text.
-	contentMapper           string           // For content-mapped files, the identity of the mapper that produced this file.
-	supplementalSourceFiles []*SourceFile
-	canonicalSourceFile     *SourceFile
-	Statements              *NodeList  // NodeList[*Statement]
-	EndOfFileToken          *TokenNode // TokenNode[*EndOfFileToken]
+	fileName          string // For debugging convenience
+	parseOptions      SourceFileParseOptions
+	text              string
+	contentMapperInfo *contentMapperSourceFileInfo
+	Statements        *NodeList  // NodeList[*Statement]
+	EndOfFileToken    *TokenNode // TokenNode[*EndOfFileToken]
 
 	// Fields for lazily-computed data owned by packages outside ast.
 	dataMu sync.Mutex
@@ -2564,15 +2560,15 @@ func (node *SourceFile) Text() string {
 // OriginalText returns the untransformed source text for content-mapped files, or Text() otherwise.
 func (node *SourceFile) OriginalText() string {
 	if node.ContentMapper() != "" {
-		return node.originalText
+		return node.contentMapperInfo.originalText
 	}
 	return node.text
 }
 
 // OriginalFileName returns the canonical filename associated with a supplemental source file, or FileName() otherwise.
 func (node *SourceFile) OriginalFileName() string {
-	if node.canonicalSourceFile != nil {
-		return node.canonicalSourceFile.FileName()
+	if canonical := node.CanonicalSourceFile(); canonical != nil {
+		return canonical.FileName()
 	}
 	return node.FileName()
 }
@@ -2580,20 +2576,26 @@ func (node *SourceFile) OriginalFileName() string {
 // SetOriginalText records the untransformed source text of a content-mapped file, whose Text() holds
 // the transformed TypeScript.
 func (node *SourceFile) SetOriginalText(text string) {
-	node.originalText = text
+	node.ensureContentMapperInfo().originalText = text
 }
 
 // SpanMap returns the span map that maps positions in this file's transformed Text() back to its
 // original, untransformed content, or nil if the file is not content-mapped (or is a failure stub).
 // The returned map is nil-safe: a nil map maps positions identically.
 func (node *SourceFile) SpanMap() *spanmap.SpanMap {
-	return node.spanMap
+	if node.contentMapperInfo == nil {
+		return nil
+	}
+	return node.contentMapperInfo.spanMap
 }
 
 // ContentMapper returns the identity of the content mapper that produced this file, or "" if the file
 // was not produced by a content mapper (or the mapper did not identify itself).
 func (node *SourceFile) ContentMapper() string {
-	return node.contentMapper
+	if node.contentMapperInfo == nil {
+		return ""
+	}
+	return node.contentMapperInfo.contentMapper
 }
 
 // IsContentMapperFailureStub reports whether this file is the empty placeholder produced when a content
@@ -2604,42 +2606,93 @@ func (node *SourceFile) IsContentMapperFailureStub() bool {
 
 // SetContentMapper records the identity of the content mapper that produced this file.
 func (node *SourceFile) SetContentMapper(identity string) {
-	node.contentMapper = identity
+	node.ensureContentMapperInfo().contentMapper = identity
 }
 
 // SetSpanMap records the span map that maps positions in this file's transformed Text() back to its
 // original, untransformed content.
 func (node *SourceFile) SetSpanMap(spanMap *spanmap.SpanMap) {
-	node.spanMap = spanMap
+	node.ensureContentMapperInfo().spanMap = spanMap
+}
+
+type MappedDiagnosticDirectivePolicy uint8
+
+const (
+	MappedDiagnosticDirectivePolicyIgnore MappedDiagnosticDirectivePolicy = iota
+	MappedDiagnosticDirectivePolicyExpect
+)
+
+type MappedDiagnosticDirective struct {
+	OriginalRange     core.TextRange
+	VirtualRange      core.TextRange
+	Policy            MappedDiagnosticDirectivePolicy
+	UnusedCode        int32
+	UnusedMessageText string
+	Source            string
+}
+
+type contentMapperSourceFileInfo struct {
+	contentMapper           string
+	originalText            string
+	spanMap                 *spanmap.SpanMap
+	diagnosticDirectives    []MappedDiagnosticDirective
+	supplementalSourceFiles []*SourceFile
+	canonicalSourceFile     *SourceFile
+}
+
+func (node *SourceFile) ensureContentMapperInfo() *contentMapperSourceFileInfo {
+	if node.contentMapperInfo == nil {
+		node.contentMapperInfo = &contentMapperSourceFileInfo{}
+	}
+	return node.contentMapperInfo
+}
+
+func (node *SourceFile) DiagnosticDirectives() []MappedDiagnosticDirective {
+	if node.contentMapperInfo == nil {
+		return nil
+	}
+	return node.contentMapperInfo.diagnosticDirectives
+}
+
+func (node *SourceFile) SetDiagnosticDirectives(directives []MappedDiagnosticDirective) {
+	node.ensureContentMapperInfo().diagnosticDirectives = directives
 }
 
 // SupplementalSourceFiles returns the additional outputs produced from this canonical source file.
 func (node *SourceFile) SupplementalSourceFiles() []*SourceFile {
-	return node.supplementalSourceFiles
+	if node.contentMapperInfo == nil {
+		return nil
+	}
+	return node.contentMapperInfo.supplementalSourceFiles
 }
 
 // SetSupplementalSourceFiles records the additional outputs produced with this canonical source file.
 func (node *SourceFile) SetSupplementalSourceFiles(files []*SourceFile) {
-	if node.canonicalSourceFile != nil || node.supplementalSourceFiles != nil {
+	info := node.ensureContentMapperInfo()
+	if info.canonicalSourceFile != nil || info.supplementalSourceFiles != nil {
 		panic("content mapper source file association already set")
 	}
-	node.supplementalSourceFiles = files
+	info.supplementalSourceFiles = files
 	for _, file := range files {
-		if file.canonicalSourceFile != nil || file.supplementalSourceFiles != nil {
+		fileInfo := file.ensureContentMapperInfo()
+		if fileInfo.canonicalSourceFile != nil || fileInfo.supplementalSourceFiles != nil {
 			panic("content mapper source file association already set")
 		}
-		file.canonicalSourceFile = node
+		fileInfo.canonicalSourceFile = node
 	}
 }
 
 // CanonicalSourceFile returns the canonical output associated with this supplemental source file.
 func (node *SourceFile) CanonicalSourceFile() *SourceFile {
-	return node.canonicalSourceFile
+	if node.contentMapperInfo == nil {
+		return nil
+	}
+	return node.contentMapperInfo.canonicalSourceFile
 }
 
 // IsContentMapperSupplemental reports whether this is an unnamed supplemental mapper output.
 func (node *SourceFile) IsContentMapperSupplemental() bool {
-	return node.canonicalSourceFile != nil
+	return node.CanonicalSourceFile() != nil
 }
 
 func (file *SourceFile) HasIdentifier(name string) bool {
@@ -2762,9 +2815,13 @@ func (node *SourceFile) IsJS() bool {
 
 func (node *SourceFile) copyFrom(other *SourceFile) {
 	// Do not copy fields set by NewSourceFile (Text, FileName, Path, or Statements)
-	node.originalText = other.originalText
-	node.spanMap = other.spanMap
-	node.contentMapper = other.contentMapper
+	if other.contentMapperInfo != nil {
+		node.contentMapperInfo = &contentMapperSourceFileInfo{
+			originalText:  other.contentMapperInfo.originalText,
+			spanMap:       other.contentMapperInfo.spanMap,
+			contentMapper: other.contentMapperInfo.contentMapper,
+		}
+	}
 	node.LanguageVariant = other.LanguageVariant
 	node.ScriptKind = other.ScriptKind
 	node.IsDeclarationFile = other.IsDeclarationFile

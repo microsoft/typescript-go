@@ -1470,6 +1470,43 @@ func (p *Program) getBindAndCheckDiagnosticsWithChecker(ctx context.Context, fil
 			filtered = append(filtered, ast.NewDiagnostic(sourceFile, directive.Loc, diagnostics.Unused_ts_expect_error_directive))
 		}
 	}
+	filtered = applyContentMapperDiagnosticDirectives(sourceFile, filtered)
+	return filtered
+}
+
+func applyContentMapperDiagnosticDirectives(sourceFile *ast.SourceFile, diags []*ast.Diagnostic) []*ast.Diagnostic {
+	directives := sourceFile.DiagnosticDirectives()
+	if len(directives) == 0 {
+		return diags
+	}
+	used := make([]bool, len(directives))
+	markUsed := func(diag *ast.Diagnostic) bool {
+		if diag.Source() != "" {
+			return false
+		}
+		for i, directive := range directives {
+			if diag.Pos() >= directive.VirtualRange.Pos() && diag.Pos() < directive.VirtualRange.End() {
+				used[i] = true
+				return true
+			}
+		}
+		return false
+	}
+	filtered := core.Filter(diags, func(diag *ast.Diagnostic) bool {
+		return !markUsed(diag)
+	})
+	for i, directive := range directives {
+		if directive.Policy == ast.MappedDiagnosticDirectivePolicyExpect && !used[i] {
+			filtered = append(filtered, ast.NewExternalDiagnostic(
+				sourceFile,
+				directive.OriginalRange,
+				directive.Source,
+				diagnostics.CategoryError,
+				directive.UnusedCode,
+				directive.UnusedMessageText,
+			))
+		}
+	}
 	return filtered
 }
 

@@ -314,5 +314,25 @@
     "The content mapper's 'initialize' request failed: {0}": {
         "category": "Message",
         "code": 100068
+    },
+    "Diagnostic directive {0} returned by the content mapper has an invalid range.": {
+        "category": "Message",
+        "code": 100069
+    },
+    "The content mapper returned a diagnostic directive with invalid policy '{0}'.": {
+        "category": "Message",
+        "code": 100072
+    },
+    "Diagnostic directive {0} returned by the content mapper has policy 'expect' and must provide 'unusedDiagnostic'.": {
+        "category": "Message",
+        "code": 100074
+    },
+    "The content mapper returned diagnostic directives with overlapping virtual ranges.": {
+        "category": "Message",
+        "code": 100075
+    },
+    "The invalid diagnostic directive is in supplemental output {0} returned by the content mapper.": {
+        "category": "Message",
+        "code": 100076
     }
 }

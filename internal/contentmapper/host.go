@@ -40,6 +40,28 @@ func (e *TransformError) Error() string {
 
 func (e *TransformError) Unwrap() error { return e.err }
 
+// DiagnosticDirectiveErrorKind identifies why a diagnostic directive was rejected.
+type DiagnosticDirectiveErrorKind uint8
+
+const (
+	DiagnosticDirectiveErrorKindInvalidRange DiagnosticDirectiveErrorKind = iota
+	DiagnosticDirectiveErrorKindInvalidPolicy
+	DiagnosticDirectiveErrorKindExpectMissingUnusedDiagnostic
+	DiagnosticDirectiveErrorKindOverlap
+)
+
+// DiagnosticDirectiveError reports an invalid diagnostic directive in a transform response.
+type DiagnosticDirectiveError struct {
+	Kind              DiagnosticDirectiveErrorKind
+	Index             int
+	SupplementalIndex int
+	Policy            DiagnosticDirectivePolicy
+}
+
+func (e *DiagnosticDirectiveError) Error() string {
+	return fmt.Sprintf("invalid content mapper diagnostic directive %d", e.Index)
+}
+
 // InvalidSupplementalVirtualExtensionError reports an unsupported or missing virtual extension on a supplemental output.
 type InvalidSupplementalVirtualExtensionError struct {
 	Extension string
@@ -148,15 +170,18 @@ type Result struct {
 	// produces against the virtual text can be reported at their original locations. A successful
 	// transform must return a non-nil map; an empty map describes fully synthesized output.
 	Mappings *spanmap.SpanMap
+	// DiagnosticDirectives control TypeScript diagnostics produced in virtual ranges.
+	DiagnosticDirectives []ast.MappedDiagnosticDirective
 	// Supplemental contains additional unnamed outputs associated with the canonical result.
 	Supplemental []MappedResult
 }
 
 // MappedResult is one virtual source file and its mapping to the original input.
 type MappedResult struct {
-	Text             string
-	VirtualExtension string
-	Mappings         *spanmap.SpanMap
+	Text                 string
+	VirtualExtension     string
+	Mappings             *spanmap.SpanMap
+	DiagnosticDirectives []ast.MappedDiagnosticDirective
 }
 
 // Request carries the inputs for transforming one content-mapped source file.

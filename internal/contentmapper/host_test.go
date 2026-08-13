@@ -12,6 +12,7 @@ import (
 	"sync/atomic"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ipc"
@@ -122,7 +123,17 @@ func (m unicodeMapper) HandleRequest(ctx context.Context, method string, params 
 			return nil, err
 		}
 		return contentmapper.TransformResult{
-			MappedOutput: contentmapper.MappedOutput{Text: p.Content, Mappings: mappings},
+			MappedOutput: contentmapper.MappedOutput{
+				Text:     p.Content,
+				Mappings: mappings,
+				DiagnosticDirectives: []contentmapper.MappedDiagnosticDirective{{
+					OriginalStart:  emojiLength,
+					OriginalLength: textLength - emojiLength,
+					VirtualStart:   emojiLength,
+					VirtualLength:  textLength - emojiLength,
+					Policy:         contentmapper.DiagnosticDirectivePolicyIgnore,
+				}},
+			},
 			Diagnostics: []contentmapper.Diagnostic{{
 				MessageText: "after non-ASCII character",
 				Start:       emojiLength,
@@ -242,13 +253,137 @@ func TestRunnerTransformResponseValidation(t *testing.T) {
 	})
 }
 
+func TestRunnerTransformDiagnosticDirectives(t *testing.T) {
+	t.Parallel()
+	request := contentmapper.Request{FileName: "/a.vue", Content: "directive\nsource"}
+	mapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}, Extensions: map[string]string{".vue": ".ts"}}}
+	transform := func(output contentmapper.MappedOutput) (contentmapper.Result, error) {
+		host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: responseMapper{response: func(p contentmapper.TransformParams) any {
+			return contentmapper.TransformResult{MappedOutput: output}
+		}}}, locale.Default)
+		defer host.Close()
+		return host.Transform(mapper, request)
+	}
+
+	result, err := transform(contentmapper.MappedOutput{
+		Text: "virtual source",
+		DiagnosticDirectives: []contentmapper.MappedDiagnosticDirective{{
+			OriginalStart:  0,
+			OriginalLength: 9,
+			VirtualStart:   8,
+			VirtualLength:  6,
+			Policy:         contentmapper.DiagnosticDirectivePolicyExpect,
+			UnusedDiagnostic: &contentmapper.UnusedDirectiveDiagnostic{
+				Code:        2578,
+				MessageText: "Unused framework directive.",
+			},
+		}},
+	})
+	assert.NilError(t, err)
+	assert.Equal(t, len(result.DiagnosticDirectives), 1)
+	directive := result.DiagnosticDirectives[0]
+	assert.Equal(t, directive.OriginalRange.Pos(), 0)
+	assert.Equal(t, directive.OriginalRange.End(), 9)
+	assert.Equal(t, directive.VirtualRange.Pos(), 8)
+	assert.Equal(t, directive.VirtualRange.End(), 14)
+	assert.Equal(t, directive.Policy, ast.MappedDiagnosticDirectivePolicyExpect)
+	assert.Equal(t, directive.UnusedCode, int32(2578))
+	assert.Equal(t, directive.UnusedMessageText, "Unused framework directive.")
+	assert.Equal(t, directive.Source, "mapper")
+	_, err = transform(contentmapper.MappedOutput{
+		Text: "x",
+		DiagnosticDirectives: []contentmapper.MappedDiagnosticDirective{{
+			OriginalStart:    -1,
+			Policy:           contentmapper.DiagnosticDirectivePolicyIgnore,
+			UnusedDiagnostic: &contentmapper.UnusedDirectiveDiagnostic{},
+		}},
+	})
+	assert.NilError(t, err)
+
+	invalid := []struct {
+		name       string
+		text       string
+		directives []contentmapper.MappedDiagnosticDirective
+		kind       contentmapper.DiagnosticDirectiveErrorKind
+	}{
+		{
+			name: "invalid range",
+			text: "x",
+			directives: []contentmapper.MappedDiagnosticDirective{{
+				VirtualStart: -1,
+				Policy:       contentmapper.DiagnosticDirectivePolicyIgnore,
+			}},
+			kind: contentmapper.DiagnosticDirectiveErrorKindInvalidRange,
+		},
+		{
+			name: "unknown policy",
+			text: "x",
+			directives: []contentmapper.MappedDiagnosticDirective{{
+				Policy: "unknown",
+			}},
+			kind: contentmapper.DiagnosticDirectiveErrorKindInvalidPolicy,
+		},
+		{
+			name: "expect requires unused diagnostic",
+			text: "x",
+			directives: []contentmapper.MappedDiagnosticDirective{{
+				Policy: contentmapper.DiagnosticDirectivePolicyExpect,
+			}},
+			kind: contentmapper.DiagnosticDirectiveErrorKindExpectMissingUnusedDiagnostic,
+		},
+		{
+			name: "original range out of bounds",
+			text: "x",
+			directives: []contentmapper.MappedDiagnosticDirective{{
+				OriginalStart:    99,
+				Policy:           contentmapper.DiagnosticDirectivePolicyExpect,
+				UnusedDiagnostic: &contentmapper.UnusedDirectiveDiagnostic{},
+			}},
+			kind: contentmapper.DiagnosticDirectiveErrorKindInvalidRange,
+		},
+		{
+			name: "virtual range out of bounds",
+			text: "x",
+			directives: []contentmapper.MappedDiagnosticDirective{{
+				VirtualStart: 99,
+				Policy:       contentmapper.DiagnosticDirectivePolicyIgnore,
+			}},
+			kind: contentmapper.DiagnosticDirectiveErrorKindInvalidRange,
+		},
+		{
+			name: "overlap",
+			text: "abc",
+			directives: []contentmapper.MappedDiagnosticDirective{
+				{VirtualLength: 2, Policy: contentmapper.DiagnosticDirectivePolicyIgnore},
+				{VirtualStart: 1, VirtualLength: 2, Policy: contentmapper.DiagnosticDirectivePolicyIgnore},
+			},
+			kind: contentmapper.DiagnosticDirectiveErrorKindOverlap,
+		},
+	}
+	for _, test := range invalid {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			_, transformErr := transform(contentmapper.MappedOutput{Text: test.text, DiagnosticDirectives: test.directives})
+			directiveError, ok := errors.AsType[*contentmapper.DiagnosticDirectiveError](transformErr)
+			assert.Assert(t, ok)
+			assert.Equal(t, directiveError.Kind, test.kind)
+		})
+	}
+}
+
 func TestRunnerTransformSupplementalOutputs(t *testing.T) {
 	t.Parallel()
 	host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: responseMapper{response: func(p contentmapper.TransformParams) any {
 		return contentmapper.TransformResult{
 			MappedOutput: contentmapper.MappedOutput{Text: "export default 1;"},
 			Supplemental: []contentmapper.SupplementalOutput{
-				{MappedOutput: contentmapper.MappedOutput{Text: "declare const first: string;"}, Extension: ".ts"},
+				{MappedOutput: contentmapper.MappedOutput{
+					Text: "declare const first: string;",
+					DiagnosticDirectives: []contentmapper.MappedDiagnosticDirective{{
+						VirtualLength: 7,
+						Policy:        contentmapper.DiagnosticDirectivePolicyIgnore,
+					}},
+				}, Extension: ".ts"},
 				{MappedOutput: contentmapper.MappedOutput{Text: "declare const second: number;"}, Extension: ".mjs"},
 			},
 		}
@@ -261,8 +396,39 @@ func TestRunnerTransformSupplementalOutputs(t *testing.T) {
 	assert.Equal(t, result.Supplemental[0].Text, "declare const first: string;")
 	assert.Equal(t, result.Supplemental[0].VirtualExtension, ".ts")
 	assert.Assert(t, result.Supplemental[0].Mappings != nil)
+	assert.Equal(t, len(result.Supplemental[0].DiagnosticDirectives), 1)
+	assert.Equal(t, result.Supplemental[0].DiagnosticDirectives[0].VirtualRange.End(), 7)
 	assert.Equal(t, result.Supplemental[1].VirtualExtension, ".mjs")
 	assert.Assert(t, result.Supplemental[1].Mappings != nil)
+}
+
+func TestRunnerTransformInvalidSupplementalDiagnosticDirective(t *testing.T) {
+	t.Parallel()
+	host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: responseMapper{response: func(p contentmapper.TransformParams) any {
+		return contentmapper.TransformResult{
+			MappedOutput: contentmapper.MappedOutput{Text: "export {};"},
+			Supplemental: []contentmapper.SupplementalOutput{
+				{MappedOutput: contentmapper.MappedOutput{Text: "export {};"}, Extension: ".ts"},
+				{
+					MappedOutput: contentmapper.MappedOutput{
+						Text: "export {};",
+						DiagnosticDirectives: []contentmapper.MappedDiagnosticDirective{{
+							Policy: contentmapper.DiagnosticDirectivePolicyExpect,
+						}},
+					},
+					Extension: ".ts",
+				},
+			},
+		}
+	}}}, locale.Default)
+	defer host.Close()
+	mapper := &contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}, Extensions: map[string]string{".vue": ".ts"}}}
+	_, err := host.Transform(mapper, contentmapper.Request{FileName: "/component.vue", Content: "component"})
+	directiveError, ok := errors.AsType[*contentmapper.DiagnosticDirectiveError](err)
+	assert.Assert(t, ok)
+	assert.Equal(t, directiveError.Kind, contentmapper.DiagnosticDirectiveErrorKindExpectMissingUnusedDiagnostic)
+	assert.Equal(t, directiveError.Index, 0)
+	assert.Equal(t, directiveError.SupplementalIndex, 1)
 }
 
 func TestRunnerRejectsInvalidSupplementalVirtualExtension(t *testing.T) {
@@ -311,6 +477,10 @@ func TestRunnerPositionEncodings(t *testing.T) {
 			assert.Equal(t, fidelity, spanmap.FidelityExact)
 			assert.Equal(t, result.Diagnostics[0].Pos(), 2)
 			assert.Equal(t, result.Diagnostics[0].End(), 3)
+			assert.Equal(t, result.DiagnosticDirectives[0].OriginalRange.Pos(), 2)
+			assert.Equal(t, result.DiagnosticDirectives[0].OriginalRange.End(), 3)
+			assert.Equal(t, result.DiagnosticDirectives[0].VirtualRange.Pos(), 2)
+			assert.Equal(t, result.DiagnosticDirectives[0].VirtualRange.End(), 3)
 		})
 	}
 }

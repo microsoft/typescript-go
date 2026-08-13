@@ -4400,6 +4400,16 @@ var The_content_mapper_returned_an_initialize_response_that_could_not_be_decoded
 
 var The_content_mapper_s_initialize_request_failed_Colon_0 = &Message{code: 100068, category: CategoryMessage, key: "The_content_mapper_s_initialize_request_failed_Colon_0_100068", text: "The content mapper's 'initialize' request failed: {0}"}
 
+var Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_range = &Message{code: 100069, category: CategoryMessage, key: "Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_range_100069", text: "Diagnostic directive {0} returned by the content mapper has an invalid range."}
+
+var The_content_mapper_returned_a_diagnostic_directive_with_invalid_policy_0 = &Message{code: 100072, category: CategoryMessage, key: "The_content_mapper_returned_a_diagnostic_directive_with_invalid_policy_0_100072", text: "The content mapper returned a diagnostic directive with invalid policy '{0}'."}
+
+var Diagnostic_directive_0_returned_by_the_content_mapper_has_policy_expect_and_must_provide_unusedDiagnostic = &Message{code: 100074, category: CategoryMessage, key: "Diagnostic_directive_0_returned_by_the_content_mapper_has_policy_expect_and_must_provide_unusedDiagn_100074", text: "Diagnostic directive {0} returned by the content mapper has policy 'expect' and must provide 'unusedDiagnostic'."}
+
+var The_content_mapper_returned_diagnostic_directives_with_overlapping_virtual_ranges = &Message{code: 100075, category: CategoryMessage, key: "The_content_mapper_returned_diagnostic_directives_with_overlapping_virtual_ranges_100075", text: "The content mapper returned diagnostic directives with overlapping virtual ranges."}
+
+var The_invalid_diagnostic_directive_is_in_supplemental_output_0_returned_by_the_content_mapper = &Message{code: 100076, category: CategoryMessage, key: "The_invalid_diagnostic_directive_is_in_supplemental_output_0_returned_by_the_content_mapper_100076", text: "The invalid diagnostic directive is in supplemental output {0} returned by the content mapper."}
+
 func keyToMessage(key Key) *Message {
 	switch key {
 	case "Unterminated_string_literal_1002":
@@ -8800,6 +8810,16 @@ func keyToMessage(key Key) *Message {
 		return The_content_mapper_returned_an_initialize_response_that_could_not_be_decoded_Colon_0
 	case "The_content_mapper_s_initialize_request_failed_Colon_0_100068":
 		return The_content_mapper_s_initialize_request_failed_Colon_0
+	case "Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_range_100069":
+		return Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_range
+	case "The_content_mapper_returned_a_diagnostic_directive_with_invalid_policy_0_100072":
+		return The_content_mapper_returned_a_diagnostic_directive_with_invalid_policy_0
+	case "Diagnostic_directive_0_returned_by_the_content_mapper_has_policy_expect_and_must_provide_unusedDiagn_100074":
+		return Diagnostic_directive_0_returned_by_the_content_mapper_has_policy_expect_and_must_provide_unusedDiagnostic
+	case "The_content_mapper_returned_diagnostic_directives_with_overlapping_virtual_ranges_100075":
+		return The_content_mapper_returned_diagnostic_directives_with_overlapping_virtual_ranges
+	case "The_invalid_diagnostic_directive_is_in_supplemental_output_0_returned_by_the_content_mapper_100076":
+		return The_invalid_diagnostic_directive_is_in_supplemental_output_0_returned_by_the_content_mapper
 	default:
 		return nil
 	}

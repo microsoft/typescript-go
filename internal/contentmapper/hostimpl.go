@@ -1,6 +1,7 @@
 package contentmapper
 
 import (
+	"cmp"
 	"context"
 	"encoding/hex"
 	"errors"
@@ -114,6 +115,30 @@ type MappedOutput struct {
 	// Mappings is the span map's tuple-array JSON (see spanmap.Marshal), expressed in the selected
 	// position encoding. Absent or empty means the output is fully synthesized.
 	Mappings json.Value `json:"mappings,omitempty"`
+	// DiagnosticDirectives describe framework directives that suppress TypeScript diagnostics in
+	// virtual ranges and optionally report an error when no diagnostic is produced.
+	DiagnosticDirectives []MappedDiagnosticDirective `json:"diagnosticDirectives,omitempty"`
+}
+
+type DiagnosticDirectivePolicy string
+
+const (
+	DiagnosticDirectivePolicyIgnore DiagnosticDirectivePolicy = "ignore"
+	DiagnosticDirectivePolicyExpect DiagnosticDirectivePolicy = "expect"
+)
+
+type UnusedDirectiveDiagnostic struct {
+	Code        int32  `json:"code"`
+	MessageText string `json:"messageText"`
+}
+
+type MappedDiagnosticDirective struct {
+	OriginalStart    int                        `json:"originalStart"`
+	OriginalLength   int                        `json:"originalLength"`
+	VirtualStart     int                        `json:"virtualStart"`
+	VirtualLength    int                        `json:"virtualLength"`
+	Policy           DiagnosticDirectivePolicy  `json:"policy"`
+	UnusedDiagnostic *UnusedDirectiveDiagnostic `json:"unusedDiagnostic,omitempty"`
 }
 
 type SupplementalOutput struct {
@@ -824,20 +849,24 @@ func decodeTransformResult(raw json.Value, originalText string, positionEncoding
 	if err := json.Unmarshal(raw, &res); err != nil {
 		return Result{}, err
 	}
-	mapped, originalPositions, err := decodeMappedOutput(res.MappedOutput, originalText, positionEncoding)
+	mapped, originalPositions, err := decodeMappedOutput(res.MappedOutput, originalText, positionEncoding, diagnosticSource)
 	if err != nil {
 		return Result{}, err
 	}
 	result := Result{
-		Text:     mapped.Text,
-		Mappings: mapped.Mappings,
+		Text:                 mapped.Text,
+		Mappings:             mapped.Mappings,
+		DiagnosticDirectives: mapped.DiagnosticDirectives,
 	}
-	for _, supplemental := range res.Supplemental {
+	for supplementalIndex, supplemental := range res.Supplemental {
 		if !IsSupportedVirtualExtension(supplemental.Extension) {
 			return Result{}, &InvalidSupplementalVirtualExtensionError{Extension: supplemental.Extension}
 		}
-		mapped, _, err := decodeMappedOutput(supplemental.MappedOutput, originalText, positionEncoding)
+		mapped, _, err := decodeMappedOutput(supplemental.MappedOutput, originalText, positionEncoding, diagnosticSource)
 		if err != nil {
+			if directiveError, ok := errors.AsType[*DiagnosticDirectiveError](err); ok {
+				directiveError.SupplementalIndex = supplementalIndex
+			}
 			return Result{}, err
 		}
 		mapped.VirtualExtension = supplemental.Extension
@@ -867,7 +896,7 @@ func decodeTransformResult(raw json.Value, originalText string, positionEncoding
 	return result, nil
 }
 
-func decodeMappedOutput(output MappedOutput, originalText string, positionEncoding PositionEncoding) (MappedResult, *positionNormalizer, error) {
+func decodeMappedOutput(output MappedOutput, originalText string, positionEncoding PositionEncoding, diagnosticSource string) (MappedResult, *positionNormalizer, error) {
 	result := MappedResult{
 		Text: output.Text,
 	}
@@ -883,9 +912,9 @@ func decodeMappedOutput(output MappedOutput, originalText string, positionEncodi
 	// synthesized output (no segment corresponds to the original), so decode to an empty map rather than
 	// nil, which would mean "not content-mapped".
 	if len(output.Mappings) > 0 {
-		mappings, err := spanmap.Unmarshal(output.Mappings)
-		if err != nil {
-			return MappedResult{}, nil, err
+		mappings, unmarshalErr := spanmap.Unmarshal(output.Mappings)
+		if unmarshalErr != nil {
+			return MappedResult{}, nil, unmarshalErr
 		}
 		result.Mappings, err = normalizeMappings(mappings, virtualPositions, originalPositions)
 		if err != nil {
@@ -894,7 +923,83 @@ func decodeMappedOutput(output MappedOutput, originalText string, positionEncodi
 	} else {
 		result.Mappings = spanmap.New(nil)
 	}
+	result.DiagnosticDirectives, err = normalizeDiagnosticDirectives(output.DiagnosticDirectives, virtualPositions, originalPositions, diagnosticSource)
+	if err != nil {
+		return MappedResult{}, nil, err
+	}
 	return result, originalPositions, nil
+}
+
+func normalizeDiagnosticDirectives(directives []MappedDiagnosticDirective, virtualPositions, originalPositions *positionNormalizer, diagnosticSource string) ([]ast.MappedDiagnosticDirective, error) {
+	result := make([]ast.MappedDiagnosticDirective, len(directives))
+	for i, directive := range directives {
+		directiveError := func(kind DiagnosticDirectiveErrorKind) *DiagnosticDirectiveError {
+			return &DiagnosticDirectiveError{
+				Kind:              kind,
+				Index:             i,
+				SupplementalIndex: -1,
+			}
+		}
+		normalized := ast.MappedDiagnosticDirective{Source: diagnosticSource}
+		switch directive.Policy {
+		case DiagnosticDirectivePolicyIgnore:
+			normalized.Policy = ast.MappedDiagnosticDirectivePolicyIgnore
+		case DiagnosticDirectivePolicyExpect:
+			if directive.UnusedDiagnostic == nil {
+				return nil, directiveError(DiagnosticDirectiveErrorKindExpectMissingUnusedDiagnostic)
+			}
+			normalized.Policy = ast.MappedDiagnosticDirectivePolicyExpect
+			normalized.UnusedCode = directive.UnusedDiagnostic.Code
+			normalized.UnusedMessageText = directive.UnusedDiagnostic.MessageText
+		default:
+			validationError := directiveError(DiagnosticDirectiveErrorKindInvalidPolicy)
+			validationError.Policy = directive.Policy
+			return nil, validationError
+		}
+		if directive.VirtualStart < 0 || directive.VirtualLength < 0 || directive.VirtualStart > int(^uint(0)>>1)-directive.VirtualLength {
+			return nil, directiveError(DiagnosticDirectiveErrorKindInvalidRange)
+		}
+		virtualStart, err := virtualPositions.normalize(directive.VirtualStart)
+		if err != nil {
+			return nil, directiveError(DiagnosticDirectiveErrorKindInvalidRange)
+		}
+		virtualEnd, err := virtualPositions.normalize(directive.VirtualStart + directive.VirtualLength)
+		if err != nil {
+			return nil, directiveError(DiagnosticDirectiveErrorKindInvalidRange)
+		}
+		normalized.VirtualRange = core.NewTextRange(virtualStart, virtualEnd)
+		validOriginalRange := directive.OriginalStart >= 0 && directive.OriginalLength >= 0 && directive.OriginalStart <= int(^uint(0)>>1)-directive.OriginalLength
+		if validOriginalRange {
+			originalStart, startErr := originalPositions.normalize(directive.OriginalStart)
+			originalEnd, endErr := originalPositions.normalize(directive.OriginalStart + directive.OriginalLength)
+			if startErr == nil && endErr == nil {
+				normalized.OriginalRange = core.NewTextRange(originalStart, originalEnd)
+			} else {
+				validOriginalRange = false
+			}
+		}
+		if normalized.Policy == ast.MappedDiagnosticDirectivePolicyExpect && !validOriginalRange {
+			return nil, directiveError(DiagnosticDirectiveErrorKindInvalidRange)
+		}
+		result[i] = normalized
+	}
+	type indexedDirective struct {
+		directive ast.MappedDiagnosticDirective
+		index     int
+	}
+	sorted := make([]indexedDirective, len(result))
+	for i, directive := range result {
+		sorted[i] = indexedDirective{directive: directive, index: i}
+	}
+	slices.SortFunc(sorted, func(a, b indexedDirective) int {
+		return cmp.Compare(a.directive.VirtualRange.Pos(), b.directive.VirtualRange.Pos())
+	})
+	for i := 1; i < len(sorted); i++ {
+		if sorted[i].directive.VirtualRange.Pos() < sorted[i-1].directive.VirtualRange.End() {
+			return nil, &DiagnosticDirectiveError{Kind: DiagnosticDirectiveErrorKindOverlap, Index: sorted[i].index, SupplementalIndex: -1}
+		}
+	}
+	return result, nil
 }
 
 func normalizeMappings(mappings *spanmap.SpanMap, virtualPositions *positionNormalizer, originalPositions *positionNormalizer) (*spanmap.SpanMap, error) {

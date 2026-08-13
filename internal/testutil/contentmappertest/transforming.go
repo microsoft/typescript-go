@@ -36,12 +36,12 @@ func (Handler) HandleRequest(ctx context.Context, method string, params json.Val
 		if err := json.Unmarshal(params, &p); err != nil {
 			return nil, err
 		}
-		text, mappings, diagnostics, err := transform(p.Content, p.CompilerOptions)
+		text, mappings, diagnostics, diagnosticDirectives, err := transform(p.Content, p.CompilerOptions)
 		if err != nil {
 			return nil, err
 		}
 		return contentmapper.TransformResult{
-			MappedOutput: contentmapper.MappedOutput{Text: text, Mappings: mappings},
+			MappedOutput: contentmapper.MappedOutput{Text: text, Mappings: mappings, DiagnosticDirectives: diagnosticDirectives},
 			Diagnostics:  diagnostics,
 		}, nil
 	default:
@@ -49,7 +49,7 @@ func (Handler) HandleRequest(ctx context.Context, method string, params json.Val
 	}
 }
 
-func transform(content string, options *collections.OrderedMap[string, json.Value]) (string, json.Value, []contentmapper.Diagnostic, error) {
+func transform(content string, options *collections.OrderedMap[string, json.Value]) (string, json.Value, []contentmapper.Diagnostic, []contentmapper.MappedDiagnosticDirective, error) {
 	var virtual strings.Builder
 	var segments []spanmap.Segment
 	var diagnostics []contentmapper.Diagnostic
@@ -119,11 +119,85 @@ func transform(content string, options *collections.OrderedMap[string, json.Valu
 		pos = tokenEnd
 	}
 
-	mappings, err := spanmap.New(segments).Marshal()
+	spanMap := spanmap.New(segments)
+	mappings, err := spanMap.Marshal()
 	if err != nil {
-		return "", nil, nil, err
+		return "", nil, nil, nil, err
 	}
-	return virtual.String(), json.Value(mappings), diagnostics, nil
+	return virtual.String(), json.Value(mappings), diagnostics, diagnosticDirectives(content, spanMap), nil
+}
+
+func diagnosticDirectives(content string, mappings *spanmap.SpanMap) []contentmapper.MappedDiagnosticDirective {
+	const invalidPrefix = "// @box-invalid-directive:"
+	if strings.HasPrefix(content, invalidPrefix) {
+		switch strings.TrimSpace(strings.TrimPrefix(strings.SplitN(content, "\n", 2)[0], invalidPrefix)) {
+		case "invalid-range":
+			return []contentmapper.MappedDiagnosticDirective{{VirtualStart: -1, Policy: contentmapper.DiagnosticDirectivePolicyIgnore}}
+		case "original-range-out-of-bounds":
+			return []contentmapper.MappedDiagnosticDirective{{OriginalStart: len(content) + 1, Policy: contentmapper.DiagnosticDirectivePolicyIgnore}}
+		case "virtual-range-out-of-bounds":
+			return []contentmapper.MappedDiagnosticDirective{{VirtualStart: 1 << 20, Policy: contentmapper.DiagnosticDirectivePolicyIgnore}}
+		case "invalid-policy":
+			return []contentmapper.MappedDiagnosticDirective{{Policy: "invalid"}}
+		case "ignore-with-unused-diagnostic":
+			return []contentmapper.MappedDiagnosticDirective{{Policy: contentmapper.DiagnosticDirectivePolicyIgnore, UnusedDiagnostic: &contentmapper.UnusedDirectiveDiagnostic{}}}
+		case "expect-without-unused-diagnostic":
+			return []contentmapper.MappedDiagnosticDirective{{Policy: contentmapper.DiagnosticDirectivePolicyExpect}}
+		case "overlap":
+			return []contentmapper.MappedDiagnosticDirective{
+				{VirtualLength: 2, Policy: contentmapper.DiagnosticDirectivePolicyIgnore},
+				{VirtualStart: 1, VirtualLength: 2, Policy: contentmapper.DiagnosticDirectivePolicyIgnore},
+			}
+		}
+	}
+	const ignorePrefix = "// @box-ignore"
+	const expectPrefix = "// @box-expect-error"
+	var result []contentmapper.MappedDiagnosticDirective
+	for lineStart := 0; lineStart < len(content); {
+		lineEnd := strings.IndexByte(content[lineStart:], '\n')
+		if lineEnd < 0 {
+			lineEnd = len(content)
+		} else {
+			lineEnd += lineStart
+		}
+		line := content[lineStart:lineEnd]
+		trimmed := strings.TrimSpace(line)
+		policy := contentmapper.DiagnosticDirectivePolicy("")
+		var unused *contentmapper.UnusedDirectiveDiagnostic
+		switch {
+		case trimmed == ignorePrefix:
+			policy = contentmapper.DiagnosticDirectivePolicyIgnore
+		case strings.HasPrefix(trimmed, expectPrefix+":"):
+			policy = contentmapper.DiagnosticDirectivePolicyExpect
+			unused = &contentmapper.UnusedDirectiveDiagnostic{
+				Code:        2578,
+				MessageText: strings.TrimSpace(strings.TrimPrefix(trimmed, expectPrefix+":")),
+			}
+		}
+		if policy != "" && lineEnd < len(content) {
+			affectedStart := lineEnd + 1
+			affectedLength := strings.IndexByte(content[affectedStart:], '\n')
+			if affectedLength < 0 {
+				affectedLength = len(content) - affectedStart
+			}
+			virtualSpans := mappings.OriginalToVirtualSpans(core.NewTextRange(affectedStart, affectedStart+affectedLength), spanmap.FeatureAll)
+			if len(virtualSpans) == 1 {
+				result = append(result, contentmapper.MappedDiagnosticDirective{
+					OriginalStart:    lineStart,
+					OriginalLength:   lineEnd - lineStart,
+					VirtualStart:     virtualSpans[0].Span.Pos(),
+					VirtualLength:    virtualSpans[0].Span.Len(),
+					Policy:           policy,
+					UnusedDiagnostic: unused,
+				})
+			}
+		}
+		if lineEnd == len(content) {
+			break
+		}
+		lineStart = lineEnd + 1
+	}
+	return result
 }
 
 func renderOption(options *collections.OrderedMap[string, json.Value], name string) string {
