@@ -203,6 +203,8 @@ type BuildInfoDiagnostic struct {
 	End                int                      `json:"end,omitzero"`
 	Code               int32                    `json:"code,omitzero"`
 	Category           diagnostics.Category     `json:"category,omitzero"`
+	Source             string                   `json:"source,omitzero"`
+	MessageText        string                   `json:"messageText,omitzero"`
 	MessageKey         diagnostics.Key          `json:"messageKey,omitzero"`
 	MessageArgs        []string                 `json:"messageArgs,omitzero"`
 	MessageChain       []*BuildInfoDiagnostic   `json:"messageChain,omitzero"`

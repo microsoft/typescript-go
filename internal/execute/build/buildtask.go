@@ -2,7 +2,9 @@ package build
 
 import (
 	"fmt"
+	"iter"
 	"slices"
+	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -181,6 +183,15 @@ func (t *BuildTask) updateDownstream(orchestrator *Orchestrator, path tspath.Pat
 		return
 	}
 	if orchestrator.opts.Command.BuildOptions.StopBuildOnErrors.IsTrue() && t.status.isError() {
+		return
+	}
+	if t.result.program == nil {
+		for _, downStream := range t.downStream {
+			downStream.downStreamUpdateMu.Lock()
+			downStream.resetStatus()
+			downStream.pending.Store(true)
+			downStream.downStreamUpdateMu.Unlock()
+		}
 		return
 	}
 
@@ -482,11 +493,15 @@ func (t *BuildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 			if seenRoots.Has(inputPath) || resolvedRoots.Has(inputPath) {
 				continue
 			}
+			if isContentMapperSupplementalBuildInfoPath(inputPath, getBuildInfoRootInfoReader().Roots()) {
+				continue
+			}
 			inputTime := orchestrator.host.GetMTime(inputFile)
 			if inputTime.IsZero() {
 				// Input file that was part of the program is missing (eg: dependency was removed)
 				return &upToDateStatus{kind: upToDateStatusTypeInputFileMissing, data: inputFile}
 			}
+
 			if inputTime.After(oldestOutputFileAndTime.time) {
 				var currentVersion string
 				version := buildInfoFileInfo.GetFileInfo().Version()
@@ -604,6 +619,23 @@ func (t *BuildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 		),
 		data: &inputOutputFileAndTime{newestInputFileAndTime, oldestOutputFileAndTime, buildInfoPath},
 	}
+}
+
+func isContentMapperSupplementalBuildInfoPath(inputPath tspath.Path, roots iter.Seq[tspath.Path]) bool {
+	for root := range roots {
+		suffix, ok := strings.CutPrefix(string(inputPath), string(root)+".")
+		if !ok {
+			continue
+		}
+		index, extension, ok := strings.Cut(suffix, ".")
+		if !ok || extension == "" {
+			continue
+		}
+		if _, err := strconv.Atoi(index); err == nil && contentmapper.IsSupportedVirtualExtension("."+extension) {
+			return true
+		}
+	}
+	return false
 }
 
 func (t *BuildTask) reportUpToDateStatus(orchestrator *Orchestrator) {
