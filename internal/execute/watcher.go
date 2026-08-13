@@ -185,14 +185,22 @@ func (w *Watcher) replaceContentMapperProject(config *tsoptions.ParsedCommandLin
 }
 
 func (w *Watcher) contentMapperWatchedFiles() []string {
-	if w.contentMapperProject == nil {
-		return nil
+	var files []string
+	for _, mapper := range w.config.ContentMappers() {
+		if mapper.PackageDirectory != "" && mapper.ContributionID == "" {
+			files = append(files, tspath.CombinePaths(mapper.PackageDirectory, "package.json"))
+		}
 	}
-	files, err := w.contentMapperProject.WatchedFiles()
-	if err != nil {
-		w.reportDiagnostic(compiler.ContentMapperProjectDiagnostic(err))
-		return nil
+	if w.contentMapperProject != nil {
+		dynamicFiles, err := w.contentMapperProject.WatchedFiles()
+		if err != nil {
+			w.reportDiagnostic(compiler.ContentMapperProjectDiagnostic(err))
+			return files
+		}
+		files = append(files, dynamicFiles...)
 	}
+	slices.Sort(files)
+	files = slices.Compact(files)
 	return files
 }
 
@@ -274,7 +282,7 @@ func (w *Watcher) DoCycle() {
 	changedPaths, overflow := w.wm.DrainEvents()
 	hasEvents := len(changedPaths) > 0 || overflow
 
-	if w.recheckTsConfig() {
+	if w.recheckTsConfig(w.contentMapperManifestChanged(changedPaths)) {
 		return
 	}
 
@@ -371,8 +379,14 @@ func (w *Watcher) isRelevantChange(changedPaths map[string]fswatch.EventKind) bo
 	caseSensitive := w.sys.FS().UseCaseSensitiveFileNames()
 	cwd := w.sys.GetCurrentDirectory()
 	opts := w.comparePathsOptions()
+	contentMapperWatchedFiles := collections.NewSetFromItems(core.Map(w.contentMapperWatchedFiles(), func(fileName string) tspath.Path {
+		return tspath.ToPath(fileName, cwd, caseSensitive)
+	})...)
 	for eventPath := range changedPaths {
 		p := tspath.ToPath(eventPath, cwd, caseSensitive)
+		if contentMapperWatchedFiles.Has(p) {
+			return true
+		}
 		if w.seenFiles.Has(p) {
 			return true
 		}
@@ -525,7 +539,7 @@ func (w *Watcher) tryUpdateProgram(host *watchCompilerHost) bool {
 	var changedPath tspath.Path
 	var changedCount int
 	for path, file := range oldProgram.FilesByPath() {
-		if file.IsContentMapperSupplemental() {
+		if file.ContentMapper() != "" {
 			continue
 		}
 		if _, ok := w.sourceFileCache.Load(path); !ok {
@@ -604,12 +618,24 @@ func (w *Watcher) compileAndEmit() tsc.CompileAndEmitResult {
 	})
 }
 
-func (w *Watcher) recheckTsConfig() bool {
+func (w *Watcher) contentMapperManifestChanged(changedPaths map[string]fswatch.EventKind) bool {
+	for _, mapper := range w.config.ContentMappers() {
+		if mapper.PackageDirectory == "" || mapper.ContributionID != "" {
+			continue
+		}
+		if _, changed := changedPaths[w.sys.FS().Realpath(tspath.CombinePaths(mapper.PackageDirectory, "package.json"))]; changed {
+			return true
+		}
+	}
+	return false
+}
+
+func (w *Watcher) recheckTsConfig(force bool) bool {
 	if w.configFileName == "" {
 		return false
 	}
 
-	if !w.configHasErrors && len(w.configFilePaths) > 0 {
+	if !force && !w.configHasErrors && len(w.configFilePaths) > 0 {
 		changed := false
 		for _, path := range w.configFilePaths {
 			oldMtime, ok := w.configMtimes[path]

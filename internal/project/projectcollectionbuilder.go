@@ -7,6 +7,7 @@ import (
 	"slices"
 	"time"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
@@ -1191,6 +1192,11 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 					if mapper.Package != "" && mapper.ContributionID == "" && mapper.PackageDirectory != "" {
 						watchedFiles = append(watchedFiles, tspath.CombinePaths(mapper.PackageDirectory, "package.json"))
 					}
+				}
+				if slices.ContainsFunc(result.Program.SourceFiles(), func(file *ast.SourceFile) bool {
+					return file.ContentMapper() != ""
+				}) {
+					project.host.ensureContentMapperProject()
 				}
 				contentMapperProject := project.host.ContentMapperProject()
 				if contentMapperProject != nil {

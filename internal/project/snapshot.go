@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"maps"
 	"slices"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -45,9 +46,34 @@ type Snapshot struct {
 	inferredProjectContentMappers          []*contentmapper.Mapper
 	inferredProjectContentMapperExtensions []string
 	userPreferences                        lsutil.UserPreferences
+	contentMapperWatchStateOnce            sync.Once
+	contentMapperExtensions                []string
+	contentMapperWatchedFiles              *collections.Set[tspath.Path]
 
 	builderLogs *logging.LogTree
 	apiError    error
+}
+
+func (s *Snapshot) contentMapperWatchState() ([]string, *collections.Set[tspath.Path]) {
+	s.contentMapperWatchStateOnce.Do(func() {
+		configured := s.ConfigFileRegistry.contentMappers()
+		if configured != nil {
+			s.contentMapperExtensions = slices.Clone(configured.extensions)
+		}
+		s.contentMapperExtensions = append(s.contentMapperExtensions, s.inferredProjectContentMapperExtensions...)
+		slices.Sort(s.contentMapperExtensions)
+		s.contentMapperExtensions = slices.Compact(s.contentMapperExtensions)
+
+		s.contentMapperWatchedFiles = &collections.Set[tspath.Path]{}
+		for _, project := range s.ProjectCollection.Projects() {
+			if project.contentMapperWatchedFiles != nil {
+				for path := range project.contentMapperWatchedFiles.Keys() {
+					s.contentMapperWatchedFiles.Add(path)
+				}
+			}
+		}
+	})
+	return s.contentMapperExtensions, s.contentMapperWatchedFiles
 }
 
 // NewSnapshot initializes a snapshot with refCount 1.
@@ -325,11 +351,16 @@ func (s *Snapshot) Clone(
 		}
 	} else {
 		var contentMapperExtensions []string
-		if configuredContentMappers != nil {
-			contentMapperExtensions = configuredContentMappers.extensions
+		if change.contentMapperContributions == nil {
+			contentMapperExtensions, _ = s.contentMapperWatchState()
+		} else {
+			if configuredContentMappers != nil {
+				contentMapperExtensions = slices.Clone(configuredContentMappers.extensions)
+			}
+			contentMapperExtensions = append(contentMapperExtensions, inferredContentMapperExtensions...)
 		}
-		contentMapperExtensions = append(slices.Clone(contentMapperExtensions), inferredContentMapperExtensions...)
-		change.fileChanges = fs.expandAndFilterWatchEvents(change.fileChanges, contentMapperExtensions)
+		_, contentMapperWatchedFiles := s.contentMapperWatchState()
+		change.fileChanges = fs.expandAndFilterWatchEvents(change.fileChanges, contentMapperExtensions, contentMapperWatchedFiles)
 		change.fileChanges = s.fs.expandRealpathAliases(change.fileChanges)
 		change.fileChanges = fs.markDirtyFiles(change.fileChanges)
 		change.fileChanges = fs.convertOpenAndCloseToChanges(change.fileChanges)

@@ -483,7 +483,9 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 	fileChanges := make([]FileChange, 0, len(changes))
 	hasRelevantChange := false
 	hasConfigChange := false
-	configFileRegistry := s.Snapshot().ConfigFileRegistry
+	snapshot := s.Snapshot()
+	configFileRegistry := snapshot.ConfigFileRegistry
+	contentMapperExtensions, contentMapperWatchedFiles := snapshot.contentMapperWatchState()
 	for _, change := range changes {
 		var kind FileChangeKind
 		switch change.Type {
@@ -509,6 +511,10 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 			fileName := change.Uri.FileName()
 			path := s.toPath(fileName).RemoveTrailingDirectorySeparator()
 			pathStr := string(path)
+			if contentMapperWatchedFiles.Has(path) {
+				hasRelevantChange = true
+				continue
+			}
 			i := strings.LastIndexByte(pathStr, '.')
 			if i < 0 || strings.LastIndexByte(pathStr, '/') > i {
 				// Extensionless paths might be directories.
@@ -525,7 +531,8 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 					}
 				}
 			} else {
-				if isRelevantExtension(pathStr[i:]) {
+				if isRelevantExtension(pathStr[i:]) ||
+					tspath.FileExtensionIsOneOf(pathStr, contentMapperExtensions) {
 					hasRelevantChange = true
 				}
 			}
