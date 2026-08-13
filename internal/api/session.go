@@ -1170,7 +1170,7 @@ func (s *Session) handleParseJsonConfigFileContent(ctx context.Context, params *
 	}
 
 	parsedCommandLine := tsoptions.ParseJsonConfigFileContent(
-		params.JSON.Value,
+		jsonValueToAny(params.JSON),
 		s.projectSession,
 		basePath,
 		nil, /*existingOptions*/

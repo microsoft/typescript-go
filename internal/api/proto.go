@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -541,65 +542,35 @@ type ReadConfigFileParams struct {
 	File DocumentIdentifier `json:"file"`
 }
 
-type OrderedJSONValue struct {
-	Value any
-}
-
-var _ json.UnmarshalerFrom = (*OrderedJSONValue)(nil)
-
-func (v *OrderedJSONValue) UnmarshalJSONFrom(dec *json.Decoder) error {
-	switch dec.PeekKind() {
-	case 'n':
-		_, err := dec.ReadToken()
-		v.Value = nil
-		return err
-	case '{':
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		object := &collections.OrderedMap[string, any]{}
-		for dec.PeekKind() != '}' {
-			var key string
-			if err := json.UnmarshalDecode(dec, &key); err != nil {
-				return err
-			}
-			var child OrderedJSONValue
-			if err := json.UnmarshalDecode(dec, &child); err != nil {
-				return err
-			}
-			object.Set(key, child.Value)
-		}
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		v.Value = object
-		return nil
-	case '[':
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		array := []any{}
-		for dec.PeekKind() != ']' {
-			var child OrderedJSONValue
-			if err := json.UnmarshalDecode(dec, &child); err != nil {
-				return err
-			}
-			array = append(array, child.Value)
-		}
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		v.Value = array
-		return nil
-	default:
-		return json.UnmarshalDecode(dec, &v.Value)
-	}
-}
-
 type ParseJsonConfigFileContentParams struct {
-	JSON            OrderedJSONValue    `json:"json"`
-	ConfigDirectory *string             `json:"configDirectory,omitempty"`
-	ConfigFileName  *DocumentIdentifier `json:"configFileName,omitempty"`
+	JSON            packagejson.JSONValue `json:"json"`
+	ConfigDirectory *string               `json:"configDirectory,omitempty"`
+	ConfigFileName  *DocumentIdentifier   `json:"configFileName,omitempty"`
+}
+
+func jsonValueToAny(value packagejson.JSONValue) any {
+	switch value.Type {
+	case packagejson.JSONValueTypeNotPresent, packagejson.JSONValueTypeNull:
+		return nil
+	case packagejson.JSONValueTypeString, packagejson.JSONValueTypeNumber, packagejson.JSONValueTypeBoolean:
+		return value.Value
+	case packagejson.JSONValueTypeArray:
+		array := value.AsArray()
+		result := make([]any, len(array))
+		for i, child := range array {
+			result[i] = jsonValueToAny(child)
+		}
+		return result
+	case packagejson.JSONValueTypeObject:
+		object := value.AsObject()
+		result := collections.NewOrderedMapWithSizeHint[string, any](object.Size())
+		for key, child := range object.Entries() {
+			result.Set(key, jsonValueToAny(child))
+		}
+		return result
+	default:
+		panic(fmt.Sprintf("unexpected JSON value type %v", value.Type))
+	}
 }
 
 type TranspileOptions struct {

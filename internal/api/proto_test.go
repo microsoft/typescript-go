@@ -1,38 +1,17 @@
 package api_test
 
 import (
-	"slices"
 	"strings"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/api"
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"gotest.tools/v3/assert"
 )
-
-func TestOrderedJSONValueUnmarshalJSON(t *testing.T) {
-	t.Parallel()
-
-	var value api.OrderedJSONValue
-	err := json.Unmarshal([]byte(`{"z":1,"a":{"y":2,"x":3},"m":[{"b":4,"a":5}],"e":[]}`), &value)
-	assert.NilError(t, err)
-
-	root := value.Value.(*collections.OrderedMap[string, any])
-	assert.DeepEqual(t, slices.Collect(root.Keys()), []string{"z", "a", "m", "e"})
-	nested := root.GetOrZero("a").(*collections.OrderedMap[string, any])
-	assert.DeepEqual(t, slices.Collect(nested.Keys()), []string{"y", "x"})
-	array := root.GetOrZero("m").([]any)
-	arrayObject := array[0].(*collections.OrderedMap[string, any])
-	assert.DeepEqual(t, slices.Collect(arrayObject.Keys()), []string{"b", "a"})
-	empty := root.GetOrZero("e").([]any)
-	assert.Assert(t, empty != nil)
-	assert.Equal(t, len(empty), 0)
-}
 
 func TestDocumentIdentifierUnmarshalJSON(t *testing.T) {
 	t.Parallel()
