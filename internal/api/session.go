@@ -1126,9 +1126,9 @@ func (s *Session) handleGetDefaultProjectForFile(ctx context.Context, params *Ge
 	return NewProjectResponse(proj), nil
 }
 
-// handleParseCommandLine parses command-line arguments without compiler execution path normalization.
+// handleParseCommandLine parses command-line arguments.
 func (s *Session) handleParseCommandLine(ctx context.Context, params *ParseCommandLineParams) (*ConfigFileResponse, error) {
-	return NewConfigFileResponse(tsoptions.ParseCommandLineWithoutPathNormalization(params.CommandLine, s.projectSession)), nil
+	return NewConfigFileResponse(tsoptions.ParseCommandLine(params.CommandLine, s.projectSession)), nil
 }
 
 // handleReadConfigFile reads and parses a JSON configuration file.

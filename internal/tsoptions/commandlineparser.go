@@ -44,26 +44,11 @@ func ParseCommandLine(
 	commandLine []string,
 	host ParseConfigHost,
 ) *ParsedCommandLine {
-	return parseCommandLine(commandLine, host, true)
-}
-
-// ParseCommandLineWithoutPathNormalization preserves relative option values for API compatibility.
-func ParseCommandLineWithoutPathNormalization(
-	commandLine []string,
-	host ParseConfigHost,
-) *ParsedCommandLine {
-	return parseCommandLine(commandLine, host, false)
-}
-
-func parseCommandLine(commandLine []string, host ParseConfigHost, normalizePaths bool) *ParsedCommandLine {
 	if commandLine == nil {
 		commandLine = []string{}
 	}
 	parser := parseCommandLineWorker(CompilerOptionsDidYouMeanDiagnostics, commandLine, host.FS(), host.GetCurrentDirectory())
-	options := parser.options
-	if normalizePaths {
-		options = convertToOptionsWithAbsolutePaths(options.Clone(), CommandLineCompilerOptionsMap, host.GetCurrentDirectory())
-	}
+	options := convertToOptionsWithAbsolutePaths(parser.options.Clone(), CommandLineCompilerOptionsMap, host.GetCurrentDirectory())
 	compilerOptions := convertMapToOptions(options, &compilerOptionsParser{&core.CompilerOptions{}}).CompilerOptions
 	var watchOptions *core.WatchOptions
 	for key := range options.Keys() {

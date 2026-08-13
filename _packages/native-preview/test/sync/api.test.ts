@@ -110,7 +110,10 @@ describe("API", () => {
             ]);
             assert.deepEqual(commandLine.fileNames, ["/src/index.ts"]);
             assert.equal(commandLine.options.strict, true);
-            assert.equal(commandLine.options.outDir, "dist");
+            assert.equal(
+                commandLine.options.outDir,
+                resolve(fileURLToPath(new URL("../../../../", import.meta.url)), "dist"),
+            );
             assert.deepEqual(commandLine.watchOptions, { watchFile: 4 });
             assert.deepEqual(commandLine.raw, {
                 strict: true,
