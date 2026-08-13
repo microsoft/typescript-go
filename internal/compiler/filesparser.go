@@ -125,6 +125,9 @@ func (t *parseTask) load(loader *fileLoader) {
 	}
 
 	t.file = file
+	if virtualFileName := file.VirtualFileName(); virtualFileName != "" {
+		t.metadata.ImpliedNodeFormat = ast.GetImpliedNodeFormatForFile(virtualFileName, t.metadata.PackageJsonType)
+	}
 	t.subTasks = make([]*parseTask, 0, len(file.ReferencedFiles)+len(file.Imports())+len(file.ModuleAugmentations))
 
 	compilerOptions := loader.opts.Config.CompilerOptions()

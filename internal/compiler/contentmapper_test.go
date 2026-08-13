@@ -32,6 +32,14 @@ func (r fakeContentMapperHost) Transform(mapper *contentmapper.Mapper, request c
 }
 
 func newContentMapperProgram(t *testing.T, contentMapperProject contentmapper.Project, files map[string]string, rootFiles []string) *compiler.Program {
+	return newContentMapperProgramWithOptions(t, contentMapperProject, files, rootFiles, &core.CompilerOptions{
+		SkipLibCheck:     core.TSTrue,
+		Module:           core.ModuleKindESNext,
+		ModuleResolution: core.ModuleResolutionKindBundler,
+	})
+}
+
+func newContentMapperProgramWithOptions(t *testing.T, contentMapperProject contentmapper.Project, files map[string]string, rootFiles []string, options *core.CompilerOptions) *compiler.Program {
 	t.Helper()
 	if !bundled.Embedded {
 		t.Skip("bundled files are not embedded")
@@ -44,13 +52,9 @@ func newContentMapperProgram(t *testing.T, contentMapperProject contentmapper.Pr
 
 	config := &tsoptions.ParsedCommandLine{
 		ParsedConfig: &tsoptions.ParsedOptions{
-			FileNames: rootFiles,
-			CompilerOptions: &core.CompilerOptions{
-				SkipLibCheck:     core.TSTrue,
-				Module:           core.ModuleKindESNext,
-				ModuleResolution: core.ModuleResolutionKindBundler,
-			},
-			ContentMappers: []*contentmapper.Mapper{{Definition: contentmapper.Definition{Package: "vue", Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "vue-mapper", Version: "1.0.0"}}},
+			FileNames:       rootFiles,
+			CompilerOptions: options,
+			ContentMappers:  []*contentmapper.Mapper{{Definition: contentmapper.Definition{Package: "vue", Extensions: []string{".vue"}}, Manifest: contentmapper.Manifest{Name: "vue-mapper", Version: "1.0.0"}}},
 		},
 	}
 	return compiler.NewProgram(compiler.ProgramOptions{
@@ -59,6 +63,27 @@ func newContentMapperProgram(t *testing.T, contentMapperProject contentmapper.Pr
 		// Load files on the calling goroutine for deterministic diagnostics ordering.
 		SingleThreaded: core.TSTrue,
 	})
+}
+
+func TestContentMapperVirtualExtensionSetsImpliedNodeFormat(t *testing.T) {
+	t.Parallel()
+	program := newContentMapperProgramWithOptions(
+		t,
+		fakeContentMapperHost{transform: func(fileName string, content string) (contentmapper.Result, error) {
+			return contentmapper.Result{Text: "export {};", VirtualExtension: ".mts", Mappings: spanmap.New(nil)}, nil
+		}},
+		map[string]string{"/src/Component.vue": "<template />"},
+		[]string{"/src/Component.vue"},
+		&core.CompilerOptions{
+			SkipLibCheck:     core.TSTrue,
+			Module:           core.ModuleKindNodeNext,
+			ModuleResolution: core.ModuleResolutionKindNodeNext,
+		},
+	)
+
+	file := program.GetSourceFile("/src/Component.vue")
+	assert.Assert(t, file != nil)
+	assert.Equal(t, program.GetSourceFileMetaData(file.Path()).ImpliedNodeFormat, core.ResolutionModeESM)
 }
 
 func collectContentMapperDiagnostics(program *compiler.Program) []*ast.Diagnostic {

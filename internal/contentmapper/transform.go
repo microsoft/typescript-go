@@ -1,6 +1,7 @@
 package contentmapper
 
 import (
+	"slices"
 	"strconv"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -29,6 +30,10 @@ func TransformAndParse(
 	compilerOptions *core.CompilerOptions,
 	project Project,
 ) (SourceFiles, error) {
+	transformIdentity, err := project.Identity(mapper)
+	if err != nil {
+		return SourceFiles{}, NewTransformError(TransformErrorKindProject, err)
+	}
 	result, err := project.Transform(mapper, Request{
 		FileName:        parseOptions.FileName,
 		Content:         content,
@@ -40,6 +45,10 @@ func TransformAndParse(
 	files, err := ParseResult(parseOptions, content, mapper, result)
 	if err != nil {
 		return SourceFiles{}, err
+	}
+	files.Canonical.SetContentMapperTransformIdentity(transformIdentity)
+	for _, supplemental := range files.Supplemental {
+		supplemental.SetContentMapperTransformIdentity(transformIdentity)
 	}
 	return files, nil
 }
@@ -56,14 +65,17 @@ func ParseResult(parseOptions ast.SourceFileParseOptions, content string, mapper
 	if !IsSupportedVirtualExtension(virtualExtension) {
 		return SourceFiles{}, NewTransformError(TransformErrorKindResponse, nil)
 	}
-	virtualFileName := parseOptions.FileName + virtualExtension
-	if tspath.FileExtensionIsOneOf(virtualExtension, []string{tspath.ExtensionMts, tspath.ExtensionCts, tspath.ExtensionMjs, tspath.ExtensionCjs}) {
+	baseParseOptions := parseOptions
+	virtualFileName := baseParseOptions.FileName + virtualExtension
+	parseOptions = baseParseOptions
+	if isModuleVirtualExtension(virtualExtension) {
 		parseOptions.ExternalModuleIndicatorOptions.Force = true
 	}
 	sourceFile := parser.ParseSourceFile(parseOptions, result.Text, core.GetScriptKindFromFileName(virtualFileName))
 	sourceFile.SetOriginalText(content)
 	sourceFile.SetSpanMap(result.Mappings)
 	sourceFile.SetContentMapper(mapper.Identity())
+	sourceFile.SetVirtualFileName(virtualFileName)
 	sourceFile.SetDiagnosticDirectives(result.DiagnosticDirectives)
 	if len(result.Diagnostics) > 0 {
 		// The runner produces diagnostics without a source file (it doesn't have one yet); associate
@@ -81,21 +93,23 @@ func ParseResult(parseOptions ast.SourceFileParseOptions, content string, mapper
 		if problem := supplemental.Mappings.Validate(supplemental.Text, content); problem != nil {
 			return SourceFiles{}, problem
 		}
-		supplementalOptions := parseOptions
+		supplementalOptions := baseParseOptions
 		if !IsSupportedVirtualExtension(supplemental.VirtualExtension) {
 			return SourceFiles{}, NewTransformError(TransformErrorKindResponse, nil)
 		}
 		suffix := "." + strconv.Itoa(i) + supplemental.VirtualExtension
 		supplementalOptions.FileName += suffix
 		supplementalOptions.Path = tspath.Path(string(parseOptions.Path) + suffix)
-		if tspath.FileExtensionIsOneOf(supplemental.VirtualExtension, []string{tspath.ExtensionMts, tspath.ExtensionCts, tspath.ExtensionMjs, tspath.ExtensionCjs}) {
+		if isModuleVirtualExtension(supplemental.VirtualExtension) {
 			supplementalOptions.ExternalModuleIndicatorOptions.Force = true
 		}
+
 		file := parser.ParseSourceFile(supplementalOptions, supplemental.Text, core.GetScriptKindFromFileName(supplementalOptions.FileName))
 
 		file.SetOriginalText(content)
 		file.SetSpanMap(supplemental.Mappings)
 		file.SetContentMapper(mapper.Identity())
+		file.SetVirtualFileName(supplementalOptions.FileName)
 		file.SetDiagnosticDirectives(supplemental.DiagnosticDirectives)
 		files.Supplemental = append(files.Supplemental, file)
 	}
@@ -103,6 +117,10 @@ func ParseResult(parseOptions ast.SourceFileParseOptions, content string, mapper
 		sourceFile.SetSupplementalSourceFiles(files.Supplemental)
 	}
 	return files, nil
+}
+
+func isModuleVirtualExtension(extension string) bool {
+	return slices.Contains([]string{tspath.ExtensionMts, tspath.ExtensionCts, tspath.ExtensionMjs, tspath.ExtensionCjs}, extension)
 }
 
 // CheckSupplementalFileNameCollisions rejects compiler-assigned virtual filenames that name physical files.

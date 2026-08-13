@@ -93,7 +93,7 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 		wg.Queue(func() {
 			versionText := file.Text()
 			if file.ContentMapper() != "" {
-				versionText = file.OriginalText()
+				versionText = file.OriginalText() + "\x00" + file.ContentMapperTransformIdentity()
 			}
 			version := t.snapshot.computeHash(versionText)
 			impliedNodeFormat := t.program.GetSourceFileMetaData(file.Path()).ImpliedNodeFormat

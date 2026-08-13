@@ -440,13 +440,16 @@ func projectSpecKey(spec ProjectSpec) string {
 	return key.String()
 }
 
-func combinedIdentity(mapper *Mapper, configIdentity string) string {
-	buf := make([]byte, 0, len(mapper.Identity())+len(mapper.Options)+len(configIdentity)+2)
+func combinedIdentity(mapper *Mapper, configIdentity string, compilerOptions *core.CompilerOptions) string {
+	transformIdentity := mapper.TransformIdentity(compilerOptions).Bytes()
+	buf := make([]byte, 0, len(mapper.Identity())+len(mapper.Options)+len(configIdentity)+len(transformIdentity)+3)
 	buf = append(buf, mapper.Identity()...)
 	buf = append(buf, 0)
 	buf = append(buf, mapper.Options...)
 	buf = append(buf, 0)
 	buf = append(buf, configIdentity...)
+	buf = append(buf, 0)
+	buf = append(buf, transformIdentity[:]...)
 	hash := xxh3.Hash128(buf).Bytes()
 	return mapper.Identity() + ":" + hex.EncodeToString(hash[:])
 }
@@ -674,7 +677,7 @@ func (p *projectLease) Identities() ([]string, error) {
 			if err := p.host.openProjectLocked(p.host.ctx, entry); err != nil {
 				return nil, err
 			}
-			identities = append(identities, combinedIdentity(mapper, entry.configIdentity))
+			identities = append(identities, combinedIdentity(mapper, entry.configIdentity, entry.spec.CompilerOptions))
 		} else {
 			hash := mapper.TransformIdentity(entry.spec.CompilerOptions).Bytes()
 			identities = append(identities, mapper.Identity()+":"+hex.EncodeToString(hash[:]))
@@ -694,7 +697,7 @@ func (p *projectLease) Identity(mapper *Mapper) (string, error) {
 		if err := p.host.openProjectLocked(p.host.ctx, entry); err != nil {
 			return "", err
 		}
-		return combinedIdentity(mapper, entry.configIdentity), nil
+		return combinedIdentity(mapper, entry.configIdentity, entry.spec.CompilerOptions), nil
 	}
 	hash := mapper.TransformIdentity(entry.spec.CompilerOptions).Bytes()
 	return mapper.Identity() + ":" + hex.EncodeToString(hash[:]), nil

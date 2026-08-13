@@ -3,6 +3,7 @@ package compiler
 import (
 	"cmp"
 	"errors"
+	"fmt"
 	"slices"
 	"strings"
 	"sync"
@@ -415,13 +416,14 @@ func (p *fileLoader) parseSourceFile(t *parseTask) *ast.SourceFile {
 func (p *fileLoader) parseContentMappedFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
 	mapper := p.opts.Config.GetContentMapperForFileName(opts.FileName)
 	label := mapper.DiagnosticName()
+	transformIdentity := p.getContentMapperTransformIdentity(mapper)
 	if p.contentMapperUnavailable(mapper) {
 		// The mapper failed initialization or exceeded its failure budget; add the file empty without re-reporting.
-		return p.emptyContentMappedFile(opts, mapper.Identity())
+		return p.emptyContentMappedFile(opts, mapper.Identity(), transformIdentity)
 	}
 	files, err := p.opts.Host.GetContentMappedSourceFiles(opts, mapper, p.opts.Config.CompilerOptions())
 	if err != nil {
-		sourceFile := p.emptyContentMappedFile(opts, mapper.Identity())
+		sourceFile := p.emptyContentMappedFile(opts, mapper.Identity(), transformIdentity)
 		if transformError, ok := errors.AsType[*contentmapper.TransformError](err); ok && transformError.Kind == contentmapper.TransformErrorKindInitialize {
 			p.recordContentMapperInitializationFailure(mapper, label, transformError)
 			return sourceFile
@@ -551,11 +553,22 @@ func contentMapperMappingDiagnostic(file *ast.SourceFile, label string, problem 
 // transform could not be used, retaining the original content for diagnostics. Importers see it as an
 // empty module rather than triggering a "cannot find module" error. It is still marked as content-mapped
 // so it is excluded from emit like a successfully mapped file.
-func (p *fileLoader) emptyContentMappedFile(opts ast.SourceFileParseOptions, mapperIdentity string) *ast.SourceFile {
+func (p *fileLoader) getContentMapperTransformIdentity(mapper *contentmapper.Mapper) string {
+	if project := p.opts.Host.ContentMapperProject(); project != nil {
+		if identity, err := project.Identity(mapper); err == nil {
+			return identity
+		}
+	}
+	return fmt.Sprintf("%x", mapper.TransformIdentity(p.opts.Config.CompilerOptions()).Bytes())
+}
+
+func (p *fileLoader) emptyContentMappedFile(opts ast.SourceFileParseOptions, mapperIdentity string, transformIdentity string) *ast.SourceFile {
 	content, _ := p.opts.Host.FS().ReadFile(opts.FileName)
 	sourceFile := parser.ParseSourceFile(opts, "", core.ScriptKindTS)
 	sourceFile.SetOriginalText(content)
 	sourceFile.SetContentMapper(mapperIdentity)
+	sourceFile.SetContentMapperTransformIdentity(transformIdentity)
+	sourceFile.SetVirtualFileName(opts.FileName + tspath.ExtensionTs)
 	return sourceFile
 }
 

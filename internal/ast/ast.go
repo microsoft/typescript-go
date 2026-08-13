@@ -2609,6 +2609,28 @@ func (node *SourceFile) SetContentMapper(identity string) {
 	node.ensureContentMapperInfo().contentMapper = identity
 }
 
+func (node *SourceFile) ContentMapperTransformIdentity() string {
+	if node.contentMapperInfo == nil {
+		return ""
+	}
+	return node.contentMapperInfo.transformIdentity
+}
+
+func (node *SourceFile) SetContentMapperTransformIdentity(identity string) {
+	node.ensureContentMapperInfo().transformIdentity = identity
+}
+
+func (node *SourceFile) VirtualFileName() string {
+	if node.contentMapperInfo == nil {
+		return ""
+	}
+	return node.contentMapperInfo.virtualFileName
+}
+
+func (node *SourceFile) SetVirtualFileName(fileName string) {
+	node.ensureContentMapperInfo().virtualFileName = fileName
+}
+
 // SetSpanMap records the span map that maps positions in this file's transformed Text() back to its
 // original, untransformed content.
 func (node *SourceFile) SetSpanMap(spanMap *spanmap.SpanMap) {
@@ -2633,6 +2655,8 @@ type MappedDiagnosticDirective struct {
 
 type contentMapperSourceFileInfo struct {
 	contentMapper           string
+	transformIdentity       string
+	virtualFileName         string
 	originalText            string
 	spanMap                 *spanmap.SpanMap
 	diagnosticDirectives    []MappedDiagnosticDirective
@@ -2817,9 +2841,11 @@ func (node *SourceFile) copyFrom(other *SourceFile) {
 	// Do not copy fields set by NewSourceFile (Text, FileName, Path, or Statements)
 	if other.contentMapperInfo != nil {
 		node.contentMapperInfo = &contentMapperSourceFileInfo{
-			originalText:  other.contentMapperInfo.originalText,
-			spanMap:       other.contentMapperInfo.spanMap,
-			contentMapper: other.contentMapperInfo.contentMapper,
+			originalText:      other.contentMapperInfo.originalText,
+			spanMap:           other.contentMapperInfo.spanMap,
+			contentMapper:     other.contentMapperInfo.contentMapper,
+			transformIdentity: other.contentMapperInfo.transformIdentity,
+			virtualFileName:   other.contentMapperInfo.virtualFileName,
 		}
 	}
 	node.LanguageVariant = other.LanguageVariant
