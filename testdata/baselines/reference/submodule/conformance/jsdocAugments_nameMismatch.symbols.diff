@@ -1,0 +1,28 @@
+--- old.jsdocAugments_nameMismatch.symbols
++++ new.jsdocAugments_nameMismatch.symbols
+@@= skipped -0, +0 lines =@@
+ //// [tests/cases/conformance/jsdoc/jsdocAugments_nameMismatch.ts] ////
+
+ === /b.js ===
+-class A {}
++class A {
+ >A : Symbol(A, Decl(b.js, 0, 0))
+
+-class B {}
+->B : Symbol(B, Decl(b.js, 0, 10))
++    a = 1;
++>a : Symbol(A.a, Decl(b.js, 0, 9))
++}
++class B {
++>B : Symbol(B, Decl(b.js, 2, 1))
++
++    b = 2;
++>b : Symbol(B.b, Decl(b.js, 3, 9))
++}
+
+ /** @augments A */
+ class C extends B {}
+->C : Symbol(C, Decl(b.js, 1, 10))
+->B : Symbol(B, Decl(b.js, 0, 10))
++>C : Symbol(C, Decl(b.js, 5, 1))
++>B : Symbol(B, Decl(b.js, 2, 1))
