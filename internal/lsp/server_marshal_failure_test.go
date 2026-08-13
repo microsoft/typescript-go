@@ -60,7 +60,9 @@ func TestWriteLoopRecoversFromUnserializableResponse(t *testing.T) {
 		switch {
 		case resp.ID != nil && *resp.ID == *badID:
 			if resp.Error == nil {
-				t.Errorf("expected an error response for the unmarshalable request, got a result")
+				t.Errorf("expected an error response for the unserializable request, got a result")
+			} else if resp.Error.Code != int32(lsproto.ErrorCodeInternalError) {
+				t.Errorf("error response code = %d, want %d", resp.Error.Code, lsproto.ErrorCodeInternalError)
 			}
 			sawError = true
 		case resp.ID != nil && *resp.ID == *goodID:

@@ -113,13 +113,15 @@ type lspWriter struct {
 	w *lsproto.BaseWriter
 }
 
-// MessageMarshalError indicates that an outgoing message could not be serialized to JSON
-type MessageMarshalError struct {
+type messageMarshalError struct {
 	err error
 }
 
-func (e *MessageMarshalError) Error() string { return "failed to marshal message: " + e.err.Error() }
-func (e *MessageMarshalError) Unwrap() error { return e.err }
+func (e *messageMarshalError) Error() string { return "failed to marshal message: " + e.err.Error() }
+
+func (e *messageMarshalError) Unwrap() []error {
+	return []error{lsproto.ErrorCodeInternalError, e.err}
+}
 
 func (r *lspReader) Read() (*lsproto.Message, error) {
 	data, err := r.r.Read()
@@ -145,7 +147,7 @@ func ToReader(r io.Reader) Reader {
 func (w *lspWriter) Write(msg *lsproto.Message) error {
 	data, err := json.Marshal(msg)
 	if err != nil {
-		return &MessageMarshalError{err: err}
+		return &messageMarshalError{err: err}
 	}
 	return w.w.Write(data)
 }
@@ -634,7 +636,7 @@ func (s *Server) writeLoop(ctx context.Context) error {
 			return err
 		}
 		if err := s.w.Write(msg); err != nil {
-			var marshalErr *MessageMarshalError
+			var marshalErr *messageMarshalError
 			if errors.As(err, &marshalErr) && msg.Kind == jsonrpc.MessageKindResponse {
 				if resp := msg.AsResponse(); resp.ID != nil && resp.Error == nil {
 					s.logger.Errorf("failed to marshal response for request %s: %v", resp.ID, marshalErr)
