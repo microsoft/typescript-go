@@ -304,15 +304,13 @@ sourceFile:sourceMap-FileWithComments.ts
 ---
 >>>    Shapes.Point = Point;
 1 >^^^^
-2 >    ^^^^^^^
-3 >           ^^^^^
-4 >                ^^^^^^^^
-5 >                        ^
-6 >                         ^^^^^^^^^^^->
+2 >    ^^^^^^^^^^^^
+3 >                ^^^^^^^^
+4 >                        ^
+5 >                         ^^^^^^^^^^^->
 1 >
-2 >    
-3 >           Point
-4 >                 implements IPoint {
+2 >    Point
+3 >                 implements IPoint {
   >                        // Constructor
   >                        constructor(public x: number, public y: number) { }
   >                
@@ -322,12 +320,11 @@ sourceFile:sourceMap-FileWithComments.ts
   >                        // Static member
   >                        static origin = new Point(0, 0);
   >                    }
-5 >                        
+4 >                        
 1 >Emitted(17, 5) Source(10, 18) + SourceIndex(0)
-2 >Emitted(17, 12) Source(10, 18) + SourceIndex(0)
-3 >Emitted(17, 17) Source(10, 23) + SourceIndex(0)
-4 >Emitted(17, 25) Source(19, 6) + SourceIndex(0)
-5 >Emitted(17, 26) Source(19, 6) + SourceIndex(0)
+2 >Emitted(17, 17) Source(10, 23) + SourceIndex(0)
+3 >Emitted(17, 25) Source(19, 6) + SourceIndex(0)
+4 >Emitted(17, 26) Source(19, 6) + SourceIndex(0)
 ---
 >>>    // Variable comment after class
 1->^^^^
@@ -386,22 +383,19 @@ sourceFile:sourceMap-FileWithComments.ts
 ---
 >>>    Shapes.foo = foo;
 1->^^^^
-2 >    ^^^^^^^
-3 >           ^^^
-4 >              ^^^^^^
-5 >                    ^
-6 >                     ^^^^^^^^^^^->
+2 >    ^^^^^^^^^^
+3 >              ^^^^^^
+4 >                    ^
+5 >                     ^^^^^^^^^^^->
 1->
-2 >    
-3 >           foo
-4 >              () {
+2 >    foo
+3 >              () {
   >                  }
-5 >                    
+4 >                    
 1->Emitted(22, 5) Source(24, 21) + SourceIndex(0)
-2 >Emitted(22, 12) Source(24, 21) + SourceIndex(0)
-3 >Emitted(22, 15) Source(24, 24) + SourceIndex(0)
-4 >Emitted(22, 21) Source(25, 6) + SourceIndex(0)
-5 >Emitted(22, 22) Source(25, 6) + SourceIndex(0)
+2 >Emitted(22, 15) Source(24, 24) + SourceIndex(0)
+3 >Emitted(22, 21) Source(25, 6) + SourceIndex(0)
+4 >Emitted(22, 22) Source(25, 6) + SourceIndex(0)
 ---
 >>>    /**  comment after function
 1->^^^^

@@ -81,20 +81,17 @@ sourceFile:file.tsx
 ---
 >>>    M.Foo = Foo;
 1->^^^^
-2 >    ^^
-3 >      ^^^
-4 >         ^^^^^^
-5 >               ^
+2 >    ^^^^^
+3 >         ^^^^^^
+4 >               ^
 1->
-2 >    
-3 >      Foo
-4 >          { constructor() { } }
-5 >               
+2 >    Foo
+3 >          { constructor() { } }
+4 >               
 1->Emitted(7, 5) Source(7, 15) + SourceIndex(0)
-2 >Emitted(7, 7) Source(7, 15) + SourceIndex(0)
-3 >Emitted(7, 10) Source(7, 18) + SourceIndex(0)
-4 >Emitted(7, 16) Source(7, 40) + SourceIndex(0)
-5 >Emitted(7, 17) Source(7, 40) + SourceIndex(0)
+2 >Emitted(7, 10) Source(7, 18) + SourceIndex(0)
+3 >Emitted(7, 16) Source(7, 40) + SourceIndex(0)
+4 >Emitted(7, 17) Source(7, 40) + SourceIndex(0)
 ---
 >>>    let S;
 1 >^^^^
@@ -149,20 +146,17 @@ sourceFile:file.tsx
 ---
 >>>        S.Bar = Bar;
 1->^^^^^^^^
-2 >        ^^
-3 >          ^^^
-4 >             ^^^^^^
-5 >                   ^
+2 >        ^^^^^
+3 >             ^^^^^^
+4 >                   ^
 1->
-2 >        
-3 >          Bar
-4 >              { }
-5 >                   
+2 >        Bar
+3 >              { }
+4 >                   
 1->Emitted(12, 9) Source(9, 16) + SourceIndex(0)
-2 >Emitted(12, 11) Source(9, 16) + SourceIndex(0)
-3 >Emitted(12, 14) Source(9, 19) + SourceIndex(0)
-4 >Emitted(12, 20) Source(9, 23) + SourceIndex(0)
-5 >Emitted(12, 21) Source(9, 23) + SourceIndex(0)
+2 >Emitted(12, 14) Source(9, 19) + SourceIndex(0)
+3 >Emitted(12, 20) Source(9, 23) + SourceIndex(0)
+4 >Emitted(12, 21) Source(9, 23) + SourceIndex(0)
 ---
 >>>        // Emit Foo
 1 >^^^^^^^^
@@ -191,24 +185,20 @@ sourceFile:file.tsx
 3 >     ^^
 4 >       ^
 5 >        ^^^
-6 >           ^^
-7 >             ^
-8 >              ^^^^^
-9 >                   ^^
-10>                     ^
-11>                      ^^^^^^^^
+6 >           ^^^
+7 >              ^^^^^
+8 >                   ^^^
+9 >                      ^^^^^^^^
 1->
   >	
 2 >    }
 3 >     
 4 >       S
 5 >        
-6 >           
-7 >             S
-8 >              
-9 >                   
-10>                     S
-11>                       {
+6 >           S
+7 >              
+8 >                   S
+9 >                       {
   >                      		export class Bar { }
   >                      
   >                      		// Emit Foo
@@ -219,12 +209,10 @@ sourceFile:file.tsx
 3 >Emitted(15, 8) Source(8, 19) + SourceIndex(0)
 4 >Emitted(15, 9) Source(8, 20) + SourceIndex(0)
 5 >Emitted(15, 12) Source(8, 19) + SourceIndex(0)
-6 >Emitted(15, 14) Source(8, 19) + SourceIndex(0)
-7 >Emitted(15, 15) Source(8, 20) + SourceIndex(0)
-8 >Emitted(15, 20) Source(8, 19) + SourceIndex(0)
-9 >Emitted(15, 22) Source(8, 19) + SourceIndex(0)
-10>Emitted(15, 23) Source(8, 20) + SourceIndex(0)
-11>Emitted(15, 31) Source(13, 3) + SourceIndex(0)
+6 >Emitted(15, 15) Source(8, 20) + SourceIndex(0)
+7 >Emitted(15, 20) Source(8, 19) + SourceIndex(0)
+8 >Emitted(15, 23) Source(8, 20) + SourceIndex(0)
+9 >Emitted(15, 31) Source(13, 3) + SourceIndex(0)
 ---
 >>>})(M || (M = {}));
 1 >
@@ -435,24 +423,20 @@ sourceFile:file.tsx
 3 >     ^^
 4 >       ^
 5 >        ^^^
-6 >           ^^
-7 >             ^
-8 >              ^^^^^
-9 >                   ^^
-10>                     ^
-11>                      ^^^^^^^^
+6 >           ^^^
+7 >              ^^^^^
+8 >                   ^^^
+9 >                      ^^^^^^^^
 1->
   >	
 2 >    }
 3 >     
 4 >       S
 5 >        
-6 >           
-7 >             S
-8 >              
-9 >                   
-10>                     S
-11>                       {
+6 >           S
+7 >              
+8 >                   S
+9 >                       {
   >                      		// Emit M.Foo
   >                      		Foo, <Foo />;
   >                      
@@ -464,12 +448,10 @@ sourceFile:file.tsx
 3 >Emitted(26, 8) Source(20, 19) + SourceIndex(0)
 4 >Emitted(26, 9) Source(20, 20) + SourceIndex(0)
 5 >Emitted(26, 12) Source(20, 19) + SourceIndex(0)
-6 >Emitted(26, 14) Source(20, 19) + SourceIndex(0)
-7 >Emitted(26, 15) Source(20, 20) + SourceIndex(0)
-8 >Emitted(26, 20) Source(20, 19) + SourceIndex(0)
-9 >Emitted(26, 22) Source(20, 19) + SourceIndex(0)
-10>Emitted(26, 23) Source(20, 20) + SourceIndex(0)
-11>Emitted(26, 31) Source(26, 3) + SourceIndex(0)
+6 >Emitted(26, 15) Source(20, 20) + SourceIndex(0)
+7 >Emitted(26, 20) Source(20, 19) + SourceIndex(0)
+8 >Emitted(26, 23) Source(20, 20) + SourceIndex(0)
+9 >Emitted(26, 31) Source(26, 3) + SourceIndex(0)
 ---
 >>>})(M || (M = {}));
 1 >

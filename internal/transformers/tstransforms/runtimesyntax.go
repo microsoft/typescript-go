@@ -220,7 +220,15 @@ func (tx *RuntimeSyntaxTransformer) getNamespaceContainerName(node *ast.Node) *a
 
 // Gets an expression used to refer to an export of a namespace or a member of an enum by property name.
 func (tx *RuntimeSyntaxTransformer) getNamespaceQualifiedProperty(ns *ast.IdentifierNode, name *ast.IdentifierNode) *ast.Expression {
-	return tx.Factory().GetNamespaceMemberName(ns, name, printer.NameOptions{AllowSourceMaps: true})
+	location := name
+	if !ast.NodeIsSynthesized(name) {
+		name = name.Clone(tx.Factory())
+		name.Loc = core.UndefinedTextRange()
+	}
+	qualifiedName := tx.Factory().NewPropertyAccessExpression(ns, nil /*questionDotToken*/, name, ast.NodeFlagsNone)
+	tx.EmitContext().AssignCommentAndSourceMapRanges(qualifiedName, location)
+	tx.EmitContext().AddEmitFlags(qualifiedName, printer.EFNoComments)
+	return qualifiedName
 }
 
 // Gets an expression used to refer to an export of a namespace or a member of an enum by indexed access.
@@ -233,7 +241,8 @@ func (tx *RuntimeSyntaxTransformer) getNamespaceQualifiedElement(ns *ast.Identif
 // Gets an expression used within the provided node's container for any exported references.
 func (tx *RuntimeSyntaxTransformer) getExportQualifiedReferenceToDeclaration(node *ast.Declaration) *ast.Expression {
 	if tx.isExportOfNamespace(node.AsNode()) {
-		return tx.Factory().GetExternalModuleOrNamespaceExportName(tx.getNamespaceContainerName(tx.currentNamespace), node, false /*allowComments*/, true /*allowSourceMaps*/)
+		name := tx.Factory().GetDeclarationNameEx(node.AsNode(), printer.NameOptions{AllowSourceMaps: true})
+		return tx.getNamespaceQualifiedProperty(tx.getNamespaceContainerName(tx.currentNamespace), name)
 	}
 	return tx.Factory().GetDeclarationNameEx(node.AsNode(), printer.NameOptions{AllowSourceMaps: true})
 }
@@ -571,7 +580,7 @@ func (tx *RuntimeSyntaxTransformer) visitImportEqualsDeclaration(node *ast.Impor
 		return varStatement
 	} else {
 		// exports.${name} = ${moduleReference};
-		statement := tx.createExportStatement(node.Name(), moduleReference, node.Loc, node.Loc, node.AsNode())
+		statement := tx.createExportStatement(node.Name(), moduleReference, node.Loc, node.AsNode())
 		statement.Loc = node.Loc
 		return statement
 	}
@@ -935,7 +944,7 @@ func (tx *RuntimeSyntaxTransformer) visitExpressionIdentifier(node *ast.Identifi
 			memberName := node.Clone(tx.Factory())
 			tx.EmitContext().SetEmitFlags(memberName, printer.EFNoComments|printer.EFNoSourceMap)
 
-			expression := tx.Factory().GetNamespaceMemberName(containerName, memberName, printer.NameOptions{AllowSourceMaps: true})
+			expression := tx.getNamespaceQualifiedProperty(containerName, memberName)
 			tx.EmitContext().AssignCommentAndSourceMapRanges(expression, node.AsNode())
 			return expression
 		}
@@ -944,7 +953,10 @@ func (tx *RuntimeSyntaxTransformer) visitExpressionIdentifier(node *ast.Identifi
 }
 
 func (tx *RuntimeSyntaxTransformer) createExportStatementForDeclaration(node *ast.Declaration) *ast.Statement {
-	exportName := tx.Factory().GetExternalModuleOrNamespaceExportName(tx.getNamespaceContainerName(tx.currentNamespace), node, false /*allowComments*/, true /*allowSourceMaps*/)
+	exportName := tx.getNamespaceQualifiedProperty(
+		tx.getNamespaceContainerName(tx.currentNamespace),
+		tx.Factory().GetDeclarationNameEx(node, printer.NameOptions{AllowSourceMaps: true}),
+	)
 	localName := tx.Factory().GetLocalName(node)
 	expression := tx.Factory().NewAssignmentExpression(exportName, localName)
 	exportAssignmentSourceMapRange := node.Loc
@@ -959,16 +971,9 @@ func (tx *RuntimeSyntaxTransformer) createExportStatementForDeclaration(node *as
 	return statement
 }
 
-func (tx *RuntimeSyntaxTransformer) createExportAssignment(name *ast.IdentifierNode, expression *ast.Expression, exportAssignmentSourceMapRange core.TextRange, original *ast.Node) *ast.Expression {
+func (tx *RuntimeSyntaxTransformer) createExportStatement(name *ast.IdentifierNode, expression *ast.Expression, exportStatementSourceMapRange core.TextRange, original *ast.Node) *ast.Statement {
 	exportName := tx.getNamespaceQualifiedProperty(tx.getNamespaceContainerName(tx.currentNamespace), name)
-	exportAssignment := tx.Factory().NewAssignmentExpression(exportName, expression)
-	tx.EmitContext().SetOriginal(exportAssignment, original)
-	tx.EmitContext().SetSourceMapRange(exportAssignment, exportAssignmentSourceMapRange)
-	return exportAssignment
-}
-
-func (tx *RuntimeSyntaxTransformer) createExportStatement(name *ast.IdentifierNode, expression *ast.Expression, exportAssignmentSourceMapRange core.TextRange, exportStatementSourceMapRange core.TextRange, original *ast.Node) *ast.Statement {
-	exportStatement := tx.Factory().NewExpressionStatement(tx.createExportAssignment(name, expression, exportAssignmentSourceMapRange, original))
+	exportStatement := tx.Factory().NewExpressionStatement(tx.Factory().NewAssignmentExpression(exportName, expression))
 	tx.EmitContext().SetOriginal(exportStatement, original)
 	tx.EmitContext().SetSourceMapRange(exportStatement, exportStatementSourceMapRange)
 	return exportStatement

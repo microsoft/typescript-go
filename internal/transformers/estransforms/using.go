@@ -587,6 +587,7 @@ func (tx *usingDeclarationTransformer) hoistInitializedVariable(node *ast.Variab
 	var target *ast.Expression
 	if ast.IsIdentifier(node.Name()) {
 		target = node.Name().Clone(tx.Factory())
+		target.Loc = core.UndefinedTextRange()
 		tx.EmitContext().SetEmitFlags(target, tx.EmitContext().EmitFlags(target) & ^(printer.EFLocalName|printer.EFExportName))
 	} else {
 		target = transformers.ConvertBindingPatternToAssignmentPattern(tx.EmitContext(), node.Name().AsBindingPattern())
