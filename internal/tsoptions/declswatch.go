@@ -86,5 +86,3 @@ var OptionsForWatch = []*CommandLineOption{
 		Description:                        diagnostics.Remove_a_list_of_files_from_the_watch_mode_s_processing,
 	},
 }
-
-var CommandLineWatchOptionsMap CommandLineOptionNameMap = commandLineOptionsToMap(OptionsForWatch)

@@ -124,20 +124,9 @@ export interface Diagnostic {
     readonly relatedInformation?: readonly Diagnostic[] | undefined;
 }
 
-export interface WatchOptions {
-    watchInterval?: number;
-    watchFile?: number;
-    watchDirectory?: number;
-    fallbackPolling?: number;
-    synchronousWatchDirectory?: boolean;
-    excludeDirectories?: string[];
-    excludeFiles?: string[];
-}
-
 export interface ParsedCommandLine {
     options: CompilerOptions;
     fileNames: string[];
-    watchOptions?: WatchOptions;
     projectReferences?: ProjectReference[];
     typeAcquisition?: TypeAcquisition;
     compileOnSave?: boolean;

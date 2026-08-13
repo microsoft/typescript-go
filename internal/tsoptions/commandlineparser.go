@@ -50,13 +50,7 @@ func ParseCommandLine(
 	parser := parseCommandLineWorker(CompilerOptionsDidYouMeanDiagnostics, commandLine, host.FS(), host.GetCurrentDirectory())
 	options := convertToOptionsWithAbsolutePaths(parser.options.Clone(), CommandLineCompilerOptionsMap, host.GetCurrentDirectory())
 	compilerOptions := convertMapToOptions(options, &compilerOptionsParser{&core.CompilerOptions{}}).CompilerOptions
-	var watchOptions *core.WatchOptions
-	for key := range options.Keys() {
-		if WatchNameMap.Get(key) != nil {
-			watchOptions = convertMapToOptions(options, &watchOptionsParser{&core.WatchOptions{}}).WatchOptions
-			break
-		}
-	}
+	watchOptions := convertMapToOptions(options, &watchOptionsParser{&core.WatchOptions{}}).WatchOptions
 	result := NewParsedCommandLine(compilerOptions, parser.fileNames, tspath.ComparePathsOptions{
 		UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
 		CurrentDirectory:          host.GetCurrentDirectory(),

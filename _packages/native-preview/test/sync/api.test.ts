@@ -102,8 +102,6 @@ describe("API", () => {
         try {
             const commandLine = api.parseCommandLine([
                 "--strict",
-                "--watchFile",
-                "useFsEvents",
                 "--outDir",
                 "dist",
                 "/src/index.ts",
@@ -114,10 +112,8 @@ describe("API", () => {
                 commandLine.options.outDir,
                 resolve(fileURLToPath(new URL("../../../../", import.meta.url)), "dist"),
             );
-            assert.deepEqual(commandLine.watchOptions, { watchFile: 4 });
             assert.deepEqual(commandLine.raw, {
                 strict: true,
-                watchFile: 4,
                 outDir: "dist",
             });
             assert.deepEqual(commandLine.errors, []);
@@ -132,7 +128,6 @@ describe("API", () => {
         try {
             const commandLine = api.parseCommandLine(["--notAnOption"]);
             assert.deepEqual(commandLine.fileNames, []);
-            assert.equal(commandLine.watchOptions, undefined);
             assert.equal(commandLine.errors.length, 1);
             assert.equal(commandLine.errors[0].code, 5023);
         }
@@ -230,29 +225,17 @@ describe("API", () => {
         }
     });
 
-    test("parseJsonConfigFileContent preserves raw config and parses watch options", () => {
+    test("parseJsonConfigFileContent preserves raw config", () => {
         const api = spawnAPI();
         try {
             const input = {
                 compileOnSave: true,
                 customSetting: { enabled: true },
                 files: ["index.ts"],
-                watchOptions: {
-                    watchFile: "useFsEvents",
-                    watchInterval: 250,
-                    synchronousWatchDirectory: false,
-                    excludeFiles: [],
-                },
             };
             const config = api.parseJsonConfigFileContent(input, { configDirectory: "/src" });
             assert.deepEqual(config.raw, input);
             assert.equal(config.compileOnSave, true);
-            assert.deepEqual(config.watchOptions, {
-                watchInterval: 250,
-                watchFile: 4,
-                synchronousWatchDirectory: false,
-                excludeFiles: [],
-            });
         }
         finally {
             api.close();
@@ -349,36 +332,21 @@ describe("API", () => {
         }
     });
 
-    test("parseConfigFile parses watch options and preserves raw config", () => {
+    test("parseConfigFile preserves raw config", () => {
         const api = spawnAPI({
             "/tsconfig.json": JSON.stringify({
                 compileOnSave: true,
                 customSetting: { enabled: true },
                 files: ["/src/index.ts"],
-                watchOptions: {
-                    watchDirectory: "fixedPollingInterval",
-                    fallbackPolling: "dynamicPriority",
-                    excludeFiles: ["${configDir}/generated.ts"],
-                },
             }),
         });
         try {
             const config = api.parseConfigFile("/tsconfig.json");
-            assert.deepEqual(config.watchOptions, {
-                watchDirectory: 1,
-                fallbackPolling: 2,
-                excludeFiles: ["/generated.ts"],
-            });
             assert.equal(config.compileOnSave, true);
             assert.deepEqual(config.raw, {
                 compileOnSave: true,
                 customSetting: { enabled: true },
                 files: ["/src/index.ts"],
-                watchOptions: {
-                    watchDirectory: "fixedPollingInterval",
-                    fallbackPolling: "dynamicPriority",
-                    excludeFiles: ["${configDir}/generated.ts"],
-                },
             });
         }
         finally {

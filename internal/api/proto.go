@@ -640,22 +640,11 @@ type ProfileResult struct {
 type ConfigFileResponse struct {
 	FileNames         []string                 `json:"fileNames"`
 	Options           *core.CompilerOptions    `json:"options"`
-	WatchOptions      *WatchOptionsResponse    `json:"watchOptions,omitempty"`
 	ProjectReferences []*core.ProjectReference `json:"projectReferences,omitempty"`
 	TypeAcquisition   *core.TypeAcquisition    `json:"typeAcquisition,omitempty"`
 	CompileOnSave     *bool                    `json:"compileOnSave,omitempty"`
 	Raw               any                      `json:"raw,omitempty"`
 	Errors            []*DiagnosticResponse    `json:"errors"`
-}
-
-type WatchOptionsResponse struct {
-	Interval        *int                     `json:"watchInterval,omitempty"`
-	FileKind        *core.WatchFileKind      `json:"watchFile,omitempty"`
-	DirectoryKind   *core.WatchDirectoryKind `json:"watchDirectory,omitempty"`
-	FallbackPolling *core.PollingKind        `json:"fallbackPolling,omitempty"`
-	SyncWatchDir    *bool                    `json:"synchronousWatchDirectory,omitempty"`
-	ExcludeDir      []string                 `json:"excludeDirectories,omitzero"`
-	ExcludeFiles    []string                 `json:"excludeFiles,omitzero"`
 }
 
 type ReadConfigFileResponse struct {
@@ -696,7 +685,6 @@ func NewConfigFileResponse(parsedCommandLine *tsoptions.ParsedCommandLine) *Conf
 	return &ConfigFileResponse{
 		FileNames:         parsedCommandLine.FileNames(),
 		Options:           compilerOptions,
-		WatchOptions:      NewWatchOptionsResponse(parsedCommandLine.ParsedConfig.WatchOptions),
 		ProjectReferences: parsedCommandLine.ProjectReferences(),
 		TypeAcquisition:   parsedCommandLine.TypeAcquisition(),
 		CompileOnSave:     compileOnSave,
@@ -728,43 +716,6 @@ func toProtocolJSONValue(value any) any {
 	default:
 		return value
 	}
-}
-
-func NewWatchOptionsResponse(options *core.WatchOptions) *WatchOptionsResponse {
-	if options == nil {
-		return nil
-	}
-	response := &WatchOptionsResponse{
-		Interval:     options.Interval,
-		ExcludeDir:   options.ExcludeDir,
-		ExcludeFiles: options.ExcludeFiles,
-	}
-	if options.FileKind != core.WatchFileKindNone {
-		fileKind := options.FileKind - 1
-		response.FileKind = &fileKind
-	}
-	if options.DirectoryKind != core.WatchDirectoryKindNone {
-		directoryKind := options.DirectoryKind - 1
-		response.DirectoryKind = &directoryKind
-	}
-	if options.FallbackPolling != core.PollingKindNone {
-		fallbackPolling := options.FallbackPolling - 1
-		response.FallbackPolling = &fallbackPolling
-	}
-	if !options.SyncWatchDir.IsUnknown() {
-		syncWatchDir := options.SyncWatchDir.IsTrue()
-		response.SyncWatchDir = &syncWatchDir
-	}
-	if response.Interval == nil &&
-		response.FileKind == nil &&
-		response.DirectoryKind == nil &&
-		response.FallbackPolling == nil &&
-		response.SyncWatchDir == nil &&
-		response.ExcludeDir == nil &&
-		response.ExcludeFiles == nil {
-		return nil
-	}
-	return response
 }
 
 func NewProjectResponse(p *project.Project) *ProjectResponse {

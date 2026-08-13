@@ -858,9 +858,6 @@ func TestParseJsonConfigFileContentAcceptsJsonRepresentations(t *testing.T) {
 		"typed slices": map[string]any{
 			"compilerOptions": map[string]any{"strict": true},
 			"files":           []string{"index.ts"},
-			"watchOptions": map[string]any{
-				"excludeFiles": []string{},
-			},
 		},
 	}
 	for name, json := range tests {
@@ -883,30 +880,16 @@ func TestParseJsonConfigFileContentAcceptsJsonRepresentations(t *testing.T) {
 	}
 }
 
-func TestParseJsonConfigFileContentPreservesRawAndParsesWatchOptions(t *testing.T) {
+func TestParseJsonConfigFileContentPreservesRaw(t *testing.T) {
 	t.Parallel()
 
 	host := tsoptionstest.NewVFSParseConfigHost(map[string]string{
 		"/project/index.ts": "export {};",
-		"/project/config/base.json": `{
-			"watchOptions": {
-				"watchFile": "useFsEvents",
-				"synchronousWatchDirectory": true,
-				"excludeDirectories": ["${configDir}/generated"],
-				"excludeFiles": ["${configDir}/base.ts"]
-			}
-		}`,
 	}, "/project", true /*useCaseSensitiveFileNames*/)
 
 	parsed := tsoptions.ParseJsonConfigFileContent(
 		map[string]any{
-			"watchOptions": map[string]any{
-				"watchInterval":             float64(250),
-				"synchronousWatchDirectory": false,
-				"excludeFiles":              []any{},
-			},
 			"files":         []any{"index.ts"},
-			"extends":       "./config/base.json",
 			"customSetting": map[string]any{"enabled": true},
 			"compileOnSave": true,
 		},
@@ -921,68 +904,10 @@ func TestParseJsonConfigFileContentPreservesRawAndParsesWatchOptions(t *testing.
 
 	assert.Equal(t, len(parsed.Errors), 0)
 	assert.Assert(t, parsed.CompileOnSave != nil && *parsed.CompileOnSave)
-	assert.Equal(t, *parsed.ParsedConfig.WatchOptions.Interval, 250)
-	assert.Equal(t, parsed.ParsedConfig.WatchOptions.FileKind, core.WatchFileKindUseFsEvents)
-	assert.Assert(t, parsed.ParsedConfig.WatchOptions.SyncWatchDir.IsFalse())
-	assert.DeepEqual(t, parsed.ParsedConfig.WatchOptions.ExcludeDir, []string{"/project/config/generated"})
-	assert.DeepEqual(t, parsed.ParsedConfig.WatchOptions.ExcludeFiles, []string{})
 
 	raw := parsed.Raw.(*collections.OrderedMap[string, any])
-	assert.DeepEqual(t, slices.Collect(raw.Keys()), []string{"compileOnSave", "customSetting", "extends", "files", "watchOptions"})
+	assert.DeepEqual(t, slices.Collect(raw.Keys()), []string{"compileOnSave", "customSetting", "files"})
 	assert.Assert(t, raw.Has("customSetting"))
-	assert.Assert(t, raw.Has("watchOptions"))
-
-	cleared := tsoptions.ParseJsonConfigFileContent(
-		map[string]any{
-			"extends": "./config/base.json",
-			"files":   []any{"index.ts"},
-			"watchOptions": map[string]any{
-				"watchInterval":             float64(250),
-				"watchFile":                 nil,
-				"synchronousWatchDirectory": nil,
-				"excludeDirectories":        nil,
-				"excludeFiles":              nil,
-			},
-		},
-		host,
-		"/project",
-		nil,
-		"/project/tsconfig.json",
-		nil, /*resolutionStack*/
-		nil, /*extraFileExtensions*/
-		nil, /*extendedConfigCache*/
-	)
-	assert.Equal(t, len(cleared.Errors), 0)
-	assert.Equal(t, *cleared.ParsedConfig.WatchOptions.Interval, 250)
-	assert.Equal(t, cleared.ParsedConfig.WatchOptions.FileKind, core.WatchFileKindNone)
-	assert.Assert(t, cleared.ParsedConfig.WatchOptions.SyncWatchDir.IsUnknown())
-	assert.Assert(t, cleared.ParsedConfig.WatchOptions.ExcludeDir == nil)
-	assert.Assert(t, cleared.ParsedConfig.WatchOptions.ExcludeFiles == nil)
-}
-
-func TestParseJsonConfigFileContentReportsInvalidWatchOption(t *testing.T) {
-	t.Parallel()
-
-	host := tsoptionstest.NewVFSParseConfigHost(map[string]string{
-		"/project/index.ts": "export {};",
-	}, "/project", true /*useCaseSensitiveFileNames*/)
-	parsed := tsoptions.ParseJsonConfigFileContent(
-		map[string]any{
-			"files": []any{"index.ts"},
-			"watchOptions": map[string]any{
-				"watchFile": "invalid",
-			},
-		},
-		host,
-		"/project",
-		nil,
-		"/project/tsconfig.json",
-		nil, /*resolutionStack*/
-		nil, /*extraFileExtensions*/
-		nil, /*extendedConfigCache*/
-	)
-	assert.Equal(t, len(parsed.Errors), 1)
-	assert.Equal(t, parsed.Errors[0].Code(), diagnostics.Argument_for_0_option_must_be_Colon_1.Code())
 }
 
 func TestParseJsonConfigFileContentHandlesNullArrayElements(t *testing.T) {

@@ -34,16 +34,6 @@ func TestOrderedJSONValueUnmarshalJSON(t *testing.T) {
 	assert.Equal(t, len(empty), 0)
 }
 
-func TestNewWatchOptionsResponsePreservesEmptyArrays(t *testing.T) {
-	t.Parallel()
-
-	response := api.NewWatchOptionsResponse(&core.WatchOptions{ExcludeFiles: []string{}})
-	assert.Assert(t, response != nil)
-	data, err := json.Marshal(response)
-	assert.NilError(t, err)
-	assert.Equal(t, string(data), `{"excludeFiles":[]}`)
-}
-
 func TestDocumentIdentifierUnmarshalJSON(t *testing.T) {
 	t.Parallel()
 	tests := []struct {

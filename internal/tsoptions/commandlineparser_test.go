@@ -118,7 +118,6 @@ func TestResponseFileParsing(t *testing.T) {
 		assert.Equal(t, len(parsed.Errors), 0)
 		assert.Assert(t, parsed.CompilerOptions().Strict.IsTrue())
 		assert.Equal(t, parsed.CompilerOptions().OutDir, "/project/dist")
-		assert.Assert(t, parsed.ParsedConfig.WatchOptions == nil)
 	})
 
 	t.Run("cyclic response files", func(t *testing.T) {

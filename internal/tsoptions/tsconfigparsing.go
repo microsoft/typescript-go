@@ -23,8 +23,6 @@ import (
 
 type extendsResult struct {
 	options             *core.CompilerOptions
-	watchOptions        *core.WatchOptions
-	watchOptionsSet     *collections.Set[string]
 	include             []any
 	exclude             []any
 	files               []any
@@ -44,13 +42,6 @@ var compileOnSaveCommandLineOption = &CommandLineOption{
 	DefaultValueDescription: false,
 }
 
-var watchOptionsDeclaration = &CommandLineOption{
-	Name:                    "watchOptions",
-	Kind:                    CommandLineOptionTypeObject,
-	ElementOptions:          CommandLineWatchOptionsMap,
-	DefaultValueDescription: nil,
-}
-
 var extendsOptionDeclaration = &CommandLineOption{
 	Name:     "extends",
 	Kind:     CommandLineOptionTypeListOrElement,
@@ -65,7 +56,6 @@ var tsconfigRootOptionsMap = &CommandLineOption{
 	Kind: CommandLineOptionTypeObject,
 	ElementOptions: commandLineOptionsToMap([]*CommandLineOption{
 		compilerOptionsDeclaration,
-		watchOptionsDeclaration,
 		typeAcquisitionDeclaration,
 		extendsOptionDeclaration,
 		{
@@ -179,8 +169,6 @@ func (e *ExtendedConfigCacheEntry) ExtendedFileNames() []string {
 type parsedTsconfig struct {
 	raw             any
 	options         *core.CompilerOptions
-	watchOptions    *core.WatchOptions
-	watchOptionsSet *collections.Set[string]
 	typeAcquisition *core.TypeAcquisition
 	// Note that the case of the config path has not yet been normalized, as no files have been imported into the project yet
 	extendedConfigPath any
@@ -194,7 +182,6 @@ func parseOwnConfigOfJsonSourceFile(
 ) (*parsedTsconfig, []*ast.Diagnostic) {
 	compilerOptions := getDefaultCompilerOptions(configFileName)
 	typeAcquisition := getDefaultTypeAcquisition(configFileName)
-	var watchOptions *core.WatchOptions
 	var extendedConfigPath any
 	var rootCompilerOptions []*ast.PropertyName
 	var errors []*ast.Diagnostic
@@ -216,11 +203,6 @@ func parseOwnConfigOfJsonSourceFile(
 				switch parentOption.Name {
 				case "compilerOptions":
 					parseDiagnostics = ParseCompilerOptions(option.Name, value, compilerOptions)
-				case "watchOptions":
-					if watchOptions == nil {
-						watchOptions = &core.WatchOptions{}
-					}
-					parseDiagnostics = ParseWatchOptions(option.Name, value, watchOptions)
 				case "typeAcquisition":
 					parseDiagnostics = ParseTypeAcquisition(option.Name, value, typeAcquisition)
 				}
@@ -257,9 +239,7 @@ func parseOwnConfigOfJsonSourceFile(
 				}
 			}
 		} else if parentOption == tsconfigRootOptionsMap {
-			if option == watchOptionsDeclaration && watchOptions == nil {
-				watchOptions = &core.WatchOptions{}
-			} else if option == extendsOptionDeclaration {
+			if option == extendsOptionDeclaration {
 				configPath, err := getExtendsConfigPathOrArray(value, host, basePath, configFileName, propertyAssignment, propertyAssignment.Initializer, sourceFile)
 				extendedConfigPath = configPath
 				propertySetErrors = append(propertySetErrors, err...)
@@ -294,8 +274,6 @@ func parseOwnConfigOfJsonSourceFile(
 	return &parsedTsconfig{
 		raw:                json,
 		options:            compilerOptions,
-		watchOptions:       watchOptions,
-		watchOptionsSet:    getWatchOptionsSet(json),
 		typeAcquisition:    typeAcquisition,
 		extendedConfigPath: extendedConfigPath,
 	}, errors
@@ -983,75 +961,6 @@ func convertTypeAcquisitionFromJsonWorker(jsonOptions any, basePath string, conf
 	return options, errors
 }
 
-func convertWatchOptionsFromJsonWorker(jsonOptions any, basePath string) (*core.WatchOptions, []*ast.Diagnostic) {
-	if jsonOptions == nil {
-		return nil, nil
-	}
-	options := &core.WatchOptions{}
-	_, errors := convertOptionsFromJson(CommandLineWatchOptionsMap, jsonOptions, basePath, &watchOptionsParser{options})
-	return options, errors
-}
-
-func getWatchOptionsSet(raw any) *collections.Set[string] {
-	rawMap, ok := raw.(*collections.OrderedMap[string, any])
-	if !ok {
-		return nil
-	}
-	rawWatchOptions, exists := rawMap.Get("watchOptions")
-	if !exists {
-		return nil
-	}
-	watchOptionsMap, ok := rawWatchOptions.(*collections.OrderedMap[string, any])
-	if !ok {
-		return nil
-	}
-	result := collections.NewSetWithSizeHint[string](watchOptionsMap.Size())
-	for key := range watchOptionsMap.Keys() {
-		option := CommandLineWatchOptionsMap.Get(key)
-		if option != nil && option.Name == key {
-			result.Add(key)
-		}
-	}
-	return result
-}
-
-func mergeWatchOptions(
-	target *core.WatchOptions,
-	targetSet *collections.Set[string],
-	source *core.WatchOptions,
-	sourceSet *collections.Set[string],
-) (*core.WatchOptions, *collections.Set[string]) {
-	if sourceSet == nil {
-		return target, targetSet
-	}
-	if target == nil {
-		target = &core.WatchOptions{}
-	}
-	if targetSet == nil {
-		targetSet = collections.NewSetWithSizeHint[string](sourceSet.Len())
-	}
-	for key := range sourceSet.Keys() {
-		switch key {
-		case "watchInterval":
-			target.Interval = source.Interval
-		case "watchFile":
-			target.FileKind = source.FileKind
-		case "watchDirectory":
-			target.DirectoryKind = source.DirectoryKind
-		case "fallbackPolling":
-			target.FallbackPolling = source.FallbackPolling
-		case "synchronousWatchDirectory":
-			target.SyncWatchDir = source.SyncWatchDir
-		case "excludeDirectories":
-			target.ExcludeDir = source.ExcludeDir
-		case "excludeFiles":
-			target.ExcludeFiles = source.ExcludeFiles
-		}
-		targetSet.Add(key)
-	}
-	return target, targetSet
-}
-
 func parseOwnConfigOfJson(
 	json *collections.OrderedMap[string, any],
 	host ParseConfigHost,
@@ -1064,8 +973,7 @@ func parseOwnConfigOfJson(
 	}
 	options, err := convertCompilerOptionsFromJsonWorker(json.GetOrZero("compilerOptions"), basePath, configFileName)
 	typeAcquisition, err2 := convertTypeAcquisitionFromJsonWorker(json.GetOrZero("typeAcquisition"), basePath, configFileName)
-	watchOptions, err3 := convertWatchOptionsFromJsonWorker(json.GetOrZero("watchOptions"), basePath)
-	errors = append(append(append(errors, err...), err2...), err3...)
+	errors = append(append(errors, err...), err2...)
 	if compileOnSave, ok := json.Get("compileOnSave"); ok {
 		converted, compileOnSaveErrors := convertJsonOption(compileOnSaveCommandLineOption, compileOnSave, basePath, nil, nil, nil)
 		errors = append(errors, compileOnSaveErrors...)
@@ -1079,8 +987,6 @@ func parseOwnConfigOfJson(
 	parsedConfig := &parsedTsconfig{
 		raw:                json,
 		options:            options,
-		watchOptions:       watchOptions,
-		watchOptionsSet:    getWatchOptionsSet(json),
 		typeAcquisition:    typeAcquisition,
 		extendedConfigPath: extendedConfigPath,
 	}
@@ -1206,7 +1112,6 @@ func parseConfig(
 		ownConfig, err = parseOwnConfigOfJsonSourceFile(tsconfigToSourceFile(sourceFile), host, basePath, configFileName)
 	}
 	errors = append(errors, err...)
-	handleWatchOptionsConfigDirTemplateSubstitution(ownConfig.watchOptions, basePath)
 	if ownConfig.options != nil && ownConfig.options.Paths != nil {
 		// If we end up needing to resolve relative paths from 'paths' relative to
 		// the config file location, we'll need to know where that config file was.
@@ -1267,12 +1172,6 @@ func parseConfig(
 				}
 			}
 			mergeCompilerOptions(result.options, extendedConfig.options, extendsRaw)
-			result.watchOptions, result.watchOptionsSet = mergeWatchOptions(
-				result.watchOptions,
-				result.watchOptionsSet,
-				extendedConfig.watchOptions,
-				extendedConfig.watchOptionsSet,
-			)
 		}
 	}
 
@@ -1307,12 +1206,6 @@ func parseConfig(
 			}
 		}
 		ownConfig.options = mergeCompilerOptions(result.options, ownConfig.options, ownConfig.raw)
-		ownConfig.watchOptions, ownConfig.watchOptionsSet = mergeWatchOptions(
-			result.watchOptions,
-			result.watchOptionsSet,
-			ownConfig.watchOptions,
-			ownConfig.watchOptionsSet,
-		)
 	}
 	return ownConfig, errors
 }
@@ -1473,7 +1366,6 @@ func parseJsonConfigFileContentWorker(
 		validatedIncludeSpecsBeforeSubstitution,
 		isDefaultIncludeSpec,
 	}
-	handleWatchOptionsConfigDirTemplateSubstitution(parsedConfig.watchOptions, basePath)
 
 	if sourceFile != nil {
 		sourceFile.configFileSpecs = &configFileSpecs
@@ -1537,7 +1429,6 @@ func parseJsonConfigFileContentWorker(
 	return &ParsedCommandLine{
 		ParsedConfig: &core.ParsedOptions{
 			CompilerOptions:   parsedConfig.options,
-			WatchOptions:      parsedConfig.watchOptions,
 			TypeAcquisition:   parsedConfig.typeAcquisition,
 			FileNames:         fileNames,
 			ProjectReferences: getProjectReferences(basePathForFileNames),
@@ -1553,18 +1444,6 @@ func parseJsonConfigFileContentWorker(
 			CurrentDirectory:          basePathForFileNames,
 		},
 		literalFileNamesLen: literalFileNamesLen,
-	}
-}
-
-func handleWatchOptionsConfigDirTemplateSubstitution(watchOptions *core.WatchOptions, basePath string) {
-	if watchOptions == nil {
-		return
-	}
-	if excludeDir := getSubstitutedStringArrayWithConfigDirTemplate(watchOptions.ExcludeDir, basePath); excludeDir != nil {
-		watchOptions.ExcludeDir = excludeDir
-	}
-	if excludeFiles := getSubstitutedStringArrayWithConfigDirTemplate(watchOptions.ExcludeFiles, basePath); excludeFiles != nil {
-		watchOptions.ExcludeFiles = excludeFiles
 	}
 }
 
