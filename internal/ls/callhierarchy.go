@@ -511,7 +511,7 @@ func (l *LanguageService) createCallHierarchyItem(program *compiler.Program, nod
 	if !selectionFidelity.IsSingleSegment() {
 		return nil
 	}
-	if spanFidelity.IsNone() {
+	if spanFidelity.IsNone() || sourceFile.ContentMapper() != "" && !lspRangeContains(span, selectionSpan) {
 		span = selectionSpan
 	}
 

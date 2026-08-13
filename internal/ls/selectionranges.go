@@ -245,12 +245,10 @@ func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos 
 		return false
 	}
 
-	fullRange, fidelity := l.converters.ToLSPRangeForFeature(sourceFile, core.NewTextRange(sourceFile.Pos(), sourceFile.End()), spanmap.FeatureSelectionRanges)
-	if fidelity.IsNone() {
-		return nil
-	}
-	result := &lsproto.SelectionRange{
-		Range: fullRange,
+	var result *lsproto.SelectionRange
+	if sourceFile.ContentMapper() == "" {
+		fullRange, _ := l.converters.ToLSPRange(sourceFile, core.NewTextRange(sourceFile.Pos(), sourceFile.End()))
+		result = &lsproto.SelectionRange{Range: fullRange}
 	}
 
 	var current *ast.Node

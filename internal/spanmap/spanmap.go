@@ -512,6 +512,43 @@ func (m *SpanMap) OriginalToVirtualSpans(r core.TextRange, feature Feature) []Ma
 	return results
 }
 
+// OriginalToVirtualIntersectingSpans maps every feature-enabled segment intersection with r.
+// Unlike OriginalToVirtualSpans, uncovered range endpoints do not suppress covered interior segments.
+func (m *SpanMap) OriginalToVirtualIntersectingSpans(r core.TextRange, feature Feature) []MappedSpan {
+	if m == nil {
+		return []MappedSpan{{Span: r, Fidelity: FidelityExact}}
+	}
+	if r.Pos() == r.End() {
+		return m.OriginalToVirtualSpans(r, feature)
+	}
+	results := make([]MappedSpan, 0)
+	for _, segment := range m.segments {
+		if !supportsFeature(segment, feature) {
+			continue
+		}
+		start := max(core.TextPos(r.Pos()), segment.OriginalStart)
+		end := min(core.TextPos(r.End()), segment.OriginalEnd)
+		if start >= end {
+			continue
+		}
+		if segment.Kind == KindVerbatim {
+			results = append(results, MappedSpan{
+				Span: core.NewTextRange(
+					int(segment.VirtualStart+(start-segment.OriginalStart)),
+					int(segment.VirtualStart+(end-segment.OriginalStart)),
+				),
+				Fidelity: FidelityExact,
+			})
+		} else {
+			results = append(results, MappedSpan{
+				Span:     core.NewTextRange(int(segment.VirtualStart), int(segment.VirtualEnd)),
+				Fidelity: FidelityAtom,
+			})
+		}
+	}
+	return results
+}
+
 // originalStartProjections maps the inclusive start of an original range through every matching segment.
 // Verbatim segments preserve the offset within the segment; atoms map to their virtual start.
 //

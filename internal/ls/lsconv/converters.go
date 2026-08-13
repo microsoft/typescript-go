@@ -136,6 +136,46 @@ func FromLSPRangeForSourceFile(c *Converters, file *ast.SourceFile, textRange ls
 	return lspRangeToVirtual(c, files, textRange, feature)
 }
 
+// FromLSPRangeIntersectingForSourceFile projects every feature-enabled intersection with textRange
+// across the canonical and supplemental virtual files. Unlike FromLSPRangeForSourceFile, the original
+// range endpoints need not be mapped. This is intended for read-only range requests such as semantic
+// tokens and inlay hints, where an editor commonly asks for a viewport spanning host markup:
+//
+//	original: <template>...</template><script>const x = 1</script><style>...</style>
+//	          [---------------- requested viewport ---------------------------------)
+//	                                          [----------) mapped script
+//
+// The result contains the script intersection even though both viewport endpoints are outside it.
+func FromLSPRangeIntersectingForSourceFile(c *Converters, file *ast.SourceFile, textRange lsproto.Range, feature spanmap.Feature) []MappedSpan[*ast.SourceFile] {
+	files := sourceFileProjections(file)
+	result := make([]MappedSpan[*ast.SourceFile], 0, len(files))
+	for _, script := range files {
+		spans := script.SpanMap()
+		if spans == nil {
+			result = append(result, MappedSpan[*ast.SourceFile]{
+				Script: script,
+				MappedSpan: spanmap.MappedSpan{
+					Span: core.NewTextRange(
+						int(c.lineAndCharacterToPosition(script, textRange.Start)),
+						int(c.lineAndCharacterToPosition(script, textRange.End)),
+					),
+					Fidelity: spanmap.FidelityExact,
+				},
+			})
+			continue
+		}
+		original := originalTextScript{fileName: script.OriginalFileName(), text: script.OriginalText()}
+		originalRange := core.NewTextRange(
+			int(c.lineAndCharacterToPosition(original, textRange.Start)),
+			int(c.lineAndCharacterToPosition(original, textRange.End)),
+		)
+		for _, mapped := range spans.OriginalToVirtualIntersectingSpans(originalRange, feature) {
+			result = append(result, MappedSpan[*ast.SourceFile]{Script: script, MappedSpan: mapped})
+		}
+	}
+	return result
+}
+
 func lspRangeToVirtual[T Script](c *Converters, scripts []T, textRange lsproto.Range, feature spanmap.Feature) []MappedSpan[T] {
 	result := make([]MappedSpan[T], 0, len(scripts))
 	for _, script := range scripts {

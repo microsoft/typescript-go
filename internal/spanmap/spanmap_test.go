@@ -76,6 +76,22 @@ func TestVirtualToOriginalSpanSynthesizedGap(t *testing.T) {
 	assert.Equal(t, fidelity, spanmap.FidelityNone)
 }
 
+func TestOriginalToVirtualIntersectingSpansAllowsUncoveredEndpoints(t *testing.T) {
+	t.Parallel()
+	m := spanmap.New([]spanmap.Segment{{
+		VirtualStart: 10, VirtualEnd: 20,
+		OriginalStart: 100, OriginalEnd: 110,
+		Kind: spanmap.KindVerbatim, Features: spanmap.FeatureSemanticTokens | spanmap.FeatureInlayHints,
+	}})
+
+	for _, feature := range []spanmap.Feature{spanmap.FeatureSemanticTokens, spanmap.FeatureInlayHints} {
+		got := m.OriginalToVirtualIntersectingSpans(core.NewTextRange(90, 120), feature)
+		assert.Equal(t, len(got), 1)
+		assert.Equal(t, got[0].Span, core.NewTextRange(10, 20))
+		assert.Equal(t, got[0].Fidelity, spanmap.FidelityExact)
+	}
+}
+
 func TestVirtualToOriginalSpanEmptyIsSynthesized(t *testing.T) {
 	t.Parallel()
 
