@@ -12,6 +12,39 @@ import (
 
 const maxSelectionRangeDepth = 1000
 
+type selectionRangeBuilder struct {
+	ranges      []lsproto.Range
+	oldestIndex int
+}
+
+func newSelectionRangeBuilder(capacity int) *selectionRangeBuilder {
+	return &selectionRangeBuilder{
+		ranges: make([]lsproto.Range, 0, capacity),
+	}
+}
+
+func (b *selectionRangeBuilder) push(selectionRange lsproto.Range) {
+	if len(b.ranges) < cap(b.ranges) {
+		b.ranges = append(b.ranges, selectionRange)
+		return
+	}
+
+	b.ranges[b.oldestIndex] = selectionRange
+	b.oldestIndex = (b.oldestIndex + 1) % len(b.ranges)
+}
+
+func (b *selectionRangeBuilder) build(parentRange lsproto.Range) *lsproto.SelectionRange {
+	result := &lsproto.SelectionRange{Range: parentRange}
+	for i := range b.ranges {
+		index := (b.oldestIndex + i) % len(b.ranges)
+		result = &lsproto.SelectionRange{
+			Range:  b.ranges[index],
+			Parent: result,
+		}
+	}
+	return result
+}
+
 func (l *LanguageService) ProvideSelectionRanges(ctx context.Context, params *lsproto.SelectionRangeParams) (lsproto.SelectionRangeResponse, error) {
 	_, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
 	if sourceFile == nil {
@@ -149,8 +182,8 @@ func createSyntaxList(factory *ast.NodeFactory, children []*ast.Node) *ast.Node 
 func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos int) *lsproto.SelectionRange {
 	factory := &ast.NodeFactory{}
 	fullRange := l.converters.ToLSPRange(sourceFile, core.NewTextRange(sourceFile.Pos(), sourceFile.End()))
-	var ranges []lsproto.Range
-	rangeStart := 0
+	// Traversal discovers ranges from broadest to most specific, so retain the newest ranges nearest to the cursor
+	ranges := newSelectionRangeBuilder(maxSelectionRangeDepth - 1)
 	lastRange := fullRange
 
 	nodeContainsPosition := func(node *ast.Node) bool {
@@ -189,12 +222,7 @@ func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos 
 		}
 		lastRange = lspRange
 
-		if len(ranges) < maxSelectionRangeDepth-1 {
-			ranges = append(ranges, lspRange)
-		} else {
-			ranges[rangeStart] = lspRange
-			rangeStart = (rangeStart + 1) % len(ranges)
-		}
+		ranges.push(lspRange)
 	}
 
 	pushSelectionCommentRange := func(start, end int) {
@@ -357,13 +385,5 @@ func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos 
 		current.VisitEachChild(tempVisitor)
 		current = next
 	}
-	result := &lsproto.SelectionRange{Range: fullRange}
-	for i := range ranges {
-		index := (rangeStart + i) % len(ranges)
-		result = &lsproto.SelectionRange{
-			Range:  ranges[index],
-			Parent: result,
-		}
-	}
-	return result
+	return ranges.build(fullRange)
 }
