@@ -18,7 +18,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/jsdoc"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
@@ -3087,7 +3086,7 @@ func (s *Session) handleGetJSDocTags(ctx context.Context, params *CheckerSymbolP
 		return nil, nil
 	}
 
-	tags := jsdoc.GetSymbolTags(symbol)
+	tags := ls.GetSymbolJSDocTags(symbol)
 	if len(tags) == 0 {
 		return nil, nil
 	}
@@ -3114,7 +3113,7 @@ func (s *Session) handleGetDocumentationComment(ctx context.Context, params *Che
 		return "", nil
 	}
 
-	return jsdoc.GetSymbolDocumentationComment(symbol), nil
+	return ls.GetSymbolDocumentationComment(setup.checker, symbol), nil
 }
 
 // handleGetTypeArguments returns the type arguments of a type reference.
