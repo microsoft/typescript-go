@@ -10,6 +10,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
+const maxSelectionRangeDepth = 1000
+
 func (l *LanguageService) ProvideSelectionRanges(ctx context.Context, params *lsproto.SelectionRangeParams) (lsproto.SelectionRangeResponse, error) {
 	_, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
 	if sourceFile == nil {
@@ -242,6 +244,7 @@ func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos 
 	result := &lsproto.SelectionRange{
 		Range: fullRange,
 	}
+	fullFileRange := result
 
 	var current *ast.Node
 	for current = sourceFile.AsNode(); current != nil; {
@@ -354,6 +357,20 @@ func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos 
 
 		current.VisitEachChild(tempVisitor)
 		current = next
+	}
+	return limitSelectionRangeDepth(result, fullFileRange)
+}
+
+func limitSelectionRangeDepth(result *lsproto.SelectionRange, fullFileRange *lsproto.SelectionRange) *lsproto.SelectionRange {
+	current := result
+	for range maxSelectionRangeDepth - 2 {
+		if current.Parent == nil {
+			return result
+		}
+		current = current.Parent
+	}
+	if current.Parent != nil && current.Parent != fullFileRange {
+		current.Parent = fullFileRange
 	}
 	return result
 }
