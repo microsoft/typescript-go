@@ -1,0 +1,59 @@
+//// [tests/cases/compiler/isolatedDeclarationsShadowedSymbolComputedName.ts] ////
+
+=== global.ts ===
+export const globalSymbol = {
+>globalSymbol : Symbol(globalSymbol, Decl(global.ts, 0, 12))
+
+    [Symbol.iterator]: 1,
+>[Symbol.iterator] : Symbol([Symbol.iterator], Decl(global.ts, 0, 29))
+>Symbol.iterator : Symbol(SymbolConstructor.iterator, Decl(lib.es2015.iterable.d.ts, --, --))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
+>iterator : Symbol(SymbolConstructor.iterator, Decl(lib.es2015.iterable.d.ts, --, --))
+
+};
+
+=== shadowed.ts ===
+const Symbol = {
+>Symbol : Symbol(Symbol, Decl(shadowed.ts, 0, 5))
+
+    iterator: "iterator",
+>iterator : Symbol(iterator, Decl(shadowed.ts, 0, 16))
+
+};
+
+export const shadowedSymbol = {
+>shadowedSymbol : Symbol(shadowedSymbol, Decl(shadowed.ts, 4, 12))
+
+    [Symbol.iterator]: 1,
+>[Symbol.iterator] : Symbol([Symbol.iterator], Decl(shadowed.ts, 4, 31))
+>Symbol.iterator : Symbol(iterator, Decl(shadowed.ts, 0, 16))
+>Symbol : Symbol(Symbol, Decl(shadowed.ts, 0, 5))
+>iterator : Symbol(iterator, Decl(shadowed.ts, 0, 16))
+
+};
+
+=== symbols.ts ===
+export const symbolValue = {
+>symbolValue : Symbol(symbolValue, Decl(symbols.ts, 0, 12))
+
+    iterator: "iterator",
+>iterator : Symbol(iterator, Decl(symbols.ts, 0, 28))
+
+};
+
+=== aliased.ts ===
+import { symbolValue as Symbol } from "./symbols.js";
+>symbolValue : Symbol(Symbol, Decl(symbols.ts, 0, 12))
+>Symbol : Symbol(Symbol, Decl(aliased.ts, 0, 8))
+
+export const aliasedSymbol = {
+>aliasedSymbol : Symbol(aliasedSymbol, Decl(aliased.ts, 2, 12))
+
+    [Symbol.iterator]: 1,
+>[Symbol.iterator] : Symbol([Symbol.iterator], Decl(aliased.ts, 2, 30))
+>Symbol.iterator : Symbol(iterator, Decl(symbols.ts, 0, 28))
+>Symbol : Symbol(Symbol, Decl(aliased.ts, 0, 8))
+>iterator : Symbol(iterator, Decl(symbols.ts, 0, 28))
+
+};
+

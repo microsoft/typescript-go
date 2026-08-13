@@ -1,0 +1,69 @@
+//// [tests/cases/compiler/isolatedDeclarationsShadowedSymbolComputedName.ts] ////
+
+=== global.ts ===
+export const globalSymbol = {
+>globalSymbol : { [Symbol.iterator]: number; }
+>{    [Symbol.iterator]: 1,} : { [Symbol.iterator]: number; }
+
+    [Symbol.iterator]: 1,
+>[Symbol.iterator] : number
+>Symbol.iterator : unique symbol
+>Symbol : SymbolConstructor
+>iterator : unique symbol
+>1 : 1
+
+};
+
+=== shadowed.ts ===
+const Symbol = {
+>Symbol : { iterator: string; }
+>{    iterator: "iterator",} : { iterator: string; }
+
+    iterator: "iterator",
+>iterator : string
+>"iterator" : "iterator"
+
+};
+
+export const shadowedSymbol = {
+>shadowedSymbol : { [Symbol.iterator]: number; }
+>{    [Symbol.iterator]: 1,} : { [Symbol.iterator]: number; }
+
+    [Symbol.iterator]: 1,
+>[Symbol.iterator] : number
+>Symbol.iterator : string
+>Symbol : { iterator: string; }
+>iterator : string
+>1 : 1
+
+};
+
+=== symbols.ts ===
+export const symbolValue = {
+>symbolValue : { iterator: string; }
+>{    iterator: "iterator",} : { iterator: string; }
+
+    iterator: "iterator",
+>iterator : string
+>"iterator" : "iterator"
+
+};
+
+=== aliased.ts ===
+import { symbolValue as Symbol } from "./symbols.js";
+>symbolValue : { iterator: string; }
+>Symbol : { iterator: string; }
+
+export const aliasedSymbol = {
+>aliasedSymbol : { [Symbol.iterator]: number; }
+>{    [Symbol.iterator]: 1,} : { [Symbol.iterator]: number; }
+
+    [Symbol.iterator]: 1,
+>[Symbol.iterator] : number
+>Symbol.iterator : string
+>Symbol : { iterator: string; }
+>iterator : string
+>1 : 1
+
+};
+
