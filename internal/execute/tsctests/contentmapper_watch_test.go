@@ -20,8 +20,8 @@ type recordingContentMapperSystem struct {
 	spawner *recordingContentMapperSpawner
 }
 
-func (s *recordingContentMapperSystem) Spawn(command []string, dir string) (io.ReadWriteCloser, error) {
-	return s.spawner.Spawn(command, dir)
+func (s *recordingContentMapperSystem) Spawn(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error) {
+	return s.spawner.Spawn(command, dir, stderr)
 }
 
 type recordingContentMapperSpawner struct {
@@ -30,8 +30,8 @@ type recordingContentMapperSpawner struct {
 	closes atomic.Int32
 }
 
-func (s *recordingContentMapperSpawner) Spawn(command []string, dir string) (io.ReadWriteCloser, error) {
-	process, err := s.inner.Spawn(command, dir)
+func (s *recordingContentMapperSpawner) Spawn(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error) {
+	process, err := s.inner.Spawn(command, dir, stderr)
 	if err != nil {
 		return nil, err
 	}

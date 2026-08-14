@@ -30,8 +30,8 @@ type recordingContentMapperSpawner struct {
 	closes atomic.Int32
 }
 
-func (s *recordingContentMapperSpawner) Spawn(command []string, dir string) (io.ReadWriteCloser, error) {
-	process, err := s.inner.Spawn(command, dir)
+func (s *recordingContentMapperSpawner) Spawn(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error) {
+	process, err := s.inner.Spawn(command, dir, stderr)
 	if err != nil {
 		return nil, err
 	}

@@ -28,7 +28,7 @@ type spawner struct {
 	lifecycle *ProjectLifecycle
 }
 
-func (s spawner) Spawn(command []string, dir string) (io.ReadWriteCloser, error) {
+func (s spawner) Spawn(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error) {
 	handler, err := handlerForMapper(command, s.lifecycle)
 	if err != nil {
 		return nil, err

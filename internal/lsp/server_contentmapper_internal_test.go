@@ -1,11 +1,25 @@
 package lsp
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"gotest.tools/v3/assert"
 )
+
+func TestContentMapperLoggerRequiresTrace(t *testing.T) {
+	t.Parallel()
+	var output strings.Builder
+	server := &Server{stderr: &output}
+	server.logger = newLogger(server)
+	logger := server.contentMapperLogger()
+	logger("hidden")
+	assert.Equal(t, output.String(), "")
+	server.logger.SetVerbosity(lsproto.LogVerbosityTrace)
+	logger("visible")
+	assert.Assert(t, strings.Contains(output.String(), "visible"))
+}
 
 func TestParseContentMapperContributions(t *testing.T) {
 	t.Parallel()

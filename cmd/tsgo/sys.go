@@ -48,6 +48,10 @@ func (s *osSys) Writer() io.Writer {
 	return s.writer
 }
 
+func (s *osSys) ErrorWriter() io.Writer {
+	return os.Stderr
+}
+
 func (s *osSys) WriteOutputIsTTY() bool {
 	return term.IsTerminal(int(os.Stdout.Fd()))
 }
@@ -61,16 +65,16 @@ func (s *osSys) GetEnvironmentVariable(name string) string {
 	return os.Getenv(name)
 }
 
-func (s *osSys) Spawn(command []string, dir string) (io.ReadWriteCloser, error) {
-	return spawnProcess(command, dir)
+func (s *osSys) Spawn(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error) {
+	return spawnProcess(command, dir, stderr)
 }
 
 // spawnProcess launches a process and adapts its stdio to an io.ReadWriteCloser (Read is its stdout,
 // Write is its stdin).
-func spawnProcess(command []string, dir string) (io.ReadWriteCloser, error) {
+func spawnProcess(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error) {
 	cmd := exec.Command(command[0], command[1:]...)
 	cmd.Dir = dir
-	cmd.Stderr = os.Stderr
+	cmd.Stderr = stderr
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
 		return nil, err

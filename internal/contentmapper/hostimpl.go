@@ -21,6 +21,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/ipc"
 	"github.com/microsoft/typescript-go/internal/json"
+	"github.com/microsoft/typescript-go/internal/jsonrpc"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -299,7 +300,7 @@ var _ Host = (*host)(nil)
 // process's stdout, Write is its stdin) whose Close tears the process down. This seam keeps os/exec out
 // of this package: production hosts spawn a real process, tests supply an in-process pipe.
 type Spawner interface {
-	Spawn(command []string, dir string) (io.ReadWriteCloser, error)
+	Spawn(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error)
 }
 
 type processExitState interface {
@@ -307,10 +308,111 @@ type processExitState interface {
 }
 
 // SpawnerFunc adapts a spawn function to the Spawner interface.
-type SpawnerFunc func(command []string, dir string) (io.ReadWriteCloser, error)
+type SpawnerFunc func(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error)
 
-func (f SpawnerFunc) Spawn(command []string, dir string) (io.ReadWriteCloser, error) {
-	return f(command, dir)
+func (f SpawnerFunc) Spawn(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error) {
+	return f(command, dir, stderr)
+}
+
+// Logger receives content mapper protocol and process output as complete log lines.
+type Logger func(message string)
+
+// HostOptions configures optional content mapper process logging.
+type HostOptions struct {
+	Logger Logger
+}
+
+type loggingProtocol struct {
+	ipc.Protocol
+	mapperName string
+	logger     Logger
+}
+
+func (p *loggingProtocol) log(direction string, message any) {
+	data, err := json.Marshal(message)
+	if err != nil {
+		p.logger(fmt.Sprintf("[content mapper: %s] %s: <failed to serialize: %v>", p.mapperName, direction, err))
+		return
+	}
+	p.logger(fmt.Sprintf("[content mapper: %s] %s: %s", p.mapperName, direction, data))
+}
+
+func (p *loggingProtocol) ReadMessage() (*ipc.Message, error) {
+	message, err := p.Protocol.ReadMessage()
+	if err == nil {
+		p.log("receive", message)
+	}
+	return message, err
+}
+
+func (p *loggingProtocol) WriteRequest(id *jsonrpc.ID, method string, params any) error {
+	message := jsonrpc.RequestMessage{ID: id, Method: method, Params: params}
+	p.log("send", message)
+	return p.Protocol.WriteRequest(id, method, params)
+}
+
+func (p *loggingProtocol) WriteNotification(method string, params any) error {
+	message := jsonrpc.RequestMessage{Method: method, Params: params}
+	p.log("send", message)
+	return p.Protocol.WriteNotification(method, params)
+}
+
+func (p *loggingProtocol) WriteResponse(id *jsonrpc.ID, result any) error {
+	message := jsonrpc.ResponseMessage{ID: id, Result: result}
+	p.log("send", message)
+	return p.Protocol.WriteResponse(id, result)
+}
+
+func (p *loggingProtocol) WriteError(id *jsonrpc.ID, responseError *jsonrpc.ResponseError) error {
+	message := jsonrpc.ResponseMessage{ID: id, Error: responseError}
+	p.log("send", message)
+	return p.Protocol.WriteError(id, responseError)
+}
+
+type stderrLogger struct {
+	mapperName string
+	logger     Logger
+	mu         sync.Mutex
+	pending    string
+}
+
+func (w *stderrLogger) Write(data []byte) (int, error) {
+	w.mu.Lock()
+	defer w.mu.Unlock()
+	w.pending += string(data)
+	for {
+		index := strings.IndexByte(w.pending, '\n')
+		if index < 0 {
+			break
+		}
+		w.log(strings.TrimSuffix(w.pending[:index], "\r"))
+		w.pending = w.pending[index+1:]
+	}
+	return len(data), nil
+}
+
+func (w *stderrLogger) flush() {
+	w.mu.Lock()
+	defer w.mu.Unlock()
+	if w.pending != "" {
+		w.log(strings.TrimSuffix(w.pending, "\r"))
+		w.pending = ""
+	}
+}
+
+func (w *stderrLogger) log(message string) {
+	w.logger(fmt.Sprintf("[content mapper: %s] stderr: %s", w.mapperName, message))
+}
+
+type loggedProcess struct {
+	io.ReadWriteCloser
+	stderr *stderrLogger
+}
+
+func (p *loggedProcess) Close() error {
+	err := p.ReadWriteCloser.Close()
+	p.stderr.flush()
+	return err
 }
 
 // NewHost creates a Host that spawns each mapper's process via the given spawner and drives it over a
@@ -318,6 +420,12 @@ func (f SpawnerFunc) Spawn(command []string, dir string) (io.ReadWriteCloser, er
 // on SIGINT, or a build/watch session ending) tears every mapper process down, so owners of a session
 // context need not close the host explicitly. Close does the same synchronously.
 func NewHost(ctx context.Context, spawner Spawner, diagnosticLocale locale.Locale) Host {
+	return NewHostWithOptions(ctx, spawner, diagnosticLocale, HostOptions{})
+}
+
+// NewHostWithOptions creates a Host with optional protocol and process logging.
+func NewHostWithOptions(ctx context.Context, spawner Spawner, diagnosticLocale locale.Locale, options HostOptions) Host {
+	logger := options.Logger
 	timing := &timingCollector{mappers: make(map[string]*mapperTimingCollector)}
 	return newWithDial(ctx, diagnosticLocale, timing, func(ctx context.Context, mapper *Mapper, diagnosticLocale locale.Locale) (ipc.Conn, io.Closer, PositionEncoding, string, error) {
 		if len(mapper.Exec) == 0 {
@@ -326,12 +434,25 @@ func NewHost(ctx context.Context, spawner Spawner, diagnosticLocale locale.Local
 		mapperTiming := timing.mapper(mapper.Identity())
 		diagnosticName := mapper.DiagnosticName()
 		spawnStart := time.Now()
-		rwc, err := spawner.Spawn(mapper.Exec, mapper.PackageDirectory)
+		var stderr io.Writer = io.Discard
+		var stderrLog *stderrLogger
+		if logger != nil {
+			stderrLog = &stderrLogger{mapperName: diagnosticName, logger: logger}
+			stderr = stderrLog
+		}
+		rwc, err := spawner.Spawn(mapper.Exec, mapper.PackageDirectory, stderr)
 		mapperTiming.spawn.record(spawnStart)
 		if err != nil {
 			return nil, nil, "", "", &InitializeError{Kind: InitializeErrorKindProcessStart, MapperName: diagnosticName, Command: mapper.Exec[0], Detail: err.Error()}
 		}
-		conn := ipc.NewAsyncConn(rwc, rejectHandler{})
+		if stderrLog != nil {
+			rwc = &loggedProcess{ReadWriteCloser: rwc, stderr: stderrLog}
+		}
+		protocol := ipc.Protocol(ipc.NewJSONRPCProtocol(rwc))
+		if logger != nil {
+			protocol = &loggingProtocol{Protocol: protocol, mapperName: diagnosticName, logger: logger}
+		}
+		conn := ipc.NewAsyncConnWithProtocol(rwc, protocol, rejectHandler{})
 		go func() { _ = conn.Run(ctx) }()
 		initializeCtx, cancel := context.WithTimeout(ctx, initializeTimeout)
 		initializeStart := mapperTiming.startRequest()

@@ -90,6 +90,7 @@ type SessionInit struct {
 	NpmExecutor   ata.NpmExecutor
 	// Spawner launches content mapper processes. It is nil when the host cannot spawn processes.
 	Spawner                 contentmapper.Spawner
+	ContentMapperLogger     contentmapper.Logger
 	ParseCache              *ParseCache
 	ContentMappedParseCache *ContentMappedParseCache
 }
@@ -223,7 +224,7 @@ func newContentMapperHost(init *SessionInit) contentmapper.Host {
 	if init.Client != nil {
 		diagnosticLocale = init.Client.GetLocale()
 	}
-	return contentmapper.NewHost(init.BackgroundCtx, init.Spawner, diagnosticLocale)
+	return contentmapper.NewHostWithOptions(init.BackgroundCtx, init.Spawner, diagnosticLocale, contentmapper.HostOptions{Logger: init.ContentMapperLogger})
 }
 
 func NewSession(init *SessionInit) *Session {

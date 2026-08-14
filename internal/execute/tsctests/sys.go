@@ -221,6 +221,10 @@ func (s *TestSys) Writer() io.Writer {
 	return s.currentWrite
 }
 
+func (s *TestSys) ErrorWriter() io.Writer {
+	return s.currentWrite
+}
+
 func (s *TestSys) WriteOutputIsTTY() bool {
 	return true
 }
@@ -239,8 +243,8 @@ func (s *TestSys) GetEnvironmentVariable(name string) string {
 // Spawn serves the fake content mappers in-process, selecting the implementation by the exec command the
 // mapper package declares (see internal/testutil/contentmappertest), so tests exercise the full IPC stack
 // without spawning a subprocess.
-func (s *TestSys) Spawn(command []string, dir string) (io.ReadWriteCloser, error) {
-	return contentmappertest.NewSpawner().Spawn(command, dir)
+func (s *TestSys) Spawn(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error) {
+	return contentmappertest.NewSpawner().Spawn(command, dir, stderr)
 }
 
 func (s *TestSys) OnEmittedFiles(result *compiler.EmitResult, mTimesCache *collections.SyncMap[tspath.Path, time.Time]) {

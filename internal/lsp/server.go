@@ -52,7 +52,7 @@ type ServerOptions struct {
 	NpmInstall         func(cwd string, args []string) ([]byte, error)
 	// Spawn launches a child process, returning its stdio as an io.ReadWriteCloser (Read is its stdout,
 	// Write is its stdin). It is nil when the host cannot spawn processes. Currently used for content mappers.
-	Spawn              func(command []string, dir string) (io.ReadWriteCloser, error)
+	Spawn              func(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error)
 	ProgressDelay      time.Duration // delay before showing progress UI; 0 means no delay
 	SetParentProcessID func(parentPID int)
 }
@@ -240,7 +240,7 @@ type Server struct {
 	parseCache *project.ParseCache
 
 	npmInstall func(cwd string, args []string) ([]byte, error)
-	spawn      func(command []string, dir string) (io.ReadWriteCloser, error)
+	spawn      func(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error)
 
 	cpuProfiler pprof.CPUProfiler
 
@@ -1743,12 +1743,13 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 			PushDiagnosticsEnabled: !disablePushDiagnostics,
 			LoadExternalPlugins:    loadExternalPlugins,
 		},
-		FS:          s.fs,
-		Logger:      s.logger,
-		Client:      s,
-		NpmExecutor: s,
-		Spawner:     s.contentMapperSpawner(),
-		ParseCache:  s.parseCache,
+		FS:                  s.fs,
+		Logger:              s.logger,
+		Client:              s,
+		NpmExecutor:         s,
+		Spawner:             s.contentMapperSpawner(),
+		ContentMapperLogger: s.contentMapperLogger(),
+		ParseCache:          s.parseCache,
 	})
 
 	userPreferences, err := s.RequestConfiguration(ctx)
@@ -2382,6 +2383,14 @@ func (s *Server) contentMapperSpawner() contentmapper.Spawner {
 		return nil
 	}
 	return contentmapper.SpawnerFunc(s.spawn)
+}
+
+func (s *Server) contentMapperLogger() contentmapper.Logger {
+	return func(message string) {
+		if s.logger.IsTracing() {
+			s.logger.Info(message)
+		}
+	}
 }
 
 // Developer/debugging command handlers

@@ -76,10 +76,10 @@ func TestOutOfProcess(t *testing.T) {
 // talks to a genuinely separate process over real pipes.
 type execSpawner struct{}
 
-func (execSpawner) Spawn(command []string, dir string) (io.ReadWriteCloser, error) {
+func (execSpawner) Spawn(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error) {
 	cmd := exec.Command(os.Args[0])
 	cmd.Env = append(os.Environ(), helperEnv+"=1")
-	cmd.Stderr = os.Stderr
+	cmd.Stderr = stderr
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
 		return nil, err

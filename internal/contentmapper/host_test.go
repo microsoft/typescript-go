@@ -187,7 +187,7 @@ type fakeSpawner struct {
 	handler ipc.Handler
 }
 
-func (s *fakeSpawner) Spawn(command []string, dir string) (io.ReadWriteCloser, error) {
+func (s *fakeSpawner) Spawn(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error) {
 	s.spawns.Add(1)
 	handler := s.handler
 	if handler == nil {
@@ -223,6 +223,52 @@ func TestRunnerTransform(t *testing.T) {
 	assert.Equal(t, len(result.Diagnostics), 1)
 	assert.Equal(t, result.Diagnostics[0].Code(), int32(9999))
 	assert.Equal(t, result.Diagnostics[0].Source(), "vue")
+}
+
+func TestHostLogging(t *testing.T) {
+	t.Parallel()
+	var mu sync.Mutex
+	var logs []string
+	logger := func(message string) {
+		mu.Lock()
+		defer mu.Unlock()
+		logs = append(logs, message)
+	}
+	spawner := contentmapper.SpawnerFunc(func(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error) {
+		_, _ = io.WriteString(stderr, "mapper diagnostic\n")
+		return (&fakeSpawner{}).Spawn(command, dir, stderr)
+	})
+	host := contentmapper.NewHostWithOptions(t.Context(), spawner, locale.Default, contentmapper.HostOptions{Logger: logger})
+	defer host.Close()
+	mapper := &contentmapper.Mapper{
+		Definition: contentmapper.Definition{Package: "configured", Extensions: []string{".vue"}},
+		Manifest:   contentmapper.Manifest{Name: "resolved", Version: "1.0.0", Exec: []string{"mapper"}},
+	}
+	_, err := host.Transform(mapper, contentmapper.Request{FileName: "/a.vue", Content: "export const x = 1;"})
+	assert.NilError(t, err)
+
+	mu.Lock()
+	defer mu.Unlock()
+	joined := strings.Join(logs, "\n")
+	assert.Assert(t, strings.Contains(joined, `[content mapper: resolved] send: {"jsonrpc":"2.0","id":"api1","method":"initialize"`))
+	assert.Assert(t, strings.Contains(joined, `[content mapper: resolved] receive: {"jsonrpc":"2.0","id":"api1","result":`))
+	assert.Assert(t, strings.Contains(joined, `[content mapper: resolved] stderr: mapper diagnostic`))
+}
+
+func TestHostDiscardsStderrWithoutLogging(t *testing.T) {
+	t.Parallel()
+	spawner := contentmapper.SpawnerFunc(func(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error) {
+		assert.Equal(t, stderr, io.Discard)
+		return (&fakeSpawner{}).Spawn(command, dir, stderr)
+	})
+	host := contentmapper.NewHost(t.Context(), spawner, locale.Default)
+	defer host.Close()
+	mapper := &contentmapper.Mapper{
+		Definition: contentmapper.Definition{Package: "configured", Extensions: []string{".vue"}},
+		Manifest:   contentmapper.Manifest{Name: "resolved", Version: "1.0.0", Exec: []string{"mapper"}},
+	}
+	_, err := host.Transform(mapper, contentmapper.Request{FileName: "/a.vue", Content: "export const x = 1;"})
+	assert.NilError(t, err)
 }
 
 func TestMapperDiagnosticName(t *testing.T) {

@@ -1,6 +1,7 @@
 package tsc
 
 import (
+	"bytes"
 	"errors"
 	"io"
 	"sync"
@@ -14,7 +15,36 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
+	"gotest.tools/v3/assert"
 )
+
+type contentMapperLoggingTestSystem struct {
+	*timingTestSystem
+	enabled bool
+	stderr  bytes.Buffer
+}
+
+func (s *contentMapperLoggingTestSystem) GetEnvironmentVariable(name string) string {
+	if name == "TS_CONTENT_MAPPER_DEBUG" && s.enabled {
+		return "1"
+	}
+	return ""
+}
+
+func (s *contentMapperLoggingTestSystem) ErrorWriter() io.Writer {
+	return &s.stderr
+}
+
+func TestContentMapperLoggerEnvironmentVariable(t *testing.T) {
+	t.Parallel()
+	sys := &contentMapperLoggingTestSystem{timingTestSystem: &timingTestSystem{}}
+	assert.Assert(t, newContentMapperLogger(sys) == nil)
+	sys.enabled = true
+	logger := newContentMapperLogger(sys)
+	assert.Assert(t, logger != nil)
+	logger("mapper log")
+	assert.Equal(t, sys.stderr.String(), "mapper log\n")
+}
 
 type controlledClock struct {
 	mu                   sync.Mutex
@@ -72,6 +102,7 @@ type timingTestSystem struct {
 }
 
 func (s *timingTestSystem) Writer() io.Writer                         { return io.Discard }
+func (s *timingTestSystem) ErrorWriter() io.Writer                    { return io.Discard }
 func (s *timingTestSystem) FS() vfs.FS                                { return s.fs }
 func (s *timingTestSystem) DefaultLibraryPath() string                { return "/lib" }
 func (s *timingTestSystem) GetCurrentDirectory() string               { return "/project" }
@@ -81,7 +112,7 @@ func (s *timingTestSystem) GetEnvironmentVariable(name string) string { return "
 func (s *timingTestSystem) Now() time.Time                            { return s.clock.Now() }
 func (s *timingTestSystem) SinceStart() time.Duration                 { return s.clock.SinceStart() }
 
-func (s *timingTestSystem) Spawn([]string, string) (io.ReadWriteCloser, error) {
+func (s *timingTestSystem) Spawn([]string, string, io.Writer) (io.ReadWriteCloser, error) {
 	return nil, errors.New("spawn not implemented in timingTestSystem")
 }
 

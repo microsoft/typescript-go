@@ -2,6 +2,7 @@ package tsc
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"time"
 
@@ -19,16 +20,26 @@ import (
 
 type System interface {
 	Writer() io.Writer
+	ErrorWriter() io.Writer
 	FS() vfs.FS
 	DefaultLibraryPath() string
 	GetCurrentDirectory() string
 	WriteOutputIsTTY() bool
 	GetWidthOfTerminal() int
 	GetEnvironmentVariable(name string) string
-	Spawn(command []string, dir string) (io.ReadWriteCloser, error)
+	Spawn(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error)
 
 	Now() time.Time
 	SinceStart() time.Duration
+}
+
+func newContentMapperLogger(sys System) contentmapper.Logger {
+	if sys.GetEnvironmentVariable("TS_CONTENT_MAPPER_DEBUG") == "" {
+		return nil
+	}
+	return func(message string) {
+		fmt.Fprintln(sys.ErrorWriter(), message)
+	}
 }
 
 type ExitStatus int
@@ -75,7 +86,9 @@ func NewContentMapperHost(ctx context.Context, sys System, options *core.Compile
 		return nil
 	}
 	diagnosticLocale, _ := locale.Parse(options.Locale)
-	return contentmapper.NewHost(ctx, sys, diagnosticLocale)
+	return contentmapper.NewHostWithOptions(ctx, sys, diagnosticLocale, contentmapper.HostOptions{
+		Logger: newContentMapperLogger(sys),
+	})
 }
 
 type CompileTimes struct {
