@@ -4,6 +4,7 @@ package ast
 
 import (
 	"sync/atomic"
+	"unsafe"
 
 	"github.com/microsoft/typescript-go/internal/core"
 )
@@ -598,8 +599,50 @@ type Token struct {
 }
 
 func (f *NodeFactory) NewToken(kind TokenSyntaxKind) *Node {
-	data := f.tokenArena.New()
-	return f.newNode(kind, data)
+	switch kind {
+	case KindNumericLiteral:
+		data := f.numericLiteralArena.New()
+		return f.newNode(kind, data)
+	case KindBigIntLiteral:
+		data := &BigIntLiteral{}
+		return f.newNode(kind, data)
+	case KindStringLiteral:
+		data := f.stringLiteralArena.New()
+		return f.newNode(kind, data)
+	case KindJsxText:
+		data := &JsxText{}
+		return f.newNode(kind, data)
+	case KindRegularExpressionLiteral:
+		data := &RegularExpressionLiteral{}
+		return f.newNode(kind, data)
+	case KindNoSubstitutionTemplateLiteral:
+		data := &NoSubstitutionTemplateLiteral{}
+		return f.newNode(kind, data)
+	case KindTemplateHead:
+		data := &TemplateHead{}
+		return f.newNode(kind, data)
+	case KindTemplateMiddle:
+		data := &TemplateMiddle{}
+		return f.newNode(kind, data)
+	case KindTemplateTail:
+		data := &TemplateTail{}
+		return f.newNode(kind, data)
+	case KindIdentifier:
+		data := f.identifierArena.New()
+		return f.newNode(kind, data)
+	case KindPrivateIdentifier:
+		data := &PrivateIdentifier{}
+		return f.newNode(kind, data)
+	case KindFalseKeyword, KindImportKeyword, KindNullKeyword, KindSuperKeyword, KindThisKeyword, KindTrueKeyword:
+		data := f.keywordExpressionArena.New()
+		return f.newNode(kind, data)
+	case KindVoidKeyword, KindAnyKeyword, KindBooleanKeyword, KindIntrinsicKeyword, KindNeverKeyword, KindNumberKeyword, KindObjectKeyword, KindStringKeyword, KindSymbolKeyword, KindUndefinedKeyword, KindUnknownKeyword, KindBigIntKeyword:
+		data := f.keywordTypeNodeArena.New()
+		return f.newNode(kind, data)
+	default:
+		data := f.tokenArena.New()
+		return f.newNode(kind, data)
+	}
 }
 
 func (node *Token) Clone(f NodeFactoryCoercible) *Node {
@@ -8680,345 +8723,744 @@ func IsJSDocPropertyTag(node *Node) bool {
 }
 
 // ──────────────────────────────────────────────────────────────────────
+// Node data dispatch
+// ──────────────────────────────────────────────────────────────────────
+
+func (n *Node) data() nodeData {
+	switch n.Kind {
+	case kindFlowSwitchClauseData:
+		return (*FlowSwitchClauseData)(unsafe.Pointer(n))
+	case kindFlowReduceLabelData:
+		return (*FlowReduceLabelData)(unsafe.Pointer(n))
+	case KindUnknown, KindEndOfFile, KindSingleLineCommentTrivia, KindMultiLineCommentTrivia, KindNewLineTrivia, KindWhitespaceTrivia, KindConflictMarkerTrivia, KindNonTextFileMarkerTrivia, KindJsxTextAllWhiteSpaces, KindOpenBraceToken, KindCloseBraceToken, KindOpenParenToken, KindCloseParenToken, KindOpenBracketToken, KindCloseBracketToken, KindDotToken, KindDotDotDotToken, KindSemicolonToken, KindCommaToken, KindQuestionDotToken, KindLessThanToken, KindLessThanSlashToken, KindGreaterThanToken, KindLessThanEqualsToken, KindGreaterThanEqualsToken, KindEqualsEqualsToken, KindExclamationEqualsToken, KindEqualsEqualsEqualsToken, KindExclamationEqualsEqualsToken, KindEqualsGreaterThanToken, KindPlusToken, KindMinusToken, KindAsteriskToken, KindAsteriskAsteriskToken, KindSlashToken, KindPercentToken, KindPlusPlusToken, KindMinusMinusToken, KindLessThanLessThanToken, KindGreaterThanGreaterThanToken, KindGreaterThanGreaterThanGreaterThanToken, KindAmpersandToken, KindBarToken, KindCaretToken, KindExclamationToken, KindTildeToken, KindAmpersandAmpersandToken, KindBarBarToken, KindQuestionToken, KindColonToken, KindAtToken, KindQuestionQuestionToken, KindBacktickToken, KindHashToken, KindEqualsToken, KindPlusEqualsToken, KindMinusEqualsToken, KindAsteriskEqualsToken, KindAsteriskAsteriskEqualsToken, KindSlashEqualsToken, KindPercentEqualsToken, KindLessThanLessThanEqualsToken, KindGreaterThanGreaterThanEqualsToken, KindGreaterThanGreaterThanGreaterThanEqualsToken, KindAmpersandEqualsToken, KindBarEqualsToken, KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken, KindQuestionQuestionEqualsToken, KindCaretEqualsToken, KindJSDocCommentTextToken, KindBreakKeyword, KindCaseKeyword, KindCatchKeyword, KindClassKeyword, KindConstKeyword, KindContinueKeyword, KindDebuggerKeyword, KindDefaultKeyword, KindDeleteKeyword, KindDoKeyword, KindElseKeyword, KindEnumKeyword, KindExportKeyword, KindExtendsKeyword, KindFinallyKeyword, KindForKeyword, KindFunctionKeyword, KindIfKeyword, KindInKeyword, KindInstanceOfKeyword, KindNewKeyword, KindReturnKeyword, KindSwitchKeyword, KindThrowKeyword, KindTryKeyword, KindTypeOfKeyword, KindVarKeyword, KindWhileKeyword, KindWithKeyword, KindImplementsKeyword, KindInterfaceKeyword, KindLetKeyword, KindPackageKeyword, KindPrivateKeyword, KindProtectedKeyword, KindPublicKeyword, KindStaticKeyword, KindYieldKeyword, KindAbstractKeyword, KindAccessorKeyword, KindAsKeyword, KindAssertsKeyword, KindAssertKeyword, KindAsyncKeyword, KindAwaitKeyword, KindConstructorKeyword, KindDeclareKeyword, KindGetKeyword, KindImmediateKeyword, KindInferKeyword, KindIsKeyword, KindKeyOfKeyword, KindModuleKeyword, KindNamespaceKeyword, KindOutKeyword, KindReadonlyKeyword, KindRequireKeyword, KindSatisfiesKeyword, KindSetKeyword, KindTypeKeyword, KindUniqueKeyword, KindUsingKeyword, KindFromKeyword, KindGlobalKeyword, KindOverrideKeyword, KindOfKeyword, KindDeferKeyword:
+		return (*Token)(unsafe.Pointer(n))
+	case KindNumericLiteral:
+		return (*NumericLiteral)(unsafe.Pointer(n))
+	case KindBigIntLiteral:
+		return (*BigIntLiteral)(unsafe.Pointer(n))
+	case KindStringLiteral:
+		return (*StringLiteral)(unsafe.Pointer(n))
+	case KindJsxText:
+		return (*JsxText)(unsafe.Pointer(n))
+	case KindRegularExpressionLiteral:
+		return (*RegularExpressionLiteral)(unsafe.Pointer(n))
+	case KindNoSubstitutionTemplateLiteral:
+		return (*NoSubstitutionTemplateLiteral)(unsafe.Pointer(n))
+	case KindTemplateHead:
+		return (*TemplateHead)(unsafe.Pointer(n))
+	case KindTemplateMiddle:
+		return (*TemplateMiddle)(unsafe.Pointer(n))
+	case KindTemplateTail:
+		return (*TemplateTail)(unsafe.Pointer(n))
+	case KindIdentifier:
+		return (*Identifier)(unsafe.Pointer(n))
+	case KindPrivateIdentifier:
+		return (*PrivateIdentifier)(unsafe.Pointer(n))
+	case KindFalseKeyword, KindImportKeyword, KindNullKeyword, KindSuperKeyword, KindThisKeyword, KindTrueKeyword:
+		return (*KeywordExpression)(unsafe.Pointer(n))
+	case KindVoidKeyword, KindAnyKeyword, KindBooleanKeyword, KindIntrinsicKeyword, KindNeverKeyword, KindNumberKeyword, KindObjectKeyword, KindStringKeyword, KindSymbolKeyword, KindUndefinedKeyword, KindUnknownKeyword, KindBigIntKeyword:
+		return (*KeywordTypeNode)(unsafe.Pointer(n))
+	case KindQualifiedName:
+		return (*QualifiedName)(unsafe.Pointer(n))
+	case KindComputedPropertyName:
+		return (*ComputedPropertyName)(unsafe.Pointer(n))
+	case KindDecorator:
+		return (*Decorator)(unsafe.Pointer(n))
+	case KindEmptyStatement:
+		return (*EmptyStatement)(unsafe.Pointer(n))
+	case KindIfStatement:
+		return (*IfStatement)(unsafe.Pointer(n))
+	case KindDoStatement:
+		return (*DoStatement)(unsafe.Pointer(n))
+	case KindWhileStatement:
+		return (*WhileStatement)(unsafe.Pointer(n))
+	case KindForStatement:
+		return (*ForStatement)(unsafe.Pointer(n))
+	case KindForInStatement, KindForOfStatement:
+		return (*ForInOrOfStatement)(unsafe.Pointer(n))
+	case KindBreakStatement:
+		return (*BreakStatement)(unsafe.Pointer(n))
+	case KindContinueStatement:
+		return (*ContinueStatement)(unsafe.Pointer(n))
+	case KindReturnStatement:
+		return (*ReturnStatement)(unsafe.Pointer(n))
+	case KindWithStatement:
+		return (*WithStatement)(unsafe.Pointer(n))
+	case KindSwitchStatement:
+		return (*SwitchStatement)(unsafe.Pointer(n))
+	case KindCaseBlock:
+		return (*CaseBlock)(unsafe.Pointer(n))
+	case KindCaseClause, KindDefaultClause:
+		return (*CaseOrDefaultClause)(unsafe.Pointer(n))
+	case KindThrowStatement:
+		return (*ThrowStatement)(unsafe.Pointer(n))
+	case KindTryStatement:
+		return (*TryStatement)(unsafe.Pointer(n))
+	case KindCatchClause:
+		return (*CatchClause)(unsafe.Pointer(n))
+	case KindDebuggerStatement:
+		return (*DebuggerStatement)(unsafe.Pointer(n))
+	case KindLabeledStatement:
+		return (*LabeledStatement)(unsafe.Pointer(n))
+	case KindExpressionStatement:
+		return (*ExpressionStatement)(unsafe.Pointer(n))
+	case KindBlock:
+		return (*Block)(unsafe.Pointer(n))
+	case KindVariableStatement:
+		return (*VariableStatement)(unsafe.Pointer(n))
+	case KindVariableDeclaration:
+		return (*VariableDeclaration)(unsafe.Pointer(n))
+	case KindVariableDeclarationList:
+		return (*VariableDeclarationList)(unsafe.Pointer(n))
+	case KindObjectBindingPattern, KindArrayBindingPattern:
+		return (*BindingPattern)(unsafe.Pointer(n))
+	case KindParameter:
+		return (*ParameterDeclaration)(unsafe.Pointer(n))
+	case KindBindingElement:
+		return (*BindingElement)(unsafe.Pointer(n))
+	case KindMissingDeclaration:
+		return (*MissingDeclaration)(unsafe.Pointer(n))
+	case KindFunctionDeclaration:
+		return (*FunctionDeclaration)(unsafe.Pointer(n))
+	case KindClassDeclaration:
+		return (*ClassDeclaration)(unsafe.Pointer(n))
+	case KindClassExpression:
+		return (*ClassExpression)(unsafe.Pointer(n))
+	case KindHeritageClause:
+		return (*HeritageClause)(unsafe.Pointer(n))
+	case KindInterfaceDeclaration:
+		return (*InterfaceDeclaration)(unsafe.Pointer(n))
+	case KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
+		return (*TypeAliasDeclaration)(unsafe.Pointer(n))
+	case KindEnumMember:
+		return (*EnumMember)(unsafe.Pointer(n))
+	case KindEnumDeclaration:
+		return (*EnumDeclaration)(unsafe.Pointer(n))
+	case KindModuleBlock:
+		return (*ModuleBlock)(unsafe.Pointer(n))
+	case KindNotEmittedStatement:
+		return (*NotEmittedStatement)(unsafe.Pointer(n))
+	case KindNotEmittedTypeElement:
+		return (*NotEmittedTypeElement)(unsafe.Pointer(n))
+	case KindImportDeclaration, KindJSImportDeclaration:
+		return (*ImportDeclaration)(unsafe.Pointer(n))
+	case KindExternalModuleReference:
+		return (*ExternalModuleReference)(unsafe.Pointer(n))
+	case KindNamespaceImport:
+		return (*NamespaceImport)(unsafe.Pointer(n))
+	case KindNamedImports:
+		return (*NamedImports)(unsafe.Pointer(n))
+	case KindExportAssignment:
+		return (*ExportAssignment)(unsafe.Pointer(n))
+	case KindNamespaceExportDeclaration:
+		return (*NamespaceExportDeclaration)(unsafe.Pointer(n))
+	case KindNamespaceExport:
+		return (*NamespaceExport)(unsafe.Pointer(n))
+	case KindNamedExports:
+		return (*NamedExports)(unsafe.Pointer(n))
+	case KindExportSpecifier:
+		return (*ExportSpecifier)(unsafe.Pointer(n))
+	case KindCallSignature:
+		return (*CallSignatureDeclaration)(unsafe.Pointer(n))
+	case KindConstructSignature:
+		return (*ConstructSignatureDeclaration)(unsafe.Pointer(n))
+	case KindConstructor:
+		return (*ConstructorDeclaration)(unsafe.Pointer(n))
+	case KindGetAccessor:
+		return (*GetAccessorDeclaration)(unsafe.Pointer(n))
+	case KindSetAccessor:
+		return (*SetAccessorDeclaration)(unsafe.Pointer(n))
+	case KindIndexSignature:
+		return (*IndexSignatureDeclaration)(unsafe.Pointer(n))
+	case KindMethodSignature:
+		return (*MethodSignatureDeclaration)(unsafe.Pointer(n))
+	case KindMethodDeclaration:
+		return (*MethodDeclaration)(unsafe.Pointer(n))
+	case KindPropertySignature:
+		return (*PropertySignatureDeclaration)(unsafe.Pointer(n))
+	case KindPropertyDeclaration:
+		return (*PropertyDeclaration)(unsafe.Pointer(n))
+	case KindSemicolonClassElement:
+		return (*SemicolonClassElement)(unsafe.Pointer(n))
+	case KindClassStaticBlockDeclaration:
+		return (*ClassStaticBlockDeclaration)(unsafe.Pointer(n))
+	case KindOmittedExpression:
+		return (*OmittedExpression)(unsafe.Pointer(n))
+	case KindBinaryExpression:
+		return (*BinaryExpression)(unsafe.Pointer(n))
+	case KindPrefixUnaryExpression:
+		return (*PrefixUnaryExpression)(unsafe.Pointer(n))
+	case KindPostfixUnaryExpression:
+		return (*PostfixUnaryExpression)(unsafe.Pointer(n))
+	case KindYieldExpression:
+		return (*YieldExpression)(unsafe.Pointer(n))
+	case KindArrowFunction:
+		return (*ArrowFunction)(unsafe.Pointer(n))
+	case KindFunctionExpression:
+		return (*FunctionExpression)(unsafe.Pointer(n))
+	case KindAsExpression:
+		return (*AsExpression)(unsafe.Pointer(n))
+	case KindSatisfiesExpression:
+		return (*SatisfiesExpression)(unsafe.Pointer(n))
+	case KindConditionalExpression:
+		return (*ConditionalExpression)(unsafe.Pointer(n))
+	case KindPropertyAccessExpression:
+		return (*PropertyAccessExpression)(unsafe.Pointer(n))
+	case KindElementAccessExpression:
+		return (*ElementAccessExpression)(unsafe.Pointer(n))
+	case KindCallExpression:
+		return (*CallExpression)(unsafe.Pointer(n))
+	case KindNewExpression:
+		return (*NewExpression)(unsafe.Pointer(n))
+	case KindMetaProperty:
+		return (*MetaProperty)(unsafe.Pointer(n))
+	case KindNonNullExpression:
+		return (*NonNullExpression)(unsafe.Pointer(n))
+	case KindSpreadElement:
+		return (*SpreadElement)(unsafe.Pointer(n))
+	case KindTemplateExpression:
+		return (*TemplateExpression)(unsafe.Pointer(n))
+	case KindTemplateSpan:
+		return (*TemplateSpan)(unsafe.Pointer(n))
+	case KindTaggedTemplateExpression:
+		return (*TaggedTemplateExpression)(unsafe.Pointer(n))
+	case KindParenthesizedExpression:
+		return (*ParenthesizedExpression)(unsafe.Pointer(n))
+	case KindArrayLiteralExpression:
+		return (*ArrayLiteralExpression)(unsafe.Pointer(n))
+	case KindObjectLiteralExpression:
+		return (*ObjectLiteralExpression)(unsafe.Pointer(n))
+	case KindSpreadAssignment:
+		return (*SpreadAssignment)(unsafe.Pointer(n))
+	case KindPropertyAssignment:
+		return (*PropertyAssignment)(unsafe.Pointer(n))
+	case KindShorthandPropertyAssignment:
+		return (*ShorthandPropertyAssignment)(unsafe.Pointer(n))
+	case KindDeleteExpression:
+		return (*DeleteExpression)(unsafe.Pointer(n))
+	case KindTypeOfExpression:
+		return (*TypeOfExpression)(unsafe.Pointer(n))
+	case KindVoidExpression:
+		return (*VoidExpression)(unsafe.Pointer(n))
+	case KindAwaitExpression:
+		return (*AwaitExpression)(unsafe.Pointer(n))
+	case KindTypeAssertionExpression:
+		return (*TypeAssertion)(unsafe.Pointer(n))
+	case KindUnionType:
+		return (*UnionTypeNode)(unsafe.Pointer(n))
+	case KindIntersectionType:
+		return (*IntersectionTypeNode)(unsafe.Pointer(n))
+	case KindConditionalType:
+		return (*ConditionalTypeNode)(unsafe.Pointer(n))
+	case KindTypeOperator:
+		return (*TypeOperatorNode)(unsafe.Pointer(n))
+	case KindInferType:
+		return (*InferTypeNode)(unsafe.Pointer(n))
+	case KindArrayType:
+		return (*ArrayTypeNode)(unsafe.Pointer(n))
+	case KindIndexedAccessType:
+		return (*IndexedAccessTypeNode)(unsafe.Pointer(n))
+	case KindTypeReference:
+		return (*TypeReferenceNode)(unsafe.Pointer(n))
+	case KindExpressionWithTypeArguments:
+		return (*ExpressionWithTypeArguments)(unsafe.Pointer(n))
+	case KindLiteralType:
+		return (*LiteralTypeNode)(unsafe.Pointer(n))
+	case KindThisType:
+		return (*ThisTypeNode)(unsafe.Pointer(n))
+	case KindTypePredicate:
+		return (*TypePredicateNode)(unsafe.Pointer(n))
+	case KindImportAttribute:
+		return (*ImportAttribute)(unsafe.Pointer(n))
+	case KindImportAttributes:
+		return (*ImportAttributes)(unsafe.Pointer(n))
+	case KindTypeQuery:
+		return (*TypeQueryNode)(unsafe.Pointer(n))
+	case KindMappedType:
+		return (*MappedTypeNode)(unsafe.Pointer(n))
+	case KindTypeLiteral:
+		return (*TypeLiteralNode)(unsafe.Pointer(n))
+	case KindTupleType:
+		return (*TupleTypeNode)(unsafe.Pointer(n))
+	case KindNamedTupleMember:
+		return (*NamedTupleMember)(unsafe.Pointer(n))
+	case KindOptionalType:
+		return (*OptionalTypeNode)(unsafe.Pointer(n))
+	case KindRestType:
+		return (*RestTypeNode)(unsafe.Pointer(n))
+	case KindParenthesizedType:
+		return (*ParenthesizedTypeNode)(unsafe.Pointer(n))
+	case KindFunctionType:
+		return (*FunctionTypeNode)(unsafe.Pointer(n))
+	case KindConstructorType:
+		return (*ConstructorTypeNode)(unsafe.Pointer(n))
+	case KindTemplateLiteralType:
+		return (*TemplateLiteralTypeNode)(unsafe.Pointer(n))
+	case KindTemplateLiteralTypeSpan:
+		return (*TemplateLiteralTypeSpan)(unsafe.Pointer(n))
+	case KindSyntheticExpression:
+		return (*SyntheticExpression)(unsafe.Pointer(n))
+	case KindPartiallyEmittedExpression:
+		return (*PartiallyEmittedExpression)(unsafe.Pointer(n))
+	case KindJsxElement:
+		return (*JsxElement)(unsafe.Pointer(n))
+	case KindJsxAttributes:
+		return (*JsxAttributes)(unsafe.Pointer(n))
+	case KindJsxNamespacedName:
+		return (*JsxNamespacedName)(unsafe.Pointer(n))
+	case KindJsxOpeningElement:
+		return (*JsxOpeningElement)(unsafe.Pointer(n))
+	case KindJsxSelfClosingElement:
+		return (*JsxSelfClosingElement)(unsafe.Pointer(n))
+	case KindJsxFragment:
+		return (*JsxFragment)(unsafe.Pointer(n))
+	case KindJsxOpeningFragment:
+		return (*JsxOpeningFragment)(unsafe.Pointer(n))
+	case KindJsxClosingFragment:
+		return (*JsxClosingFragment)(unsafe.Pointer(n))
+	case KindJsxAttribute:
+		return (*JsxAttribute)(unsafe.Pointer(n))
+	case KindJsxSpreadAttribute:
+		return (*JsxSpreadAttribute)(unsafe.Pointer(n))
+	case KindJsxClosingElement:
+		return (*JsxClosingElement)(unsafe.Pointer(n))
+	case KindJsxExpression:
+		return (*JsxExpression)(unsafe.Pointer(n))
+	case KindSyntaxList:
+		return (*SyntaxList)(unsafe.Pointer(n))
+	case KindJSDoc:
+		return (*JSDoc)(unsafe.Pointer(n))
+	case KindJSDocTypeExpression:
+		return (*JSDocTypeExpression)(unsafe.Pointer(n))
+	case KindJSDocNonNullableType:
+		return (*JSDocNonNullableType)(unsafe.Pointer(n))
+	case KindJSDocNullableType:
+		return (*JSDocNullableType)(unsafe.Pointer(n))
+	case KindJSDocAllType:
+		return (*JSDocAllType)(unsafe.Pointer(n))
+	case KindJSDocVariadicType:
+		return (*JSDocVariadicType)(unsafe.Pointer(n))
+	case KindJSDocOptionalType:
+		return (*JSDocOptionalType)(unsafe.Pointer(n))
+	case KindJSDocTypeTag:
+		return (*JSDocTypeTag)(unsafe.Pointer(n))
+	case KindJSDocUnknownTag:
+		return (*JSDocUnknownTag)(unsafe.Pointer(n))
+	case KindJSDocTemplateTag:
+		return (*JSDocTemplateTag)(unsafe.Pointer(n))
+	case KindJSDocReturnTag:
+		return (*JSDocReturnTag)(unsafe.Pointer(n))
+	case KindJSDocPublicTag:
+		return (*JSDocPublicTag)(unsafe.Pointer(n))
+	case KindJSDocPrivateTag:
+		return (*JSDocPrivateTag)(unsafe.Pointer(n))
+	case KindJSDocProtectedTag:
+		return (*JSDocProtectedTag)(unsafe.Pointer(n))
+	case KindJSDocReadonlyTag:
+		return (*JSDocReadonlyTag)(unsafe.Pointer(n))
+	case KindJSDocOverrideTag:
+		return (*JSDocOverrideTag)(unsafe.Pointer(n))
+	case KindJSDocDeprecatedTag:
+		return (*JSDocDeprecatedTag)(unsafe.Pointer(n))
+	case KindJSDocSeeTag:
+		return (*JSDocSeeTag)(unsafe.Pointer(n))
+	case KindJSDocImplementsTag:
+		return (*JSDocImplementsTag)(unsafe.Pointer(n))
+	case KindJSDocAugmentsTag:
+		return (*JSDocAugmentsTag)(unsafe.Pointer(n))
+	case KindJSDocSatisfiesTag:
+		return (*JSDocSatisfiesTag)(unsafe.Pointer(n))
+	case KindJSDocThrowsTag:
+		return (*JSDocThrowsTag)(unsafe.Pointer(n))
+	case KindJSDocThisTag:
+		return (*JSDocThisTag)(unsafe.Pointer(n))
+	case KindJSDocImportTag:
+		return (*JSDocImportTag)(unsafe.Pointer(n))
+	case KindJSDocCallbackTag:
+		return (*JSDocCallbackTag)(unsafe.Pointer(n))
+	case KindJSDocOverloadTag:
+		return (*JSDocOverloadTag)(unsafe.Pointer(n))
+	case KindJSDocTypedefTag:
+		return (*JSDocTypedefTag)(unsafe.Pointer(n))
+	case KindJSDocSignature:
+		return (*JSDocSignature)(unsafe.Pointer(n))
+	case KindJSDocNameReference:
+		return (*JSDocNameReference)(unsafe.Pointer(n))
+	case KindSourceFile:
+		return (*SourceFile)(unsafe.Pointer(n))
+	case KindModuleDeclaration:
+		return (*ModuleDeclaration)(unsafe.Pointer(n))
+	case KindImportEqualsDeclaration:
+		return (*ImportEqualsDeclaration)(unsafe.Pointer(n))
+	case KindExportDeclaration:
+		return (*ExportDeclaration)(unsafe.Pointer(n))
+	case KindImportType:
+		return (*ImportTypeNode)(unsafe.Pointer(n))
+	case KindImportClause:
+		return (*ImportClause)(unsafe.Pointer(n))
+	case KindImportSpecifier:
+		return (*ImportSpecifier)(unsafe.Pointer(n))
+	case KindJSDocText:
+		return (*JSDocText)(unsafe.Pointer(n))
+	case KindJSDocLink:
+		return (*JSDocLink)(unsafe.Pointer(n))
+	case KindJSDocLinkPlain:
+		return (*JSDocLinkPlain)(unsafe.Pointer(n))
+	case KindJSDocLinkCode:
+		return (*JSDocLinkCode)(unsafe.Pointer(n))
+	case KindTypeParameter:
+		return (*TypeParameterDeclaration)(unsafe.Pointer(n))
+	case KindSyntheticReferenceExpression:
+		return (*SyntheticReferenceExpression)(unsafe.Pointer(n))
+	case KindJSDocTypeLiteral:
+		return (*JSDocTypeLiteral)(unsafe.Pointer(n))
+	case KindJSDocParameterTag, KindJSDocPropertyTag:
+		return (*JSDocParameterOrPropertyTag)(unsafe.Pointer(n))
+	default:
+		panic("Unhandled case in Node.data: " + n.Kind.String())
+	}
+}
+
+// ──────────────────────────────────────────────────────────────────────
 // ForEachChild dispatch
 // ──────────────────────────────────────────────────────────────────────
 
 func (n *Node) ForEachChild(v Visitor) bool {
 	switch n.Kind {
 	case KindQualifiedName:
-		return n.data.(*QualifiedName).ForEachChild(v)
+		return n.data().(*QualifiedName).ForEachChild(v)
 	case KindComputedPropertyName:
-		return n.data.(*ComputedPropertyName).ForEachChild(v)
+		return n.data().(*ComputedPropertyName).ForEachChild(v)
 	case KindDecorator:
-		return n.data.(*Decorator).ForEachChild(v)
+		return n.data().(*Decorator).ForEachChild(v)
 	case KindIfStatement:
-		return n.data.(*IfStatement).ForEachChild(v)
+		return n.data().(*IfStatement).ForEachChild(v)
 	case KindDoStatement:
-		return n.data.(*DoStatement).ForEachChild(v)
+		return n.data().(*DoStatement).ForEachChild(v)
 	case KindWhileStatement:
-		return n.data.(*WhileStatement).ForEachChild(v)
+		return n.data().(*WhileStatement).ForEachChild(v)
 	case KindForStatement:
-		return n.data.(*ForStatement).ForEachChild(v)
+		return n.data().(*ForStatement).ForEachChild(v)
 	case KindForInStatement, KindForOfStatement:
-		return n.data.(*ForInOrOfStatement).ForEachChild(v)
+		return n.data().(*ForInOrOfStatement).ForEachChild(v)
 	case KindBreakStatement:
-		return n.data.(*BreakStatement).ForEachChild(v)
+		return n.data().(*BreakStatement).ForEachChild(v)
 	case KindContinueStatement:
-		return n.data.(*ContinueStatement).ForEachChild(v)
+		return n.data().(*ContinueStatement).ForEachChild(v)
 	case KindReturnStatement:
-		return n.data.(*ReturnStatement).ForEachChild(v)
+		return n.data().(*ReturnStatement).ForEachChild(v)
 	case KindWithStatement:
-		return n.data.(*WithStatement).ForEachChild(v)
+		return n.data().(*WithStatement).ForEachChild(v)
 	case KindSwitchStatement:
-		return n.data.(*SwitchStatement).ForEachChild(v)
+		return n.data().(*SwitchStatement).ForEachChild(v)
 	case KindCaseBlock:
-		return n.data.(*CaseBlock).ForEachChild(v)
+		return n.data().(*CaseBlock).ForEachChild(v)
 	case KindCaseClause, KindDefaultClause:
-		return n.data.(*CaseOrDefaultClause).ForEachChild(v)
+		return n.data().(*CaseOrDefaultClause).ForEachChild(v)
 	case KindThrowStatement:
-		return n.data.(*ThrowStatement).ForEachChild(v)
+		return n.data().(*ThrowStatement).ForEachChild(v)
 	case KindTryStatement:
-		return n.data.(*TryStatement).ForEachChild(v)
+		return n.data().(*TryStatement).ForEachChild(v)
 	case KindCatchClause:
-		return n.data.(*CatchClause).ForEachChild(v)
+		return n.data().(*CatchClause).ForEachChild(v)
 	case KindLabeledStatement:
-		return n.data.(*LabeledStatement).ForEachChild(v)
+		return n.data().(*LabeledStatement).ForEachChild(v)
 	case KindExpressionStatement:
-		return n.data.(*ExpressionStatement).ForEachChild(v)
+		return n.data().(*ExpressionStatement).ForEachChild(v)
 	case KindBlock:
-		return n.data.(*Block).ForEachChild(v)
+		return n.data().(*Block).ForEachChild(v)
 	case KindVariableStatement:
-		return n.data.(*VariableStatement).ForEachChild(v)
+		return n.data().(*VariableStatement).ForEachChild(v)
 	case KindVariableDeclaration:
-		return n.data.(*VariableDeclaration).ForEachChild(v)
+		return n.data().(*VariableDeclaration).ForEachChild(v)
 	case KindVariableDeclarationList:
-		return n.data.(*VariableDeclarationList).ForEachChild(v)
+		return n.data().(*VariableDeclarationList).ForEachChild(v)
 	case KindObjectBindingPattern, KindArrayBindingPattern:
-		return n.data.(*BindingPattern).ForEachChild(v)
+		return n.data().(*BindingPattern).ForEachChild(v)
 	case KindParameter:
-		return n.data.(*ParameterDeclaration).ForEachChild(v)
+		return n.data().(*ParameterDeclaration).ForEachChild(v)
 	case KindBindingElement:
-		return n.data.(*BindingElement).ForEachChild(v)
+		return n.data().(*BindingElement).ForEachChild(v)
 	case KindMissingDeclaration:
-		return n.data.(*MissingDeclaration).ForEachChild(v)
+		return n.data().(*MissingDeclaration).ForEachChild(v)
 	case KindFunctionDeclaration:
-		return n.data.(*FunctionDeclaration).ForEachChild(v)
+		return n.data().(*FunctionDeclaration).ForEachChild(v)
 	case KindClassDeclaration:
-		return n.data.(*ClassDeclaration).ForEachChild(v)
+		return n.data().(*ClassDeclaration).ForEachChild(v)
 	case KindClassExpression:
-		return n.data.(*ClassExpression).ForEachChild(v)
+		return n.data().(*ClassExpression).ForEachChild(v)
 	case KindHeritageClause:
-		return n.data.(*HeritageClause).ForEachChild(v)
+		return n.data().(*HeritageClause).ForEachChild(v)
 	case KindInterfaceDeclaration:
-		return n.data.(*InterfaceDeclaration).ForEachChild(v)
+		return n.data().(*InterfaceDeclaration).ForEachChild(v)
 	case KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
-		return n.data.(*TypeAliasDeclaration).ForEachChild(v)
+		return n.data().(*TypeAliasDeclaration).ForEachChild(v)
 	case KindEnumMember:
-		return n.data.(*EnumMember).ForEachChild(v)
+		return n.data().(*EnumMember).ForEachChild(v)
 	case KindEnumDeclaration:
-		return n.data.(*EnumDeclaration).ForEachChild(v)
+		return n.data().(*EnumDeclaration).ForEachChild(v)
 	case KindModuleBlock:
-		return n.data.(*ModuleBlock).ForEachChild(v)
+		return n.data().(*ModuleBlock).ForEachChild(v)
 	case KindImportDeclaration, KindJSImportDeclaration:
-		return n.data.(*ImportDeclaration).ForEachChild(v)
+		return n.data().(*ImportDeclaration).ForEachChild(v)
 	case KindExternalModuleReference:
-		return n.data.(*ExternalModuleReference).ForEachChild(v)
+		return n.data().(*ExternalModuleReference).ForEachChild(v)
 	case KindNamespaceImport:
-		return n.data.(*NamespaceImport).ForEachChild(v)
+		return n.data().(*NamespaceImport).ForEachChild(v)
 	case KindNamedImports:
-		return n.data.(*NamedImports).ForEachChild(v)
+		return n.data().(*NamedImports).ForEachChild(v)
 	case KindExportAssignment:
-		return n.data.(*ExportAssignment).ForEachChild(v)
+		return n.data().(*ExportAssignment).ForEachChild(v)
 	case KindNamespaceExportDeclaration:
-		return n.data.(*NamespaceExportDeclaration).ForEachChild(v)
+		return n.data().(*NamespaceExportDeclaration).ForEachChild(v)
 	case KindNamespaceExport:
-		return n.data.(*NamespaceExport).ForEachChild(v)
+		return n.data().(*NamespaceExport).ForEachChild(v)
 	case KindNamedExports:
-		return n.data.(*NamedExports).ForEachChild(v)
+		return n.data().(*NamedExports).ForEachChild(v)
 	case KindExportSpecifier:
-		return n.data.(*ExportSpecifier).ForEachChild(v)
+		return n.data().(*ExportSpecifier).ForEachChild(v)
 	case KindCallSignature:
-		return n.data.(*CallSignatureDeclaration).ForEachChild(v)
+		return n.data().(*CallSignatureDeclaration).ForEachChild(v)
 	case KindConstructSignature:
-		return n.data.(*ConstructSignatureDeclaration).ForEachChild(v)
+		return n.data().(*ConstructSignatureDeclaration).ForEachChild(v)
 	case KindConstructor:
-		return n.data.(*ConstructorDeclaration).ForEachChild(v)
+		return n.data().(*ConstructorDeclaration).ForEachChild(v)
 	case KindGetAccessor:
-		return n.data.(*GetAccessorDeclaration).ForEachChild(v)
+		return n.data().(*GetAccessorDeclaration).ForEachChild(v)
 	case KindSetAccessor:
-		return n.data.(*SetAccessorDeclaration).ForEachChild(v)
+		return n.data().(*SetAccessorDeclaration).ForEachChild(v)
 	case KindIndexSignature:
-		return n.data.(*IndexSignatureDeclaration).ForEachChild(v)
+		return n.data().(*IndexSignatureDeclaration).ForEachChild(v)
 	case KindMethodSignature:
-		return n.data.(*MethodSignatureDeclaration).ForEachChild(v)
+		return n.data().(*MethodSignatureDeclaration).ForEachChild(v)
 	case KindMethodDeclaration:
-		return n.data.(*MethodDeclaration).ForEachChild(v)
+		return n.data().(*MethodDeclaration).ForEachChild(v)
 	case KindPropertySignature:
-		return n.data.(*PropertySignatureDeclaration).ForEachChild(v)
+		return n.data().(*PropertySignatureDeclaration).ForEachChild(v)
 	case KindPropertyDeclaration:
-		return n.data.(*PropertyDeclaration).ForEachChild(v)
+		return n.data().(*PropertyDeclaration).ForEachChild(v)
 	case KindClassStaticBlockDeclaration:
-		return n.data.(*ClassStaticBlockDeclaration).ForEachChild(v)
+		return n.data().(*ClassStaticBlockDeclaration).ForEachChild(v)
 	case KindBinaryExpression:
-		return n.data.(*BinaryExpression).ForEachChild(v)
+		return n.data().(*BinaryExpression).ForEachChild(v)
 	case KindPrefixUnaryExpression:
-		return n.data.(*PrefixUnaryExpression).ForEachChild(v)
+		return n.data().(*PrefixUnaryExpression).ForEachChild(v)
 	case KindPostfixUnaryExpression:
-		return n.data.(*PostfixUnaryExpression).ForEachChild(v)
+		return n.data().(*PostfixUnaryExpression).ForEachChild(v)
 	case KindYieldExpression:
-		return n.data.(*YieldExpression).ForEachChild(v)
+		return n.data().(*YieldExpression).ForEachChild(v)
 	case KindArrowFunction:
-		return n.data.(*ArrowFunction).ForEachChild(v)
+		return n.data().(*ArrowFunction).ForEachChild(v)
 	case KindFunctionExpression:
-		return n.data.(*FunctionExpression).ForEachChild(v)
+		return n.data().(*FunctionExpression).ForEachChild(v)
 	case KindAsExpression:
-		return n.data.(*AsExpression).ForEachChild(v)
+		return n.data().(*AsExpression).ForEachChild(v)
 	case KindSatisfiesExpression:
-		return n.data.(*SatisfiesExpression).ForEachChild(v)
+		return n.data().(*SatisfiesExpression).ForEachChild(v)
 	case KindConditionalExpression:
-		return n.data.(*ConditionalExpression).ForEachChild(v)
+		return n.data().(*ConditionalExpression).ForEachChild(v)
 	case KindPropertyAccessExpression:
-		return n.data.(*PropertyAccessExpression).ForEachChild(v)
+		return n.data().(*PropertyAccessExpression).ForEachChild(v)
 	case KindElementAccessExpression:
-		return n.data.(*ElementAccessExpression).ForEachChild(v)
+		return n.data().(*ElementAccessExpression).ForEachChild(v)
 	case KindCallExpression:
-		return n.data.(*CallExpression).ForEachChild(v)
+		return n.data().(*CallExpression).ForEachChild(v)
 	case KindNewExpression:
-		return n.data.(*NewExpression).ForEachChild(v)
+		return n.data().(*NewExpression).ForEachChild(v)
 	case KindMetaProperty:
-		return n.data.(*MetaProperty).ForEachChild(v)
+		return n.data().(*MetaProperty).ForEachChild(v)
 	case KindNonNullExpression:
-		return n.data.(*NonNullExpression).ForEachChild(v)
+		return n.data().(*NonNullExpression).ForEachChild(v)
 	case KindSpreadElement:
-		return n.data.(*SpreadElement).ForEachChild(v)
+		return n.data().(*SpreadElement).ForEachChild(v)
 	case KindTemplateExpression:
-		return n.data.(*TemplateExpression).ForEachChild(v)
+		return n.data().(*TemplateExpression).ForEachChild(v)
 	case KindTemplateSpan:
-		return n.data.(*TemplateSpan).ForEachChild(v)
+		return n.data().(*TemplateSpan).ForEachChild(v)
 	case KindTaggedTemplateExpression:
-		return n.data.(*TaggedTemplateExpression).ForEachChild(v)
+		return n.data().(*TaggedTemplateExpression).ForEachChild(v)
 	case KindParenthesizedExpression:
-		return n.data.(*ParenthesizedExpression).ForEachChild(v)
+		return n.data().(*ParenthesizedExpression).ForEachChild(v)
 	case KindArrayLiteralExpression:
-		return n.data.(*ArrayLiteralExpression).ForEachChild(v)
+		return n.data().(*ArrayLiteralExpression).ForEachChild(v)
 	case KindObjectLiteralExpression:
-		return n.data.(*ObjectLiteralExpression).ForEachChild(v)
+		return n.data().(*ObjectLiteralExpression).ForEachChild(v)
 	case KindSpreadAssignment:
-		return n.data.(*SpreadAssignment).ForEachChild(v)
+		return n.data().(*SpreadAssignment).ForEachChild(v)
 	case KindPropertyAssignment:
-		return n.data.(*PropertyAssignment).ForEachChild(v)
+		return n.data().(*PropertyAssignment).ForEachChild(v)
 	case KindShorthandPropertyAssignment:
-		return n.data.(*ShorthandPropertyAssignment).ForEachChild(v)
+		return n.data().(*ShorthandPropertyAssignment).ForEachChild(v)
 	case KindDeleteExpression:
-		return n.data.(*DeleteExpression).ForEachChild(v)
+		return n.data().(*DeleteExpression).ForEachChild(v)
 	case KindTypeOfExpression:
-		return n.data.(*TypeOfExpression).ForEachChild(v)
+		return n.data().(*TypeOfExpression).ForEachChild(v)
 	case KindVoidExpression:
-		return n.data.(*VoidExpression).ForEachChild(v)
+		return n.data().(*VoidExpression).ForEachChild(v)
 	case KindAwaitExpression:
-		return n.data.(*AwaitExpression).ForEachChild(v)
+		return n.data().(*AwaitExpression).ForEachChild(v)
 	case KindTypeAssertionExpression:
-		return n.data.(*TypeAssertion).ForEachChild(v)
+		return n.data().(*TypeAssertion).ForEachChild(v)
 	case KindUnionType:
-		return n.data.(*UnionTypeNode).ForEachChild(v)
+		return n.data().(*UnionTypeNode).ForEachChild(v)
 	case KindIntersectionType:
-		return n.data.(*IntersectionTypeNode).ForEachChild(v)
+		return n.data().(*IntersectionTypeNode).ForEachChild(v)
 	case KindConditionalType:
-		return n.data.(*ConditionalTypeNode).ForEachChild(v)
+		return n.data().(*ConditionalTypeNode).ForEachChild(v)
 	case KindTypeOperator:
-		return n.data.(*TypeOperatorNode).ForEachChild(v)
+		return n.data().(*TypeOperatorNode).ForEachChild(v)
 	case KindInferType:
-		return n.data.(*InferTypeNode).ForEachChild(v)
+		return n.data().(*InferTypeNode).ForEachChild(v)
 	case KindArrayType:
-		return n.data.(*ArrayTypeNode).ForEachChild(v)
+		return n.data().(*ArrayTypeNode).ForEachChild(v)
 	case KindIndexedAccessType:
-		return n.data.(*IndexedAccessTypeNode).ForEachChild(v)
+		return n.data().(*IndexedAccessTypeNode).ForEachChild(v)
 	case KindTypeReference:
-		return n.data.(*TypeReferenceNode).ForEachChild(v)
+		return n.data().(*TypeReferenceNode).ForEachChild(v)
 	case KindExpressionWithTypeArguments:
-		return n.data.(*ExpressionWithTypeArguments).ForEachChild(v)
+		return n.data().(*ExpressionWithTypeArguments).ForEachChild(v)
 	case KindLiteralType:
-		return n.data.(*LiteralTypeNode).ForEachChild(v)
+		return n.data().(*LiteralTypeNode).ForEachChild(v)
 	case KindTypePredicate:
-		return n.data.(*TypePredicateNode).ForEachChild(v)
+		return n.data().(*TypePredicateNode).ForEachChild(v)
 	case KindImportAttribute:
-		return n.data.(*ImportAttribute).ForEachChild(v)
+		return n.data().(*ImportAttribute).ForEachChild(v)
 	case KindImportAttributes:
-		return n.data.(*ImportAttributes).ForEachChild(v)
+		return n.data().(*ImportAttributes).ForEachChild(v)
 	case KindTypeQuery:
-		return n.data.(*TypeQueryNode).ForEachChild(v)
+		return n.data().(*TypeQueryNode).ForEachChild(v)
 	case KindMappedType:
-		return n.data.(*MappedTypeNode).ForEachChild(v)
+		return n.data().(*MappedTypeNode).ForEachChild(v)
 	case KindTypeLiteral:
-		return n.data.(*TypeLiteralNode).ForEachChild(v)
+		return n.data().(*TypeLiteralNode).ForEachChild(v)
 	case KindTupleType:
-		return n.data.(*TupleTypeNode).ForEachChild(v)
+		return n.data().(*TupleTypeNode).ForEachChild(v)
 	case KindNamedTupleMember:
-		return n.data.(*NamedTupleMember).ForEachChild(v)
+		return n.data().(*NamedTupleMember).ForEachChild(v)
 	case KindOptionalType:
-		return n.data.(*OptionalTypeNode).ForEachChild(v)
+		return n.data().(*OptionalTypeNode).ForEachChild(v)
 	case KindRestType:
-		return n.data.(*RestTypeNode).ForEachChild(v)
+		return n.data().(*RestTypeNode).ForEachChild(v)
 	case KindParenthesizedType:
-		return n.data.(*ParenthesizedTypeNode).ForEachChild(v)
+		return n.data().(*ParenthesizedTypeNode).ForEachChild(v)
 	case KindFunctionType:
-		return n.data.(*FunctionTypeNode).ForEachChild(v)
+		return n.data().(*FunctionTypeNode).ForEachChild(v)
 	case KindConstructorType:
-		return n.data.(*ConstructorTypeNode).ForEachChild(v)
+		return n.data().(*ConstructorTypeNode).ForEachChild(v)
 	case KindTemplateLiteralType:
-		return n.data.(*TemplateLiteralTypeNode).ForEachChild(v)
+		return n.data().(*TemplateLiteralTypeNode).ForEachChild(v)
 	case KindTemplateLiteralTypeSpan:
-		return n.data.(*TemplateLiteralTypeSpan).ForEachChild(v)
+		return n.data().(*TemplateLiteralTypeSpan).ForEachChild(v)
 	case KindSyntheticExpression:
-		return n.data.(*SyntheticExpression).ForEachChild(v)
+		return n.data().(*SyntheticExpression).ForEachChild(v)
 	case KindPartiallyEmittedExpression:
-		return n.data.(*PartiallyEmittedExpression).ForEachChild(v)
+		return n.data().(*PartiallyEmittedExpression).ForEachChild(v)
 	case KindJsxElement:
-		return n.data.(*JsxElement).ForEachChild(v)
+		return n.data().(*JsxElement).ForEachChild(v)
 	case KindJsxAttributes:
-		return n.data.(*JsxAttributes).ForEachChild(v)
+		return n.data().(*JsxAttributes).ForEachChild(v)
 	case KindJsxNamespacedName:
-		return n.data.(*JsxNamespacedName).ForEachChild(v)
+		return n.data().(*JsxNamespacedName).ForEachChild(v)
 	case KindJsxOpeningElement:
-		return n.data.(*JsxOpeningElement).ForEachChild(v)
+		return n.data().(*JsxOpeningElement).ForEachChild(v)
 	case KindJsxSelfClosingElement:
-		return n.data.(*JsxSelfClosingElement).ForEachChild(v)
+		return n.data().(*JsxSelfClosingElement).ForEachChild(v)
 	case KindJsxFragment:
-		return n.data.(*JsxFragment).ForEachChild(v)
+		return n.data().(*JsxFragment).ForEachChild(v)
 	case KindJsxAttribute:
-		return n.data.(*JsxAttribute).ForEachChild(v)
+		return n.data().(*JsxAttribute).ForEachChild(v)
 	case KindJsxSpreadAttribute:
-		return n.data.(*JsxSpreadAttribute).ForEachChild(v)
+		return n.data().(*JsxSpreadAttribute).ForEachChild(v)
 	case KindJsxClosingElement:
-		return n.data.(*JsxClosingElement).ForEachChild(v)
+		return n.data().(*JsxClosingElement).ForEachChild(v)
 	case KindJsxExpression:
-		return n.data.(*JsxExpression).ForEachChild(v)
+		return n.data().(*JsxExpression).ForEachChild(v)
 	case KindSyntaxList:
-		return n.data.(*SyntaxList).ForEachChild(v)
+		return n.data().(*SyntaxList).ForEachChild(v)
 	case KindJSDoc:
-		return n.data.(*JSDoc).ForEachChild(v)
+		return n.data().(*JSDoc).ForEachChild(v)
 	case KindJSDocTypeExpression:
-		return n.data.(*JSDocTypeExpression).ForEachChild(v)
+		return n.data().(*JSDocTypeExpression).ForEachChild(v)
 	case KindJSDocNonNullableType:
-		return n.data.(*JSDocNonNullableType).ForEachChild(v)
+		return n.data().(*JSDocNonNullableType).ForEachChild(v)
 	case KindJSDocNullableType:
-		return n.data.(*JSDocNullableType).ForEachChild(v)
+		return n.data().(*JSDocNullableType).ForEachChild(v)
 	case KindJSDocVariadicType:
-		return n.data.(*JSDocVariadicType).ForEachChild(v)
+		return n.data().(*JSDocVariadicType).ForEachChild(v)
 	case KindJSDocOptionalType:
-		return n.data.(*JSDocOptionalType).ForEachChild(v)
+		return n.data().(*JSDocOptionalType).ForEachChild(v)
 	case KindJSDocTypeTag:
-		return n.data.(*JSDocTypeTag).ForEachChild(v)
+		return n.data().(*JSDocTypeTag).ForEachChild(v)
 	case KindJSDocUnknownTag:
-		return n.data.(*JSDocUnknownTag).ForEachChild(v)
+		return n.data().(*JSDocUnknownTag).ForEachChild(v)
 	case KindJSDocTemplateTag:
-		return n.data.(*JSDocTemplateTag).ForEachChild(v)
+		return n.data().(*JSDocTemplateTag).ForEachChild(v)
 	case KindJSDocReturnTag:
-		return n.data.(*JSDocReturnTag).ForEachChild(v)
+		return n.data().(*JSDocReturnTag).ForEachChild(v)
 	case KindJSDocPublicTag:
-		return n.data.(*JSDocPublicTag).ForEachChild(v)
+		return n.data().(*JSDocPublicTag).ForEachChild(v)
 	case KindJSDocPrivateTag:
-		return n.data.(*JSDocPrivateTag).ForEachChild(v)
+		return n.data().(*JSDocPrivateTag).ForEachChild(v)
 	case KindJSDocProtectedTag:
-		return n.data.(*JSDocProtectedTag).ForEachChild(v)
+		return n.data().(*JSDocProtectedTag).ForEachChild(v)
 	case KindJSDocReadonlyTag:
-		return n.data.(*JSDocReadonlyTag).ForEachChild(v)
+		return n.data().(*JSDocReadonlyTag).ForEachChild(v)
 	case KindJSDocOverrideTag:
-		return n.data.(*JSDocOverrideTag).ForEachChild(v)
+		return n.data().(*JSDocOverrideTag).ForEachChild(v)
 	case KindJSDocDeprecatedTag:
-		return n.data.(*JSDocDeprecatedTag).ForEachChild(v)
+		return n.data().(*JSDocDeprecatedTag).ForEachChild(v)
 	case KindJSDocSeeTag:
-		return n.data.(*JSDocSeeTag).ForEachChild(v)
+		return n.data().(*JSDocSeeTag).ForEachChild(v)
 	case KindJSDocImplementsTag:
-		return n.data.(*JSDocImplementsTag).ForEachChild(v)
+		return n.data().(*JSDocImplementsTag).ForEachChild(v)
 	case KindJSDocAugmentsTag:
-		return n.data.(*JSDocAugmentsTag).ForEachChild(v)
+		return n.data().(*JSDocAugmentsTag).ForEachChild(v)
 	case KindJSDocSatisfiesTag:
-		return n.data.(*JSDocSatisfiesTag).ForEachChild(v)
+		return n.data().(*JSDocSatisfiesTag).ForEachChild(v)
 	case KindJSDocThrowsTag:
-		return n.data.(*JSDocThrowsTag).ForEachChild(v)
+		return n.data().(*JSDocThrowsTag).ForEachChild(v)
 	case KindJSDocThisTag:
-		return n.data.(*JSDocThisTag).ForEachChild(v)
+		return n.data().(*JSDocThisTag).ForEachChild(v)
 	case KindJSDocImportTag:
-		return n.data.(*JSDocImportTag).ForEachChild(v)
+		return n.data().(*JSDocImportTag).ForEachChild(v)
 	case KindJSDocCallbackTag:
-		return n.data.(*JSDocCallbackTag).ForEachChild(v)
+		return n.data().(*JSDocCallbackTag).ForEachChild(v)
 	case KindJSDocOverloadTag:
-		return n.data.(*JSDocOverloadTag).ForEachChild(v)
+		return n.data().(*JSDocOverloadTag).ForEachChild(v)
 	case KindJSDocTypedefTag:
-		return n.data.(*JSDocTypedefTag).ForEachChild(v)
+		return n.data().(*JSDocTypedefTag).ForEachChild(v)
 	case KindJSDocSignature:
-		return n.data.(*JSDocSignature).ForEachChild(v)
+		return n.data().(*JSDocSignature).ForEachChild(v)
 	case KindJSDocNameReference:
-		return n.data.(*JSDocNameReference).ForEachChild(v)
+		return n.data().(*JSDocNameReference).ForEachChild(v)
 	case KindSourceFile:
-		return n.data.(*SourceFile).ForEachChild(v)
+		return n.data().(*SourceFile).ForEachChild(v)
 	case KindModuleDeclaration:
-		return n.data.(*ModuleDeclaration).ForEachChild(v)
+		return n.data().(*ModuleDeclaration).ForEachChild(v)
 	case KindImportEqualsDeclaration:
-		return n.data.(*ImportEqualsDeclaration).ForEachChild(v)
+		return n.data().(*ImportEqualsDeclaration).ForEachChild(v)
 	case KindExportDeclaration:
-		return n.data.(*ExportDeclaration).ForEachChild(v)
+		return n.data().(*ExportDeclaration).ForEachChild(v)
 	case KindImportType:
-		return n.data.(*ImportTypeNode).ForEachChild(v)
+		return n.data().(*ImportTypeNode).ForEachChild(v)
 	case KindImportClause:
-		return n.data.(*ImportClause).ForEachChild(v)
+		return n.data().(*ImportClause).ForEachChild(v)
 	case KindImportSpecifier:
-		return n.data.(*ImportSpecifier).ForEachChild(v)
+		return n.data().(*ImportSpecifier).ForEachChild(v)
 	case KindJSDocLink:
-		return n.data.(*JSDocLink).ForEachChild(v)
+		return n.data().(*JSDocLink).ForEachChild(v)
 	case KindJSDocLinkPlain:
-		return n.data.(*JSDocLinkPlain).ForEachChild(v)
+		return n.data().(*JSDocLinkPlain).ForEachChild(v)
 	case KindJSDocLinkCode:
-		return n.data.(*JSDocLinkCode).ForEachChild(v)
+		return n.data().(*JSDocLinkCode).ForEachChild(v)
 	case KindTypeParameter:
-		return n.data.(*TypeParameterDeclaration).ForEachChild(v)
+		return n.data().(*TypeParameterDeclaration).ForEachChild(v)
 	case KindSyntheticReferenceExpression:
-		return n.data.(*SyntheticReferenceExpression).ForEachChild(v)
+		return n.data().(*SyntheticReferenceExpression).ForEachChild(v)
 	case KindJSDocTypeLiteral:
-		return n.data.(*JSDocTypeLiteral).ForEachChild(v)
+		return n.data().(*JSDocTypeLiteral).ForEachChild(v)
 	case KindJSDocParameterTag, KindJSDocPropertyTag:
-		return n.data.(*JSDocParameterOrPropertyTag).ForEachChild(v)
+		return n.data().(*JSDocParameterOrPropertyTag).ForEachChild(v)
 	default:
 		return false
 	}
@@ -9029,771 +9471,771 @@ func (n *Node) ForEachChild(v Visitor) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 func (n *Node) AsToken() *Token {
-	return n.data.(*Token)
+	return n.data().(*Token)
 }
 
 func (n *Node) AsIdentifier() *Identifier {
-	return n.data.(*Identifier)
+	return n.data().(*Identifier)
 }
 
 func (n *Node) AsPrivateIdentifier() *PrivateIdentifier {
-	return n.data.(*PrivateIdentifier)
+	return n.data().(*PrivateIdentifier)
 }
 
 func (n *Node) AsQualifiedName() *QualifiedName {
-	return n.data.(*QualifiedName)
+	return n.data().(*QualifiedName)
 }
 
 func (n *Node) AsComputedPropertyName() *ComputedPropertyName {
-	return n.data.(*ComputedPropertyName)
+	return n.data().(*ComputedPropertyName)
 }
 
 func (n *Node) AsDecorator() *Decorator {
-	return n.data.(*Decorator)
+	return n.data().(*Decorator)
 }
 
 func (n *Node) AsEmptyStatement() *EmptyStatement {
-	return n.data.(*EmptyStatement)
+	return n.data().(*EmptyStatement)
 }
 
 func (n *Node) AsIfStatement() *IfStatement {
-	return n.data.(*IfStatement)
+	return n.data().(*IfStatement)
 }
 
 func (n *Node) AsDoStatement() *DoStatement {
-	return n.data.(*DoStatement)
+	return n.data().(*DoStatement)
 }
 
 func (n *Node) AsWhileStatement() *WhileStatement {
-	return n.data.(*WhileStatement)
+	return n.data().(*WhileStatement)
 }
 
 func (n *Node) AsForStatement() *ForStatement {
-	return n.data.(*ForStatement)
+	return n.data().(*ForStatement)
 }
 
 func (n *Node) AsForInOrOfStatement() *ForInOrOfStatement {
-	return n.data.(*ForInOrOfStatement)
+	return n.data().(*ForInOrOfStatement)
 }
 
 func (n *Node) AsBreakStatement() *BreakStatement {
-	return n.data.(*BreakStatement)
+	return n.data().(*BreakStatement)
 }
 
 func (n *Node) AsContinueStatement() *ContinueStatement {
-	return n.data.(*ContinueStatement)
+	return n.data().(*ContinueStatement)
 }
 
 func (n *Node) AsReturnStatement() *ReturnStatement {
-	return n.data.(*ReturnStatement)
+	return n.data().(*ReturnStatement)
 }
 
 func (n *Node) AsWithStatement() *WithStatement {
-	return n.data.(*WithStatement)
+	return n.data().(*WithStatement)
 }
 
 func (n *Node) AsSwitchStatement() *SwitchStatement {
-	return n.data.(*SwitchStatement)
+	return n.data().(*SwitchStatement)
 }
 
 func (n *Node) AsCaseBlock() *CaseBlock {
-	return n.data.(*CaseBlock)
+	return n.data().(*CaseBlock)
 }
 
 func (n *Node) AsCaseOrDefaultClause() *CaseOrDefaultClause {
-	return n.data.(*CaseOrDefaultClause)
+	return n.data().(*CaseOrDefaultClause)
 }
 
 func (n *Node) AsThrowStatement() *ThrowStatement {
-	return n.data.(*ThrowStatement)
+	return n.data().(*ThrowStatement)
 }
 
 func (n *Node) AsTryStatement() *TryStatement {
-	return n.data.(*TryStatement)
+	return n.data().(*TryStatement)
 }
 
 func (n *Node) AsCatchClause() *CatchClause {
-	return n.data.(*CatchClause)
+	return n.data().(*CatchClause)
 }
 
 func (n *Node) AsDebuggerStatement() *DebuggerStatement {
-	return n.data.(*DebuggerStatement)
+	return n.data().(*DebuggerStatement)
 }
 
 func (n *Node) AsLabeledStatement() *LabeledStatement {
-	return n.data.(*LabeledStatement)
+	return n.data().(*LabeledStatement)
 }
 
 func (n *Node) AsExpressionStatement() *ExpressionStatement {
-	return n.data.(*ExpressionStatement)
+	return n.data().(*ExpressionStatement)
 }
 
 func (n *Node) AsBlock() *Block {
-	return n.data.(*Block)
+	return n.data().(*Block)
 }
 
 func (n *Node) AsVariableStatement() *VariableStatement {
-	return n.data.(*VariableStatement)
+	return n.data().(*VariableStatement)
 }
 
 func (n *Node) AsVariableDeclaration() *VariableDeclaration {
-	return n.data.(*VariableDeclaration)
+	return n.data().(*VariableDeclaration)
 }
 
 func (n *Node) AsVariableDeclarationList() *VariableDeclarationList {
-	return n.data.(*VariableDeclarationList)
+	return n.data().(*VariableDeclarationList)
 }
 
 func (n *Node) AsBindingPattern() *BindingPattern {
-	return n.data.(*BindingPattern)
+	return n.data().(*BindingPattern)
 }
 
 func (n *Node) AsParameterDeclaration() *ParameterDeclaration {
-	return n.data.(*ParameterDeclaration)
+	return n.data().(*ParameterDeclaration)
 }
 
 func (n *Node) AsBindingElement() *BindingElement {
-	return n.data.(*BindingElement)
+	return n.data().(*BindingElement)
 }
 
 func (n *Node) AsMissingDeclaration() *MissingDeclaration {
-	return n.data.(*MissingDeclaration)
+	return n.data().(*MissingDeclaration)
 }
 
 func (n *Node) AsFunctionDeclaration() *FunctionDeclaration {
-	return n.data.(*FunctionDeclaration)
+	return n.data().(*FunctionDeclaration)
 }
 
 func (n *Node) AsClassDeclaration() *ClassDeclaration {
-	return n.data.(*ClassDeclaration)
+	return n.data().(*ClassDeclaration)
 }
 
 func (n *Node) AsClassExpression() *ClassExpression {
-	return n.data.(*ClassExpression)
+	return n.data().(*ClassExpression)
 }
 
 func (n *Node) AsHeritageClause() *HeritageClause {
-	return n.data.(*HeritageClause)
+	return n.data().(*HeritageClause)
 }
 
 func (n *Node) AsInterfaceDeclaration() *InterfaceDeclaration {
-	return n.data.(*InterfaceDeclaration)
+	return n.data().(*InterfaceDeclaration)
 }
 
 func (n *Node) AsTypeAliasDeclaration() *TypeAliasDeclaration {
-	return n.data.(*TypeAliasDeclaration)
+	return n.data().(*TypeAliasDeclaration)
 }
 
 func (n *Node) AsEnumMember() *EnumMember {
-	return n.data.(*EnumMember)
+	return n.data().(*EnumMember)
 }
 
 func (n *Node) AsEnumDeclaration() *EnumDeclaration {
-	return n.data.(*EnumDeclaration)
+	return n.data().(*EnumDeclaration)
 }
 
 func (n *Node) AsModuleBlock() *ModuleBlock {
-	return n.data.(*ModuleBlock)
+	return n.data().(*ModuleBlock)
 }
 
 func (n *Node) AsNotEmittedStatement() *NotEmittedStatement {
-	return n.data.(*NotEmittedStatement)
+	return n.data().(*NotEmittedStatement)
 }
 
 func (n *Node) AsNotEmittedTypeElement() *NotEmittedTypeElement {
-	return n.data.(*NotEmittedTypeElement)
+	return n.data().(*NotEmittedTypeElement)
 }
 
 func (n *Node) AsImportDeclaration() *ImportDeclaration {
-	return n.data.(*ImportDeclaration)
+	return n.data().(*ImportDeclaration)
 }
 
 func (n *Node) AsExternalModuleReference() *ExternalModuleReference {
-	return n.data.(*ExternalModuleReference)
+	return n.data().(*ExternalModuleReference)
 }
 
 func (n *Node) AsNamespaceImport() *NamespaceImport {
-	return n.data.(*NamespaceImport)
+	return n.data().(*NamespaceImport)
 }
 
 func (n *Node) AsNamedImports() *NamedImports {
-	return n.data.(*NamedImports)
+	return n.data().(*NamedImports)
 }
 
 func (n *Node) AsExportAssignment() *ExportAssignment {
-	return n.data.(*ExportAssignment)
+	return n.data().(*ExportAssignment)
 }
 
 func (n *Node) AsNamespaceExportDeclaration() *NamespaceExportDeclaration {
-	return n.data.(*NamespaceExportDeclaration)
+	return n.data().(*NamespaceExportDeclaration)
 }
 
 func (n *Node) AsNamespaceExport() *NamespaceExport {
-	return n.data.(*NamespaceExport)
+	return n.data().(*NamespaceExport)
 }
 
 func (n *Node) AsNamedExports() *NamedExports {
-	return n.data.(*NamedExports)
+	return n.data().(*NamedExports)
 }
 
 func (n *Node) AsExportSpecifier() *ExportSpecifier {
-	return n.data.(*ExportSpecifier)
+	return n.data().(*ExportSpecifier)
 }
 
 func (n *Node) AsCallSignatureDeclaration() *CallSignatureDeclaration {
-	return n.data.(*CallSignatureDeclaration)
+	return n.data().(*CallSignatureDeclaration)
 }
 
 func (n *Node) AsConstructSignatureDeclaration() *ConstructSignatureDeclaration {
-	return n.data.(*ConstructSignatureDeclaration)
+	return n.data().(*ConstructSignatureDeclaration)
 }
 
 func (n *Node) AsConstructorDeclaration() *ConstructorDeclaration {
-	return n.data.(*ConstructorDeclaration)
+	return n.data().(*ConstructorDeclaration)
 }
 
 func (n *Node) AsGetAccessorDeclaration() *GetAccessorDeclaration {
-	return n.data.(*GetAccessorDeclaration)
+	return n.data().(*GetAccessorDeclaration)
 }
 
 func (n *Node) AsSetAccessorDeclaration() *SetAccessorDeclaration {
-	return n.data.(*SetAccessorDeclaration)
+	return n.data().(*SetAccessorDeclaration)
 }
 
 func (n *Node) AsIndexSignatureDeclaration() *IndexSignatureDeclaration {
-	return n.data.(*IndexSignatureDeclaration)
+	return n.data().(*IndexSignatureDeclaration)
 }
 
 func (n *Node) AsMethodSignatureDeclaration() *MethodSignatureDeclaration {
-	return n.data.(*MethodSignatureDeclaration)
+	return n.data().(*MethodSignatureDeclaration)
 }
 
 func (n *Node) AsMethodDeclaration() *MethodDeclaration {
-	return n.data.(*MethodDeclaration)
+	return n.data().(*MethodDeclaration)
 }
 
 func (n *Node) AsPropertySignatureDeclaration() *PropertySignatureDeclaration {
-	return n.data.(*PropertySignatureDeclaration)
+	return n.data().(*PropertySignatureDeclaration)
 }
 
 func (n *Node) AsPropertyDeclaration() *PropertyDeclaration {
-	return n.data.(*PropertyDeclaration)
+	return n.data().(*PropertyDeclaration)
 }
 
 func (n *Node) AsSemicolonClassElement() *SemicolonClassElement {
-	return n.data.(*SemicolonClassElement)
+	return n.data().(*SemicolonClassElement)
 }
 
 func (n *Node) AsClassStaticBlockDeclaration() *ClassStaticBlockDeclaration {
-	return n.data.(*ClassStaticBlockDeclaration)
+	return n.data().(*ClassStaticBlockDeclaration)
 }
 
 func (n *Node) AsOmittedExpression() *OmittedExpression {
-	return n.data.(*OmittedExpression)
+	return n.data().(*OmittedExpression)
 }
 
 func (n *Node) AsKeywordExpression() *KeywordExpression {
-	return n.data.(*KeywordExpression)
+	return n.data().(*KeywordExpression)
 }
 
 func (n *Node) AsStringLiteral() *StringLiteral {
-	return n.data.(*StringLiteral)
+	return n.data().(*StringLiteral)
 }
 
 func (n *Node) AsNumericLiteral() *NumericLiteral {
-	return n.data.(*NumericLiteral)
+	return n.data().(*NumericLiteral)
 }
 
 func (n *Node) AsBigIntLiteral() *BigIntLiteral {
-	return n.data.(*BigIntLiteral)
+	return n.data().(*BigIntLiteral)
 }
 
 func (n *Node) AsRegularExpressionLiteral() *RegularExpressionLiteral {
-	return n.data.(*RegularExpressionLiteral)
+	return n.data().(*RegularExpressionLiteral)
 }
 
 func (n *Node) AsNoSubstitutionTemplateLiteral() *NoSubstitutionTemplateLiteral {
-	return n.data.(*NoSubstitutionTemplateLiteral)
+	return n.data().(*NoSubstitutionTemplateLiteral)
 }
 
 func (n *Node) AsBinaryExpression() *BinaryExpression {
-	return n.data.(*BinaryExpression)
+	return n.data().(*BinaryExpression)
 }
 
 func (n *Node) AsPrefixUnaryExpression() *PrefixUnaryExpression {
-	return n.data.(*PrefixUnaryExpression)
+	return n.data().(*PrefixUnaryExpression)
 }
 
 func (n *Node) AsPostfixUnaryExpression() *PostfixUnaryExpression {
-	return n.data.(*PostfixUnaryExpression)
+	return n.data().(*PostfixUnaryExpression)
 }
 
 func (n *Node) AsYieldExpression() *YieldExpression {
-	return n.data.(*YieldExpression)
+	return n.data().(*YieldExpression)
 }
 
 func (n *Node) AsArrowFunction() *ArrowFunction {
-	return n.data.(*ArrowFunction)
+	return n.data().(*ArrowFunction)
 }
 
 func (n *Node) AsFunctionExpression() *FunctionExpression {
-	return n.data.(*FunctionExpression)
+	return n.data().(*FunctionExpression)
 }
 
 func (n *Node) AsAsExpression() *AsExpression {
-	return n.data.(*AsExpression)
+	return n.data().(*AsExpression)
 }
 
 func (n *Node) AsSatisfiesExpression() *SatisfiesExpression {
-	return n.data.(*SatisfiesExpression)
+	return n.data().(*SatisfiesExpression)
 }
 
 func (n *Node) AsConditionalExpression() *ConditionalExpression {
-	return n.data.(*ConditionalExpression)
+	return n.data().(*ConditionalExpression)
 }
 
 func (n *Node) AsPropertyAccessExpression() *PropertyAccessExpression {
-	return n.data.(*PropertyAccessExpression)
+	return n.data().(*PropertyAccessExpression)
 }
 
 func (n *Node) AsElementAccessExpression() *ElementAccessExpression {
-	return n.data.(*ElementAccessExpression)
+	return n.data().(*ElementAccessExpression)
 }
 
 func (n *Node) AsCallExpression() *CallExpression {
-	return n.data.(*CallExpression)
+	return n.data().(*CallExpression)
 }
 
 func (n *Node) AsNewExpression() *NewExpression {
-	return n.data.(*NewExpression)
+	return n.data().(*NewExpression)
 }
 
 func (n *Node) AsMetaProperty() *MetaProperty {
-	return n.data.(*MetaProperty)
+	return n.data().(*MetaProperty)
 }
 
 func (n *Node) AsNonNullExpression() *NonNullExpression {
-	return n.data.(*NonNullExpression)
+	return n.data().(*NonNullExpression)
 }
 
 func (n *Node) AsSpreadElement() *SpreadElement {
-	return n.data.(*SpreadElement)
+	return n.data().(*SpreadElement)
 }
 
 func (n *Node) AsTemplateExpression() *TemplateExpression {
-	return n.data.(*TemplateExpression)
+	return n.data().(*TemplateExpression)
 }
 
 func (n *Node) AsTemplateSpan() *TemplateSpan {
-	return n.data.(*TemplateSpan)
+	return n.data().(*TemplateSpan)
 }
 
 func (n *Node) AsTaggedTemplateExpression() *TaggedTemplateExpression {
-	return n.data.(*TaggedTemplateExpression)
+	return n.data().(*TaggedTemplateExpression)
 }
 
 func (n *Node) AsParenthesizedExpression() *ParenthesizedExpression {
-	return n.data.(*ParenthesizedExpression)
+	return n.data().(*ParenthesizedExpression)
 }
 
 func (n *Node) AsArrayLiteralExpression() *ArrayLiteralExpression {
-	return n.data.(*ArrayLiteralExpression)
+	return n.data().(*ArrayLiteralExpression)
 }
 
 func (n *Node) AsObjectLiteralExpression() *ObjectLiteralExpression {
-	return n.data.(*ObjectLiteralExpression)
+	return n.data().(*ObjectLiteralExpression)
 }
 
 func (n *Node) AsSpreadAssignment() *SpreadAssignment {
-	return n.data.(*SpreadAssignment)
+	return n.data().(*SpreadAssignment)
 }
 
 func (n *Node) AsPropertyAssignment() *PropertyAssignment {
-	return n.data.(*PropertyAssignment)
+	return n.data().(*PropertyAssignment)
 }
 
 func (n *Node) AsShorthandPropertyAssignment() *ShorthandPropertyAssignment {
-	return n.data.(*ShorthandPropertyAssignment)
+	return n.data().(*ShorthandPropertyAssignment)
 }
 
 func (n *Node) AsDeleteExpression() *DeleteExpression {
-	return n.data.(*DeleteExpression)
+	return n.data().(*DeleteExpression)
 }
 
 func (n *Node) AsTypeOfExpression() *TypeOfExpression {
-	return n.data.(*TypeOfExpression)
+	return n.data().(*TypeOfExpression)
 }
 
 func (n *Node) AsVoidExpression() *VoidExpression {
-	return n.data.(*VoidExpression)
+	return n.data().(*VoidExpression)
 }
 
 func (n *Node) AsAwaitExpression() *AwaitExpression {
-	return n.data.(*AwaitExpression)
+	return n.data().(*AwaitExpression)
 }
 
 func (n *Node) AsTypeAssertion() *TypeAssertion {
-	return n.data.(*TypeAssertion)
+	return n.data().(*TypeAssertion)
 }
 
 func (n *Node) AsKeywordTypeNode() *KeywordTypeNode {
-	return n.data.(*KeywordTypeNode)
+	return n.data().(*KeywordTypeNode)
 }
 
 func (n *Node) AsUnionTypeNode() *UnionTypeNode {
-	return n.data.(*UnionTypeNode)
+	return n.data().(*UnionTypeNode)
 }
 
 func (n *Node) AsIntersectionTypeNode() *IntersectionTypeNode {
-	return n.data.(*IntersectionTypeNode)
+	return n.data().(*IntersectionTypeNode)
 }
 
 func (n *Node) AsConditionalTypeNode() *ConditionalTypeNode {
-	return n.data.(*ConditionalTypeNode)
+	return n.data().(*ConditionalTypeNode)
 }
 
 func (n *Node) AsTypeOperatorNode() *TypeOperatorNode {
-	return n.data.(*TypeOperatorNode)
+	return n.data().(*TypeOperatorNode)
 }
 
 func (n *Node) AsInferTypeNode() *InferTypeNode {
-	return n.data.(*InferTypeNode)
+	return n.data().(*InferTypeNode)
 }
 
 func (n *Node) AsArrayTypeNode() *ArrayTypeNode {
-	return n.data.(*ArrayTypeNode)
+	return n.data().(*ArrayTypeNode)
 }
 
 func (n *Node) AsIndexedAccessTypeNode() *IndexedAccessTypeNode {
-	return n.data.(*IndexedAccessTypeNode)
+	return n.data().(*IndexedAccessTypeNode)
 }
 
 func (n *Node) AsTypeReferenceNode() *TypeReferenceNode {
-	return n.data.(*TypeReferenceNode)
+	return n.data().(*TypeReferenceNode)
 }
 
 func (n *Node) AsExpressionWithTypeArguments() *ExpressionWithTypeArguments {
-	return n.data.(*ExpressionWithTypeArguments)
+	return n.data().(*ExpressionWithTypeArguments)
 }
 
 func (n *Node) AsLiteralTypeNode() *LiteralTypeNode {
-	return n.data.(*LiteralTypeNode)
+	return n.data().(*LiteralTypeNode)
 }
 
 func (n *Node) AsThisTypeNode() *ThisTypeNode {
-	return n.data.(*ThisTypeNode)
+	return n.data().(*ThisTypeNode)
 }
 
 func (n *Node) AsTypePredicateNode() *TypePredicateNode {
-	return n.data.(*TypePredicateNode)
+	return n.data().(*TypePredicateNode)
 }
 
 func (n *Node) AsImportAttribute() *ImportAttribute {
-	return n.data.(*ImportAttribute)
+	return n.data().(*ImportAttribute)
 }
 
 func (n *Node) AsImportAttributes() *ImportAttributes {
-	return n.data.(*ImportAttributes)
+	return n.data().(*ImportAttributes)
 }
 
 func (n *Node) AsTypeQueryNode() *TypeQueryNode {
-	return n.data.(*TypeQueryNode)
+	return n.data().(*TypeQueryNode)
 }
 
 func (n *Node) AsMappedTypeNode() *MappedTypeNode {
-	return n.data.(*MappedTypeNode)
+	return n.data().(*MappedTypeNode)
 }
 
 func (n *Node) AsTypeLiteralNode() *TypeLiteralNode {
-	return n.data.(*TypeLiteralNode)
+	return n.data().(*TypeLiteralNode)
 }
 
 func (n *Node) AsTupleTypeNode() *TupleTypeNode {
-	return n.data.(*TupleTypeNode)
+	return n.data().(*TupleTypeNode)
 }
 
 func (n *Node) AsNamedTupleMember() *NamedTupleMember {
-	return n.data.(*NamedTupleMember)
+	return n.data().(*NamedTupleMember)
 }
 
 func (n *Node) AsOptionalTypeNode() *OptionalTypeNode {
-	return n.data.(*OptionalTypeNode)
+	return n.data().(*OptionalTypeNode)
 }
 
 func (n *Node) AsRestTypeNode() *RestTypeNode {
-	return n.data.(*RestTypeNode)
+	return n.data().(*RestTypeNode)
 }
 
 func (n *Node) AsParenthesizedTypeNode() *ParenthesizedTypeNode {
-	return n.data.(*ParenthesizedTypeNode)
+	return n.data().(*ParenthesizedTypeNode)
 }
 
 func (n *Node) AsFunctionTypeNode() *FunctionTypeNode {
-	return n.data.(*FunctionTypeNode)
+	return n.data().(*FunctionTypeNode)
 }
 
 func (n *Node) AsConstructorTypeNode() *ConstructorTypeNode {
-	return n.data.(*ConstructorTypeNode)
+	return n.data().(*ConstructorTypeNode)
 }
 
 func (n *Node) AsTemplateHead() *TemplateHead {
-	return n.data.(*TemplateHead)
+	return n.data().(*TemplateHead)
 }
 
 func (n *Node) AsTemplateMiddle() *TemplateMiddle {
-	return n.data.(*TemplateMiddle)
+	return n.data().(*TemplateMiddle)
 }
 
 func (n *Node) AsTemplateTail() *TemplateTail {
-	return n.data.(*TemplateTail)
+	return n.data().(*TemplateTail)
 }
 
 func (n *Node) AsTemplateLiteralTypeNode() *TemplateLiteralTypeNode {
-	return n.data.(*TemplateLiteralTypeNode)
+	return n.data().(*TemplateLiteralTypeNode)
 }
 
 func (n *Node) AsTemplateLiteralTypeSpan() *TemplateLiteralTypeSpan {
-	return n.data.(*TemplateLiteralTypeSpan)
+	return n.data().(*TemplateLiteralTypeSpan)
 }
 
 func (n *Node) AsSyntheticExpression() *SyntheticExpression {
-	return n.data.(*SyntheticExpression)
+	return n.data().(*SyntheticExpression)
 }
 
 func (n *Node) AsPartiallyEmittedExpression() *PartiallyEmittedExpression {
-	return n.data.(*PartiallyEmittedExpression)
+	return n.data().(*PartiallyEmittedExpression)
 }
 
 func (n *Node) AsJsxElement() *JsxElement {
-	return n.data.(*JsxElement)
+	return n.data().(*JsxElement)
 }
 
 func (n *Node) AsJsxAttributes() *JsxAttributes {
-	return n.data.(*JsxAttributes)
+	return n.data().(*JsxAttributes)
 }
 
 func (n *Node) AsJsxNamespacedName() *JsxNamespacedName {
-	return n.data.(*JsxNamespacedName)
+	return n.data().(*JsxNamespacedName)
 }
 
 func (n *Node) AsJsxOpeningElement() *JsxOpeningElement {
-	return n.data.(*JsxOpeningElement)
+	return n.data().(*JsxOpeningElement)
 }
 
 func (n *Node) AsJsxSelfClosingElement() *JsxSelfClosingElement {
-	return n.data.(*JsxSelfClosingElement)
+	return n.data().(*JsxSelfClosingElement)
 }
 
 func (n *Node) AsJsxFragment() *JsxFragment {
-	return n.data.(*JsxFragment)
+	return n.data().(*JsxFragment)
 }
 
 func (n *Node) AsJsxOpeningFragment() *JsxOpeningFragment {
-	return n.data.(*JsxOpeningFragment)
+	return n.data().(*JsxOpeningFragment)
 }
 
 func (n *Node) AsJsxClosingFragment() *JsxClosingFragment {
-	return n.data.(*JsxClosingFragment)
+	return n.data().(*JsxClosingFragment)
 }
 
 func (n *Node) AsJsxAttribute() *JsxAttribute {
-	return n.data.(*JsxAttribute)
+	return n.data().(*JsxAttribute)
 }
 
 func (n *Node) AsJsxSpreadAttribute() *JsxSpreadAttribute {
-	return n.data.(*JsxSpreadAttribute)
+	return n.data().(*JsxSpreadAttribute)
 }
 
 func (n *Node) AsJsxClosingElement() *JsxClosingElement {
-	return n.data.(*JsxClosingElement)
+	return n.data().(*JsxClosingElement)
 }
 
 func (n *Node) AsJsxExpression() *JsxExpression {
-	return n.data.(*JsxExpression)
+	return n.data().(*JsxExpression)
 }
 
 func (n *Node) AsJsxText() *JsxText {
-	return n.data.(*JsxText)
+	return n.data().(*JsxText)
 }
 
 func (n *Node) AsSyntaxList() *SyntaxList {
-	return n.data.(*SyntaxList)
+	return n.data().(*SyntaxList)
 }
 
 func (n *Node) AsJSDoc() *JSDoc {
-	return n.data.(*JSDoc)
+	return n.data().(*JSDoc)
 }
 
 func (n *Node) AsJSDocTypeExpression() *JSDocTypeExpression {
-	return n.data.(*JSDocTypeExpression)
+	return n.data().(*JSDocTypeExpression)
 }
 
 func (n *Node) AsJSDocNonNullableType() *JSDocNonNullableType {
-	return n.data.(*JSDocNonNullableType)
+	return n.data().(*JSDocNonNullableType)
 }
 
 func (n *Node) AsJSDocNullableType() *JSDocNullableType {
-	return n.data.(*JSDocNullableType)
+	return n.data().(*JSDocNullableType)
 }
 
 func (n *Node) AsJSDocAllType() *JSDocAllType {
-	return n.data.(*JSDocAllType)
+	return n.data().(*JSDocAllType)
 }
 
 func (n *Node) AsJSDocVariadicType() *JSDocVariadicType {
-	return n.data.(*JSDocVariadicType)
+	return n.data().(*JSDocVariadicType)
 }
 
 func (n *Node) AsJSDocOptionalType() *JSDocOptionalType {
-	return n.data.(*JSDocOptionalType)
+	return n.data().(*JSDocOptionalType)
 }
 
 func (n *Node) AsJSDocTypeTag() *JSDocTypeTag {
-	return n.data.(*JSDocTypeTag)
+	return n.data().(*JSDocTypeTag)
 }
 
 func (n *Node) AsJSDocUnknownTag() *JSDocUnknownTag {
-	return n.data.(*JSDocUnknownTag)
+	return n.data().(*JSDocUnknownTag)
 }
 
 func (n *Node) AsJSDocTemplateTag() *JSDocTemplateTag {
-	return n.data.(*JSDocTemplateTag)
+	return n.data().(*JSDocTemplateTag)
 }
 
 func (n *Node) AsJSDocReturnTag() *JSDocReturnTag {
-	return n.data.(*JSDocReturnTag)
+	return n.data().(*JSDocReturnTag)
 }
 
 func (n *Node) AsJSDocPublicTag() *JSDocPublicTag {
-	return n.data.(*JSDocPublicTag)
+	return n.data().(*JSDocPublicTag)
 }
 
 func (n *Node) AsJSDocPrivateTag() *JSDocPrivateTag {
-	return n.data.(*JSDocPrivateTag)
+	return n.data().(*JSDocPrivateTag)
 }
 
 func (n *Node) AsJSDocProtectedTag() *JSDocProtectedTag {
-	return n.data.(*JSDocProtectedTag)
+	return n.data().(*JSDocProtectedTag)
 }
 
 func (n *Node) AsJSDocReadonlyTag() *JSDocReadonlyTag {
-	return n.data.(*JSDocReadonlyTag)
+	return n.data().(*JSDocReadonlyTag)
 }
 
 func (n *Node) AsJSDocOverrideTag() *JSDocOverrideTag {
-	return n.data.(*JSDocOverrideTag)
+	return n.data().(*JSDocOverrideTag)
 }
 
 func (n *Node) AsJSDocDeprecatedTag() *JSDocDeprecatedTag {
-	return n.data.(*JSDocDeprecatedTag)
+	return n.data().(*JSDocDeprecatedTag)
 }
 
 func (n *Node) AsJSDocSeeTag() *JSDocSeeTag {
-	return n.data.(*JSDocSeeTag)
+	return n.data().(*JSDocSeeTag)
 }
 
 func (n *Node) AsJSDocImplementsTag() *JSDocImplementsTag {
-	return n.data.(*JSDocImplementsTag)
+	return n.data().(*JSDocImplementsTag)
 }
 
 func (n *Node) AsJSDocAugmentsTag() *JSDocAugmentsTag {
-	return n.data.(*JSDocAugmentsTag)
+	return n.data().(*JSDocAugmentsTag)
 }
 
 func (n *Node) AsJSDocSatisfiesTag() *JSDocSatisfiesTag {
-	return n.data.(*JSDocSatisfiesTag)
+	return n.data().(*JSDocSatisfiesTag)
 }
 
 func (n *Node) AsJSDocThrowsTag() *JSDocThrowsTag {
-	return n.data.(*JSDocThrowsTag)
+	return n.data().(*JSDocThrowsTag)
 }
 
 func (n *Node) AsJSDocThisTag() *JSDocThisTag {
-	return n.data.(*JSDocThisTag)
+	return n.data().(*JSDocThisTag)
 }
 
 func (n *Node) AsJSDocImportTag() *JSDocImportTag {
-	return n.data.(*JSDocImportTag)
+	return n.data().(*JSDocImportTag)
 }
 
 func (n *Node) AsJSDocCallbackTag() *JSDocCallbackTag {
-	return n.data.(*JSDocCallbackTag)
+	return n.data().(*JSDocCallbackTag)
 }
 
 func (n *Node) AsJSDocOverloadTag() *JSDocOverloadTag {
-	return n.data.(*JSDocOverloadTag)
+	return n.data().(*JSDocOverloadTag)
 }
 
 func (n *Node) AsJSDocTypedefTag() *JSDocTypedefTag {
-	return n.data.(*JSDocTypedefTag)
+	return n.data().(*JSDocTypedefTag)
 }
 
 func (n *Node) AsJSDocSignature() *JSDocSignature {
-	return n.data.(*JSDocSignature)
+	return n.data().(*JSDocSignature)
 }
 
 func (n *Node) AsJSDocNameReference() *JSDocNameReference {
-	return n.data.(*JSDocNameReference)
+	return n.data().(*JSDocNameReference)
 }
 
 func (n *Node) AsSourceFile() *SourceFile {
-	return n.data.(*SourceFile)
+	return n.data().(*SourceFile)
 }
 
 func (n *Node) AsModuleDeclaration() *ModuleDeclaration {
-	return n.data.(*ModuleDeclaration)
+	return n.data().(*ModuleDeclaration)
 }
 
 func (n *Node) AsImportEqualsDeclaration() *ImportEqualsDeclaration {
-	return n.data.(*ImportEqualsDeclaration)
+	return n.data().(*ImportEqualsDeclaration)
 }
 
 func (n *Node) AsExportDeclaration() *ExportDeclaration {
-	return n.data.(*ExportDeclaration)
+	return n.data().(*ExportDeclaration)
 }
 
 func (n *Node) AsImportTypeNode() *ImportTypeNode {
-	return n.data.(*ImportTypeNode)
+	return n.data().(*ImportTypeNode)
 }
 
 func (n *Node) AsImportClause() *ImportClause {
-	return n.data.(*ImportClause)
+	return n.data().(*ImportClause)
 }
 
 func (n *Node) AsImportSpecifier() *ImportSpecifier {
-	return n.data.(*ImportSpecifier)
+	return n.data().(*ImportSpecifier)
 }
 
 func (n *Node) AsJSDocText() *JSDocText {
-	return n.data.(*JSDocText)
+	return n.data().(*JSDocText)
 }
 
 func (n *Node) AsJSDocLink() *JSDocLink {
-	return n.data.(*JSDocLink)
+	return n.data().(*JSDocLink)
 }
 
 func (n *Node) AsJSDocLinkPlain() *JSDocLinkPlain {
-	return n.data.(*JSDocLinkPlain)
+	return n.data().(*JSDocLinkPlain)
 }
 
 func (n *Node) AsJSDocLinkCode() *JSDocLinkCode {
-	return n.data.(*JSDocLinkCode)
+	return n.data().(*JSDocLinkCode)
 }
 
 func (n *Node) AsTypeParameterDeclaration() *TypeParameterDeclaration {
-	return n.data.(*TypeParameterDeclaration)
+	return n.data().(*TypeParameterDeclaration)
 }
 
 func (n *Node) AsSyntheticReferenceExpression() *SyntheticReferenceExpression {
-	return n.data.(*SyntheticReferenceExpression)
+	return n.data().(*SyntheticReferenceExpression)
 }
 
 func (n *Node) AsJSDocTypeLiteral() *JSDocTypeLiteral {
-	return n.data.(*JSDocTypeLiteral)
+	return n.data().(*JSDocTypeLiteral)
 }
 
 func (n *Node) AsJSDocParameterOrPropertyTag() *JSDocParameterOrPropertyTag {
-	return n.data.(*JSDocParameterOrPropertyTag)
+	return n.data().(*JSDocParameterOrPropertyTag)
 }
 
 // ──────────────────────────────────────────────────────────────────────

@@ -127,6 +127,7 @@ function generateHeader(w: CodeWriter) {
     w.write("import (");
     w.push();
     w.write('"sync/atomic"');
+    w.write('"unsafe"');
     w.write("");
     w.write('"github.com/microsoft/typescript-go/internal/core"');
     w.pop();
@@ -341,13 +342,37 @@ function generateAsCast(w: CodeWriter, name: string) {
     const structName = name;
     w.write(`func (n *Node) As${name}() *${structName} {`);
     w.push();
-    w.write(`return n.data.(*${structName})`);
+    w.write(`return n.data().(*${structName})`);
     w.pop();
     w.write("}");
     w.write("");
 }
 
 // ── Generate New*() factory methods ────────────────────────────────────────
+
+function canonicalNodesByKind(): Map<NodeType, string[]> {
+    // Token's kind union overlaps the concrete identifier, literal, and keyword
+    // nodes. Later schema entries are the canonical representation for those
+    // kinds.
+    const nodeByKind = new Map<string, NodeType>();
+    for (const node of api.nodes()) {
+        for (const kind of node.allKinds()) {
+            nodeByKind.set(kind.formatGoConstant(), node);
+        }
+    }
+
+    const kindsByNode = new Map<NodeType, string[]>();
+    for (const [kind, node] of nodeByKind) {
+        const kinds = kindsByNode.get(node);
+        if (kinds) {
+            kinds.push(kind);
+        }
+        else {
+            kindsByNode.set(node, [kind]);
+        }
+    }
+    return kindsByNode;
+}
 
 function isNodeFlagsMember(m: MemberInfo): boolean {
     const type = m.type;
@@ -416,7 +441,40 @@ function generateNewFactory(w: CodeWriter, node: NodeType) {
     const members = schemaMembers(node);
     const kindMember = members.find(m => m.isKindParam());
     const nodeFlagsMembers = members.filter(m => isNodeFlagsMember(m));
-    emitNewFactory(w, `New${node.name}`, node.syntaxKindName, structName, node, members, kindMember, nodeFlagsMembers);
+
+    if (node.name === "Token") {
+        const tokenKinds = new Set(node.allKinds().map(kind => kind.formatGoConstant()));
+        w.write("func (f *NodeFactory) NewToken(kind TokenSyntaxKind) *Node {");
+        w.push();
+        w.write("switch kind {");
+        for (const [canonicalNode, kinds] of canonicalNodesByKind()) {
+            if (canonicalNode === node) continue;
+            const overlappingKinds = kinds.filter(kind => tokenKinds.has(kind));
+            if (overlappingKinds.length === 0) continue;
+            w.write(`case ${overlappingKinds.join(", ")}:`);
+            w.push();
+            if (canonicalNode.arena) {
+                w.write(`data := f.${api.uncapitalize(canonicalNode.name)}Arena.New()`);
+            }
+            else {
+                w.write(`data := &${canonicalNode.name}{}`);
+            }
+            w.write("return f.newNode(kind, data)");
+            w.pop();
+        }
+        w.write("default:");
+        w.push();
+        w.write("data := f.tokenArena.New()");
+        w.write("return f.newNode(kind, data)");
+        w.pop();
+        w.write("}");
+        w.pop();
+        w.write("}");
+        w.write("");
+    }
+    else {
+        emitNewFactory(w, `New${node.name}`, node.syntaxKindName, structName, node, members, kindMember, nodeFlagsMembers);
+    }
     for (const alias of node.kindAliases) {
         emitNewFactory(w, `New${alias}`, alias, structName, node, members, kindMember, nodeFlagsMembers);
     }
@@ -557,6 +615,37 @@ function generateForEachChild(w: CodeWriter, node: NodeType) {
 
 // ── Generate ForEachChild dispatch ─────────────────────────────────────────
 
+// Generates a (*Node).data method that recovers the concrete node pointer from
+// the embedded Node at offset zero. This avoids storing an interface self
+// pointer in every Node.
+function generateDataDispatch(w: CodeWriter) {
+    w.write("func (n *Node) data() nodeData {");
+    w.push();
+    w.write("switch n.Kind {");
+    w.write("case kindFlowSwitchClauseData:");
+    w.push();
+    w.write("return (*FlowSwitchClauseData)(unsafe.Pointer(n))");
+    w.pop();
+    w.write("case kindFlowReduceLabelData:");
+    w.push();
+    w.write("return (*FlowReduceLabelData)(unsafe.Pointer(n))");
+    w.pop();
+    for (const [node, kinds] of canonicalNodesByKind()) {
+        w.write(`case ${kinds.join(", ")}:`);
+        w.push();
+        w.write(`return (*${node.name})(unsafe.Pointer(n))`);
+        w.pop();
+    }
+    w.write("default:");
+    w.push();
+    w.write('panic("Unhandled case in Node.data: " + n.Kind.String())');
+    w.pop();
+    w.write("}");
+    w.pop();
+    w.write("}");
+    w.write("");
+}
+
 // Determines whether a node has a meaningful ForEachChild implementation (i.e.
 // one that is not the no-op inherited from NodeDefault). This is true for any
 // generated node with child members, or for hand-written nodes (e.g. SourceFile)
@@ -569,7 +658,7 @@ function hasForEachChild(node: NodeType): boolean {
 // Generates a (*Node).ForEachChild method that dispatches on node.Kind to the
 // concrete node type's ForEachChild method.
 //
-// This deliberately avoids calling node.data.ForEachChild(v) through the
+// This deliberately avoids calling node.data().ForEachChild(v) through the
 // nodeData interface. An interface (or other indirect) call is opaque to escape
 // analysis, which must then assume the visitor `v` escapes; that forces caller
 // closures — and any locals they capture — onto the heap. Dispatching through a
@@ -590,7 +679,7 @@ function generateForEachChildDispatch(w: CodeWriter) {
         if (kinds.length === 0) continue;
         w.write(`case ${kinds.join(", ")}:`);
         w.push();
-        w.write(`return n.data.(*${node.name}).ForEachChild(v)`);
+        w.write(`return n.data().(*${node.name}).ForEachChild(v)`);
         w.pop();
     }
     w.write("default:");
@@ -943,6 +1032,13 @@ function generate(): string {
             w.write("// Struct and factory methods hand-written in ./ast.go");
         }
     }
+
+    // Node data dispatch
+    w.write("// ──────────────────────────────────────────────────────────────────────");
+    w.write("// Node data dispatch");
+    w.write("// ──────────────────────────────────────────────────────────────────────");
+    w.write("");
+    generateDataDispatch(w);
 
     // ForEachChild dispatch
     w.write("// ──────────────────────────────────────────────────────────────────────");
