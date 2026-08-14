@@ -93,7 +93,7 @@ func (host *emitHost) GetEffectiveDeclarationFlags(node *ast.Node, flags ast.Mod
 
 func (host *emitHost) GetOutputPathsFor(file *ast.SourceFile, forceDtsPaths bool) declarations.OutputPaths {
 	// TODO: cache
-	return outputpaths.GetOutputPathsFor(file, host.Options(), host, forceDtsPaths)
+	return outputpaths.GetOutputPathsFor(file, host.Options(), host, outputpaths.ForceEmitPaths{Dts: forceDtsPaths})
 }
 
 func (host *emitHost) GetResolutionModeOverride(node *ast.Node) core.ResolutionMode {
@@ -108,6 +108,7 @@ func (host *emitHost) Options() *core.CompilerOptions { return host.program.Opti
 func (host *emitHost) SourceFiles() []*ast.SourceFile { return host.program.SourceFiles() }
 func (host *emitHost) GetCurrentDirectory() string    { return host.program.GetCurrentDirectory() }
 func (host *emitHost) CommonSourceDirectory() string  { return host.program.CommonSourceDirectory() }
+
 func (host *emitHost) UseCaseSensitiveFileNames() bool {
 	return host.program.UseCaseSensitiveFileNames()
 }

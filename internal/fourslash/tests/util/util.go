@@ -231,11 +231,13 @@ var CompletionGlobalVars = []fourslash.CompletionsExpectedItem{
 	&lsproto.CompletionItem{
 		Label:    "escape",
 		Kind:     new(lsproto.CompletionItemKindFunction),
+		Tags:     &[]lsproto.CompletionItemTag{lsproto.CompletionItemTagDeprecated},
 		SortText: new(string(ls.DeprecateSortText(ls.SortTextGlobalsOrKeywords))),
 	},
 	&lsproto.CompletionItem{
 		Label:    "unescape",
 		Kind:     new(lsproto.CompletionItemKindFunction),
+		Tags:     &[]lsproto.CompletionItemTag{lsproto.CompletionItemTagDeprecated},
 		SortText: new(string(ls.DeprecateSortText(ls.SortTextGlobalsOrKeywords))),
 	},
 }
@@ -682,6 +684,7 @@ var CompletionGlobalTypeDecls = []fourslash.CompletionsExpectedItem{
 	&lsproto.CompletionItem{
 		Label:    "ImportAssertions",
 		Kind:     new(lsproto.CompletionItemKindInterface),
+		Tags:     &[]lsproto.CompletionItemTag{lsproto.CompletionItemTagDeprecated},
 		SortText: new(string(ls.DeprecateSortText(ls.SortTextGlobalsOrKeywords))),
 	},
 	&lsproto.CompletionItem{
@@ -1420,26 +1423,27 @@ func CompletionGlobalTypesPlus(items []fourslash.CompletionsExpectedItem) []four
 var CompletionGlobalTypes = CompletionGlobalTypesPlus(nil)
 
 func getInJSKeywords(keywords []fourslash.CompletionsExpectedItem) []fourslash.CompletionsExpectedItem {
-	return core.Filter(keywords, func(item fourslash.CompletionsExpectedItem) bool {
-		var label string
-		switch item := item.(type) {
-		case *lsproto.CompletionItem:
-			label = item.Label
-		case string:
-			label = item
-		default:
-			panic(fmt.Sprintf("unexpected completion item type: %T", item))
-		}
-		switch label {
-		case "enum", "interface", "implements", "private", "protected", "public", "abstract",
-			"any", "boolean", "declare", "infer", "is", "keyof", "module", "namespace", "never",
-			"readonly", "number", "object", "string", "symbol", "type", "unique", "override",
-			"unknown", "global", "bigint":
-			return false
-		default:
-			return true
-		}
-	},
+	return core.Filter(
+		keywords, func(item fourslash.CompletionsExpectedItem) bool {
+			var label string
+			switch item := item.(type) {
+			case *lsproto.CompletionItem:
+				label = item.Label
+			case string:
+				label = item
+			default:
+				panic(fmt.Sprintf("unexpected completion item type: %T", item))
+			}
+			switch label {
+			case "enum", "interface", "implements", "private", "protected", "public", "abstract",
+				"any", "boolean", "declare", "infer", "is", "keyof", "module", "namespace", "never",
+				"readonly", "number", "object", "string", "symbol", "type", "unique", "override",
+				"unknown", "global", "bigint":
+				return false
+			default:
+				return true
+			}
+		},
 	)
 }
 

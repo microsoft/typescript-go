@@ -68,7 +68,7 @@ func NewSnapshot(
 
 		fs:                                 fs,
 		ConfigFileRegistry:                 configFileRegistry,
-		ProjectCollection:                  &ProjectCollection{toPath: toPath},
+		ProjectCollection:                  &ProjectCollection{toPath: toPath, openFiles: openFilePaths(fs.overlays)},
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
 		userPreferences:                    userPreferences,
 		AutoImports:                        autoImports,
@@ -159,6 +159,8 @@ func (s *Snapshot) ReadDirectory(currentDir string, path string, extensions []st
 type APISnapshotRequest struct {
 	OpenProjects  *collections.Set[string]
 	CloseProjects *collections.Set[tspath.Path]
+	OpenFiles     *collections.Set[lsproto.DocumentUri]
+	CloseFiles    *collections.Set[tspath.Path]
 }
 
 type ProjectTreeRequest struct {
@@ -264,6 +266,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		switch change.reason {
 		case UpdateReasonDidOpenFile:
 			logger.Logf("Reason: DidOpenFile - %s", change.fileChanges.Opened)
+		case UpdateReasonDidCloseFile:
+			logger.Logf("Reason: DidCloseFile - %v", change.fileChanges.Closed)
 		case UpdateReasonDidChangeCompilerOptionsForInferredProjects:
 			logger.Logf("Reason: DidChangeCompilerOptionsForInferredProjects")
 		case UpdateReasonRequestedLanguageServicePendingChanges:
@@ -278,6 +282,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			logger.Logf("Reason: RequestedLoadProjectTree - %v", getDetails())
 		case UpdateReasonIdleCleanDiskCache:
 			logger.Logf("Reason: IdleCleanDiskCache")
+		case UpdateReasonDidChangeConfigFile:
+			logger.Logf("Reason: DidChangeConfigFile - %v", getDetails())
 		}
 	}
 
@@ -302,7 +308,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	} else {
 		change.fileChanges = fs.expandAndFilterWatchEvents(change.fileChanges)
 		change.fileChanges = s.fs.expandRealpathAliases(change.fileChanges)
-		fs.markDirtyFiles(change.fileChanges)
+		change.fileChanges = fs.markDirtyFiles(change.fileChanges)
 		change.fileChanges = fs.convertOpenAndCloseToChanges(change.fileChanges)
 	}
 
@@ -325,7 +331,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		fs,
 		s.ProjectCollection,
 		s.ConfigFileRegistry,
-		s.ProjectCollection.apiOpenedProjects,
+		s.ProjectCollection.apiState,
 		compilerOptionsForInferredProjects,
 		s.sessionOptions,
 		customConfigFileName,
@@ -533,6 +539,13 @@ func (s *Snapshot) Deref(session *Session) {
 func (s *Snapshot) dispose(session *Session) {
 	for _, project := range s.ProjectCollection.Projects() {
 		if project.Program != nil && session.programCounter.Deref(project.Program) {
+			// This program is no longer referenced by any snapshot.
+			// Mark its checker pool as discarded so its idle-cleanup timer stops
+			// keeping the pool alive, allowing the pool and any idle checkers it
+			// still references to be reclaimed when the pool is garbage-collected.
+			if project.checkerPool != nil {
+				project.checkerPool.Discard()
+			}
 			for _, file := range project.Program.SourceFiles() {
 				session.parseCache.Deref(NewParseCacheKey(file.ParseOptions(), file.Hash, file.ScriptKind))
 			}

@@ -34,7 +34,7 @@ export default ky;
 }
 
 tsgo -b --explainFiles --listEmittedFiles --v
-ExitStatus:: DiagnosticsPresent_OutputsGenerated
+ExitStatus:: DiagnosticsPresent_OutputsSkipped
 Output::
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
@@ -48,9 +48,8 @@ Output::
 [7m2[0m export const api = ky.extend({});
 [7m [0m [91m             ~~~[0m
 
-TSFILE:  /home/src/workspaces/project/index.js
-TSFILE:  /home/src/workspaces/project/index.d.ts
-TSFILE:  /home/src/workspaces/project/tsconfig.tsbuildinfo
+TSFILE: /home/src/workspaces/project/index.js
+TSFILE: /home/src/workspaces/project/tsconfig.tsbuildinfo
 ../../tslibs/TS/Lib/lib.es2025.full.d.ts
    Default library for target 'ES2025'
 node_modules/ky/distribution/index.d.ts
@@ -59,6 +58,8 @@ node_modules/ky/distribution/index.d.ts
 index.ts
    Matched by default include pattern '**/*'
    File is ECMAScript module because 'package.json' has field "type" with value "module"
+[[90mHH:MM:SS AM[0m] Updating unchanged output timestamps of project 'tsconfig.json'...
+
 
 Found 1 error in index.ts[90m:2[0m
 
@@ -85,17 +86,12 @@ interface Symbol {
     readonly [Symbol.toStringTag]: string;
 }
 declare const console: { log(msg: any): void; };
-//// [/home/src/workspaces/project/index.d.ts] *new* 
-export declare const api: {
-    extend(options: Record<string, unknown>): KyInstance;
-};
-
 //// [/home/src/workspaces/project/index.js] *new* 
 import ky from 'ky';
 export const api = ky.extend({});
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","errors":true,"root":["./index.ts"]}
+{"version":"FakeTSVersion","errors":true,"root":["./index.ts"],"packageJsons":["./node_modules/ky/package.json","./package.json"],"missingPackageJsons":["./node_modules/ky/distribution/package.json"]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -108,7 +104,14 @@ export const api = ky.extend({});
       "original": "./index.ts"
     }
   ],
-  "size": 63
+  "packageJsons": [
+    "./node_modules/ky/package.json",
+    "./package.json"
+  ],
+  "missingPackageJsons": [
+    "./node_modules/ky/distribution/package.json"
+  ],
+  "size": 200
 }
 
 tsconfig.json::
@@ -122,7 +125,7 @@ Signatures::
 Edit [0]:: no change
 
 tsgo -b --explainFiles --listEmittedFiles --v
-ExitStatus:: DiagnosticsPresent_OutputsGenerated
+ExitStatus:: DiagnosticsPresent_OutputsSkipped
 Output::
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
@@ -136,9 +139,8 @@ Output::
 [7m2[0m export const api = ky.extend({});
 [7m [0m [91m             ~~~[0m
 
-TSFILE:  /home/src/workspaces/project/index.js
-TSFILE:  /home/src/workspaces/project/index.d.ts
-TSFILE:  /home/src/workspaces/project/tsconfig.tsbuildinfo
+TSFILE: /home/src/workspaces/project/index.js
+TSFILE: /home/src/workspaces/project/tsconfig.tsbuildinfo
 ../../tslibs/TS/Lib/lib.es2025.full.d.ts
    Default library for target 'ES2025'
 node_modules/ky/distribution/index.d.ts
@@ -147,10 +149,11 @@ node_modules/ky/distribution/index.d.ts
 index.ts
    Matched by default include pattern '**/*'
    File is ECMAScript module because 'package.json' has field "type" with value "module"
+[[90mHH:MM:SS AM[0m] Updating unchanged output timestamps of project 'tsconfig.json'...
+
 
 Found 1 error in index.ts[90m:2[0m
 
-//// [/home/src/workspaces/project/index.d.ts] *rewrite with same content*
 //// [/home/src/workspaces/project/index.js] *rewrite with same content*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *rewrite with same content*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *rewrite with same content*

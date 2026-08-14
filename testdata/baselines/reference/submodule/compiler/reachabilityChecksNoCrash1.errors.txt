@@ -20,7 +20,6 @@ reachabilityChecksNoCrash1.ts(2,11): error TS2304: Cannot find name 'out'.
 reachabilityChecksNoCrash1.ts(2,19): error TS1005: ',' expected.
 reachabilityChecksNoCrash1.ts(3,9): error TS1005: ':' expected.
 reachabilityChecksNoCrash1.ts(3,16): error TS1109: Expression expected.
-reachabilityChecksNoCrash1.ts(3,16): error TS1135: Argument expression expected.
 reachabilityChecksNoCrash1.ts(3,22): error TS1005: ':' expected.
 reachabilityChecksNoCrash1.ts(3,22): error TS2304: Cannot find name 'v'.
 reachabilityChecksNoCrash1.ts(3,24): error TS1005: ',' expected.
@@ -33,11 +32,11 @@ reachabilityChecksNoCrash1.ts(4,9): error TS18004: No value exists in scope for 
 reachabilityChecksNoCrash1.ts(4,12): error TS1005: ',' expected.
 reachabilityChecksNoCrash1.ts(4,24): error TS2304: Cannot find name 'v'.
 reachabilityChecksNoCrash1.ts(4,26): error TS1005: ',' expected.
+reachabilityChecksNoCrash1.ts(6,12): error TS2304: Cannot find name 'out'.
 reachabilityChecksNoCrash1.ts(7,1): error TS1109: Expression expected.
-reachabilityChecksNoCrash1.ts(7,1): error TS1128: Declaration or statement expected.
 
 
-==== reachabilityChecksNoCrash1.ts (37 errors) ====
+==== reachabilityChecksNoCrash1.ts (36 errors) ====
     export async function arrayFromAsync<T>(asyncIterable!: AsyncIterable<T>): Promise<T[]> {
                           ~~~~~~~~~~~~~~
 !!! error TS7010: 'arrayFromAsync', which lacks return-type annotation, implicitly has an 'any' return type.
@@ -86,8 +85,6 @@ reachabilityChecksNoCrash1.ts(7,1): error TS1128: Declaration or statement expec
 !!! error TS1005: ':' expected.
                    ~~~~~
 !!! error TS1109: Expression expected.
-                   ~~~~~
-!!! error TS1135: Argument expression expected.
                          ~
 !!! error TS1005: ':' expected.
                          ~
@@ -118,9 +115,9 @@ reachabilityChecksNoCrash1.ts(7,1): error TS1128: Declaration or statement expec
     ~~~~~
 !!! error TS2365: Operator '>' cannot be applied to types 'boolean' and '{ const: never[]; for: any; of: any; asyncIterable: any; out: any; "": any; }'.
         return out;
+               ~~~
+!!! error TS2304: Cannot find name 'out'.
     }
     ~
 !!! error TS1109: Expression expected.
-    ~
-!!! error TS1128: Declaration or statement expected.
     

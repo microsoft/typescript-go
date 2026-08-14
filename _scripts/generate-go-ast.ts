@@ -139,13 +139,90 @@ function generateHeader(w: CodeWriter) {
 
 // ── Generate struct definitions ────────────────────────────────────────────
 
+/**
+ * Verifies that nothing inherits a base along more than one path.
+ */
+function verifyNoDuplicateBases(): void {
+    const problems: string[] = [];
+    const check = (name: string, extendsKeys: string[]) => {
+        const copies = new Map<string, number>();
+        const walk = (keys: string[]) => {
+            for (const key of keys) {
+                copies.set(key, (copies.get(key) ?? 0) + 1);
+                walk(api.getBase(key)?.extendsKeys ?? []);
+            }
+        };
+        walk(extendsKeys);
+        for (const [base, count] of copies) {
+            if (count > 1) problems.push(`${name} inherits ${base} ${count} times`);
+        }
+    };
+    for (const base of api.bases()) check(base.key, base.extendsKeys);
+    for (const node of api.nodes()) check(node.name, node.extendsKeys);
+
+    if (problems.length > 0) {
+        throw new Error(`ast.json declares duplicate embedded bases:\n  ${problems.sort().join("\n  ")}`);
+    }
+}
+
+/**
+ * Verifies that the inheritance path containing NodeBase is embedded first.
+ */
+function verifyNodeBaseAtOffsetZero(): void {
+    const containsNodeBase = (key: string): boolean => {
+        if (key === "NodeBase") return true;
+        return api.getBase(key)?.extendsKeys.some(containsNodeBase) ?? false;
+    };
+    const problems: string[] = [];
+    const check = (name: string, extendsKeys: string[], requireNodeBase: boolean) => {
+        const nodeBaseIndex = extendsKeys.findIndex(containsNodeBase);
+        if (nodeBaseIndex < 0 && requireNodeBase) {
+            problems.push(`${name} does not embed NodeBase`);
+        }
+        else if (nodeBaseIndex > 0) {
+            problems.push(`${name} embeds ${extendsKeys[nodeBaseIndex]} after ${extendsKeys.slice(0, nodeBaseIndex).join(", ")}`);
+        }
+    };
+    for (const base of api.bases()) check(base.key, base.extendsKeys, false);
+    for (const node of api.nodes()) check(node.name, node.extendsKeys, true);
+
+    if (problems.length > 0) {
+        throw new Error(`ast.json does not embed NodeBase at offset zero:\n  ${problems.sort().join("\n  ")}`);
+    }
+}
+
+verifyNoDuplicateBases();
+verifyNodeBaseAtOffsetZero();
+
+// A base with no fields and no extends is a struct{} marker. Go pads a struct whose last field is
+// zero-size (so the field's address stays in bounds), so markers are embedded first, never last; being
+// zero-size, they don't move NodeBase off offset zero.
+function isZeroSizeBase(key: string): boolean {
+    const base = api.getBase(key);
+    return !!base && base.extendsKeys.length === 0 && base.fields.length === 0;
+}
+
+function goEmbeds(extendsKeys: string[]): string[] {
+    const zeroSized: string[] = [];
+    const nonZeroSized: string[] = [];
+    for (const key of extendsKeys) {
+        if (isZeroSizeBase(key)) {
+            zeroSized.push(key);
+        }
+        else {
+            nonZeroSized.push(key);
+        }
+    }
+    return [...zeroSized, ...nonZeroSized];
+}
+
 function generateStructDef(w: CodeWriter, node: NodeType) {
     const structName = node.name;
     w.write(`type ${structName} struct {`);
     w.push();
 
     // Embeddings from extends (each maps to a Go struct via convention)
-    for (const ext of node.extendsKeys) {
+    for (const ext of goEmbeds(node.extendsKeys)) {
         w.write(ext);
     }
 
@@ -232,7 +309,7 @@ function generateBaseStructDefs(w: CodeWriter) {
 
         const structName = base.key;
 
-        const goExts = base.extendsKeys;
+        const goExts = goEmbeds(base.extendsKeys);
 
         w.write(`type ${structName} struct {`);
         w.push();
@@ -478,6 +555,54 @@ function generateForEachChild(w: CodeWriter, node: NodeType) {
     w.write("");
 }
 
+// ── Generate ForEachChild dispatch ─────────────────────────────────────────
+
+// Determines whether a node has a meaningful ForEachChild implementation (i.e.
+// one that is not the no-op inherited from NodeDefault). This is true for any
+// generated node with child members, or for hand-written nodes (e.g. SourceFile)
+// which define ForEachChild manually in ast.go.
+function hasForEachChild(node: NodeType): boolean {
+    if (node.handWritten) return true;
+    return schemaMembers(node).some(m => m.isChild());
+}
+
+// Generates a (*Node).ForEachChild method that dispatches on node.Kind to the
+// concrete node type's ForEachChild method.
+//
+// This deliberately avoids calling node.data.ForEachChild(v) through the
+// nodeData interface. An interface (or other indirect) call is opaque to escape
+// analysis, which must then assume the visitor `v` escapes; that forces caller
+// closures — and any locals they capture — onto the heap. Dispatching through a
+// Kind switch to a statically-resolved concrete method lets escape analysis
+// prove the visitor does not escape, keeping caller closures on the stack. The
+// integer switch over Kind also compiles to a jump table, making dispatch
+// cheaper than the interface call it replaces.
+//
+// Kinds whose node has no children fall through to `default` and return false,
+// matching NodeDefault.ForEachChild.
+function generateForEachChildDispatch(w: CodeWriter) {
+    w.write("func (n *Node) ForEachChild(v Visitor) bool {");
+    w.push();
+    w.write("switch n.Kind {");
+    for (const node of api.nodes()) {
+        if (!hasForEachChild(node)) continue;
+        const kinds = node.allKinds().map(k => k.formatGoConstant());
+        if (kinds.length === 0) continue;
+        w.write(`case ${kinds.join(", ")}:`);
+        w.push();
+        w.write(`return n.data.(*${node.name}).ForEachChild(v)`);
+        w.pop();
+    }
+    w.write("default:");
+    w.push();
+    w.write("return false");
+    w.pop();
+    w.write("}");
+    w.pop();
+    w.write("}");
+    w.write("");
+}
+
 // ── Generate VisitEachChild() ──────────────────────────────────────────────
 
 function generateVisitEachChild(w: CodeWriter, node: NodeType) {
@@ -561,7 +686,6 @@ function generateClone(w: CodeWriter, node: NodeType) {
             return "node.Kind";
         }
         const type = m.declaredType;
-        const isPrivate = m.inherited ? (m.inheritedField?.private || false) : (m.private || false);
 
         if (m.inherited && type?.kind === "alias" && type.name === "ModifierLike") {
             return "node.Modifiers()";
@@ -607,13 +731,9 @@ function generateIsFunction(w: CodeWriter, node: NodeType) {
         w.write(`func Is${node.name}(node *Node) bool {`);
         w.push();
         w.write("switch node.Kind {");
-        w.push();
-        for (const kind of kindTypes) {
-            w.write(`case ${kind.formatGoConstant()}:`);
-        }
+        w.write(`case ${kindTypes.map(kind => kind.formatGoConstant()).join(", ")}:`);
         w.push();
         w.write("return true");
-        w.pop();
         w.pop();
         w.write("}");
         w.write("return false");
@@ -823,6 +943,13 @@ function generate(): string {
             w.write("// Struct and factory methods hand-written in ./ast.go");
         }
     }
+
+    // ForEachChild dispatch
+    w.write("// ──────────────────────────────────────────────────────────────────────");
+    w.write("// ForEachChild dispatch");
+    w.write("// ──────────────────────────────────────────────────────────────────────");
+    w.write("");
+    generateForEachChildDispatch(w);
 
     // As*() casts
     w.write("// ──────────────────────────────────────────────────────────────────────");

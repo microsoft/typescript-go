@@ -78,10 +78,11 @@ class Foo {
     }
 }
 exports.Foo = Foo;
-/**
-* comment5
-*/
-exports.someMethod = null.someMethod;
+({ 
+    /**
+    * comment5
+    */
+    someMethod: exports.someMethod } = null);
 
 
 //// [declarationEmitRetainsJsdocyComments.d.ts]
@@ -108,11 +109,11 @@ export declare class Foo {
      */
     bar(s: number): void;
 }
-export declare let 
+export declare let { 
 /**
 * comment5
 */
-someMethod: any;
+someMethod }: any;
 declare global {
     interface ExtFunc {
         /**

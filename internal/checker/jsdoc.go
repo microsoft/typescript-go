@@ -64,14 +64,16 @@ func (c *Checker) checkUnmatchedJSDocParameters(node *ast.Node) {
 
 			if ast.IsQualifiedName(name) {
 				if isJs {
-					c.error(name, diagnostics.Qualified_name_0_is_not_allowed_without_a_leading_param_object_1,
+					c.error(
+						name, diagnostics.Qualified_name_0_is_not_allowed_without_a_leading_param_object_1,
 						entityNameToString(name),
 						entityNameToString(name.AsQualifiedName().Left),
 					)
 				}
 			} else {
 				if !isNameFirst {
-					c.errorOrSuggestion(isJs, name,
+					c.errorOrSuggestion(
+						isJs, name,
 						diagnostics.JSDoc_param_tag_has_name_0_but_there_is_no_parameter_with_that_name,
 						name.Text(),
 					)
@@ -82,16 +84,17 @@ func (c *Checker) checkUnmatchedJSDocParameters(node *ast.Node) {
 }
 
 func getAllJSDocTags(node *ast.Node) []*ast.Node {
-	if node == nil {
-		return nil
+	if node.Flags&ast.NodeFlagsJSDoc == 0 {
+		for current := node; current != nil; current = ast.GetNextJSDocCommentLocation(current) {
+			jsdocs := current.JSDoc(nil)
+			if len(jsdocs) == 0 {
+				continue
+			}
+			lastJSDoc := jsdocs[len(jsdocs)-1].AsJSDoc()
+			if lastJSDoc.Tags != nil {
+				return lastJSDoc.Tags.Nodes
+			}
+		}
 	}
-	jsdocs := node.JSDoc(nil)
-	if len(jsdocs) == 0 {
-		return nil
-	}
-	lastJSDoc := jsdocs[len(jsdocs)-1].AsJSDoc()
-	if lastJSDoc.Tags == nil {
-		return nil
-	}
-	return lastJSDoc.Tags.Nodes
+	return nil
 }

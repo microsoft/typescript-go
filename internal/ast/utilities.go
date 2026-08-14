@@ -769,18 +769,22 @@ func IsPrologueDirective(node *Node) bool {
 		node.Expression().Kind == KindStringLiteral
 }
 
-type OuterExpressionKinds int16
+type OuterExpressionKinds uint16
 
 const (
-	OEKParentheses                  OuterExpressionKinds = 1 << 0
-	OEKTypeAssertions               OuterExpressionKinds = 1 << 1
-	OEKNonNullAssertions            OuterExpressionKinds = 1 << 2
-	OEKPartiallyEmittedExpressions  OuterExpressionKinds = 1 << 3
-	OEKExpressionsWithTypeArguments OuterExpressionKinds = 1 << 4
-	OEKSatisfies                    OuterExpressionKinds = 1 << 5
-	OEKExcludeJSDocTypeAssertion                         = 1 << 6
-	OEKAssertions                                        = OEKTypeAssertions | OEKNonNullAssertions | OEKSatisfies
-	OEKAll                                               = OEKParentheses | OEKAssertions | OEKPartiallyEmittedExpressions | OEKExpressionsWithTypeArguments
+	OEKParentheses                                       OuterExpressionKinds = 1 << 0
+	OEKTypeAssertions                                    OuterExpressionKinds = 1 << 1
+	OEKNonNullAssertions                                 OuterExpressionKinds = 1 << 2
+	OEKPartiallyEmittedExpressions                       OuterExpressionKinds = 1 << 3
+	OEKExpressionsWithTypeArguments                      OuterExpressionKinds = 1 << 4
+	OEKSatisfies                                         OuterExpressionKinds = 1 << 5
+	OEKExcludeJSDocTypeAssertion                         OuterExpressionKinds = 1 << 6
+	OEKAssignments                                       OuterExpressionKinds = 1 << 7
+	OEKComma                                             OuterExpressionKinds = 1 << 8
+	OEKAssertions                                                             = OEKTypeAssertions | OEKNonNullAssertions | OEKSatisfies
+	OEKAll                                                                    = OEKParentheses | OEKAssertions | OEKPartiallyEmittedExpressions | OEKExpressionsWithTypeArguments
+	OEKAllExceptAssertionsOrExpressionsWithTypeArguments                      = OEKAll &^ OEKAssertions &^ OEKExpressionsWithTypeArguments
+	OEKExpressionTypePassthrough                                              = OEKParentheses | OEKAssignments | OEKComma
 )
 
 // Determines whether node is an "outer expression" of the provided kinds
@@ -798,6 +802,13 @@ func IsOuterExpression(node *Expression, kinds OuterExpressionKinds) bool {
 		return kinds&OEKNonNullAssertions != 0
 	case KindPartiallyEmittedExpression:
 		return kinds&OEKPartiallyEmittedExpressions != 0
+	case KindBinaryExpression:
+		switch node.AsBinaryExpression().OperatorToken.Kind {
+		case KindEqualsToken:
+			return kinds&OEKAssignments != 0
+		case KindCommaToken:
+			return kinds&OEKComma != 0
+		}
 	}
 	return false
 }
@@ -805,7 +816,11 @@ func IsOuterExpression(node *Expression, kinds OuterExpressionKinds) bool {
 // Descends into an expression, skipping past "outer expressions" of the provided kinds
 func SkipOuterExpressions(node *Expression, kinds OuterExpressionKinds) *Expression {
 	for IsOuterExpression(node, kinds) {
-		node = node.Expression()
+		if IsBinaryExpression(node) {
+			node = node.AsBinaryExpression().Right
+		} else {
+			node = node.Expression()
+		}
 	}
 	return node
 }
@@ -901,6 +916,25 @@ func FindAncestor(node *Node, callback func(*Node) bool) *Node {
 		node = node.Parent
 	}
 	return nil
+}
+
+func FindManyAncestors(node *Node, callbacks ...func(*Node) bool) []*Node {
+	ancestors := make([]*Node, len(callbacks))
+	found := 0
+	for node != nil {
+		for i, callback := range callbacks {
+			if ancestors[i] == nil && callback(node) {
+				ancestors[i] = node
+				found++
+				if found == len(callbacks) {
+					return ancestors
+				}
+				break
+			}
+		}
+		node = node.Parent
+	}
+	return ancestors
 }
 
 // Walks up the parents of a node to find the ancestor that matches the kind
@@ -1394,18 +1428,20 @@ func IsExpressionWithTypeArgumentsInClassExtendsClause(node *Node) bool {
 }
 
 func TryGetClassExtendingExpressionWithTypeArguments(node *Node) *ClassLikeDeclaration {
-	cls, isImplements := TryGetClassImplementingOrExtendingExpressionWithTypeArguments(node)
+	if !IsExpressionWithTypeArguments(node) {
+		return nil
+	}
+	cls, isImplements := TryGetClassImplementingOrExtendingHeritageClauseElement(node)
 	if cls != nil && !isImplements {
 		return cls
 	}
 	return nil
 }
 
-func TryGetClassImplementingOrExtendingExpressionWithTypeArguments(node *Node) (class *ClassLikeDeclaration, isImplements bool) {
-	if IsExpressionWithTypeArguments(node) {
-		if IsHeritageClause(node.Parent) && IsClassLike(node.Parent.Parent) {
-			return node.Parent.Parent, node.Parent.AsHeritageClause().Token == KindImplementsKeyword
-		}
+func TryGetClassImplementingOrExtendingHeritageClauseElement(node *Node) (class *ClassLikeDeclaration, isImplements bool) {
+	if (IsExpressionWithTypeArguments(node) || IsTypeReferenceNode(node)) &&
+		IsHeritageClause(node.Parent) && IsClassLike(node.Parent.Parent) {
+		return node.Parent.Parent, node.Parent.AsHeritageClause().Token == KindImplementsKeyword
 	}
 	return nil, false
 }
@@ -1619,6 +1655,10 @@ func IsAmbientModule(node *Node) bool {
 	return IsModuleDeclaration(node) && (node.AsModuleDeclaration().Name().Kind == KindStringLiteral || IsGlobalScopeAugmentation(node))
 }
 
+func IsAmbientModuleSymbolName(s string) bool {
+	return strings.HasPrefix(s, "\"") && strings.HasSuffix(s, "\"")
+}
+
 func IsExternalModule(file *SourceFile) bool {
 	return file.ExternalModuleIndicator != nil
 }
@@ -1675,24 +1715,37 @@ func GetContainingClass(node *Node) *Node {
 	return FindAncestor(node.Parent, IsClassLike)
 }
 
-func GetExtendsHeritageClauseElement(node *Node) *ExpressionWithTypeArgumentsNode {
-	return core.FirstOrNil(GetExtendsHeritageClauseElements(node))
-}
-
-func GetExtendsHeritageClauseElements(node *Node) []*ExpressionWithTypeArgumentsNode {
+func GetExtendsHeritageClauseElements(node *Node) []*HeritageClauseElement {
 	return GetHeritageElements(node, KindExtendsKeyword)
 }
 
-func GetImplementsHeritageClauseElements(node *Node) []*ExpressionWithTypeArgumentsNode {
+func GetImplementsHeritageClauseElements(node *Node) []*HeritageClauseElement {
 	return GetHeritageElements(node, KindImplementsKeyword)
 }
 
-func GetHeritageElements(node *Node, kind Kind) []*Node {
+func GetHeritageElements(node *Node, kind Kind) []*HeritageClauseElement {
 	clause := GetHeritageClause(node, kind)
 	if clause != nil {
 		return clause.AsHeritageClause().Types.Nodes
 	}
 	return nil
+}
+
+// GetHeritageClauseElementName returns the expression or type name of a heritage clause element.
+func GetHeritageClauseElementName(node *HeritageClauseElement) *Node {
+	if IsTypeReferenceNode(node) {
+		return node.AsTypeReferenceNode().TypeName
+	}
+	return node.AsExpressionWithTypeArguments().Expression
+}
+
+func IsNameOfHeritageClauseTypeReference(node *Node) bool {
+	for IsQualifiedName(node.Parent) {
+		node = node.Parent
+	}
+	return IsTypeReferenceNode(node.Parent) &&
+		node.Parent.AsTypeReferenceNode().TypeName == node &&
+		IsHeritageClause(node.Parent.Parent)
 }
 
 func GetHeritageClause(node *Node, kind Kind) *Node {
@@ -3049,10 +3102,6 @@ func GetClassExtendsHeritageElement(node *Node) *ExpressionWithTypeArgumentsNode
 	return nil
 }
 
-func GetImplementsTypeNodes(node *Node) []*ExpressionWithTypeArgumentsNode {
-	return GetHeritageElements(node, KindImplementsKeyword)
-}
-
 func IsTypeKeywordToken(node *Node) bool {
 	return node.Kind == KindTypeKeyword
 }
@@ -3709,7 +3758,7 @@ func IndexOfNode(nodes []*Node, node *Node) int {
 }
 
 func CompareNodePositions(n1, n2 *Node) int {
-	return n1.Pos() - n2.Pos()
+	return core.CompareTextRanges(n1.Loc, n2.Loc)
 }
 
 func IsUnterminatedLiteral(node *Node) bool {
@@ -4014,6 +4063,24 @@ func GetHostSignatureFromJSDoc(node *Node) *Node {
 	return nil
 }
 
+// Finds the declaration that owns the JSDoc for a function-like node.
+// Keep these hosts aligned with JSDoc parameter reparsing so unmatched @param diagnostics use the same attachment rules.
+// Keep in sync with getNextJSDocCommentLocation in the API's src/ast/jsdoc.ts
+func GetNextJSDocCommentLocation(node *Node) *Node {
+	if parent := node.Parent; parent != nil {
+		switch parent.Kind {
+		case KindPropertyAssignment, KindExportAssignment, KindPropertyDeclaration, KindVariableDeclaration,
+			KindSatisfiesExpression, KindReturnStatement, KindVariableStatement, KindExpressionStatement:
+			return parent
+		case KindVariableDeclarationList:
+			if parent.AsVariableDeclarationList().Declarations.Nodes[0] == node {
+				return parent
+			}
+		}
+	}
+	return nil
+}
+
 func IsImportOrImportEqualsDeclaration(node *Node) bool {
 	return IsImportDeclaration(node) || IsImportEqualsDeclaration(node)
 }
@@ -4125,8 +4192,16 @@ func TryGetImportFromModuleSpecifier(node *StringLiteralLike) *Node {
 	return nil
 }
 
-func IsImplicitlyExportedJSTypeAlias(node *Node) bool {
-	return IsJSTypeAliasDeclaration(node) && IsSourceFile(node.Parent) && IsExternalOrCommonJSModule(node.Parent.AsSourceFile())
+func IsImplicitlyExportedJSDocDeclaration(node *Node) bool {
+	if !IsSourceFile(node.Parent) || !IsExternalOrCommonJSModule(node.Parent.AsSourceFile()) {
+		return false
+	}
+	if IsJSTypeAliasDeclaration(node) {
+		return true
+	}
+	// A reparsed ModuleDeclaration synthesized from a JSDoc @typedef/@callback
+	// dotted name should also be treated as implicitly exported in modules.
+	return IsModuleDeclaration(node) && node.Flags&NodeFlagsReparsed != 0
 }
 
 func HasContextSensitiveParameters(node *Node) bool {
@@ -4236,7 +4311,7 @@ func ClassElementOrClassElementParameterIsDecorated(useLegacyDecorators bool, no
 		var firstAccessorWithDecorators *Node
 		if HasDecorators(decls.FirstAccessor) {
 			firstAccessorWithDecorators = decls.FirstAccessor
-		} else if HasDecorators(decls.SecondAccessor) {
+		} else if decls.SecondAccessor != nil && HasDecorators(decls.SecondAccessor) {
 			firstAccessorWithDecorators = decls.SecondAccessor
 		}
 		if firstAccessorWithDecorators == nil || node != firstAccessorWithDecorators {
@@ -4483,4 +4558,38 @@ func IsExpandoPropertyDeclaration(node *Node) bool {
 func IsSuperProperty(node *Node) bool {
 	return (IsPropertyAccessExpression(node) || IsElementAccessExpression(node)) &&
 		node.Expression().Kind == KindSuperKeyword
+}
+
+// Indicates whether a node is a potential source of an assigned name for a class, function, or arrow function.
+func IsNamedEvaluationSource(node *Node) bool {
+	switch node.Kind {
+	case KindPropertyAssignment:
+		return !IsProtoSetter(node.AsPropertyAssignment().Name())
+	case KindShorthandPropertyAssignment:
+		return node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer != nil
+	case KindVariableDeclaration:
+		return IsIdentifier(node.AsVariableDeclaration().Name()) && node.Initializer() != nil
+	case KindParameter:
+		return IsIdentifier(node.AsParameterDeclaration().Name()) && node.Initializer() != nil && node.AsParameterDeclaration().DotDotDotToken == nil
+	case KindBindingElement:
+		return IsIdentifier(node.AsBindingElement().Name()) && node.Initializer() != nil && node.AsBindingElement().DotDotDotToken == nil
+	case KindPropertyDeclaration:
+		return node.Initializer() != nil
+	case KindBinaryExpression:
+		switch node.AsBinaryExpression().OperatorToken.Kind {
+		case KindEqualsToken, KindAmpersandAmpersandEqualsToken, KindBarBarEqualsToken, KindQuestionQuestionEqualsToken:
+			return IsIdentifier(node.AsBinaryExpression().Left)
+		}
+	case KindExportAssignment:
+		return true
+	}
+	return false
+}
+
+// Indicates whether a property name is the special `__proto__` property.
+// Per the ECMA-262 spec, this only matters for property assignments whose name is
+// the Identifier `__proto__`, or the string literal `"__proto__"`, but not for
+// computed property names.
+func IsProtoSetter(node *Node) bool {
+	return (IsIdentifier(node) || IsStringLiteral(node)) && node.Text() == "__proto__"
 }

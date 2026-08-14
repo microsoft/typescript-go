@@ -30,6 +30,7 @@ export enum NodeFlags {
     JsonFile = 1 << 25,
     PossiblyContainsDeprecatedTag = 1 << 26,
     Unreachable = 1 << 27,
+    ReparserTransformedLiteral = 1 << 28,
     BlockScoped = Let | Const | Using,
     Constant = Const | Using,
     AwaitUsing = Const | Using,
@@ -39,4 +40,6 @@ export enum NodeFlags {
     TypeExcludesFlags = YieldContext | AwaitContext,
     PermanentlySetIncrementalFlags = PossiblyContainsDynamicImport | PossiblyContainsImportMeta,
     IdentifierHasExtendedUnicodeEscape = ContainsThis,
+    IdentifierIsInJSDocNamespace = HasAsyncFunctions,
+    NestedNamespace = OptionalChain,
 }

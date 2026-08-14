@@ -691,6 +691,7 @@ loop:
 	p.jsdocTagCommentsSpace = comments[:0]
 
 	comments = removeLeadingNewlines(comments)
+	comments = removeTrailingWhitespace(comments)
 	if len(comments) > 0 {
 		var commentStart int
 		if linkEnd > -1 {
@@ -865,9 +866,10 @@ func (p *Parser) parseNestedTypeLiteral(typeExpression *ast.Node, name *ast.Enti
 				p.rewind(state)
 				break
 			}
-			if child.Kind == ast.KindJSDocParameterTag || child.Kind == ast.KindJSDocPropertyTag {
+			switch child.Kind {
+			case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag:
 				children = append(children, child)
-			} else if child.Kind == ast.KindJSDocTemplateTag {
+			case ast.KindJSDocTemplateTag:
 				p.parseErrorAtRange(child.TagName().Loc, diagnostics.A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag)
 			}
 		}
@@ -987,10 +989,38 @@ func (p *Parser) parseThisTag(start int, tagName *ast.IdentifierNode, margin int
 	return p.finishNode(result, start)
 }
 
+func (p *Parser) parseJSDocTypeNameWithNamespace(nested bool) *ast.Node {
+	start := p.scanner.TokenStart()
+	if !tokenIsIdentifierOrKeyword(p.token) {
+		return nil
+	}
+	typeNameOrNamespaceName := p.parseJSDocIdentifierName(nil)
+	if p.parseOptionalJsdoc(ast.KindDotToken) {
+		body := p.parseJSDocTypeNameWithNamespace(true /*nested*/)
+		jsDocNamespaceNode := p.factory.NewModuleDeclaration(
+			nil,                      /*modifiers*/
+			ast.KindNamespaceKeyword, /*keyword*/
+			typeNameOrNamespaceName,
+			body,
+		)
+		if nested {
+			jsDocNamespaceNode.Flags |= ast.NodeFlagsNestedNamespace
+		}
+		return p.finishNode(jsDocNamespaceNode, start)
+	}
+	if nested {
+		typeNameOrNamespaceName.Flags |= ast.NodeFlagsIdentifierIsInJSDocNamespace
+	}
+	return typeNameOrNamespaceName
+}
+
 func (p *Parser) parseTypedefTag(start int, tagName *ast.IdentifierNode, indent int, indentText string) *ast.Node {
 	typeExpression := p.tryParseTypeExpression()
 	p.skipWhitespaceOrAsterisk()
-	fullName := p.parseJSDocIdentifierName(diagnostics.Identifier_expected)
+	fullName := p.parseJSDocTypeNameWithNamespace(false /*nested*/)
+	if fullName == nil {
+		fullName = p.parseJSDocIdentifierName(diagnostics.Identifier_expected)
+	}
 	p.skipWhitespace()
 	comment := p.parseTagComments(indent, nil)
 
@@ -1007,11 +1037,11 @@ func (p *Parser) parseTypedefTag(start int, tagName *ast.IdentifierNode, indent 
 				p.rewind(state)
 				break
 			}
-			if child.Kind == ast.KindJSDocTemplateTag {
-				break
-			}
 			hasChildren = true
-			if child.Kind == ast.KindJSDocTypeTag {
+			switch child.Kind {
+			case ast.KindJSDocTemplateTag:
+				p.parseErrorAtRange(child.TagName().Loc, diagnostics.A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag)
+			case ast.KindJSDocTypeTag:
 				if childTypeTag == nil {
 					childTypeTag = child.AsJSDocTypeTag()
 				} else {
@@ -1020,9 +1050,8 @@ func (p *Parser) parseTypedefTag(start int, tagName *ast.IdentifierNode, indent 
 						related := ast.NewDiagnostic(nil, core.NewTextRange(0, 0), diagnostics.The_tag_was_first_specified_here)
 						lastError.AddRelatedInfo(related)
 					}
-					break
 				}
-			} else {
+			default:
 				jsdocPropertyTags = append(jsdocPropertyTags, child)
 			}
 		}
@@ -1082,9 +1111,9 @@ func (p *Parser) parseCallbackTagParameters(indent int) *ast.NodeList {
 		}
 		if child.Kind == ast.KindJSDocTemplateTag {
 			p.parseErrorAtRange(child.TagName().Loc, diagnostics.A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag)
-			break
+		} else {
+			parameters = append(parameters, child)
 		}
-		parameters = append(parameters, child)
 	}
 	return p.newNodeList(core.NewTextRange(pos, p.nodePos()), parameters)
 }
@@ -1106,7 +1135,10 @@ func (p *Parser) parseJSDocSignature(start int, indent int) *ast.Node {
 }
 
 func (p *Parser) parseCallbackTag(start int, tagName *ast.IdentifierNode, indent int, indentText string) *ast.Node {
-	fullName := p.parseJSDocIdentifierName(diagnostics.Identifier_expected)
+	fullName := p.parseJSDocTypeNameWithNamespace(false /*nested*/)
+	if fullName == nil {
+		fullName = p.parseJSDocIdentifierName(diagnostics.Identifier_expected)
+	}
 	p.skipWhitespace()
 	comment := p.parseTagComments(indent, nil)
 	typeExpression := p.parseJSDocSignature(p.nodePos(), indent)
@@ -1317,7 +1349,6 @@ func (p *Parser) parseJSDocIdentifierName(diagnosticMessage *diagnostics.Message
 	pos := p.scanner.TokenStart()
 	end := p.scanner.TokenEnd()
 	text := p.scanner.TokenValue()
-	p.internIdentifier(text)
 	p.nextTokenJSDoc()
 	return p.finishNodeWithEnd(p.newIdentifier(text), pos, end)
 }

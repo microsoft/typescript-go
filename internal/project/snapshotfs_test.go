@@ -2,11 +2,13 @@ package project
 
 import (
 	"slices"
+	"sync"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
@@ -493,6 +495,51 @@ func TestSnapshotFSBuilder(t *testing.T) {
 
 		// Should contain both disk file and overlay file (both as basenames)
 		assert.Assert(t, slices.Contains(entries.Files, "disk.ts"), "should contain disk.ts")
+		assert.Assert(t, slices.Contains(entries.Files, "overlay.ts"), "should contain overlay.ts")
+	})
+
+	t.Run("GetAccessibleEntries is safe under concurrent calls", func(t *testing.T) {
+		t.Parallel()
+		testFS := vfstest.FromMap(map[string]string{
+			"/src/a.ts": "",
+			"/src/b.ts": "",
+			"/src/c.ts": "",
+			"/src/d.ts": "",
+			"/src/e.ts": "",
+		}, false /* useCaseSensitiveFileNames */)
+
+		overlays := map[tspath.Path]*Overlay{
+			tspath.Path("/src/overlay.ts"): {
+				fileBase: fileBase{fileName: "/src/overlay.ts", content: ""},
+			},
+		}
+
+		builder := newSnapshotFSBuilder(
+			testFS,
+			make(map[tspath.Path]*Overlay), // prevOverlays
+			overlays,
+			make(map[tspath.Path]*diskFile),
+			make(map[tspath.Path]dirty.CloneableMap[tspath.Path, string]),
+			nil, // nodeModulesRealpathAliases
+			lsproto.PositionEncodingKindUTF16,
+			toPath,
+		)
+
+		_ = builder.fs.GetAccessibleEntries("/src")
+
+		start := make(chan struct{})
+		var wg sync.WaitGroup
+		for range 50 {
+			wg.Go(func() {
+				<-start
+				_ = builder.GetAccessibleEntries("/src")
+			})
+		}
+		close(start)
+		wg.Wait()
+
+		// Sanity: the overlay is still reported after all the concurrent calls.
+		entries := builder.GetAccessibleEntries("/src")
 		assert.Assert(t, slices.Contains(entries.Files, "overlay.ts"), "should contain overlay.ts")
 	})
 }
@@ -1381,5 +1428,101 @@ func TestRealpathAliasLifecycle(t *testing.T) {
 		assert.Equal(t, aliases1.paths.Len(), 1, "snapshot1 alias set must not be mutated by snapshot2")
 		assert.Assert(t, !aliases1.paths.Has(tspath.Path("/project/node_modules/alias/package.json")),
 			"snapshot1 must not contain alias added in snapshot2")
+	})
+}
+
+func TestExpandAndFilterWatchEvents(t *testing.T) {
+	t.Parallel()
+
+	toPath := func(fileName string) tspath.Path {
+		return tspath.Path(fileName)
+	}
+
+	newBuilder := func(testFS vfs.FS) *snapshotFSBuilder {
+		return newSnapshotFSBuilder(
+			testFS,
+			make(map[tspath.Path]*Overlay),
+			make(map[tspath.Path]*Overlay),
+			make(map[tspath.Path]*diskFile),
+			make(map[tspath.Path]dirty.CloneableMap[tspath.Path, string]),
+			nil,
+			lsproto.PositionEncodingKindUTF16,
+			toPath,
+		)
+	}
+
+	t.Run("preserves node_modules directory deletion even when untracked", func(t *testing.T) {
+		t.Parallel()
+		// node_modules package files are read transiently and never tracked in
+		// diskDirectories, so a node_modules directory deletion can neither be
+		// expanded nor matched by extension. It must still be preserved.
+		builder := newBuilder(vfstest.FromMap(map[string]string{
+			"/project/index.ts": "export const x = 1;",
+		}, false))
+
+		change := FileChangeSummary{}
+		change.Deleted.Add("file:///project/node_modules")
+
+		expanded := builder.expandAndFilterWatchEvents(change)
+		assert.Assert(t, expanded.Deleted.Has("file:///project/node_modules"),
+			"bare node_modules directory deletion should be preserved")
+	})
+
+	t.Run("preserves deletion of a package directory inside node_modules", func(t *testing.T) {
+		t.Parallel()
+		builder := newBuilder(vfstest.FromMap(map[string]string{
+			"/project/index.ts": "export const x = 1;",
+		}, false))
+
+		change := FileChangeSummary{}
+		change.Deleted.Add("file:///project/node_modules/@scope/pkg")
+
+		expanded := builder.expandAndFilterWatchEvents(change)
+		assert.Assert(t, expanded.Deleted.Has("file:///project/node_modules/@scope/pkg"),
+			"package directory deletion inside node_modules should be preserved")
+	})
+
+	t.Run("drops irrelevant untracked deletion outside node_modules", func(t *testing.T) {
+		t.Parallel()
+		builder := newBuilder(vfstest.FromMap(map[string]string{
+			"/project/index.ts": "export const x = 1;",
+		}, false))
+
+		change := FileChangeSummary{}
+		change.Deleted.Add("file:///project/build")
+
+		expanded := builder.expandAndFilterWatchEvents(change)
+		assert.Equal(t, expanded.Deleted.Len(), 0,
+			"untracked non-node_modules directory deletion should be dropped")
+	})
+
+	t.Run("expands tracked directory deletion into file deletions", func(t *testing.T) {
+		t.Parallel()
+		existingDiskFiles := map[tspath.Path]*diskFile{
+			tspath.Path("/src/foo.ts"): newDiskFile("/src/foo.ts", "const foo = 1;"),
+		}
+		existingDirs := map[tspath.Path]dirty.CloneableMap[tspath.Path, string]{
+			tspath.Path("/"):    {tspath.Path("/src"): "src"},
+			tspath.Path("/src"): {tspath.Path("/src/foo.ts"): "foo.ts"},
+		}
+		builder := newSnapshotFSBuilder(
+			vfstest.FromMap(map[string]string{"/src/foo.ts": "const foo = 1;"}, false),
+			make(map[tspath.Path]*Overlay),
+			make(map[tspath.Path]*Overlay),
+			existingDiskFiles,
+			existingDirs,
+			nil,
+			lsproto.PositionEncodingKindUTF16,
+			toPath,
+		)
+
+		change := FileChangeSummary{}
+		change.Deleted.Add("file:///src")
+
+		expanded := builder.expandAndFilterWatchEvents(change)
+		assert.Assert(t, expanded.Deleted.Has("file:///src/foo.ts"),
+			"tracked directory deletion should expand to contained file deletions")
+		assert.Assert(t, !expanded.Deleted.Has("file:///src"),
+			"the directory URI itself should be replaced by its files")
 	})
 }

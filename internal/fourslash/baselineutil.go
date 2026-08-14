@@ -26,6 +26,7 @@ const (
 	closingTagCmd               baselineCommand = "Closing Tag"
 	documentHighlightsCmd       baselineCommand = "documentHighlights"
 	findAllReferencesCmd        baselineCommand = "findAllReferences"
+	vsFindAllReferencesCmd      baselineCommand = "vsFindAllReferences"
 	goToDefinitionCmd           baselineCommand = "goToDefinition"
 	goToImplementationCmd       baselineCommand = "goToImplementation"
 	goToSourceDefinitionCmd     baselineCommand = "goToSourceDefinition"
@@ -33,6 +34,7 @@ const (
 	inlayHintsCmd               baselineCommand = "Inlay Hints"
 	nonSuggestionDiagnosticsCmd baselineCommand = "Syntax and Semantic Diagnostics"
 	quickInfoCmd                baselineCommand = "QuickInfo"
+	vsQuickInfoCmd              baselineCommand = "VSQuickInfo"
 	linkedEditingCmd            baselineCommand = "linkedEditing"
 	renameCmd                   baselineCommand = "findRenameLocations"
 	signatureHelpCmd            baselineCommand = "SignatureHelp"
@@ -78,7 +80,7 @@ func getBaselineFileName(t *testing.T, command baselineCommand) string {
 
 func getBaselineExtension(command baselineCommand) string {
 	switch command {
-	case quickInfoCmd, signatureHelpCmd, smartSelectionCmd, inlayHintsCmd, nonSuggestionDiagnosticsCmd, documentSymbolsCmd, closingTagCmd:
+	case quickInfoCmd, vsQuickInfoCmd, signatureHelpCmd, smartSelectionCmd, inlayHintsCmd, nonSuggestionDiagnosticsCmd, documentSymbolsCmd, closingTagCmd, vsFindAllReferencesCmd:
 		return "baseline"
 	case callHierarchyCmd:
 		return "callHierarchy.txt"
@@ -741,7 +743,8 @@ func (f *FourslashTest) getBaselineContentForFile(
 		if options.getLocationData != nil {
 			startMarker += options.getLocationData(span)
 		}
-		details = append(details,
+		details = append(
+			details,
 			&baselineDetail{pos: span.textSpan.Start, positionMarker: startMarker, span: &span, kind: detailKindTextStart},
 			&baselineDetail{pos: span.textSpan.End, positionMarker: core.OrElse(options.endMarker, "|]"), span: &span, kind: detailKindTextEnd},
 		)

@@ -71,6 +71,7 @@ import type {
     FunctionTypeNode,
     GetAccessorDeclaration,
     HeritageClause,
+    HeritageClauseElement,
     Identifier,
     IfStatement,
     ImportAttribute,
@@ -93,6 +94,7 @@ import type {
     JSDocCallbackTag,
     JSDocComment,
     JSDocDeprecatedTag,
+    JSDocFullName,
     JSDocImplementsTag,
     JSDocImportTag,
     JSDocLink,
@@ -256,6 +258,8 @@ import type {
     WithStatement,
     YieldExpression,
 } from "./ast.ts";
+import { getTokenPosOfNode } from "./astnav.ts";
+import { cloneSourceFileData } from "./utils.ts";
 import {
     forEachChildOfJSDocParameterTag,
     forEachChildOfJSDocPropertyTag,
@@ -399,9 +403,6 @@ export class NodeObject {
     }
     get finallyBlock(): any {
         return this._data?.finallyBlock;
-    }
-    get fullName(): any {
-        return this._data?.fullName;
     }
     get head(): any {
         return this._data?.head;
@@ -668,6 +669,39 @@ export class NodeObject {
         let node: Node = this as unknown as Node;
         while (node.parent) node = node.parent;
         return node as unknown as SourceFile;
+    }
+
+    getStart(sourceFile?: SourceFile, includeJsDocComment?: boolean): number {
+        return getTokenPosOfNode(this as unknown as Node, sourceFile ?? this.getSourceFile(), includeJsDocComment);
+    }
+
+    getFullStart(): number {
+        return this.pos;
+    }
+
+    getEnd(): number {
+        return this.end;
+    }
+
+    getWidth(sourceFile?: SourceFile): number {
+        return this.getEnd() - this.getStart(sourceFile);
+    }
+
+    getFullWidth(): number {
+        return this.end - this.pos;
+    }
+
+    getLeadingTriviaWidth(sourceFile?: SourceFile): number {
+        return this.getStart(sourceFile) - this.pos;
+    }
+
+    getFullText(sourceFile?: SourceFile): string {
+        return (sourceFile ?? this.getSourceFile()).text.substring(this.pos, this.end);
+    }
+
+    getText(sourceFile?: SourceFile): string {
+        sourceFile ??= this.getSourceFile();
+        return sourceFile.text.substring(this.getStart(sourceFile), this.end);
     }
 }
 
@@ -1010,7 +1044,7 @@ function cloneNodeData(node: Node): any {
         case SyntaxKind.JSDocImportTag:
             return { tagName: n.tagName, importClause: n.importClause, moduleSpecifier: n.moduleSpecifier, attributes: n.attributes, comment: n.comment };
         case SyntaxKind.JSDocCallbackTag:
-            return { tagName: n.tagName, typeExpression: n.typeExpression, fullName: n.fullName, comment: n.comment };
+            return { tagName: n.tagName, typeExpression: n.typeExpression, name: n.name, comment: n.comment };
         case SyntaxKind.JSDocOverloadTag:
             return { tagName: n.tagName, typeExpression: n.typeExpression, comment: n.comment };
         case SyntaxKind.JSDocTypedefTag:
@@ -1062,7 +1096,7 @@ function cloneNodeData(node: Node): any {
         case SyntaxKind.JSDocPropertyTag:
             return { tagName: n.tagName, name: n.name, isBracketed: n.isBracketed, typeExpression: n.typeExpression, isNameFirst: n.isNameFirst, comment: n.comment };
         case SyntaxKind.SourceFile:
-            return { statements: n.statements, endOfFileToken: n.endOfFileToken, text: n.text, fileName: n.fileName, path: n.path };
+            return cloneSourceFileData(n);
         default:
             return undefined;
     }
@@ -1531,7 +1565,7 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
     [SyntaxKind.JSDocCallbackTag]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.tagName) ||
         visitNode(cbNode, data.typeExpression) ||
-        visitNode(cbNode, data.fullName) ||
+        visitNode(cbNode, data.name) ||
         visitNodes(cbNode, cbNodes, data.comment),
     [SyntaxKind.JSDocOverloadTag]: (data, cbNode, cbNodes) =>
         visitNode(cbNode, data.tagName) ||
@@ -1858,7 +1892,7 @@ export function createClassExpression(modifiers: readonly ModifierLike[] | undef
     }) as unknown as ClassExpression;
 }
 
-export function createHeritageClause(token: SyntaxKind.ExtendsKeyword | SyntaxKind.ImplementsKeyword, types: readonly ExpressionWithTypeArguments[]): HeritageClause {
+export function createHeritageClause(token: SyntaxKind.ExtendsKeyword | SyntaxKind.ImplementsKeyword, types: readonly HeritageClauseElement[]): HeritageClause {
     return new NodeObject(SyntaxKind.HeritageClause, {
         token,
         types: createNodeArray(types),
@@ -2860,11 +2894,11 @@ export function createJSDocImportTag(tagName: Identifier, importClause: ImportCl
     }) as unknown as JSDocImportTag;
 }
 
-export function createJSDocCallbackTag(tagName: Identifier, typeExpression: TypeNode, fullName?: Node, comment?: readonly JSDocComment[]): JSDocCallbackTag {
+export function createJSDocCallbackTag(tagName: Identifier, typeExpression: TypeNode, name?: JSDocFullName, comment?: readonly JSDocComment[]): JSDocCallbackTag {
     return new NodeObject(SyntaxKind.JSDocCallbackTag, {
         tagName,
         typeExpression,
-        fullName,
+        name,
         comment: comment ? createNodeArray(comment) : undefined,
     }) as unknown as JSDocCallbackTag;
 }
@@ -2877,7 +2911,7 @@ export function createJSDocOverloadTag(tagName: Identifier, typeExpression: Type
     }) as unknown as JSDocOverloadTag;
 }
 
-export function createJSDocTypedefTag(tagName: Identifier, typeExpression?: Node, name?: Identifier, comment?: readonly JSDocComment[]): JSDocTypedefTag {
+export function createJSDocTypedefTag(tagName: Identifier, typeExpression?: Node, name?: JSDocFullName, comment?: readonly JSDocComment[]): JSDocTypedefTag {
     return new NodeObject(SyntaxKind.JSDocTypedefTag, {
         tagName,
         typeExpression,
@@ -2954,27 +2988,27 @@ export function createImportSpecifier(isTypeOnly: boolean = false, propertyName:
     }) as unknown as ImportSpecifier;
 }
 
-export function createJSDocText(text: readonly string[]): JSDocText {
+export function createJSDocText(text: string): JSDocText {
     return new NodeObject(SyntaxKind.JSDocText, {
         text,
     }) as unknown as JSDocText;
 }
 
-export function createJSDocLink(name: EntityName | undefined, text: readonly string[]): JSDocLink {
+export function createJSDocLink(name: EntityName | undefined, text: string): JSDocLink {
     return new NodeObject(SyntaxKind.JSDocLink, {
         name,
         text,
     }) as unknown as JSDocLink;
 }
 
-export function createJSDocLinkPlain(name: EntityName | undefined, text: readonly string[]): JSDocLinkPlain {
+export function createJSDocLinkPlain(name: EntityName | undefined, text: string): JSDocLinkPlain {
     return new NodeObject(SyntaxKind.JSDocLinkPlain, {
         name,
         text,
     }) as unknown as JSDocLinkPlain;
 }
 
-export function createJSDocLinkCode(name: EntityName | undefined, text: readonly string[]): JSDocLinkCode {
+export function createJSDocLinkCode(name: EntityName | undefined, text: string): JSDocLinkCode {
     return new NodeObject(SyntaxKind.JSDocLinkCode, {
         name,
         text,
@@ -3183,7 +3217,7 @@ export function updateClassExpression(node: ClassExpression, modifiers: readonly
     return node.modifiers !== modifiers || node.name !== name || node.typeParameters !== typeParameters || node.heritageClauses !== heritageClauses || node.members !== members ? createClassExpression(modifiers, name, typeParameters, heritageClauses, members) : node;
 }
 
-export function updateHeritageClause(node: HeritageClause, types: readonly ExpressionWithTypeArguments[]): HeritageClause {
+export function updateHeritageClause(node: HeritageClause, types: readonly HeritageClauseElement[]): HeritageClause {
     return node.types !== types ? createHeritageClause(node.token, types) : node;
 }
 
@@ -3651,15 +3685,15 @@ export function updateJSDocImportTag(node: JSDocImportTag, tagName: Identifier, 
     return node.tagName !== tagName || node.importClause !== importClause || node.moduleSpecifier !== moduleSpecifier || node.attributes !== attributes || node.comment !== comment ? createJSDocImportTag(tagName, importClause, moduleSpecifier, attributes, comment) : node;
 }
 
-export function updateJSDocCallbackTag(node: JSDocCallbackTag, tagName: Identifier, typeExpression: TypeNode, fullName?: Node, comment?: readonly JSDocComment[]): JSDocCallbackTag {
-    return node.tagName !== tagName || node.typeExpression !== typeExpression || node.fullName !== fullName || node.comment !== comment ? createJSDocCallbackTag(tagName, typeExpression, fullName, comment) : node;
+export function updateJSDocCallbackTag(node: JSDocCallbackTag, tagName: Identifier, typeExpression: TypeNode, name?: JSDocFullName, comment?: readonly JSDocComment[]): JSDocCallbackTag {
+    return node.tagName !== tagName || node.typeExpression !== typeExpression || node.name !== name || node.comment !== comment ? createJSDocCallbackTag(tagName, typeExpression, name, comment) : node;
 }
 
 export function updateJSDocOverloadTag(node: JSDocOverloadTag, tagName: Identifier, typeExpression: TypeNode, comment?: readonly JSDocComment[]): JSDocOverloadTag {
     return node.tagName !== tagName || node.typeExpression !== typeExpression || node.comment !== comment ? createJSDocOverloadTag(tagName, typeExpression, comment) : node;
 }
 
-export function updateJSDocTypedefTag(node: JSDocTypedefTag, tagName: Identifier, typeExpression?: Node, name?: Identifier, comment?: readonly JSDocComment[]): JSDocTypedefTag {
+export function updateJSDocTypedefTag(node: JSDocTypedefTag, tagName: Identifier, typeExpression?: Node, name?: JSDocFullName, comment?: readonly JSDocComment[]): JSDocTypedefTag {
     return node.tagName !== tagName || node.typeExpression !== typeExpression || node.name !== name || node.comment !== comment ? createJSDocTypedefTag(tagName, typeExpression, name, comment) : node;
 }
 
@@ -3761,8 +3795,16 @@ export function createSourceFile(statements: readonly Statement[], endOfFileToke
     }) as unknown as SourceFile;
 }
 
+function cloneSourceFileWithChanges(source: SourceFile, statements: readonly Statement[], endOfFileToken: EndOfFile): SourceFile {
+    return new NodeObject(SyntaxKind.SourceFile, {
+        ...cloneSourceFileData(source),
+        statements: createNodeArray(statements),
+        endOfFileToken,
+    }) as unknown as SourceFile;
+}
+
 export function updateSourceFile(node: SourceFile, statements: readonly Statement[], endOfFileToken: EndOfFile): SourceFile {
     return node.statements !== statements || node.endOfFileToken !== endOfFileToken
-        ? createSourceFile(statements, endOfFileToken, node.text, node.fileName, node.path)
+        ? cloneSourceFileWithChanges(node, statements, endOfFileToken)
         : node;
 }

@@ -25,6 +25,7 @@ func runLSP(args []string) int {
 	_ = pipe
 	socket := flag.String("socket", "", "use socket for communication")
 	_ = socket
+	clientProcessID := flag.Int("clientProcessId", 0, "use the given PID for the parent process watchdog")
 	if err := flag.Parse(args); err != nil {
 		return 2
 	}
@@ -60,10 +61,8 @@ func runLSP(args []string) int {
 			cmd.Dir = cwd
 			return cmd.Output()
 		},
-		ProgressDelay: 250 * time.Millisecond,
-		SetParentProcessID: func(parentPID int) {
-			startParentProcessWatchdog(ctx, stop, parentPID)
-		},
+		ProgressDelay:      250 * time.Millisecond,
+		SetParentProcessID: newParentProcessWatchdog(ctx, stop, *clientProcessID),
 	})
 
 	if err := s.Run(ctx); err != nil {
@@ -71,6 +70,22 @@ func runLSP(args []string) int {
 		return 1
 	}
 	return 0
+}
+
+// newParentProcessWatchdog returns a SetParentProcessID callback if the platform
+// supports process-alive checking and no client process ID override was provided,
+// or nil otherwise.
+func newParentProcessWatchdog(ctx context.Context, stop context.CancelFunc, clientProcessID int) func(int) {
+	if !processAliveSupported {
+		return nil
+	}
+	if clientProcessID > 0 {
+		startParentProcessWatchdog(ctx, stop, clientProcessID)
+		return nil
+	}
+	return func(parentPID int) {
+		startParentProcessWatchdog(ctx, stop, parentPID)
+	}
 }
 
 // startParentProcessWatchdog starts a goroutine that monitors the parent process

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -20,7 +21,8 @@ func TestOrganizeImports_removeUnused_preservesMultiline(t *testing.T) {
 export { a, b, c };`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImports(t,
+	f.VerifyOrganizeImports(
+		t,
 		`import {
     a,
     b,
@@ -45,7 +47,8 @@ func TestOrganizeImports_removeUnused_preservesMultilineWithRemoval(t *testing.T
 export { a, c };`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
-	f.VerifyOrganizeImports(t,
+	f.VerifyOrganizeImports(
+		t,
 		`import {
     a,
     c
@@ -54,5 +57,31 @@ export { a, c };`
 export { a, c };`,
 		lsproto.CodeActionKindSourceRemoveUnusedImports,
 		nil,
+	)
+}
+
+func TestOrganizeImports_removeUnusedUsesLanguageServiceFormatOptions(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `import {
+    a,
+    b,
+    c,
+} from "module";
+
+export { a, c };`
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
+	preferences := lsutil.ParseUserPreferences(map[string]any{
+		"editor": map[string]any{
+			"tabSize":      2,
+			"insertSpaces": false,
+		},
+	})
+	f.VerifyOrganizeImports(
+		t,
+		"import {\n\ta,\n\tc\n} from \"module\";\n\nexport { a, c };",
+		lsproto.CodeActionKindSourceRemoveUnusedImports,
+		&preferences,
 	)
 }

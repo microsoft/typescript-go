@@ -1,25 +1,6 @@
 --- old.instantiationExpressions.types
 +++ new.instantiationExpressions.types
-@@= skipped -1, +1 lines =@@
-
- === instantiationExpressions.ts ===
- declare function fx<T>(x: T): T;
-->fx : { <T>(x: T): T; <T_1>(x: T_1, n: number): T_1; <T_1, U>(t: [T_1, U]): [T_1, U]; }
-+>fx : { <T>(x: T): T; <T>(x: T, n: number): T; <T, U>(t: [T, U]): [T, U]; }
- >x : T
-
- declare function fx<T>(x: T, n: number): T;
-->fx : { <T_1>(x: T_1): T_1; <T>(x: T, n: number): T; <T_1, U>(t: [T_1, U]): [T_1, U]; }
-+>fx : { <T>(x: T): T; <T>(x: T, n: number): T; <T, U>(t: [T, U]): [T, U]; }
- >x : T
- >n : number
-
- declare function fx<T, U>(t: [T, U]): [T, U];
-->fx : { <T_1>(x: T_1): T_1; <T_1>(x: T_1, n: number): T_1; <T, U>(t: [T, U]): [T, U]; }
-+>fx : { <T>(x: T): T; <T>(x: T, n: number): T; <T, U>(t: [T, U]): [T, U]; }
- >t : [T, U]
-
- function f1() {
+@@= skipped -17, +17 lines =@@
  >f1 : () => void
 
      let f0 = fx<>;  // Error
@@ -30,7 +11,7 @@
  >fx : { <T>(x: T): T; <T>(x: T, n: number): T; <T, U>(t: [T, U]): [T, U]; }
 
      let f1 = fx<string>;  // { (x: string): string; (x: string, n: number): string; }
-@@= skipped -37, +37 lines =@@
+@@= skipped -21, +21 lines =@@
  }
 
  type T10 = typeof fx<>;  // Error
@@ -59,3 +40,13 @@
  >Array : ArrayConstructor
 
  type T21 = typeof Array<string>;  // new (...) => string[]
+@@= skipped -275, +275 lines =@@
+ >x : string
+
+     let fs = f<string>;  // ((a: string) => string) | { x: string }
+->fs : { x: string; } | ((a: string) => string)
+->f<string> : { x: string; } | ((a: string) => string)
++>fs : ((a: string) => string) | { x: string; }
++>f<string> : ((a: string) => string) | { x: string; }
+ >f : (<T>(a: T) => T) | { x: string; }
+ }

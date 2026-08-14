@@ -21,15 +21,36 @@ func (b *NodeBuilderImpl) tryJSTypeNodeToTypeNode(node *ast.Node) *ast.Node {
 	return b.reuseNode(node)
 }
 
-// a wrapper around `reuseNode` that handles renaming `new` to `"new"` so we don't accidentally emit constructor signatures when we don't mean to
-func (b *NodeBuilderImpl) reuseName(node *ast.Node) *ast.Node {
+func (b *NodeBuilderImpl) reuseName(node *ast.Node, isMethod bool) *ast.Node {
 	res := b.reuseNode(node)
-	if res != nil && res.Kind == ast.KindIdentifier && node.AsIdentifier().Text == "new" {
-		str := b.f.NewStringLiteral("new", ast.TokenFlagsNone)
-		b.e.SetOriginal(str, res)
-		return b.setTextRange(str, res)
+	if res == nil {
+		return res
 	}
-	return res
+
+	text, ok := ast.TryGetTextOfPropertyName(res)
+	if !ok {
+		return res
+	}
+
+	kind := classifyPropertyName(text, ast.IsStringLiteral(res), isMethod)
+	if ast.IsIdentifier(res) && kind == propertyNameNodeKindIdentifier {
+		return res
+	}
+	if ast.IsStringLiteral(res) && kind == propertyNameNodeKindStringLiteral {
+		return res
+	}
+
+	var renamed *ast.Node
+	switch kind {
+	case propertyNameNodeKindIdentifier:
+		renamed = b.newIdentifier(text, nil)
+	case propertyNameNodeKindStringLiteral:
+		renamed = b.f.NewStringLiteral(text, ast.TokenFlagsNone)
+	default:
+		return res
+	}
+	b.e.SetOriginal(renamed, res)
+	return b.setTextRange(renamed, res)
 }
 
 func (b *NodeBuilderImpl) reuseTypeNode(node *ast.Node) *ast.Node {
@@ -75,13 +96,14 @@ func (b *NodeBuilderImpl) walkNodeForExpandability(node *ast.Node) {
 }
 
 type recoveryBoundary struct {
-	ctx                 *NodeBuilderContext
-	hadError            bool
-	deferredReports     []func()
-	oldTracker          nodebuilder.SymbolTracker
-	oldTrackedSymbols   []*TrackedSymbolArgs
-	trackedSymbols      []*TrackedSymbolArgs
-	oldEncounteredError bool
+	ctx                  *NodeBuilderContext
+	hadError             bool
+	deferredReports      []func()
+	oldTracker           nodebuilder.SymbolTracker
+	oldTrackedSymbols    []*TrackedSymbolArgs
+	trackedSymbols       []*TrackedSymbolArgs
+	oldEncounteredError  bool
+	oldApproximateLength int
 }
 
 func (b *recoveryBoundary) markError(f func()) {
@@ -172,7 +194,7 @@ func newWrappingTracker(inner nodebuilder.SymbolTracker, bound *recoveryBoundary
 
 func (b *NodeBuilderImpl) createRecoveryBoundary() *recoveryBoundary {
 	b.ch.checkNotCanceled()
-	bound := &recoveryBoundary{ctx: b.ctx, oldTracker: b.ctx.tracker, oldTrackedSymbols: b.ctx.trackedSymbols, oldEncounteredError: b.ctx.encounteredError}
+	bound := &recoveryBoundary{ctx: b.ctx, oldTracker: b.ctx.tracker, oldTrackedSymbols: b.ctx.trackedSymbols, oldEncounteredError: b.ctx.encounteredError, oldApproximateLength: b.ctx.approximateLength}
 	newTracker := NewSymbolTrackerImpl(b.ctx, newWrappingTracker(b.ctx.tracker, bound))
 	b.ctx.tracker = newTracker
 	b.ctx.trackedSymbols = nil
@@ -183,6 +205,7 @@ func (b *NodeBuilderImpl) finalizeBoundary(bound *recoveryBoundary) bool {
 	b.ctx.tracker = bound.oldTracker
 	b.ctx.trackedSymbols = bound.oldTrackedSymbols
 	b.ctx.encounteredError = bound.oldEncounteredError
+	b.ctx.approximateLength = bound.oldApproximateLength
 
 	for _, f := range bound.deferredReports {
 		f()
@@ -216,7 +239,7 @@ func (b *NodeBuilderImpl) getModuleSpecifierOverride(parent *ast.Node, lit *ast.
 		}
 		name := lit.Text()
 		originalName := name
-		nodeSymbol := b.ch.symbolNodeLinks.Get(parent).resolvedSymbol
+		nodeSymbol := b.tryGetResolvedSymbolFromTypeNode(parent)
 		meaning := ast.SymbolFlagsType
 		if parent.AsImportTypeNode().IsTypeOf {
 			meaning = ast.SymbolFlagsValue
@@ -394,7 +417,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 		if ast.IsConstTypeReference(node) {
 			return nil
 		}
-		s := b.ch.symbolNodeLinks.Get(node).resolvedSymbol
+		s := b.tryGetResolvedSymbolFromTypeNode(node)
 		if s == nil {
 			return nil // ???
 		}
@@ -404,7 +427,12 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 				return nil // refers to type parameter remapped by context (TODO improvement: just return the remapped param name?)
 			}
 		}
-		// TODO: further bails in JSdoc - not required anymore due to dropped behavior/reparser?
+		if !b.canReuseExistingJSTypeNode(node, b.getTypeFromTypeNode(node, false)) {
+			// fallback to serialization for jsdoc types that have insufficient or incomplete type args, or are remapped by the checker in only jsdoc contexts
+			// TODO: remappings like `promise` -> `Promise<any>` are static, we *could* statically remap the nodes, too. But that only matters for `isolatedDeclarations`
+			// in JS, should we enable that.
+			return nil
+		}
 		introducesError, newName, _ := trackExistingEntityName(node.AsTypeReferenceNode().TypeName, nil)
 		if !introducesError {
 			typeArguments := visitor.VisitNodes(node.AsTypeReferenceNode().TypeArguments)
@@ -480,6 +508,9 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 		if node.Kind == ast.KindJSDocTypeLiteral {
 			var members []*ast.Node
 			for _, t := range node.AsJSDocTypeLiteral().JSDocPropertyTags {
+				if t.Kind != ast.KindJSDocPropertyTag && t.Kind != ast.KindJSDocParameterTag {
+					continue
+				}
 				n := t.Name()
 				var targetName *ast.Node
 				if ast.IsIdentifier(n) {
@@ -777,10 +808,16 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 			return res
 		}
 
-		if ast.IsStringLiteral(node) && b.ctx.flags&nodebuilder.FlagsUseSingleQuotesForStringLiteralType != 0 && node.AsStringLiteral().TokenFlags&ast.TokenFlagsSingleQuote == 0 {
-			// set single quote on string literals
+		if ast.IsStringLiteralLike(node) {
+			// Preserve the original characters of the literal (e.g. emojis) in declaration emit
+			// rather than escaping them as ASCII Unicode escapes. Mirrors TypeScript's behavior
+			// for synthesized string literal types in the node builder (checker.ts:6853).
 			c := node.Clone(b.f)
-			c.AsStringLiteral().TokenFlags ^= ast.TokenFlagsSingleQuote
+			if ast.IsStringLiteral(node) && b.ctx.flags&nodebuilder.FlagsUseSingleQuotesForStringLiteralType != 0 && node.AsStringLiteral().TokenFlags&ast.TokenFlagsSingleQuote == 0 {
+				// set single quote on string literals
+				c.AsStringLiteral().TokenFlags ^= ast.TokenFlagsSingleQuote
+			}
+			b.e.AddEmitFlags(c, printer.EFNoAsciiEscaping)
 			return c
 		}
 
