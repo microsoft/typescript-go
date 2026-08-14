@@ -47,6 +47,7 @@ const (
 	DiagnosticDirectiveErrorKindInvalidRange DiagnosticDirectiveErrorKind = iota
 	DiagnosticDirectiveErrorKindInvalidPolicy
 	DiagnosticDirectiveErrorKindExpectMissingUnusedDiagnostic
+	DiagnosticDirectiveErrorKindInvalidUnusedDiagnosticIndex
 	DiagnosticDirectiveErrorKindOverlap
 )
 

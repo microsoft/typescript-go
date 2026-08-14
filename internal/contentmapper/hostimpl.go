@@ -120,28 +120,76 @@ type MappedOutput struct {
 	Mappings json.Value `json:"mappings,omitempty"`
 	// DiagnosticDirectives describe framework directives that suppress TypeScript diagnostics in
 	// virtual ranges and optionally report an error when no diagnostic is produced.
-	DiagnosticDirectives []MappedDiagnosticDirective `json:"diagnosticDirectives,omitempty"`
+	DiagnosticDirectives *DiagnosticDirectives `json:"diagnosticDirectives,omitempty"`
 }
 
-type DiagnosticDirectivePolicy string
+// DiagnosticDirectivePolicy is the numeric policy stored in a mapped diagnostic directive tuple.
+type DiagnosticDirectivePolicy uint8
 
 const (
-	DiagnosticDirectivePolicyIgnore DiagnosticDirectivePolicy = "ignore"
-	DiagnosticDirectivePolicyExpect DiagnosticDirectivePolicy = "expect"
+	DiagnosticDirectivePolicyIgnore DiagnosticDirectivePolicy = iota
+	DiagnosticDirectivePolicyExpect
 )
 
-type UnusedDirectiveDiagnostic struct {
+type UnusedExpectDirectiveDiagnostic struct {
 	Code        int32  `json:"code"`
 	MessageText string `json:"messageText"`
 }
 
+// DiagnosticDirectives shares unused-expect diagnostics across compact directive tuples.
+type DiagnosticDirectives struct {
+	UnusedExpectDirectiveDiagnostics []UnusedExpectDirectiveDiagnostic `json:"unusedExpectDirectiveDiagnostics"`
+	Directives                       []MappedDiagnosticDirective       `json:"directives"`
+}
+
+// MappedDiagnosticDirective is encoded as
+// [originalStart, originalLength, virtualStart, virtualEnd, policy, unusedExpectDirectiveIndex?].
+// An omitted index selects the only unused-expect diagnostic and is invalid when there is not exactly one.
 type MappedDiagnosticDirective struct {
-	OriginalStart    int                        `json:"originalStart"`
-	OriginalLength   int                        `json:"originalLength"`
-	VirtualStart     int                        `json:"virtualStart"`
-	VirtualLength    int                        `json:"virtualLength"`
-	Policy           DiagnosticDirectivePolicy  `json:"policy"`
-	UnusedDiagnostic *UnusedDirectiveDiagnostic `json:"unusedDiagnostic,omitempty"`
+	OriginalStart              int
+	OriginalLength             int
+	VirtualStart               int
+	VirtualEnd                 int
+	Policy                     DiagnosticDirectivePolicy
+	UnusedExpectDirectiveIndex *int
+}
+
+var (
+	_ json.MarshalerTo     = MappedDiagnosticDirective{}
+	_ json.UnmarshalerFrom = (*MappedDiagnosticDirective)(nil)
+)
+
+func (d MappedDiagnosticDirective) MarshalJSONTo(enc *json.Encoder) error {
+	tuple := []any{d.OriginalStart, d.OriginalLength, d.VirtualStart, d.VirtualEnd, d.Policy}
+	if d.UnusedExpectDirectiveIndex != nil {
+		tuple = append(tuple, *d.UnusedExpectDirectiveIndex)
+	}
+	return json.MarshalEncode(enc, tuple)
+}
+
+func (d *MappedDiagnosticDirective) UnmarshalJSONFrom(dec *json.Decoder) error {
+	var tuple []json.Value
+	if err := json.UnmarshalDecode(dec, &tuple); err != nil {
+		return err
+	}
+	if len(tuple) != 5 && len(tuple) != 6 {
+		return fmt.Errorf("diagnostic directive tuple must contain 5 or 6 elements, got %d", len(tuple))
+	}
+	*d = MappedDiagnosticDirective{}
+	fields := []any{&d.OriginalStart, &d.OriginalLength, &d.VirtualStart, &d.VirtualEnd, &d.Policy}
+	for i, field := range fields {
+		if err := json.Unmarshal(tuple[i], field); err != nil {
+			return fmt.Errorf("invalid diagnostic directive tuple element %d: %w", i, err)
+		}
+	}
+	if len(tuple) == 6 {
+		var index int
+		d.UnusedExpectDirectiveIndex = &index
+		if err := json.Unmarshal(tuple[5], d.UnusedExpectDirectiveIndex); err != nil {
+			return fmt.Errorf("invalid diagnostic directive tuple element 5: %w", err)
+		}
+	}
+	return nil
 }
 
 type SupplementalOutput struct {
@@ -1056,7 +1104,11 @@ func decodeMappedOutput(output MappedOutput, originalText string, positionEncodi
 	return result, originalPositions, nil
 }
 
-func normalizeDiagnosticDirectives(directives []MappedDiagnosticDirective, virtualPositions, originalPositions *positionNormalizer, diagnosticSource string) ([]ast.MappedDiagnosticDirective, error) {
+func normalizeDiagnosticDirectives(diagnosticDirectives *DiagnosticDirectives, virtualPositions, originalPositions *positionNormalizer, diagnosticSource string) ([]ast.MappedDiagnosticDirective, error) {
+	if diagnosticDirectives == nil {
+		return nil, nil
+	}
+	directives := diagnosticDirectives.Directives
 	result := make([]ast.MappedDiagnosticDirective, len(directives))
 	for i, directive := range directives {
 		directiveError := func(kind DiagnosticDirectiveErrorKind) *DiagnosticDirectiveError {
@@ -1071,25 +1123,32 @@ func normalizeDiagnosticDirectives(directives []MappedDiagnosticDirective, virtu
 		case DiagnosticDirectivePolicyIgnore:
 			normalized.Policy = ast.MappedDiagnosticDirectivePolicyIgnore
 		case DiagnosticDirectivePolicyExpect:
-			if directive.UnusedDiagnostic == nil {
+			unusedDiagnosticIndex := 0
+			if directive.UnusedExpectDirectiveIndex != nil {
+				unusedDiagnosticIndex = *directive.UnusedExpectDirectiveIndex
+			} else if len(diagnosticDirectives.UnusedExpectDirectiveDiagnostics) != 1 {
 				return nil, directiveError(DiagnosticDirectiveErrorKindExpectMissingUnusedDiagnostic)
 			}
+			if unusedDiagnosticIndex < 0 || unusedDiagnosticIndex >= len(diagnosticDirectives.UnusedExpectDirectiveDiagnostics) {
+				return nil, directiveError(DiagnosticDirectiveErrorKindInvalidUnusedDiagnosticIndex)
+			}
+			unusedDiagnostic := diagnosticDirectives.UnusedExpectDirectiveDiagnostics[unusedDiagnosticIndex]
 			normalized.Policy = ast.MappedDiagnosticDirectivePolicyExpect
-			normalized.UnusedCode = directive.UnusedDiagnostic.Code
-			normalized.UnusedMessageText = directive.UnusedDiagnostic.MessageText
+			normalized.UnusedCode = unusedDiagnostic.Code
+			normalized.UnusedMessageText = unusedDiagnostic.MessageText
 		default:
 			validationError := directiveError(DiagnosticDirectiveErrorKindInvalidPolicy)
 			validationError.Policy = directive.Policy
 			return nil, validationError
 		}
-		if directive.VirtualStart < 0 || directive.VirtualLength < 0 || directive.VirtualStart > int(^uint(0)>>1)-directive.VirtualLength {
+		if directive.VirtualStart < 0 || directive.VirtualEnd < directive.VirtualStart {
 			return nil, directiveError(DiagnosticDirectiveErrorKindInvalidRange)
 		}
 		virtualStart, err := virtualPositions.normalize(directive.VirtualStart)
 		if err != nil {
 			return nil, directiveError(DiagnosticDirectiveErrorKindInvalidRange)
 		}
-		virtualEnd, err := virtualPositions.normalize(directive.VirtualStart + directive.VirtualLength)
+		virtualEnd, err := virtualPositions.normalize(directive.VirtualEnd)
 		if err != nil {
 			return nil, directiveError(DiagnosticDirectiveErrorKindInvalidRange)
 		}

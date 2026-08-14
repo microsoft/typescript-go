@@ -85,6 +85,13 @@ type unicodeMapper struct {
 	source   *string
 }
 
+func protocolDiagnosticDirectives(directives []contentmapper.MappedDiagnosticDirective, unused ...contentmapper.UnusedExpectDirectiveDiagnostic) *contentmapper.DiagnosticDirectives {
+	return &contentmapper.DiagnosticDirectives{
+		UnusedExpectDirectiveDiagnostics: unused,
+		Directives:                       directives,
+	}
+}
+
 func (m unicodeMapper) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
 	case contentmapper.MethodInitialize:
@@ -127,13 +134,13 @@ func (m unicodeMapper) HandleRequest(ctx context.Context, method string, params 
 				Text:      p.Content,
 				Extension: ".ts",
 				Mappings:  mappings,
-				DiagnosticDirectives: []contentmapper.MappedDiagnosticDirective{{
+				DiagnosticDirectives: protocolDiagnosticDirectives([]contentmapper.MappedDiagnosticDirective{{
 					OriginalStart:  emojiLength,
 					OriginalLength: textLength - emojiLength,
 					VirtualStart:   emojiLength,
-					VirtualLength:  textLength - emojiLength,
+					VirtualEnd:     textLength,
 					Policy:         contentmapper.DiagnosticDirectivePolicyIgnore,
-				}},
+				}}),
 			},
 			Diagnostics: []contentmapper.Diagnostic{{
 				MessageText: "after non-ASCII character",
@@ -316,17 +323,13 @@ func TestRunnerTransformDiagnosticDirectives(t *testing.T) {
 
 	result, err := transform(contentmapper.MappedOutput{
 		Text: "virtual source", Extension: ".ts",
-		DiagnosticDirectives: []contentmapper.MappedDiagnosticDirective{{
+		DiagnosticDirectives: protocolDiagnosticDirectives([]contentmapper.MappedDiagnosticDirective{{
 			OriginalStart:  0,
 			OriginalLength: 9,
 			VirtualStart:   8,
-			VirtualLength:  6,
+			VirtualEnd:     14,
 			Policy:         contentmapper.DiagnosticDirectivePolicyExpect,
-			UnusedDiagnostic: &contentmapper.UnusedDirectiveDiagnostic{
-				Code:        2578,
-				MessageText: "Unused framework directive.",
-			},
-		}},
+		}}, contentmapper.UnusedExpectDirectiveDiagnostic{Code: 2578, MessageText: "Unused framework directive."}),
 	})
 	assert.NilError(t, err)
 	assert.Equal(t, len(result.DiagnosticDirectives), 1)
@@ -339,13 +342,29 @@ func TestRunnerTransformDiagnosticDirectives(t *testing.T) {
 	assert.Equal(t, directive.UnusedCode, int32(2578))
 	assert.Equal(t, directive.UnusedMessageText, "Unused framework directive.")
 	assert.Equal(t, directive.Source, "mapper")
+	unusedIndex := 1
+	result, err = transform(contentmapper.MappedOutput{
+		Text: "virtual source", Extension: ".ts",
+		DiagnosticDirectives: protocolDiagnosticDirectives([]contentmapper.MappedDiagnosticDirective{{
+			OriginalLength:             9,
+			VirtualStart:               8,
+			VirtualEnd:                 14,
+			Policy:                     contentmapper.DiagnosticDirectivePolicyExpect,
+			UnusedExpectDirectiveIndex: &unusedIndex,
+		}},
+			contentmapper.UnusedExpectDirectiveDiagnostic{Code: 1, MessageText: "first"},
+			contentmapper.UnusedExpectDirectiveDiagnostic{Code: 2, MessageText: "second"},
+		),
+	})
+	assert.NilError(t, err)
+	assert.Equal(t, result.DiagnosticDirectives[0].UnusedCode, int32(2))
+	assert.Equal(t, result.DiagnosticDirectives[0].UnusedMessageText, "second")
 	_, err = transform(contentmapper.MappedOutput{
 		Text: "x", Extension: ".ts",
-		DiagnosticDirectives: []contentmapper.MappedDiagnosticDirective{{
-			OriginalStart:    -1,
-			Policy:           contentmapper.DiagnosticDirectivePolicyIgnore,
-			UnusedDiagnostic: &contentmapper.UnusedDirectiveDiagnostic{},
-		}},
+		DiagnosticDirectives: protocolDiagnosticDirectives([]contentmapper.MappedDiagnosticDirective{{
+			OriginalStart: -1,
+			Policy:        contentmapper.DiagnosticDirectivePolicyIgnore,
+		}}, contentmapper.UnusedExpectDirectiveDiagnostic{}),
 	})
 	assert.NilError(t, err)
 
@@ -368,7 +387,7 @@ func TestRunnerTransformDiagnosticDirectives(t *testing.T) {
 			name: "unknown policy",
 			text: "x",
 			directives: []contentmapper.MappedDiagnosticDirective{{
-				Policy: "unknown",
+				Policy: 2,
 			}},
 			kind: contentmapper.DiagnosticDirectiveErrorKindInvalidPolicy,
 		},
@@ -381,12 +400,19 @@ func TestRunnerTransformDiagnosticDirectives(t *testing.T) {
 			kind: contentmapper.DiagnosticDirectiveErrorKindExpectMissingUnusedDiagnostic,
 		},
 		{
+			name: "multiple unused diagnostics require index",
+			text: "x",
+			directives: []contentmapper.MappedDiagnosticDirective{{
+				Policy: contentmapper.DiagnosticDirectivePolicyExpect,
+			}},
+			kind: contentmapper.DiagnosticDirectiveErrorKindExpectMissingUnusedDiagnostic,
+		},
+		{
 			name: "original range out of bounds",
 			text: "x",
 			directives: []contentmapper.MappedDiagnosticDirective{{
-				OriginalStart:    99,
-				Policy:           contentmapper.DiagnosticDirectivePolicyExpect,
-				UnusedDiagnostic: &contentmapper.UnusedDirectiveDiagnostic{},
+				OriginalStart: 99,
+				Policy:        contentmapper.DiagnosticDirectivePolicyExpect,
 			}},
 			kind: contentmapper.DiagnosticDirectiveErrorKindInvalidRange,
 		},
@@ -403,8 +429,8 @@ func TestRunnerTransformDiagnosticDirectives(t *testing.T) {
 			name: "overlap",
 			text: "abc",
 			directives: []contentmapper.MappedDiagnosticDirective{
-				{VirtualLength: 2, Policy: contentmapper.DiagnosticDirectivePolicyIgnore},
-				{VirtualStart: 1, VirtualLength: 2, Policy: contentmapper.DiagnosticDirectivePolicyIgnore},
+				{VirtualEnd: 2, Policy: contentmapper.DiagnosticDirectivePolicyIgnore},
+				{VirtualStart: 1, VirtualEnd: 3, Policy: contentmapper.DiagnosticDirectivePolicyIgnore},
 			},
 			kind: contentmapper.DiagnosticDirectiveErrorKindOverlap,
 		},
@@ -412,12 +438,85 @@ func TestRunnerTransformDiagnosticDirectives(t *testing.T) {
 	for _, test := range invalid {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
-			_, transformErr := transform(contentmapper.MappedOutput{Text: test.text, Extension: ".ts", DiagnosticDirectives: test.directives})
+			diagnosticDirectives := protocolDiagnosticDirectives(test.directives)
+			if test.name == "original range out of bounds" {
+				diagnosticDirectives.UnusedExpectDirectiveDiagnostics = []contentmapper.UnusedExpectDirectiveDiagnostic{{}}
+			} else if test.name == "multiple unused diagnostics require index" {
+				diagnosticDirectives.UnusedExpectDirectiveDiagnostics = []contentmapper.UnusedExpectDirectiveDiagnostic{{}, {}}
+			}
+			_, transformErr := transform(contentmapper.MappedOutput{Text: test.text, Extension: ".ts", DiagnosticDirectives: diagnosticDirectives})
 			directiveError, ok := errors.AsType[*contentmapper.DiagnosticDirectiveError](transformErr)
 			assert.Assert(t, ok)
 			assert.Equal(t, directiveError.Kind, test.kind)
 		})
 	}
+}
+
+func TestMappedDiagnosticDirectiveJSON(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name      string
+		directive contentmapper.MappedDiagnosticDirective
+		want      string
+	}{
+		{
+			name: "ignore",
+			directive: contentmapper.MappedDiagnosticDirective{
+				VirtualStart: 8, VirtualEnd: 14,
+				OriginalStart: 0, OriginalLength: 9,
+				Policy: contentmapper.DiagnosticDirectivePolicyIgnore,
+			},
+			want: `[0,9,8,14,0]`,
+		},
+		{
+			name: "expect",
+			directive: contentmapper.MappedDiagnosticDirective{
+				VirtualStart: 8, VirtualEnd: 14,
+				OriginalStart: 0, OriginalLength: 9,
+				Policy: contentmapper.DiagnosticDirectivePolicyExpect,
+			},
+			want: `[0,9,8,14,1]`,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			data, err := json.Marshal(test.directive)
+			assert.NilError(t, err)
+			assert.Equal(t, string(data), test.want)
+			var decoded contentmapper.MappedDiagnosticDirective
+			assert.NilError(t, json.Unmarshal(data, &decoded))
+			assert.DeepEqual(t, decoded, test.directive)
+		})
+	}
+
+	for _, data := range []string{
+		`[0,0,0,0]`,
+		`[0,0,0,0,0,1,2]`,
+	} {
+		var directive contentmapper.MappedDiagnosticDirective
+		assert.ErrorContains(t, json.Unmarshal([]byte(data), &directive), "diagnostic directive tuple")
+	}
+
+	unusedIndex := 1
+	diagnosticDirectives := contentmapper.DiagnosticDirectives{
+		UnusedExpectDirectiveDiagnostics: []contentmapper.UnusedExpectDirectiveDiagnostic{
+			{Code: 1, MessageText: "first"},
+			{Code: 2, MessageText: "second"},
+		},
+		Directives: []contentmapper.MappedDiagnosticDirective{{
+			OriginalStart: 2, OriginalLength: 3,
+			VirtualStart: 5, VirtualEnd: 9,
+			Policy:                     contentmapper.DiagnosticDirectivePolicyExpect,
+			UnusedExpectDirectiveIndex: &unusedIndex,
+		}},
+	}
+	data, err := json.Marshal(diagnosticDirectives)
+	assert.NilError(t, err)
+	assert.Equal(t, string(data), `{"unusedExpectDirectiveDiagnostics":[{"code":1,"messageText":"first"},{"code":2,"messageText":"second"}],"directives":[[2,3,5,9,1,1]]}`)
+	var decoded contentmapper.DiagnosticDirectives
+	assert.NilError(t, json.Unmarshal(data, &decoded))
+	assert.DeepEqual(t, decoded, diagnosticDirectives)
 }
 
 func TestRunnerTransformSupplementalOutputs(t *testing.T) {
@@ -428,10 +527,10 @@ func TestRunnerTransformSupplementalOutputs(t *testing.T) {
 			Supplemental: []contentmapper.SupplementalOutput{
 				{MappedOutput: contentmapper.MappedOutput{
 					Text: "declare const first: string;", Extension: ".ts",
-					DiagnosticDirectives: []contentmapper.MappedDiagnosticDirective{{
-						VirtualLength: 7,
-						Policy:        contentmapper.DiagnosticDirectivePolicyIgnore,
-					}},
+					DiagnosticDirectives: protocolDiagnosticDirectives([]contentmapper.MappedDiagnosticDirective{{
+						VirtualEnd: 7,
+						Policy:     contentmapper.DiagnosticDirectivePolicyIgnore,
+					}}),
 				}},
 				{MappedOutput: contentmapper.MappedOutput{Text: "declare const second: number;", Extension: ".mjs"}},
 			},
@@ -461,9 +560,9 @@ func TestRunnerTransformInvalidSupplementalDiagnosticDirective(t *testing.T) {
 				{
 					MappedOutput: contentmapper.MappedOutput{
 						Text: "export {};", Extension: ".ts",
-						DiagnosticDirectives: []contentmapper.MappedDiagnosticDirective{{
+						DiagnosticDirectives: protocolDiagnosticDirectives([]contentmapper.MappedDiagnosticDirective{{
 							Policy: contentmapper.DiagnosticDirectivePolicyExpect,
-						}},
+						}}),
 					},
 				},
 			},

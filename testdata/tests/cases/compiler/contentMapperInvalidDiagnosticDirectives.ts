@@ -13,6 +13,7 @@
         { "package": "mapper", "extensions": [".invalidrange"] },
         { "package": "mapper", "extensions": [".invalidpolicy"] },
         { "package": "mapper", "extensions": [".expectmissing"] },
+        { "package": "mapper", "extensions": [".invalidunusedindex"] },
         { "package": "mapper", "extensions": [".overlap"] }
     ]
 }
@@ -35,6 +36,9 @@
 
 // @Filename: /expectWithoutUnusedDiagnostic.expectmissing
 // @box-invalid-directive: expect-without-unused-diagnostic
+
+// @Filename: /invalidUnusedDiagnosticIndex.invalidunusedindex
+// @box-invalid-directive: invalid-unused-diagnostic-index
 
 // @Filename: /overlap.overlap
 // @box-invalid-directive: overlap

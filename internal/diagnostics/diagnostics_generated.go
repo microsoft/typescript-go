@@ -4398,11 +4398,13 @@ var Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_range =
 
 var The_content_mapper_returned_a_diagnostic_directive_with_invalid_policy_0 = &Message{code: 100072, category: CategoryMessage, key: "The_content_mapper_returned_a_diagnostic_directive_with_invalid_policy_0_100072", text: "The content mapper returned a diagnostic directive with invalid policy '{0}'."}
 
-var Diagnostic_directive_0_returned_by_the_content_mapper_has_policy_expect_and_must_provide_unusedDiagnostic = &Message{code: 100074, category: CategoryMessage, key: "Diagnostic_directive_0_returned_by_the_content_mapper_has_policy_expect_and_must_provide_unusedDiagn_100074", text: "Diagnostic directive {0} returned by the content mapper has policy 'expect' and must provide 'unusedDiagnostic'."}
+var Diagnostic_directive_0_returned_by_the_content_mapper_must_specify_unusedExpectDirectiveIndex_when_there_is_not_exactly_one_unusedExpectDirectiveDiagnostics_entry = &Message{code: 100074, category: CategoryMessage, key: "Diagnostic_directive_0_returned_by_the_content_mapper_must_specify_unusedExpectDirectiveIndex_when_t_100074", text: "Diagnostic directive {0} returned by the content mapper must specify 'unusedExpectDirectiveIndex' when there is not exactly one 'unusedExpectDirectiveDiagnostics' entry."}
 
 var The_content_mapper_returned_diagnostic_directives_with_overlapping_virtual_ranges = &Message{code: 100075, category: CategoryMessage, key: "The_content_mapper_returned_diagnostic_directives_with_overlapping_virtual_ranges_100075", text: "The content mapper returned diagnostic directives with overlapping virtual ranges."}
 
 var The_invalid_diagnostic_directive_is_in_supplemental_output_0_returned_by_the_content_mapper = &Message{code: 100076, category: CategoryMessage, key: "The_invalid_diagnostic_directive_is_in_supplemental_output_0_returned_by_the_content_mapper_100076", text: "The invalid diagnostic directive is in supplemental output {0} returned by the content mapper."}
+
+var Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_unusedExpectDirectiveIndex = &Message{code: 100077, category: CategoryMessage, key: "Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_unusedExpectDirectiveIndex_100077", text: "Diagnostic directive {0} returned by the content mapper has an invalid 'unusedExpectDirectiveIndex'."}
 
 func keyToMessage(key Key) *Message {
 	switch key {
@@ -8802,12 +8804,14 @@ func keyToMessage(key Key) *Message {
 		return Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_range
 	case "The_content_mapper_returned_a_diagnostic_directive_with_invalid_policy_0_100072":
 		return The_content_mapper_returned_a_diagnostic_directive_with_invalid_policy_0
-	case "Diagnostic_directive_0_returned_by_the_content_mapper_has_policy_expect_and_must_provide_unusedDiagn_100074":
-		return Diagnostic_directive_0_returned_by_the_content_mapper_has_policy_expect_and_must_provide_unusedDiagnostic
+	case "Diagnostic_directive_0_returned_by_the_content_mapper_must_specify_unusedExpectDirectiveIndex_when_t_100074":
+		return Diagnostic_directive_0_returned_by_the_content_mapper_must_specify_unusedExpectDirectiveIndex_when_there_is_not_exactly_one_unusedExpectDirectiveDiagnostics_entry
 	case "The_content_mapper_returned_diagnostic_directives_with_overlapping_virtual_ranges_100075":
 		return The_content_mapper_returned_diagnostic_directives_with_overlapping_virtual_ranges
 	case "The_invalid_diagnostic_directive_is_in_supplemental_output_0_returned_by_the_content_mapper_100076":
 		return The_invalid_diagnostic_directive_is_in_supplemental_output_0_returned_by_the_content_mapper
+	case "Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_unusedExpectDirectiveIndex_100077":
+		return Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_unusedExpectDirectiveIndex
 	default:
 		return nil
 	}

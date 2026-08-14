@@ -57,7 +57,7 @@ func mappedExtension(content string) string {
 	return ".ts"
 }
 
-func transform(content string, options *collections.OrderedMap[string, json.Value]) (string, json.Value, []contentmapper.Diagnostic, []contentmapper.MappedDiagnosticDirective, error) {
+func transform(content string, options *collections.OrderedMap[string, json.Value]) (string, json.Value, []contentmapper.Diagnostic, *contentmapper.DiagnosticDirectives, error) {
 	var virtual strings.Builder
 	var segments []spanmap.Segment
 	var diagnostics []contentmapper.Diagnostic
@@ -135,32 +135,42 @@ func transform(content string, options *collections.OrderedMap[string, json.Valu
 	return virtual.String(), json.Value(mappings), diagnostics, diagnosticDirectives(content, spanMap), nil
 }
 
-func diagnosticDirectives(content string, mappings *spanmap.SpanMap) []contentmapper.MappedDiagnosticDirective {
+func diagnosticDirectives(content string, mappings *spanmap.SpanMap) *contentmapper.DiagnosticDirectives {
+	wrap := func(directives []contentmapper.MappedDiagnosticDirective, unused ...contentmapper.UnusedExpectDirectiveDiagnostic) *contentmapper.DiagnosticDirectives {
+		return &contentmapper.DiagnosticDirectives{UnusedExpectDirectiveDiagnostics: unused, Directives: directives}
+	}
 	const invalidPrefix = "// @box-invalid-directive:"
 	if strings.HasPrefix(content, invalidPrefix) {
 		switch strings.TrimSpace(strings.TrimPrefix(strings.SplitN(content, "\n", 2)[0], invalidPrefix)) {
 		case "invalid-range":
-			return []contentmapper.MappedDiagnosticDirective{{VirtualStart: -1, Policy: contentmapper.DiagnosticDirectivePolicyIgnore}}
+			return wrap([]contentmapper.MappedDiagnosticDirective{{VirtualStart: -1, Policy: contentmapper.DiagnosticDirectivePolicyIgnore}})
 		case "original-range-out-of-bounds":
-			return []contentmapper.MappedDiagnosticDirective{{OriginalStart: len(content) + 1, Policy: contentmapper.DiagnosticDirectivePolicyIgnore}}
+			return wrap([]contentmapper.MappedDiagnosticDirective{{OriginalStart: len(content) + 1, Policy: contentmapper.DiagnosticDirectivePolicyIgnore}})
 		case "virtual-range-out-of-bounds":
-			return []contentmapper.MappedDiagnosticDirective{{VirtualStart: 1 << 20, Policy: contentmapper.DiagnosticDirectivePolicyIgnore}}
+			return wrap([]contentmapper.MappedDiagnosticDirective{{VirtualStart: 1 << 20, VirtualEnd: 1 << 20, Policy: contentmapper.DiagnosticDirectivePolicyIgnore}})
 		case "invalid-policy":
-			return []contentmapper.MappedDiagnosticDirective{{Policy: "invalid"}}
+			return wrap([]contentmapper.MappedDiagnosticDirective{{Policy: 2}})
 		case "ignore-with-unused-diagnostic":
-			return []contentmapper.MappedDiagnosticDirective{{Policy: contentmapper.DiagnosticDirectivePolicyIgnore, UnusedDiagnostic: &contentmapper.UnusedDirectiveDiagnostic{}}}
+			return wrap([]contentmapper.MappedDiagnosticDirective{{Policy: contentmapper.DiagnosticDirectivePolicyIgnore}}, contentmapper.UnusedExpectDirectiveDiagnostic{})
 		case "expect-without-unused-diagnostic":
-			return []contentmapper.MappedDiagnosticDirective{{Policy: contentmapper.DiagnosticDirectivePolicyExpect}}
+			return wrap([]contentmapper.MappedDiagnosticDirective{{Policy: contentmapper.DiagnosticDirectivePolicyExpect}})
+		case "invalid-unused-diagnostic-index":
+			index := 1
+			return wrap(
+				[]contentmapper.MappedDiagnosticDirective{{Policy: contentmapper.DiagnosticDirectivePolicyExpect, UnusedExpectDirectiveIndex: &index}},
+				contentmapper.UnusedExpectDirectiveDiagnostic{},
+			)
 		case "overlap":
-			return []contentmapper.MappedDiagnosticDirective{
-				{VirtualLength: 2, Policy: contentmapper.DiagnosticDirectivePolicyIgnore},
-				{VirtualStart: 1, VirtualLength: 2, Policy: contentmapper.DiagnosticDirectivePolicyIgnore},
-			}
+			return wrap([]contentmapper.MappedDiagnosticDirective{
+				{VirtualEnd: 2, Policy: contentmapper.DiagnosticDirectivePolicyIgnore},
+				{VirtualStart: 1, VirtualEnd: 3, Policy: contentmapper.DiagnosticDirectivePolicyIgnore},
+			})
 		}
 	}
 	const ignorePrefix = "// @box-ignore"
 	const expectPrefix = "// @box-expect-error"
 	var result []contentmapper.MappedDiagnosticDirective
+	var unusedDiagnostics []contentmapper.UnusedExpectDirectiveDiagnostic
 	for lineStart := 0; lineStart < len(content); {
 		lineEnd := strings.IndexByte(content[lineStart:], '\n')
 		if lineEnd < 0 {
@@ -170,19 +180,23 @@ func diagnosticDirectives(content string, mappings *spanmap.SpanMap) []contentma
 		}
 		line := content[lineStart:lineEnd]
 		trimmed := strings.TrimSpace(line)
-		policy := contentmapper.DiagnosticDirectivePolicy("")
-		var unused *contentmapper.UnusedDirectiveDiagnostic
+		var policy contentmapper.DiagnosticDirectivePolicy
+		hasPolicy := false
+		unusedDiagnosticIndex := -1
 		switch {
 		case trimmed == ignorePrefix:
 			policy = contentmapper.DiagnosticDirectivePolicyIgnore
+			hasPolicy = true
 		case strings.HasPrefix(trimmed, expectPrefix+":"):
 			policy = contentmapper.DiagnosticDirectivePolicyExpect
-			unused = &contentmapper.UnusedDirectiveDiagnostic{
+			hasPolicy = true
+			unusedDiagnosticIndex = len(unusedDiagnostics)
+			unusedDiagnostics = append(unusedDiagnostics, contentmapper.UnusedExpectDirectiveDiagnostic{
 				Code:        2578,
 				MessageText: strings.TrimSpace(strings.TrimPrefix(trimmed, expectPrefix+":")),
-			}
+			})
 		}
-		if policy != "" && lineEnd < len(content) {
+		if hasPolicy && lineEnd < len(content) {
 			affectedStart := lineEnd + 1
 			affectedLength := strings.IndexByte(content[affectedStart:], '\n')
 			if affectedLength < 0 {
@@ -190,14 +204,17 @@ func diagnosticDirectives(content string, mappings *spanmap.SpanMap) []contentma
 			}
 			virtualSpans := mappings.OriginalToVirtualSpans(core.NewTextRange(affectedStart, affectedStart+affectedLength), spanmap.FeatureAll)
 			if len(virtualSpans) == 1 {
-				result = append(result, contentmapper.MappedDiagnosticDirective{
-					OriginalStart:    lineStart,
-					OriginalLength:   lineEnd - lineStart,
-					VirtualStart:     virtualSpans[0].Span.Pos(),
-					VirtualLength:    virtualSpans[0].Span.Len(),
-					Policy:           policy,
-					UnusedDiagnostic: unused,
-				})
+				directive := contentmapper.MappedDiagnosticDirective{
+					OriginalStart:  lineStart,
+					OriginalLength: lineEnd - lineStart,
+					VirtualStart:   virtualSpans[0].Span.Pos(),
+					VirtualEnd:     virtualSpans[0].Span.End(),
+					Policy:         policy,
+				}
+				if unusedDiagnosticIndex >= 0 {
+					directive.UnusedExpectDirectiveIndex = &unusedDiagnosticIndex
+				}
+				result = append(result, directive)
 			}
 		}
 		if lineEnd == len(content) {
@@ -205,7 +222,15 @@ func diagnosticDirectives(content string, mappings *spanmap.SpanMap) []contentma
 		}
 		lineStart = lineEnd + 1
 	}
-	return result
+	if len(unusedDiagnostics) == 1 {
+		for i := range result {
+			result[i].UnusedExpectDirectiveIndex = nil
+		}
+	}
+	if len(result) == 0 && len(unusedDiagnostics) == 0 {
+		return nil
+	}
+	return wrap(result, unusedDiagnostics...)
 }
 
 func renderOption(options *collections.OrderedMap[string, json.Value], name string) string {

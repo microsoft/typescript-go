@@ -480,7 +480,9 @@ func contentMapperTransformDiagnostic(file *ast.SourceFile, label string, err er
 				case contentmapper.DiagnosticDirectiveErrorKindInvalidPolicy:
 					detail = ast.NewCompilerDiagnostic(diagnostics.The_content_mapper_returned_a_diagnostic_directive_with_invalid_policy_0, directiveError.Policy)
 				case contentmapper.DiagnosticDirectiveErrorKindExpectMissingUnusedDiagnostic:
-					detail = ast.NewCompilerDiagnostic(diagnostics.Diagnostic_directive_0_returned_by_the_content_mapper_has_policy_expect_and_must_provide_unusedDiagnostic, directiveError.Index)
+					detail = ast.NewCompilerDiagnostic(diagnostics.Diagnostic_directive_0_returned_by_the_content_mapper_must_specify_unusedExpectDirectiveIndex_when_there_is_not_exactly_one_unusedExpectDirectiveDiagnostics_entry, directiveError.Index)
+				case contentmapper.DiagnosticDirectiveErrorKindInvalidUnusedDiagnosticIndex:
+					detail = ast.NewCompilerDiagnostic(diagnostics.Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_unusedExpectDirectiveIndex, directiveError.Index)
 				case contentmapper.DiagnosticDirectiveErrorKindOverlap:
 					detail = ast.NewCompilerDiagnostic(diagnostics.The_content_mapper_returned_diagnostic_directives_with_overlapping_virtual_ranges)
 				}

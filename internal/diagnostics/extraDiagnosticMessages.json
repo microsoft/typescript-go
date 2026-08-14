@@ -311,7 +311,7 @@
         "category": "Message",
         "code": 100072
     },
-    "Diagnostic directive {0} returned by the content mapper has policy 'expect' and must provide 'unusedDiagnostic'.": {
+    "Diagnostic directive {0} returned by the content mapper must specify 'unusedExpectDirectiveIndex' when there is not exactly one 'unusedExpectDirectiveDiagnostics' entry.": {
         "category": "Message",
         "code": 100074
     },
@@ -322,5 +322,9 @@
     "The invalid diagnostic directive is in supplemental output {0} returned by the content mapper.": {
         "category": "Message",
         "code": 100076
+    },
+    "Diagnostic directive {0} returned by the content mapper has an invalid 'unusedExpectDirectiveIndex'.": {
+        "category": "Message",
+        "code": 100077
     }
 }

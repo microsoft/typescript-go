@@ -13,6 +13,11 @@
 // @box-invalid-directive: expect-without-unused-diagnostic
 --- Transformed ---
 
+//// [/invalidUnusedDiagnosticIndex.invalidunusedindex] (ScriptKind: ScriptKindTS, ContentMapper: [.invalidunusedindex])
+--- Original ---
+// @box-invalid-directive: invalid-unused-diagnostic-index
+--- Transformed ---
+
 //// [/overlap.overlap] (ScriptKind: ScriptKindTS, ContentMapper: [.overlap])
 --- Original ---
 // @box-invalid-directive: overlap
@@ -21,19 +26,25 @@
 === Diagnostics ===
 
 /expectWithoutUnusedDiagnostic.expectmissing:1:1 - error TS100025: The content mapper 'mapper' failed to transform this file.
-  Diagnostic directive 0 returned by the content mapper has policy 'expect' and must provide 'unusedDiagnostic'.
+  Diagnostic directive 0 returned by the content mapper must specify 'unusedExpectDirectiveIndex' when there is not exactly one 'unusedExpectDirectiveDiagnostics' entry.
 
 1 
   ~
 
 /invalidPolicy.invalidpolicy:1:1 - error TS100025: The content mapper 'mapper' failed to transform this file.
-  The content mapper returned a diagnostic directive with invalid policy 'invalid'.
+  The content mapper returned a diagnostic directive with invalid policy '2'.
 
 1 
   ~
 
 /invalidRange.invalidrange:1:1 - error TS100025: The content mapper 'mapper' failed to transform this file.
   Diagnostic directive 0 returned by the content mapper has an invalid range.
+
+1 
+  ~
+
+/invalidUnusedDiagnosticIndex.invalidunusedindex:1:1 - error TS100025: The content mapper 'mapper' failed to transform this file.
+  Diagnostic directive 0 returned by the content mapper has an invalid 'unusedExpectDirectiveIndex'.
 
 1 
   ~
