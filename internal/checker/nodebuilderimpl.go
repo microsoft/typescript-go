@@ -2222,7 +2222,7 @@ func (b *NodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 		}
 		reportErrors := !b.ctx.suppressReportInferenceFallback
 		if ast.IsVariableDeclaration(declaration) && !ast.IsVarConstLike(declaration) && ast.HasInitializer(declaration) && t == b.ch.autoType {
-			// In the case of an autoType variable declaration (let v = null), we should still prefer the pseudotype derived from the AST for the .d.ts purposes.
+			// For autoType variable declarations initialized with null or undefined, prefer the pseudotype derived from the AST for .d.ts emit.
 			result = b.pseudoTypeToNode(pt)
 		} else if b.pseudoTypeEquivalentToType(pt, t, !requiresAddingUndefined && (ast.IsParameterDeclaration(declaration) || ast.IsPropertySignatureDeclaration(declaration) || ast.IsPropertyDeclaration(declaration)) && isOptionalDeclaration(declaration), reportErrors) {
 			// !!! TODO: If annotated type node is a reference with insufficient type arguments, we should still fall back to type serialization
