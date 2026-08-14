@@ -76,7 +76,6 @@ export const pi = 3;
 
 
 //// [topComment-js.d.ts]
-/** Comment on nothing */
 export declare const pi = 3;
 //// [nonTopComment-js.d.ts]
 export declare const e = 3;
@@ -87,14 +86,11 @@ export declare const pi = 3;
 //// [elidedDeclarationComment-js.d.ts]
 export declare const pi = 3;
 //// [topComment-exports.d.ts]
-/** Comment on nothing */
 export declare var pi: 3;
 //// [topComment-moduleExports.d.ts]
-/** Comment on nothing */
 declare const _exports = 3;
 export = _exports;
 //// [topComment-ts.d.ts]
-/** Comment on nothing */
 export declare const pi = 3;
 //// [nonTopComment-ts.d.ts]
 export declare const e = 3;
