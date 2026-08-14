@@ -1,4 +1,4 @@
-// @loadExternalPlugins: true
+// @runExternalCode: true
 
 // @Filename: /tsconfig.json
 {
@@ -17,7 +17,7 @@
 {
     "name": "mapper",
     "version": "1.0.0",
-    "tsContentMapper": { "exec": ["supplemental-diagnostics-mapper"] }
+    "typescript": { "contentMapper": { "exec": ["supplemental-diagnostics-mapper"] } }
 }
 
 // @Filename: /component.astro

@@ -1,4 +1,4 @@
-// @loadExternalPlugins: true
+// @runExternalCode: true
 // @noEmit: true
 
 // @Filename: /tsconfig.json
@@ -15,7 +15,7 @@
 {
     "name": "mapper",
     "version": "1.0.0",
-    "tsContentMapper": { "exec": ["lisp-mapper"] }
+    "typescript": { "contentMapper": { "exec": ["lisp-mapper"] } }
 }
 
 // @Filename: /expression.lisp

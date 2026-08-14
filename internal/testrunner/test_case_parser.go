@@ -72,7 +72,7 @@ func makeUnitsFromTest(code string, fileName string) testCaseContent {
 	// opts in with a top-level `// @runExternalCode: true`, which we surface to the config
 	// parse as an existing option so the gate passes and the mappers register.
 	var existingOptions *core.CompilerOptions
-	if globalOptions["loadexternalcode"] == "true" {
+	if globalOptions["runexternalcode"] == "true" {
 		existingOptions = &core.CompilerOptions{RunExternalCode: core.TSTrue}
 	}
 

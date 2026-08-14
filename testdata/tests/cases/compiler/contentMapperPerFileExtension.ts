@@ -1,4 +1,4 @@
-// @loadExternalPlugins: true
+// @runExternalCode: true
 // @noTypesAndSymbols: true
 // @noEmit: true
 
@@ -17,7 +17,7 @@
 {
     "name": "mapper",
     "version": "1.0.0",
-    "tsContentMapper": { "exec": ["compiler-test-mapper"], "compilerOptions": ["jsx"] }
+    "typescript": { "contentMapper": { "exec": ["compiler-test-mapper"], "compilerOptions": ["jsx"] } }
 }
 
 // @Filename: /script.box

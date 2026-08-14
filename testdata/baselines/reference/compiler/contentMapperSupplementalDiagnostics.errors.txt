@@ -20,6 +20,6 @@
     {
         "name": "mapper",
         "version": "1.0.0",
-        "tsContentMapper": { "exec": ["supplemental-diagnostics-mapper"] }
+        "typescript": { "contentMapper": { "exec": ["supplemental-diagnostics-mapper"] } }
     }
     

@@ -171,7 +171,7 @@ func TestParsedCommandLine(t *testing.T) {
 			t.Parallel()
 
 			host := tsoptionstest.NewVFSParseConfigHost(map[string]string{
-				"/dev/node_modules/mapper/package.json": `{ "name": "mapper", "version": "1.0.0", "tsContentMapper": { "exec": ["mapper"] } }`,
+				"/dev/node_modules/mapper/package.json": `{ "name": "mapper", "version": "1.0.0", "typescript": { "contentMapper": { "exec": ["mapper"] } } }`,
 			}, "/dev", true)
 			configFileName := "/dev/tsconfig.json"
 			jsonText := `{
@@ -198,7 +198,7 @@ func TestParsedCommandLine(t *testing.T) {
 			assert.Assert(t, !parsedCommandLine.PossiblyMatchesFileName("/dev/other/new.box"))
 
 			insensitiveHost := tsoptionstest.NewVFSParseConfigHost(map[string]string{
-				"/dev/node_modules/mapper/package.json": `{ "name": "mapper", "version": "1.0.0", "tsContentMapper": { "exec": ["mapper"] } }`,
+				"/dev/node_modules/mapper/package.json": `{ "name": "mapper", "version": "1.0.0", "typescript": { "contentMapper": { "exec": ["mapper"] } } }`,
 			}, "/dev", false)
 			insensitiveCommandLine := tsoptions.ParseJsonSourceFileConfigFileContent(
 				tsconfigSourceFile,

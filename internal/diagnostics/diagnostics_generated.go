@@ -4338,9 +4338,9 @@ var The_package_json_of_the_content_mapper_package_0_could_not_be_parsed = &Mess
 
 var The_package_json_of_the_content_mapper_package_0_does_not_specify_a_name = &Message{code: 100034, category: CategoryError, key: "The_package_json_of_the_content_mapper_package_0_does_not_specify_a_name_100034", text: "The 'package.json' of the content mapper package '{0}' does not specify a 'name'."}
 
-var The_package_json_of_the_content_mapper_package_0_does_not_declare_a_tsContentMapper_object = &Message{code: 100035, category: CategoryError, key: "The_package_json_of_the_content_mapper_package_0_does_not_declare_a_tsContentMapper_object_100035", text: "The 'package.json' of the content mapper package '{0}' does not declare a 'tsContentMapper' object."}
+var The_package_json_of_the_content_mapper_package_0_does_not_declare_a_typescript_contentMapper_object = &Message{code: 100035, category: CategoryError, key: "The_package_json_of_the_content_mapper_package_0_does_not_declare_a_typescript_contentMapper_object_100035", text: "The 'package.json' of the content mapper package '{0}' does not declare a 'typescript.contentMapper' object."}
 
-var The_tsContentMapper_exec_of_the_content_mapper_package_0_must_be_a_non_empty_array_of_strings = &Message{code: 100036, category: CategoryError, key: "The_tsContentMapper_exec_of_the_content_mapper_package_0_must_be_a_non_empty_array_of_strings_100036", text: "The 'tsContentMapper.exec' of the content mapper package '{0}' must be a non-empty array of strings."}
+var The_typescript_contentMapper_exec_of_the_content_mapper_package_0_must_be_a_non_empty_array_of_strings = &Message{code: 100036, category: CategoryError, key: "The_typescript_contentMapper_exec_of_the_content_mapper_package_0_must_be_a_non_empty_array_of_strin_100036", text: "The 'typescript.contentMapper.exec' of the content mapper package '{0}' must be a non-empty array of strings."}
 
 var Virtual_code_produced_by_the_content_mapper_0_has_problems_with_no_corresponding_location_in_this_file = &Message{code: 100037, category: CategoryError, key: "Virtual_code_produced_by_the_content_mapper_0_has_problems_with_no_corresponding_location_in_this_fi_100037", text: "Virtual code produced by the content mapper '{0}' has problems with no corresponding location in this file."}
 
@@ -8742,10 +8742,10 @@ func keyToMessage(key Key) *Message {
 		return The_package_json_of_the_content_mapper_package_0_could_not_be_parsed
 	case "The_package_json_of_the_content_mapper_package_0_does_not_specify_a_name_100034":
 		return The_package_json_of_the_content_mapper_package_0_does_not_specify_a_name
-	case "The_package_json_of_the_content_mapper_package_0_does_not_declare_a_tsContentMapper_object_100035":
-		return The_package_json_of_the_content_mapper_package_0_does_not_declare_a_tsContentMapper_object
-	case "The_tsContentMapper_exec_of_the_content_mapper_package_0_must_be_a_non_empty_array_of_strings_100036":
-		return The_tsContentMapper_exec_of_the_content_mapper_package_0_must_be_a_non_empty_array_of_strings
+	case "The_package_json_of_the_content_mapper_package_0_does_not_declare_a_typescript_contentMapper_object_100035":
+		return The_package_json_of_the_content_mapper_package_0_does_not_declare_a_typescript_contentMapper_object
+	case "The_typescript_contentMapper_exec_of_the_content_mapper_package_0_must_be_a_non_empty_array_of_strin_100036":
+		return The_typescript_contentMapper_exec_of_the_content_mapper_package_0_must_be_a_non_empty_array_of_strings
 	case "Virtual_code_produced_by_the_content_mapper_0_has_problems_with_no_corresponding_location_in_this_fi_100037":
 		return Virtual_code_produced_by_the_content_mapper_0_has_problems_with_no_corresponding_location_in_this_file
 	case "The_content_mapper_0_produced_overlapping_or_out_of_order_position_mappings_near_virtual_offset_1_100038":

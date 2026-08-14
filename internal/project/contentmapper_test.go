@@ -228,7 +228,7 @@ func TestContentMapperPackageManifestChangeReloadsConfig(t *testing.T) {
 		packageJsonPath: `{
 			"name": "mapper",
 			"version": "1.0.0",
-			"tsContentMapper": { "exec": ["compiler-test-mapper"] }
+			"typescript": { "contentMapper": { "exec": ["compiler-test-mapper"] } }
 		}`,
 		"/home/project/app.box": "export const version = #{target};\n",
 		"/home/project/main.ts": "import { version } from \"./app.box\";\n",

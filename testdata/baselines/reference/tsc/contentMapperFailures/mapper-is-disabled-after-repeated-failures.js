@@ -27,7 +27,7 @@ import "./g.vue";
 {
     "name": "fail",
     "version": "1.0.0",
-    "tsContentMapper": { "exec": ["failing-mapper"] }
+    "typescript": { "contentMapper": { "exec": ["failing-mapper"] } }
 }
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
 {

@@ -9,7 +9,7 @@ export const local = 1;
 {
     "name": "vue-ts-mapper",
     "version": "1.0.0",
-    "tsContentMapper": { "exec": ["verbatim-mapper"] }
+    "typescript": { "contentMapper": { "exec": ["verbatim-mapper"] } }
 }
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
 {
@@ -134,7 +134,7 @@ Edit [1]:: upgrade the content mapper package to a new version
 {
     "name": "vue-ts-mapper",
     "version": "2.0.0",
-    "tsContentMapper": { "exec": ["verbatim-mapper"] }
+    "typescript": { "contentMapper": { "exec": ["verbatim-mapper"] } }
 }
 
 tsgo --build --verbose --runExternalCode

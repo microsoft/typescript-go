@@ -4824,7 +4824,7 @@ func TestTscContentMapperEmit(t *testing.T) {
 			{
 				"name": "vue-ts-mapper",
 				"version": "1.0.0",
-				"tsContentMapper": { "exec": ["verbatim-mapper"] }
+				"typescript": { "contentMapper": { "exec": ["verbatim-mapper"] } }
 			}`),
 		},
 		commandLineArgs: []string{"--runExternalCode"},
@@ -4847,7 +4847,7 @@ func TestTscContentMapperExplainFiles(t *testing.T) {
 			{
 				"name": "mapper",
 				"version": "1.0.0",
-				"tsContentMapper": { "exec": ["supplemental-mapper"] }
+				"typescript": { "contentMapper": { "exec": ["supplemental-mapper"] } }
 			}`),
 		},
 		commandLineArgs: []string{"--runExternalCode", "--explainFiles"},
@@ -4860,7 +4860,7 @@ func TestTscContentMapperFailures(t *testing.T) {
 	{
 		"name": "fail",
 		"version": "1.0.0",
-		"tsContentMapper": { "exec": ["failing-mapper"] }
+		"typescript": { "contentMapper": { "exec": ["failing-mapper"] } }
 	}`)
 	failMapperTSConfig := stringtestutil.Dedent(`
 	{
@@ -4895,7 +4895,7 @@ func TestTscContentMapperFailures(t *testing.T) {
 				{
 					"name": "missing",
 					"version": "1.0.0",
-					"tsContentMapper": { "exec": ["missing-mapper"] }
+					"typescript": { "contentMapper": { "exec": ["missing-mapper"] } }
 				}`),
 			},
 			commandLineArgs: []string{"--runExternalCode", "--singleThreaded"},
@@ -4961,7 +4961,7 @@ func TestTscContentMapperSynthesized(t *testing.T) {
 			{
 				"name": "synth",
 				"version": "1.0.0",
-				"tsContentMapper": { "exec": ["synthesizing-mapper"] }
+				"typescript": { "contentMapper": { "exec": ["synthesizing-mapper"] } }
 			}`),
 		},
 		commandLineArgs: []string{"--runExternalCode"},

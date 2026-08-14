@@ -1,4 +1,4 @@
-// @loadExternalPlugins: true
+// @runExternalCode: true
 
 // The mapper package really lives at /packages/mapper and is symlinked into node_modules, as in a
 // monorepo. Content mapper resolution must follow the symlink to find the package's manifest.
@@ -21,7 +21,7 @@
 {
 	"name": "mapper",
 	"version": "1.0.0",
-	"tsContentMapper": { "exec": ["compiler-test-mapper"], "compilerOptions": ["target", "jsx"] }
+	"typescript": { "contentMapper": { "exec": ["compiler-test-mapper"], "compilerOptions": ["target", "jsx"] } }
 }
 
 // @Filename: /app.box

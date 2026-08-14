@@ -1,4 +1,4 @@
-// @loadExternalPlugins: true
+// @runExternalCode: true
 // @noTypesAndSymbols: true
 
 // @Filename: /tsconfig.json
@@ -21,10 +21,10 @@
 {
     "name": "mapper",
     "version": "1.0.0",
-    "tsContentMapper": {
+    "typescript": { "contentMapper": {
         "exec": ["compiler-test-mapper"],
         "compilerOptions": ["target", "jsx"]
-    }
+    } }
 }
 
 // @Filename: /invalidRange.invalidrange

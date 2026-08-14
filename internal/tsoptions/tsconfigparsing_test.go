@@ -1155,7 +1155,7 @@ func TestContentMappers(t *testing.T) {
 		allFileList: map[string]string{
 			"/src/app.ts":                           "export {}",
 			"/src/Component.vue":                    "<template></template>",
-			"/node_modules/vue-mapper/package.json": `{ "name": "vue-mapper", "version": "1.2.3", "tsContentMapper": { "exec": ["node", "./mapper.js"], "dynamicConfig": true } }`,
+			"/node_modules/vue-mapper/package.json": `{ "name": "vue-mapper", "version": "1.2.3", "typescript": { "contentMapper": { "exec": ["node", "./mapper.js"], "dynamicConfig": true } } }`,
 		},
 		existingOptions: &core.CompilerOptions{RunExternalCode: core.TSTrue},
 	}
@@ -1317,8 +1317,8 @@ func TestContentMappersValidation(t *testing.T) {
 				existingOptions: &core.CompilerOptions{RunExternalCode: core.TSTrue},
 			}
 			if test.name == "duplicate extension across mappers" {
-				config.allFileList["/node_modules/a/package.json"] = `{ "name": "a", "version": "1.0.0", "tsContentMapper": { "exec": ["a"] } }`
-				config.allFileList["/node_modules/b/package.json"] = `{ "name": "b", "version": "1.0.0", "tsContentMapper": { "exec": ["b"] } }`
+				config.allFileList["/node_modules/a/package.json"] = `{ "name": "a", "version": "1.0.0", "typescript": { "contentMapper": { "exec": ["a"] } } }`
+				config.allFileList["/node_modules/b/package.json"] = `{ "name": "b", "version": "1.0.0", "typescript": { "contentMapper": { "exec": ["b"] } } }`
 			}
 			for apiName, getParsed := range map[string]func(testConfig, tsoptions.ParseConfigHost, string) *tsoptions.ParsedCommandLine{
 				"json api":           getParsedWithJsonApi,

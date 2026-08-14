@@ -11,7 +11,7 @@ import "./app.vue";
 {
     "name": "synth",
     "version": "1.0.0",
-    "tsContentMapper": { "exec": ["synthesizing-mapper"] }
+    "typescript": { "contentMapper": { "exec": ["synthesizing-mapper"] } }
 }
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
 {

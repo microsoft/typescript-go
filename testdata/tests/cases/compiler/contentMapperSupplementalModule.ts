@@ -1,4 +1,4 @@
-// @loadExternalPlugins: true
+// @runExternalCode: true
 // @declaration: true
 
 // @Filename: /tsconfig.json
@@ -18,7 +18,7 @@
 {
     "name": "mapper",
     "version": "1.0.0",
-    "tsContentMapper": { "exec": ["supplemental-module-mapper"] }
+    "typescript": { "contentMapper": { "exec": ["supplemental-module-mapper"] } }
 }
 
 // @Filename: /component.vue

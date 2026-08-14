@@ -71,11 +71,11 @@ func TestResolveContentMapperManifest(t *testing.T) {
 		"/home/project/node_modules/vue-ts-mapper/package.json": `{
 			"name": "vue-ts-mapper",
 			"version": "1.2.3",
-			"tsContentMapper": { "exec": ["node", "./dist/mapper.js"], "compilerOptions": ["target", "jsx"] }
+			"typescript": { "contentMapper": { "exec": ["node", "./dist/mapper.js"], "compilerOptions": ["target", "jsx"] } }
 		}`,
 		"/home/node_modules/@scope/noversion/package.json": `{
 			"name": "@scope/noversion",
-			"tsContentMapper": { "exec": ["run"] }
+			"typescript": { "contentMapper": { "exec": ["run"] } }
 		}`,
 		"/home/project/node_modules/no-name/package.json": `{
 			"version": "1.0.0"
@@ -85,11 +85,11 @@ func TestResolveContentMapperManifest(t *testing.T) {
 		}`,
 		"/home/project/node_modules/no-exec/package.json": `{
 			"name": "no-exec",
-			"tsContentMapper": {}
+			"typescript": { "contentMapper": {} }
 		}`,
 		"/home/project/node_modules/bad-exec/package.json": `{
 			"name": "bad-exec",
-			"tsContentMapper": { "exec": "node ./mapper.js" }
+			"typescript": { "contentMapper": { "exec": "node ./mapper.js" } }
 		}`,
 	}, true /*useCaseSensitiveFileNames*/)}
 
@@ -119,15 +119,15 @@ func TestResolveContentMapperManifest(t *testing.T) {
 	assert.Equal(t, packageDirectory, "/home/project/node_modules/no-name")
 	assert.Equal(t, diagnostic.Code(), diagnostics.The_package_json_of_the_content_mapper_package_0_does_not_specify_a_name.Code())
 
-	// A package that does not declare a "tsContentMapper" object reports a diagnostic.
+	// A package that does not declare a "typescript.contentMapper" object reports a diagnostic.
 	_, _, diagnostic = resolveContentMapperManifest(host, "/home/project/tsconfig.json", "no-manifest")
 	assert.Assert(t, diagnostic != nil)
-	assert.Equal(t, diagnostic.Code(), diagnostics.The_package_json_of_the_content_mapper_package_0_does_not_declare_a_tsContentMapper_object.Code())
+	assert.Equal(t, diagnostic.Code(), diagnostics.The_package_json_of_the_content_mapper_package_0_does_not_declare_a_typescript_contentMapper_object.Code())
 
-	// A "tsContentMapper" with no "exec", or an "exec" of the wrong type, reports a diagnostic.
+	// A "typescript.contentMapper" with no "exec", or an "exec" of the wrong type, reports a diagnostic.
 	for _, pkg := range []string{"no-exec", "bad-exec"} {
 		_, _, diagnostic = resolveContentMapperManifest(host, "/home/project/tsconfig.json", pkg)
 		assert.Assert(t, diagnostic != nil, "expected a diagnostic for %s", pkg)
-		assert.Equal(t, diagnostic.Code(), diagnostics.The_tsContentMapper_exec_of_the_content_mapper_package_0_must_be_a_non_empty_array_of_strings.Code())
+		assert.Equal(t, diagnostic.Code(), diagnostics.The_typescript_contentMapper_exec_of_the_content_mapper_package_0_must_be_a_non_empty_array_of_strings.Code())
 	}
 }

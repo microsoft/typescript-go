@@ -4,7 +4,7 @@
 {
     "name": "mapper",
     "version": "1.0.0",
-    "tsContentMapper": { "exec": ["compiler-test-mapper"] }
+    "typescript": { "contentMapper": { "exec": ["compiler-test-mapper"] } }
 }
 
 //// [component.y.z]

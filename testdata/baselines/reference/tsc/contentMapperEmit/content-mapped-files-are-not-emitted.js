@@ -9,7 +9,7 @@ export const local = 1;
 {
     "name": "vue-ts-mapper",
     "version": "1.0.0",
-    "tsContentMapper": { "exec": ["verbatim-mapper"] }
+    "typescript": { "contentMapper": { "exec": ["verbatim-mapper"] } }
 }
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
 {

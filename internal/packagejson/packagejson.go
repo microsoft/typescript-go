@@ -111,7 +111,7 @@ type Fields struct {
 	HeaderFields
 	PathFields
 	DependencyFields
-	ContentMapper Expected[ContentMapperFields] `json:"tsContentMapper"`
+	ContentMapper Expected[ContentMapperFields] `json:"-"`
 }
 
 type ContentMapperFields struct {
@@ -120,10 +120,25 @@ type ContentMapperFields struct {
 	DynamicConfig   Expected[bool]     `json:"dynamicConfig"`
 }
 
+type typeScriptFields struct {
+	ContentMapper Expected[ContentMapperFields] `json:"contentMapper"`
+}
+
 func Parse(data []byte) (Fields, error) {
-	var f Fields
-	if err := json.Unmarshal(data, &f, json.AllowDuplicateNames(true)); err != nil {
+	var parsed struct {
+		HeaderFields
+		PathFields
+		DependencyFields
+		TypeScript Expected[typeScriptFields] `json:"typescript"`
+	}
+	if err := json.Unmarshal(data, &parsed, json.AllowDuplicateNames(true)); err != nil {
 		return Fields{}, err
 	}
-	return f, nil
+	typeScript, _ := parsed.TypeScript.GetValue()
+	return Fields{
+		HeaderFields:     parsed.HeaderFields,
+		PathFields:       parsed.PathFields,
+		DependencyFields: parsed.DependencyFields,
+		ContentMapper:    typeScript.ContentMapper,
+	}, nil
 }

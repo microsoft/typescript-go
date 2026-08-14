@@ -37,15 +37,15 @@ func resolveContentMapperManifest(host ParseConfigHost, containingFile string, p
 	}
 	version, _ := fields.Version.GetValue()
 
-	// A content mapper package must declare how to run it: a "tsContentMapper" object with a non-empty
+	// A content mapper package must declare how to run it: a "typescript.contentMapper" object with a non-empty
 	// "exec" array of strings.
 	cm, ok := fields.ContentMapper.GetValue()
 	if !ok {
-		return contentmapper.Manifest{}, packageDirectory, ast.NewCompilerDiagnostic(diagnostics.The_package_json_of_the_content_mapper_package_0_does_not_declare_a_tsContentMapper_object, packageName)
+		return contentmapper.Manifest{}, packageDirectory, ast.NewCompilerDiagnostic(diagnostics.The_package_json_of_the_content_mapper_package_0_does_not_declare_a_typescript_contentMapper_object, packageName)
 	}
 	exec, ok := cm.Exec.GetValue()
 	if !ok || len(exec) == 0 {
-		return contentmapper.Manifest{}, packageDirectory, ast.NewCompilerDiagnostic(diagnostics.The_tsContentMapper_exec_of_the_content_mapper_package_0_must_be_a_non_empty_array_of_strings, packageName)
+		return contentmapper.Manifest{}, packageDirectory, ast.NewCompilerDiagnostic(diagnostics.The_typescript_contentMapper_exec_of_the_content_mapper_package_0_must_be_a_non_empty_array_of_strings, packageName)
 	}
 	compilerOptions, _ := cm.CompilerOptions.GetValue()
 	dynamicConfig, _ := cm.DynamicConfig.GetValue()

@@ -191,11 +191,11 @@
         "category": "Error",
         "code": 100034
     },
-    "The 'package.json' of the content mapper package '{0}' does not declare a 'tsContentMapper' object.": {
+    "The 'package.json' of the content mapper package '{0}' does not declare a 'typescript.contentMapper' object.": {
         "category": "Error",
         "code": 100035
     },
-    "The 'tsContentMapper.exec' of the content mapper package '{0}' must be a non-empty array of strings.": {
+    "The 'typescript.contentMapper.exec' of the content mapper package '{0}' must be a non-empty array of strings.": {
         "category": "Error",
         "code": 100036
     },
