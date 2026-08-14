@@ -75,6 +75,9 @@ describe("Encoder", () => {
         assert.strictEqual(decoded.fileName, "/test.ts");
         assert.strictEqual(decoded.path, "/test.ts");
         assert.strictEqual(decoded.text, "");
+        assert.strictEqual(decoded.contentMapper, undefined);
+        assert.strictEqual(decoded.virtualFileName, undefined);
+        assert.strictEqual(decoded.diagnosticDirectives, undefined);
         assert.strictEqual(decoded.supplementalSourceFileNames, undefined);
         assert.strictEqual(decoded.canonicalSourceFileName, undefined);
     });
@@ -187,6 +190,9 @@ describe("Encoder", () => {
         const ordinary = decode(encodeSourceFile(makeSF("text", "/test.ts", [])));
         assert.equal(ordinary.originalText, ordinary.text);
         assert.equal(ordinary.spanMap, undefined);
+        assert.equal(ordinary.contentMapper, undefined);
+        assert.equal(ordinary.virtualFileName, undefined);
+        assert.equal(ordinary.diagnosticDirectives, undefined);
     });
 
     test("boolean properties are encoded", () => {

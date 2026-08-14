@@ -2,6 +2,7 @@ import {
     computeLineStarts,
     type FileReference,
     type LineAndCharacter,
+    type MappedDiagnosticDirective,
     type Node,
     NodeFlags,
     type Path,
@@ -65,6 +66,8 @@ export class RemoteSourceFile extends RemoteNode implements SourceFileInfo {
     private _cachedSpanMap: SpanMap | undefined;
     private _spanMapRead = false;
     private _cachedSupplementalSourceFileNames: readonly string[] | undefined;
+    private _cachedDiagnosticDirectives: readonly MappedDiagnosticDirective[] | undefined;
+    private _diagnosticDirectivesRead = false;
 
     constructor(data: Uint8Array, decoder: TextDecoder, timing?: TimingCollector) {
         const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
@@ -284,6 +287,41 @@ export class RemoteSourceFile extends RemoteNode implements SourceFileInfo {
     get canonicalSourceFileName(): string | undefined {
         const stringIndex = this.view.getUint32(this.extendedDataOffset + 60, true);
         return stringIndex === NO_STRUCTURED_DATA ? undefined : this.getString(stringIndex);
+    }
+
+    get contentMapper(): string | undefined {
+        const stringIndex = this.view.getUint32(this.extendedDataOffset + 64, true);
+        return stringIndex === NO_STRUCTURED_DATA ? undefined : this.getString(stringIndex);
+    }
+
+    get virtualFileName(): string | undefined {
+        const stringIndex = this.view.getUint32(this.extendedDataOffset + 68, true);
+        return stringIndex === NO_STRUCTURED_DATA ? undefined : this.getString(stringIndex);
+    }
+
+    get diagnosticDirectives(): readonly MappedDiagnosticDirective[] | undefined {
+        if (this._diagnosticDirectivesRead) return this._cachedDiagnosticDirectives;
+        this._diagnosticDirectivesRead = true;
+        const offset = this.view.getUint32(this.extendedDataOffset + 72, true);
+        if (offset === NO_STRUCTURED_DATA) return undefined;
+        const buf = new Uint8Array(this.view.buffer, this.view.byteOffset, this.view.byteLength);
+        const reader = new MsgpackReader(buf, this._offsetStructuredData + offset);
+        const count = reader.readArrayHeader();
+        const directives = Array<MappedDiagnosticDirective>(count);
+        for (let i = 0; i < count; i++) {
+            if (reader.readArrayHeader() !== 6) throw new Error("Invalid diagnostic directive");
+            const originalStart = reader.readUint();
+            const originalLength = reader.readUint();
+            const virtualStart = reader.readUint();
+            const virtualLength = reader.readUint();
+            directives[i] = {
+                originalRange: { pos: originalStart, end: originalStart + originalLength },
+                virtualRange: { pos: virtualStart, end: virtualStart + virtualLength },
+                policy: reader.readUint(),
+                unusedCode: reader.readUint(),
+            };
+        }
+        return this._cachedDiagnosticDirectives = directives;
     }
 
     get isDeclarationFile(): boolean {

@@ -354,6 +354,7 @@ const enumDefs = [
     { name: "JsxEmit", goPrefix: "JsxEmit", goFile: "internal/core/compileroptions.go", outDir: "_packages/native-preview/src/enums" },
     { name: "ScriptKind", goPrefix: "ScriptKind", goFile: "internal/core/scriptkind.go", outDir: "_packages/native-preview/src/enums" },
     { name: "TokenFlags", goPrefix: "TokenFlags", goFile: "internal/ast/tokenflags.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "DiagnosticDirectivePolicy", goPrefix: "MappedDiagnosticDirectivePolicy", goFile: "internal/ast/ast.go", outDir: "_packages/native-preview/src/enums" },
     { name: "SpanMapKind", goPrefix: "Kind", goFile: "internal/spanmap/spanmap.go", outDir: "_packages/native-preview/src/enums" },
     { name: "SpanMapFidelity", goPrefix: "Fidelity", goFile: "internal/spanmap/spanmap.go", outDir: "_packages/native-preview/src/enums" },
     { name: "SpanMapFeature", goPrefix: "Feature", goFile: "internal/spanmap/spanmap.go", outDir: "_packages/native-preview/src/enums" },

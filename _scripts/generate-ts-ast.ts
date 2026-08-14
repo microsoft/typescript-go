@@ -581,6 +581,11 @@ function generateFactory(): string {
         const name of [
             "fileName",
             "originalText",
+            "contentMapper",
+            "virtualFileName",
+            "diagnosticDirectives",
+            "supplementalSourceFileNames",
+            "canonicalSourceFileName",
             "path",
             "languageVariant",
             "scriptKind",
@@ -1175,6 +1180,9 @@ function generateFactory(): string {
     out.push(`        text,`);
     out.push(`        originalText: text,`);
     out.push(`        spanMap: undefined,`);
+    out.push(`        contentMapper: undefined,`);
+    out.push(`        virtualFileName: undefined,`);
+    out.push(`        diagnosticDirectives: undefined,`);
     out.push(`        fileName,`);
     out.push(`        path,`);
     out.push(`    }) as unknown as SourceFile;`);
