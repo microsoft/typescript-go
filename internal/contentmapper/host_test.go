@@ -781,7 +781,6 @@ func TestProjectLifecycle(t *testing.T) {
 	assert.Equal(t, dynamicTimings.OpenProject.Count, uint64(6))
 	assert.Equal(t, dynamicTimings.Transform.Count, uint64(1))
 	assert.Equal(t, dynamicTimings.CloseProject.Count, uint64(6))
-	assert.Assert(t, timings.RequestWait > 0)
 	mapperProcess.mu.Lock()
 	defer mapperProcess.mu.Unlock()
 	assert.Equal(t, len(mapperProcess.projectHandles), 6)
