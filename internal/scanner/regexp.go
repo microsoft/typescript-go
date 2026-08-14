@@ -8,6 +8,7 @@ import (
 	"unicode/utf16"
 	"unicode/utf8"
 
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
@@ -160,17 +161,14 @@ func (p *regExpParser) scanDisjunction(isInGroup bool) {
 	// This ensures a name defined inside a nested group (e.g. `(?:(?<a>x))`) is
 	// still visible to a duplicate check for a sibling group later in the same
 	// enclosing alternative (e.g. `(?:(?<a>x))(?<a>z)`).
-	var disjunctionNames map[string]bool
+	var disjunctionNames collections.Set[string]
 	for {
 		p.namedCapturingGroups = append(p.namedCapturingGroups, make(map[string]bool))
 		p.scanAlternative(isInGroup)
 		alternativeNames := p.namedCapturingGroups[len(p.namedCapturingGroups)-1]
 		p.namedCapturingGroups = p.namedCapturingGroups[:len(p.namedCapturingGroups)-1]
 		for name := range alternativeNames {
-			if disjunctionNames == nil {
-				disjunctionNames = make(map[string]bool)
-			}
-			disjunctionNames[name] = true
+			disjunctionNames.Add(name)
 		}
 		if p.char() != '|' {
 			break
@@ -179,7 +177,7 @@ func (p *regExpParser) scanDisjunction(isInGroup bool) {
 	}
 	if isInGroup && len(p.namedCapturingGroups) > 0 {
 		parentScope := p.namedCapturingGroups[len(p.namedCapturingGroups)-1]
-		for name := range disjunctionNames {
+		for name := range disjunctionNames.Keys() {
 			parentScope[name] = true
 		}
 	}
