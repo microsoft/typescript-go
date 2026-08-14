@@ -325,6 +325,18 @@ const (
 	contentMapperCompletionRegistrationID        = "content-mapper-completion"
 	contentMapperRenameRegistrationID            = "content-mapper-rename"
 	contentMapperSemanticTokensRegistrationID    = "content-mapper-semantic-tokens"
+	contentMapperDocumentSymbolRegistrationID    = "content-mapper-document-symbol"
+	contentMapperFoldingRangeRegistrationID      = "content-mapper-folding-range"
+	contentMapperSelectionRangeRegistrationID    = "content-mapper-selection-range"
+	contentMapperInlayHintRegistrationID         = "content-mapper-inlay-hint"
+	contentMapperCodeLensRegistrationID          = "content-mapper-code-lens"
+	contentMapperCodeActionRegistrationID        = "content-mapper-code-action"
+	contentMapperFormattingRegistrationID        = "content-mapper-formatting"
+	contentMapperRangeFormattingRegistrationID   = "content-mapper-range-formatting"
+	contentMapperOnTypeFormattingRegistrationID  = "content-mapper-on-type-formatting"
+	contentMapperLinkedEditingRegistrationID     = "content-mapper-linked-editing"
+	contentMapperCallHierarchyRegistrationID     = "content-mapper-call-hierarchy"
+	contentMapperWillRenameFilesRegistrationID   = "content-mapper-will-rename-files"
 )
 
 func (s *Server) supportsContentMapperRegistration(id string) bool {
@@ -353,6 +365,31 @@ func (s *Server) supportsContentMapperRegistration(id string) bool {
 		return s.clientCapabilities.TextDocument.Rename.DynamicRegistration
 	case contentMapperSemanticTokensRegistrationID:
 		return s.clientCapabilities.TextDocument.SemanticTokens.DynamicRegistration
+	case contentMapperDocumentSymbolRegistrationID:
+		return s.clientCapabilities.TextDocument.DocumentSymbol.DynamicRegistration
+	case contentMapperFoldingRangeRegistrationID:
+		return s.clientCapabilities.TextDocument.FoldingRange.DynamicRegistration
+	case contentMapperSelectionRangeRegistrationID:
+		return s.clientCapabilities.TextDocument.SelectionRange.DynamicRegistration
+	case contentMapperInlayHintRegistrationID:
+		return s.clientCapabilities.TextDocument.InlayHint.DynamicRegistration
+	case contentMapperCodeLensRegistrationID:
+		return s.clientCapabilities.TextDocument.CodeLens.DynamicRegistration
+	case contentMapperCodeActionRegistrationID:
+		return s.clientCapabilities.TextDocument.CodeAction.DynamicRegistration
+	case contentMapperFormattingRegistrationID:
+		return s.clientCapabilities.TextDocument.Formatting.DynamicRegistration
+	case contentMapperRangeFormattingRegistrationID:
+		return s.clientCapabilities.TextDocument.RangeFormatting.DynamicRegistration
+	case contentMapperOnTypeFormattingRegistrationID:
+		return s.clientCapabilities.TextDocument.OnTypeFormatting.DynamicRegistration
+	case contentMapperLinkedEditingRegistrationID:
+		return s.clientCapabilities.TextDocument.LinkedEditingRange.DynamicRegistration
+	case contentMapperCallHierarchyRegistrationID:
+		return s.clientCapabilities.TextDocument.CallHierarchy.DynamicRegistration
+	case contentMapperWillRenameFilesRegistrationID:
+		return s.clientCapabilities.Workspace.FileOperations.DynamicRegistration &&
+			s.clientCapabilities.Workspace.FileOperations.WillRename
 	default:
 		return false
 	}
@@ -386,6 +423,18 @@ func (s *Server) RegisterContentMapperExtensions(ctx context.Context, extensions
 			{Id: contentMapperCompletionRegistrationID, Method: string(lsproto.MethodTextDocumentCompletion)},
 			{Id: contentMapperRenameRegistrationID, Method: string(lsproto.MethodTextDocumentRename)},
 			{Id: contentMapperSemanticTokensRegistrationID, Method: string(lsproto.MethodTextDocumentSemanticTokens)},
+			{Id: contentMapperDocumentSymbolRegistrationID, Method: string(lsproto.MethodTextDocumentDocumentSymbol)},
+			{Id: contentMapperFoldingRangeRegistrationID, Method: string(lsproto.MethodTextDocumentFoldingRange)},
+			{Id: contentMapperSelectionRangeRegistrationID, Method: string(lsproto.MethodTextDocumentSelectionRange)},
+			{Id: contentMapperInlayHintRegistrationID, Method: string(lsproto.MethodTextDocumentInlayHint)},
+			{Id: contentMapperCodeLensRegistrationID, Method: string(lsproto.MethodTextDocumentCodeLens)},
+			{Id: contentMapperCodeActionRegistrationID, Method: string(lsproto.MethodTextDocumentCodeAction)},
+			{Id: contentMapperFormattingRegistrationID, Method: string(lsproto.MethodTextDocumentFormatting)},
+			{Id: contentMapperRangeFormattingRegistrationID, Method: string(lsproto.MethodTextDocumentRangeFormatting)},
+			{Id: contentMapperOnTypeFormattingRegistrationID, Method: string(lsproto.MethodTextDocumentOnTypeFormatting)},
+			{Id: contentMapperLinkedEditingRegistrationID, Method: string(lsproto.MethodTextDocumentLinkedEditingRange)},
+			{Id: contentMapperCallHierarchyRegistrationID, Method: string(lsproto.MethodTextDocumentPrepareCallHierarchy)},
+			{Id: contentMapperWillRenameFilesRegistrationID, Method: string(lsproto.MethodWorkspaceWillRenameFiles)},
 		}
 		unregistrations = slices.DeleteFunc(unregistrations, func(registration *lsproto.Unregistration) bool {
 			return !s.supportsContentMapperRegistration(registration.Id)
@@ -411,6 +460,15 @@ func (s *Server) RegisterContentMapperExtensions(ctx context.Context, extensions
 		})
 	}
 	selector := lsproto.DocumentSelectorOrNull{DocumentSelector: &filters}
+	contentMapperFileRenameFilters := make([]*lsproto.FileOperationFilter, 0, len(extensions))
+	for _, extension := range extensions {
+		contentMapperFileRenameFilters = append(contentMapperFileRenameFilters, &lsproto.FileOperationFilter{
+			Scheme: new("file"),
+			Pattern: &lsproto.FileOperationPattern{
+				Glob: "**/*" + extension,
+			},
+		})
+	}
 
 	registrations := []*lsproto.Registration{
 		{
@@ -525,6 +583,94 @@ func (s *Server) RegisterContentMapperExtensions(ctx context.Context, extensions
 						Boolean: new(true),
 					},
 				},
+			},
+		},
+		{
+			Id: contentMapperDocumentSymbolRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentDocumentSymbol: &lsproto.DocumentSymbolRegistrationOptions{DocumentSelector: selector},
+			},
+		},
+		{
+			Id: contentMapperFoldingRangeRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentFoldingRange: &lsproto.FoldingRangeRegistrationOptions{DocumentSelector: selector},
+			},
+		},
+		{
+			Id: contentMapperSelectionRangeRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentSelectionRange: &lsproto.SelectionRangeRegistrationOptions{DocumentSelector: selector},
+			},
+		},
+		{
+			Id: contentMapperInlayHintRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentInlayHint: &lsproto.InlayHintRegistrationOptions{DocumentSelector: selector},
+			},
+		},
+		{
+			Id: contentMapperCodeLensRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentCodeLens: &lsproto.CodeLensRegistrationOptions{
+					DocumentSelector: selector,
+					ResolveProvider:  new(true),
+				},
+			},
+		},
+		{
+			Id: contentMapperCodeActionRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentCodeAction: &lsproto.CodeActionRegistrationOptions{
+					DocumentSelector: selector,
+					CodeActionKinds: &[]lsproto.CodeActionKind{
+						lsproto.CodeActionKindQuickFix,
+						lsproto.CodeActionKindSourceOrganizeImports,
+						lsproto.CodeActionKindSourceRemoveUnusedImports,
+						lsproto.CodeActionKindSourceSortImports,
+						lsproto.CodeActionKindSourceFixAll,
+					},
+				},
+			},
+		},
+		{
+			Id: contentMapperFormattingRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentFormatting: &lsproto.DocumentFormattingRegistrationOptions{DocumentSelector: selector},
+			},
+		},
+		{
+			Id: contentMapperRangeFormattingRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentRangeFormatting: &lsproto.DocumentRangeFormattingRegistrationOptions{DocumentSelector: selector},
+			},
+		},
+		{
+			Id: contentMapperOnTypeFormattingRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentOnTypeFormatting: &lsproto.DocumentOnTypeFormattingRegistrationOptions{
+					DocumentSelector:      selector,
+					FirstTriggerCharacter: "{",
+					MoreTriggerCharacter:  &[]string{"}", ";", "\n"},
+				},
+			},
+		},
+		{
+			Id: contentMapperLinkedEditingRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentLinkedEditingRange: &lsproto.LinkedEditingRangeRegistrationOptions{DocumentSelector: selector},
+			},
+		},
+		{
+			Id: contentMapperCallHierarchyRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				TextDocumentPrepareCallHierarchy: &lsproto.CallHierarchyRegistrationOptions{DocumentSelector: selector},
+			},
+		},
+		{
+			Id: contentMapperWillRenameFilesRegistrationID,
+			RegisterOptions: &lsproto.RegisterOptions{
+				WorkspaceWillRenameFiles: &lsproto.FileOperationRegistrationOptions{Filters: contentMapperFileRenameFilters},
 			},
 		},
 	}

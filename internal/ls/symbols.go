@@ -24,12 +24,30 @@ import (
 
 func (l *LanguageService) ProvideDocumentSymbols(ctx context.Context, documentURI lsproto.DocumentUri) (lsproto.DocumentSymbolResponse, error) {
 	_, file := l.getProgramAndFile(documentURI)
+	projections := append([]*ast.SourceFile{file}, file.SupplementalSourceFiles()...)
+	var symbols []*lsproto.DocumentSymbol
+	var seen collections.Set[struct {
+		name string
+		kind lsproto.SymbolKind
+		rng  lsproto.Range
+	}]
+	for _, projection := range projections {
+		for _, symbol := range l.getDocumentSymbolsForChildren(ctx, projection.AsNode(), projection) {
+			key := struct {
+				name string
+				kind lsproto.SymbolKind
+				rng  lsproto.Range
+			}{symbol.Name, symbol.Kind, symbol.Range}
+			if seen.AddIfAbsent(key) {
+				symbols = append(symbols, symbol)
+			}
+		}
+	}
 	if lsproto.GetClientCapabilities(ctx).TextDocument.DocumentSymbol.HierarchicalDocumentSymbolSupport {
-		symbols := l.getDocumentSymbolsForChildren(ctx, file.AsNode(), file)
 		return lsproto.SymbolInformationsOrDocumentSymbolsOrNull{DocumentSymbols: &symbols}, nil
 	}
 	// Client doesn't support hierarchical document symbols, return flat SymbolInformation array
-	symbolInfos := l.getDocumentSymbolInformations(ctx, file, documentURI)
+	symbolInfos := flattenDocumentSymbols(symbols, documentURI)
 	symbolInfoPtrs := make([]*lsproto.SymbolInformation, len(symbolInfos))
 	for i := range symbolInfos {
 		symbolInfoPtrs[i] = &symbolInfos[i]
@@ -41,7 +59,10 @@ func (l *LanguageService) ProvideDocumentSymbols(ctx context.Context, documentUR
 func (l *LanguageService) getDocumentSymbolInformations(ctx context.Context, file *ast.SourceFile, documentURI lsproto.DocumentUri) []lsproto.SymbolInformation {
 	// First get hierarchical symbols
 	docSymbols := l.getDocumentSymbolsForChildren(ctx, file.AsNode(), file)
+	return flattenDocumentSymbols(docSymbols, documentURI)
+}
 
+func flattenDocumentSymbols(docSymbols []*lsproto.DocumentSymbol, documentURI lsproto.DocumentUri) []lsproto.SymbolInformation {
 	// Flatten the hierarchy
 	var result []lsproto.SymbolInformation
 	var flatten func(symbols []*lsproto.DocumentSymbol, containerName *string)

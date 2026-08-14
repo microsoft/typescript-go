@@ -318,6 +318,7 @@ func TestContentMapperSupplementalFileClonedOnEdit(t *testing.T) {
 	assert.Equal(t, len(oldSupplemental), 1)
 	assert.Equal(t, oldSupplemental[0].FileName(), "/home/project/app.box.0.ts")
 	assert.Equal(t, oldSupplemental[0].Path(), tspath.Path("/home/project/app.box.0.ts"))
+	assert.Equal(t, oldSupplemental[0].Hash, oldCanonical.Hash)
 	assert.Assert(t, oldProgram.GetSourceFileByPath(oldSupplemental[0].Path()) == oldSupplemental[0])
 	assert.Assert(t, oldProgram.FilesByPath()[oldSupplemental[0].Path()] == oldSupplemental[0])
 
@@ -339,6 +340,8 @@ func TestContentMapperSupplementalFileClonedOnEdit(t *testing.T) {
 	assert.Equal(t, newSupplemental[0].Path(), oldSupplemental[0].Path())
 	assert.Assert(t, newCanonical != oldCanonical)
 	assert.Assert(t, newSupplemental[0] != oldSupplemental[0])
+	assert.Equal(t, newSupplemental[0].Hash, newCanonical.Hash)
+	assert.Assert(t, newSupplemental[0].Hash != oldSupplemental[0].Hash)
 	assert.Assert(t, newProgram.FilesByPath()[newSupplemental[0].Path()] == newSupplemental[0])
 	assert.Assert(t, strings.Contains(newSupplemental[0].Text(), "supplementalValue: string"))
 	mainFile := newProgram.GetSourceFile("/home/project/main.ts")

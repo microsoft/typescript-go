@@ -74,16 +74,37 @@ export const title = "Profile";
 	}, onServerRequest)
 	t.Cleanup(func() { _ = closeClient() })
 
-	caps := &lsproto.ClientCapabilities{TextDocument: &lsproto.TextDocumentClientCapabilities{
-		Synchronization: &lsproto.TextDocumentSyncClientCapabilities{DynamicRegistration: new(true)},
-		SemanticTokens: &lsproto.SemanticTokensClientCapabilities{
-			DynamicRegistration: new(true),
-			Requests:            &lsproto.ClientSemanticTokensRequestOptions{},
-			TokenTypes:          []string{},
-			TokenModifiers:      []string{},
-			Formats:             []lsproto.TokenFormat{lsproto.TokenFormatRelative},
+	caps := &lsproto.ClientCapabilities{
+		Workspace: &lsproto.WorkspaceClientCapabilities{
+			FileOperations: &lsproto.FileOperationClientCapabilities{
+				DynamicRegistration: new(true),
+				WillRename:          new(true),
+			},
 		},
-	}}
+		TextDocument: &lsproto.TextDocumentClientCapabilities{
+			Synchronization: &lsproto.TextDocumentSyncClientCapabilities{DynamicRegistration: new(true)},
+			DocumentSymbol:  &lsproto.DocumentSymbolClientCapabilities{DynamicRegistration: new(true)},
+			FoldingRange:    &lsproto.FoldingRangeClientCapabilities{DynamicRegistration: new(true)},
+			SelectionRange:  &lsproto.SelectionRangeClientCapabilities{DynamicRegistration: new(true)},
+			InlayHint:       &lsproto.InlayHintClientCapabilities{DynamicRegistration: new(true)},
+			CodeLens:        &lsproto.CodeLensClientCapabilities{DynamicRegistration: new(true)},
+			CodeAction:      &lsproto.CodeActionClientCapabilities{DynamicRegistration: new(true)},
+			Formatting:      &lsproto.DocumentFormattingClientCapabilities{DynamicRegistration: new(true)},
+			RangeFormatting: &lsproto.DocumentRangeFormattingClientCapabilities{DynamicRegistration: new(true)},
+			OnTypeFormatting: &lsproto.DocumentOnTypeFormattingClientCapabilities{
+				DynamicRegistration: new(true),
+			},
+			LinkedEditingRange: &lsproto.LinkedEditingRangeClientCapabilities{DynamicRegistration: new(true)},
+			CallHierarchy:      &lsproto.CallHierarchyClientCapabilities{DynamicRegistration: new(true)},
+			SemanticTokens: &lsproto.SemanticTokensClientCapabilities{
+				DynamicRegistration: new(true),
+				Requests:            &lsproto.ClientSemanticTokensRequestOptions{},
+				TokenTypes:          []string{},
+				TokenModifiers:      []string{},
+				Formats:             []lsproto.TokenFormat{lsproto.TokenFormatRelative},
+			},
+		},
+	}
 	initMsg, _, ok := lsptestutil.SendRequest(t, client, lsproto.InitializeInfo, &lsproto.InitializeParams{
 		Capabilities: caps,
 		InitializationOptions: &lsproto.InitializationOptionsOrNull{InitializationOptions: &lsproto.InitializationOptions{
@@ -108,28 +129,46 @@ export const title = "Profile";
 	registered := append([]*lsproto.Registration(nil), registrations...)
 	mu.Unlock()
 	assert.Assert(t, len(registered) > 0, "expected dynamic registrations")
-	var foundDidOpen, foundSemanticTokens bool
+	expectedMapperRegistrations := map[string]bool{
+		"content-mapper-did-open":           false,
+		"content-mapper-did-change":         false,
+		"content-mapper-did-close":          false,
+		"content-mapper-semantic-tokens":    false,
+		"content-mapper-document-symbol":    false,
+		"content-mapper-folding-range":      false,
+		"content-mapper-selection-range":    false,
+		"content-mapper-inlay-hint":         false,
+		"content-mapper-code-lens":          false,
+		"content-mapper-code-action":        false,
+		"content-mapper-formatting":         false,
+		"content-mapper-range-formatting":   false,
+		"content-mapper-on-type-formatting": false,
+		"content-mapper-linked-editing":     false,
+		"content-mapper-call-hierarchy":     false,
+		"content-mapper-will-rename-files":  false,
+	}
 	for _, registration := range registered {
-		if registration.Id != "content-mapper-did-open" && registration.Id != "content-mapper-did-change" && registration.Id != "content-mapper-did-close" && registration.Id != "content-mapper-semantic-tokens" {
+		if _, expected := expectedMapperRegistrations[registration.Id]; !expected {
 			assert.Assert(t, !strings.HasPrefix(registration.Id, "content-mapper-"), "unexpected unsupported content mapper registration %q", registration.Id)
+		} else {
+			expectedMapperRegistrations[registration.Id] = true
 		}
 		if registration.Id == "content-mapper-did-open" {
-			foundDidOpen = true
 			assert.Assert(t, registration.RegisterOptions != nil && registration.RegisterOptions.TextDocumentDidOpen != nil)
 			selector := registration.RegisterOptions.TextDocumentDidOpen.DocumentSelector.DocumentSelector
 			assert.Assert(t, selector != nil && len(*selector) == 1)
 			assert.Equal(t, *(*selector)[0].Pattern.Pattern.Pattern, "**/*.vue")
 		}
 		if registration.Id == "content-mapper-semantic-tokens" {
-			foundSemanticTokens = true
 			assert.Assert(t, registration.RegisterOptions != nil && registration.RegisterOptions.TextDocumentSemanticTokens != nil)
 			selector := registration.RegisterOptions.TextDocumentSemanticTokens.DocumentSelector.DocumentSelector
 			assert.Assert(t, selector != nil && len(*selector) == 1)
 			assert.Equal(t, *(*selector)[0].Pattern.Pattern.Pattern, "**/*.vue")
 		}
 	}
-	assert.Assert(t, foundDidOpen, "expected didOpen registration for .vue")
-	assert.Assert(t, foundSemanticTokens, "expected semantic tokens registration for .vue")
+	for id, found := range expectedMapperRegistrations {
+		assert.Assert(t, found, "expected %s registration for .vue", id)
+	}
 
 	lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
 		TextDocument: &lsproto.TextDocumentItem{Uri: uri, LanguageId: "vue", Version: 1, Text: component},
@@ -184,20 +223,20 @@ export const title = "Profile";
 	unregistered := append([]*lsproto.Unregistration(nil), unregistrations...)
 	mu.Unlock()
 	assert.Assert(t, len(unregistered) > 0, "expected dynamic unregistration")
-	var foundDidClose, foundSemanticTokensUnregistration bool
+	expectedUnregistrations := make(map[string]bool, len(expectedMapperRegistrations))
+	for id := range expectedMapperRegistrations {
+		expectedUnregistrations[id] = false
+	}
 	for _, unregistration := range unregistered {
-		if unregistration.Id != "content-mapper-did-open" && unregistration.Id != "content-mapper-did-change" && unregistration.Id != "content-mapper-did-close" && unregistration.Id != "content-mapper-semantic-tokens" {
+		if _, expected := expectedUnregistrations[unregistration.Id]; !expected {
 			assert.Assert(t, !strings.HasPrefix(unregistration.Id, "content-mapper-"), "unexpected unsupported content mapper unregistration %q", unregistration.Id)
-		}
-		if unregistration.Id == "content-mapper-did-close" {
-			foundDidClose = true
-		}
-		if unregistration.Id == "content-mapper-semantic-tokens" {
-			foundSemanticTokensUnregistration = true
+		} else {
+			expectedUnregistrations[unregistration.Id] = true
 		}
 	}
-	assert.Assert(t, foundDidClose, "expected didClose unregistration")
-	assert.Assert(t, foundSemanticTokensUnregistration, "expected semantic tokens unregistration")
+	for id, found := range expectedUnregistrations {
+		assert.Assert(t, found, "expected %s unregistration", id)
+	}
 
 	lsptestutil.SendNotification(t, client, lsproto.TextDocumentDidCloseInfo, &lsproto.DidCloseTextDocumentParams{
 		TextDocument: lsproto.TextDocumentIdentifier{Uri: uri},

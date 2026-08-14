@@ -29,7 +29,7 @@ func (l *LanguageService) ProvideSourceDefinition(
 	position lsproto.Position,
 ) (lsproto.DefinitionResponse, error) {
 	program, file := l.getProgramAndFile(documentURI)
-	positions := lsconv.FromLSPPositionForSourceFile(l.converters, file, position, spanmap.FeatureSourceDefinition)
+	positions := lsconv.FromLSPPositionForSourceFile(l.converters, file, position, spanmap.FeatureDefinition)
 	results := make([]lsproto.DefinitionResponse, 0, len(positions))
 	for _, mapped := range positions {
 		if mapped.Fidelity.IsSingleSegment() {
@@ -61,7 +61,7 @@ func (l *LanguageService) provideSourceDefinitionAtPosition(
 		// GetTouchingPropertyName returns the SourceFile node.
 		if declarations, ref := resolver.resolveTripleSlashReference(file, pos, program); len(declarations) != 0 {
 			originSelectionRange, _ := l.createLspRangeFromBounds(ref.Pos(), ref.End(), file)
-			return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, declarations, nil /*reference*/, spanmap.FeatureSourceDefinition), nil
+			return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, declarations, nil /*reference*/, spanmap.FeatureDefinition), nil
 		}
 		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{}, nil
 	}
@@ -75,7 +75,7 @@ func (l *LanguageService) provideSourceDefinitionAtPosition(
 		specifierMode := program.GetModeForUsageLocation(file, containingModuleSpecifier)
 		if implementationFile := resolver.resolveImplementation(containingModuleSpecifier.Text(), specifierMode); implementationFile != "" {
 			if sourceFile := resolver.getOrParseSourceFile(implementationFile); sourceFile != nil {
-				return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, getSourceDefinitionEntryDeclarations(sourceFile), nil, spanmap.FeatureSourceDefinition), nil
+				return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, getSourceDefinitionEntryDeclarations(sourceFile), nil, spanmap.FeatureDefinition), nil
 			}
 		}
 		return l.provideDefinitionAtPosition(ctx, program, file, textPos, clientSupportsLink), nil
@@ -96,7 +96,7 @@ func (l *LanguageService) provideSourceDefinitionAtPosition(
 		moduleResults := resolver.searchImplementationFile(node, resolvedImplFile, names)
 		if len(moduleResults) != 0 {
 			if !ast.IsPartOfTypeNode(node) && !ast.IsPartOfTypeOnlyImportOrExportDeclaration(node) || hasConcreteSourceDeclarations(moduleResults) {
-				return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, uniqueDeclarationNodes(moduleResults), nil, spanmap.FeatureSourceDefinition), nil
+				return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, uniqueDeclarationNodes(moduleResults), nil, spanmap.FeatureDefinition), nil
 			}
 		}
 	}
@@ -117,12 +117,12 @@ func (l *LanguageService) provideSourceDefinitionAtPosition(
 		// in which case the .d.ts definition is more appropriate.
 		if containingModuleSpecifier != nil && resolvedImplFile != "" && !hasConcreteSourceDeclarations(checkerDeclarations) {
 			if sourceFile := resolver.getOrParseSourceFile(resolvedImplFile); sourceFile != nil {
-				return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, getSourceDefinitionEntryDeclarations(sourceFile), nil, spanmap.FeatureSourceDefinition), nil
+				return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, getSourceDefinitionEntryDeclarations(sourceFile), nil, spanmap.FeatureDefinition), nil
 			}
 		}
 		return l.provideDefinitionAtPosition(ctx, program, file, textPos, clientSupportsLink), nil
 	}
-	return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, declarations, nil /*reference*/, spanmap.FeatureSourceDefinition), nil
+	return l.createDefinitionLocations(originSelectionRange, clientSupportsLink, declarations, nil /*reference*/, spanmap.FeatureDefinition), nil
 }
 
 // sourceDefResolver resolves source definitions by mapping .d.ts declarations

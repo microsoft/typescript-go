@@ -46,7 +46,6 @@ const (
 	FeatureDefinition
 	FeatureTypeDefinition
 	FeatureImplementation
-	FeatureSourceDefinition
 	FeatureReferences
 	FeatureDocumentHighlights
 	FeatureRename

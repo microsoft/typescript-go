@@ -211,15 +211,15 @@ func (l *LanguageService) updateImportsForFileRename(program *compiler.Program, 
 
 	var movedFiles []movedFile
 	for _, sourceFile := range allFiles {
-		if newFileName, ok := oldToNew(sourceFile.FileName()); ok {
+		if newFileName, ok := oldToNew(sourceFile.OriginalFileName()); ok {
 			movedFiles = append(movedFiles, movedFile{sourceFile: sourceFile, newFileName: newFileName})
 		}
 	}
 
 	for _, sourceFile := range allFiles {
-		oldFileName := sourceFile.FileName()
-		newFromOld, fileMoved := oldToNew(sourceFile.FileName())
-		newImportFromPath := sourceFile.FileName()
+		oldFileName := sourceFile.OriginalFileName()
+		newFromOld, fileMoved := oldToNew(oldFileName)
+		newImportFromPath := oldFileName
 		if fileMoved {
 			newImportFromPath = newFromOld
 		}

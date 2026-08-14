@@ -137,6 +137,9 @@ func (c *compilerHost) GetContentMappedSourceFiles(parseOptions ast.SourceFilePa
 			return contentmapper.SourceFiles{}, transformErr
 		}
 		files.Canonical.Hash = key.Hash
+		for _, supplemental := range files.Supplemental {
+			supplemental.Hash = key.Hash
+		}
 		return files, nil
 	})
 	if err == nil {
