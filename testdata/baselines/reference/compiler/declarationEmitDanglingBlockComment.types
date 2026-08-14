@@ -1,0 +1,132 @@
+//// [tests/cases/compiler/declarationEmitDanglingBlockComment.ts] ////
+
+=== topComment-js.js ===
+/** Comment on nothing */
+
+/** Comment on noop */
+(function noop() {})();
+>(function noop() {})() : void
+>(function noop() {}) : () => void
+>function noop() {} : () => void
+>noop : () => void
+
+export const pi = 3;
+>pi : 3
+>3 : 3
+
+=== nonTopComment-js.js ===
+export const e = 3;
+>e : 3
+>3 : 3
+
+/** Comment on nothing */
+
+/** Comment on noop */
+(function noop() {})();
+>(function noop() {})() : void
+>(function noop() {}) : () => void
+>function noop() {} : () => void
+>noop : () => void
+
+export const pi = 3;
+>pi : 3
+>3 : 3
+
+=== attachedComment-js.js ===
+/** Comment on pi */
+export const pi = 3;
+>pi : 3
+>3 : 3
+
+=== elidedDeclarationComment-js.js ===
+/** Comment on unused */
+const unused = 1;
+>unused : 1
+>1 : 1
+
+export const pi = 3;
+>pi : 3
+>3 : 3
+
+=== topComment-exports.js ===
+/** Comment on nothing */
+
+/** Comment on noop */
+(function noop() {})();
+>(function noop() {})() : void
+>(function noop() {}) : () => void
+>function noop() {} : () => void
+>noop : () => void
+
+exports.pi = 3;
+>exports.pi = 3 : 3
+>exports.pi : 3
+>exports : typeof import("./topComment-exports")
+>pi : 3
+>3 : 3
+
+=== topComment-moduleExports.js ===
+/** Comment on nothing */
+
+/** Comment on noop */
+(function noop() {})();
+>(function noop() {})() : void
+>(function noop() {}) : () => void
+>function noop() {} : () => void
+>noop : () => void
+
+module.exports = 3;
+>module.exports = 3 : 3
+>module.exports : 3
+>module : { exports: 3; }
+>exports : 3
+>3 : 3
+
+=== topComment-ts.ts ===
+/** Comment on nothing */
+
+/** Comment on noop */
+(function noop() {})();
+>(function noop() {})() : void
+>(function noop() {}) : () => void
+>function noop() {} : () => void
+>noop : () => void
+
+export const pi = 3;
+>pi : 3
+>3 : 3
+
+=== nonTopComment-ts.ts ===
+export const e = 3;
+>e : 3
+>3 : 3
+
+/** Comment on nothing */
+
+/** Comment on noop */
+(function noop() {})();
+>(function noop() {})() : void
+>(function noop() {}) : () => void
+>function noop() {} : () => void
+>noop : () => void
+
+export const pi = 3;
+>pi : 3
+>3 : 3
+
+=== attachedComment-ts.ts ===
+/** Comment on pi */
+export const pi = 3;
+>pi : 3
+>3 : 3
+
+=== elidedDeclarationComment-ts.ts ===
+/** Comment on unused */
+const unused = 1;
+>unused : 1
+>1 : 1
+
+export const pi = 3;
+>pi : 3
+>3 : 3
+

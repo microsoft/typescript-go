@@ -1,0 +1,98 @@
+//// [tests/cases/compiler/declarationEmitDanglingBlockComment.ts] ////
+
+=== topComment-js.js ===
+/** Comment on nothing */
+
+/** Comment on noop */
+(function noop() {})();
+>noop : Symbol(noop, Decl(topComment-js.js, 3, 1))
+
+export const pi = 3;
+>pi : Symbol(pi, Decl(topComment-js.js, 5, 12))
+
+=== nonTopComment-js.js ===
+export const e = 3;
+>e : Symbol(e, Decl(nonTopComment-js.js, 0, 12))
+
+/** Comment on nothing */
+
+/** Comment on noop */
+(function noop() {})();
+>noop : Symbol(noop, Decl(nonTopComment-js.js, 5, 1))
+
+export const pi = 3;
+>pi : Symbol(pi, Decl(nonTopComment-js.js, 7, 12))
+
+=== attachedComment-js.js ===
+/** Comment on pi */
+export const pi = 3;
+>pi : Symbol(pi, Decl(attachedComment-js.js, 1, 12))
+
+=== elidedDeclarationComment-js.js ===
+/** Comment on unused */
+const unused = 1;
+>unused : Symbol(unused, Decl(elidedDeclarationComment-js.js, 1, 5))
+
+export const pi = 3;
+>pi : Symbol(pi, Decl(elidedDeclarationComment-js.js, 3, 12))
+
+=== topComment-exports.js ===
+/** Comment on nothing */
+
+/** Comment on noop */
+(function noop() {})();
+>noop : Symbol(noop, Decl(topComment-exports.js, 3, 1))
+
+exports.pi = 3;
+>exports.pi : Symbol(pi, Decl(topComment-exports.js, 3, 23))
+>exports : Symbol(exports, Decl(topComment-exports.js, 0, 0))
+>pi : Symbol(pi, Decl(topComment-exports.js, 3, 23))
+
+=== topComment-moduleExports.js ===
+/** Comment on nothing */
+
+/** Comment on noop */
+(function noop() {})();
+>noop : Symbol(noop, Decl(topComment-moduleExports.js, 3, 1))
+
+module.exports = 3;
+>module.exports : Symbol(exports, Decl(topComment-moduleExports.js, 0, 0))
+>module : Symbol(module, Decl(topComment-moduleExports.js, 0, 0))
+>exports : Symbol(exports, Decl(topComment-moduleExports.js, 0, 0))
+
+=== topComment-ts.ts ===
+/** Comment on nothing */
+
+/** Comment on noop */
+(function noop() {})();
+>noop : Symbol(noop, Decl(topComment-ts.ts, 3, 1))
+
+export const pi = 3;
+>pi : Symbol(pi, Decl(topComment-ts.ts, 5, 12))
+
+=== nonTopComment-ts.ts ===
+export const e = 3;
+>e : Symbol(e, Decl(nonTopComment-ts.ts, 0, 12))
+
+/** Comment on nothing */
+
+/** Comment on noop */
+(function noop() {})();
+>noop : Symbol(noop, Decl(nonTopComment-ts.ts, 5, 1))
+
+export const pi = 3;
+>pi : Symbol(pi, Decl(nonTopComment-ts.ts, 7, 12))
+
+=== attachedComment-ts.ts ===
+/** Comment on pi */
+export const pi = 3;
+>pi : Symbol(pi, Decl(attachedComment-ts.ts, 1, 12))
+
+=== elidedDeclarationComment-ts.ts ===
+/** Comment on unused */
+const unused = 1;
+>unused : Symbol(unused, Decl(elidedDeclarationComment-ts.ts, 1, 5))
+
+export const pi = 3;
+>pi : Symbol(pi, Decl(elidedDeclarationComment-ts.ts, 3, 12))
+
