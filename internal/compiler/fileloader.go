@@ -214,6 +214,7 @@ func (p *fileLoader) addRootFileTask(fileName string, libFile *LibFile, includeR
 	}
 	if diagnostic != nil {
 		rootTask.normalizedFilePath = absPath
+		rootTask.failedLookup = true
 		rootTask.processingDiagnostics = []*processingDiagnostic{{
 			kind: processingDiagnosticKindExplainingFileInclude,
 			data: &includeExplainingDiagnostic{
@@ -547,7 +548,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 		}
 	}
 
-	if file.ScriptKind == core.ScriptKindJSX || file.ScriptKind == core.ScriptKindTSX {
+	if isJavaScriptFile || file.ScriptKind == core.ScriptKindTSX {
 		jsxImport := ast.GetJSXRuntimeImport(ast.GetJSXImplicitImportBase(optionsForFile, file), optionsForFile)
 		if jsxImport != "" {
 			specifier := p.createSyntheticImport(jsxImport, file)

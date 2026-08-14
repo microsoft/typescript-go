@@ -3468,6 +3468,8 @@ var This_syntax_is_reserved_in_files_with_the_mts_or_cts_extension_Add_a_trailin
 
 var A_mapped_type_may_not_declare_properties_or_methods = &Message{code: 7061, category: CategoryError, key: "A_mapped_type_may_not_declare_properties_or_methods_7061", text: "A mapped type may not declare properties or methods."}
 
+var Declaration_emit_elides_private_members_but_0_refers_to_a_private_member_Write_an_explicit_type_here = &Message{code: 7080, category: CategoryError, key: "Declaration_emit_elides_private_members_but_0_refers_to_a_private_member_Write_an_explicit_type_here_7080", text: "Declaration emit elides private members, but '{0}' refers to a private member. Write an explicit type here."}
+
 var You_cannot_rename_this_element = &Message{code: 8000, category: CategoryError, key: "You_cannot_rename_this_element_8000", text: "You cannot rename this element."}
 
 var You_cannot_rename_elements_that_are_defined_in_the_standard_TypeScript_library = &Message{code: 8001, category: CategoryError, key: "You_cannot_rename_elements_that_are_defined_in_the_standard_TypeScript_library_8001", text: "You cannot rename elements that are defined in the standard TypeScript library."}
@@ -3570,7 +3572,7 @@ var Only_const_arrays_can_be_inferred_with_isolatedDeclarations = &Message{code:
 
 var Arrays_with_spread_elements_can_t_inferred_with_isolatedDeclarations = &Message{code: 9018, category: CategoryError, key: "Arrays_with_spread_elements_can_t_inferred_with_isolatedDeclarations_9018", text: "Arrays with spread elements can't inferred with --isolatedDeclarations."}
 
-var Binding_elements_can_t_be_exported_directly_with_isolatedDeclarations = &Message{code: 9019, category: CategoryError, key: "Binding_elements_can_t_be_exported_directly_with_isolatedDeclarations_9019", text: "Binding elements can't be exported directly with --isolatedDeclarations."}
+var Binding_elements_with_initializers_can_t_be_exported_directly_with_isolatedDeclarations = &Message{code: 9019, category: CategoryError, key: "Binding_elements_with_initializers_can_t_be_exported_directly_with_isolatedDeclarations_9019", text: "Binding elements with initializers can't be exported directly with --isolatedDeclarations."}
 
 var Enum_member_initializers_must_be_computable_without_references_to_external_symbols_with_isolatedDeclarations = &Message{code: 9020, category: CategoryError, key: "Enum_member_initializers_must_be_computable_without_references_to_external_symbols_with_isolatedDecl_9020", text: "Enum member initializers must be computable without references to external symbols with --isolatedDeclarations."}
 
@@ -7778,6 +7780,8 @@ func keyToMessage(key Key) *Message {
 		return This_syntax_is_reserved_in_files_with_the_mts_or_cts_extension_Add_a_trailing_comma_or_explicit_constraint
 	case "A_mapped_type_may_not_declare_properties_or_methods_7061":
 		return A_mapped_type_may_not_declare_properties_or_methods
+	case "Declaration_emit_elides_private_members_but_0_refers_to_a_private_member_Write_an_explicit_type_here_7080":
+		return Declaration_emit_elides_private_members_but_0_refers_to_a_private_member_Write_an_explicit_type_here
 	case "You_cannot_rename_this_element_8000":
 		return You_cannot_rename_this_element
 	case "You_cannot_rename_elements_that_are_defined_in_the_standard_TypeScript_library_8001":
@@ -7880,8 +7884,8 @@ func keyToMessage(key Key) *Message {
 		return Only_const_arrays_can_be_inferred_with_isolatedDeclarations
 	case "Arrays_with_spread_elements_can_t_inferred_with_isolatedDeclarations_9018":
 		return Arrays_with_spread_elements_can_t_inferred_with_isolatedDeclarations
-	case "Binding_elements_can_t_be_exported_directly_with_isolatedDeclarations_9019":
-		return Binding_elements_can_t_be_exported_directly_with_isolatedDeclarations
+	case "Binding_elements_with_initializers_can_t_be_exported_directly_with_isolatedDeclarations_9019":
+		return Binding_elements_with_initializers_can_t_be_exported_directly_with_isolatedDeclarations
 	case "Enum_member_initializers_must_be_computable_without_references_to_external_symbols_with_isolatedDecl_9020":
 		return Enum_member_initializers_must_be_computable_without_references_to_external_symbols_with_isolatedDeclarations
 	case "Extends_clause_can_t_contain_an_expression_with_isolatedDeclarations_9021":

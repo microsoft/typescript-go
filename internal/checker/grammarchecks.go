@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -81,7 +82,7 @@ func (c *Checker) checkGrammarRegularExpressionLiteral(node *ast.RegularExpressi
 				lastError.AddRelatedInfo(err)
 			} else if lastError == nil || start != lastError.Pos() {
 				lastError = ast.NewDiagnostic(sourceFile, core.NewTextRange(start, start+length), message, args...)
-				c.addDiagnostic(lastError)
+				lastError = c.addDiagnostic(lastError)
 			}
 		})
 		c.regExpScanner.SetText(sourceFile.Text())
@@ -787,9 +788,9 @@ func (c *Checker) checkGrammarArrowFunction(node *ast.Node, file *ast.SourceFile
 	}
 
 	equalsGreaterThanToken := arrowFunc.EqualsGreaterThanToken
-	startLine := scanner.GetECMALineOfPosition(file, equalsGreaterThanToken.Pos())
-	endLine := scanner.GetECMALineOfPosition(file, equalsGreaterThanToken.End())
-	return startLine != endLine && c.grammarErrorOnNode(equalsGreaterThanToken, diagnostics.Line_terminator_not_permitted_before_arrow)
+	arrowFullText := file.Text()[equalsGreaterThanToken.Pos():equalsGreaterThanToken.End()]
+	return strings.ContainsFunc(arrowFullText, stringutil.IsLineBreak) &&
+		c.grammarErrorOnNode(equalsGreaterThanToken, diagnostics.Line_terminator_not_permitted_before_arrow)
 }
 
 func (c *Checker) checkGrammarIndexSignatureParameters(node *ast.IndexSignatureDeclaration) bool {
