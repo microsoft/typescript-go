@@ -57,7 +57,7 @@ func NewFlowSwitchClauseData(switchStatement *Node, clauseStart int, clauseEnd i
 	node.SwitchStatement = switchStatement
 	node.ClauseStart = int32(clauseStart)
 	node.ClauseEnd = int32(clauseEnd)
-	return newNode(kindFlowSwitchClauseData, node, NodeFactoryHooks{})
+	return newNode(kindFlowSwitchClauseData, node.AsNode(), NodeFactoryHooks{})
 }
 
 func (node *FlowSwitchClauseData) IsEmpty() bool {
@@ -76,5 +76,5 @@ func NewFlowReduceLabelData(target *FlowLabel, antecedents *FlowList) *Node {
 	node := &FlowReduceLabelData{}
 	node.Target = target
 	node.Antecedents = antecedents
-	return newNode(kindFlowReduceLabelData, node, NodeFactoryHooks{})
+	return newNode(kindFlowReduceLabelData, node.AsNode(), NodeFactoryHooks{})
 }

@@ -385,6 +385,10 @@ function canonicalNodesByKind(): Map<NodeType, string[]> {
     return kindsByNode;
 }
 
+function extendsBase(extendsKeys: string[], baseKey: string): boolean {
+    return extendsKeys.some(key => key === baseKey || extendsBase(api.getBase(key)?.extendsKeys ?? [], baseKey));
+}
+
 function isNodeFlagsMember(m: MemberInfo): boolean {
     const type = m.type;
     return type.kind === "primitive" && type.name === "NodeFlags";
@@ -426,7 +430,7 @@ function emitNewFactory(
     const kindArg = kindMember ? kindMember.goParamName() : `Kind${kindName}`;
 
     if (nodeFlagsMembers.length > 0) {
-        w.write(`node := f.newNode(${kindArg}, data)`);
+        w.write(`node := f.newNode(${kindArg}, data.AsNode())`);
         for (const m of nodeFlagsMembers) {
             const param = m.goParamName();
             if (m.bitmask) {
@@ -439,7 +443,7 @@ function emitNewFactory(
         w.write("return node");
     }
     else {
-        w.write(`return f.newNode(${kindArg}, data)`);
+        w.write(`return f.newNode(${kindArg}, data.AsNode())`);
     }
 
     w.pop();
@@ -470,13 +474,13 @@ function generateNewFactory(w: CodeWriter, node: NodeType) {
             else {
                 w.write(`data := &${canonicalNode.name}{}`);
             }
-            w.write("return f.newNode(kind, data)");
+            w.write("return f.newNode(kind, data.AsNode())");
             w.pop();
         }
         w.write("default:");
         w.push();
         w.write("data := f.tokenArena.New()");
-        w.write("return f.newNode(kind, data)");
+        w.write("return f.newNode(kind, data.AsNode())");
         w.pop();
         w.write("}");
         w.pop();
@@ -626,37 +630,6 @@ function generateForEachChild(w: CodeWriter, node: NodeType) {
 
 // ── Generate ForEachChild dispatch ─────────────────────────────────────────
 
-// Generates a (*Node).data method that recovers the concrete node pointer from
-// the embedded Node at offset zero. This avoids storing an interface self
-// pointer in every Node.
-function generateDataDispatch(w: CodeWriter) {
-    w.write("func (n *Node) data() nodeData {");
-    w.push();
-    w.write("switch n.Kind {");
-    w.write("case kindFlowSwitchClauseData:");
-    w.push();
-    w.write("return (*FlowSwitchClauseData)(unsafe.Pointer(n))");
-    w.pop();
-    w.write("case kindFlowReduceLabelData:");
-    w.push();
-    w.write("return (*FlowReduceLabelData)(unsafe.Pointer(n))");
-    w.pop();
-    for (const [node, kinds] of canonicalNodesByKind()) {
-        w.write(`case ${kinds.join(", ")}:`);
-        w.push();
-        w.write(`return (*${node.name})(unsafe.Pointer(n))`);
-        w.pop();
-    }
-    w.write("default:");
-    w.push();
-    w.write('panic("Unhandled case in Node.data: " + n.Kind.String())');
-    w.pop();
-    w.write("}");
-    w.pop();
-    w.write("}");
-    w.write("");
-}
-
 // Determines whether a node has a meaningful ForEachChild implementation (i.e.
 // one that is not the no-op inherited from NodeDefault). This is true for any
 // generated node with child members, or for hand-written nodes (e.g. SourceFile)
@@ -669,14 +642,10 @@ function hasForEachChild(node: NodeType): boolean {
 // Generates a (*Node).ForEachChild method that dispatches on node.Kind to the
 // concrete node type's ForEachChild method.
 //
-// This deliberately avoids calling node.data().ForEachChild(v) through the
-// nodeData interface. An interface (or other indirect) call is opaque to escape
-// analysis, which must then assume the visitor `v` escapes; that forces caller
-// closures — and any locals they capture — onto the heap. Dispatching through a
-// Kind switch to a statically-resolved concrete method lets escape analysis
-// prove the visitor does not escape, keeping caller closures on the stack. The
-// integer switch over Kind also compiles to a jump table, making dispatch
-// cheaper than the interface call it replaces.
+// Dispatching through a Kind switch to a statically-resolved concrete method
+// lets escape analysis prove the visitor does not escape, keeping caller
+// closures on the stack. The integer switch over Kind also compiles to a jump
+// table.
 //
 // Kinds whose node has no children fall through to `default` and return false,
 // matching NodeDefault.ForEachChild.
@@ -696,6 +665,137 @@ function generateForEachChildDispatch(w: CodeWriter) {
     w.write("default:");
     w.push();
     w.write("return false");
+    w.pop();
+    w.write("}");
+    w.pop();
+    w.write("}");
+    w.write("");
+}
+
+function generateVisitEachChildDispatch(w: CodeWriter) {
+    w.write("func (n *Node) VisitEachChild(v *NodeVisitor) *Node {");
+    w.push();
+    w.write("switch n.Kind {");
+    for (const node of api.nodes()) {
+        if (!hasForEachChild(node)) continue;
+        const kinds = node.allKinds().map(k => k.formatGoConstant());
+        if (kinds.length === 0) continue;
+        w.write(`case ${kinds.join(", ")}:`);
+        w.push();
+        w.write(`return (*${node.name})(unsafe.Pointer(n)).VisitEachChild(v)`);
+        w.pop();
+    }
+    w.write("default:");
+    w.push();
+    w.write("return n");
+    w.pop();
+    w.write("}");
+    w.pop();
+    w.write("}");
+    w.write("");
+}
+
+function generateSubtreeFactsDispatch(w: CodeWriter) {
+    w.write("func (n *Node) SubtreeFacts() SubtreeFacts {");
+    w.push();
+    w.write("switch n.Kind {");
+    w.write("case kindFlowSwitchClauseData:");
+    w.push();
+    w.write("data := (*FlowSwitchClauseData)(unsafe.Pointer(n))");
+    w.write("return data.subtreeFactsWorker(data.AsNode())");
+    w.pop();
+    w.write("case kindFlowReduceLabelData:");
+    w.push();
+    w.write("data := (*FlowReduceLabelData)(unsafe.Pointer(n))");
+    w.write("return data.subtreeFactsWorker(data.AsNode())");
+    w.pop();
+    for (const [node, kinds] of canonicalNodesByKind()) {
+        w.write(`case ${kinds.join(", ")}:`);
+        w.push();
+        w.write(`data := (*${node.name})(unsafe.Pointer(n))`);
+        w.write("return data.subtreeFactsWorker(data.AsNode())");
+        w.pop();
+    }
+    w.write("default:");
+    w.push();
+    w.write('panic("Unhandled case in Node.SubtreeFacts: " + n.Kind.String())');
+    w.pop();
+    w.write("}");
+    w.pop();
+    w.write("}");
+    w.write("");
+}
+
+function generateComputeSubtreeFactsDispatch(w: CodeWriter) {
+    generateNodeDataAccessorDispatch(w, "computeSubtreeFacts", "SubtreeFacts", () => true, "SubtreeFactsNone");
+}
+
+function generateNodeDataAccessorDispatch(
+    w: CodeWriter,
+    methodName: string,
+    returnType: string,
+    handlesNode: (node: NodeType) => boolean,
+    defaultValue: string,
+) {
+    w.write(`func (n *Node) ${methodName}() ${returnType} {`);
+    w.push();
+    w.write("switch n.Kind {");
+    for (const [node, kinds] of canonicalNodesByKind()) {
+        if (!handlesNode(node)) continue;
+        w.write(`case ${kinds.join(", ")}:`);
+        w.push();
+        w.write(`return (*${node.name})(unsafe.Pointer(n)).${methodName}()`);
+        w.pop();
+    }
+    w.write("default:");
+    w.push();
+    w.write(`return ${defaultValue}`);
+    w.pop();
+    w.write("}");
+    w.pop();
+    w.write("}");
+    w.write("");
+}
+
+function generateCloneDispatch(w: CodeWriter) {
+    w.write("func (n *Node) Clone(f NodeFactoryCoercible) *Node {");
+    w.push();
+    w.write("switch n.Kind {");
+    w.write("case kindFlowSwitchClauseData, kindFlowReduceLabelData:");
+    w.push();
+    w.write("return nil");
+    w.pop();
+    for (const [node, kinds] of canonicalNodesByKind()) {
+        w.write(`case ${kinds.join(", ")}:`);
+        w.push();
+        w.write(`return (*${node.name})(unsafe.Pointer(n)).Clone(f)`);
+        w.pop();
+    }
+    w.write("default:");
+    w.push();
+    w.write('panic("Unhandled case in Node.Clone: " + n.Kind.String())');
+    w.pop();
+    w.write("}");
+    w.pop();
+    w.write("}");
+    w.write("");
+}
+
+function generateSetModifiersDispatch(w: CodeWriter) {
+    w.write("func (n *MutableNode) SetModifiers(modifiers *ModifierList) {");
+    w.push();
+    w.write("node := (*Node)(unsafe.Pointer(n))");
+    w.write("switch node.Kind {");
+    for (const [data, kinds] of canonicalNodesByKind()) {
+        if (!extendsBase(data.extendsKeys, "ModifiersBase")) continue;
+        w.write(`case ${kinds.join(", ")}:`);
+        w.push();
+        w.write(`(*${data.name})(unsafe.Pointer(node)).setModifiers(modifiers)`);
+        w.pop();
+    }
+    w.write("default:");
+    w.push();
+    w.write('panic("Cannot set modifiers on " + node.Kind.String())');
     w.pop();
     w.write("}");
     w.pop();
@@ -1044,19 +1144,53 @@ function generate(): string {
         }
     }
 
-    // Node data dispatch
-    w.write("// ──────────────────────────────────────────────────────────────────────");
-    w.write("// Node data dispatch");
-    w.write("// ──────────────────────────────────────────────────────────────────────");
-    w.write("");
-    generateDataDispatch(w);
-
     // ForEachChild dispatch
     w.write("// ──────────────────────────────────────────────────────────────────────");
     w.write("// ForEachChild dispatch");
     w.write("// ──────────────────────────────────────────────────────────────────────");
     w.write("");
     generateForEachChildDispatch(w);
+
+    // VisitEachChild dispatch
+    w.write("// ──────────────────────────────────────────────────────────────────────");
+    w.write("// VisitEachChild dispatch");
+    w.write("// ──────────────────────────────────────────────────────────────────────");
+    w.write("");
+    generateVisitEachChildDispatch(w);
+
+    // SubtreeFacts dispatch
+    w.write("// ──────────────────────────────────────────────────────────────────────");
+    w.write("// SubtreeFacts dispatch");
+    w.write("// ──────────────────────────────────────────────────────────────────────");
+    w.write("");
+    generateSubtreeFactsDispatch(w);
+
+    // Compute subtree facts dispatch
+    w.write("// ──────────────────────────────────────────────────────────────────────");
+    w.write("// Compute subtree facts dispatch");
+    w.write("// ──────────────────────────────────────────────────────────────────────");
+    w.write("");
+    generateComputeSubtreeFactsDispatch(w);
+
+    // Node data accessor dispatch
+    w.write("// ──────────────────────────────────────────────────────────────────────");
+    w.write("// Node data accessor dispatch");
+    w.write("// ──────────────────────────────────────────────────────────────────────");
+    w.write("");
+    generateNodeDataAccessorDispatch(w, "Name", "*DeclarationName", node => schemaMembers(node).some(m => m.name === "name"), "nil");
+    generateNodeDataAccessorDispatch(w, "Modifiers", "*ModifierList", node => extendsBase(node.extendsKeys, "ModifiersBase"), "nil");
+    generateNodeDataAccessorDispatch(w, "FlowNodeData", "*FlowNodeBase", node => extendsBase(node.extendsKeys, "FlowNodeBase"), "nil");
+    generateNodeDataAccessorDispatch(w, "DeclarationData", "*DeclarationBase", node => extendsBase(node.extendsKeys, "DeclarationBase"), "nil");
+    generateNodeDataAccessorDispatch(w, "LocalsContainerData", "*LocalsContainerBase", node => extendsBase(node.extendsKeys, "LocalsContainerBase"), "nil");
+    generateNodeDataAccessorDispatch(w, "FunctionLikeData", "*FunctionLikeBase", node => extendsBase(node.extendsKeys, "FunctionLikeBase"), "nil");
+    generateNodeDataAccessorDispatch(w, "propagateSubtreeFacts", "SubtreeFacts", () => true, "SubtreeFactsNone");
+    generateNodeDataAccessorDispatch(w, "ExportableData", "*ExportableBase", node => extendsBase(node.extendsKeys, "ExportableBase"), "nil");
+    generateNodeDataAccessorDispatch(w, "ClassLikeData", "*ClassLikeBase", node => extendsBase(node.extendsKeys, "ClassLikeBase"), "nil");
+    generateNodeDataAccessorDispatch(w, "BodyData", "*BodyBase", node => extendsBase(node.extendsKeys, "BodyBase"), "nil");
+    generateNodeDataAccessorDispatch(w, "LiteralLikeData", "*LiteralLikeNodeBase", node => extendsBase(node.extendsKeys, "LiteralLikeNodeBase"), "nil");
+    generateNodeDataAccessorDispatch(w, "TemplateLiteralLikeData", "*TemplateLiteralLikeNodeBase", node => extendsBase(node.extendsKeys, "TemplateLiteralLikeNodeBase"), "nil");
+    generateCloneDispatch(w);
+    generateSetModifiersDispatch(w);
 
     // As*() casts
     w.write("// ──────────────────────────────────────────────────────────────────────");
