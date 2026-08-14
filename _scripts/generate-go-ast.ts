@@ -825,17 +825,23 @@ function generateNodeOffsetAccessorDispatch(
     w: CodeWriter,
     methodName: string,
     returnType: string,
-    selector: string,
+    selector: string | ((node: NodeType) => string),
     handlesNode: (node: NodeType) => boolean,
     indirect: boolean,
+    unsupported = "return nil",
+    directIndex = false,
+    handlesKind: (kind: string) => boolean = () => true,
 ) {
     const offsetsName = `node${methodName}Offsets`;
-    w.write(`var ${offsetsName} = [KindCount]uint16{`);
+    const tableLength = directIndex ? "kindFlowReduceLabelData + 1" : "KindCount";
+    w.write(`var ${offsetsName} = [${tableLength}]uint16{`);
     w.push();
     for (const [node, kinds] of canonicalNodesByKind()) {
         if (!handlesNode(node)) continue;
         for (const kind of kinds) {
-            w.write(`${kind}: uint16(unsafe.Offsetof(${node.name}{}.${selector})) + 1,`);
+            if (!handlesKind(kind)) continue;
+            const nodeSelector = typeof selector === "string" ? selector : selector(node);
+            w.write(`${kind}: uint16(unsafe.Offsetof(${node.name}{}.${nodeSelector})) + 1,`);
         }
     }
     w.pop();
@@ -843,16 +849,19 @@ function generateNodeOffsetAccessorDispatch(
     w.write("");
     w.write(`func (n *Node) ${methodName}() ${returnType} {`);
     w.push();
-    w.write("kind := uint16(n.Kind)");
-    w.write(`if kind >= uint16(len(${offsetsName})) {`);
-    w.push();
-    w.write("return nil");
-    w.pop();
-    w.write("}");
-    w.write(`offset := ${offsetsName}[kind]`);
+    const kind = directIndex ? "n.Kind" : "kind";
+    if (!directIndex) {
+        w.write("kind := uint16(n.Kind)");
+        w.write(`if ${kind} >= uint16(len(${offsetsName})) {`);
+        w.push();
+        w.write(unsupported);
+        w.pop();
+        w.write("}");
+    }
+    w.write(`offset := ${offsetsName}[${kind}]`);
     w.write("if offset == 0 {");
     w.push();
-    w.write("return nil");
+    w.write(unsupported);
     w.pop();
     w.write("}");
     const pointer = "unsafe.Add(unsafe.Pointer(n), uintptr(offset-1))";
@@ -861,6 +870,25 @@ function generateNodeOffsetAccessorDispatch(
     }
     else {
         w.write(`return (${returnType})(${pointer})`);
+    }
+    w.pop();
+    w.write("}");
+    w.write("");
+}
+
+function generateNodeTextOffsets(w: CodeWriter) {
+    w.write("var nodeTextOffsets = [kindFlowReduceLabelData + 1]uint16{");
+    w.push();
+    for (const [node, kinds] of canonicalNodesByKind()) {
+        const hasText = schemaMembers(node).some(m =>
+            m.name === "Text" &&
+            m.type.kind === "primitive" &&
+            m.type.name === "string"
+        ) && node.name !== "JsxText";
+        if (!hasText) continue;
+        for (const kind of kinds) {
+            w.write(`${kind}: uint16(unsafe.Offsetof(${node.name}{}.Text)) + 1,`);
+        }
     }
     w.pop();
     w.write("}");
@@ -1293,12 +1321,38 @@ function generate(): string {
     generateNodeOffsetAccessorDispatch(w, "DeclarationData", "*DeclarationBase", "DeclarationBase", node => extendsBase(node.extendsKeys, "DeclarationBase"), false);
     generateNodeOffsetAccessorDispatch(w, "LocalsContainerData", "*LocalsContainerBase", "LocalsContainerBase", node => extendsBase(node.extendsKeys, "LocalsContainerBase"), false);
     generateNodeOffsetAccessorDispatch(w, "FunctionLikeData", "*FunctionLikeBase", "FunctionLikeBase", node => extendsBase(node.extendsKeys, "FunctionLikeBase"), false);
+    generateNodeOffsetAccessorDispatch(
+        w,
+        "Expression",
+        "*Node",
+        "Expression",
+        node =>
+            schemaMembers(node).some(m => m.name === "Expression") &&
+            node.name !== "TypeParameterDeclaration" &&
+            node.name !== "SyntheticReferenceExpression",
+        true,
+        "return n.expressionUnsupported()",
+        true,
+        kind => kind !== "KindDefaultClause",
+    );
+    generateNodeOffsetAccessorDispatch(
+        w,
+        "Type",
+        "*Node",
+        node => schemaMembers(node).some(m => m.name === "Type") ? "Type" : "TypeExpression",
+        node =>
+            (schemaMembers(node).some(m => m.name === "Type") && node.name !== "SyntheticExpression" && node.name !== "JSDocVariadicType") ||
+            node.name === "JSDocParameterOrPropertyTag",
+        true,
+    );
+    generateNodeOffsetAccessorDispatch(w, "Initializer", "*Node", "Initializer", node => schemaMembers(node).some(m => m.name === "Initializer"), true, 'panic("Unhandled case in Node.Initializer")');
+    generateNodeTextOffsets(w);
     generatePropagateSubtreeFactsDispatch(w);
-    generateNodeDataAccessorDispatch(w, "ExportableData", "*ExportableBase", node => extendsBase(node.extendsKeys, "ExportableBase"), "nil");
-    generateNodeDataAccessorDispatch(w, "ClassLikeData", "*ClassLikeBase", node => extendsBase(node.extendsKeys, "ClassLikeBase"), "nil");
-    generateNodeDataAccessorDispatch(w, "BodyData", "*BodyBase", node => extendsBase(node.extendsKeys, "BodyBase"), "nil");
-    generateNodeDataAccessorDispatch(w, "LiteralLikeData", "*LiteralLikeNodeBase", node => extendsBase(node.extendsKeys, "LiteralLikeNodeBase"), "nil");
-    generateNodeDataAccessorDispatch(w, "TemplateLiteralLikeData", "*TemplateLiteralLikeNodeBase", node => extendsBase(node.extendsKeys, "TemplateLiteralLikeNodeBase"), "nil");
+    generateNodeOffsetAccessorDispatch(w, "ExportableData", "*ExportableBase", "ExportableBase", node => extendsBase(node.extendsKeys, "ExportableBase"), false);
+    generateNodeOffsetAccessorDispatch(w, "ClassLikeData", "*ClassLikeBase", "ClassLikeBase", node => extendsBase(node.extendsKeys, "ClassLikeBase"), false);
+    generateNodeOffsetAccessorDispatch(w, "BodyData", "*BodyBase", "BodyBase", node => extendsBase(node.extendsKeys, "BodyBase"), false);
+    generateNodeOffsetAccessorDispatch(w, "LiteralLikeData", "*LiteralLikeNodeBase", "LiteralLikeNodeBase", node => extendsBase(node.extendsKeys, "LiteralLikeNodeBase"), false);
+    generateNodeOffsetAccessorDispatch(w, "TemplateLiteralLikeData", "*TemplateLiteralLikeNodeBase", "TemplateLiteralLikeNodeBase", node => extendsBase(node.extendsKeys, "TemplateLiteralLikeNodeBase"), false);
     generateCloneDispatch(w);
     generateSetModifiersDispatch(w);
 

@@ -10601,6 +10601,148 @@ func (n *Node) FunctionLikeData() *FunctionLikeBase {
 	return (*FunctionLikeBase)(unsafe.Add(unsafe.Pointer(n), uintptr(offset-1)))
 }
 
+var nodeExpressionOffsets = [kindFlowReduceLabelData + 1]uint16{
+	KindComputedPropertyName:        uint16(unsafe.Offsetof(ComputedPropertyName{}.Expression)) + 1,
+	KindDecorator:                   uint16(unsafe.Offsetof(Decorator{}.Expression)) + 1,
+	KindIfStatement:                 uint16(unsafe.Offsetof(IfStatement{}.Expression)) + 1,
+	KindDoStatement:                 uint16(unsafe.Offsetof(DoStatement{}.Expression)) + 1,
+	KindWhileStatement:              uint16(unsafe.Offsetof(WhileStatement{}.Expression)) + 1,
+	KindForInStatement:              uint16(unsafe.Offsetof(ForInOrOfStatement{}.Expression)) + 1,
+	KindForOfStatement:              uint16(unsafe.Offsetof(ForInOrOfStatement{}.Expression)) + 1,
+	KindReturnStatement:             uint16(unsafe.Offsetof(ReturnStatement{}.Expression)) + 1,
+	KindWithStatement:               uint16(unsafe.Offsetof(WithStatement{}.Expression)) + 1,
+	KindSwitchStatement:             uint16(unsafe.Offsetof(SwitchStatement{}.Expression)) + 1,
+	KindCaseClause:                  uint16(unsafe.Offsetof(CaseOrDefaultClause{}.Expression)) + 1,
+	KindThrowStatement:              uint16(unsafe.Offsetof(ThrowStatement{}.Expression)) + 1,
+	KindExpressionStatement:         uint16(unsafe.Offsetof(ExpressionStatement{}.Expression)) + 1,
+	KindExternalModuleReference:     uint16(unsafe.Offsetof(ExternalModuleReference{}.Expression)) + 1,
+	KindExportAssignment:            uint16(unsafe.Offsetof(ExportAssignment{}.Expression)) + 1,
+	KindYieldExpression:             uint16(unsafe.Offsetof(YieldExpression{}.Expression)) + 1,
+	KindAsExpression:                uint16(unsafe.Offsetof(AsExpression{}.Expression)) + 1,
+	KindSatisfiesExpression:         uint16(unsafe.Offsetof(SatisfiesExpression{}.Expression)) + 1,
+	KindPropertyAccessExpression:    uint16(unsafe.Offsetof(PropertyAccessExpression{}.Expression)) + 1,
+	KindElementAccessExpression:     uint16(unsafe.Offsetof(ElementAccessExpression{}.Expression)) + 1,
+	KindCallExpression:              uint16(unsafe.Offsetof(CallExpression{}.Expression)) + 1,
+	KindNewExpression:               uint16(unsafe.Offsetof(NewExpression{}.Expression)) + 1,
+	KindNonNullExpression:           uint16(unsafe.Offsetof(NonNullExpression{}.Expression)) + 1,
+	KindSpreadElement:               uint16(unsafe.Offsetof(SpreadElement{}.Expression)) + 1,
+	KindTemplateSpan:                uint16(unsafe.Offsetof(TemplateSpan{}.Expression)) + 1,
+	KindParenthesizedExpression:     uint16(unsafe.Offsetof(ParenthesizedExpression{}.Expression)) + 1,
+	KindSpreadAssignment:            uint16(unsafe.Offsetof(SpreadAssignment{}.Expression)) + 1,
+	KindDeleteExpression:            uint16(unsafe.Offsetof(DeleteExpression{}.Expression)) + 1,
+	KindTypeOfExpression:            uint16(unsafe.Offsetof(TypeOfExpression{}.Expression)) + 1,
+	KindVoidExpression:              uint16(unsafe.Offsetof(VoidExpression{}.Expression)) + 1,
+	KindAwaitExpression:             uint16(unsafe.Offsetof(AwaitExpression{}.Expression)) + 1,
+	KindTypeAssertionExpression:     uint16(unsafe.Offsetof(TypeAssertion{}.Expression)) + 1,
+	KindExpressionWithTypeArguments: uint16(unsafe.Offsetof(ExpressionWithTypeArguments{}.Expression)) + 1,
+	KindPartiallyEmittedExpression:  uint16(unsafe.Offsetof(PartiallyEmittedExpression{}.Expression)) + 1,
+	KindJsxSpreadAttribute:          uint16(unsafe.Offsetof(JsxSpreadAttribute{}.Expression)) + 1,
+	KindJsxExpression:               uint16(unsafe.Offsetof(JsxExpression{}.Expression)) + 1,
+}
+
+func (n *Node) Expression() *Node {
+	offset := nodeExpressionOffsets[n.Kind]
+	if offset == 0 {
+		return n.expressionUnsupported()
+	}
+	return *(**Node)(unsafe.Add(unsafe.Pointer(n), uintptr(offset-1)))
+}
+
+var nodeTypeOffsets = [KindCount]uint16{
+	KindVariableDeclaration:         uint16(unsafe.Offsetof(VariableDeclaration{}.Type)) + 1,
+	KindParameter:                   uint16(unsafe.Offsetof(ParameterDeclaration{}.Type)) + 1,
+	KindFunctionDeclaration:         uint16(unsafe.Offsetof(FunctionDeclaration{}.Type)) + 1,
+	KindTypeAliasDeclaration:        uint16(unsafe.Offsetof(TypeAliasDeclaration{}.Type)) + 1,
+	KindJSTypeAliasDeclaration:      uint16(unsafe.Offsetof(TypeAliasDeclaration{}.Type)) + 1,
+	KindExportAssignment:            uint16(unsafe.Offsetof(ExportAssignment{}.Type)) + 1,
+	KindCallSignature:               uint16(unsafe.Offsetof(CallSignatureDeclaration{}.Type)) + 1,
+	KindConstructSignature:          uint16(unsafe.Offsetof(ConstructSignatureDeclaration{}.Type)) + 1,
+	KindConstructor:                 uint16(unsafe.Offsetof(ConstructorDeclaration{}.Type)) + 1,
+	KindGetAccessor:                 uint16(unsafe.Offsetof(GetAccessorDeclaration{}.Type)) + 1,
+	KindSetAccessor:                 uint16(unsafe.Offsetof(SetAccessorDeclaration{}.Type)) + 1,
+	KindIndexSignature:              uint16(unsafe.Offsetof(IndexSignatureDeclaration{}.Type)) + 1,
+	KindMethodSignature:             uint16(unsafe.Offsetof(MethodSignatureDeclaration{}.Type)) + 1,
+	KindMethodDeclaration:           uint16(unsafe.Offsetof(MethodDeclaration{}.Type)) + 1,
+	KindPropertySignature:           uint16(unsafe.Offsetof(PropertySignatureDeclaration{}.Type)) + 1,
+	KindPropertyDeclaration:         uint16(unsafe.Offsetof(PropertyDeclaration{}.Type)) + 1,
+	KindBinaryExpression:            uint16(unsafe.Offsetof(BinaryExpression{}.Type)) + 1,
+	KindArrowFunction:               uint16(unsafe.Offsetof(ArrowFunction{}.Type)) + 1,
+	KindFunctionExpression:          uint16(unsafe.Offsetof(FunctionExpression{}.Type)) + 1,
+	KindAsExpression:                uint16(unsafe.Offsetof(AsExpression{}.Type)) + 1,
+	KindSatisfiesExpression:         uint16(unsafe.Offsetof(SatisfiesExpression{}.Type)) + 1,
+	KindPropertyAssignment:          uint16(unsafe.Offsetof(PropertyAssignment{}.Type)) + 1,
+	KindShorthandPropertyAssignment: uint16(unsafe.Offsetof(ShorthandPropertyAssignment{}.Type)) + 1,
+	KindTypeAssertionExpression:     uint16(unsafe.Offsetof(TypeAssertion{}.Type)) + 1,
+	KindTypeOperator:                uint16(unsafe.Offsetof(TypeOperatorNode{}.Type)) + 1,
+	KindTypePredicate:               uint16(unsafe.Offsetof(TypePredicateNode{}.Type)) + 1,
+	KindMappedType:                  uint16(unsafe.Offsetof(MappedTypeNode{}.Type)) + 1,
+	KindNamedTupleMember:            uint16(unsafe.Offsetof(NamedTupleMember{}.Type)) + 1,
+	KindOptionalType:                uint16(unsafe.Offsetof(OptionalTypeNode{}.Type)) + 1,
+	KindRestType:                    uint16(unsafe.Offsetof(RestTypeNode{}.Type)) + 1,
+	KindParenthesizedType:           uint16(unsafe.Offsetof(ParenthesizedTypeNode{}.Type)) + 1,
+	KindFunctionType:                uint16(unsafe.Offsetof(FunctionTypeNode{}.Type)) + 1,
+	KindConstructorType:             uint16(unsafe.Offsetof(ConstructorTypeNode{}.Type)) + 1,
+	KindTemplateLiteralTypeSpan:     uint16(unsafe.Offsetof(TemplateLiteralTypeSpan{}.Type)) + 1,
+	KindJSDocTypeExpression:         uint16(unsafe.Offsetof(JSDocTypeExpression{}.Type)) + 1,
+	KindJSDocNonNullableType:        uint16(unsafe.Offsetof(JSDocNonNullableType{}.Type)) + 1,
+	KindJSDocNullableType:           uint16(unsafe.Offsetof(JSDocNullableType{}.Type)) + 1,
+	KindJSDocOptionalType:           uint16(unsafe.Offsetof(JSDocOptionalType{}.Type)) + 1,
+	KindJSDocSignature:              uint16(unsafe.Offsetof(JSDocSignature{}.Type)) + 1,
+	KindJSDocParameterTag:           uint16(unsafe.Offsetof(JSDocParameterOrPropertyTag{}.TypeExpression)) + 1,
+	KindJSDocPropertyTag:            uint16(unsafe.Offsetof(JSDocParameterOrPropertyTag{}.TypeExpression)) + 1,
+}
+
+func (n *Node) Type() *Node {
+	kind := uint16(n.Kind)
+	if kind >= uint16(len(nodeTypeOffsets)) {
+		return nil
+	}
+	offset := nodeTypeOffsets[kind]
+	if offset == 0 {
+		return nil
+	}
+	return *(**Node)(unsafe.Add(unsafe.Pointer(n), uintptr(offset-1)))
+}
+
+var nodeInitializerOffsets = [KindCount]uint16{
+	KindForStatement:        uint16(unsafe.Offsetof(ForStatement{}.Initializer)) + 1,
+	KindForInStatement:      uint16(unsafe.Offsetof(ForInOrOfStatement{}.Initializer)) + 1,
+	KindForOfStatement:      uint16(unsafe.Offsetof(ForInOrOfStatement{}.Initializer)) + 1,
+	KindVariableDeclaration: uint16(unsafe.Offsetof(VariableDeclaration{}.Initializer)) + 1,
+	KindParameter:           uint16(unsafe.Offsetof(ParameterDeclaration{}.Initializer)) + 1,
+	KindBindingElement:      uint16(unsafe.Offsetof(BindingElement{}.Initializer)) + 1,
+	KindEnumMember:          uint16(unsafe.Offsetof(EnumMember{}.Initializer)) + 1,
+	KindPropertySignature:   uint16(unsafe.Offsetof(PropertySignatureDeclaration{}.Initializer)) + 1,
+	KindPropertyDeclaration: uint16(unsafe.Offsetof(PropertyDeclaration{}.Initializer)) + 1,
+	KindPropertyAssignment:  uint16(unsafe.Offsetof(PropertyAssignment{}.Initializer)) + 1,
+	KindJsxAttribute:        uint16(unsafe.Offsetof(JsxAttribute{}.Initializer)) + 1,
+}
+
+func (n *Node) Initializer() *Node {
+	kind := uint16(n.Kind)
+	if kind >= uint16(len(nodeInitializerOffsets)) {
+		panic("Unhandled case in Node.Initializer")
+	}
+	offset := nodeInitializerOffsets[kind]
+	if offset == 0 {
+		panic("Unhandled case in Node.Initializer")
+	}
+	return *(**Node)(unsafe.Add(unsafe.Pointer(n), uintptr(offset-1)))
+}
+
+var nodeTextOffsets = [kindFlowReduceLabelData + 1]uint16{
+	KindNumericLiteral:                uint16(unsafe.Offsetof(NumericLiteral{}.Text)) + 1,
+	KindBigIntLiteral:                 uint16(unsafe.Offsetof(BigIntLiteral{}.Text)) + 1,
+	KindStringLiteral:                 uint16(unsafe.Offsetof(StringLiteral{}.Text)) + 1,
+	KindRegularExpressionLiteral:      uint16(unsafe.Offsetof(RegularExpressionLiteral{}.Text)) + 1,
+	KindNoSubstitutionTemplateLiteral: uint16(unsafe.Offsetof(NoSubstitutionTemplateLiteral{}.Text)) + 1,
+	KindTemplateHead:                  uint16(unsafe.Offsetof(TemplateHead{}.Text)) + 1,
+	KindTemplateMiddle:                uint16(unsafe.Offsetof(TemplateMiddle{}.Text)) + 1,
+	KindTemplateTail:                  uint16(unsafe.Offsetof(TemplateTail{}.Text)) + 1,
+	KindIdentifier:                    uint16(unsafe.Offsetof(Identifier{}.Text)) + 1,
+	KindPrivateIdentifier:             uint16(unsafe.Offsetof(PrivateIdentifier{}.Text)) + 1,
+}
+
 var nodePropagateSubtreeFactsExclusions = [KindCount]SubtreeFacts{
 	KindCatchClause:              SubtreeExclusionsCatchClause,
 	KindVariableDeclarationList:  SubtreeExclusionsVariableDeclarationList,
@@ -10642,113 +10784,117 @@ func (n *Node) propagateSubtreeFacts() SubtreeFacts {
 	return facts & ^nodePropagateSubtreeFactsExclusions[kind]
 }
 
+var nodeExportableDataOffsets = [KindCount]uint16{
+	KindVariableDeclaration:     uint16(unsafe.Offsetof(VariableDeclaration{}.ExportableBase)) + 1,
+	KindBindingElement:          uint16(unsafe.Offsetof(BindingElement{}.ExportableBase)) + 1,
+	KindFunctionDeclaration:     uint16(unsafe.Offsetof(FunctionDeclaration{}.ExportableBase)) + 1,
+	KindClassDeclaration:        uint16(unsafe.Offsetof(ClassDeclaration{}.ExportableBase)) + 1,
+	KindClassExpression:         uint16(unsafe.Offsetof(ClassExpression{}.ExportableBase)) + 1,
+	KindInterfaceDeclaration:    uint16(unsafe.Offsetof(InterfaceDeclaration{}.ExportableBase)) + 1,
+	KindTypeAliasDeclaration:    uint16(unsafe.Offsetof(TypeAliasDeclaration{}.ExportableBase)) + 1,
+	KindJSTypeAliasDeclaration:  uint16(unsafe.Offsetof(TypeAliasDeclaration{}.ExportableBase)) + 1,
+	KindEnumDeclaration:         uint16(unsafe.Offsetof(EnumDeclaration{}.ExportableBase)) + 1,
+	KindNamespaceImport:         uint16(unsafe.Offsetof(NamespaceImport{}.ExportableBase)) + 1,
+	KindExportSpecifier:         uint16(unsafe.Offsetof(ExportSpecifier{}.ExportableBase)) + 1,
+	KindModuleDeclaration:       uint16(unsafe.Offsetof(ModuleDeclaration{}.ExportableBase)) + 1,
+	KindImportEqualsDeclaration: uint16(unsafe.Offsetof(ImportEqualsDeclaration{}.ExportableBase)) + 1,
+	KindImportClause:            uint16(unsafe.Offsetof(ImportClause{}.ExportableBase)) + 1,
+	KindImportSpecifier:         uint16(unsafe.Offsetof(ImportSpecifier{}.ExportableBase)) + 1,
+}
+
 func (n *Node) ExportableData() *ExportableBase {
-	switch n.Kind {
-	case KindVariableDeclaration:
-		return (*VariableDeclaration)(unsafe.Pointer(n)).ExportableData()
-	case KindBindingElement:
-		return (*BindingElement)(unsafe.Pointer(n)).ExportableData()
-	case KindFunctionDeclaration:
-		return (*FunctionDeclaration)(unsafe.Pointer(n)).ExportableData()
-	case KindClassDeclaration:
-		return (*ClassDeclaration)(unsafe.Pointer(n)).ExportableData()
-	case KindClassExpression:
-		return (*ClassExpression)(unsafe.Pointer(n)).ExportableData()
-	case KindInterfaceDeclaration:
-		return (*InterfaceDeclaration)(unsafe.Pointer(n)).ExportableData()
-	case KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
-		return (*TypeAliasDeclaration)(unsafe.Pointer(n)).ExportableData()
-	case KindEnumDeclaration:
-		return (*EnumDeclaration)(unsafe.Pointer(n)).ExportableData()
-	case KindNamespaceImport:
-		return (*NamespaceImport)(unsafe.Pointer(n)).ExportableData()
-	case KindExportSpecifier:
-		return (*ExportSpecifier)(unsafe.Pointer(n)).ExportableData()
-	case KindModuleDeclaration:
-		return (*ModuleDeclaration)(unsafe.Pointer(n)).ExportableData()
-	case KindImportEqualsDeclaration:
-		return (*ImportEqualsDeclaration)(unsafe.Pointer(n)).ExportableData()
-	case KindImportClause:
-		return (*ImportClause)(unsafe.Pointer(n)).ExportableData()
-	case KindImportSpecifier:
-		return (*ImportSpecifier)(unsafe.Pointer(n)).ExportableData()
-	default:
+	kind := uint16(n.Kind)
+	if kind >= uint16(len(nodeExportableDataOffsets)) {
 		return nil
 	}
+	offset := nodeExportableDataOffsets[kind]
+	if offset == 0 {
+		return nil
+	}
+	return (*ExportableBase)(unsafe.Add(unsafe.Pointer(n), uintptr(offset-1)))
+}
+
+var nodeClassLikeDataOffsets = [KindCount]uint16{
+	KindClassDeclaration: uint16(unsafe.Offsetof(ClassDeclaration{}.ClassLikeBase)) + 1,
+	KindClassExpression:  uint16(unsafe.Offsetof(ClassExpression{}.ClassLikeBase)) + 1,
 }
 
 func (n *Node) ClassLikeData() *ClassLikeBase {
-	switch n.Kind {
-	case KindClassDeclaration:
-		return (*ClassDeclaration)(unsafe.Pointer(n)).ClassLikeData()
-	case KindClassExpression:
-		return (*ClassExpression)(unsafe.Pointer(n)).ClassLikeData()
-	default:
+	kind := uint16(n.Kind)
+	if kind >= uint16(len(nodeClassLikeDataOffsets)) {
 		return nil
 	}
+	offset := nodeClassLikeDataOffsets[kind]
+	if offset == 0 {
+		return nil
+	}
+	return (*ClassLikeBase)(unsafe.Add(unsafe.Pointer(n), uintptr(offset-1)))
+}
+
+var nodeBodyDataOffsets = [KindCount]uint16{
+	KindFunctionDeclaration: uint16(unsafe.Offsetof(FunctionDeclaration{}.BodyBase)) + 1,
+	KindConstructor:         uint16(unsafe.Offsetof(ConstructorDeclaration{}.BodyBase)) + 1,
+	KindGetAccessor:         uint16(unsafe.Offsetof(GetAccessorDeclaration{}.BodyBase)) + 1,
+	KindSetAccessor:         uint16(unsafe.Offsetof(SetAccessorDeclaration{}.BodyBase)) + 1,
+	KindMethodDeclaration:   uint16(unsafe.Offsetof(MethodDeclaration{}.BodyBase)) + 1,
+	KindArrowFunction:       uint16(unsafe.Offsetof(ArrowFunction{}.BodyBase)) + 1,
+	KindFunctionExpression:  uint16(unsafe.Offsetof(FunctionExpression{}.BodyBase)) + 1,
+	KindModuleDeclaration:   uint16(unsafe.Offsetof(ModuleDeclaration{}.BodyBase)) + 1,
 }
 
 func (n *Node) BodyData() *BodyBase {
-	switch n.Kind {
-	case KindFunctionDeclaration:
-		return (*FunctionDeclaration)(unsafe.Pointer(n)).BodyData()
-	case KindConstructor:
-		return (*ConstructorDeclaration)(unsafe.Pointer(n)).BodyData()
-	case KindGetAccessor:
-		return (*GetAccessorDeclaration)(unsafe.Pointer(n)).BodyData()
-	case KindSetAccessor:
-		return (*SetAccessorDeclaration)(unsafe.Pointer(n)).BodyData()
-	case KindMethodDeclaration:
-		return (*MethodDeclaration)(unsafe.Pointer(n)).BodyData()
-	case KindArrowFunction:
-		return (*ArrowFunction)(unsafe.Pointer(n)).BodyData()
-	case KindFunctionExpression:
-		return (*FunctionExpression)(unsafe.Pointer(n)).BodyData()
-	case KindModuleDeclaration:
-		return (*ModuleDeclaration)(unsafe.Pointer(n)).BodyData()
-	default:
+	kind := uint16(n.Kind)
+	if kind >= uint16(len(nodeBodyDataOffsets)) {
 		return nil
 	}
+	offset := nodeBodyDataOffsets[kind]
+	if offset == 0 {
+		return nil
+	}
+	return (*BodyBase)(unsafe.Add(unsafe.Pointer(n), uintptr(offset-1)))
+}
+
+var nodeLiteralLikeDataOffsets = [KindCount]uint16{
+	KindNumericLiteral:                uint16(unsafe.Offsetof(NumericLiteral{}.LiteralLikeNodeBase)) + 1,
+	KindBigIntLiteral:                 uint16(unsafe.Offsetof(BigIntLiteral{}.LiteralLikeNodeBase)) + 1,
+	KindStringLiteral:                 uint16(unsafe.Offsetof(StringLiteral{}.LiteralLikeNodeBase)) + 1,
+	KindJsxText:                       uint16(unsafe.Offsetof(JsxText{}.LiteralLikeNodeBase)) + 1,
+	KindRegularExpressionLiteral:      uint16(unsafe.Offsetof(RegularExpressionLiteral{}.LiteralLikeNodeBase)) + 1,
+	KindNoSubstitutionTemplateLiteral: uint16(unsafe.Offsetof(NoSubstitutionTemplateLiteral{}.LiteralLikeNodeBase)) + 1,
+	KindTemplateHead:                  uint16(unsafe.Offsetof(TemplateHead{}.LiteralLikeNodeBase)) + 1,
+	KindTemplateMiddle:                uint16(unsafe.Offsetof(TemplateMiddle{}.LiteralLikeNodeBase)) + 1,
+	KindTemplateTail:                  uint16(unsafe.Offsetof(TemplateTail{}.LiteralLikeNodeBase)) + 1,
 }
 
 func (n *Node) LiteralLikeData() *LiteralLikeNodeBase {
-	switch n.Kind {
-	case KindNumericLiteral:
-		return (*NumericLiteral)(unsafe.Pointer(n)).LiteralLikeData()
-	case KindBigIntLiteral:
-		return (*BigIntLiteral)(unsafe.Pointer(n)).LiteralLikeData()
-	case KindStringLiteral:
-		return (*StringLiteral)(unsafe.Pointer(n)).LiteralLikeData()
-	case KindJsxText:
-		return (*JsxText)(unsafe.Pointer(n)).LiteralLikeData()
-	case KindRegularExpressionLiteral:
-		return (*RegularExpressionLiteral)(unsafe.Pointer(n)).LiteralLikeData()
-	case KindNoSubstitutionTemplateLiteral:
-		return (*NoSubstitutionTemplateLiteral)(unsafe.Pointer(n)).LiteralLikeData()
-	case KindTemplateHead:
-		return (*TemplateHead)(unsafe.Pointer(n)).LiteralLikeData()
-	case KindTemplateMiddle:
-		return (*TemplateMiddle)(unsafe.Pointer(n)).LiteralLikeData()
-	case KindTemplateTail:
-		return (*TemplateTail)(unsafe.Pointer(n)).LiteralLikeData()
-	default:
+	kind := uint16(n.Kind)
+	if kind >= uint16(len(nodeLiteralLikeDataOffsets)) {
 		return nil
 	}
+	offset := nodeLiteralLikeDataOffsets[kind]
+	if offset == 0 {
+		return nil
+	}
+	return (*LiteralLikeNodeBase)(unsafe.Add(unsafe.Pointer(n), uintptr(offset-1)))
+}
+
+var nodeTemplateLiteralLikeDataOffsets = [KindCount]uint16{
+	KindNoSubstitutionTemplateLiteral: uint16(unsafe.Offsetof(NoSubstitutionTemplateLiteral{}.TemplateLiteralLikeNodeBase)) + 1,
+	KindTemplateHead:                  uint16(unsafe.Offsetof(TemplateHead{}.TemplateLiteralLikeNodeBase)) + 1,
+	KindTemplateMiddle:                uint16(unsafe.Offsetof(TemplateMiddle{}.TemplateLiteralLikeNodeBase)) + 1,
+	KindTemplateTail:                  uint16(unsafe.Offsetof(TemplateTail{}.TemplateLiteralLikeNodeBase)) + 1,
 }
 
 func (n *Node) TemplateLiteralLikeData() *TemplateLiteralLikeNodeBase {
-	switch n.Kind {
-	case KindNoSubstitutionTemplateLiteral:
-		return (*NoSubstitutionTemplateLiteral)(unsafe.Pointer(n)).TemplateLiteralLikeData()
-	case KindTemplateHead:
-		return (*TemplateHead)(unsafe.Pointer(n)).TemplateLiteralLikeData()
-	case KindTemplateMiddle:
-		return (*TemplateMiddle)(unsafe.Pointer(n)).TemplateLiteralLikeData()
-	case KindTemplateTail:
-		return (*TemplateTail)(unsafe.Pointer(n)).TemplateLiteralLikeData()
-	default:
+	kind := uint16(n.Kind)
+	if kind >= uint16(len(nodeTemplateLiteralLikeDataOffsets)) {
 		return nil
 	}
+	offset := nodeTemplateLiteralLikeDataOffsets[kind]
+	if offset == 0 {
+		return nil
+	}
+	return (*TemplateLiteralLikeNodeBase)(unsafe.Add(unsafe.Pointer(n), uintptr(offset-1)))
 }
 
 func (n *Node) Clone(f NodeFactoryCoercible) *Node {
