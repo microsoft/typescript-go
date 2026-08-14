@@ -114,7 +114,7 @@ export class Client implements vscode.Disposable {
                 codeLensShowLocationsCommandName,
                 enableTelemetry: true,
                 logVerbosity: this.outputChannel.logLevel,
-                loadExternalPlugins: contentMappersEnabled(),
+                runExternalCode: contentMappersEnabled(),
             },
             errorHandler: this.errorHandler,
             middleware: {
@@ -247,7 +247,7 @@ export class Client implements vscode.Disposable {
 
         // Refresh options in case they changed between construction and start.
         this.clientOptions.initializationOptions.logVerbosity = this.outputChannel.logLevel;
-        this.clientOptions.initializationOptions.loadExternalPlugins = contentMappersEnabled();
+        this.clientOptions.initializationOptions.runExternalCode = contentMappersEnabled();
         this.clientOptions.initializationOptions.trackFlakyDiagnostics = effectiveflakesFlag !== "never" ? (effectiveflakesFlag === "panic" ? 2 : 1) : 0;
 
         this.client = new NativePreviewLanguageClient(

@@ -35,9 +35,6 @@ Initializes a TypeScript project and creates a tsconfig.json file.
 [94m--listFilesOnly[39m
 Print names of files that are part of the compilation and then stop processing.
 
-[94m--loadExternalPlugins[39m
-Allow loading external content mapper plugins that execute code during compilation.
-
 [94m--locale[39m
 Set the language of the messaging from TypeScript. This does not affect emit.
 
@@ -49,6 +46,9 @@ Compile the project given the path to its configuration file, or to a folder wit
 
 [94m--quiet, -q[39m
 Do not print diagnostics.
+
+[94m--runExternalCode[39m
+Allow loading external content mapper plugins that execute code during compilation.
 
 [94m--showConfig[39m
 Print the final configuration instead of building.

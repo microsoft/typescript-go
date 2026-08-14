@@ -1687,9 +1687,9 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	if s.initializationOptions.EnableTelemetry != nil {
 		enableTelemetry = *s.initializationOptions.EnableTelemetry
 	}
-	var loadExternalPlugins bool
-	if s.initializationOptions.LoadExternalPlugins != nil {
-		loadExternalPlugins = *s.initializationOptions.LoadExternalPlugins
+	var runExternalCode bool
+	if s.initializationOptions.RunExternalCode != nil {
+		runExternalCode = *s.initializationOptions.RunExternalCode
 	}
 	hasDynamicWatchRegistration := s.clientCapabilities.Workspace.DidChangeWatchedFiles.DynamicRegistration
 	if hasDynamicWatchRegistration {
@@ -1741,7 +1741,7 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 			TelemetryEnabled:       enableTelemetry,
 			DebounceDelay:          500 * time.Millisecond,
 			PushDiagnosticsEnabled: !disablePushDiagnostics,
-			LoadExternalPlugins:    loadExternalPlugins,
+			RunExternalCode:        runExternalCode,
 		},
 		FS:                  s.fs,
 		Logger:              s.logger,

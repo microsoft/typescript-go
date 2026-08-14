@@ -69,10 +69,10 @@ const customStructures: Structure[] = [
                 documentation: "The initial log verbosity level, matching the client's output channel log level at startup. Subsequent changes are sent via custom/setLogVerbosity.",
             },
             {
-                name: "loadExternalPlugins",
+                name: "runExternalCode",
                 type: { kind: "base", name: "boolean" },
                 optional: true,
-                documentation: "LoadExternalPlugins allows configured content mappers to launch external plugin processes. The client should set this only for trusted workspaces. It mirrors the --loadExternalPlugins CLI flag.",
+                documentation: "RunExternalCode allows configured content mappers to launch external plugin processes. The client should set this only for trusted workspaces. It mirrors the --runExternalCode CLI flag.",
             },
             {
                 name: "trackFlakyDiagnostics",

@@ -153,10 +153,10 @@ func (c *configFileRegistryBuilder) reloadIfNeeded(entry *configFileEntry, fileN
 	case PendingReloadFull:
 		logger.Log("Loading config file: " + fileName)
 		// When the workspace is trusted, enable external content mappers so a config's contentMappers pass
-		// the loadExternalPlugins gate and register, as they would with the CLI flag.
+		// the runExternalCode gate and register, as they would with the CLI flag.
 		var existingOptions *core.CompilerOptions
-		if c.sessionOptions.LoadExternalPlugins {
-			existingOptions = &core.CompilerOptions{LoadExternalPlugins: core.TSTrue}
+		if c.sessionOptions.RunExternalCode {
+			existingOptions = &core.CompilerOptions{RunExternalCode: core.TSTrue}
 		}
 		entry.commandLine, _ = tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, existingOptions, nil /*optionsRaw*/, c, c)
 		c.updateExtendingConfigs(path, entry.commandLine, oldCommandLine)

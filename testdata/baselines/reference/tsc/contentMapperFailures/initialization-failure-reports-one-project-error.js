@@ -33,7 +33,7 @@ import "./f.vue";
     ]
 }
 
-tsgo --loadExternalPlugins --singleThreaded
+tsgo --runExternalCode --singleThreaded
 ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
 [91merror[0m[90m TS100063: [0mThe content mapper 'missing' could not be initialized.

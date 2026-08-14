@@ -34,6 +34,6 @@ func newContentMapperFourslash(t *testing.T, content, mapper string, extensions 
 ` + content
 	return fourslash.NewFourslashWithOptions(t, content, &fourslash.FourslashOptions{
 		ContentMapperSpawner: contentmappertest.NewSpawner(),
-		LoadExternalPlugins:  true,
+		RunExternalCode:      true,
 	})
 }

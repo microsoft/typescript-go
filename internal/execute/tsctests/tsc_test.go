@@ -4827,7 +4827,7 @@ func TestTscContentMapperEmit(t *testing.T) {
 				"tsContentMapper": { "exec": ["verbatim-mapper"] }
 			}`),
 		},
-		commandLineArgs: []string{"--loadExternalPlugins"},
+		commandLineArgs: []string{"--runExternalCode"},
 	}).run(t, "contentMapperEmit")
 }
 
@@ -4850,7 +4850,7 @@ func TestTscContentMapperExplainFiles(t *testing.T) {
 				"tsContentMapper": { "exec": ["supplemental-mapper"] }
 			}`),
 		},
-		commandLineArgs: []string{"--loadExternalPlugins", "--explainFiles"},
+		commandLineArgs: []string{"--runExternalCode", "--explainFiles"},
 	}).run(t, "contentMapperExplainFiles")
 }
 
@@ -4898,7 +4898,7 @@ func TestTscContentMapperFailures(t *testing.T) {
 					"tsContentMapper": { "exec": ["missing-mapper"] }
 				}`),
 			},
-			commandLineArgs: []string{"--loadExternalPlugins", "--singleThreaded"},
+			commandLineArgs: []string{"--runExternalCode", "--singleThreaded"},
 		},
 		{
 			subScenario: "transform failure reports a per-file error",
@@ -4908,7 +4908,7 @@ func TestTscContentMapperFailures(t *testing.T) {
 				"/home/src/workspaces/project/app.vue":                        `<template>hi</template>`,
 				"/home/src/workspaces/project/node_modules/fail/package.json": failMapperPackageJSON,
 			},
-			commandLineArgs: []string{"--loadExternalPlugins"},
+			commandLineArgs: []string{"--runExternalCode"},
 		},
 		{
 			subScenario: "mapper is disabled after repeated failures",
@@ -4933,7 +4933,7 @@ func TestTscContentMapperFailures(t *testing.T) {
 			},
 			// --singleThreaded makes file loading order deterministic so the same files exceed the failure
 			// threshold on every run.
-			commandLineArgs: []string{"--loadExternalPlugins", "--singleThreaded"},
+			commandLineArgs: []string{"--runExternalCode", "--singleThreaded"},
 		},
 	}
 	for _, test := range testCases {
@@ -4964,6 +4964,6 @@ func TestTscContentMapperSynthesized(t *testing.T) {
 				"tsContentMapper": { "exec": ["synthesizing-mapper"] }
 			}`),
 		},
-		commandLineArgs: []string{"--loadExternalPlugins"},
+		commandLineArgs: []string{"--runExternalCode"},
 	}).run(t, "contentMapperSynthesized")
 }

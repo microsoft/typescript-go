@@ -1157,7 +1157,7 @@ func TestContentMappers(t *testing.T) {
 			"/src/Component.vue":                    "<template></template>",
 			"/node_modules/vue-mapper/package.json": `{ "name": "vue-mapper", "version": "1.2.3", "tsContentMapper": { "exec": ["node", "./mapper.js"], "dynamicConfig": true } }`,
 		},
-		existingOptions: &core.CompilerOptions{LoadExternalPlugins: core.TSTrue},
+		existingOptions: &core.CompilerOptions{RunExternalCode: core.TSTrue},
 	}
 	for name, getParsed := range map[string]func(testConfig, tsoptions.ParseConfigHost, string) *tsoptions.ParsedCommandLine{
 		"json api":           getParsedWithJsonApi,
@@ -1203,9 +1203,9 @@ func TestContentMappersRequireFlag(t *testing.T) {
 		configFileName: "tsconfig.json",
 		basePath:       "/",
 		allFileList:    map[string]string{"/app.ts": "export {}"},
-		// existingOptions omitted: --loadExternalPlugins is not set.
+		// existingOptions omitted: --runExternalCode is not set.
 	}
-	expectedCode := diagnostics.Content_mappers_require_the_loadExternalPlugins_command_line_flag_to_be_enabled.Code()
+	expectedCode := diagnostics.Content_mappers_require_the_runExternalCode_command_line_flag_to_be_enabled.Code()
 	for name, getParsed := range map[string]func(testConfig, tsoptions.ParseConfigHost, string) *tsoptions.ParsedCommandLine{
 		"json api":           getParsedWithJsonApi,
 		"jsonSourceFile api": getParsedWithJsonSourceFileApi,
@@ -1232,7 +1232,7 @@ func TestUnresolvedContentMapperDoesNotRegisterExtensions(t *testing.T) {
 		configFileName:  "tsconfig.json",
 		basePath:        "/",
 		allFileList:     map[string]string{"/src/app.ts": "export {}", "/src/Component.vue": "<template />"},
-		existingOptions: &core.CompilerOptions{LoadExternalPlugins: core.TSTrue},
+		existingOptions: &core.CompilerOptions{RunExternalCode: core.TSTrue},
 	}
 	for name, getParsed := range map[string]func(testConfig, tsoptions.ParseConfigHost, string) *tsoptions.ParsedCommandLine{
 		"json api":           getParsedWithJsonApi,
@@ -1314,7 +1314,7 @@ func TestContentMappersValidation(t *testing.T) {
 				configFileName:  "tsconfig.json",
 				basePath:        "/",
 				allFileList:     map[string]string{"/app.ts": "export {}"},
-				existingOptions: &core.CompilerOptions{LoadExternalPlugins: core.TSTrue},
+				existingOptions: &core.CompilerOptions{RunExternalCode: core.TSTrue},
 			}
 			if test.name == "duplicate extension across mappers" {
 				config.allFileList["/node_modules/a/package.json"] = `{ "name": "a", "version": "1.0.0", "tsContentMapper": { "exec": ["a"] } }`

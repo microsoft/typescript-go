@@ -130,7 +130,7 @@ import {} from "./[|/*unloadedPath*/Un|]";
 `
 	f, done := fourslash.NewFourslashWithOptions(t, content, &fourslash.FourslashOptions{
 		ContentMapperSpawner: contentmappertest.NewSpawner(),
-		LoadExternalPlugins:  true,
+		RunExternalCode:      true,
 	})
 	defer done()
 

@@ -68,7 +68,7 @@ func TestContentMapperBuildLifecycle(t *testing.T) {
 	spawner := &recordingContentMapperSpawner{inner: contentmappertest.NewSpawner()}
 	sys := &recordingContentMapperSystem{TestSys: testSys, spawner: spawner}
 
-	result := execute.CommandLine(t.Context(), sys, []string{"--build", "--loadExternalPlugins"}, testSys)
+	result := execute.CommandLine(t.Context(), sys, []string{"--build", "--runExternalCode"}, testSys)
 	assert.Assert(t, result.Watcher == nil)
 	assert.Equal(t, spawner.spawns.Load(), int32(1))
 	assert.Equal(t, spawner.closes.Load(), int32(1))
@@ -80,8 +80,8 @@ func TestContentMapperWatchLifecycle(t *testing.T) {
 		name string
 		args []string
 	}{
-		{name: "watch", args: []string{"--watch", "--loadExternalPlugins"}},
-		{name: "build watch", args: []string{"--build", "--watch", "--loadExternalPlugins"}},
+		{name: "watch", args: []string{"--watch", "--runExternalCode"}},
+		{name: "build watch", args: []string{"--build", "--watch", "--runExternalCode"}},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
@@ -142,7 +142,7 @@ func TestContentMapperSupplementalCollisionWatch(t *testing.T) {
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
-	result := execute.CommandLine(ctx, sys, []string{"--watch", "--loadExternalPlugins"}, testSys)
+	result := execute.CommandLine(ctx, sys, []string{"--watch", "--runExternalCode"}, testSys)
 	w := result.Watcher.(*execute.Watcher)
 	fullBuilds := w.FullBuilds()
 
@@ -176,7 +176,7 @@ func TestDynamicContentMapperWatchDependency(t *testing.T) {
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
-	result := execute.CommandLine(ctx, sys, []string{"--watch", "--loadExternalPlugins"}, testSys)
+	result := execute.CommandLine(ctx, sys, []string{"--watch", "--runExternalCode"}, testSys)
 	w := result.Watcher.(*execute.Watcher)
 	fullBuilds := w.FullBuilds()
 
@@ -210,7 +210,7 @@ func TestDynamicContentMapperBuildWatchDependency(t *testing.T) {
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
-	result := execute.CommandLine(ctx, sys, []string{"--build", "--watch", "--loadExternalPlugins"}, testSys)
+	result := execute.CommandLine(ctx, sys, []string{"--build", "--watch", "--runExternalCode"}, testSys)
 	assert.Equal(t, lifecycle.Opens.Load(), int32(1))
 
 	testSys.writeFileNoError(mapperConfigFileName, `{ "version": 2 }`)
@@ -246,7 +246,7 @@ func TestContentMapperBuildWatchSharedLifecycle(t *testing.T) {
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
-	result := execute.CommandLine(ctx, sys, []string{"--build", "--watch", "--loadExternalPlugins"}, testSys)
+	result := execute.CommandLine(ctx, sys, []string{"--build", "--watch", "--runExternalCode"}, testSys)
 	assert.Assert(t, result.Watcher != nil)
 	assert.Equal(t, spawner.spawns.Load(), int32(1))
 	assert.Equal(t, spawner.closes.Load(), int32(0))

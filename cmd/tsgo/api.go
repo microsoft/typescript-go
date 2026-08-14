@@ -21,7 +21,7 @@ func runAPI(args []string) int {
 	callbacks := flag.String("callbacks", "", "comma-separated list of FS callbacks to enable (readFile,fileExists,directoryExists,getAccessibleEntries,realpath)")
 	async := flag.Bool("async", false, "use JSON-RPC protocol instead of MessagePack (for async API)")
 	timing := flag.Bool("timing", false, "collect per-request server processing time, folded into the client's timing snapshot")
-	loadExternalPlugins := flag.Bool("loadExternalPlugins", false, "allow projects to execute configured external plugins")
+	runExternalCode := flag.Bool("RunExternalCode", false, "allow projects to execute configured external plugins")
 	if err := flag.Parse(args); err != nil {
 		return 2
 	}
@@ -41,7 +41,7 @@ func runAPI(args []string) int {
 		Callbacks:            callbacksList,
 		Async:                *async,
 		CollectTiming:        *timing,
-		LoadExternalPlugins:  *loadExternalPlugins,
+		RunExternalCode:      *runExternalCode,
 		ContentMapperSpawner: newSystem(),
 	}
 	if *pipePath != "" {

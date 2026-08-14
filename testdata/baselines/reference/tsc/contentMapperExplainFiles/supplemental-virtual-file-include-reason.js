@@ -16,7 +16,7 @@ export const value = 1;
     ]
 }
 
-tsgo --loadExternalPlugins --explainFiles
+tsgo --runExternalCode --explainFiles
 ExitStatus:: Success
 Output::
 ../../tslibs/TS/Lib/lib.es2025.full.d.ts

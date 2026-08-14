@@ -74,11 +74,11 @@ type SessionOptions struct {
 	LoggingEnabled         bool
 	TelemetryEnabled       bool
 	PushDiagnosticsEnabled bool
-	// LoadExternalPlugins allows configured content mappers to run their (external) processes,
-	// gated on workspace trust by the client. It corresponds to the --loadExternalPlugins CLI flag.
-	LoadExternalPlugins bool
-	DebounceDelay       time.Duration
-	CheckerPoolOptions  CheckerPoolOptions
+	// RunExternalCode allows configured content mappers to run their (external) processes,
+	// gated on workspace trust by the client. It corresponds to the --runExternalCode CLI flag.
+	RunExternalCode    bool
+	DebounceDelay      time.Duration
+	CheckerPoolOptions CheckerPoolOptions
 }
 
 type SessionInit struct {
@@ -110,7 +110,7 @@ type Session struct {
 	logger        logging.Logger
 	npmExecutor   ata.NpmExecutor
 	// contentMapperHost drives configured content mappers for all projects in the session. It is nil unless
-	// the workspace is trusted (LoadExternalPlugins) and a spawner is available. It is shared so
+	// the workspace is trusted (RunExternalCode) and a spawner is available. It is shared so
 	// projects that use the same mapper share a single process, and is closed when the session ends.
 	contentMapperHost contentmapper.Host
 	// contentMapperTimings is the cumulative host snapshot at the most recent session snapshot adoption.
@@ -217,7 +217,7 @@ type Session struct {
 // a spawner is available; otherwise it returns nil, and configured content mappers are rejected by the
 // config-file gate.
 func newContentMapperHost(init *SessionInit) contentmapper.Host {
-	if !init.Options.LoadExternalPlugins || init.Spawner == nil {
+	if !init.Options.RunExternalCode || init.Spawner == nil {
 		return nil
 	}
 	diagnosticLocale := locale.Default
@@ -403,7 +403,7 @@ func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, vers
 // SetContentMapperContributions atomically replaces extension-provided inferred-project mappers and
 // discovers configured projects for matching open documents. Configured projects never consume these mappers.
 func (s *Session) SetContentMapperContributions(ctx context.Context, contributions ContentMapperContributions, documentURIs []lsproto.DocumentUri) {
-	if !s.options.LoadExternalPlugins {
+	if !s.options.RunExternalCode {
 		return
 	}
 	s.cancelScheduledSnapshotUpdate()

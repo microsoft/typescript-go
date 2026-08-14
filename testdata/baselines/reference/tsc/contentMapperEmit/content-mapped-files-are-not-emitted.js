@@ -21,7 +21,7 @@ export const local = 1;
     ]
 }
 
-tsgo --loadExternalPlugins
+tsgo --runExternalCode
 ExitStatus:: Success
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.es2025.full.d.ts] *Lib*

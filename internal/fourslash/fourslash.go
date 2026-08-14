@@ -166,7 +166,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 type FourslashOptions struct {
 	Capabilities         *lsproto.ClientCapabilities
 	ContentMapperSpawner contentmapper.Spawner
-	LoadExternalPlugins  bool
+	RunExternalCode      bool
 }
 
 func NewFourslashWithOptions(t *testing.T, content string, options *FourslashOptions) (*FourslashTest, func()) {
@@ -262,7 +262,7 @@ func newFourslash(t *testing.T, content string, options *FourslashOptions, testP
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	// !!! replace with a proper request *after initialize*
 	client.SetCompilerOptionsForInferredProjects(compilerOptions)
-	f.initialize(t, options.Capabilities, options.LoadExternalPlugins)
+	f.initialize(t, options.Capabilities, options.RunExternalCode)
 
 	if testData.isStateBaseliningEnabled() {
 		// Single baseline, so initialize project state baseline too
@@ -367,12 +367,12 @@ func getBaseFileNameFromTest(t *testing.T) string {
 
 const showCodeLensLocationsCommandName = "typescript.showCodeLensLocations"
 
-func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCapabilities, loadExternalPlugins bool) {
+func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCapabilities, runExternalCode bool) {
 	initializationOptions := &lsproto.InitializationOptions{
 		CodeLensShowLocationsCommandName: new(showCodeLensLocationsCommandName),
 	}
-	if loadExternalPlugins {
-		initializationOptions.LoadExternalPlugins = new(true)
+	if runExternalCode {
+		initializationOptions.RunExternalCode = new(true)
 	}
 	params := &lsproto.InitializeParams{
 		Locale: new("en-US"),

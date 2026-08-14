@@ -8794,8 +8794,8 @@ type InitializationOptions struct {
 	// The initial log verbosity level, matching the client's output channel log level at startup. Subsequent changes are sent via custom/setLogVerbosity.
 	LogVerbosity *LogVerbosity `json:"logVerbosity,omitzero"`
 
-	// LoadExternalPlugins allows configured content mappers to launch external plugin processes. The client should set this only for trusted workspaces. It mirrors the --loadExternalPlugins CLI flag.
-	LoadExternalPlugins *bool `json:"loadExternalPlugins,omitzero"`
+	// RunExternalCode allows configured content mappers to launch external plugin processes. The client should set this only for trusted workspaces. It mirrors the --runExternalCode CLI flag.
+	RunExternalCode *bool `json:"runExternalCode,omitzero"`
 
 	// The level at which we track flaky diagnostics, if at all.
 	TrackFlakyDiagnostics *DiagnosticFlakeLogLevel `json:"trackFlakyDiagnostics,omitzero"`
