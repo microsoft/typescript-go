@@ -52,6 +52,14 @@ func TestTscCommandline(t *testing.T) {
 			commandLineArgs: []string{"--verbose", "--build"},
 		},
 		{
+			subScenario: "malformed tsconfig property without value",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": `{"" }`,
+				"/home/src/workspaces/project/index.ts":      "",
+			},
+			commandLineArgs: nil,
+		},
+		{
 			subScenario:     "Initialized TSConfig with files options",
 			commandLineArgs: []string{"--init", "file0.st", "file1.ts", "file2.ts"},
 		},
@@ -117,6 +125,11 @@ func TestTscCommandline(t *testing.T) {
 			subScenario:     "Parse --lib option with file name",
 			files:           FileMap{"/home/src/workspaces/project/first.ts": `export const Key = Symbol()`},
 			commandLineArgs: []string{"--lib", "es6 ", "first.ts"},
+		},
+		{
+			subScenario:     "noEmit with type error",
+			files:           FileMap{"/home/src/workspaces/project/index.ts": `x = 5;`},
+			commandLineArgs: []string{"--noEmit", "index.ts"},
 		},
 		{
 			subScenario:     "option diagnostics are suppressed when there are syntactic errors",
