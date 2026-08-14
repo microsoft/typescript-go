@@ -4759,7 +4759,7 @@ func (c *Checker) getMemberOverrideModifierStatus(node *ast.Node, member *ast.No
 	staticType := c.getTypeOfSymbol(classSymbol)
 
 	var baseWithThis *Type
-	if ast.GetExtendsHeritageClauseElement(node) != nil {
+	if ast.GetClassExtendsHeritageElement(node) != nil {
 		baseTypes := c.getBaseTypes(t)
 		if len(baseTypes) > 0 {
 			baseWithThis = c.getTypeWithThisArgument(baseTypes[0], t.AsInterfaceType().thisType, false)
