@@ -1,0 +1,86 @@
+--- old.getContextNodeForOfForInSwitch.baseline.jsonc
++++ new.getContextNodeForOfForInSwitch.baseline.jsonc
+@@= skipped --1, +0 lines =@@
++// === findAllReferences ===
++// === /getContextNodeForOfForInSwitch.ts ===
++// const arr = [1, 2, 3];
++// for (const /*FIND ALL REFS*/[|x|] of arr) {
++//     [|x|];
++// }
++// const obj = { a: 1 };
++// for (const y in obj) {
++// --- (line: 7) skipped ---
++
++
++
++// === findAllReferences ===
++// === /getContextNodeForOfForInSwitch.ts ===
++// const arr = [1, 2, 3];
++// for (const [|x|] of arr) {
++//     /*FIND ALL REFS*/[|x|];
++// }
++// const obj = { a: 1 };
++// for (const y in obj) {
++// --- (line: 7) skipped ---
++
++
++
++// === findAllReferences ===
++// === /getContextNodeForOfForInSwitch.ts ===
++// const arr = [1, 2, 3];
++// for (const x of arr) {
++//     x;
++// }
++// const obj = { a: 1 };
++// for (const /*FIND ALL REFS*/[|y|] in obj) {
++//     [|y|];
++// }
++// function f(n: number) {
++//     switch (n) {
++// --- (line: 11) skipped ---
++
++
++
++// === findAllReferences ===
++// === /getContextNodeForOfForInSwitch.ts ===
++// const arr = [1, 2, 3];
++// for (const x of arr) {
++//     x;
++// }
++// const obj = { a: 1 };
++// for (const [|y|] in obj) {
++//     /*FIND ALL REFS*/[|y|];
++// }
++// function f(n: number) {
++//     switch (n) {
++// --- (line: 11) skipped ---
++
++
++
++// === findAllReferences ===
++// === /getContextNodeForOfForInSwitch.ts ===
++// --- (line: 8) skipped ---
++// function f(n: number) {
++//     switch (n) {
++//         case 0:
++//             const /*FIND ALL REFS*/[|z|] = 1;
++//             [|z|];
++//             break;
++//     }
++// }
++// 
++
++
++
++// === findAllReferences ===
++// === /getContextNodeForOfForInSwitch.ts ===
++// --- (line: 8) skipped ---
++// function f(n: number) {
++//     switch (n) {
++//         case 0:
++//             const [|z|] = 1;
++//             /*FIND ALL REFS*/[|z|];
++//             break;
++//     }
++// }
++// 
