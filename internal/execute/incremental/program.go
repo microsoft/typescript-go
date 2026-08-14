@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"slices"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -33,15 +35,22 @@ type Program struct {
 
 	// Testing data
 	testingData *TestingData
+
+	nestedEmitMu    sync.Mutex
+	nestedEmitNow   func() time.Time
+	nestedEmitDepth int
+	nestedEmitStart time.Time
+	nestedEmitTime  time.Duration
 }
 
 var _ compiler.ProgramLike = (*Program)(nil)
 
-func NewProgram(program *compiler.Program, oldProgram *Program, host Host, testing bool) *Program {
+func NewProgram(program *compiler.Program, oldProgram *Program, host Host, nestedEmitNow func() time.Time, testing bool) *Program {
 	incrementalProgram := &Program{
-		snapshot: programToSnapshot(program, oldProgram, testing),
-		program:  program,
-		host:     host,
+		snapshot:      programToSnapshot(program, oldProgram, testing),
+		program:       program,
+		host:          host,
+		nestedEmitNow: nestedEmitNow,
 	}
 
 	if testing {
@@ -65,6 +74,37 @@ type TestingData struct {
 
 func (p *Program) GetTestingData() *TestingData {
 	return p.testingData
+}
+
+func (p *Program) beginNestedEmit() func() {
+	p.nestedEmitMu.Lock()
+	now := p.nestedEmitNow
+	if now == nil {
+		p.nestedEmitMu.Unlock()
+		return func() {}
+	}
+	if p.nestedEmitDepth == 0 {
+		p.nestedEmitStart = now()
+	}
+	p.nestedEmitDepth++
+	p.nestedEmitMu.Unlock()
+
+	return func() {
+		p.nestedEmitMu.Lock()
+		defer p.nestedEmitMu.Unlock()
+		p.nestedEmitDepth--
+		if p.nestedEmitDepth == 0 {
+			p.nestedEmitTime += now().Sub(p.nestedEmitStart)
+		}
+	}
+}
+
+func (p *Program) TakeNestedEmitTime() time.Duration {
+	p.nestedEmitMu.Lock()
+	defer p.nestedEmitMu.Unlock()
+	nestedEmitTime := p.nestedEmitTime
+	p.nestedEmitTime = 0
+	return nestedEmitTime
 }
 
 func (p *Program) panicIfNoProgram(method string) {
@@ -204,16 +244,20 @@ func (p *Program) Emit(ctx context.Context, options compiler.EmitOptions) *compi
 	p.panicIfNoProgram("Emit")
 
 	var result *compiler.EmitResult
-	if p.snapshot.options.NoEmit.IsTrue() {
-		result = &compiler.EmitResult{EmitSkipped: true}
-	} else {
-		result = compiler.HandleNoEmitOnError(ctx, p, options.TargetSourceFiles)
+	if !options.ForceEmit && options.EmitOnly != compiler.EmitOnlyBuilderSignature {
+		var emitBuildInfo func() *compiler.EmitResult
+		if p.Options().NoEmit.IsTrue() {
+			emitBuildInfo = func() *compiler.EmitResult {
+				return p.emitBuildInfo(ctx, options)
+			}
+		}
+		result = compiler.HandleNoEmitOptions(ctx, p, options.TargetSourceFiles, emitBuildInfo)
 		if ctx.Err() != nil {
 			return nil
 		}
 	}
 	if result != nil {
-		if options.TargetSourceFiles != nil {
+		if options.TargetSourceFiles != nil || p.Options().NoEmit.IsTrue() {
 			return result
 		}
 

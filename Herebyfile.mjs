@@ -355,7 +355,7 @@ const enumDefs = [
     { name: "TokenFlags", goPrefix: "TokenFlags", goFile: "internal/ast/tokenflags.go", outDir: "_packages/native-preview/src/enums" },
     { name: "NodeBuilderFlags", goPrefix: "Flags", goFile: "internal/nodebuilder/types.go", outDir: "_packages/native-preview/src/enums" },
     { name: "CompletionItemKind", goPrefix: "CompletionItemKind", goFile: "internal/lsp/lsproto/lsp_generated.go", outDir: "_packages/native-preview/src/enums" },
-    { name: "EmitOnly", goPrefix: "Emit", goFile: "internal/compiler/emitter.go", outDir: "_packages/native-preview/src/enums", excludeMembers: ["OnlyForcedDts"] },
+    { name: "EmitOnly", goPrefix: "Emit", goFile: "internal/compiler/emitter.go", outDir: "_packages/native-preview/src/enums", excludeMembers: ["OnlyBuilderSignature"] },
     // String enum: Go stores internal names with a "\xFE" sentinel prefix, but the escaped
     // form sent over the wire uses "__" (see EscapeSymbolName), so map the sentinel accordingly.
     { name: "InternalSymbolName", goPrefix: "InternalSymbolName", goFile: "internal/ast/symbol.go", outDir: "_packages/native-preview/src/enums", stringEnum: true, valueReplacements: { InternalSymbolNamePrefix: "__" } },
@@ -1485,6 +1485,41 @@ const mainNativePreviewPackage = {
     npmTarball: path.join(builtNpm, publishAsTypescript ? "typescript.tgz" : "native-preview.tgz"),
 };
 
+const typescriptMacEntitlements = [
+    "com.apple.security.cs.allow-dyld-environment-variables",
+    "com.apple.security.cs.disable-library-validation",
+];
+
+function createTypeScriptMacEntitlementsPlist() {
+    const entries = typescriptMacEntitlements.map(entitlement => `    <key>${entitlement}</key>\n    <true/>`).join("\n");
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+${entries}
+</dict>
+</plist>
+`;
+}
+
+/**
+ * @param {string} filePath
+ */
+async function verifyTypeScriptMacEntitlements(filePath) {
+    const { stdout } = await $pipe`go tool quill describe --quiet --output json ${filePath}`;
+    const details = JSON.parse(stdout);
+    const entitlements = details[0]?.superBlob?.entitlements?.entitlements;
+    if (typeof entitlements !== "string") {
+        throw new Error(`Signed file has no macOS entitlements: ${filePath}`);
+    }
+    for (const entitlement of typescriptMacEntitlements) {
+        const escapedEntitlement = entitlement.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        if (!new RegExp(`<key>\\s*${escapedEntitlement}\\s*</key>\\s*<true\\s*/>`).test(entitlements)) {
+            throw new Error(`Signed file is missing macOS entitlement '${entitlement}': ${filePath}`);
+        }
+    }
+}
+
 /**
  * @typedef {"win32" | "linux" | "darwin" | "aix" | "android" | "freebsd" | "netbsd" | "openbsd" | "sunos"} OS
  * @typedef {"x64" | "arm" | "arm64" | "ia32" | "ppc64" | "loong64" | "mips64el" | "riscv64" | "s390x"} Arch
@@ -1522,6 +1557,7 @@ const platforms = [
     { os: "darwin", arch: "x64", vsix: true, cert: "MacDeveloperHarden" },
     { os: "darwin", arch: "arm64", vsix: true, cert: "MacDeveloperHarden" },
     { os: "aix", arch: "ppc64" },
+    { os: "android", arch: "arm64" },
     { os: "freebsd", arch: "arm64" },
     { os: "freebsd", arch: "x64" },
     { os: "linux", arch: "loong64" },
@@ -1541,7 +1577,6 @@ const ignoredGoTargets = new Map([
     ["android/386", "Android is not a Node runtime target TypeScript supports"],
     ["android/amd64", "Android is not a Node runtime target TypeScript supports"],
     ["android/arm", "Android is not a Node runtime target TypeScript supports"],
-    ["android/arm64", "Android is not a Node runtime target TypeScript supports"],
     ["freebsd/386", "FreeBSD is experimental in Node and limited here to mainstream 64-bit x64/arm64"],
     ["freebsd/arm", "FreeBSD is experimental in Node and limited here to mainstream 64-bit x64/arm64"],
     ["linux/386", "ia32 means 32-bit x86, which TypeScript does not support for native packages"],
@@ -2008,6 +2043,8 @@ async function runSignNativePreviewPackages() {
     }
 
     const tmp = await getSignTempDir();
+    const typescriptMacEntitlementsPath = path.join(tmp, "typescript-macos-entitlements.plist");
+    await fs.promises.writeFile(typescriptMacEntitlementsPath, createTypeScriptMacEntitlementsPlist());
 
     /** @type {DDSignFileList} */
     const filelist = {
@@ -2039,6 +2076,9 @@ async function runSignNativePreviewPackages() {
                 // Mac signing requires putting files into zips and then signing those,
                 // along with a notarization step.
                 for (const p of filelistPaths) {
+                    // ESRP preserves entitlements from an existing ad-hoc signature.
+                    await $pipe`go tool quill sign --quiet --ad-hoc --identity ${path.basename(p.path)} --entitlements ${typescriptMacEntitlementsPath} ${p.path}`;
+
                     const unsignedZipPath = path.join(tmp, `${p.tmpName}.unsigned.zip`);
                     const signedZipPath = path.join(tmp, `${p.tmpName}.signed.zip`);
                     const notarizedZipPath = path.join(tmp, `${p.tmpName}.notarized.zip`);
@@ -2098,6 +2138,7 @@ async function runSignNativePreviewPackages() {
 
         for (const p of macZips) {
             await fs.promises.chmod(p.path, 0o755);
+            await verifyTypeScriptMacEntitlements(p.path);
         }
     }
 }

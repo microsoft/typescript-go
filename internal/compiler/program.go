@@ -706,7 +706,7 @@ func (p *Program) GetIncludeProcessorDiagnostics(sourceFile *ast.SourceFile) []*
 	if p.SkipTypeChecking(sourceFile, false) {
 		return nil
 	}
-	filtered, _ := p.getDiagnosticsWithPrecedingDirectives(sourceFile, p.includeProcessor.getDiagnostics(p).GetDiagnosticsForFile(sourceFile.FileName()))
+	filtered, _ := p.getDiagnosticsWithPrecedingDirectives(sourceFile, p.includeProcessor.getDiagnostics(p).GetDiagnosticsForFile(sourceFile))
 	return filtered
 }
 
@@ -1655,11 +1655,12 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 		defer tr.Push(tracing.PhaseEmit, "emit", nil, true)()
 	}
 
-	if !options.ForceEmit && options.EmitOnly != EmitOnlyForcedDts {
-		result := HandleNoEmitOnError(
+	if !options.ForceEmit && options.EmitOnly != EmitOnlyBuilderSignature {
+		result := HandleNoEmitOptions(
 			ctx,
 			p,
 			options.TargetSourceFiles,
+			nil,
 		)
 		if result != nil || ctx.Err() != nil {
 			return result
@@ -1674,7 +1675,7 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 	}
 	wg := core.NewWorkGroup(p.SingleThreaded())
 	var emitters []*emitter
-	forceDtsEmit := options.EmitOnly == EmitOnlyForcedDts || options.ForceEmit && options.EmitOnly == EmitOnlyDts
+	forceDtsEmit := options.EmitOnly == EmitOnlyBuilderSignature || options.ForceEmit && options.EmitOnly == EmitOnlyDts
 	forceJsEmit := options.ForceEmit && options.EmitOnly == EmitOnlyJs
 	sourceFiles := p.getSourceFilesToEmit(options.TargetSourceFiles, forceDtsEmit, forceJsEmit)
 
@@ -1757,26 +1758,39 @@ type ProgramLike interface {
 	Program() *Program
 }
 
-func HandleNoEmitOnError(ctx context.Context, program ProgramLike, files []*ast.SourceFile) *EmitResult {
-	if !program.Options().NoEmitOnError.IsTrue() {
-		return nil // No emit on error is not set, so we can proceed with emitting
-	}
+// HandleNoEmitOptions mirrors tsc's handleNoEmitOptions.
+func HandleNoEmitOptions(ctx context.Context, program ProgramLike, files []*ast.SourceFile, emitBuildInfo func() *EmitResult) *EmitResult {
+	if !program.Options().NoEmit.IsTrue() {
+		if !program.Options().NoEmitOnError.IsTrue() {
+			return nil // NoEmit is false and NoEmitOnError is also false, so we can proceed with normal emit
+		}
 
-	diagnostics := GetDiagnosticsOfAnyProgram(
-		ctx,
-		program,
-		files,
-		true,
-		program.GetBindDiagnostics,
-		program.GetSemanticDiagnostics,
-	)
-	if len(diagnostics) == 0 {
-		return nil // No diagnostics, so we can proceed with emitting
+		diagnostics := GetDiagnosticsOfAnyProgram(
+			ctx,
+			program,
+			files,
+			true,
+			program.GetBindDiagnostics,
+			program.GetSemanticDiagnostics,
+		)
+		if len(diagnostics) == 0 {
+			return nil // NoEmitOnError is enabled, but no diagnostics were found, so we can proceed with emitting
+		}
+		return &EmitResult{
+			Diagnostics: diagnostics,
+			EmitSkipped: true,
+		}
 	}
-	return &EmitResult{
-		Diagnostics: diagnostics,
-		EmitSkipped: true,
+	if files != nil {
+		return &EmitResult{EmitSkipped: true}
 	}
+	if emitBuildInfo != nil {
+		result := emitBuildInfo()
+		if result != nil {
+			return result
+		}
+	}
+	return &EmitResult{}
 }
 
 func GetDiagnosticsOfAnyProgram(
