@@ -116,6 +116,39 @@ export const profileTitle = help/**/;
 	f.BaselineAutoImportsCompletions(t, []string{""})
 }
 
+func TestContentMapperAutoImportsAfterSynthesizedHeader(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	f, done := newContentMapperFourslash(t, `// @Filename: /dep.ts
+export const helper = 1;
+
+// @Filename: /app.box
+const value = help/**/;
+`, contentmappertest.TransformingMapper, ".box")
+	defer done()
+
+	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
+		UserPreferences: &lsutil.UserPreferences{
+			IncludeCompletionsForModuleExports:    core.TSTrue,
+			IncludeCompletionsForImportStatements: core.TSTrue,
+		},
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
+		},
+		Items: &fourslash.CompletionsExpectedItems{Includes: []fourslash.CompletionsExpectedItem{"helper"}},
+	})
+	f.VerifyApplyCodeActionFromCompletion(t, new(""), &fourslash.ApplyCodeActionFromCompletionOptions{
+		Name:        "helper",
+		Source:      "./dep",
+		Description: "Add import from \"./dep\"",
+		NewFileContent: new(`import { helper } from "./dep";
+
+const value = help;
+`),
+	})
+}
+
 func TestContentMapperSupplementalAutoImports(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
@@ -144,31 +177,6 @@ const value = help/**/;
 				AdditionalTextEdits: fourslash.AnyTextEdits,
 			},
 		}},
-	})
-}
-
-func TestContentMapperFiltersAutoImportsInVirtualCode(t *testing.T) {
-	t.Parallel()
-	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	f, done := newContentMapperFourslash(t, `// @Filename: /dep.ts
-export const helper = 1;
-
-// @Filename: /app.box
-export const version = #{target};
-const value = help/**/;
-`, contentmappertest.TransformingMapper, ".box")
-	defer done()
-
-	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
-		UserPreferences: &lsutil.UserPreferences{
-			IncludeCompletionsForModuleExports:    core.TSTrue,
-			IncludeCompletionsForImportStatements: core.TSTrue,
-		},
-		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &DefaultCommitCharacters,
-			EditRange:        Ignored,
-		},
-		Items: &fourslash.CompletionsExpectedItems{Excludes: []string{"helper"}},
 	})
 }
 

@@ -11,7 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil/contentmappertest"
 )
 
-func TestContentMapperRejectsAutoImportInSynthesizedSupplementalPrefix(t *testing.T) {
+func TestContentMapperAutoImportAfterSynthesizedSupplementalPrefix(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	// The mapper produces these virtual files for app.astro:
@@ -20,11 +20,8 @@ func TestContentMapperRejectsAutoImportInSynthesizedSupplementalPrefix(t *testin
 	//   supplemental: /* generated */
 	//                 const value = help;
 	//
-	// Only the original `const value = help;` text is mapped. An auto-import would be inserted at
-	// supplemental offset 0, inside the synthesized prefix, so it cannot be represented in app.astro.
-	// Requesting completions exercises the full completion -> import adder -> change tracker path. The
-	// completion must be omitted rather than returning an edit under the supplemental's virtual filename,
-	// which would evade rejection under the physical filename and modify the original file incorrectly.
+	// Only the original `const value = help;` text is mapped. The auto-import insertion skips the
+	// synthesized prefix and maps back through the supplemental file to the start of app.astro.
 	f, done := newContentMapperFourslash(t, `// @Filename: /dep.ts
 export const helper = 1;
 
@@ -42,7 +39,16 @@ const value = help/**/;
 			CommitCharacters: &DefaultCommitCharacters,
 			EditRange:        Ignored,
 		},
-		Items: &fourslash.CompletionsExpectedItems{Excludes: []string{"helper"}},
+		Items: &fourslash.CompletionsExpectedItems{Includes: []fourslash.CompletionsExpectedItem{"helper"}},
+	})
+	f.VerifyApplyCodeActionFromCompletion(t, new(""), &fourslash.ApplyCodeActionFromCompletionOptions{
+		Name:        "helper",
+		Source:      "./dep",
+		Description: "Add import from \"./dep\"",
+		NewFileContent: new(`import { helper } from "./dep";
+
+const value = help;
+`),
 	})
 }
 

@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
@@ -529,8 +530,23 @@ func (t *Tracker) InsertAtTopOfFile(sourceFile *ast.SourceFile, insert []*ast.St
 	}
 
 	pos := t.getInsertionPositionAtSourceFileTop(sourceFile)
+	originalPos := pos
+	// A content mapper may synthesize a header. Advance to the first writable segment so the insertion
+	// maps exactly to the original file, and use its original position when deciding leading trivia.
+	if spanMap := sourceFile.SpanMap(); spanMap != nil {
+		for _, segment := range spanMap.Segments() {
+			if segment.Kind != spanmap.KindVerbatim || segment.VirtualEnd <= core.TextPos(pos) {
+				continue
+			}
+			if segment.VirtualStart > core.TextPos(pos) {
+				pos = int(segment.VirtualStart)
+			}
+			originalPos = int(segment.OriginalStart + core.TextPos(pos) - segment.VirtualStart)
+			break
+		}
+	}
 	options := NodeOptions{}
-	if pos != 0 {
+	if originalPos != 0 {
 		options.Prefix = t.newLine
 	}
 	if len(sourceFile.Text()) == 0 || !stringutil.IsLineBreak(rune(sourceFile.Text()[pos])) {
