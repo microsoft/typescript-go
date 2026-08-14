@@ -543,6 +543,16 @@ func GetScriptKindFromFileName(fileName string) ScriptKind {
 	return ScriptKindUnknown
 }
 
+// EnsureScriptKindFromFileName is like GetScriptKindFromFileName, but defaults to
+// ScriptKindTS when the file name has no recognized extension (e.g. files included
+// with allowNonTsExtensions), so the result is always safe to hand to the parser.
+func EnsureScriptKindFromFileName(fileName string) ScriptKind {
+	if kind := GetScriptKindFromFileName(fileName); kind != ScriptKindUnknown {
+		return kind
+	}
+	return ScriptKindTS
+}
+
 // Given a name and a list of names that are *not* equal to the name, return a spelling suggestion if there is one that is close enough.
 // Names less than length 3 only check for case-insensitive equality.
 //
@@ -557,6 +567,14 @@ func GetScriptKindFromFileName(fileName string) ScriptKind {
 //
 // @internal
 func GetSpellingSuggestion[T any](name string, candidates iter.Seq[T], getName func(T) string, compare func(T, T) int) T {
+	return getSpellingSuggestion(name, candidates, getName, compare, 0 /*maxCandidates*/)
+}
+
+func GetSpellingSuggestionWithMaxCandidateCount[T any](name string, candidates iter.Seq[T], getName func(T) string, compare func(T, T) int, maxCandidates int) T {
+	return getSpellingSuggestion(name, candidates, getName, compare, maxCandidates)
+}
+
+func getSpellingSuggestion[T any](name string, candidates iter.Seq[T], getName func(T) string, compare func(T, T) int, maxCandidates int) T {
 	runeName := []rune(name)
 	maximumLengthDifference := max(2, int(float64(len(runeName))*0.34))
 	bestDistance := math.Floor(float64(len(runeName))*0.4) + 0.9 // If the best result is worse than this, don't bother.
@@ -564,7 +582,13 @@ func GetSpellingSuggestion[T any](name string, candidates iter.Seq[T], getName f
 	defer levenshteinBuffersPool.Put(buffers)
 	var bestCandidate T
 	hasBest := false
+	checkedCandidates := 0
 	for candidate := range candidates {
+		checkedCandidates++
+		if maxCandidates > 0 && checkedCandidates > maxCandidates {
+			var zero T
+			return zero
+		}
 		candidateName := getName(candidate)
 		maxLen := max(len(candidateName), len(runeName))
 		minLen := min(len(candidateName), len(runeName))

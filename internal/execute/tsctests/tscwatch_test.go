@@ -1,6 +1,7 @@
 package tsctests
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -9,6 +10,30 @@ import (
 
 func TestWatch(t *testing.T) {
 	t.Parallel()
+	bunDependencyTest := func() *tscInput {
+		files := FileMap{}
+		var index strings.Builder
+		var fileNames strings.Builder
+		fileNames.WriteString(`"index.ts"`)
+		for i := range 12 {
+			name := fmt.Sprintf("pkg%d", i)
+			value := fmt.Sprintf("value%d", i)
+			index.WriteString(fmt.Sprintf(`import { %[1]s } from "./node_modules/.bun/%[2]s/index"; %[1]s;`, value, name))
+			index.WriteString("\n")
+			files["/home/src/workspaces/project/node_modules/.bun/"+name+"/index.ts"] = fmt.Sprintf("export const %s = %d;", value, i)
+			fileNames.WriteString(fmt.Sprintf(`, "node_modules/.bun/%s/index.ts"`, name))
+		}
+		files["/home/src/workspaces/project/index.ts"] = index.String()
+		files["/home/src/workspaces/project/tsconfig.json"] = fmt.Sprintf(`{
+	"compilerOptions": {},
+	"files": [%s]
+}`, fileNames.String())
+		return &tscInput{
+			subScenario:     "watch handles many bun dependency files",
+			files:           files,
+			commandLineArgs: []string{"--watch"},
+		}
+	}
 	testCases := []*tscInput{
 		{
 			subScenario: "watch with no tsconfig",
@@ -25,6 +50,7 @@ func TestWatch(t *testing.T) {
 			},
 			commandLineArgs: []string{"--watch", "--incremental"},
 		},
+		bunDependencyTest(),
 		{
 			subScenario: "watch skips build when no files change",
 			files: FileMap{
@@ -535,6 +561,25 @@ func TestWatch(t *testing.T) {
 			edits: []*tscEdit{
 				newTscEdit("trivial file change", func(sys *TestSys) {
 					sys.writeFileNoError("/home/src/workspaces/project/index.ts", `const x: number = 2;`)
+				}),
+			},
+		},
+		// Global (script) files: commenting out a global declaration in one
+		// file must surface the resulting error in another file that used it.
+		{
+			subScenario: "watch detects error across global script files when global decl removed",
+			files: FileMap{
+				"/home/src/workspaces/project/a.ts":          `console.log(a);`,
+				"/home/src/workspaces/project/x.ts":          `const a = 1;`,
+				"/home/src/workspaces/project/tsconfig.json": `{}`,
+			},
+			commandLineArgs: []string{"--watch"},
+			edits: []*tscEdit{
+				newTscEdit("comment out global declaration", func(sys *TestSys) {
+					sys.writeFileNoError("/home/src/workspaces/project/x.ts", `// const a = 1;`)
+				}),
+				newTscEdit("restore global declaration", func(sys *TestSys) {
+					sys.writeFileNoError("/home/src/workspaces/project/x.ts", `const a = 1;`)
 				}),
 			},
 		},

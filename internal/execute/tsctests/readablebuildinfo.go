@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
@@ -16,9 +17,11 @@ type readableBuildInfo struct {
 	Version   string `json:"version,omitzero"`
 
 	// Common between incremental and tsc -b buildinfo for non incremental programs
-	Errors       bool                     `json:"errors,omitzero"`
-	CheckPending bool                     `json:"checkPending,omitzero"`
-	Root         []*readableBuildInfoRoot `json:"root,omitzero"`
+	Errors              bool                     `json:"errors,omitzero"`
+	CheckPending        bool                     `json:"checkPending,omitzero"`
+	Root                []*readableBuildInfoRoot `json:"root,omitzero"`
+	PackageJsons        []string                 `json:"packageJsons,omitzero"`
+	MissingPackageJsons []string                 `json:"missingPackageJsons,omitzero"`
 
 	// IncrementalProgram info
 	FileNames                  []string                                  `json:"fileNames,omitzero"`
@@ -55,19 +58,27 @@ type readableBuildInfoFileInfo struct {
 
 type readableBuildInfoDiagnostic struct {
 	// incrementalBuildInfoFileId if it is for a File thats other than its stored for
-	File               string                         `json:"file,omitzero"`
-	NoFile             bool                           `json:"noFile,omitzero"`
-	Pos                int                            `json:"pos,omitzero"`
-	End                int                            `json:"end,omitzero"`
-	Code               int32                          `json:"code,omitzero"`
-	Category           diagnostics.Category           `json:"category,omitzero"`
-	MessageKey         diagnostics.Key                `json:"messageKey,omitzero"`
-	MessageArgs        []string                       `json:"messageArgs,omitzero"`
-	MessageChain       []*readableBuildInfoDiagnostic `json:"messageChain,omitzero"`
-	RelatedInformation []*readableBuildInfoDiagnostic `json:"relatedInformation,omitzero"`
-	ReportsUnnecessary bool                           `json:"reportsUnnecessary,omitzero"`
-	ReportsDeprecated  bool                           `json:"reportsDeprecated,omitzero"`
-	SkippedOnNoEmit    bool                           `json:"skippedOnNoEmit,omitzero"`
+	File               string                           `json:"file,omitzero"`
+	NoFile             bool                             `json:"noFile,omitzero"`
+	Pos                int                              `json:"pos,omitzero"`
+	End                int                              `json:"end,omitzero"`
+	Code               int32                            `json:"code,omitzero"`
+	Category           diagnostics.Category             `json:"category,omitzero"`
+	MessageKey         diagnostics.Key                  `json:"messageKey,omitzero"`
+	MessageArgs        []string                         `json:"messageArgs,omitzero"`
+	MessageChain       []*readableBuildInfoDiagnostic   `json:"messageChain,omitzero"`
+	RelatedInformation []*readableBuildInfoDiagnostic   `json:"relatedInformation,omitzero"`
+	ReportsUnnecessary bool                             `json:"reportsUnnecessary,omitzero"`
+	ReportsDeprecated  bool                             `json:"reportsDeprecated,omitzero"`
+	SkippedOnNoEmit    bool                             `json:"skippedOnNoEmit,omitzero"`
+	RepopulateInfo     *readableBuildInfoRepopulateInfo `json:"repopulateInfo,omitzero"`
+}
+
+type readableBuildInfoRepopulateInfo struct {
+	Kind            ast.RepopulateDiagnosticKind `json:"kind"`
+	ModuleReference string                       `json:"moduleReference,omitzero"`
+	Mode            core.ResolutionMode          `json:"mode,omitzero"`
+	PackageName     string                       `json:"packageName,omitzero"`
 }
 
 type readableBuildInfoDiagnosticsOfFile struct {
@@ -214,6 +225,8 @@ func toReadableBuildInfo(buildInfo *incremental.BuildInfo, buildInfoText string)
 		Options:              buildInfo.Options,
 		LatestChangedDtsFile: buildInfo.LatestChangedDtsFile,
 		SemanticErrors:       buildInfo.SemanticErrors,
+		PackageJsons:         buildInfo.PackageJsons,
+		MissingPackageJsons:  buildInfo.MissingPackageJsons,
 		Size:                 len(buildInfoText),
 	}
 	readable.setFileInfos()
@@ -261,8 +274,21 @@ func (r *readableBuildInfo) toReadableBuildInfoDiagnostic(diagnostics []*increme
 			ReportsUnnecessary: d.ReportsUnnecessary,
 			ReportsDeprecated:  d.ReportsDeprecated,
 			SkippedOnNoEmit:    d.SkippedOnNoEmit,
+			RepopulateInfo:     toReadableBuildInfoRepopulateInfo(d.RepopulateInfo),
 		}
 	})
+}
+
+func toReadableBuildInfoRepopulateInfo(info *incremental.BuildInfoRepopulateInfo) *readableBuildInfoRepopulateInfo {
+	if info == nil {
+		return nil
+	}
+	return &readableBuildInfoRepopulateInfo{
+		Kind:            info.Kind,
+		ModuleReference: info.ModuleReference,
+		Mode:            info.Mode,
+		PackageName:     info.PackageName,
+	}
 }
 
 func (r *readableBuildInfo) toReadableBuildInfoDiagnosticsOfFile(diagnostics *incremental.BuildInfoDiagnosticsOfFile) *readableBuildInfoDiagnosticsOfFile {
