@@ -9128,339 +9128,339 @@ func (n *Node) data() nodeData {
 func (n *Node) ForEachChild(v Visitor) bool {
 	switch n.Kind {
 	case KindQualifiedName:
-		return n.data().(*QualifiedName).ForEachChild(v)
+		return (*QualifiedName)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindComputedPropertyName:
-		return n.data().(*ComputedPropertyName).ForEachChild(v)
+		return (*ComputedPropertyName)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindDecorator:
-		return n.data().(*Decorator).ForEachChild(v)
+		return (*Decorator)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindIfStatement:
-		return n.data().(*IfStatement).ForEachChild(v)
+		return (*IfStatement)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindDoStatement:
-		return n.data().(*DoStatement).ForEachChild(v)
+		return (*DoStatement)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindWhileStatement:
-		return n.data().(*WhileStatement).ForEachChild(v)
+		return (*WhileStatement)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindForStatement:
-		return n.data().(*ForStatement).ForEachChild(v)
+		return (*ForStatement)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindForInStatement, KindForOfStatement:
-		return n.data().(*ForInOrOfStatement).ForEachChild(v)
+		return (*ForInOrOfStatement)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindBreakStatement:
-		return n.data().(*BreakStatement).ForEachChild(v)
+		return (*BreakStatement)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindContinueStatement:
-		return n.data().(*ContinueStatement).ForEachChild(v)
+		return (*ContinueStatement)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindReturnStatement:
-		return n.data().(*ReturnStatement).ForEachChild(v)
+		return (*ReturnStatement)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindWithStatement:
-		return n.data().(*WithStatement).ForEachChild(v)
+		return (*WithStatement)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindSwitchStatement:
-		return n.data().(*SwitchStatement).ForEachChild(v)
+		return (*SwitchStatement)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindCaseBlock:
-		return n.data().(*CaseBlock).ForEachChild(v)
+		return (*CaseBlock)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindCaseClause, KindDefaultClause:
-		return n.data().(*CaseOrDefaultClause).ForEachChild(v)
+		return (*CaseOrDefaultClause)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindThrowStatement:
-		return n.data().(*ThrowStatement).ForEachChild(v)
+		return (*ThrowStatement)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindTryStatement:
-		return n.data().(*TryStatement).ForEachChild(v)
+		return (*TryStatement)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindCatchClause:
-		return n.data().(*CatchClause).ForEachChild(v)
+		return (*CatchClause)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindLabeledStatement:
-		return n.data().(*LabeledStatement).ForEachChild(v)
+		return (*LabeledStatement)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindExpressionStatement:
-		return n.data().(*ExpressionStatement).ForEachChild(v)
+		return (*ExpressionStatement)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindBlock:
-		return n.data().(*Block).ForEachChild(v)
+		return (*Block)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindVariableStatement:
-		return n.data().(*VariableStatement).ForEachChild(v)
+		return (*VariableStatement)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindVariableDeclaration:
-		return n.data().(*VariableDeclaration).ForEachChild(v)
+		return (*VariableDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindVariableDeclarationList:
-		return n.data().(*VariableDeclarationList).ForEachChild(v)
+		return (*VariableDeclarationList)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindObjectBindingPattern, KindArrayBindingPattern:
-		return n.data().(*BindingPattern).ForEachChild(v)
+		return (*BindingPattern)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindParameter:
-		return n.data().(*ParameterDeclaration).ForEachChild(v)
+		return (*ParameterDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindBindingElement:
-		return n.data().(*BindingElement).ForEachChild(v)
+		return (*BindingElement)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindMissingDeclaration:
-		return n.data().(*MissingDeclaration).ForEachChild(v)
+		return (*MissingDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindFunctionDeclaration:
-		return n.data().(*FunctionDeclaration).ForEachChild(v)
+		return (*FunctionDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindClassDeclaration:
-		return n.data().(*ClassDeclaration).ForEachChild(v)
+		return (*ClassDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindClassExpression:
-		return n.data().(*ClassExpression).ForEachChild(v)
+		return (*ClassExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindHeritageClause:
-		return n.data().(*HeritageClause).ForEachChild(v)
+		return (*HeritageClause)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindInterfaceDeclaration:
-		return n.data().(*InterfaceDeclaration).ForEachChild(v)
+		return (*InterfaceDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
-		return n.data().(*TypeAliasDeclaration).ForEachChild(v)
+		return (*TypeAliasDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindEnumMember:
-		return n.data().(*EnumMember).ForEachChild(v)
+		return (*EnumMember)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindEnumDeclaration:
-		return n.data().(*EnumDeclaration).ForEachChild(v)
+		return (*EnumDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindModuleBlock:
-		return n.data().(*ModuleBlock).ForEachChild(v)
+		return (*ModuleBlock)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindImportDeclaration, KindJSImportDeclaration:
-		return n.data().(*ImportDeclaration).ForEachChild(v)
+		return (*ImportDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindExternalModuleReference:
-		return n.data().(*ExternalModuleReference).ForEachChild(v)
+		return (*ExternalModuleReference)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindNamespaceImport:
-		return n.data().(*NamespaceImport).ForEachChild(v)
+		return (*NamespaceImport)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindNamedImports:
-		return n.data().(*NamedImports).ForEachChild(v)
+		return (*NamedImports)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindExportAssignment:
-		return n.data().(*ExportAssignment).ForEachChild(v)
+		return (*ExportAssignment)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindNamespaceExportDeclaration:
-		return n.data().(*NamespaceExportDeclaration).ForEachChild(v)
+		return (*NamespaceExportDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindNamespaceExport:
-		return n.data().(*NamespaceExport).ForEachChild(v)
+		return (*NamespaceExport)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindNamedExports:
-		return n.data().(*NamedExports).ForEachChild(v)
+		return (*NamedExports)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindExportSpecifier:
-		return n.data().(*ExportSpecifier).ForEachChild(v)
+		return (*ExportSpecifier)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindCallSignature:
-		return n.data().(*CallSignatureDeclaration).ForEachChild(v)
+		return (*CallSignatureDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindConstructSignature:
-		return n.data().(*ConstructSignatureDeclaration).ForEachChild(v)
+		return (*ConstructSignatureDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindConstructor:
-		return n.data().(*ConstructorDeclaration).ForEachChild(v)
+		return (*ConstructorDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindGetAccessor:
-		return n.data().(*GetAccessorDeclaration).ForEachChild(v)
+		return (*GetAccessorDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindSetAccessor:
-		return n.data().(*SetAccessorDeclaration).ForEachChild(v)
+		return (*SetAccessorDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindIndexSignature:
-		return n.data().(*IndexSignatureDeclaration).ForEachChild(v)
+		return (*IndexSignatureDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindMethodSignature:
-		return n.data().(*MethodSignatureDeclaration).ForEachChild(v)
+		return (*MethodSignatureDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindMethodDeclaration:
-		return n.data().(*MethodDeclaration).ForEachChild(v)
+		return (*MethodDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindPropertySignature:
-		return n.data().(*PropertySignatureDeclaration).ForEachChild(v)
+		return (*PropertySignatureDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindPropertyDeclaration:
-		return n.data().(*PropertyDeclaration).ForEachChild(v)
+		return (*PropertyDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindClassStaticBlockDeclaration:
-		return n.data().(*ClassStaticBlockDeclaration).ForEachChild(v)
+		return (*ClassStaticBlockDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindBinaryExpression:
-		return n.data().(*BinaryExpression).ForEachChild(v)
+		return (*BinaryExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindPrefixUnaryExpression:
-		return n.data().(*PrefixUnaryExpression).ForEachChild(v)
+		return (*PrefixUnaryExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindPostfixUnaryExpression:
-		return n.data().(*PostfixUnaryExpression).ForEachChild(v)
+		return (*PostfixUnaryExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindYieldExpression:
-		return n.data().(*YieldExpression).ForEachChild(v)
+		return (*YieldExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindArrowFunction:
-		return n.data().(*ArrowFunction).ForEachChild(v)
+		return (*ArrowFunction)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindFunctionExpression:
-		return n.data().(*FunctionExpression).ForEachChild(v)
+		return (*FunctionExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindAsExpression:
-		return n.data().(*AsExpression).ForEachChild(v)
+		return (*AsExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindSatisfiesExpression:
-		return n.data().(*SatisfiesExpression).ForEachChild(v)
+		return (*SatisfiesExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindConditionalExpression:
-		return n.data().(*ConditionalExpression).ForEachChild(v)
+		return (*ConditionalExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindPropertyAccessExpression:
-		return n.data().(*PropertyAccessExpression).ForEachChild(v)
+		return (*PropertyAccessExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindElementAccessExpression:
-		return n.data().(*ElementAccessExpression).ForEachChild(v)
+		return (*ElementAccessExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindCallExpression:
-		return n.data().(*CallExpression).ForEachChild(v)
+		return (*CallExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindNewExpression:
-		return n.data().(*NewExpression).ForEachChild(v)
+		return (*NewExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindMetaProperty:
-		return n.data().(*MetaProperty).ForEachChild(v)
+		return (*MetaProperty)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindNonNullExpression:
-		return n.data().(*NonNullExpression).ForEachChild(v)
+		return (*NonNullExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindSpreadElement:
-		return n.data().(*SpreadElement).ForEachChild(v)
+		return (*SpreadElement)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindTemplateExpression:
-		return n.data().(*TemplateExpression).ForEachChild(v)
+		return (*TemplateExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindTemplateSpan:
-		return n.data().(*TemplateSpan).ForEachChild(v)
+		return (*TemplateSpan)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindTaggedTemplateExpression:
-		return n.data().(*TaggedTemplateExpression).ForEachChild(v)
+		return (*TaggedTemplateExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindParenthesizedExpression:
-		return n.data().(*ParenthesizedExpression).ForEachChild(v)
+		return (*ParenthesizedExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindArrayLiteralExpression:
-		return n.data().(*ArrayLiteralExpression).ForEachChild(v)
+		return (*ArrayLiteralExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindObjectLiteralExpression:
-		return n.data().(*ObjectLiteralExpression).ForEachChild(v)
+		return (*ObjectLiteralExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindSpreadAssignment:
-		return n.data().(*SpreadAssignment).ForEachChild(v)
+		return (*SpreadAssignment)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindPropertyAssignment:
-		return n.data().(*PropertyAssignment).ForEachChild(v)
+		return (*PropertyAssignment)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindShorthandPropertyAssignment:
-		return n.data().(*ShorthandPropertyAssignment).ForEachChild(v)
+		return (*ShorthandPropertyAssignment)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindDeleteExpression:
-		return n.data().(*DeleteExpression).ForEachChild(v)
+		return (*DeleteExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindTypeOfExpression:
-		return n.data().(*TypeOfExpression).ForEachChild(v)
+		return (*TypeOfExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindVoidExpression:
-		return n.data().(*VoidExpression).ForEachChild(v)
+		return (*VoidExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindAwaitExpression:
-		return n.data().(*AwaitExpression).ForEachChild(v)
+		return (*AwaitExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindTypeAssertionExpression:
-		return n.data().(*TypeAssertion).ForEachChild(v)
+		return (*TypeAssertion)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindUnionType:
-		return n.data().(*UnionTypeNode).ForEachChild(v)
+		return (*UnionTypeNode)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindIntersectionType:
-		return n.data().(*IntersectionTypeNode).ForEachChild(v)
+		return (*IntersectionTypeNode)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindConditionalType:
-		return n.data().(*ConditionalTypeNode).ForEachChild(v)
+		return (*ConditionalTypeNode)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindTypeOperator:
-		return n.data().(*TypeOperatorNode).ForEachChild(v)
+		return (*TypeOperatorNode)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindInferType:
-		return n.data().(*InferTypeNode).ForEachChild(v)
+		return (*InferTypeNode)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindArrayType:
-		return n.data().(*ArrayTypeNode).ForEachChild(v)
+		return (*ArrayTypeNode)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindIndexedAccessType:
-		return n.data().(*IndexedAccessTypeNode).ForEachChild(v)
+		return (*IndexedAccessTypeNode)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindTypeReference:
-		return n.data().(*TypeReferenceNode).ForEachChild(v)
+		return (*TypeReferenceNode)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindExpressionWithTypeArguments:
-		return n.data().(*ExpressionWithTypeArguments).ForEachChild(v)
+		return (*ExpressionWithTypeArguments)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindLiteralType:
-		return n.data().(*LiteralTypeNode).ForEachChild(v)
+		return (*LiteralTypeNode)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindTypePredicate:
-		return n.data().(*TypePredicateNode).ForEachChild(v)
+		return (*TypePredicateNode)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindImportAttribute:
-		return n.data().(*ImportAttribute).ForEachChild(v)
+		return (*ImportAttribute)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindImportAttributes:
-		return n.data().(*ImportAttributes).ForEachChild(v)
+		return (*ImportAttributes)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindTypeQuery:
-		return n.data().(*TypeQueryNode).ForEachChild(v)
+		return (*TypeQueryNode)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindMappedType:
-		return n.data().(*MappedTypeNode).ForEachChild(v)
+		return (*MappedTypeNode)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindTypeLiteral:
-		return n.data().(*TypeLiteralNode).ForEachChild(v)
+		return (*TypeLiteralNode)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindTupleType:
-		return n.data().(*TupleTypeNode).ForEachChild(v)
+		return (*TupleTypeNode)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindNamedTupleMember:
-		return n.data().(*NamedTupleMember).ForEachChild(v)
+		return (*NamedTupleMember)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindOptionalType:
-		return n.data().(*OptionalTypeNode).ForEachChild(v)
+		return (*OptionalTypeNode)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindRestType:
-		return n.data().(*RestTypeNode).ForEachChild(v)
+		return (*RestTypeNode)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindParenthesizedType:
-		return n.data().(*ParenthesizedTypeNode).ForEachChild(v)
+		return (*ParenthesizedTypeNode)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindFunctionType:
-		return n.data().(*FunctionTypeNode).ForEachChild(v)
+		return (*FunctionTypeNode)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindConstructorType:
-		return n.data().(*ConstructorTypeNode).ForEachChild(v)
+		return (*ConstructorTypeNode)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindTemplateLiteralType:
-		return n.data().(*TemplateLiteralTypeNode).ForEachChild(v)
+		return (*TemplateLiteralTypeNode)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindTemplateLiteralTypeSpan:
-		return n.data().(*TemplateLiteralTypeSpan).ForEachChild(v)
+		return (*TemplateLiteralTypeSpan)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindSyntheticExpression:
-		return n.data().(*SyntheticExpression).ForEachChild(v)
+		return (*SyntheticExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindPartiallyEmittedExpression:
-		return n.data().(*PartiallyEmittedExpression).ForEachChild(v)
+		return (*PartiallyEmittedExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJsxElement:
-		return n.data().(*JsxElement).ForEachChild(v)
+		return (*JsxElement)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJsxAttributes:
-		return n.data().(*JsxAttributes).ForEachChild(v)
+		return (*JsxAttributes)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJsxNamespacedName:
-		return n.data().(*JsxNamespacedName).ForEachChild(v)
+		return (*JsxNamespacedName)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJsxOpeningElement:
-		return n.data().(*JsxOpeningElement).ForEachChild(v)
+		return (*JsxOpeningElement)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJsxSelfClosingElement:
-		return n.data().(*JsxSelfClosingElement).ForEachChild(v)
+		return (*JsxSelfClosingElement)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJsxFragment:
-		return n.data().(*JsxFragment).ForEachChild(v)
+		return (*JsxFragment)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJsxAttribute:
-		return n.data().(*JsxAttribute).ForEachChild(v)
+		return (*JsxAttribute)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJsxSpreadAttribute:
-		return n.data().(*JsxSpreadAttribute).ForEachChild(v)
+		return (*JsxSpreadAttribute)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJsxClosingElement:
-		return n.data().(*JsxClosingElement).ForEachChild(v)
+		return (*JsxClosingElement)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJsxExpression:
-		return n.data().(*JsxExpression).ForEachChild(v)
+		return (*JsxExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindSyntaxList:
-		return n.data().(*SyntaxList).ForEachChild(v)
+		return (*SyntaxList)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDoc:
-		return n.data().(*JSDoc).ForEachChild(v)
+		return (*JSDoc)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocTypeExpression:
-		return n.data().(*JSDocTypeExpression).ForEachChild(v)
+		return (*JSDocTypeExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocNonNullableType:
-		return n.data().(*JSDocNonNullableType).ForEachChild(v)
+		return (*JSDocNonNullableType)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocNullableType:
-		return n.data().(*JSDocNullableType).ForEachChild(v)
+		return (*JSDocNullableType)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocVariadicType:
-		return n.data().(*JSDocVariadicType).ForEachChild(v)
+		return (*JSDocVariadicType)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocOptionalType:
-		return n.data().(*JSDocOptionalType).ForEachChild(v)
+		return (*JSDocOptionalType)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocTypeTag:
-		return n.data().(*JSDocTypeTag).ForEachChild(v)
+		return (*JSDocTypeTag)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocUnknownTag:
-		return n.data().(*JSDocUnknownTag).ForEachChild(v)
+		return (*JSDocUnknownTag)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocTemplateTag:
-		return n.data().(*JSDocTemplateTag).ForEachChild(v)
+		return (*JSDocTemplateTag)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocReturnTag:
-		return n.data().(*JSDocReturnTag).ForEachChild(v)
+		return (*JSDocReturnTag)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocPublicTag:
-		return n.data().(*JSDocPublicTag).ForEachChild(v)
+		return (*JSDocPublicTag)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocPrivateTag:
-		return n.data().(*JSDocPrivateTag).ForEachChild(v)
+		return (*JSDocPrivateTag)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocProtectedTag:
-		return n.data().(*JSDocProtectedTag).ForEachChild(v)
+		return (*JSDocProtectedTag)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocReadonlyTag:
-		return n.data().(*JSDocReadonlyTag).ForEachChild(v)
+		return (*JSDocReadonlyTag)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocOverrideTag:
-		return n.data().(*JSDocOverrideTag).ForEachChild(v)
+		return (*JSDocOverrideTag)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocDeprecatedTag:
-		return n.data().(*JSDocDeprecatedTag).ForEachChild(v)
+		return (*JSDocDeprecatedTag)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocSeeTag:
-		return n.data().(*JSDocSeeTag).ForEachChild(v)
+		return (*JSDocSeeTag)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocImplementsTag:
-		return n.data().(*JSDocImplementsTag).ForEachChild(v)
+		return (*JSDocImplementsTag)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocAugmentsTag:
-		return n.data().(*JSDocAugmentsTag).ForEachChild(v)
+		return (*JSDocAugmentsTag)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocSatisfiesTag:
-		return n.data().(*JSDocSatisfiesTag).ForEachChild(v)
+		return (*JSDocSatisfiesTag)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocThrowsTag:
-		return n.data().(*JSDocThrowsTag).ForEachChild(v)
+		return (*JSDocThrowsTag)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocThisTag:
-		return n.data().(*JSDocThisTag).ForEachChild(v)
+		return (*JSDocThisTag)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocImportTag:
-		return n.data().(*JSDocImportTag).ForEachChild(v)
+		return (*JSDocImportTag)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocCallbackTag:
-		return n.data().(*JSDocCallbackTag).ForEachChild(v)
+		return (*JSDocCallbackTag)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocOverloadTag:
-		return n.data().(*JSDocOverloadTag).ForEachChild(v)
+		return (*JSDocOverloadTag)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocTypedefTag:
-		return n.data().(*JSDocTypedefTag).ForEachChild(v)
+		return (*JSDocTypedefTag)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocSignature:
-		return n.data().(*JSDocSignature).ForEachChild(v)
+		return (*JSDocSignature)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocNameReference:
-		return n.data().(*JSDocNameReference).ForEachChild(v)
+		return (*JSDocNameReference)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindSourceFile:
-		return n.data().(*SourceFile).ForEachChild(v)
+		return (*SourceFile)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindModuleDeclaration:
-		return n.data().(*ModuleDeclaration).ForEachChild(v)
+		return (*ModuleDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindImportEqualsDeclaration:
-		return n.data().(*ImportEqualsDeclaration).ForEachChild(v)
+		return (*ImportEqualsDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindExportDeclaration:
-		return n.data().(*ExportDeclaration).ForEachChild(v)
+		return (*ExportDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindImportType:
-		return n.data().(*ImportTypeNode).ForEachChild(v)
+		return (*ImportTypeNode)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindImportClause:
-		return n.data().(*ImportClause).ForEachChild(v)
+		return (*ImportClause)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindImportSpecifier:
-		return n.data().(*ImportSpecifier).ForEachChild(v)
+		return (*ImportSpecifier)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocLink:
-		return n.data().(*JSDocLink).ForEachChild(v)
+		return (*JSDocLink)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocLinkPlain:
-		return n.data().(*JSDocLinkPlain).ForEachChild(v)
+		return (*JSDocLinkPlain)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocLinkCode:
-		return n.data().(*JSDocLinkCode).ForEachChild(v)
+		return (*JSDocLinkCode)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindTypeParameter:
-		return n.data().(*TypeParameterDeclaration).ForEachChild(v)
+		return (*TypeParameterDeclaration)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindSyntheticReferenceExpression:
-		return n.data().(*SyntheticReferenceExpression).ForEachChild(v)
+		return (*SyntheticReferenceExpression)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocTypeLiteral:
-		return n.data().(*JSDocTypeLiteral).ForEachChild(v)
+		return (*JSDocTypeLiteral)(unsafe.Pointer(n)).ForEachChild(v)
 	case KindJSDocParameterTag, KindJSDocPropertyTag:
-		return n.data().(*JSDocParameterOrPropertyTag).ForEachChild(v)
+		return (*JSDocParameterOrPropertyTag)(unsafe.Pointer(n)).ForEachChild(v)
 	default:
 		return false
 	}
@@ -9471,771 +9471,1731 @@ func (n *Node) ForEachChild(v Visitor) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 func (n *Node) AsToken() *Token {
-	return n.data().(*Token)
+	switch n.Kind {
+	case KindUnknown, KindEndOfFile, KindSingleLineCommentTrivia, KindMultiLineCommentTrivia, KindNewLineTrivia, KindWhitespaceTrivia, KindConflictMarkerTrivia, KindNonTextFileMarkerTrivia, KindJsxTextAllWhiteSpaces, KindOpenBraceToken, KindCloseBraceToken, KindOpenParenToken, KindCloseParenToken, KindOpenBracketToken, KindCloseBracketToken, KindDotToken, KindDotDotDotToken, KindSemicolonToken, KindCommaToken, KindQuestionDotToken, KindLessThanToken, KindLessThanSlashToken, KindGreaterThanToken, KindLessThanEqualsToken, KindGreaterThanEqualsToken, KindEqualsEqualsToken, KindExclamationEqualsToken, KindEqualsEqualsEqualsToken, KindExclamationEqualsEqualsToken, KindEqualsGreaterThanToken, KindPlusToken, KindMinusToken, KindAsteriskToken, KindAsteriskAsteriskToken, KindSlashToken, KindPercentToken, KindPlusPlusToken, KindMinusMinusToken, KindLessThanLessThanToken, KindGreaterThanGreaterThanToken, KindGreaterThanGreaterThanGreaterThanToken, KindAmpersandToken, KindBarToken, KindCaretToken, KindExclamationToken, KindTildeToken, KindAmpersandAmpersandToken, KindBarBarToken, KindQuestionToken, KindColonToken, KindAtToken, KindQuestionQuestionToken, KindBacktickToken, KindHashToken, KindEqualsToken, KindPlusEqualsToken, KindMinusEqualsToken, KindAsteriskEqualsToken, KindAsteriskAsteriskEqualsToken, KindSlashEqualsToken, KindPercentEqualsToken, KindLessThanLessThanEqualsToken, KindGreaterThanGreaterThanEqualsToken, KindGreaterThanGreaterThanGreaterThanEqualsToken, KindAmpersandEqualsToken, KindBarEqualsToken, KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken, KindQuestionQuestionEqualsToken, KindCaretEqualsToken, KindJSDocCommentTextToken, KindBreakKeyword, KindCaseKeyword, KindCatchKeyword, KindClassKeyword, KindConstKeyword, KindContinueKeyword, KindDebuggerKeyword, KindDefaultKeyword, KindDeleteKeyword, KindDoKeyword, KindElseKeyword, KindEnumKeyword, KindExportKeyword, KindExtendsKeyword, KindFinallyKeyword, KindForKeyword, KindFunctionKeyword, KindIfKeyword, KindInKeyword, KindInstanceOfKeyword, KindNewKeyword, KindReturnKeyword, KindSwitchKeyword, KindThrowKeyword, KindTryKeyword, KindTypeOfKeyword, KindVarKeyword, KindWhileKeyword, KindWithKeyword, KindImplementsKeyword, KindInterfaceKeyword, KindLetKeyword, KindPackageKeyword, KindPrivateKeyword, KindProtectedKeyword, KindPublicKeyword, KindStaticKeyword, KindYieldKeyword, KindAbstractKeyword, KindAccessorKeyword, KindAsKeyword, KindAssertsKeyword, KindAssertKeyword, KindAsyncKeyword, KindAwaitKeyword, KindConstructorKeyword, KindDeclareKeyword, KindGetKeyword, KindImmediateKeyword, KindInferKeyword, KindIsKeyword, KindKeyOfKeyword, KindModuleKeyword, KindNamespaceKeyword, KindOutKeyword, KindReadonlyKeyword, KindRequireKeyword, KindSatisfiesKeyword, KindSetKeyword, KindTypeKeyword, KindUniqueKeyword, KindUsingKeyword, KindFromKeyword, KindGlobalKeyword, KindOverrideKeyword, KindOfKeyword, KindDeferKeyword:
+		return (*Token)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to Token")
+	}
 }
 
 func (n *Node) AsIdentifier() *Identifier {
-	return n.data().(*Identifier)
+	switch n.Kind {
+	case KindIdentifier:
+		return (*Identifier)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to Identifier")
+	}
 }
 
 func (n *Node) AsPrivateIdentifier() *PrivateIdentifier {
-	return n.data().(*PrivateIdentifier)
+	switch n.Kind {
+	case KindPrivateIdentifier:
+		return (*PrivateIdentifier)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to PrivateIdentifier")
+	}
 }
 
 func (n *Node) AsQualifiedName() *QualifiedName {
-	return n.data().(*QualifiedName)
+	switch n.Kind {
+	case KindQualifiedName:
+		return (*QualifiedName)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to QualifiedName")
+	}
 }
 
 func (n *Node) AsComputedPropertyName() *ComputedPropertyName {
-	return n.data().(*ComputedPropertyName)
+	switch n.Kind {
+	case KindComputedPropertyName:
+		return (*ComputedPropertyName)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ComputedPropertyName")
+	}
 }
 
 func (n *Node) AsDecorator() *Decorator {
-	return n.data().(*Decorator)
+	switch n.Kind {
+	case KindDecorator:
+		return (*Decorator)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to Decorator")
+	}
 }
 
 func (n *Node) AsEmptyStatement() *EmptyStatement {
-	return n.data().(*EmptyStatement)
+	switch n.Kind {
+	case KindEmptyStatement:
+		return (*EmptyStatement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to EmptyStatement")
+	}
 }
 
 func (n *Node) AsIfStatement() *IfStatement {
-	return n.data().(*IfStatement)
+	switch n.Kind {
+	case KindIfStatement:
+		return (*IfStatement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to IfStatement")
+	}
 }
 
 func (n *Node) AsDoStatement() *DoStatement {
-	return n.data().(*DoStatement)
+	switch n.Kind {
+	case KindDoStatement:
+		return (*DoStatement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to DoStatement")
+	}
 }
 
 func (n *Node) AsWhileStatement() *WhileStatement {
-	return n.data().(*WhileStatement)
+	switch n.Kind {
+	case KindWhileStatement:
+		return (*WhileStatement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to WhileStatement")
+	}
 }
 
 func (n *Node) AsForStatement() *ForStatement {
-	return n.data().(*ForStatement)
+	switch n.Kind {
+	case KindForStatement:
+		return (*ForStatement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ForStatement")
+	}
 }
 
 func (n *Node) AsForInOrOfStatement() *ForInOrOfStatement {
-	return n.data().(*ForInOrOfStatement)
+	switch n.Kind {
+	case KindForInStatement, KindForOfStatement:
+		return (*ForInOrOfStatement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ForInOrOfStatement")
+	}
 }
 
 func (n *Node) AsBreakStatement() *BreakStatement {
-	return n.data().(*BreakStatement)
+	switch n.Kind {
+	case KindBreakStatement:
+		return (*BreakStatement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to BreakStatement")
+	}
 }
 
 func (n *Node) AsContinueStatement() *ContinueStatement {
-	return n.data().(*ContinueStatement)
+	switch n.Kind {
+	case KindContinueStatement:
+		return (*ContinueStatement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ContinueStatement")
+	}
 }
 
 func (n *Node) AsReturnStatement() *ReturnStatement {
-	return n.data().(*ReturnStatement)
+	switch n.Kind {
+	case KindReturnStatement:
+		return (*ReturnStatement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ReturnStatement")
+	}
 }
 
 func (n *Node) AsWithStatement() *WithStatement {
-	return n.data().(*WithStatement)
+	switch n.Kind {
+	case KindWithStatement:
+		return (*WithStatement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to WithStatement")
+	}
 }
 
 func (n *Node) AsSwitchStatement() *SwitchStatement {
-	return n.data().(*SwitchStatement)
+	switch n.Kind {
+	case KindSwitchStatement:
+		return (*SwitchStatement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to SwitchStatement")
+	}
 }
 
 func (n *Node) AsCaseBlock() *CaseBlock {
-	return n.data().(*CaseBlock)
+	switch n.Kind {
+	case KindCaseBlock:
+		return (*CaseBlock)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to CaseBlock")
+	}
 }
 
 func (n *Node) AsCaseOrDefaultClause() *CaseOrDefaultClause {
-	return n.data().(*CaseOrDefaultClause)
+	switch n.Kind {
+	case KindCaseClause, KindDefaultClause:
+		return (*CaseOrDefaultClause)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to CaseOrDefaultClause")
+	}
 }
 
 func (n *Node) AsThrowStatement() *ThrowStatement {
-	return n.data().(*ThrowStatement)
+	switch n.Kind {
+	case KindThrowStatement:
+		return (*ThrowStatement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ThrowStatement")
+	}
 }
 
 func (n *Node) AsTryStatement() *TryStatement {
-	return n.data().(*TryStatement)
+	switch n.Kind {
+	case KindTryStatement:
+		return (*TryStatement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to TryStatement")
+	}
 }
 
 func (n *Node) AsCatchClause() *CatchClause {
-	return n.data().(*CatchClause)
+	switch n.Kind {
+	case KindCatchClause:
+		return (*CatchClause)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to CatchClause")
+	}
 }
 
 func (n *Node) AsDebuggerStatement() *DebuggerStatement {
-	return n.data().(*DebuggerStatement)
+	switch n.Kind {
+	case KindDebuggerStatement:
+		return (*DebuggerStatement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to DebuggerStatement")
+	}
 }
 
 func (n *Node) AsLabeledStatement() *LabeledStatement {
-	return n.data().(*LabeledStatement)
+	switch n.Kind {
+	case KindLabeledStatement:
+		return (*LabeledStatement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to LabeledStatement")
+	}
 }
 
 func (n *Node) AsExpressionStatement() *ExpressionStatement {
-	return n.data().(*ExpressionStatement)
+	switch n.Kind {
+	case KindExpressionStatement:
+		return (*ExpressionStatement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ExpressionStatement")
+	}
 }
 
 func (n *Node) AsBlock() *Block {
-	return n.data().(*Block)
+	switch n.Kind {
+	case KindBlock:
+		return (*Block)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to Block")
+	}
 }
 
 func (n *Node) AsVariableStatement() *VariableStatement {
-	return n.data().(*VariableStatement)
+	switch n.Kind {
+	case KindVariableStatement:
+		return (*VariableStatement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to VariableStatement")
+	}
 }
 
 func (n *Node) AsVariableDeclaration() *VariableDeclaration {
-	return n.data().(*VariableDeclaration)
+	switch n.Kind {
+	case KindVariableDeclaration:
+		return (*VariableDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to VariableDeclaration")
+	}
 }
 
 func (n *Node) AsVariableDeclarationList() *VariableDeclarationList {
-	return n.data().(*VariableDeclarationList)
+	switch n.Kind {
+	case KindVariableDeclarationList:
+		return (*VariableDeclarationList)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to VariableDeclarationList")
+	}
 }
 
 func (n *Node) AsBindingPattern() *BindingPattern {
-	return n.data().(*BindingPattern)
+	switch n.Kind {
+	case KindObjectBindingPattern, KindArrayBindingPattern:
+		return (*BindingPattern)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to BindingPattern")
+	}
 }
 
 func (n *Node) AsParameterDeclaration() *ParameterDeclaration {
-	return n.data().(*ParameterDeclaration)
+	switch n.Kind {
+	case KindParameter:
+		return (*ParameterDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ParameterDeclaration")
+	}
 }
 
 func (n *Node) AsBindingElement() *BindingElement {
-	return n.data().(*BindingElement)
+	switch n.Kind {
+	case KindBindingElement:
+		return (*BindingElement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to BindingElement")
+	}
 }
 
 func (n *Node) AsMissingDeclaration() *MissingDeclaration {
-	return n.data().(*MissingDeclaration)
+	switch n.Kind {
+	case KindMissingDeclaration:
+		return (*MissingDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to MissingDeclaration")
+	}
 }
 
 func (n *Node) AsFunctionDeclaration() *FunctionDeclaration {
-	return n.data().(*FunctionDeclaration)
+	switch n.Kind {
+	case KindFunctionDeclaration:
+		return (*FunctionDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to FunctionDeclaration")
+	}
 }
 
 func (n *Node) AsClassDeclaration() *ClassDeclaration {
-	return n.data().(*ClassDeclaration)
+	switch n.Kind {
+	case KindClassDeclaration:
+		return (*ClassDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ClassDeclaration")
+	}
 }
 
 func (n *Node) AsClassExpression() *ClassExpression {
-	return n.data().(*ClassExpression)
+	switch n.Kind {
+	case KindClassExpression:
+		return (*ClassExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ClassExpression")
+	}
 }
 
 func (n *Node) AsHeritageClause() *HeritageClause {
-	return n.data().(*HeritageClause)
+	switch n.Kind {
+	case KindHeritageClause:
+		return (*HeritageClause)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to HeritageClause")
+	}
 }
 
 func (n *Node) AsInterfaceDeclaration() *InterfaceDeclaration {
-	return n.data().(*InterfaceDeclaration)
+	switch n.Kind {
+	case KindInterfaceDeclaration:
+		return (*InterfaceDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to InterfaceDeclaration")
+	}
 }
 
 func (n *Node) AsTypeAliasDeclaration() *TypeAliasDeclaration {
-	return n.data().(*TypeAliasDeclaration)
+	switch n.Kind {
+	case KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
+		return (*TypeAliasDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to TypeAliasDeclaration")
+	}
 }
 
 func (n *Node) AsEnumMember() *EnumMember {
-	return n.data().(*EnumMember)
+	switch n.Kind {
+	case KindEnumMember:
+		return (*EnumMember)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to EnumMember")
+	}
 }
 
 func (n *Node) AsEnumDeclaration() *EnumDeclaration {
-	return n.data().(*EnumDeclaration)
+	switch n.Kind {
+	case KindEnumDeclaration:
+		return (*EnumDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to EnumDeclaration")
+	}
 }
 
 func (n *Node) AsModuleBlock() *ModuleBlock {
-	return n.data().(*ModuleBlock)
+	switch n.Kind {
+	case KindModuleBlock:
+		return (*ModuleBlock)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ModuleBlock")
+	}
 }
 
 func (n *Node) AsNotEmittedStatement() *NotEmittedStatement {
-	return n.data().(*NotEmittedStatement)
+	switch n.Kind {
+	case KindNotEmittedStatement:
+		return (*NotEmittedStatement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to NotEmittedStatement")
+	}
 }
 
 func (n *Node) AsNotEmittedTypeElement() *NotEmittedTypeElement {
-	return n.data().(*NotEmittedTypeElement)
+	switch n.Kind {
+	case KindNotEmittedTypeElement:
+		return (*NotEmittedTypeElement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to NotEmittedTypeElement")
+	}
 }
 
 func (n *Node) AsImportDeclaration() *ImportDeclaration {
-	return n.data().(*ImportDeclaration)
+	switch n.Kind {
+	case KindImportDeclaration, KindJSImportDeclaration:
+		return (*ImportDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ImportDeclaration")
+	}
 }
 
 func (n *Node) AsExternalModuleReference() *ExternalModuleReference {
-	return n.data().(*ExternalModuleReference)
+	switch n.Kind {
+	case KindExternalModuleReference:
+		return (*ExternalModuleReference)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ExternalModuleReference")
+	}
 }
 
 func (n *Node) AsNamespaceImport() *NamespaceImport {
-	return n.data().(*NamespaceImport)
+	switch n.Kind {
+	case KindNamespaceImport:
+		return (*NamespaceImport)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to NamespaceImport")
+	}
 }
 
 func (n *Node) AsNamedImports() *NamedImports {
-	return n.data().(*NamedImports)
+	switch n.Kind {
+	case KindNamedImports:
+		return (*NamedImports)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to NamedImports")
+	}
 }
 
 func (n *Node) AsExportAssignment() *ExportAssignment {
-	return n.data().(*ExportAssignment)
+	switch n.Kind {
+	case KindExportAssignment:
+		return (*ExportAssignment)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ExportAssignment")
+	}
 }
 
 func (n *Node) AsNamespaceExportDeclaration() *NamespaceExportDeclaration {
-	return n.data().(*NamespaceExportDeclaration)
+	switch n.Kind {
+	case KindNamespaceExportDeclaration:
+		return (*NamespaceExportDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to NamespaceExportDeclaration")
+	}
 }
 
 func (n *Node) AsNamespaceExport() *NamespaceExport {
-	return n.data().(*NamespaceExport)
+	switch n.Kind {
+	case KindNamespaceExport:
+		return (*NamespaceExport)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to NamespaceExport")
+	}
 }
 
 func (n *Node) AsNamedExports() *NamedExports {
-	return n.data().(*NamedExports)
+	switch n.Kind {
+	case KindNamedExports:
+		return (*NamedExports)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to NamedExports")
+	}
 }
 
 func (n *Node) AsExportSpecifier() *ExportSpecifier {
-	return n.data().(*ExportSpecifier)
+	switch n.Kind {
+	case KindExportSpecifier:
+		return (*ExportSpecifier)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ExportSpecifier")
+	}
 }
 
 func (n *Node) AsCallSignatureDeclaration() *CallSignatureDeclaration {
-	return n.data().(*CallSignatureDeclaration)
+	switch n.Kind {
+	case KindCallSignature:
+		return (*CallSignatureDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to CallSignatureDeclaration")
+	}
 }
 
 func (n *Node) AsConstructSignatureDeclaration() *ConstructSignatureDeclaration {
-	return n.data().(*ConstructSignatureDeclaration)
+	switch n.Kind {
+	case KindConstructSignature:
+		return (*ConstructSignatureDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ConstructSignatureDeclaration")
+	}
 }
 
 func (n *Node) AsConstructorDeclaration() *ConstructorDeclaration {
-	return n.data().(*ConstructorDeclaration)
+	switch n.Kind {
+	case KindConstructor:
+		return (*ConstructorDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ConstructorDeclaration")
+	}
 }
 
 func (n *Node) AsGetAccessorDeclaration() *GetAccessorDeclaration {
-	return n.data().(*GetAccessorDeclaration)
+	switch n.Kind {
+	case KindGetAccessor:
+		return (*GetAccessorDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to GetAccessorDeclaration")
+	}
 }
 
 func (n *Node) AsSetAccessorDeclaration() *SetAccessorDeclaration {
-	return n.data().(*SetAccessorDeclaration)
+	switch n.Kind {
+	case KindSetAccessor:
+		return (*SetAccessorDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to SetAccessorDeclaration")
+	}
 }
 
 func (n *Node) AsIndexSignatureDeclaration() *IndexSignatureDeclaration {
-	return n.data().(*IndexSignatureDeclaration)
+	switch n.Kind {
+	case KindIndexSignature:
+		return (*IndexSignatureDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to IndexSignatureDeclaration")
+	}
 }
 
 func (n *Node) AsMethodSignatureDeclaration() *MethodSignatureDeclaration {
-	return n.data().(*MethodSignatureDeclaration)
+	switch n.Kind {
+	case KindMethodSignature:
+		return (*MethodSignatureDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to MethodSignatureDeclaration")
+	}
 }
 
 func (n *Node) AsMethodDeclaration() *MethodDeclaration {
-	return n.data().(*MethodDeclaration)
+	switch n.Kind {
+	case KindMethodDeclaration:
+		return (*MethodDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to MethodDeclaration")
+	}
 }
 
 func (n *Node) AsPropertySignatureDeclaration() *PropertySignatureDeclaration {
-	return n.data().(*PropertySignatureDeclaration)
+	switch n.Kind {
+	case KindPropertySignature:
+		return (*PropertySignatureDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to PropertySignatureDeclaration")
+	}
 }
 
 func (n *Node) AsPropertyDeclaration() *PropertyDeclaration {
-	return n.data().(*PropertyDeclaration)
+	switch n.Kind {
+	case KindPropertyDeclaration:
+		return (*PropertyDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to PropertyDeclaration")
+	}
 }
 
 func (n *Node) AsSemicolonClassElement() *SemicolonClassElement {
-	return n.data().(*SemicolonClassElement)
+	switch n.Kind {
+	case KindSemicolonClassElement:
+		return (*SemicolonClassElement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to SemicolonClassElement")
+	}
 }
 
 func (n *Node) AsClassStaticBlockDeclaration() *ClassStaticBlockDeclaration {
-	return n.data().(*ClassStaticBlockDeclaration)
+	switch n.Kind {
+	case KindClassStaticBlockDeclaration:
+		return (*ClassStaticBlockDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ClassStaticBlockDeclaration")
+	}
 }
 
 func (n *Node) AsOmittedExpression() *OmittedExpression {
-	return n.data().(*OmittedExpression)
+	switch n.Kind {
+	case KindOmittedExpression:
+		return (*OmittedExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to OmittedExpression")
+	}
 }
 
 func (n *Node) AsKeywordExpression() *KeywordExpression {
-	return n.data().(*KeywordExpression)
+	switch n.Kind {
+	case KindFalseKeyword, KindImportKeyword, KindNullKeyword, KindSuperKeyword, KindThisKeyword, KindTrueKeyword:
+		return (*KeywordExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to KeywordExpression")
+	}
 }
 
 func (n *Node) AsStringLiteral() *StringLiteral {
-	return n.data().(*StringLiteral)
+	switch n.Kind {
+	case KindStringLiteral:
+		return (*StringLiteral)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to StringLiteral")
+	}
 }
 
 func (n *Node) AsNumericLiteral() *NumericLiteral {
-	return n.data().(*NumericLiteral)
+	switch n.Kind {
+	case KindNumericLiteral:
+		return (*NumericLiteral)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to NumericLiteral")
+	}
 }
 
 func (n *Node) AsBigIntLiteral() *BigIntLiteral {
-	return n.data().(*BigIntLiteral)
+	switch n.Kind {
+	case KindBigIntLiteral:
+		return (*BigIntLiteral)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to BigIntLiteral")
+	}
 }
 
 func (n *Node) AsRegularExpressionLiteral() *RegularExpressionLiteral {
-	return n.data().(*RegularExpressionLiteral)
+	switch n.Kind {
+	case KindRegularExpressionLiteral:
+		return (*RegularExpressionLiteral)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to RegularExpressionLiteral")
+	}
 }
 
 func (n *Node) AsNoSubstitutionTemplateLiteral() *NoSubstitutionTemplateLiteral {
-	return n.data().(*NoSubstitutionTemplateLiteral)
+	switch n.Kind {
+	case KindNoSubstitutionTemplateLiteral:
+		return (*NoSubstitutionTemplateLiteral)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to NoSubstitutionTemplateLiteral")
+	}
 }
 
 func (n *Node) AsBinaryExpression() *BinaryExpression {
-	return n.data().(*BinaryExpression)
+	switch n.Kind {
+	case KindBinaryExpression:
+		return (*BinaryExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to BinaryExpression")
+	}
 }
 
 func (n *Node) AsPrefixUnaryExpression() *PrefixUnaryExpression {
-	return n.data().(*PrefixUnaryExpression)
+	switch n.Kind {
+	case KindPrefixUnaryExpression:
+		return (*PrefixUnaryExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to PrefixUnaryExpression")
+	}
 }
 
 func (n *Node) AsPostfixUnaryExpression() *PostfixUnaryExpression {
-	return n.data().(*PostfixUnaryExpression)
+	switch n.Kind {
+	case KindPostfixUnaryExpression:
+		return (*PostfixUnaryExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to PostfixUnaryExpression")
+	}
 }
 
 func (n *Node) AsYieldExpression() *YieldExpression {
-	return n.data().(*YieldExpression)
+	switch n.Kind {
+	case KindYieldExpression:
+		return (*YieldExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to YieldExpression")
+	}
 }
 
 func (n *Node) AsArrowFunction() *ArrowFunction {
-	return n.data().(*ArrowFunction)
+	switch n.Kind {
+	case KindArrowFunction:
+		return (*ArrowFunction)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ArrowFunction")
+	}
 }
 
 func (n *Node) AsFunctionExpression() *FunctionExpression {
-	return n.data().(*FunctionExpression)
+	switch n.Kind {
+	case KindFunctionExpression:
+		return (*FunctionExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to FunctionExpression")
+	}
 }
 
 func (n *Node) AsAsExpression() *AsExpression {
-	return n.data().(*AsExpression)
+	switch n.Kind {
+	case KindAsExpression:
+		return (*AsExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to AsExpression")
+	}
 }
 
 func (n *Node) AsSatisfiesExpression() *SatisfiesExpression {
-	return n.data().(*SatisfiesExpression)
+	switch n.Kind {
+	case KindSatisfiesExpression:
+		return (*SatisfiesExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to SatisfiesExpression")
+	}
 }
 
 func (n *Node) AsConditionalExpression() *ConditionalExpression {
-	return n.data().(*ConditionalExpression)
+	switch n.Kind {
+	case KindConditionalExpression:
+		return (*ConditionalExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ConditionalExpression")
+	}
 }
 
 func (n *Node) AsPropertyAccessExpression() *PropertyAccessExpression {
-	return n.data().(*PropertyAccessExpression)
+	switch n.Kind {
+	case KindPropertyAccessExpression:
+		return (*PropertyAccessExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to PropertyAccessExpression")
+	}
 }
 
 func (n *Node) AsElementAccessExpression() *ElementAccessExpression {
-	return n.data().(*ElementAccessExpression)
+	switch n.Kind {
+	case KindElementAccessExpression:
+		return (*ElementAccessExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ElementAccessExpression")
+	}
 }
 
 func (n *Node) AsCallExpression() *CallExpression {
-	return n.data().(*CallExpression)
+	switch n.Kind {
+	case KindCallExpression:
+		return (*CallExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to CallExpression")
+	}
 }
 
 func (n *Node) AsNewExpression() *NewExpression {
-	return n.data().(*NewExpression)
+	switch n.Kind {
+	case KindNewExpression:
+		return (*NewExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to NewExpression")
+	}
 }
 
 func (n *Node) AsMetaProperty() *MetaProperty {
-	return n.data().(*MetaProperty)
+	switch n.Kind {
+	case KindMetaProperty:
+		return (*MetaProperty)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to MetaProperty")
+	}
 }
 
 func (n *Node) AsNonNullExpression() *NonNullExpression {
-	return n.data().(*NonNullExpression)
+	switch n.Kind {
+	case KindNonNullExpression:
+		return (*NonNullExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to NonNullExpression")
+	}
 }
 
 func (n *Node) AsSpreadElement() *SpreadElement {
-	return n.data().(*SpreadElement)
+	switch n.Kind {
+	case KindSpreadElement:
+		return (*SpreadElement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to SpreadElement")
+	}
 }
 
 func (n *Node) AsTemplateExpression() *TemplateExpression {
-	return n.data().(*TemplateExpression)
+	switch n.Kind {
+	case KindTemplateExpression:
+		return (*TemplateExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to TemplateExpression")
+	}
 }
 
 func (n *Node) AsTemplateSpan() *TemplateSpan {
-	return n.data().(*TemplateSpan)
+	switch n.Kind {
+	case KindTemplateSpan:
+		return (*TemplateSpan)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to TemplateSpan")
+	}
 }
 
 func (n *Node) AsTaggedTemplateExpression() *TaggedTemplateExpression {
-	return n.data().(*TaggedTemplateExpression)
+	switch n.Kind {
+	case KindTaggedTemplateExpression:
+		return (*TaggedTemplateExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to TaggedTemplateExpression")
+	}
 }
 
 func (n *Node) AsParenthesizedExpression() *ParenthesizedExpression {
-	return n.data().(*ParenthesizedExpression)
+	switch n.Kind {
+	case KindParenthesizedExpression:
+		return (*ParenthesizedExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ParenthesizedExpression")
+	}
 }
 
 func (n *Node) AsArrayLiteralExpression() *ArrayLiteralExpression {
-	return n.data().(*ArrayLiteralExpression)
+	switch n.Kind {
+	case KindArrayLiteralExpression:
+		return (*ArrayLiteralExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ArrayLiteralExpression")
+	}
 }
 
 func (n *Node) AsObjectLiteralExpression() *ObjectLiteralExpression {
-	return n.data().(*ObjectLiteralExpression)
+	switch n.Kind {
+	case KindObjectLiteralExpression:
+		return (*ObjectLiteralExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ObjectLiteralExpression")
+	}
 }
 
 func (n *Node) AsSpreadAssignment() *SpreadAssignment {
-	return n.data().(*SpreadAssignment)
+	switch n.Kind {
+	case KindSpreadAssignment:
+		return (*SpreadAssignment)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to SpreadAssignment")
+	}
 }
 
 func (n *Node) AsPropertyAssignment() *PropertyAssignment {
-	return n.data().(*PropertyAssignment)
+	switch n.Kind {
+	case KindPropertyAssignment:
+		return (*PropertyAssignment)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to PropertyAssignment")
+	}
 }
 
 func (n *Node) AsShorthandPropertyAssignment() *ShorthandPropertyAssignment {
-	return n.data().(*ShorthandPropertyAssignment)
+	switch n.Kind {
+	case KindShorthandPropertyAssignment:
+		return (*ShorthandPropertyAssignment)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ShorthandPropertyAssignment")
+	}
 }
 
 func (n *Node) AsDeleteExpression() *DeleteExpression {
-	return n.data().(*DeleteExpression)
+	switch n.Kind {
+	case KindDeleteExpression:
+		return (*DeleteExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to DeleteExpression")
+	}
 }
 
 func (n *Node) AsTypeOfExpression() *TypeOfExpression {
-	return n.data().(*TypeOfExpression)
+	switch n.Kind {
+	case KindTypeOfExpression:
+		return (*TypeOfExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to TypeOfExpression")
+	}
 }
 
 func (n *Node) AsVoidExpression() *VoidExpression {
-	return n.data().(*VoidExpression)
+	switch n.Kind {
+	case KindVoidExpression:
+		return (*VoidExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to VoidExpression")
+	}
 }
 
 func (n *Node) AsAwaitExpression() *AwaitExpression {
-	return n.data().(*AwaitExpression)
+	switch n.Kind {
+	case KindAwaitExpression:
+		return (*AwaitExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to AwaitExpression")
+	}
 }
 
 func (n *Node) AsTypeAssertion() *TypeAssertion {
-	return n.data().(*TypeAssertion)
+	switch n.Kind {
+	case KindTypeAssertionExpression:
+		return (*TypeAssertion)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to TypeAssertion")
+	}
 }
 
 func (n *Node) AsKeywordTypeNode() *KeywordTypeNode {
-	return n.data().(*KeywordTypeNode)
+	switch n.Kind {
+	case KindVoidKeyword, KindAnyKeyword, KindBooleanKeyword, KindIntrinsicKeyword, KindNeverKeyword, KindNumberKeyword, KindObjectKeyword, KindStringKeyword, KindSymbolKeyword, KindUndefinedKeyword, KindUnknownKeyword, KindBigIntKeyword:
+		return (*KeywordTypeNode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to KeywordTypeNode")
+	}
 }
 
 func (n *Node) AsUnionTypeNode() *UnionTypeNode {
-	return n.data().(*UnionTypeNode)
+	switch n.Kind {
+	case KindUnionType:
+		return (*UnionTypeNode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to UnionTypeNode")
+	}
 }
 
 func (n *Node) AsIntersectionTypeNode() *IntersectionTypeNode {
-	return n.data().(*IntersectionTypeNode)
+	switch n.Kind {
+	case KindIntersectionType:
+		return (*IntersectionTypeNode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to IntersectionTypeNode")
+	}
 }
 
 func (n *Node) AsConditionalTypeNode() *ConditionalTypeNode {
-	return n.data().(*ConditionalTypeNode)
+	switch n.Kind {
+	case KindConditionalType:
+		return (*ConditionalTypeNode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ConditionalTypeNode")
+	}
 }
 
 func (n *Node) AsTypeOperatorNode() *TypeOperatorNode {
-	return n.data().(*TypeOperatorNode)
+	switch n.Kind {
+	case KindTypeOperator:
+		return (*TypeOperatorNode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to TypeOperatorNode")
+	}
 }
 
 func (n *Node) AsInferTypeNode() *InferTypeNode {
-	return n.data().(*InferTypeNode)
+	switch n.Kind {
+	case KindInferType:
+		return (*InferTypeNode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to InferTypeNode")
+	}
 }
 
 func (n *Node) AsArrayTypeNode() *ArrayTypeNode {
-	return n.data().(*ArrayTypeNode)
+	switch n.Kind {
+	case KindArrayType:
+		return (*ArrayTypeNode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ArrayTypeNode")
+	}
 }
 
 func (n *Node) AsIndexedAccessTypeNode() *IndexedAccessTypeNode {
-	return n.data().(*IndexedAccessTypeNode)
+	switch n.Kind {
+	case KindIndexedAccessType:
+		return (*IndexedAccessTypeNode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to IndexedAccessTypeNode")
+	}
 }
 
 func (n *Node) AsTypeReferenceNode() *TypeReferenceNode {
-	return n.data().(*TypeReferenceNode)
+	switch n.Kind {
+	case KindTypeReference:
+		return (*TypeReferenceNode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to TypeReferenceNode")
+	}
 }
 
 func (n *Node) AsExpressionWithTypeArguments() *ExpressionWithTypeArguments {
-	return n.data().(*ExpressionWithTypeArguments)
+	switch n.Kind {
+	case KindExpressionWithTypeArguments:
+		return (*ExpressionWithTypeArguments)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ExpressionWithTypeArguments")
+	}
 }
 
 func (n *Node) AsLiteralTypeNode() *LiteralTypeNode {
-	return n.data().(*LiteralTypeNode)
+	switch n.Kind {
+	case KindLiteralType:
+		return (*LiteralTypeNode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to LiteralTypeNode")
+	}
 }
 
 func (n *Node) AsThisTypeNode() *ThisTypeNode {
-	return n.data().(*ThisTypeNode)
+	switch n.Kind {
+	case KindThisType:
+		return (*ThisTypeNode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ThisTypeNode")
+	}
 }
 
 func (n *Node) AsTypePredicateNode() *TypePredicateNode {
-	return n.data().(*TypePredicateNode)
+	switch n.Kind {
+	case KindTypePredicate:
+		return (*TypePredicateNode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to TypePredicateNode")
+	}
 }
 
 func (n *Node) AsImportAttribute() *ImportAttribute {
-	return n.data().(*ImportAttribute)
+	switch n.Kind {
+	case KindImportAttribute:
+		return (*ImportAttribute)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ImportAttribute")
+	}
 }
 
 func (n *Node) AsImportAttributes() *ImportAttributes {
-	return n.data().(*ImportAttributes)
+	switch n.Kind {
+	case KindImportAttributes:
+		return (*ImportAttributes)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ImportAttributes")
+	}
 }
 
 func (n *Node) AsTypeQueryNode() *TypeQueryNode {
-	return n.data().(*TypeQueryNode)
+	switch n.Kind {
+	case KindTypeQuery:
+		return (*TypeQueryNode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to TypeQueryNode")
+	}
 }
 
 func (n *Node) AsMappedTypeNode() *MappedTypeNode {
-	return n.data().(*MappedTypeNode)
+	switch n.Kind {
+	case KindMappedType:
+		return (*MappedTypeNode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to MappedTypeNode")
+	}
 }
 
 func (n *Node) AsTypeLiteralNode() *TypeLiteralNode {
-	return n.data().(*TypeLiteralNode)
+	switch n.Kind {
+	case KindTypeLiteral:
+		return (*TypeLiteralNode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to TypeLiteralNode")
+	}
 }
 
 func (n *Node) AsTupleTypeNode() *TupleTypeNode {
-	return n.data().(*TupleTypeNode)
+	switch n.Kind {
+	case KindTupleType:
+		return (*TupleTypeNode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to TupleTypeNode")
+	}
 }
 
 func (n *Node) AsNamedTupleMember() *NamedTupleMember {
-	return n.data().(*NamedTupleMember)
+	switch n.Kind {
+	case KindNamedTupleMember:
+		return (*NamedTupleMember)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to NamedTupleMember")
+	}
 }
 
 func (n *Node) AsOptionalTypeNode() *OptionalTypeNode {
-	return n.data().(*OptionalTypeNode)
+	switch n.Kind {
+	case KindOptionalType:
+		return (*OptionalTypeNode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to OptionalTypeNode")
+	}
 }
 
 func (n *Node) AsRestTypeNode() *RestTypeNode {
-	return n.data().(*RestTypeNode)
+	switch n.Kind {
+	case KindRestType:
+		return (*RestTypeNode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to RestTypeNode")
+	}
 }
 
 func (n *Node) AsParenthesizedTypeNode() *ParenthesizedTypeNode {
-	return n.data().(*ParenthesizedTypeNode)
+	switch n.Kind {
+	case KindParenthesizedType:
+		return (*ParenthesizedTypeNode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ParenthesizedTypeNode")
+	}
 }
 
 func (n *Node) AsFunctionTypeNode() *FunctionTypeNode {
-	return n.data().(*FunctionTypeNode)
+	switch n.Kind {
+	case KindFunctionType:
+		return (*FunctionTypeNode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to FunctionTypeNode")
+	}
 }
 
 func (n *Node) AsConstructorTypeNode() *ConstructorTypeNode {
-	return n.data().(*ConstructorTypeNode)
+	switch n.Kind {
+	case KindConstructorType:
+		return (*ConstructorTypeNode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ConstructorTypeNode")
+	}
 }
 
 func (n *Node) AsTemplateHead() *TemplateHead {
-	return n.data().(*TemplateHead)
+	switch n.Kind {
+	case KindTemplateHead:
+		return (*TemplateHead)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to TemplateHead")
+	}
 }
 
 func (n *Node) AsTemplateMiddle() *TemplateMiddle {
-	return n.data().(*TemplateMiddle)
+	switch n.Kind {
+	case KindTemplateMiddle:
+		return (*TemplateMiddle)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to TemplateMiddle")
+	}
 }
 
 func (n *Node) AsTemplateTail() *TemplateTail {
-	return n.data().(*TemplateTail)
+	switch n.Kind {
+	case KindTemplateTail:
+		return (*TemplateTail)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to TemplateTail")
+	}
 }
 
 func (n *Node) AsTemplateLiteralTypeNode() *TemplateLiteralTypeNode {
-	return n.data().(*TemplateLiteralTypeNode)
+	switch n.Kind {
+	case KindTemplateLiteralType:
+		return (*TemplateLiteralTypeNode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to TemplateLiteralTypeNode")
+	}
 }
 
 func (n *Node) AsTemplateLiteralTypeSpan() *TemplateLiteralTypeSpan {
-	return n.data().(*TemplateLiteralTypeSpan)
+	switch n.Kind {
+	case KindTemplateLiteralTypeSpan:
+		return (*TemplateLiteralTypeSpan)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to TemplateLiteralTypeSpan")
+	}
 }
 
 func (n *Node) AsSyntheticExpression() *SyntheticExpression {
-	return n.data().(*SyntheticExpression)
+	switch n.Kind {
+	case KindSyntheticExpression:
+		return (*SyntheticExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to SyntheticExpression")
+	}
 }
 
 func (n *Node) AsPartiallyEmittedExpression() *PartiallyEmittedExpression {
-	return n.data().(*PartiallyEmittedExpression)
+	switch n.Kind {
+	case KindPartiallyEmittedExpression:
+		return (*PartiallyEmittedExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to PartiallyEmittedExpression")
+	}
 }
 
 func (n *Node) AsJsxElement() *JsxElement {
-	return n.data().(*JsxElement)
+	switch n.Kind {
+	case KindJsxElement:
+		return (*JsxElement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JsxElement")
+	}
 }
 
 func (n *Node) AsJsxAttributes() *JsxAttributes {
-	return n.data().(*JsxAttributes)
+	switch n.Kind {
+	case KindJsxAttributes:
+		return (*JsxAttributes)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JsxAttributes")
+	}
 }
 
 func (n *Node) AsJsxNamespacedName() *JsxNamespacedName {
-	return n.data().(*JsxNamespacedName)
+	switch n.Kind {
+	case KindJsxNamespacedName:
+		return (*JsxNamespacedName)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JsxNamespacedName")
+	}
 }
 
 func (n *Node) AsJsxOpeningElement() *JsxOpeningElement {
-	return n.data().(*JsxOpeningElement)
+	switch n.Kind {
+	case KindJsxOpeningElement:
+		return (*JsxOpeningElement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JsxOpeningElement")
+	}
 }
 
 func (n *Node) AsJsxSelfClosingElement() *JsxSelfClosingElement {
-	return n.data().(*JsxSelfClosingElement)
+	switch n.Kind {
+	case KindJsxSelfClosingElement:
+		return (*JsxSelfClosingElement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JsxSelfClosingElement")
+	}
 }
 
 func (n *Node) AsJsxFragment() *JsxFragment {
-	return n.data().(*JsxFragment)
+	switch n.Kind {
+	case KindJsxFragment:
+		return (*JsxFragment)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JsxFragment")
+	}
 }
 
 func (n *Node) AsJsxOpeningFragment() *JsxOpeningFragment {
-	return n.data().(*JsxOpeningFragment)
+	switch n.Kind {
+	case KindJsxOpeningFragment:
+		return (*JsxOpeningFragment)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JsxOpeningFragment")
+	}
 }
 
 func (n *Node) AsJsxClosingFragment() *JsxClosingFragment {
-	return n.data().(*JsxClosingFragment)
+	switch n.Kind {
+	case KindJsxClosingFragment:
+		return (*JsxClosingFragment)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JsxClosingFragment")
+	}
 }
 
 func (n *Node) AsJsxAttribute() *JsxAttribute {
-	return n.data().(*JsxAttribute)
+	switch n.Kind {
+	case KindJsxAttribute:
+		return (*JsxAttribute)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JsxAttribute")
+	}
 }
 
 func (n *Node) AsJsxSpreadAttribute() *JsxSpreadAttribute {
-	return n.data().(*JsxSpreadAttribute)
+	switch n.Kind {
+	case KindJsxSpreadAttribute:
+		return (*JsxSpreadAttribute)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JsxSpreadAttribute")
+	}
 }
 
 func (n *Node) AsJsxClosingElement() *JsxClosingElement {
-	return n.data().(*JsxClosingElement)
+	switch n.Kind {
+	case KindJsxClosingElement:
+		return (*JsxClosingElement)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JsxClosingElement")
+	}
 }
 
 func (n *Node) AsJsxExpression() *JsxExpression {
-	return n.data().(*JsxExpression)
+	switch n.Kind {
+	case KindJsxExpression:
+		return (*JsxExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JsxExpression")
+	}
 }
 
 func (n *Node) AsJsxText() *JsxText {
-	return n.data().(*JsxText)
+	switch n.Kind {
+	case KindJsxText:
+		return (*JsxText)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JsxText")
+	}
 }
 
 func (n *Node) AsSyntaxList() *SyntaxList {
-	return n.data().(*SyntaxList)
+	switch n.Kind {
+	case KindSyntaxList:
+		return (*SyntaxList)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to SyntaxList")
+	}
 }
 
 func (n *Node) AsJSDoc() *JSDoc {
-	return n.data().(*JSDoc)
+	switch n.Kind {
+	case KindJSDoc:
+		return (*JSDoc)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDoc")
+	}
 }
 
 func (n *Node) AsJSDocTypeExpression() *JSDocTypeExpression {
-	return n.data().(*JSDocTypeExpression)
+	switch n.Kind {
+	case KindJSDocTypeExpression:
+		return (*JSDocTypeExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocTypeExpression")
+	}
 }
 
 func (n *Node) AsJSDocNonNullableType() *JSDocNonNullableType {
-	return n.data().(*JSDocNonNullableType)
+	switch n.Kind {
+	case KindJSDocNonNullableType:
+		return (*JSDocNonNullableType)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocNonNullableType")
+	}
 }
 
 func (n *Node) AsJSDocNullableType() *JSDocNullableType {
-	return n.data().(*JSDocNullableType)
+	switch n.Kind {
+	case KindJSDocNullableType:
+		return (*JSDocNullableType)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocNullableType")
+	}
 }
 
 func (n *Node) AsJSDocAllType() *JSDocAllType {
-	return n.data().(*JSDocAllType)
+	switch n.Kind {
+	case KindJSDocAllType:
+		return (*JSDocAllType)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocAllType")
+	}
 }
 
 func (n *Node) AsJSDocVariadicType() *JSDocVariadicType {
-	return n.data().(*JSDocVariadicType)
+	switch n.Kind {
+	case KindJSDocVariadicType:
+		return (*JSDocVariadicType)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocVariadicType")
+	}
 }
 
 func (n *Node) AsJSDocOptionalType() *JSDocOptionalType {
-	return n.data().(*JSDocOptionalType)
+	switch n.Kind {
+	case KindJSDocOptionalType:
+		return (*JSDocOptionalType)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocOptionalType")
+	}
 }
 
 func (n *Node) AsJSDocTypeTag() *JSDocTypeTag {
-	return n.data().(*JSDocTypeTag)
+	switch n.Kind {
+	case KindJSDocTypeTag:
+		return (*JSDocTypeTag)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocTypeTag")
+	}
 }
 
 func (n *Node) AsJSDocUnknownTag() *JSDocUnknownTag {
-	return n.data().(*JSDocUnknownTag)
+	switch n.Kind {
+	case KindJSDocUnknownTag:
+		return (*JSDocUnknownTag)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocUnknownTag")
+	}
 }
 
 func (n *Node) AsJSDocTemplateTag() *JSDocTemplateTag {
-	return n.data().(*JSDocTemplateTag)
+	switch n.Kind {
+	case KindJSDocTemplateTag:
+		return (*JSDocTemplateTag)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocTemplateTag")
+	}
 }
 
 func (n *Node) AsJSDocReturnTag() *JSDocReturnTag {
-	return n.data().(*JSDocReturnTag)
+	switch n.Kind {
+	case KindJSDocReturnTag:
+		return (*JSDocReturnTag)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocReturnTag")
+	}
 }
 
 func (n *Node) AsJSDocPublicTag() *JSDocPublicTag {
-	return n.data().(*JSDocPublicTag)
+	switch n.Kind {
+	case KindJSDocPublicTag:
+		return (*JSDocPublicTag)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocPublicTag")
+	}
 }
 
 func (n *Node) AsJSDocPrivateTag() *JSDocPrivateTag {
-	return n.data().(*JSDocPrivateTag)
+	switch n.Kind {
+	case KindJSDocPrivateTag:
+		return (*JSDocPrivateTag)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocPrivateTag")
+	}
 }
 
 func (n *Node) AsJSDocProtectedTag() *JSDocProtectedTag {
-	return n.data().(*JSDocProtectedTag)
+	switch n.Kind {
+	case KindJSDocProtectedTag:
+		return (*JSDocProtectedTag)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocProtectedTag")
+	}
 }
 
 func (n *Node) AsJSDocReadonlyTag() *JSDocReadonlyTag {
-	return n.data().(*JSDocReadonlyTag)
+	switch n.Kind {
+	case KindJSDocReadonlyTag:
+		return (*JSDocReadonlyTag)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocReadonlyTag")
+	}
 }
 
 func (n *Node) AsJSDocOverrideTag() *JSDocOverrideTag {
-	return n.data().(*JSDocOverrideTag)
+	switch n.Kind {
+	case KindJSDocOverrideTag:
+		return (*JSDocOverrideTag)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocOverrideTag")
+	}
 }
 
 func (n *Node) AsJSDocDeprecatedTag() *JSDocDeprecatedTag {
-	return n.data().(*JSDocDeprecatedTag)
+	switch n.Kind {
+	case KindJSDocDeprecatedTag:
+		return (*JSDocDeprecatedTag)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocDeprecatedTag")
+	}
 }
 
 func (n *Node) AsJSDocSeeTag() *JSDocSeeTag {
-	return n.data().(*JSDocSeeTag)
+	switch n.Kind {
+	case KindJSDocSeeTag:
+		return (*JSDocSeeTag)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocSeeTag")
+	}
 }
 
 func (n *Node) AsJSDocImplementsTag() *JSDocImplementsTag {
-	return n.data().(*JSDocImplementsTag)
+	switch n.Kind {
+	case KindJSDocImplementsTag:
+		return (*JSDocImplementsTag)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocImplementsTag")
+	}
 }
 
 func (n *Node) AsJSDocAugmentsTag() *JSDocAugmentsTag {
-	return n.data().(*JSDocAugmentsTag)
+	switch n.Kind {
+	case KindJSDocAugmentsTag:
+		return (*JSDocAugmentsTag)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocAugmentsTag")
+	}
 }
 
 func (n *Node) AsJSDocSatisfiesTag() *JSDocSatisfiesTag {
-	return n.data().(*JSDocSatisfiesTag)
+	switch n.Kind {
+	case KindJSDocSatisfiesTag:
+		return (*JSDocSatisfiesTag)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocSatisfiesTag")
+	}
 }
 
 func (n *Node) AsJSDocThrowsTag() *JSDocThrowsTag {
-	return n.data().(*JSDocThrowsTag)
+	switch n.Kind {
+	case KindJSDocThrowsTag:
+		return (*JSDocThrowsTag)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocThrowsTag")
+	}
 }
 
 func (n *Node) AsJSDocThisTag() *JSDocThisTag {
-	return n.data().(*JSDocThisTag)
+	switch n.Kind {
+	case KindJSDocThisTag:
+		return (*JSDocThisTag)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocThisTag")
+	}
 }
 
 func (n *Node) AsJSDocImportTag() *JSDocImportTag {
-	return n.data().(*JSDocImportTag)
+	switch n.Kind {
+	case KindJSDocImportTag:
+		return (*JSDocImportTag)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocImportTag")
+	}
 }
 
 func (n *Node) AsJSDocCallbackTag() *JSDocCallbackTag {
-	return n.data().(*JSDocCallbackTag)
+	switch n.Kind {
+	case KindJSDocCallbackTag:
+		return (*JSDocCallbackTag)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocCallbackTag")
+	}
 }
 
 func (n *Node) AsJSDocOverloadTag() *JSDocOverloadTag {
-	return n.data().(*JSDocOverloadTag)
+	switch n.Kind {
+	case KindJSDocOverloadTag:
+		return (*JSDocOverloadTag)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocOverloadTag")
+	}
 }
 
 func (n *Node) AsJSDocTypedefTag() *JSDocTypedefTag {
-	return n.data().(*JSDocTypedefTag)
+	switch n.Kind {
+	case KindJSDocTypedefTag:
+		return (*JSDocTypedefTag)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocTypedefTag")
+	}
 }
 
 func (n *Node) AsJSDocSignature() *JSDocSignature {
-	return n.data().(*JSDocSignature)
+	switch n.Kind {
+	case KindJSDocSignature:
+		return (*JSDocSignature)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocSignature")
+	}
 }
 
 func (n *Node) AsJSDocNameReference() *JSDocNameReference {
-	return n.data().(*JSDocNameReference)
+	switch n.Kind {
+	case KindJSDocNameReference:
+		return (*JSDocNameReference)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocNameReference")
+	}
 }
 
 func (n *Node) AsSourceFile() *SourceFile {
-	return n.data().(*SourceFile)
+	switch n.Kind {
+	case KindSourceFile:
+		return (*SourceFile)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to SourceFile")
+	}
 }
 
 func (n *Node) AsModuleDeclaration() *ModuleDeclaration {
-	return n.data().(*ModuleDeclaration)
+	switch n.Kind {
+	case KindModuleDeclaration:
+		return (*ModuleDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ModuleDeclaration")
+	}
 }
 
 func (n *Node) AsImportEqualsDeclaration() *ImportEqualsDeclaration {
-	return n.data().(*ImportEqualsDeclaration)
+	switch n.Kind {
+	case KindImportEqualsDeclaration:
+		return (*ImportEqualsDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ImportEqualsDeclaration")
+	}
 }
 
 func (n *Node) AsExportDeclaration() *ExportDeclaration {
-	return n.data().(*ExportDeclaration)
+	switch n.Kind {
+	case KindExportDeclaration:
+		return (*ExportDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ExportDeclaration")
+	}
 }
 
 func (n *Node) AsImportTypeNode() *ImportTypeNode {
-	return n.data().(*ImportTypeNode)
+	switch n.Kind {
+	case KindImportType:
+		return (*ImportTypeNode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ImportTypeNode")
+	}
 }
 
 func (n *Node) AsImportClause() *ImportClause {
-	return n.data().(*ImportClause)
+	switch n.Kind {
+	case KindImportClause:
+		return (*ImportClause)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ImportClause")
+	}
 }
 
 func (n *Node) AsImportSpecifier() *ImportSpecifier {
-	return n.data().(*ImportSpecifier)
+	switch n.Kind {
+	case KindImportSpecifier:
+		return (*ImportSpecifier)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to ImportSpecifier")
+	}
 }
 
 func (n *Node) AsJSDocText() *JSDocText {
-	return n.data().(*JSDocText)
+	switch n.Kind {
+	case KindJSDocText:
+		return (*JSDocText)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocText")
+	}
 }
 
 func (n *Node) AsJSDocLink() *JSDocLink {
-	return n.data().(*JSDocLink)
+	switch n.Kind {
+	case KindJSDocLink:
+		return (*JSDocLink)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocLink")
+	}
 }
 
 func (n *Node) AsJSDocLinkPlain() *JSDocLinkPlain {
-	return n.data().(*JSDocLinkPlain)
+	switch n.Kind {
+	case KindJSDocLinkPlain:
+		return (*JSDocLinkPlain)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocLinkPlain")
+	}
 }
 
 func (n *Node) AsJSDocLinkCode() *JSDocLinkCode {
-	return n.data().(*JSDocLinkCode)
+	switch n.Kind {
+	case KindJSDocLinkCode:
+		return (*JSDocLinkCode)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocLinkCode")
+	}
 }
 
 func (n *Node) AsTypeParameterDeclaration() *TypeParameterDeclaration {
-	return n.data().(*TypeParameterDeclaration)
+	switch n.Kind {
+	case KindTypeParameter:
+		return (*TypeParameterDeclaration)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to TypeParameterDeclaration")
+	}
 }
 
 func (n *Node) AsSyntheticReferenceExpression() *SyntheticReferenceExpression {
-	return n.data().(*SyntheticReferenceExpression)
+	switch n.Kind {
+	case KindSyntheticReferenceExpression:
+		return (*SyntheticReferenceExpression)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to SyntheticReferenceExpression")
+	}
 }
 
 func (n *Node) AsJSDocTypeLiteral() *JSDocTypeLiteral {
-	return n.data().(*JSDocTypeLiteral)
+	switch n.Kind {
+	case KindJSDocTypeLiteral:
+		return (*JSDocTypeLiteral)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocTypeLiteral")
+	}
 }
 
 func (n *Node) AsJSDocParameterOrPropertyTag() *JSDocParameterOrPropertyTag {
-	return n.data().(*JSDocParameterOrPropertyTag)
+	switch n.Kind {
+	case KindJSDocParameterTag, KindJSDocPropertyTag:
+		return (*JSDocParameterOrPropertyTag)(unsafe.Pointer(n))
+	default:
+		panic("Cannot cast " + n.Kind.String() + " to JSDocParameterOrPropertyTag")
+	}
 }
 
 // ──────────────────────────────────────────────────────────────────────

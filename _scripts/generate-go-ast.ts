@@ -338,11 +338,22 @@ function generateBaseStructDefs(w: CodeWriter) {
 
 // ── Generate As*() cast methods ────────────────────────────────────────────
 
-function generateAsCast(w: CodeWriter, name: string) {
-    const structName = name;
-    w.write(`func (n *Node) As${name}() *${structName} {`);
+function generateAsCast(w: CodeWriter, node: NodeType, canonicalKinds: Map<NodeType, string[]>) {
+    w.write(`func (n *Node) As${node.name}() *${node.name} {`);
     w.push();
-    w.write(`return n.data().(*${structName})`);
+    w.write("switch n.Kind {");
+    const kinds = canonicalKinds.get(node);
+    if (kinds) {
+        w.write(`case ${kinds.join(", ")}:`);
+        w.push();
+        w.write(`return (*${node.name})(unsafe.Pointer(n))`);
+        w.pop();
+    }
+    w.write("default:");
+    w.push();
+    w.write(`panic("Cannot cast " + n.Kind.String() + " to ${node.name}")`);
+    w.pop();
+    w.write("}");
     w.pop();
     w.write("}");
     w.write("");
@@ -679,7 +690,7 @@ function generateForEachChildDispatch(w: CodeWriter) {
         if (kinds.length === 0) continue;
         w.write(`case ${kinds.join(", ")}:`);
         w.push();
-        w.write(`return n.data().(*${node.name}).ForEachChild(v)`);
+        w.write(`return (*${node.name})(unsafe.Pointer(n)).ForEachChild(v)`);
         w.pop();
     }
     w.write("default:");
@@ -1052,8 +1063,9 @@ function generate(): string {
     w.write("// As*() cast methods");
     w.write("// ──────────────────────────────────────────────────────────────────────");
     w.write("");
+    const canonicalKinds = canonicalNodesByKind();
     for (const node of api.nodes()) {
-        generateAsCast(w, node.name);
+        generateAsCast(w, node, canonicalKinds);
     }
 
     // Kind alias guards
