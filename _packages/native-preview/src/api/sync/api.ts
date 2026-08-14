@@ -124,6 +124,7 @@ import type {
     ObjectType,
     StringLiteralType,
     StringMappingType,
+    StructuredType,
     SubstitutionType,
     TemplateLiteralType,
     ThisTypePredicate,
@@ -139,7 +140,7 @@ import type {
 
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 export { CheckFlags, CompletionItemKind, DiagnosticCategory, ElementFlags, EmitOnly, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
-export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutput, EmitOutputFile, EmitResult, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ParsedCommandLine, ProjectReference, ReadConfigFileResult, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeAcquisition, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutput, EmitOutputFile, EmitResult, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ParsedCommandLine, ProjectReference, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, StructuredType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeAcquisition, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 
 interface EmitOutputResponse {
     readonly emitSkipped: boolean;
@@ -959,9 +960,9 @@ export class Program {
     }
 
     /**
-     * Returns all source files in the program. Convenience wrapper over
-     * {@link getSourceFileNames} and {@link getSourceFile}; any file that cannot
-     * be loaded is omitted.
+     * Returns the source files in the program that can be loaded.
+     * Convenience wrapper over {@link getSourceFileNames} and {@link getSourceFile};
+     * files that cannot be loaded are omitted.
      */
     getSourceFiles(): readonly SourceFile[] {
         const fileNames = this.getSourceFileNames();
@@ -2420,6 +2421,10 @@ class TypeObject implements Type {
     isTypeParameter(): this is TypeParameter {
         return isTypeParameter(this);
     }
+
+    isStructuredType(): this is StructuredType {
+        return isStructuredType(this);
+    }
 }
 
 export function isUnionType(type: Type): type is UnionType {
@@ -2506,6 +2511,10 @@ export function isStringMappingType(type: Type): type is StringMappingType {
 
 export function isTypeParameter(type: Type): type is TypeParameter {
     return (type.flags & TypeFlags.TypeParameter) !== 0;
+}
+
+export function isStructuredType(type: Type): type is StructuredType {
+    return (type.flags & TypeFlags.StructuredType) !== 0;
 }
 
 export class Signature {

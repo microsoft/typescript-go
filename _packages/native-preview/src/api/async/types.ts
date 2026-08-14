@@ -120,6 +120,8 @@ export interface Type {
     isStringMappingType(): this is StringMappingType;
     /** Whether this type is a type parameter */
     isTypeParameter(): this is TypeParameter;
+    /** Whether this type is a structured type (object, union, or intersection) */
+    isStructuredType(): this is StructuredType;
 }
 
 /**
@@ -162,8 +164,15 @@ export interface BooleanLiteralType extends LiteralType {
     readonly value: boolean;
 }
 
+/**
+ * Structured types — object, union, and intersection types (TypeFlags.StructuredType).
+ * Common supertype of {@link ObjectType} and {@link UnionOrIntersectionType}.
+ */
+export interface StructuredType extends Type {
+}
+
 /** Object types (TypeFlags.Object) */
-export interface ObjectType extends Type {
+export interface ObjectType extends StructuredType {
     /** Object flags — use to determine the specific kind of object type. */
     readonly objectFlags: ObjectFlags;
 }
@@ -195,7 +204,7 @@ export interface TupleType extends InterfaceType {
 }
 
 /** Union or intersection types (TypeFlags.Union | TypeFlags.Intersection) */
-export interface UnionOrIntersectionType extends Type {
+export interface UnionOrIntersectionType extends StructuredType {
     /** Get the constituent types */
     getTypes(): Promise<readonly Type[]>;
 }

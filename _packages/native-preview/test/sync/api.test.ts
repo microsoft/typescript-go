@@ -829,7 +829,7 @@ describe("SourceFile", () => {
         }
     });
 
-    test("getSourceFiles returns a source file for every program file name", () => {
+    test("getSourceFiles returns the source files that can be loaded", () => {
         const api = spawnAPI({
             "/tsconfig.json": JSON.stringify({
                 compilerOptions: {
@@ -3928,6 +3928,43 @@ describe("Checker - TypeParameter getters", () => {
 
             assert.equal(typeParam.getConstraint(), undefined);
             assert.equal(typeParam.getDefault(), undefined);
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
+describe("Type - isStructuredType", () => {
+    test("is true for object and union types and false for primitives", () => {
+        const src = `export interface I { a: number; }\nexport type U = { a: number } | { b: string };\nexport const n: number = 1;`;
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { strict: true } }),
+            "/src/main.ts": src,
+        });
+        try {
+            const snapshot = api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+
+            const iSymbol = project.checker.getSymbolAtPosition("/src/main.ts", src.indexOf("I {"));
+            assert.ok(iSymbol);
+            const iType = project.checker.getDeclaredTypeOfSymbol(iSymbol);
+            assert.ok(iType);
+            assert.ok(iType.isStructuredType());
+            assert.ok(iType.flags & TypeFlags.StructuredType);
+
+            const uSymbol = project.checker.getSymbolAtPosition("/src/main.ts", src.indexOf("U ="));
+            assert.ok(uSymbol);
+            const uType = project.checker.getDeclaredTypeOfSymbol(uSymbol);
+            assert.ok(uType);
+            assert.ok(uType.isStructuredType());
+            assert.ok(uType.flags & TypeFlags.Union);
+
+            const nSymbol = project.checker.getSymbolAtPosition("/src/main.ts", src.indexOf("n:"));
+            assert.ok(nSymbol);
+            const nType = project.checker.getTypeOfSymbol(nSymbol);
+            assert.ok(nType);
+            assert.equal(nType.isStructuredType(), false);
         }
         finally {
             api.close();
