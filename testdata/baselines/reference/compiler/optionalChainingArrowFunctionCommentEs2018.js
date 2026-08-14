@@ -25,15 +25,16 @@ export const f = () =>
 
 //// [optionalChainingArrowFunctionCommentEs2018.js]
 const thing = { nested: { condition: true } };
-const wat = () => { var _a; return 
+const wat = () => { var _a; 
 // explanatory comment
-((_a = thing === null || thing === void 0 ? void 0 : thing.nested) === null || _a === void 0 ? void 0 : _a.condition) ? "pass" : "fail"; };
-const watInline = () => /* inline explanatory comment */ { var _a; return ((_a = thing === null || thing === void 0 ? void 0 : thing.nested) === null || _a === void 0 ? void 0 : _a.condition) ? "pass" : "fail"; };
+return ((_a = thing === null || thing === void 0 ? void 0 : thing.nested) === null || _a === void 0 ? void 0 : _a.condition) ? "pass" : "fail"; };
+const watInline = () => /* inline explanatory comment */ { var _a; /* inline explanatory comment */ return ((_a = thing === null || thing === void 0 ? void 0 : thing.nested) === null || _a === void 0 ? void 0 : _a.condition) ? "pass" : "fail"; };
 const watInlineMultiline = () => /* inline
-explanatory comment */ { var _a; return ((_a = thing === null || thing === void 0 ? void 0 : thing.nested) === null || _a === void 0 ? void 0 : _a.condition) ? "pass" : "fail"; };
-const watInlineThenLeading = () => /* inline explanatory comment */ { var _a; return 
+explanatory comment */ { var _a; /* inline
+explanatory comment */ return ((_a = thing === null || thing === void 0 ? void 0 : thing.nested) === null || _a === void 0 ? void 0 : _a.condition) ? "pass" : "fail"; };
+const watInlineThenLeading = () => /* inline explanatory comment */ { var _a; /* inline explanatory comment */ 
 // leading explanatory comment
-((_a = thing === null || thing === void 0 ? void 0 : thing.nested) === null || _a === void 0 ? void 0 : _a.condition) ? "pass" : "fail"; };
-export const f = () => { var _a; return 
+return ((_a = thing === null || thing === void 0 ? void 0 : thing.nested) === null || _a === void 0 ? void 0 : _a.condition) ? "pass" : "fail"; };
+export const f = () => { var _a; 
 // comment
-(_a = o.a) === null || _a === void 0 ? void 0 : _a.length; };
+return (_a = o.a) === null || _a === void 0 ? void 0 : _a.length; };
