@@ -153,7 +153,10 @@ const externalHelpersModuleNameText = "tslib"
 
 // Ids
 
-type TypeId uint32
+type (
+	TypeId      uint32
+	SignatureId uint32
+)
 
 // Links for referenced symbols
 
@@ -369,6 +372,11 @@ type SymbolNodeLinks struct {
 type TypeNodeLinks struct {
 	resolvedType        *Type   // Resolved type associated with node
 	outerTypeParameters []*Type // Outer type parameters of anonymous object type
+}
+
+type ComputedNameNodeLinks struct {
+	hasName *bool  // If the node has a computable name
+	name    string // Resolved name associated with the type of the node
 }
 
 // Links for enum members
@@ -631,6 +639,8 @@ const (
 	ObjectFlagsContainsIntersections      = 1 << 25 // Union contains intersections
 	ObjectFlagsIsUnknownLikeUnionComputed = 1 << 26 // IsUnknownLikeUnion flag has been computed
 	ObjectFlagsIsUnknownLikeUnion         = 1 << 27 // Union of null, undefined, and empty object type
+	ObjectFlagsIsUniformEnumComputed      = 1 << 28 // IsUniformEnum flag has been computed
+	ObjectFlagsIsUniformEnum              = 1 << 29 // Union contains uniform literal types
 	// Flags that require TypeFlags.Intersection
 	ObjectFlagsIsNeverIntersectionComputed = 1 << 25 // IsNeverLike flag has been computed
 	ObjectFlagsIsNeverIntersection         = 1 << 26 // Intersection reduces to never
@@ -777,6 +787,10 @@ func (t *Type) Symbol() *ast.Symbol {
 	return t.symbol
 }
 
+func (t *Type) Alias() *TypeAlias {
+	return t.alias
+}
+
 func (t *Type) IsUnion() bool {
 	return t.flags&TypeFlagsUnion != 0
 }
@@ -875,6 +889,14 @@ type LiteralType struct {
 
 func (t *LiteralType) Value() any {
 	return t.value
+}
+
+func (t *LiteralType) FreshType() *Type {
+	return t.freshType
+}
+
+func (t *LiteralType) RegularType() *Type {
+	return t.regularType
 }
 
 func (t *LiteralType) String() string {
@@ -1259,6 +1281,7 @@ const (
 // Signature
 
 type Signature struct {
+	id                       SignatureId
 	flags                    SignatureFlags
 	minArgumentCount         int32
 	resolvedMinArgumentCount int32
@@ -1272,6 +1295,10 @@ type Signature struct {
 	mapper                   *TypeMapper
 	isolatedSignatureType    *Type
 	composite                *CompositeSignature
+}
+
+func (s *Signature) Id() SignatureId {
+	return s.id
 }
 
 func (s *Signature) Flags() SignatureFlags {
@@ -1364,6 +1391,10 @@ func (info *IndexInfo) ValueType() *Type {
 
 func (info *IndexInfo) IsReadonly() bool {
 	return info.isReadonly
+}
+
+func (info *IndexInfo) Declaration() *ast.Node {
+	return info.declaration
 }
 
 /**

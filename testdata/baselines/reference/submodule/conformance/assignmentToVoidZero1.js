@@ -18,4 +18,3 @@ exports.y = 2;
 //// [assignmentToVoidZero1.d.ts]
 export declare var y: 2;
 export declare var x: 1;
-export declare var y: 2;

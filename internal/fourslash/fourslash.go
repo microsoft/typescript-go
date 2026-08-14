@@ -242,8 +242,8 @@ func (f *FourslashTest) handleServerRequest(_ context.Context, req *lsproto.Requ
 		// Return current user preferences for each requested section.
 		// The server requests multiple sections (js/ts, typescript, javascript, editor);
 		// we return user preferences for "js/ts" and nil for others.
-		params, ok := req.Params.(*lsproto.ConfigurationParams)
-		if !ok || params == nil || params.Items == nil {
+		params, err := lsproto.UnmarshalParams[*lsproto.ConfigurationParams](req)
+		if err != nil || params == nil || params.Items == nil {
 			return &lsproto.ResponseMessage{
 				ID:      req.ID,
 				JSONRPC: req.JSONRPC,
@@ -319,8 +319,10 @@ const showCodeLensLocationsCommandName = "typescript.showCodeLensLocations"
 func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCapabilities) {
 	params := &lsproto.InitializeParams{
 		Locale: new("en-US"),
-		InitializationOptions: &lsproto.InitializationOptions{
-			CodeLensShowLocationsCommandName: new(showCodeLensLocationsCommandName),
+		InitializationOptions: &lsproto.InitializationOptionsOrNull{
+			InitializationOptions: &lsproto.InitializationOptions{
+				CodeLensShowLocationsCommandName: new(showCodeLensLocationsCommandName),
+			},
 		},
 	}
 	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
@@ -409,8 +411,10 @@ var (
 		LinkSupport: ptrTrue,
 	}
 	defaultHoverCapabilities = &lsproto.HoverClientCapabilities{
-		ContentFormat:  &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
-		VerbosityLevel: ptrTrue,
+		ContentFormat: &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
+	}
+	defaultExperimentalCapabilities = &lsproto.ExperimentalClientCapabilities{
+		HoverVerbosityLevel: ptrTrue,
 	}
 	defaultSignatureHelpCapabilities = &lsproto.SignatureHelpClientCapabilities{
 		SignatureInformation: &lsproto.ClientSignatureInformationOptions{
@@ -469,6 +473,9 @@ func GetDefaultCapabilities() *lsproto.ClientCapabilities {
 	return &lsproto.ClientCapabilities{
 		General: &lsproto.GeneralClientCapabilities{
 			PositionEncodings: &[]lsproto.PositionEncodingKind{lsproto.PositionEncodingKindUTF8},
+		},
+		Experimental: &lsproto.ExperimentalClientCapabilities{
+			HoverVerbosityLevel: ptrTrue,
 		},
 		TextDocument: &lsproto.TextDocumentClientCapabilities{
 			Completion: &lsproto.CompletionClientCapabilities{
@@ -563,6 +570,9 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	}
 	capabilitiesWithDefaults.General = &lsproto.GeneralClientCapabilities{
 		PositionEncodings: &[]lsproto.PositionEncodingKind{lsproto.PositionEncodingKindUTF8},
+	}
+	if capabilitiesWithDefaults.Experimental == nil {
+		capabilitiesWithDefaults.Experimental = defaultExperimentalCapabilities
 	}
 	if capabilitiesWithDefaults.TextDocument == nil {
 		capabilitiesWithDefaults.TextDocument = &lsproto.TextDocumentClientCapabilities{}
@@ -1088,7 +1098,10 @@ func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput,
 			if item == nil {
 				t.Fatalf("Code action '%s' from source '%s' not found in completions.", expectedAction.Name, expectedAction.Source)
 			}
-			assert.Check(t, strings.Contains(*item.Detail, expectedAction.Description), "Completion item detail does not contain expected description.")
+			// Detail and AdditionalTextEdits for auto-import items are populated by
+			// completionItem/resolve, not in the initial completion list.
+			item = f.resolveCompletionItem(t, item)
+			assert.Check(t, item.Detail != nil && strings.Contains(*item.Detail, expectedAction.Description), "Completion item detail does not contain expected description.")
 			f.applyTextEdits(t, *item.AdditionalTextEdits)
 			assert.Equal(t, f.getScriptInfo(f.activeFilename).content, expectedAction.NewFileContent, fmt.Sprintf("File content after applying code action '%s' did not match expected content.", expectedAction.Name))
 		},
@@ -1125,6 +1138,83 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *Completi
 func (f *FourslashTest) GetCompletions(t *testing.T, userPreferences *lsutil.UserPreferences) *lsproto.CompletionList {
 	t.Helper()
 	return f.getCompletions(t, userPreferences)
+}
+
+func (f *FourslashTest) VerifyJSDocCompletion(t *testing.T, markerInput MarkerInput, expectedOffset int, expectedText string, generateReturnInDocTemplate *bool) {
+	t.Helper()
+	f.goToMarkerInput(t, markerInput)
+
+	var userPreferences *lsutil.UserPreferences
+	if generateReturnInDocTemplate != nil {
+		prefs := lsutil.NewDefaultUserPreferences()
+		prefs.GenerateReturnInDocTemplate = core.BoolToTristate(*generateReturnInDocTemplate)
+		userPreferences = &prefs
+	}
+
+	list := f.getCompletions(t, userPreferences)
+	item := findJSDocCompletionItem(list)
+	if item == nil {
+		script := f.getScriptInfo(f.activeFilename)
+		insertStart := int(f.converters.LineAndCharacterToPosition(script, f.currentCaretPosition))
+		f.Insert(t, "/**")
+		list = f.getCompletions(t, userPreferences)
+		item = findJSDocCompletionItem(list)
+		f.editScriptAndUpdateMarkers(t, f.activeFilename, insertStart, insertStart+3, "")
+		f.currentCaretPosition = f.converters.PositionToLineAndCharacter(script, core.TextPos(insertStart))
+	}
+	if list == nil {
+		t.Fatalf("%sExpected JSDoc completion, got nil completion list.", f.getCurrentPositionPrefix())
+	}
+	if item == nil {
+		t.Fatalf("%sExpected JSDoc completion item, got %#v.", f.getCurrentPositionPrefix(), list.Items)
+	}
+	if item.TextEdit == nil || item.TextEdit.InsertReplaceEdit == nil {
+		t.Fatalf("%sExpected JSDoc completion to have insert/replace edit, got %#v.", f.getCurrentPositionPrefix(), item.TextEdit)
+	}
+	assert.Equal(t, item.TextEdit.InsertReplaceEdit.NewText, expectedText, f.getCurrentPositionPrefix())
+	_ = expectedOffset // The completion path uses snippet placeholders for caret placement.
+}
+
+func (f *FourslashTest) VerifyNoJSDocCompletion(t *testing.T, markerInput MarkerInput) {
+	t.Helper()
+	f.goToMarkerInput(t, markerInput)
+
+	list := f.getCompletions(t, nil /*userPreferences*/)
+	if item := findJSDocCompletionItem(list); item != nil {
+		t.Fatalf("%sDid not expect JSDoc completion item.", f.getCurrentPositionPrefix())
+	}
+
+	script := f.getScriptInfo(f.activeFilename)
+	insertStart := int(f.converters.LineAndCharacterToPosition(script, f.currentCaretPosition))
+	f.Insert(t, "/**")
+	list = f.getCompletions(t, nil /*userPreferences*/)
+	item := findJSDocCompletionItem(list)
+	f.editScriptAndUpdateMarkers(t, f.activeFilename, insertStart, insertStart+3, "")
+	f.currentCaretPosition = f.converters.PositionToLineAndCharacter(script, core.TextPos(insertStart))
+	if item != nil {
+		t.Fatalf("%sDid not expect JSDoc completion item.", f.getCurrentPositionPrefix())
+	}
+}
+
+func findJSDocCompletionItem(list *lsproto.CompletionList) *lsproto.CompletionItem {
+	if list == nil {
+		return nil
+	}
+	return core.Find(list.Items, func(item *lsproto.CompletionItem) bool {
+		return item.Label == "/** */"
+	})
+}
+
+func (f *FourslashTest) goToMarkerInput(t *testing.T, markerInput MarkerInput) {
+	t.Helper()
+	switch marker := markerInput.(type) {
+	case string:
+		f.GoToMarker(t, marker)
+	case *Marker:
+		f.goToMarker(t, marker)
+	default:
+		t.Fatalf("Invalid marker input type: %T. Expected string or *Marker.", markerInput)
+	}
 }
 
 func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *lsutil.UserPreferences) *lsproto.CompletionList {
@@ -2522,7 +2612,7 @@ func (f *FourslashTest) verifyBaselineDefinitions(
 		} else if result.DefinitionLinks != nil {
 			var originRange *lsproto.Range
 			resultAsSpans = core.Map(*result.DefinitionLinks, func(link *lsproto.LocationLink) documentSpan {
-				if originRange != nil && originRange != link.OriginSelectionRange {
+				if originRange != nil && (link.OriginSelectionRange == nil || *originRange != *link.OriginSelectionRange) {
 					panic("multiple different origin ranges in definition links")
 				}
 				originRange = link.OriginSelectionRange
@@ -2765,6 +2855,75 @@ func (f *FourslashTest) VerifyBaselineHover(t *testing.T) {
 	} else {
 		t.Fatalf("Failed to stringify markers and items for baseline: %v", err)
 	}
+}
+
+// VerifyBaselineVSHover is like VerifyBaselineHover, but asserts on the VS-specific rich hover
+// content (Hover.VSRawContent / the "_vs_rawContent" wire field) that the LSP server emits for
+// clients advertising the VSSupportsVisualStudioExtensions capability.
+func (f *FourslashTest) VerifyBaselineVSHover(t *testing.T) {
+	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.Hover], bool) {
+		if marker.Name == nil {
+			return markerAndItem[*lsproto.Hover]{}, false
+		}
+
+		params := &lsproto.HoverParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: lsconv.FileNameToDocumentURI(marker.fileName),
+			},
+			Position: marker.LSPosition,
+		}
+
+		result := sendRequest(t, f, lsproto.TextDocumentHoverInfo, params)
+		return markerAndItem[*lsproto.Hover]{Marker: marker, Item: result.Hover}, true
+	})
+
+	getRange := func(item *lsproto.Hover) *lsproto.Range {
+		if item == nil || item.Range == nil {
+			return nil
+		}
+		return item.Range
+	}
+
+	getTooltipLines := func(item, _prev *lsproto.Hover) []string {
+		if item == nil {
+			return nil
+		}
+		if item.VSRawContent == nil {
+			return []string{"(no _vs_rawContent; is VSSupportsVisualStudioExtensions set on the test's ClientCapabilities?)"}
+		}
+		return renderVSContainerElement(item.VSRawContent, "")
+	}
+
+	f.addResultToBaseline(t, vsQuickInfoCmd, annotateContentWithTooltips(t, f, markersAndItems, "vsquickinfo", getRange, getTooltipLines))
+	if jsonStr, err := core.StringifyJson(markersAndItems, "", "  "); err == nil {
+		f.writeToBaseline(vsQuickInfoCmd, jsonStr)
+	} else {
+		t.Fatalf("Failed to stringify markers and items for baseline: %v", err)
+	}
+}
+
+// renderVSContainerElement renders a VS rich-content container element (icon + colorized runs,
+// possibly nested for the stacked display-line/documentation shape) into readable baseline lines.
+func renderVSContainerElement(el *lsproto.VSContainerElement, indent string) []string {
+	lines := []string{fmt.Sprintf("%sContainerElement (Style=%s)", indent, el.Style)}
+	childIndent := indent + "  "
+	for _, child := range el.Elements {
+		switch {
+		case child.ImageElement != nil:
+			imageId := child.ImageElement.ImageId
+			lines = append(lines, fmt.Sprintf("%sImageElement { Guid: %s, Id: 0x%X }", childIndent, imageId.Guid, imageId.Id))
+		case child.ClassifiedTextElement != nil:
+			lines = append(lines, childIndent+"ClassifiedTextElement")
+			for _, run := range child.ClassifiedTextElement.Runs {
+				lines = append(lines, fmt.Sprintf("%s  [%s] %q", childIndent, run.ClassificationTypeName, run.Text))
+			}
+		case child.ContainerElement != nil:
+			lines = append(lines, renderVSContainerElement(child.ContainerElement, childIndent)...)
+		default:
+			lines = append(lines, childIndent+"<empty union element>")
+		}
+	}
+	return lines
 }
 
 func appendLinesForMarkedStringWithLanguage(result []string, ms *lsproto.MarkedStringWithLanguage) []string {
@@ -4594,6 +4753,26 @@ func (f *FourslashTest) VerifyRenameSucceeded(t *testing.T, preferences *lsutil.
 	}
 }
 
+func (f *FourslashTest) VerifyRenameRange(t *testing.T, expectedRange lsproto.Range, expectedPlaceholder string, preferences *lsutil.UserPreferences) {
+	t.Helper()
+	if preferences != nil {
+		defer f.ConfigureWithReset(t, *preferences)()
+	}
+	params := &lsproto.PrepareRenameParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+	}
+
+	result := sendRequest(t, f, lsproto.TextDocumentPrepareRenameInfo, params)
+	if result.PrepareRenamePlaceholder == nil {
+		t.Fatal(f.getCurrentPositionPrefix() + "Expected prepareRename to return a range and placeholder")
+	}
+	assert.DeepEqual(t, result.PrepareRenamePlaceholder.Range, expectedRange)
+	assert.Equal(t, result.PrepareRenamePlaceholder.Placeholder, expectedPlaceholder)
+}
+
 func (f *FourslashTest) RenameAtCaret(t *testing.T, newName string) lsproto.RenameResponse {
 	t.Helper()
 	result := sendRequest(t, f, lsproto.TextDocumentRenameInfo, &lsproto.RenameParams{
@@ -5412,7 +5591,12 @@ func (f *FourslashTest) VerifyWorkspaceSymbol(t *testing.T, cases []*VerifyWorks
 			preferences = new(lsutil.NewDefaultUserPreferences())
 		}
 		f.Configure(t, *preferences)
-		result := sendRequest(t, f, lsproto.WorkspaceSymbolInfo, &lsproto.WorkspaceSymbolParams{Query: testCase.Pattern})
+		result := sendRequest(t, f, lsproto.WorkspaceSymbolInfo, &lsproto.WorkspaceSymbolParams{
+			Query: testCase.Pattern,
+			TextDocument: &lsproto.TextDocumentIdentifier{
+				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+			},
+		})
 		if result.SymbolInformations == nil {
 			t.Fatalf("Expected non-nil symbol information array from workspace symbol request")
 		}
@@ -5477,18 +5661,22 @@ func (f *FourslashTest) VerifyBaselineDocumentSymbol(t *testing.T) {
 	}
 	result := sendRequest(t, f, lsproto.TextDocumentDocumentSymbolInfo, params)
 	uri := lsconv.FileNameToDocumentURI(f.activeFilename)
-	spansToSymbol := make(map[documentSpan]*lsproto.DocumentSymbol)
+	symbolBySpan := make(map[documentSpanKey]*lsproto.DocumentSymbol)
 	if result.DocumentSymbols != nil {
 		for _, symbol := range *result.DocumentSymbols {
-			collectDocumentSymbolSpans(uri, symbol, spansToSymbol)
+			collectDocumentSymbolSpans(uri, symbol, symbolBySpan)
 		}
+	}
+	spans := make([]documentSpan, 0, len(symbolBySpan))
+	for key, symbol := range symbolBySpan {
+		spans = append(spans, documentSpan{uri: key.uri, textSpan: key.textSpan, contextSpan: &symbol.Range})
 	}
 	f.addResultToBaseline(
 		t,
 		documentSymbolsCmd,
-		f.getBaselineForSpansWithFileContents(slices.Collect(maps.Keys(spansToSymbol)), baselineFourslashLocationsOptions{
+		f.getBaselineForSpansWithFileContents(spans, baselineFourslashLocationsOptions{
 			getLocationData: func(span documentSpan) string {
-				symbol := spansToSymbol[span]
+				symbol := symbolBySpan[documentSpanKey{uri: span.uri, textSpan: span.textSpan, contextSpan: *span.contextSpan}]
 				return fmt.Sprintf("{| name: %s, kind: %s |}", symbol.Name, symbol.Kind.String())
 			},
 		}),
@@ -5513,19 +5701,30 @@ func writeDocumentSymbolDetails(symbols []*lsproto.DocumentSymbol, indent int, b
 func collectDocumentSymbolSpans(
 	uri lsproto.DocumentUri,
 	symbol *lsproto.DocumentSymbol,
-	spansToSymbol map[documentSpan]*lsproto.DocumentSymbol,
+	symbolBySpan map[documentSpanKey]*lsproto.DocumentSymbol,
 ) {
-	span := documentSpan{
-		uri:         uri,
-		textSpan:    symbol.SelectionRange,
-		contextSpan: &symbol.Range,
+	// Deduplicate by value rather than by the documentSpan key, which holds a pointer to
+	// the symbol's Range. The same logical symbol can be reached more than once
+	// (e.g. a merged declaration), and depending on transport those occurrences may
+	// be the same object (shared *Range) or independent copies (distinct *Range
+	// after a JSON round-trip). A value-based key collapses them consistently.
+	key := documentSpanKey{uri: uri, textSpan: symbol.SelectionRange, contextSpan: symbol.Range}
+	if _, ok := symbolBySpan[key]; !ok {
+		symbolBySpan[key] = symbol
 	}
-	spansToSymbol[span] = symbol
 	if symbol.Children != nil {
 		for _, child := range *symbol.Children {
-			collectDocumentSymbolSpans(uri, child, spansToSymbol)
+			collectDocumentSymbolSpans(uri, child, symbolBySpan)
 		}
 	}
+}
+
+// documentSpanKey is a value-comparable variant of documentSpan used to deduplicate
+// document symbols regardless of pointer identity.
+type documentSpanKey struct {
+	uri         lsproto.DocumentUri
+	textSpan    lsproto.Range
+	contextSpan lsproto.Range
 }
 
 // VerifyNumberOfErrorsInCurrentFile verifies that the current file has the expected number of errors.

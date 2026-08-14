@@ -10,6 +10,7 @@ import {
     LanguageClient,
     LanguageClientOptions,
     Message,
+    MessageSignature,
     NotebookDocumentFilter,
     ServerOptions,
     StaticFeature,
@@ -31,12 +32,14 @@ import {
     ExeInfo,
     getExe,
     jsTsLanguageModes,
+    languageClientName,
+    readNativePreviewConfig,
 } from "./util";
 import { getLanguageForUri } from "./util";
+import { workspaceSymbolSendRequestMiddleware } from "./workspaceSymbolMiddleware";
 
 export class Client implements vscode.Disposable {
     private outputChannel: vscode.LogOutputChannel;
-    private traceOutputChannel: vscode.LogOutputChannel;
     private initializedEventEmitter: vscode.EventEmitter<void>;
     private telemetryReporter: tr.TelemetryReporter;
 
@@ -45,6 +48,7 @@ export class Client implements vscode.Disposable {
     private client?: LanguageClient;
 
     private isDisposed = false;
+    private isStopping = false;
     private disposables: vscode.Disposable[] = [];
     isInitialized = false;
 
@@ -53,12 +57,10 @@ export class Client implements vscode.Disposable {
 
     constructor(
         outputChannel: vscode.LogOutputChannel,
-        traceOutputChannel: vscode.LogOutputChannel,
         initializedEventEmitter: vscode.EventEmitter<void>,
         telemetryReporter: tr.TelemetryReporter,
     ) {
         this.outputChannel = outputChannel;
-        this.traceOutputChannel = traceOutputChannel;
         this.initializedEventEmitter = initializedEventEmitter;
         this.telemetryReporter = telemetryReporter;
         this.errorHandler = new ReportingErrorHandler(this.telemetryReporter, 5);
@@ -79,20 +81,27 @@ export class Client implements vscode.Disposable {
         this.clientOptions = {
             documentSelector: this.documentSelector,
             outputChannel: this.outputChannel,
-            traceOutputChannel: this.traceOutputChannel,
             initializationOptions: {
                 codeLensShowLocationsCommandName,
                 enableTelemetry: true,
+                logVerbosity: this.outputChannel.logLevel,
             },
             errorHandler: this.errorHandler,
             middleware: {
                 workspace: {
                     ...configurationMiddleware,
+                    didChangeWatchedFile: (event, next) => {
+                        if (this.isStopping || this.isDisposed) {
+                            return Promise.resolve();
+                        }
+                        return next(event);
+                    },
                 },
                 sendNotification: sendNotificationMiddleware,
+                sendRequest: workspaceSymbolSendRequestMiddleware,
                 provideHover: () => undefined,
             },
-            diagnosticCollectionName: "typescript",
+            diagnosticCollectionName: "typescript-push",
             diagnosticPullOptions: {
                 onChange: true,
                 onSave: true,
@@ -142,19 +151,25 @@ export class Client implements vscode.Disposable {
         };
     }
 
-    async start(exe: { path: string; version: string; }): Promise<void> {
+    async start(exe: ExeInfo): Promise<void> {
+        this.isStopping = false;
         this.exe = exe;
         this.outputChannel.appendLine(`Resolved to ${this.exe.path}`);
         this.telemetryReporter.sendTelemetryEvent("languageServer.start", {
             version: this.exe.version,
         });
 
-        // Get pprofDir
-        const config = vscode.workspace.getConfiguration("typescript.native-preview");
-        const pprofDir = config.get<string>("pprofDir");
+        const pprofDir = readNativePreviewConfig<string | undefined>("server.pprofDir", undefined)
+            ?? readNativePreviewConfig<string | undefined>("pprofDir", undefined);
         const pprofArgs = pprofDir ? ["--pprofDir", pprofDir] : [];
 
-        const goMemLimit = config.get<string>("goMemLimit");
+        const flakesFlag = vscode.workspace
+            .getConfiguration("js/ts")
+            .get<"panic" | "log" | "never" | "auto">("server.trackFlakyDiagnostics", "auto");
+        const effectiveflakesFlag = flakesFlag === "auto" ? (isInsiders() ? "log" : "never") : flakesFlag;
+
+        const goMemLimit = readNativePreviewConfig<string | undefined>("server.goMemLimit", undefined)
+            ?? readNativePreviewConfig<string | undefined>("goMemLimit", undefined);
         const env = { ...process.env };
         if (goMemLimit) {
             // Keep this regex aligned with the pattern in package.json.
@@ -182,21 +197,26 @@ export class Client implements vscode.Disposable {
             },
         };
 
-        this.client = new LanguageClient(
-            "typescript.native-preview",
-            "typescript.native-preview-lsp",
+        // Refresh the initial log verbosity in case the output channel's log
+        // level changed between construction and start.
+        this.clientOptions.initializationOptions.logVerbosity = this.outputChannel.logLevel;
+        this.clientOptions.initializationOptions.trackFlakyDiagnostics = effectiveflakesFlag !== "never" ? (effectiveflakesFlag === "panic" ? 2 : 1) : 0;
+
+        this.client = new NativePreviewLanguageClient(
+            "js/ts",
+            languageClientName,
             serverOptions,
             this.clientOptions,
         );
-        this.disposables.push(this.client);
 
         // Register a static feature to advertise verbosityLevel support in hover capabilities.
         this.client.registerFeature(
             {
                 fillClientCapabilities(capabilities: ClientCapabilities): void {
-                    capabilities.textDocument = capabilities.textDocument ?? {};
-                    capabilities.textDocument.hover = capabilities.textDocument.hover ?? {};
-                    (capabilities.textDocument.hover as { verbosityLevel?: boolean; }).verbosityLevel = true;
+                    capabilities.experimental = typeof capabilities.experimental === "object" && capabilities.experimental !== null
+                        ? capabilities.experimental
+                        : {};
+                    (capabilities.experimental as { hoverVerbosityLevel?: boolean; }).hoverVerbosityLevel = true;
                 },
                 initialize(): void {},
                 getState() {
@@ -206,14 +226,17 @@ export class Client implements vscode.Disposable {
             } satisfies StaticFeature,
         );
 
-        this.outputChannel.appendLine(`Starting language server...`);
+        this.outputChannel.appendLine(vscode.l10n.t(`Starting language server...`));
         await this.client.start();
         this.isInitialized = true;
         this.initializedEventEmitter.fire();
 
-        if (this.traceOutputChannel.logLevel !== vscode.LogLevel.Trace) {
-            this.traceOutputChannel.appendLine(`To see LSP trace output, set this output's log level to "Trace" (gear icon next to the dropdown).`);
-        }
+        // Send the initial log verbosity level to the server, and update it
+        // whenever the output channel's log level changes (via the gear icon).
+        this.sendLogVerbosity();
+        const logLevelListener = this.outputChannel.onDidChangeLogLevel(() => {
+            this.sendLogVerbosity();
+        });
 
         type TelemetryData = {
             eventName: string;
@@ -240,6 +263,7 @@ export class Client implements vscode.Disposable {
         });
 
         this.disposables.push(
+            logLevelListener,
             serverTelemetryListener,
             registerMultiDocumentHighlightFeature(this.documentSelector, this.client),
             registerSourceDefinitionFeature(this.client),
@@ -248,12 +272,27 @@ export class Client implements vscode.Disposable {
         );
     }
 
+    async stop(): Promise<void> {
+        if (this.isDisposed) {
+            return;
+        }
+        this.isStopping = true;
+        this.isInitialized = false;
+        const disposables = this.disposables.splice(0);
+        await Promise.all(disposables.map(d => d.dispose()));
+        await this.client?.stop();
+    }
+
     async dispose(): Promise<void> {
         if (this.isDisposed) {
             return;
         }
         this.isDisposed = true;
-        await Promise.all(this.disposables.map(d => d.dispose()));
+        this.isStopping = true;
+        this.isInitialized = false;
+        const disposables = this.disposables.splice(0);
+        await Promise.all(disposables.map(d => d.dispose()));
+        await this.client?.dispose();
     }
 
     getCurrentExe(): { path: string; version: string; } | undefined {
@@ -270,7 +309,7 @@ export class Client implements vscode.Disposable {
      */
     async initializeAPISession(pipe?: string): Promise<{ sessionId: string; pipe: string; }> {
         if (!this.client) {
-            throw new Error("Language client is not initialized");
+            throw new Error(vscode.l10n.t("Language client is not initialized"));
         }
         return this.client.sendRequest<{ sessionId: string; pipe: string; }>("custom/initializeAPISession", { pipe });
     }
@@ -281,20 +320,21 @@ export class Client implements vscode.Disposable {
      */
     async tryRestart(context: vscode.ExtensionContext): Promise<boolean> {
         if (!this.client) {
-            return Promise.reject(new Error("Language client is not initialized"));
+            return Promise.reject(new Error(vscode.l10n.t("Language client is not initialized")));
         }
+        this.isStopping = false;
         const exe = await getExe(context);
         if (exe.path !== this.exe?.path) {
             return false;
         }
 
         this.isInitialized = false;
-        this.outputChannel.appendLine(`Restarting language server...`);
+        this.outputChannel.appendLine(vscode.l10n.t("Restarting language server..."));
         try {
             await this.client.restart();
         }
         catch (err) {
-            this.outputChannel.appendLine(`Graceful shutdown failed, forcing restart: ${err}`);
+            this.outputChannel.appendLine(vscode.l10n.t(`Graceful shutdown failed, forcing restart: {0}`, String(err)));
             await this.client.start();
         }
         this.isInitialized = true;
@@ -304,16 +344,25 @@ export class Client implements vscode.Disposable {
 
     // Developer/debugging methods
 
+    private sendLogVerbosity(): void {
+        if (!this.client) {
+            return;
+        }
+        this.client.sendNotification("custom/setLogVerbosity", {
+            verbosity: this.outputChannel.logLevel,
+        });
+    }
+
     async runGC(): Promise<void> {
         if (!this.client) {
-            throw new Error("Language client is not initialized");
+            throw new Error(vscode.l10n.t("Language client is not initialized"));
         }
         await this.client.sendRequest("custom/runGC");
     }
 
     async saveHeapProfile(dir: string): Promise<string> {
         if (!this.client) {
-            throw new Error("Language client is not initialized");
+            throw new Error(vscode.l10n.t("Language client is not initialized"));
         }
         const result = await this.client.sendRequest<{ file: string; }>("custom/saveHeapProfile", { dir });
         return result.file;
@@ -321,7 +370,7 @@ export class Client implements vscode.Disposable {
 
     async saveAllocProfile(dir: string): Promise<string> {
         if (!this.client) {
-            throw new Error("Language client is not initialized");
+            throw new Error(vscode.l10n.t("Language client is not initialized"));
         }
         const result = await this.client.sendRequest<{ file: string; }>("custom/saveAllocProfile", { dir });
         return result.file;
@@ -329,14 +378,14 @@ export class Client implements vscode.Disposable {
 
     async startCPUProfile(dir: string): Promise<void> {
         if (!this.client) {
-            throw new Error("Language client is not initialized");
+            throw new Error(vscode.l10n.t("Language client is not initialized"));
         }
         await this.client.sendRequest("custom/startCPUProfile", { dir });
     }
 
     async stopCPUProfile(): Promise<string> {
         if (!this.client) {
-            throw new Error("Language client is not initialized");
+            throw new Error(vscode.l10n.t("Language client is not initialized"));
         }
         const result = await this.client.sendRequest<{ file: string; }>("custom/stopCPUProfile");
         return result.file;
@@ -344,11 +393,53 @@ export class Client implements vscode.Disposable {
 
     async getProjectInfo(uri: string, token?: vscode.CancellationToken): Promise<{ configFilePath: string; }> {
         if (!this.client) {
-            throw new Error("Language client is not initialized");
+            throw new Error(vscode.l10n.t("Language client is not initialized"));
         }
         return this.client.sendRequest<{ configFilePath: string; }>("custom/projectInfo", {
             textDocument: { uri },
         }, token);
+    }
+}
+
+// Returns true when running on a VS Code Insiders build.
+function isInsiders(): boolean {
+    return vscode.env.uriScheme === "vscode-insiders";
+}
+
+// LanguageClient subclass that lets the user control whether a failed request
+// surfaces an error notification, via the `js/ts.server.showFailedResponses` setting.
+class NativePreviewLanguageClient extends LanguageClient {
+    override handleFailedRequest<T>(
+        type: MessageSignature,
+        token: vscode.CancellationToken | undefined,
+        error: unknown,
+        defaultValue: T,
+        showNotification: boolean = true,
+        throwOnCancel: boolean = false,
+    ): T {
+        const setting = vscode.workspace
+            .getConfiguration("js/ts")
+            .get<"always" | "never" | "auto">("server.showFailedResponses", "auto");
+        const effectiveSetting = setting === "auto" ? (isInsiders() ? "always" : "never") : setting;
+
+        let effectiveShowNotification = showNotification;
+        switch (effectiveSetting) {
+            case "never":
+                effectiveShowNotification = false;
+                break;
+            default:
+                // Use the default behavior (showNotification) for "always" and any unrecognized values.
+                break;
+        }
+
+        return super.handleFailedRequest(
+            type,
+            token,
+            error,
+            defaultValue,
+            effectiveShowNotification,
+            throwOnCancel,
+        );
     }
 }
 
@@ -458,7 +549,7 @@ class ReportingErrorHandler implements ErrorHandler {
         if (resultingAction === CloseAction.DoNotRestart) {
             return {
                 action: resultingAction,
-                message: `The typescript.native-preview-lsp server crashed ${this.maxRestartCount + 1} times in the last 3 minutes. The server will not be restarted. See the output for more information.`,
+                message: vscode.l10n.t(`The TypeScript language server crashed {0} times in the last 3 minutes. The server will not be restarted. See the output for more information.`, String(this.maxRestartCount + 1)),
             };
         }
 

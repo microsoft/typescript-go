@@ -199,6 +199,11 @@ export function multiply(a, b) { return a * b; }
   "size": 1830
 }
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /user/username/projects/sample1
+  /user/username/projects/sample1/core (recursive)
 core/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -215,6 +220,11 @@ Edit [0]:: no change
 
 Output::
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /user/username/projects/sample1
+  /user/username/projects/sample1/core (recursive)
 
 
 Edit [1]:: Add new file
@@ -337,6 +347,11 @@ export const y = 10;
   "size": 2011
 }
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /user/username/projects/sample1
+  /user/username/projects/sample1/core (recursive)
 core/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /user/username/projects/sample1/core/file3.ts
@@ -349,3 +364,8 @@ Edit [2]:: no change
 
 Output::
 
+Watch Registrations::
+Directory watches::
+  /home/src/tslibs/TS/Lib
+  /user/username/projects/sample1
+  /user/username/projects/sample1/core (recursive)

@@ -44,8 +44,18 @@ func canProduceDiagnostics(node *ast.Node) bool {
 		ast.IsIndexSignatureDeclaration(node) ||
 		ast.IsPropertyAccessExpression(node) ||
 		ast.IsElementAccessExpression(node) ||
-		ast.IsBinaryExpression(node) // || // !!! TODO: JSDoc support
+		ast.IsBinaryExpression(node) ||
+		ast.IsCallExpression(node) // || // !!! TODO: JSDoc support
 	/* ast.IsJSDocTypeAlias(node); */
+}
+
+func canReuseModifierNodes(nodes []*ast.Node) bool {
+	for _, node := range nodes {
+		if ast.IsModifier(node) && node.Flags&ast.NodeFlagsReparsed != 0 {
+			return false
+		}
+	}
+	return true
 }
 
 func isDeclarationAndNotVisible(emitContext *printer.EmitContext, resolver printer.EmitResolver, node *ast.Node) bool {
@@ -105,7 +115,8 @@ func isEnclosingDeclaration(node *ast.Node) bool {
 		ast.IsInterfaceDeclaration(node) ||
 		ast.IsFunctionLike(node) ||
 		ast.IsIndexSignatureDeclaration(node) ||
-		ast.IsMappedTypeNode(node)
+		ast.IsMappedTypeNode(node) ||
+		ast.IsVariableDeclaration(node)
 }
 
 func isAlwaysType(node *ast.Node) bool {

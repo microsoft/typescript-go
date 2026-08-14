@@ -3,8 +3,14 @@ useCaseSensitiveFileNames::true
 Input::
 
 tsgo --moduleResolution nodenext  first.ts --module nodenext --target esnext --moduleDetection auto --jsx react --newLine crlf
-ExitStatus:: Success
+ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
+[91merror[0m[90m TS6053: [0mFile 'first.ts' not found.
+  The file is in the program because:
+    Root file specified for compilation
+
+Found 1 error.
+
 //// [/home/src/tslibs/TS/Lib/lib.esnext.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}

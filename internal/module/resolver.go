@@ -212,6 +212,10 @@ func (r *Resolver) GetPackageScopeForPath(directory string) *packagejson.InfoCac
 	return (&resolutionState{compilerOptions: r.compilerOptions, resolver: r}).getPackageScopeForPath(directory)
 }
 
+func (r *Resolver) PackageJsonCacheEntries(f func(key tspath.Path, value *packagejson.InfoCacheEntry) bool) {
+	r.caches.packageJsonInfoCache.Range(f)
+}
+
 func (r *tracer) traceResolutionUsingProjectReference(redirectedReference ResolvedProjectReference) {
 	if redirectedReference != nil && redirectedReference.CompilerOptions() != nil {
 		r.write(diagnostics.Using_compiler_options_of_project_reference_redirect_0, redirectedReference.ConfigName())
@@ -931,7 +935,10 @@ func (r *resolutionState) tryLoadInputFileForPath(finalPath string, entry string
 				CurrentDirectory:          r.resolver.host.GetCurrentDirectory(),
 			}) {
 				// The matched export is looking up something in either the out declaration or js dir, now map the written path back into the source dir and source extension
-				pathFragment := finalPath[len(candidateDir)+1:] // +1 to also remove directory separator
+				var pathFragment string
+				if len(finalPath) > len(candidateDir) {
+					pathFragment = finalPath[len(candidateDir)+1:] // +1 to also remove directory separator
+				}
 				possibleInputBase := tspath.CombinePaths(rootDir, pathFragment)
 				jsAndDtsExtensions := []string{tspath.ExtensionMjs, tspath.ExtensionCjs, tspath.ExtensionJs, tspath.ExtensionJson, tspath.ExtensionDmts, tspath.ExtensionDcts, tspath.ExtensionDts}
 				for _, ext := range jsAndDtsExtensions {
@@ -1131,7 +1138,7 @@ func (r *resolutionState) loadModuleFromSpecificNodeModulesDirectory(ext extensi
 			// https://github.com/microsoft/TypeScript/pull/49327
 			return r.loadModuleFromExports(packageInfo, ext, tspath.CombinePaths(".", rest))
 		}
-		if rest != "" {
+		if rest != "" && packageInfo.Exists() {
 			versionPaths := packageInfo.Contents.GetVersionPaths(r.getTraceFunc())
 			if versionPaths.Exists() {
 				if r.tracer != nil {
@@ -1839,7 +1846,7 @@ func (r *resolutionState) readPackageJsonPeerDependencies(packageJsonInfo *packa
 	builder := strings.Builder{}
 	for _, name := range names {
 		peerPackageJson := r.getPackageJsonInfo(nodeModules + name)
-		if peerPackageJson != nil {
+		if peerPackageJson.Exists() {
 			version := peerPackageJson.Contents.Version.Value
 			builder.WriteString("+")
 			builder.WriteString(name)
@@ -1960,7 +1967,10 @@ func getNodeResolutionFeatures(options *core.CompilerOptions) NodeResolutionFeat
 
 func moveToNextDirectorySeparatorIfAvailable(path string, prevSeparatorIndex int, isFolder bool) int {
 	offset := prevSeparatorIndex + 1
-	nextSeparatorIndex := strings.Index(path[offset:], "/")
+	nextSeparatorIndex := -1
+	if offset <= len(path) {
+		nextSeparatorIndex = strings.Index(path[offset:], "/")
+	}
 	if nextSeparatorIndex == -1 {
 		if isFolder {
 			return len(path)

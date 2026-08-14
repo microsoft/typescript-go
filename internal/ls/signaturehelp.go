@@ -294,7 +294,12 @@ func (l *LanguageService) createSignatureHelpItems(ctx context.Context, candidat
 	}
 
 	var callTargetDisplayParts strings.Builder
-	if callTargetSymbol != nil {
+	// A contextual signature for an anonymous inline function type (e.g. a callback
+	// argument) has a synthetic symbol whose name is an internal marker such as
+	// "\xFEtype". There is no meaningful name to show, so render the signature with
+	// no prefix (as we already do when there is no call target symbol) rather than
+	// leaking the internal name.
+	if callTargetSymbol != nil && !strings.HasPrefix(callTargetSymbol.Name, ast.InternalSymbolNamePrefix) {
 		if useFullPrefix {
 			callTargetDisplayParts.WriteString(c.SymbolToStringEx(callTargetSymbol, sourceFile.AsNode(), ast.SymbolFlagsNone, checker.SymbolFormatFlagsUseAliasDefinedOutsideCurrentScope))
 		} else {
@@ -436,7 +441,7 @@ func (l *LanguageService) getSignatureHelpItem(candidate *checker.Signature, isT
 	// Generate documentation from the signature's declaration
 	var documentation *string
 	if declaration := candidate.Declaration(); declaration != nil {
-		doc := l.getDocumentationFromDeclaration(c, nil, declaration, nil, docFormat, true /*commentOnly*/)
+		doc := getDocumentationFromDeclaration(l.getMappedLocation, c, nil, declaration, nil, docFormat, true /*commentOnly*/)
 		if doc != "" {
 			documentation = &doc
 		}
@@ -648,7 +653,7 @@ func (l *LanguageService) createSignatureHelpParameterFromLabel(parameter *ast.S
 	isRest := parameter.CheckFlags&ast.CheckFlagsRestParameter != 0
 	var documentation *lsproto.StringOrMarkupContent
 	if parameter.ValueDeclaration != nil {
-		doc := l.getDocumentationFromDeclaration(c, nil, parameter.ValueDeclaration, nil, docFormat, true /*commentOnly*/)
+		doc := getDocumentationFromDeclaration(l.getMappedLocation, c, nil, parameter.ValueDeclaration, nil, docFormat, true /*commentOnly*/)
 		if doc != "" {
 			documentation = &lsproto.StringOrMarkupContent{
 				MarkupContent: &lsproto.MarkupContent{

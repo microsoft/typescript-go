@@ -147,9 +147,10 @@ func makeFanotifyHandleKey(fsid [2]int32, handleType int32, handleBytes []byte) 
 
 // fanotifySubscription mirrors inotifySubscription for the fanotify backend.
 type fanotifySubscription struct {
-	path     string
-	dirWatch *dirWatch
-	key      fanotifyHandleKey
+	path      string
+	watchPath string
+	dirWatch  *dirWatch
+	key       fanotifyHandleKey
 }
 
 // fanotifyDfidName holds parsed directory FID + name from an info record.
@@ -294,7 +295,7 @@ func (b *fanotifyBackend) subscribe(w *dirWatch) error {
 			b.markMask = fanotifyMarkMaskMovedFromTo
 		} else {
 			b.markMask = fanotifyMarkMaskRename
-			err := unix.FanotifyMark(b.fanotifyFD, fanotifyMarkAddFlags, fanotifyMarkMaskRename, unix.AT_FDCWD, w.dir)
+			err := unix.FanotifyMark(b.fanotifyFD, fanotifyMarkAddFlags, fanotifyMarkMaskRename, unix.AT_FDCWD, w.physicalDir)
 			switch {
 			case err == nil:
 				// B5: pair the probe Add with a matching Remove. If
@@ -305,7 +306,7 @@ func (b *fanotifyBackend) subscribe(w *dirWatch) error {
 				// flags the kernel just merges them. The probe is the
 				// only failure path we explicitly retry.
 				for {
-					rmErr := unix.FanotifyMark(b.fanotifyFD, unix.FAN_MARK_REMOVE|unix.FAN_MARK_ONLYDIR, fanotifyMarkMaskRename, unix.AT_FDCWD, w.dir)
+					rmErr := unix.FanotifyMark(b.fanotifyFD, unix.FAN_MARK_REMOVE|unix.FAN_MARK_ONLYDIR, fanotifyMarkMaskRename, unix.AT_FDCWD, w.physicalDir)
 					if rmErr == nil || !errors.Is(rmErr, unix.EINTR) {
 						break
 					}
@@ -316,7 +317,7 @@ func (b *fanotifyBackend) subscribe(w *dirWatch) error {
 		}
 	}
 	if !w.recursive {
-		if err := b.markDir(w, w.dir); err != nil {
+		if err := b.markDir(w, w.dir, w.physicalDir); err != nil {
 			return &dirWatchError{
 				err:      fmt.Errorf("fanotify_mark on '%s' failed: %w", w.dir, err),
 				dirWatch: w,
@@ -324,11 +325,12 @@ func (b *fanotifyBackend) subscribe(w *dirWatch) error {
 		}
 		return nil
 	}
-	if err := walkDir(w.dir, true, func(path string, isDir bool) error {
+	if err := walkDir(w.physicalDir, true, func(watchPath string, isDir bool) error {
 		if !isDir {
 			return nil
 		}
-		if err := b.markDir(w, path); err != nil {
+		path := w.displayPath(watchPath)
+		if err := b.markDir(w, path, watchPath); err != nil {
 			return &dirWatchError{
 				err:      fmt.Errorf("fanotify_mark on '%s' failed: %w", path, err),
 				dirWatch: w,
@@ -342,25 +344,32 @@ func (b *fanotifyBackend) subscribe(w *dirWatch) error {
 	return nil
 }
 
-func (b *fanotifyBackend) markDir(w *dirWatch, path string) error {
-	if err := unix.FanotifyMark(b.fanotifyFD, fanotifyMarkAddFlags, b.markMask, unix.AT_FDCWD, path); err != nil {
-		return err
+func (b *fanotifyBackend) markDir(w *dirWatch, path string, markPath string) error {
+	if err := unix.FanotifyMark(b.fanotifyFD, fanotifyMarkAddFlags, b.markMask, unix.AT_FDCWD, markPath); err != nil {
+		return maybeWrapUnsupportedFilesystem(err)
 	}
-	handle, _, err := unix.NameToHandleAt(unix.AT_FDCWD, path, 0)
+	handle, _, err := unix.NameToHandleAt(unix.AT_FDCWD, markPath, 0)
 	if err != nil {
 		// Unmark since we can't track this directory without a handle.
-		_ = unix.FanotifyMark(b.fanotifyFD, unix.FAN_MARK_REMOVE|unix.FAN_MARK_ONLYDIR, b.markMask, unix.AT_FDCWD, path)
-		return fmt.Errorf("name_to_handle_at: %w", err)
+		_ = unix.FanotifyMark(b.fanotifyFD, unix.FAN_MARK_REMOVE|unix.FAN_MARK_ONLYDIR, b.markMask, unix.AT_FDCWD, markPath)
+		return maybeWrapUnsupportedFilesystem(fmt.Errorf("name_to_handle_at: %w", err))
 	}
 	var st unix.Statfs_t
-	if err := unix.Statfs(path, &st); err != nil {
-		_ = unix.FanotifyMark(b.fanotifyFD, unix.FAN_MARK_REMOVE|unix.FAN_MARK_ONLYDIR, b.markMask, unix.AT_FDCWD, path)
+	if err := unix.Statfs(markPath, &st); err != nil {
+		_ = unix.FanotifyMark(b.fanotifyFD, unix.FAN_MARK_REMOVE|unix.FAN_MARK_ONLYDIR, b.markMask, unix.AT_FDCWD, markPath)
 		return fmt.Errorf("statfs: %w", err)
 	}
 	key := makeFanotifyHandleKey(st.Fsid.Val, handle.Type(), handle.Bytes())
-	sub := &fanotifySubscription{path: path, dirWatch: w, key: key}
+	sub := &fanotifySubscription{path: path, watchPath: markPath, dirWatch: w, key: key}
 	b.subscriptions[key] = append(b.subscriptions[key], sub)
 	return nil
+}
+
+func maybeWrapUnsupportedFilesystem(err error) error {
+	if errors.Is(err, unix.EOPNOTSUPP) || errors.Is(err, unix.ENOTSUP) || errors.Is(err, unix.ENODEV) {
+		return fmt.Errorf("%w: %w", err, ErrFilesystemUnsupported)
+	}
+	return err
 }
 
 // handleEvents reads and dispatches fanotify events from the fd.
@@ -468,11 +477,11 @@ func (b *fanotifyBackend) handleRenameEvent(mask uint64, dfidOld *fanotifyDfidNa
 			newPath := s.path + "/" + dfidNew.name
 			s.dirWatch.events.create(newPath)
 			if isDir && s.dirWatch.recursive {
-				_ = walkDir(newPath, true, func(p string, pIsDir bool) error {
+				_ = walkDir(s.dirWatch.physicalPath(newPath), true, func(p string, pIsDir bool) error {
 					if !pIsDir {
 						return nil
 					}
-					_ = b.markDir(s.dirWatch, p)
+					_ = b.markDir(s.dirWatch, s.dirWatch.displayPath(p), p)
 					return nil
 				})
 			}
@@ -564,11 +573,11 @@ func (b *fanotifyBackend) handleSubscription(mask uint64, dfid *fanotifyDfidName
 	if hasCreate {
 		w.events.create(path)
 		if isDir && w.recursive {
-			_ = walkDir(path, true, func(p string, pIsDir bool) error {
+			_ = walkDir(w.physicalPath(path), true, func(p string, pIsDir bool) error {
 				if !pIsDir {
 					return nil
 				}
-				_ = b.markDir(w, p)
+				_ = b.markDir(w, w.displayPath(p), p)
 				return nil
 			})
 		}
@@ -728,7 +737,7 @@ func (b *fanotifyBackend) closeWatch(w *dirWatch) error {
 		for _, s := range list {
 			if s.dirWatch == w {
 				removedAny = true
-				removedPath = s.path
+				removedPath = s.watchPath
 				continue
 			}
 			kept = append(kept, s)

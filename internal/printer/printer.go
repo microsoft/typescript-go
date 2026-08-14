@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"slices"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -700,7 +701,18 @@ func (p *Printer) writeCommentRangeWorker(text string, lineMap []core.TextPos, k
 			}
 
 			// Write the comment line text
-			end := min(loc.End(), nextLineStart-1)
+			end := min(loc.End(), nextLineStart)
+			for scan := pos; scan < end; {
+				ch, size := utf8.DecodeRuneInString(text[scan:end])
+				if size == 0 {
+					break
+				}
+				if stringutil.IsLineBreak(ch) {
+					end = scan
+					break
+				}
+				scan += size
+			}
 			currentLineText := strings.TrimSpace(text[pos:end])
 			if len(currentLineText) > 0 {
 				p.writeComment(currentLineText)
@@ -2960,10 +2972,6 @@ func (p *Printer) emitExpressionWithTypeArguments(node *ast.ExpressionWithTypeAr
 	p.exitNode(node.AsNode(), state)
 }
 
-func (p *Printer) emitExpressionWithTypeArgumentsNode(node *ast.ExpressionWithTypeArgumentsNode) {
-	p.emitExpressionWithTypeArguments(node.AsExpressionWithTypeArguments())
-}
-
 func (p *Printer) emitAsExpression(node *ast.AsExpression) {
 	state := p.enterNode(node.AsNode())
 	p.emitExpression(node.Expression, ast.OperatorPrecedenceRelational)
@@ -4468,8 +4476,19 @@ func (p *Printer) emitHeritageClause(node *ast.HeritageClause) {
 	p.writeSpace()
 	p.emitToken(node.Token, node.Pos(), WriteKindKeyword, node.AsNode())
 	p.writeSpace()
-	p.emitList((*Printer).emitExpressionWithTypeArgumentsNode, node.AsNode(), node.Types, LFHeritageClauseTypes)
+	p.emitList((*Printer).emitHeritageClauseElement, node.AsNode(), node.Types, LFHeritageClauseTypes)
 	p.exitNode(node.AsNode(), state)
+}
+
+func (p *Printer) emitHeritageClauseElement(node *ast.HeritageClauseElement) {
+	switch node.Kind {
+	case ast.KindExpressionWithTypeArguments:
+		p.emitExpressionWithTypeArguments(node.AsExpressionWithTypeArguments())
+	case ast.KindTypeReference:
+		p.emitTypeReference(node.AsTypeReferenceNode())
+	default:
+		panic(fmt.Sprintf("unhandled HeritageClauseElement: %v", node.Kind))
+	}
 }
 
 func (p *Printer) emitHeritageClauseNode(node *ast.HeritageClauseNode) {
@@ -6069,7 +6088,7 @@ func (p *Printer) generateName(name *ast.MemberName) {
 // Returns a value indicating whether a name is unique globally or within the current file.
 func (p *Printer) isFileLevelUniqueNameInCurrentFile(name string, _ bool) bool {
 	if p.currentSourceFile != nil {
-		return IsFileLevelUniqueName(p.currentSourceFile, name, p.HasGlobalName)
+		return p.emitContext.IsFileLevelUniqueName(p.currentSourceFile, name, p.HasGlobalName)
 	} else {
 		return true
 	}

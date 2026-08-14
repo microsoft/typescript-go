@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 	"slices"
+	"strings"
+	"sync"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -12,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
+	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/tracing"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -31,15 +35,22 @@ type Program struct {
 
 	// Testing data
 	testingData *TestingData
+
+	nestedEmitMu    sync.Mutex
+	nestedEmitNow   func() time.Time
+	nestedEmitDepth int
+	nestedEmitStart time.Time
+	nestedEmitTime  time.Duration
 }
 
 var _ compiler.ProgramLike = (*Program)(nil)
 
-func NewProgram(program *compiler.Program, oldProgram *Program, host Host, testing bool) *Program {
+func NewProgram(program *compiler.Program, oldProgram *Program, host Host, nestedEmitNow func() time.Time, testing bool) *Program {
 	incrementalProgram := &Program{
-		snapshot: programToSnapshot(program, oldProgram, testing),
-		program:  program,
-		host:     host,
+		snapshot:      programToSnapshot(program, oldProgram, testing),
+		program:       program,
+		host:          host,
+		nestedEmitNow: nestedEmitNow,
 	}
 
 	if testing {
@@ -63,6 +74,37 @@ type TestingData struct {
 
 func (p *Program) GetTestingData() *TestingData {
 	return p.testingData
+}
+
+func (p *Program) beginNestedEmit() func() {
+	p.nestedEmitMu.Lock()
+	now := p.nestedEmitNow
+	if now == nil {
+		p.nestedEmitMu.Unlock()
+		return func() {}
+	}
+	if p.nestedEmitDepth == 0 {
+		p.nestedEmitStart = now()
+	}
+	p.nestedEmitDepth++
+	p.nestedEmitMu.Unlock()
+
+	return func() {
+		p.nestedEmitMu.Lock()
+		defer p.nestedEmitMu.Unlock()
+		p.nestedEmitDepth--
+		if p.nestedEmitDepth == 0 {
+			p.nestedEmitTime += now().Sub(p.nestedEmitStart)
+		}
+	}
+}
+
+func (p *Program) TakeNestedEmitTime() time.Duration {
+	p.nestedEmitMu.Lock()
+	defer p.nestedEmitMu.Unlock()
+	nestedEmitTime := p.nestedEmitTime
+	p.nestedEmitTime = 0
+	return nestedEmitTime
 }
 
 func (p *Program) panicIfNoProgram(method string) {
@@ -183,7 +225,7 @@ func (p *Program) getSemanticDiagnosticsOfFile(file *ast.SourceFile) []*ast.Diag
 func (p *Program) GetDeclarationDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
 	p.panicIfNoProgram("GetDeclarationDiagnostics")
 	result := emitFiles(ctx, p, compiler.EmitOptions{
-		TargetSourceFile: file,
+		TargetSourceFiles: core.SingleElementSlice(file),
 	}, true)
 	if result != nil {
 		return result.Diagnostics
@@ -202,16 +244,20 @@ func (p *Program) Emit(ctx context.Context, options compiler.EmitOptions) *compi
 	p.panicIfNoProgram("Emit")
 
 	var result *compiler.EmitResult
-	if p.snapshot.options.NoEmit.IsTrue() {
-		result = &compiler.EmitResult{EmitSkipped: true}
-	} else {
-		result = compiler.HandleNoEmitOnError(ctx, p, options.TargetSourceFile)
+	if !options.ForceEmit && options.EmitOnly != compiler.EmitOnlyBuilderSignature {
+		var emitBuildInfo func() *compiler.EmitResult
+		if p.Options().NoEmit.IsTrue() {
+			emitBuildInfo = func() *compiler.EmitResult {
+				return p.emitBuildInfo(ctx, options)
+			}
+		}
+		result = compiler.HandleNoEmitOptions(ctx, p, options.TargetSourceFiles, emitBuildInfo)
 		if ctx.Err() != nil {
 			return nil
 		}
 	}
 	if result != nil {
-		if options.TargetSourceFile != nil {
+		if options.TargetSourceFiles != nil || p.Options().NoEmit.IsTrue() {
 			return result
 		}
 
@@ -287,6 +333,13 @@ func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOption
 	if p.snapshot.hasErrors == core.TSUnknown {
 		p.ensureHasErrorsForState(ctx, p.program)
 		if p.snapshot.hasErrors != p.snapshot.hasErrorsFromOldState || p.snapshot.hasSemanticErrors != p.snapshot.hasSemanticErrorsFromOldState {
+			p.snapshot.buildInfoEmitPending.Store(true)
+		}
+	}
+	if p.snapshot.packageJsons == nil {
+		p.ensurePackageJsonsForState()
+		if !slices.Equal(p.snapshot.packageJsons, p.snapshot.packageJsonsFromOldState) ||
+			!slices.Equal(p.snapshot.missingPackageJsons, p.snapshot.missingPackageJsonsFromOldState) {
 			p.snapshot.buildInfoEmitPending.Store(true)
 		}
 	}
@@ -372,7 +425,7 @@ func (p *Program) ensureHasErrorsForState(ctx context.Context, program *compiler
 
 	p.snapshot.hasErrors = core.TSFalse
 	// Check semantic and emit diagnostics first as we dont need to ask program about it
-	if slices.ContainsFunc(program.GetSourceFiles(), func(file *ast.SourceFile) bool {
+	if slices.ContainsFunc(p.program.GetSourceFiles(), func(file *ast.SourceFile) bool {
 		semanticDiagnostics, ok := p.snapshot.semanticDiagnosticsPerFile.Load(file.Path())
 		if !ok {
 			// Missing semantic diagnostics in cache will be encoded in incremental buildInfo
@@ -388,4 +441,57 @@ func (p *Program) ensureHasErrorsForState(ctx context.Context, program *compiler
 		// But encode as errors in non incremental buildInfo
 		p.snapshot.hasSemanticErrors = !p.snapshot.options.IsIncremental()
 	}
+}
+
+func (p *Program) ensurePackageJsonsForState() {
+	config := tspath.GetDirectoryPath(p.program.CommandLine().ConfigName())
+	if config != "" {
+		p.program.PackageJsonCacheEntries(func(key tspath.Path, value *packagejson.InfoCacheEntry) bool {
+			if value == nil {
+				return true
+			}
+			packageJson := tspath.CombinePaths(value.PackageDirectory, "package.json")
+			if value.Exists() || value.DirectoryExists {
+				packageJson = p.program.Host().FS().Realpath(packageJson)
+			}
+			if value.Exists() {
+				p.snapshot.packageJsons = append(p.snapshot.packageJsons, packageJson)
+			} else if strings.Contains(packageJson, "/node_modules/") {
+				p.snapshot.missingPackageJsons = append(p.snapshot.missingPackageJsons, packageJson)
+			}
+			return true
+		})
+	}
+	p.snapshot.packageJsons = normalizePackageJsons(p.snapshot.packageJsons)
+	p.snapshot.missingPackageJsons = normalizePackageJsons(p.snapshot.missingPackageJsons)
+}
+
+func normalizePackageJsons(packageJsons []string) []string {
+	if packageJsons == nil {
+		return make([]string, 0)
+	}
+	slices.Sort(packageJsons)
+	return core.Deduplicate(packageJsons)
+}
+
+func (p *Program) PackageJsonLookupPaths() []string {
+	config := tspath.GetDirectoryPath(p.program.CommandLine().ConfigName())
+	if config == "" {
+		return nil
+	}
+
+	var packageJsons []string
+	p.program.PackageJsonCacheEntries(func(key tspath.Path, value *packagejson.InfoCacheEntry) bool {
+		if value == nil {
+			return true
+		}
+		packageJson := tspath.CombinePaths(value.PackageDirectory, "package.json")
+		if value.Exists() || value.DirectoryExists {
+			packageJson = p.program.Host().FS().Realpath(packageJson)
+		}
+		packageJsons = append(packageJsons, packageJson)
+		return true
+	})
+	slices.Sort(packageJsons)
+	return core.Deduplicate(packageJsons)
 }
