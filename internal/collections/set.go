@@ -7,7 +7,7 @@ type Set[T comparable] struct {
 }
 
 // NewSetWithSizeHint creates a new Set with a hint for the number of elements it will contain.
-func NewSetWithSizeHint[T comparable](hint int) *Set[T] {
+func NewSetWithSizeHint[T comparable](hint int) *Set[T] /* ref: nonnil */ {
 	return &Set[T]{
 		M: make(map[T]struct{}, hint),
 	}
@@ -21,14 +21,14 @@ func (s *Set[T]) Has(key T) bool {
 	return ok
 }
 
-func (s *Set[T]) Add(key T) {
+func (s *Set[T] /* ref: nonnil */) Add(key T) {
 	if s.M == nil {
 		s.M = make(map[T]struct{})
 	}
 	s.M[key] = struct{}{}
 }
 
-func (s *Set[T]) Delete(key T) {
+func (s *Set[T] /* ref: nonnil */) Delete(key T) {
 	delete(s.M, key)
 }
 
@@ -54,7 +54,7 @@ func (s *Set[T]) Clear() {
 }
 
 // Returns true if the key was not already present in the set.
-func (s *Set[T]) AddIfAbsent(key T) bool {
+func (s *Set[T] /* ref: nonnil */) AddIfAbsent(key T) bool {
 	if s.Has(key) {
 		return false
 	}
@@ -70,7 +70,7 @@ func (s *Set[T]) Clone() *Set[T] {
 	return clone
 }
 
-func (s *Set[T]) Union(other *Set[T]) {
+func (s *Set[T]) Union(other *Set[T] /* ref: nonnil */) {
 	if s.Len() == 0 && other.Len() == 0 {
 		return
 	}
@@ -135,7 +135,7 @@ func (s *Set[T]) Intersects(other *Set[T]) bool {
 	return false
 }
 
-func NewSetFromItems[T comparable](items ...T) *Set[T] {
+func NewSetFromItems[T comparable](items ...T) *Set[T] /* ref: nonnil */ {
 	s := &Set[T]{}
 	for _, item := range items {
 		s.Add(item)

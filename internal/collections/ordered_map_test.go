@@ -163,11 +163,11 @@ func TestOrderedMapUnmarshalJSON(t *testing.T) {
 
 	t.Run("UnmarshalJSONV2", func(t *testing.T) {
 		t.Parallel()
-		testOrderedMapUnmarshalJSON(t, func(in []byte, out any) error { return json.Unmarshal(in, out) })
+		testOrderedMapUnmarshalJSON(t, func(in []byte, out any /* ref: nonnil */) error { return json.Unmarshal(in, out) })
 	})
 }
 
-func testOrderedMapUnmarshalJSON(t *testing.T, unmarshal func([]byte, any) error) {
+func testOrderedMapUnmarshalJSON(t *testing.T, unmarshal func([]byte, any /* ref: nonnil */) error /* ref: nonnil */) {
 	var m collections.OrderedMap[string, any]
 	err := unmarshal([]byte(`{"a": 1, "b": "two", "c": { "d": 4 } }`), &m)
 	assert.NilError(t, err)

@@ -13,24 +13,25 @@ type CopyOnWriteMap[K comparable, V any] struct {
 }
 
 // Get returns the value for k and whether it was present.
-func (c *CopyOnWriteMap[K, V]) Get(k K) (V, bool) {
+func (c *CopyOnWriteMap[K, V] /* ref: nonnil */) Get(k K) (V, bool) {
 	v, ok := c.m[k]
 	return v, ok
 }
 
 // Has reports whether k is in the map.
-func (c *CopyOnWriteMap[K, V]) Has(k K) bool {
+func (c *CopyOnWriteMap[K, V] /* ref: nonnil */) Has(k K) bool {
 	_, ok := c.m[k]
 	return ok
 }
 
 // Set assigns v to k, cloning the inherited backing map first if necessary.
-func (c *CopyOnWriteMap[K, V]) Set(k K, v V) {
+func (c *CopyOnWriteMap[K, V] /* ref: nonnil */) Set(k K, v V) {
 	c.ensureOwned()
 	c.m[k] = v
 }
 
-func (c *CopyOnWriteMap[K, V]) ensureOwned() {
+// TODO(gabritto): analyzer: assertion type predicate.
+func (c *CopyOnWriteMap[K, V] /* ref: nonnil */) ensureOwned() {
 	if c.owned {
 		return
 	}
@@ -46,7 +47,7 @@ func (c *CopyOnWriteMap[K, V]) ensureOwned() {
 // While the scope is active, the map shares its current backing storage with
 // the parent scope: reads see the inherited entries, and the first mutation
 // transparently clones the storage so the parent's view is not modified.
-func (c *CopyOnWriteMap[K, V]) EnterScope() func() {
+func (c *CopyOnWriteMap[K, V] /* ref: nonnil */) EnterScope() func() {
 	saved := *c
 	c.owned = false
 	return func() { *c = saved }
@@ -57,13 +58,13 @@ type CopyOnWriteSet[K comparable] struct {
 }
 
 // Has reports whether k is in the set.
-func (c *CopyOnWriteSet[K]) Has(k K) bool {
+func (c *CopyOnWriteSet[K] /* ref: nonnil */) Has(k K) bool {
 	_, ok := c.m.Get(k)
 	return ok
 }
 
 // Set adds k to the set, cloning the inherited backing map first if necessary.
-func (c *CopyOnWriteSet[K]) Add(k K) {
+func (c *CopyOnWriteSet[K] /* ref: nonnil */) Add(k K) {
 	c.m.Set(k, struct{}{})
 }
 
@@ -71,6 +72,6 @@ func (c *CopyOnWriteSet[K]) Add(k K) {
 // While the scope is active, the set shares its current backing storage with
 // the parent scope: reads see the inherited entries, and the first mutation
 // transparently clones the storage so the parent's view is not modified.
-func (c *CopyOnWriteSet[K]) EnterScope() func() {
+func (c *CopyOnWriteSet[K] /* ref: nonnil */) EnterScope() func() {
 	return c.m.EnterScope()
 }

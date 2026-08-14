@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io"
 	"strconv"
+
+	"github.com/microsoft/typescript-go/internal/typeutil"
 )
 
 // Base protocol for JSON-RPC with Content-Length headers (as used by LSP).
@@ -20,18 +22,20 @@ var (
 
 // Reader reads JSON-RPC messages with Content-Length framing.
 type Reader struct {
-	r *bufio.Reader
+	r typeutil.DefPtr[bufio.Reader]
 }
 
+type DefReader = *Reader /* ref: nonnil */
+
 // NewReader creates a new Reader.
-func NewReader(r io.Reader) *Reader {
+func NewReader(r io.Reader /* ref: nonnil */) DefReader {
 	return &Reader{
 		r: bufio.NewReader(r),
 	}
 }
 
 // Read reads the next message payload.
-func (r *Reader) Read() ([]byte, error) {
+func (r DefReader) Read() ([]byte, error) {
 	var contentLength int64
 
 	for {
@@ -77,18 +81,20 @@ func (r *Reader) Read() ([]byte, error) {
 
 // Writer writes JSON-RPC messages with Content-Length framing.
 type Writer struct {
-	w *bufio.Writer
+	w typeutil.DefPtr[bufio.Writer]
 }
 
+type DefWriter = *Writer /* ref: nonnil */
+
 // NewWriter creates a new Writer.
-func NewWriter(w io.Writer) *Writer {
+func NewWriter(w io.Writer /* ref: nonnil */) DefWriter {
 	return &Writer{
 		w: bufio.NewWriter(w),
 	}
 }
 
 // Write writes a message payload with Content-Length header.
-func (w *Writer) Write(data []byte) error {
+func (w DefWriter) Write(data []byte) error {
 	if _, err := fmt.Fprintf(w.w, "Content-Length: %d\r\n\r\n", len(data)); err != nil {
 		return err
 	}
