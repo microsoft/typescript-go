@@ -194,15 +194,15 @@ func (l *LanguageService) createDefinitionLocations(
 			contextNode := core.OrElse(getContextNode(decl), decl)
 			contextRange := core.OrElse(toContextRange(&nameRange, file, contextNode), &nameRange)
 			targetSelectionLoc := l.getMappedLocation(fileName, nameRange)
-			targetLoc := l.getMappedLocation(fileName, *contextRange)
-			if targetLoc.Uri != targetSelectionLoc.Uri {
-				targetLoc = targetSelectionLoc
+			targetRange := targetSelectionLoc.Range
+			if targetContextLoc := l.getMappedLocation(fileName, *contextRange); targetContextLoc.Uri == targetSelectionLoc.Uri {
+				targetRange = targetContextLoc.Range
 			}
 			locations = append(locations, &lsproto.LocationLink{
 				OriginSelectionRange: &originSelectionRange,
 				TargetSelectionRange: targetSelectionLoc.Range,
-				TargetUri:            targetLoc.Uri,
-				TargetRange:          targetLoc.Range,
+				TargetUri:            targetSelectionLoc.Uri,
+				TargetRange:          targetRange,
 			})
 		}
 	}
