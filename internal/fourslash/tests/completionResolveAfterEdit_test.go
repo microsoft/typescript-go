@@ -3,8 +3,8 @@ package fourslash_test
 import (
 	"testing"
 
-	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -56,25 +56,28 @@ export const u = 1;
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 
-	f.GoToMarker(t, "a")
-	completions := f.GetCompletions(t, nil /*userPreferences*/)
-	if completions == nil {
-		t.Fatal("Expected completions but got none")
-	}
-	item := core.Find(completions.Items, func(item *lsproto.CompletionItem) bool {
-		return item.Label == "u"
+	f.VerifyCompletions(t, "a", &fourslash.CompletionsExpectedList{
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &[]string{},
+			EditRange:        Ignored,
+		},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label:      "u",
+					InsertText: new(`import { u } from "./a";`),
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportFix{ModuleSpecifier: "./a"},
+					},
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: `import { u } from "./a";`,
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
+					AdditionalTextEdits: fourslash.NoTextEdits,
+				},
+			},
+		},
 	})
-	if item == nil {
-		t.Fatal("Expected import statement completion for u")
-	}
-	if item.Data == nil || item.Data.AutoImport == nil || !item.Data.IsImportStatementCompletion {
-		t.Fatalf("Expected import statement completion data, got %#v", item.Data)
-	}
-	resolved := f.ResolveCompletionItem(t, item)
-	if resolved == nil {
-		t.Fatal("Expected resolved import statement completion")
-	}
-	if resolved.AdditionalTextEdits != nil && len(*resolved.AdditionalTextEdits) != 0 {
-		t.Fatal("Expected import statement completion to have no additional import edits")
-	}
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
@@ -17,25 +18,35 @@ func TestImportStatementCompletionUsesNamedImport(t *testing.T) {
 export interface I {}
 // @Filename: 1.ts
 import * as u from "./a";
-import I/*a*/`
+[|import I/*a*/|]`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 
-	f.GoToMarker(t, "a")
 	preferences := lsutil.NewDefaultUserPreferences()
 	preferences.IncludeCompletionsForModuleExports = core.TSFalse
 	preferences.IncludeCompletionsForImportStatements = core.TSTrue
-	completions := f.GetCompletions(t, &preferences)
-	if completions == nil {
-		t.Fatal("Expected completions but got none")
-	}
-	item := core.Find(completions.Items, func(item *lsproto.CompletionItem) bool {
-		return item.Label == "I"
+	f.VerifyCompletions(t, "a", &fourslash.CompletionsExpectedList{
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &[]string{},
+			EditRange:        Ignored,
+		},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label:      "I",
+					InsertText: new(`import { I } from "./a";`),
+					Data: &lsproto.CompletionItemData{
+						AutoImport: &lsproto.AutoImportFix{ModuleSpecifier: "./a"},
+					},
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: `import { I } from "./a";`,
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
+				},
+			},
+		},
+		UserPreferences: &preferences,
 	})
-	if item == nil {
-		t.Fatal("Expected import statement completion for I")
-	}
-	if item.TextEdit == nil || item.TextEdit.TextEdit == nil || item.TextEdit.TextEdit.NewText != `import { I } from "./a";` {
-		t.Fatalf("Expected named import text edit, got %#v", item.TextEdit)
-	}
 }

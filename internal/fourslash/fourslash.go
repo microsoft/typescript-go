@@ -1549,6 +1549,10 @@ func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual
 			if !(actual.AdditionalTextEdits != nil && len(*actual.AdditionalTextEdits) > 0) {
 				return "Expected non-nil AdditionalTextEdits for auto-import completion item"
 			}
+		} else if expected.AdditionalTextEdits == NoTextEdits {
+			if actual.AdditionalTextEdits != nil && len(*actual.AdditionalTextEdits) > 0 {
+				return "Expected no AdditionalTextEdits for auto-import completion item"
+			}
 		}
 		if expected.LabelDetails != nil {
 			if err := cmp.Diff(actual.LabelDetails, expected.LabelDetails); err != "" {
@@ -5593,7 +5597,10 @@ func isLibFile(fileName string) bool {
 	return false
 }
 
-var AnyTextEdits = new([]*lsproto.TextEdit)
+var (
+	AnyTextEdits = new([]*lsproto.TextEdit)
+	NoTextEdits  = new([]*lsproto.TextEdit)
+)
 
 func (f *FourslashTest) VerifyBaselineGoToImplementation(t *testing.T, markerNames ...string) {
 	f.verifyBaselineDefinitions(
