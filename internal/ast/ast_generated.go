@@ -9419,53 +9419,37 @@ func (n *Node) VisitEachChild(v *NodeVisitor) *Node {
 func (n *Node) SubtreeFacts() SubtreeFacts {
 	switch n.Kind {
 	case kindFlowSwitchClauseData:
-		data := (*FlowSwitchClauseData)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return SubtreeFactsNone
 	case kindFlowReduceLabelData:
-		data := (*FlowReduceLabelData)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return SubtreeFactsNone
 	case KindUnknown, KindEndOfFile, KindSingleLineCommentTrivia, KindMultiLineCommentTrivia, KindNewLineTrivia, KindWhitespaceTrivia, KindConflictMarkerTrivia, KindNonTextFileMarkerTrivia, KindJsxTextAllWhiteSpaces, KindOpenBraceToken, KindCloseBraceToken, KindOpenParenToken, KindCloseParenToken, KindOpenBracketToken, KindCloseBracketToken, KindDotToken, KindDotDotDotToken, KindSemicolonToken, KindCommaToken, KindQuestionDotToken, KindLessThanToken, KindLessThanSlashToken, KindGreaterThanToken, KindLessThanEqualsToken, KindGreaterThanEqualsToken, KindEqualsEqualsToken, KindExclamationEqualsToken, KindEqualsEqualsEqualsToken, KindExclamationEqualsEqualsToken, KindEqualsGreaterThanToken, KindPlusToken, KindMinusToken, KindAsteriskToken, KindAsteriskAsteriskToken, KindSlashToken, KindPercentToken, KindPlusPlusToken, KindMinusMinusToken, KindLessThanLessThanToken, KindGreaterThanGreaterThanToken, KindGreaterThanGreaterThanGreaterThanToken, KindAmpersandToken, KindBarToken, KindCaretToken, KindExclamationToken, KindTildeToken, KindAmpersandAmpersandToken, KindBarBarToken, KindQuestionToken, KindColonToken, KindAtToken, KindQuestionQuestionToken, KindBacktickToken, KindHashToken, KindEqualsToken, KindPlusEqualsToken, KindMinusEqualsToken, KindAsteriskEqualsToken, KindAsteriskAsteriskEqualsToken, KindSlashEqualsToken, KindPercentEqualsToken, KindLessThanLessThanEqualsToken, KindGreaterThanGreaterThanEqualsToken, KindGreaterThanGreaterThanGreaterThanEqualsToken, KindAmpersandEqualsToken, KindBarEqualsToken, KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken, KindQuestionQuestionEqualsToken, KindCaretEqualsToken, KindJSDocCommentTextToken, KindBreakKeyword, KindCaseKeyword, KindCatchKeyword, KindClassKeyword, KindConstKeyword, KindContinueKeyword, KindDebuggerKeyword, KindDefaultKeyword, KindDeleteKeyword, KindDoKeyword, KindElseKeyword, KindEnumKeyword, KindExportKeyword, KindExtendsKeyword, KindFinallyKeyword, KindForKeyword, KindFunctionKeyword, KindIfKeyword, KindInKeyword, KindInstanceOfKeyword, KindNewKeyword, KindReturnKeyword, KindSwitchKeyword, KindThrowKeyword, KindTryKeyword, KindTypeOfKeyword, KindVarKeyword, KindWhileKeyword, KindWithKeyword, KindImplementsKeyword, KindInterfaceKeyword, KindLetKeyword, KindPackageKeyword, KindPrivateKeyword, KindProtectedKeyword, KindPublicKeyword, KindStaticKeyword, KindYieldKeyword, KindAbstractKeyword, KindAccessorKeyword, KindAsKeyword, KindAssertsKeyword, KindAssertKeyword, KindAsyncKeyword, KindAwaitKeyword, KindConstructorKeyword, KindDeclareKeyword, KindGetKeyword, KindImmediateKeyword, KindInferKeyword, KindIsKeyword, KindKeyOfKeyword, KindModuleKeyword, KindNamespaceKeyword, KindOutKeyword, KindReadonlyKeyword, KindRequireKeyword, KindSatisfiesKeyword, KindSetKeyword, KindTypeKeyword, KindUniqueKeyword, KindUsingKeyword, KindFromKeyword, KindGlobalKeyword, KindOverrideKeyword, KindOfKeyword, KindDeferKeyword:
-		data := (*Token)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*Token)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindNumericLiteral:
-		data := (*NumericLiteral)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*NumericLiteral)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindBigIntLiteral:
-		data := (*BigIntLiteral)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*BigIntLiteral)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindStringLiteral:
-		data := (*StringLiteral)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*StringLiteral)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJsxText:
-		data := (*JsxText)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JsxText)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindRegularExpressionLiteral:
-		data := (*RegularExpressionLiteral)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*RegularExpressionLiteral)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindNoSubstitutionTemplateLiteral:
-		data := (*NoSubstitutionTemplateLiteral)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*NoSubstitutionTemplateLiteral)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindTemplateHead:
-		data := (*TemplateHead)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*TemplateHead)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindTemplateMiddle:
-		data := (*TemplateMiddle)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*TemplateMiddle)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindTemplateTail:
-		data := (*TemplateTail)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*TemplateTail)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindIdentifier:
-		data := (*Identifier)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*Identifier)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindPrivateIdentifier:
-		data := (*PrivateIdentifier)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*PrivateIdentifier)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindFalseKeyword, KindImportKeyword, KindNullKeyword, KindSuperKeyword, KindThisKeyword, KindTrueKeyword:
-		data := (*KeywordExpression)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*KeywordExpression)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindVoidKeyword, KindAnyKeyword, KindBooleanKeyword, KindIntrinsicKeyword, KindNeverKeyword, KindNumberKeyword, KindObjectKeyword, KindStringKeyword, KindSymbolKeyword, KindUndefinedKeyword, KindUnknownKeyword, KindBigIntKeyword:
-		data := (*KeywordTypeNode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*KeywordTypeNode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindQualifiedName:
 		data := (*QualifiedName)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
@@ -9476,8 +9460,7 @@ func (n *Node) SubtreeFacts() SubtreeFacts {
 		data := (*Decorator)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindEmptyStatement:
-		data := (*EmptyStatement)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*EmptyStatement)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindIfStatement:
 		data := (*IfStatement)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
@@ -9494,11 +9477,9 @@ func (n *Node) SubtreeFacts() SubtreeFacts {
 		data := (*ForInOrOfStatement)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindBreakStatement:
-		data := (*BreakStatement)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*BreakStatement)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindContinueStatement:
-		data := (*ContinueStatement)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*ContinueStatement)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindReturnStatement:
 		data := (*ReturnStatement)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
@@ -9524,14 +9505,11 @@ func (n *Node) SubtreeFacts() SubtreeFacts {
 		data := (*CatchClause)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindDebuggerStatement:
-		data := (*DebuggerStatement)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*DebuggerStatement)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindLabeledStatement:
-		data := (*LabeledStatement)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*LabeledStatement)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindExpressionStatement:
-		data := (*ExpressionStatement)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*ExpressionStatement)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindBlock:
 		data := (*Block)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
@@ -9554,8 +9532,7 @@ func (n *Node) SubtreeFacts() SubtreeFacts {
 		data := (*BindingElement)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindMissingDeclaration:
-		data := (*MissingDeclaration)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*MissingDeclaration)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindFunctionDeclaration:
 		data := (*FunctionDeclaration)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
@@ -9569,11 +9546,9 @@ func (n *Node) SubtreeFacts() SubtreeFacts {
 		data := (*HeritageClause)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindInterfaceDeclaration:
-		data := (*InterfaceDeclaration)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*InterfaceDeclaration)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
-		data := (*TypeAliasDeclaration)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*TypeAliasDeclaration)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindEnumMember:
 		data := (*EnumMember)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
@@ -9584,20 +9559,16 @@ func (n *Node) SubtreeFacts() SubtreeFacts {
 		data := (*ModuleBlock)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindNotEmittedStatement:
-		data := (*NotEmittedStatement)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*NotEmittedStatement)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindNotEmittedTypeElement:
-		data := (*NotEmittedTypeElement)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*NotEmittedTypeElement)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindImportDeclaration, KindJSImportDeclaration:
 		data := (*ImportDeclaration)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindExternalModuleReference:
-		data := (*ExternalModuleReference)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*ExternalModuleReference)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindNamespaceImport:
-		data := (*NamespaceImport)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*NamespaceImport)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindNamedImports:
 		data := (*NamedImports)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
@@ -9605,11 +9576,9 @@ func (n *Node) SubtreeFacts() SubtreeFacts {
 		data := (*ExportAssignment)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindNamespaceExportDeclaration:
-		data := (*NamespaceExportDeclaration)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*NamespaceExportDeclaration)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindNamespaceExport:
-		data := (*NamespaceExport)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*NamespaceExport)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindNamedExports:
 		data := (*NamedExports)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
@@ -9617,11 +9586,9 @@ func (n *Node) SubtreeFacts() SubtreeFacts {
 		data := (*ExportSpecifier)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindCallSignature:
-		data := (*CallSignatureDeclaration)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*CallSignatureDeclaration)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindConstructSignature:
-		data := (*ConstructSignatureDeclaration)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*ConstructSignatureDeclaration)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindConstructor:
 		data := (*ConstructorDeclaration)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
@@ -9632,41 +9599,33 @@ func (n *Node) SubtreeFacts() SubtreeFacts {
 		data := (*SetAccessorDeclaration)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindIndexSignature:
-		data := (*IndexSignatureDeclaration)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*IndexSignatureDeclaration)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindMethodSignature:
-		data := (*MethodSignatureDeclaration)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*MethodSignatureDeclaration)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindMethodDeclaration:
 		data := (*MethodDeclaration)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindPropertySignature:
-		data := (*PropertySignatureDeclaration)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*PropertySignatureDeclaration)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindPropertyDeclaration:
 		data := (*PropertyDeclaration)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindSemicolonClassElement:
-		data := (*SemicolonClassElement)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*SemicolonClassElement)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindClassStaticBlockDeclaration:
 		data := (*ClassStaticBlockDeclaration)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindOmittedExpression:
-		data := (*OmittedExpression)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*OmittedExpression)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindBinaryExpression:
 		data := (*BinaryExpression)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindPrefixUnaryExpression:
-		data := (*PrefixUnaryExpression)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*PrefixUnaryExpression)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindPostfixUnaryExpression:
-		data := (*PostfixUnaryExpression)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*PostfixUnaryExpression)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindYieldExpression:
-		data := (*YieldExpression)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*YieldExpression)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindArrowFunction:
 		data := (*ArrowFunction)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
@@ -9674,11 +9633,9 @@ func (n *Node) SubtreeFacts() SubtreeFacts {
 		data := (*FunctionExpression)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindAsExpression:
-		data := (*AsExpression)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*AsExpression)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindSatisfiesExpression:
-		data := (*SatisfiesExpression)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*SatisfiesExpression)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindConditionalExpression:
 		data := (*ConditionalExpression)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
@@ -9698,23 +9655,19 @@ func (n *Node) SubtreeFacts() SubtreeFacts {
 		data := (*MetaProperty)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindNonNullExpression:
-		data := (*NonNullExpression)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*NonNullExpression)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindSpreadElement:
-		data := (*SpreadElement)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*SpreadElement)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindTemplateExpression:
 		data := (*TemplateExpression)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindTemplateSpan:
-		data := (*TemplateSpan)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*TemplateSpan)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindTaggedTemplateExpression:
 		data := (*TaggedTemplateExpression)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindParenthesizedExpression:
-		data := (*ParenthesizedExpression)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*ParenthesizedExpression)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindArrayLiteralExpression:
 		data := (*ArrayLiteralExpression)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
@@ -9722,8 +9675,7 @@ func (n *Node) SubtreeFacts() SubtreeFacts {
 		data := (*ObjectLiteralExpression)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindSpreadAssignment:
-		data := (*SpreadAssignment)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*SpreadAssignment)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindPropertyAssignment:
 		data := (*PropertyAssignment)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
@@ -9731,56 +9683,40 @@ func (n *Node) SubtreeFacts() SubtreeFacts {
 		data := (*ShorthandPropertyAssignment)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindDeleteExpression:
-		data := (*DeleteExpression)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*DeleteExpression)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindTypeOfExpression:
-		data := (*TypeOfExpression)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*TypeOfExpression)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindVoidExpression:
-		data := (*VoidExpression)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*VoidExpression)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindAwaitExpression:
-		data := (*AwaitExpression)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*AwaitExpression)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindTypeAssertionExpression:
-		data := (*TypeAssertion)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*TypeAssertion)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindUnionType:
-		data := (*UnionTypeNode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*UnionTypeNode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindIntersectionType:
-		data := (*IntersectionTypeNode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*IntersectionTypeNode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindConditionalType:
-		data := (*ConditionalTypeNode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*ConditionalTypeNode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindTypeOperator:
-		data := (*TypeOperatorNode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*TypeOperatorNode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindInferType:
-		data := (*InferTypeNode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*InferTypeNode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindArrayType:
-		data := (*ArrayTypeNode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*ArrayTypeNode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindIndexedAccessType:
-		data := (*IndexedAccessTypeNode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*IndexedAccessTypeNode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindTypeReference:
-		data := (*TypeReferenceNode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*TypeReferenceNode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindExpressionWithTypeArguments:
 		data := (*ExpressionWithTypeArguments)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindLiteralType:
-		data := (*LiteralTypeNode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*LiteralTypeNode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindThisType:
-		data := (*ThisTypeNode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*ThisTypeNode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindTypePredicate:
-		data := (*TypePredicateNode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*TypePredicateNode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindImportAttribute:
 		data := (*ImportAttribute)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
@@ -9788,47 +9724,33 @@ func (n *Node) SubtreeFacts() SubtreeFacts {
 		data := (*ImportAttributes)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindTypeQuery:
-		data := (*TypeQueryNode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*TypeQueryNode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindMappedType:
-		data := (*MappedTypeNode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*MappedTypeNode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindTypeLiteral:
-		data := (*TypeLiteralNode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*TypeLiteralNode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindTupleType:
-		data := (*TupleTypeNode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*TupleTypeNode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindNamedTupleMember:
-		data := (*NamedTupleMember)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*NamedTupleMember)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindOptionalType:
-		data := (*OptionalTypeNode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*OptionalTypeNode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindRestType:
-		data := (*RestTypeNode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*RestTypeNode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindParenthesizedType:
-		data := (*ParenthesizedTypeNode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*ParenthesizedTypeNode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindFunctionType:
-		data := (*FunctionTypeNode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*FunctionTypeNode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindConstructorType:
-		data := (*ConstructorTypeNode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*ConstructorTypeNode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindTemplateLiteralType:
-		data := (*TemplateLiteralTypeNode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*TemplateLiteralTypeNode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindTemplateLiteralTypeSpan:
-		data := (*TemplateLiteralTypeSpan)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*TemplateLiteralTypeSpan)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindSyntheticExpression:
-		data := (*SyntheticExpression)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*SyntheticExpression)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindPartiallyEmittedExpression:
-		data := (*PartiallyEmittedExpression)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*PartiallyEmittedExpression)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJsxElement:
 		data := (*JsxElement)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
@@ -9848,113 +9770,78 @@ func (n *Node) SubtreeFacts() SubtreeFacts {
 		data := (*JsxFragment)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindJsxOpeningFragment:
-		data := (*JsxOpeningFragment)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JsxOpeningFragment)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJsxClosingFragment:
-		data := (*JsxClosingFragment)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JsxClosingFragment)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJsxAttribute:
 		data := (*JsxAttribute)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindJsxSpreadAttribute:
-		data := (*JsxSpreadAttribute)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JsxSpreadAttribute)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJsxClosingElement:
-		data := (*JsxClosingElement)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JsxClosingElement)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJsxExpression:
-		data := (*JsxExpression)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JsxExpression)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindSyntaxList:
-		data := (*SyntaxList)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*SyntaxList)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDoc:
-		data := (*JSDoc)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDoc)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocTypeExpression:
-		data := (*JSDocTypeExpression)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocTypeExpression)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocNonNullableType:
-		data := (*JSDocNonNullableType)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocNonNullableType)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocNullableType:
-		data := (*JSDocNullableType)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocNullableType)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocAllType:
-		data := (*JSDocAllType)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocAllType)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocVariadicType:
-		data := (*JSDocVariadicType)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocVariadicType)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocOptionalType:
-		data := (*JSDocOptionalType)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocOptionalType)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocTypeTag:
-		data := (*JSDocTypeTag)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocTypeTag)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocUnknownTag:
-		data := (*JSDocUnknownTag)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocUnknownTag)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocTemplateTag:
-		data := (*JSDocTemplateTag)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocTemplateTag)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocReturnTag:
-		data := (*JSDocReturnTag)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocReturnTag)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocPublicTag:
-		data := (*JSDocPublicTag)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocPublicTag)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocPrivateTag:
-		data := (*JSDocPrivateTag)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocPrivateTag)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocProtectedTag:
-		data := (*JSDocProtectedTag)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocProtectedTag)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocReadonlyTag:
-		data := (*JSDocReadonlyTag)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocReadonlyTag)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocOverrideTag:
-		data := (*JSDocOverrideTag)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocOverrideTag)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocDeprecatedTag:
-		data := (*JSDocDeprecatedTag)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocDeprecatedTag)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocSeeTag:
-		data := (*JSDocSeeTag)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocSeeTag)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocImplementsTag:
-		data := (*JSDocImplementsTag)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocImplementsTag)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocAugmentsTag:
-		data := (*JSDocAugmentsTag)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocAugmentsTag)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocSatisfiesTag:
-		data := (*JSDocSatisfiesTag)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocSatisfiesTag)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocThrowsTag:
-		data := (*JSDocThrowsTag)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocThrowsTag)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocThisTag:
-		data := (*JSDocThisTag)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocThisTag)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocImportTag:
-		data := (*JSDocImportTag)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocImportTag)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocCallbackTag:
-		data := (*JSDocCallbackTag)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocCallbackTag)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocOverloadTag:
-		data := (*JSDocOverloadTag)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocOverloadTag)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocTypedefTag:
-		data := (*JSDocTypedefTag)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocTypedefTag)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocSignature:
-		data := (*JSDocSignature)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocSignature)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocNameReference:
-		data := (*JSDocNameReference)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocNameReference)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindSourceFile:
 		data := (*SourceFile)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
@@ -9968,8 +9855,7 @@ func (n *Node) SubtreeFacts() SubtreeFacts {
 		data := (*ExportDeclaration)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindImportType:
-		data := (*ImportTypeNode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*ImportTypeNode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindImportClause:
 		data := (*ImportClause)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
@@ -9977,29 +9863,21 @@ func (n *Node) SubtreeFacts() SubtreeFacts {
 		data := (*ImportSpecifier)(unsafe.Pointer(n))
 		return data.subtreeFactsWorker(data.AsNode())
 	case KindJSDocText:
-		data := (*JSDocText)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocText)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocLink:
-		data := (*JSDocLink)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocLink)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocLinkPlain:
-		data := (*JSDocLinkPlain)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocLinkPlain)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocLinkCode:
-		data := (*JSDocLinkCode)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocLinkCode)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindTypeParameter:
-		data := (*TypeParameterDeclaration)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*TypeParameterDeclaration)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindSyntheticReferenceExpression:
-		data := (*SyntheticReferenceExpression)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*SyntheticReferenceExpression)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocTypeLiteral:
-		data := (*JSDocTypeLiteral)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocTypeLiteral)(unsafe.Pointer(n)).computeSubtreeFacts()
 	case KindJSDocParameterTag, KindJSDocPropertyTag:
-		data := (*JSDocParameterOrPropertyTag)(unsafe.Pointer(n))
-		return data.subtreeFactsWorker(data.AsNode())
+		return (*JSDocParameterOrPropertyTag)(unsafe.Pointer(n)).computeSubtreeFacts()
 	default:
 		panic("Unhandled case in Node.SubtreeFacts: " + n.Kind.String())
 	}
@@ -10404,863 +10282,364 @@ func (n *Node) computeSubtreeFacts() SubtreeFacts {
 // Node data accessor dispatch
 // ──────────────────────────────────────────────────────────────────────
 
+var nodeNameOffsets = [KindCount]uint16{
+	KindVariableDeclaration:         uint16(unsafe.Offsetof(VariableDeclaration{}.name)) + 1,
+	KindParameter:                   uint16(unsafe.Offsetof(ParameterDeclaration{}.name)) + 1,
+	KindBindingElement:              uint16(unsafe.Offsetof(BindingElement{}.name)) + 1,
+	KindFunctionDeclaration:         uint16(unsafe.Offsetof(FunctionDeclaration{}.name)) + 1,
+	KindClassDeclaration:            uint16(unsafe.Offsetof(ClassDeclaration{}.name)) + 1,
+	KindClassExpression:             uint16(unsafe.Offsetof(ClassExpression{}.name)) + 1,
+	KindInterfaceDeclaration:        uint16(unsafe.Offsetof(InterfaceDeclaration{}.name)) + 1,
+	KindTypeAliasDeclaration:        uint16(unsafe.Offsetof(TypeAliasDeclaration{}.name)) + 1,
+	KindJSTypeAliasDeclaration:      uint16(unsafe.Offsetof(TypeAliasDeclaration{}.name)) + 1,
+	KindEnumMember:                  uint16(unsafe.Offsetof(EnumMember{}.name)) + 1,
+	KindEnumDeclaration:             uint16(unsafe.Offsetof(EnumDeclaration{}.name)) + 1,
+	KindNamespaceImport:             uint16(unsafe.Offsetof(NamespaceImport{}.name)) + 1,
+	KindNamespaceExportDeclaration:  uint16(unsafe.Offsetof(NamespaceExportDeclaration{}.name)) + 1,
+	KindNamespaceExport:             uint16(unsafe.Offsetof(NamespaceExport{}.name)) + 1,
+	KindExportSpecifier:             uint16(unsafe.Offsetof(ExportSpecifier{}.name)) + 1,
+	KindGetAccessor:                 uint16(unsafe.Offsetof(GetAccessorDeclaration{}.name)) + 1,
+	KindSetAccessor:                 uint16(unsafe.Offsetof(SetAccessorDeclaration{}.name)) + 1,
+	KindMethodSignature:             uint16(unsafe.Offsetof(MethodSignatureDeclaration{}.name)) + 1,
+	KindMethodDeclaration:           uint16(unsafe.Offsetof(MethodDeclaration{}.name)) + 1,
+	KindPropertySignature:           uint16(unsafe.Offsetof(PropertySignatureDeclaration{}.name)) + 1,
+	KindPropertyDeclaration:         uint16(unsafe.Offsetof(PropertyDeclaration{}.name)) + 1,
+	KindFunctionExpression:          uint16(unsafe.Offsetof(FunctionExpression{}.name)) + 1,
+	KindPropertyAccessExpression:    uint16(unsafe.Offsetof(PropertyAccessExpression{}.name)) + 1,
+	KindMetaProperty:                uint16(unsafe.Offsetof(MetaProperty{}.name)) + 1,
+	KindPropertyAssignment:          uint16(unsafe.Offsetof(PropertyAssignment{}.name)) + 1,
+	KindShorthandPropertyAssignment: uint16(unsafe.Offsetof(ShorthandPropertyAssignment{}.name)) + 1,
+	KindImportAttribute:             uint16(unsafe.Offsetof(ImportAttribute{}.name)) + 1,
+	KindNamedTupleMember:            uint16(unsafe.Offsetof(NamedTupleMember{}.name)) + 1,
+	KindJsxNamespacedName:           uint16(unsafe.Offsetof(JsxNamespacedName{}.name)) + 1,
+	KindJsxAttribute:                uint16(unsafe.Offsetof(JsxAttribute{}.name)) + 1,
+	KindJSDocCallbackTag:            uint16(unsafe.Offsetof(JSDocCallbackTag{}.name)) + 1,
+	KindJSDocTypedefTag:             uint16(unsafe.Offsetof(JSDocTypedefTag{}.name)) + 1,
+	KindJSDocNameReference:          uint16(unsafe.Offsetof(JSDocNameReference{}.name)) + 1,
+	KindModuleDeclaration:           uint16(unsafe.Offsetof(ModuleDeclaration{}.name)) + 1,
+	KindImportEqualsDeclaration:     uint16(unsafe.Offsetof(ImportEqualsDeclaration{}.name)) + 1,
+	KindImportClause:                uint16(unsafe.Offsetof(ImportClause{}.name)) + 1,
+	KindImportSpecifier:             uint16(unsafe.Offsetof(ImportSpecifier{}.name)) + 1,
+	KindJSDocLink:                   uint16(unsafe.Offsetof(JSDocLink{}.name)) + 1,
+	KindJSDocLinkPlain:              uint16(unsafe.Offsetof(JSDocLinkPlain{}.name)) + 1,
+	KindJSDocLinkCode:               uint16(unsafe.Offsetof(JSDocLinkCode{}.name)) + 1,
+	KindTypeParameter:               uint16(unsafe.Offsetof(TypeParameterDeclaration{}.name)) + 1,
+	KindJSDocParameterTag:           uint16(unsafe.Offsetof(JSDocParameterOrPropertyTag{}.name)) + 1,
+	KindJSDocPropertyTag:            uint16(unsafe.Offsetof(JSDocParameterOrPropertyTag{}.name)) + 1,
+}
+
 func (n *Node) Name() *DeclarationName {
-	switch n.Kind {
-	case KindVariableDeclaration:
-		return (*VariableDeclaration)(unsafe.Pointer(n)).Name()
-	case KindParameter:
-		return (*ParameterDeclaration)(unsafe.Pointer(n)).Name()
-	case KindBindingElement:
-		return (*BindingElement)(unsafe.Pointer(n)).Name()
-	case KindFunctionDeclaration:
-		return (*FunctionDeclaration)(unsafe.Pointer(n)).Name()
-	case KindClassDeclaration:
-		return (*ClassDeclaration)(unsafe.Pointer(n)).Name()
-	case KindClassExpression:
-		return (*ClassExpression)(unsafe.Pointer(n)).Name()
-	case KindInterfaceDeclaration:
-		return (*InterfaceDeclaration)(unsafe.Pointer(n)).Name()
-	case KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
-		return (*TypeAliasDeclaration)(unsafe.Pointer(n)).Name()
-	case KindEnumMember:
-		return (*EnumMember)(unsafe.Pointer(n)).Name()
-	case KindEnumDeclaration:
-		return (*EnumDeclaration)(unsafe.Pointer(n)).Name()
-	case KindNamespaceImport:
-		return (*NamespaceImport)(unsafe.Pointer(n)).Name()
-	case KindNamespaceExportDeclaration:
-		return (*NamespaceExportDeclaration)(unsafe.Pointer(n)).Name()
-	case KindNamespaceExport:
-		return (*NamespaceExport)(unsafe.Pointer(n)).Name()
-	case KindExportSpecifier:
-		return (*ExportSpecifier)(unsafe.Pointer(n)).Name()
-	case KindGetAccessor:
-		return (*GetAccessorDeclaration)(unsafe.Pointer(n)).Name()
-	case KindSetAccessor:
-		return (*SetAccessorDeclaration)(unsafe.Pointer(n)).Name()
-	case KindMethodSignature:
-		return (*MethodSignatureDeclaration)(unsafe.Pointer(n)).Name()
-	case KindMethodDeclaration:
-		return (*MethodDeclaration)(unsafe.Pointer(n)).Name()
-	case KindPropertySignature:
-		return (*PropertySignatureDeclaration)(unsafe.Pointer(n)).Name()
-	case KindPropertyDeclaration:
-		return (*PropertyDeclaration)(unsafe.Pointer(n)).Name()
-	case KindFunctionExpression:
-		return (*FunctionExpression)(unsafe.Pointer(n)).Name()
-	case KindPropertyAccessExpression:
-		return (*PropertyAccessExpression)(unsafe.Pointer(n)).Name()
-	case KindMetaProperty:
-		return (*MetaProperty)(unsafe.Pointer(n)).Name()
-	case KindPropertyAssignment:
-		return (*PropertyAssignment)(unsafe.Pointer(n)).Name()
-	case KindShorthandPropertyAssignment:
-		return (*ShorthandPropertyAssignment)(unsafe.Pointer(n)).Name()
-	case KindImportAttribute:
-		return (*ImportAttribute)(unsafe.Pointer(n)).Name()
-	case KindNamedTupleMember:
-		return (*NamedTupleMember)(unsafe.Pointer(n)).Name()
-	case KindJsxNamespacedName:
-		return (*JsxNamespacedName)(unsafe.Pointer(n)).Name()
-	case KindJsxAttribute:
-		return (*JsxAttribute)(unsafe.Pointer(n)).Name()
-	case KindJSDocCallbackTag:
-		return (*JSDocCallbackTag)(unsafe.Pointer(n)).Name()
-	case KindJSDocTypedefTag:
-		return (*JSDocTypedefTag)(unsafe.Pointer(n)).Name()
-	case KindJSDocNameReference:
-		return (*JSDocNameReference)(unsafe.Pointer(n)).Name()
-	case KindModuleDeclaration:
-		return (*ModuleDeclaration)(unsafe.Pointer(n)).Name()
-	case KindImportEqualsDeclaration:
-		return (*ImportEqualsDeclaration)(unsafe.Pointer(n)).Name()
-	case KindImportClause:
-		return (*ImportClause)(unsafe.Pointer(n)).Name()
-	case KindImportSpecifier:
-		return (*ImportSpecifier)(unsafe.Pointer(n)).Name()
-	case KindJSDocLink:
-		return (*JSDocLink)(unsafe.Pointer(n)).Name()
-	case KindJSDocLinkPlain:
-		return (*JSDocLinkPlain)(unsafe.Pointer(n)).Name()
-	case KindJSDocLinkCode:
-		return (*JSDocLinkCode)(unsafe.Pointer(n)).Name()
-	case KindTypeParameter:
-		return (*TypeParameterDeclaration)(unsafe.Pointer(n)).Name()
-	case KindJSDocParameterTag, KindJSDocPropertyTag:
-		return (*JSDocParameterOrPropertyTag)(unsafe.Pointer(n)).Name()
-	default:
+	kind := uint16(n.Kind)
+	if kind >= uint16(len(nodeNameOffsets)) {
 		return nil
 	}
+	offset := nodeNameOffsets[kind]
+	if offset == 0 {
+		return nil
+	}
+	return *(**DeclarationName)(unsafe.Add(unsafe.Pointer(n), uintptr(offset-1)))
+}
+
+var nodeModifiersOffsets = [KindCount]uint16{
+	KindVariableStatement:           uint16(unsafe.Offsetof(VariableStatement{}.modifiers)) + 1,
+	KindParameter:                   uint16(unsafe.Offsetof(ParameterDeclaration{}.modifiers)) + 1,
+	KindMissingDeclaration:          uint16(unsafe.Offsetof(MissingDeclaration{}.modifiers)) + 1,
+	KindFunctionDeclaration:         uint16(unsafe.Offsetof(FunctionDeclaration{}.modifiers)) + 1,
+	KindClassDeclaration:            uint16(unsafe.Offsetof(ClassDeclaration{}.modifiers)) + 1,
+	KindClassExpression:             uint16(unsafe.Offsetof(ClassExpression{}.modifiers)) + 1,
+	KindInterfaceDeclaration:        uint16(unsafe.Offsetof(InterfaceDeclaration{}.modifiers)) + 1,
+	KindTypeAliasDeclaration:        uint16(unsafe.Offsetof(TypeAliasDeclaration{}.modifiers)) + 1,
+	KindJSTypeAliasDeclaration:      uint16(unsafe.Offsetof(TypeAliasDeclaration{}.modifiers)) + 1,
+	KindEnumMember:                  uint16(unsafe.Offsetof(EnumMember{}.modifiers)) + 1,
+	KindEnumDeclaration:             uint16(unsafe.Offsetof(EnumDeclaration{}.modifiers)) + 1,
+	KindImportDeclaration:           uint16(unsafe.Offsetof(ImportDeclaration{}.modifiers)) + 1,
+	KindJSImportDeclaration:         uint16(unsafe.Offsetof(ImportDeclaration{}.modifiers)) + 1,
+	KindExportAssignment:            uint16(unsafe.Offsetof(ExportAssignment{}.modifiers)) + 1,
+	KindNamespaceExportDeclaration:  uint16(unsafe.Offsetof(NamespaceExportDeclaration{}.modifiers)) + 1,
+	KindConstructor:                 uint16(unsafe.Offsetof(ConstructorDeclaration{}.modifiers)) + 1,
+	KindGetAccessor:                 uint16(unsafe.Offsetof(GetAccessorDeclaration{}.modifiers)) + 1,
+	KindSetAccessor:                 uint16(unsafe.Offsetof(SetAccessorDeclaration{}.modifiers)) + 1,
+	KindIndexSignature:              uint16(unsafe.Offsetof(IndexSignatureDeclaration{}.modifiers)) + 1,
+	KindMethodSignature:             uint16(unsafe.Offsetof(MethodSignatureDeclaration{}.modifiers)) + 1,
+	KindMethodDeclaration:           uint16(unsafe.Offsetof(MethodDeclaration{}.modifiers)) + 1,
+	KindPropertySignature:           uint16(unsafe.Offsetof(PropertySignatureDeclaration{}.modifiers)) + 1,
+	KindPropertyDeclaration:         uint16(unsafe.Offsetof(PropertyDeclaration{}.modifiers)) + 1,
+	KindClassStaticBlockDeclaration: uint16(unsafe.Offsetof(ClassStaticBlockDeclaration{}.modifiers)) + 1,
+	KindBinaryExpression:            uint16(unsafe.Offsetof(BinaryExpression{}.modifiers)) + 1,
+	KindArrowFunction:               uint16(unsafe.Offsetof(ArrowFunction{}.modifiers)) + 1,
+	KindFunctionExpression:          uint16(unsafe.Offsetof(FunctionExpression{}.modifiers)) + 1,
+	KindPropertyAssignment:          uint16(unsafe.Offsetof(PropertyAssignment{}.modifiers)) + 1,
+	KindShorthandPropertyAssignment: uint16(unsafe.Offsetof(ShorthandPropertyAssignment{}.modifiers)) + 1,
+	KindFunctionType:                uint16(unsafe.Offsetof(FunctionTypeNode{}.modifiers)) + 1,
+	KindConstructorType:             uint16(unsafe.Offsetof(ConstructorTypeNode{}.modifiers)) + 1,
+	KindModuleDeclaration:           uint16(unsafe.Offsetof(ModuleDeclaration{}.modifiers)) + 1,
+	KindImportEqualsDeclaration:     uint16(unsafe.Offsetof(ImportEqualsDeclaration{}.modifiers)) + 1,
+	KindExportDeclaration:           uint16(unsafe.Offsetof(ExportDeclaration{}.modifiers)) + 1,
+	KindTypeParameter:               uint16(unsafe.Offsetof(TypeParameterDeclaration{}.modifiers)) + 1,
 }
 
 func (n *Node) Modifiers() *ModifierList {
-	switch n.Kind {
-	case KindVariableStatement:
-		return (*VariableStatement)(unsafe.Pointer(n)).Modifiers()
-	case KindParameter:
-		return (*ParameterDeclaration)(unsafe.Pointer(n)).Modifiers()
-	case KindMissingDeclaration:
-		return (*MissingDeclaration)(unsafe.Pointer(n)).Modifiers()
-	case KindFunctionDeclaration:
-		return (*FunctionDeclaration)(unsafe.Pointer(n)).Modifiers()
-	case KindClassDeclaration:
-		return (*ClassDeclaration)(unsafe.Pointer(n)).Modifiers()
-	case KindClassExpression:
-		return (*ClassExpression)(unsafe.Pointer(n)).Modifiers()
-	case KindInterfaceDeclaration:
-		return (*InterfaceDeclaration)(unsafe.Pointer(n)).Modifiers()
-	case KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
-		return (*TypeAliasDeclaration)(unsafe.Pointer(n)).Modifiers()
-	case KindEnumMember:
-		return (*EnumMember)(unsafe.Pointer(n)).Modifiers()
-	case KindEnumDeclaration:
-		return (*EnumDeclaration)(unsafe.Pointer(n)).Modifiers()
-	case KindImportDeclaration, KindJSImportDeclaration:
-		return (*ImportDeclaration)(unsafe.Pointer(n)).Modifiers()
-	case KindExportAssignment:
-		return (*ExportAssignment)(unsafe.Pointer(n)).Modifiers()
-	case KindNamespaceExportDeclaration:
-		return (*NamespaceExportDeclaration)(unsafe.Pointer(n)).Modifiers()
-	case KindConstructor:
-		return (*ConstructorDeclaration)(unsafe.Pointer(n)).Modifiers()
-	case KindGetAccessor:
-		return (*GetAccessorDeclaration)(unsafe.Pointer(n)).Modifiers()
-	case KindSetAccessor:
-		return (*SetAccessorDeclaration)(unsafe.Pointer(n)).Modifiers()
-	case KindIndexSignature:
-		return (*IndexSignatureDeclaration)(unsafe.Pointer(n)).Modifiers()
-	case KindMethodSignature:
-		return (*MethodSignatureDeclaration)(unsafe.Pointer(n)).Modifiers()
-	case KindMethodDeclaration:
-		return (*MethodDeclaration)(unsafe.Pointer(n)).Modifiers()
-	case KindPropertySignature:
-		return (*PropertySignatureDeclaration)(unsafe.Pointer(n)).Modifiers()
-	case KindPropertyDeclaration:
-		return (*PropertyDeclaration)(unsafe.Pointer(n)).Modifiers()
-	case KindClassStaticBlockDeclaration:
-		return (*ClassStaticBlockDeclaration)(unsafe.Pointer(n)).Modifiers()
-	case KindBinaryExpression:
-		return (*BinaryExpression)(unsafe.Pointer(n)).Modifiers()
-	case KindArrowFunction:
-		return (*ArrowFunction)(unsafe.Pointer(n)).Modifiers()
-	case KindFunctionExpression:
-		return (*FunctionExpression)(unsafe.Pointer(n)).Modifiers()
-	case KindPropertyAssignment:
-		return (*PropertyAssignment)(unsafe.Pointer(n)).Modifiers()
-	case KindShorthandPropertyAssignment:
-		return (*ShorthandPropertyAssignment)(unsafe.Pointer(n)).Modifiers()
-	case KindFunctionType:
-		return (*FunctionTypeNode)(unsafe.Pointer(n)).Modifiers()
-	case KindConstructorType:
-		return (*ConstructorTypeNode)(unsafe.Pointer(n)).Modifiers()
-	case KindModuleDeclaration:
-		return (*ModuleDeclaration)(unsafe.Pointer(n)).Modifiers()
-	case KindImportEqualsDeclaration:
-		return (*ImportEqualsDeclaration)(unsafe.Pointer(n)).Modifiers()
-	case KindExportDeclaration:
-		return (*ExportDeclaration)(unsafe.Pointer(n)).Modifiers()
-	case KindTypeParameter:
-		return (*TypeParameterDeclaration)(unsafe.Pointer(n)).Modifiers()
-	default:
+	kind := uint16(n.Kind)
+	if kind >= uint16(len(nodeModifiersOffsets)) {
 		return nil
 	}
+	offset := nodeModifiersOffsets[kind]
+	if offset == 0 {
+		return nil
+	}
+	return *(**ModifierList)(unsafe.Add(unsafe.Pointer(n), uintptr(offset-1)))
+}
+
+var nodeFlowNodeDataOffsets = [KindCount]uint16{
+	KindIdentifier:                 uint16(unsafe.Offsetof(Identifier{}.FlowNodeBase)) + 1,
+	KindFalseKeyword:               uint16(unsafe.Offsetof(KeywordExpression{}.FlowNodeBase)) + 1,
+	KindImportKeyword:              uint16(unsafe.Offsetof(KeywordExpression{}.FlowNodeBase)) + 1,
+	KindNullKeyword:                uint16(unsafe.Offsetof(KeywordExpression{}.FlowNodeBase)) + 1,
+	KindSuperKeyword:               uint16(unsafe.Offsetof(KeywordExpression{}.FlowNodeBase)) + 1,
+	KindThisKeyword:                uint16(unsafe.Offsetof(KeywordExpression{}.FlowNodeBase)) + 1,
+	KindTrueKeyword:                uint16(unsafe.Offsetof(KeywordExpression{}.FlowNodeBase)) + 1,
+	KindQualifiedName:              uint16(unsafe.Offsetof(QualifiedName{}.FlowNodeBase)) + 1,
+	KindEmptyStatement:             uint16(unsafe.Offsetof(EmptyStatement{}.FlowNodeBase)) + 1,
+	KindIfStatement:                uint16(unsafe.Offsetof(IfStatement{}.FlowNodeBase)) + 1,
+	KindDoStatement:                uint16(unsafe.Offsetof(DoStatement{}.FlowNodeBase)) + 1,
+	KindWhileStatement:             uint16(unsafe.Offsetof(WhileStatement{}.FlowNodeBase)) + 1,
+	KindForStatement:               uint16(unsafe.Offsetof(ForStatement{}.FlowNodeBase)) + 1,
+	KindForInStatement:             uint16(unsafe.Offsetof(ForInOrOfStatement{}.FlowNodeBase)) + 1,
+	KindForOfStatement:             uint16(unsafe.Offsetof(ForInOrOfStatement{}.FlowNodeBase)) + 1,
+	KindBreakStatement:             uint16(unsafe.Offsetof(BreakStatement{}.FlowNodeBase)) + 1,
+	KindContinueStatement:          uint16(unsafe.Offsetof(ContinueStatement{}.FlowNodeBase)) + 1,
+	KindReturnStatement:            uint16(unsafe.Offsetof(ReturnStatement{}.FlowNodeBase)) + 1,
+	KindWithStatement:              uint16(unsafe.Offsetof(WithStatement{}.FlowNodeBase)) + 1,
+	KindSwitchStatement:            uint16(unsafe.Offsetof(SwitchStatement{}.FlowNodeBase)) + 1,
+	KindThrowStatement:             uint16(unsafe.Offsetof(ThrowStatement{}.FlowNodeBase)) + 1,
+	KindTryStatement:               uint16(unsafe.Offsetof(TryStatement{}.FlowNodeBase)) + 1,
+	KindDebuggerStatement:          uint16(unsafe.Offsetof(DebuggerStatement{}.FlowNodeBase)) + 1,
+	KindLabeledStatement:           uint16(unsafe.Offsetof(LabeledStatement{}.FlowNodeBase)) + 1,
+	KindExpressionStatement:        uint16(unsafe.Offsetof(ExpressionStatement{}.FlowNodeBase)) + 1,
+	KindBlock:                      uint16(unsafe.Offsetof(Block{}.FlowNodeBase)) + 1,
+	KindVariableStatement:          uint16(unsafe.Offsetof(VariableStatement{}.FlowNodeBase)) + 1,
+	KindBindingElement:             uint16(unsafe.Offsetof(BindingElement{}.FlowNodeBase)) + 1,
+	KindMissingDeclaration:         uint16(unsafe.Offsetof(MissingDeclaration{}.FlowNodeBase)) + 1,
+	KindFunctionDeclaration:        uint16(unsafe.Offsetof(FunctionDeclaration{}.FlowNodeBase)) + 1,
+	KindClassDeclaration:           uint16(unsafe.Offsetof(ClassDeclaration{}.FlowNodeBase)) + 1,
+	KindInterfaceDeclaration:       uint16(unsafe.Offsetof(InterfaceDeclaration{}.FlowNodeBase)) + 1,
+	KindTypeAliasDeclaration:       uint16(unsafe.Offsetof(TypeAliasDeclaration{}.FlowNodeBase)) + 1,
+	KindJSTypeAliasDeclaration:     uint16(unsafe.Offsetof(TypeAliasDeclaration{}.FlowNodeBase)) + 1,
+	KindEnumDeclaration:            uint16(unsafe.Offsetof(EnumDeclaration{}.FlowNodeBase)) + 1,
+	KindModuleBlock:                uint16(unsafe.Offsetof(ModuleBlock{}.FlowNodeBase)) + 1,
+	KindNotEmittedStatement:        uint16(unsafe.Offsetof(NotEmittedStatement{}.FlowNodeBase)) + 1,
+	KindImportDeclaration:          uint16(unsafe.Offsetof(ImportDeclaration{}.FlowNodeBase)) + 1,
+	KindJSImportDeclaration:        uint16(unsafe.Offsetof(ImportDeclaration{}.FlowNodeBase)) + 1,
+	KindExportAssignment:           uint16(unsafe.Offsetof(ExportAssignment{}.FlowNodeBase)) + 1,
+	KindNamespaceExportDeclaration: uint16(unsafe.Offsetof(NamespaceExportDeclaration{}.FlowNodeBase)) + 1,
+	KindGetAccessor:                uint16(unsafe.Offsetof(GetAccessorDeclaration{}.FlowNodeBase)) + 1,
+	KindSetAccessor:                uint16(unsafe.Offsetof(SetAccessorDeclaration{}.FlowNodeBase)) + 1,
+	KindMethodDeclaration:          uint16(unsafe.Offsetof(MethodDeclaration{}.FlowNodeBase)) + 1,
+	KindArrowFunction:              uint16(unsafe.Offsetof(ArrowFunction{}.FlowNodeBase)) + 1,
+	KindFunctionExpression:         uint16(unsafe.Offsetof(FunctionExpression{}.FlowNodeBase)) + 1,
+	KindPropertyAccessExpression:   uint16(unsafe.Offsetof(PropertyAccessExpression{}.FlowNodeBase)) + 1,
+	KindElementAccessExpression:    uint16(unsafe.Offsetof(ElementAccessExpression{}.FlowNodeBase)) + 1,
+	KindMetaProperty:               uint16(unsafe.Offsetof(MetaProperty{}.FlowNodeBase)) + 1,
+	KindModuleDeclaration:          uint16(unsafe.Offsetof(ModuleDeclaration{}.FlowNodeBase)) + 1,
+	KindImportEqualsDeclaration:    uint16(unsafe.Offsetof(ImportEqualsDeclaration{}.FlowNodeBase)) + 1,
+	KindExportDeclaration:          uint16(unsafe.Offsetof(ExportDeclaration{}.FlowNodeBase)) + 1,
 }
 
 func (n *Node) FlowNodeData() *FlowNodeBase {
-	switch n.Kind {
-	case KindIdentifier:
-		return (*Identifier)(unsafe.Pointer(n)).FlowNodeData()
-	case KindFalseKeyword, KindImportKeyword, KindNullKeyword, KindSuperKeyword, KindThisKeyword, KindTrueKeyword:
-		return (*KeywordExpression)(unsafe.Pointer(n)).FlowNodeData()
-	case KindQualifiedName:
-		return (*QualifiedName)(unsafe.Pointer(n)).FlowNodeData()
-	case KindEmptyStatement:
-		return (*EmptyStatement)(unsafe.Pointer(n)).FlowNodeData()
-	case KindIfStatement:
-		return (*IfStatement)(unsafe.Pointer(n)).FlowNodeData()
-	case KindDoStatement:
-		return (*DoStatement)(unsafe.Pointer(n)).FlowNodeData()
-	case KindWhileStatement:
-		return (*WhileStatement)(unsafe.Pointer(n)).FlowNodeData()
-	case KindForStatement:
-		return (*ForStatement)(unsafe.Pointer(n)).FlowNodeData()
-	case KindForInStatement, KindForOfStatement:
-		return (*ForInOrOfStatement)(unsafe.Pointer(n)).FlowNodeData()
-	case KindBreakStatement:
-		return (*BreakStatement)(unsafe.Pointer(n)).FlowNodeData()
-	case KindContinueStatement:
-		return (*ContinueStatement)(unsafe.Pointer(n)).FlowNodeData()
-	case KindReturnStatement:
-		return (*ReturnStatement)(unsafe.Pointer(n)).FlowNodeData()
-	case KindWithStatement:
-		return (*WithStatement)(unsafe.Pointer(n)).FlowNodeData()
-	case KindSwitchStatement:
-		return (*SwitchStatement)(unsafe.Pointer(n)).FlowNodeData()
-	case KindThrowStatement:
-		return (*ThrowStatement)(unsafe.Pointer(n)).FlowNodeData()
-	case KindTryStatement:
-		return (*TryStatement)(unsafe.Pointer(n)).FlowNodeData()
-	case KindDebuggerStatement:
-		return (*DebuggerStatement)(unsafe.Pointer(n)).FlowNodeData()
-	case KindLabeledStatement:
-		return (*LabeledStatement)(unsafe.Pointer(n)).FlowNodeData()
-	case KindExpressionStatement:
-		return (*ExpressionStatement)(unsafe.Pointer(n)).FlowNodeData()
-	case KindBlock:
-		return (*Block)(unsafe.Pointer(n)).FlowNodeData()
-	case KindVariableStatement:
-		return (*VariableStatement)(unsafe.Pointer(n)).FlowNodeData()
-	case KindBindingElement:
-		return (*BindingElement)(unsafe.Pointer(n)).FlowNodeData()
-	case KindMissingDeclaration:
-		return (*MissingDeclaration)(unsafe.Pointer(n)).FlowNodeData()
-	case KindFunctionDeclaration:
-		return (*FunctionDeclaration)(unsafe.Pointer(n)).FlowNodeData()
-	case KindClassDeclaration:
-		return (*ClassDeclaration)(unsafe.Pointer(n)).FlowNodeData()
-	case KindInterfaceDeclaration:
-		return (*InterfaceDeclaration)(unsafe.Pointer(n)).FlowNodeData()
-	case KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
-		return (*TypeAliasDeclaration)(unsafe.Pointer(n)).FlowNodeData()
-	case KindEnumDeclaration:
-		return (*EnumDeclaration)(unsafe.Pointer(n)).FlowNodeData()
-	case KindModuleBlock:
-		return (*ModuleBlock)(unsafe.Pointer(n)).FlowNodeData()
-	case KindNotEmittedStatement:
-		return (*NotEmittedStatement)(unsafe.Pointer(n)).FlowNodeData()
-	case KindImportDeclaration, KindJSImportDeclaration:
-		return (*ImportDeclaration)(unsafe.Pointer(n)).FlowNodeData()
-	case KindExportAssignment:
-		return (*ExportAssignment)(unsafe.Pointer(n)).FlowNodeData()
-	case KindNamespaceExportDeclaration:
-		return (*NamespaceExportDeclaration)(unsafe.Pointer(n)).FlowNodeData()
-	case KindGetAccessor:
-		return (*GetAccessorDeclaration)(unsafe.Pointer(n)).FlowNodeData()
-	case KindSetAccessor:
-		return (*SetAccessorDeclaration)(unsafe.Pointer(n)).FlowNodeData()
-	case KindMethodDeclaration:
-		return (*MethodDeclaration)(unsafe.Pointer(n)).FlowNodeData()
-	case KindArrowFunction:
-		return (*ArrowFunction)(unsafe.Pointer(n)).FlowNodeData()
-	case KindFunctionExpression:
-		return (*FunctionExpression)(unsafe.Pointer(n)).FlowNodeData()
-	case KindPropertyAccessExpression:
-		return (*PropertyAccessExpression)(unsafe.Pointer(n)).FlowNodeData()
-	case KindElementAccessExpression:
-		return (*ElementAccessExpression)(unsafe.Pointer(n)).FlowNodeData()
-	case KindMetaProperty:
-		return (*MetaProperty)(unsafe.Pointer(n)).FlowNodeData()
-	case KindModuleDeclaration:
-		return (*ModuleDeclaration)(unsafe.Pointer(n)).FlowNodeData()
-	case KindImportEqualsDeclaration:
-		return (*ImportEqualsDeclaration)(unsafe.Pointer(n)).FlowNodeData()
-	case KindExportDeclaration:
-		return (*ExportDeclaration)(unsafe.Pointer(n)).FlowNodeData()
-	default:
+	kind := uint16(n.Kind)
+	if kind >= uint16(len(nodeFlowNodeDataOffsets)) {
 		return nil
 	}
+	offset := nodeFlowNodeDataOffsets[kind]
+	if offset == 0 {
+		return nil
+	}
+	return (*FlowNodeBase)(unsafe.Add(unsafe.Pointer(n), uintptr(offset-1)))
+}
+
+var nodeDeclarationDataOffsets = [KindCount]uint16{
+	KindNoSubstitutionTemplateLiteral: uint16(unsafe.Offsetof(NoSubstitutionTemplateLiteral{}.DeclarationBase)) + 1,
+	KindVariableDeclaration:           uint16(unsafe.Offsetof(VariableDeclaration{}.DeclarationBase)) + 1,
+	KindParameter:                     uint16(unsafe.Offsetof(ParameterDeclaration{}.DeclarationBase)) + 1,
+	KindBindingElement:                uint16(unsafe.Offsetof(BindingElement{}.DeclarationBase)) + 1,
+	KindMissingDeclaration:            uint16(unsafe.Offsetof(MissingDeclaration{}.DeclarationBase)) + 1,
+	KindFunctionDeclaration:           uint16(unsafe.Offsetof(FunctionDeclaration{}.DeclarationBase)) + 1,
+	KindClassDeclaration:              uint16(unsafe.Offsetof(ClassDeclaration{}.DeclarationBase)) + 1,
+	KindClassExpression:               uint16(unsafe.Offsetof(ClassExpression{}.DeclarationBase)) + 1,
+	KindInterfaceDeclaration:          uint16(unsafe.Offsetof(InterfaceDeclaration{}.DeclarationBase)) + 1,
+	KindTypeAliasDeclaration:          uint16(unsafe.Offsetof(TypeAliasDeclaration{}.DeclarationBase)) + 1,
+	KindJSTypeAliasDeclaration:        uint16(unsafe.Offsetof(TypeAliasDeclaration{}.DeclarationBase)) + 1,
+	KindEnumMember:                    uint16(unsafe.Offsetof(EnumMember{}.DeclarationBase)) + 1,
+	KindEnumDeclaration:               uint16(unsafe.Offsetof(EnumDeclaration{}.DeclarationBase)) + 1,
+	KindImportDeclaration:             uint16(unsafe.Offsetof(ImportDeclaration{}.DeclarationBase)) + 1,
+	KindJSImportDeclaration:           uint16(unsafe.Offsetof(ImportDeclaration{}.DeclarationBase)) + 1,
+	KindNamespaceImport:               uint16(unsafe.Offsetof(NamespaceImport{}.DeclarationBase)) + 1,
+	KindExportAssignment:              uint16(unsafe.Offsetof(ExportAssignment{}.DeclarationBase)) + 1,
+	KindNamespaceExportDeclaration:    uint16(unsafe.Offsetof(NamespaceExportDeclaration{}.DeclarationBase)) + 1,
+	KindNamespaceExport:               uint16(unsafe.Offsetof(NamespaceExport{}.DeclarationBase)) + 1,
+	KindExportSpecifier:               uint16(unsafe.Offsetof(ExportSpecifier{}.DeclarationBase)) + 1,
+	KindCallSignature:                 uint16(unsafe.Offsetof(CallSignatureDeclaration{}.DeclarationBase)) + 1,
+	KindConstructSignature:            uint16(unsafe.Offsetof(ConstructSignatureDeclaration{}.DeclarationBase)) + 1,
+	KindConstructor:                   uint16(unsafe.Offsetof(ConstructorDeclaration{}.DeclarationBase)) + 1,
+	KindGetAccessor:                   uint16(unsafe.Offsetof(GetAccessorDeclaration{}.DeclarationBase)) + 1,
+	KindSetAccessor:                   uint16(unsafe.Offsetof(SetAccessorDeclaration{}.DeclarationBase)) + 1,
+	KindIndexSignature:                uint16(unsafe.Offsetof(IndexSignatureDeclaration{}.DeclarationBase)) + 1,
+	KindMethodSignature:               uint16(unsafe.Offsetof(MethodSignatureDeclaration{}.DeclarationBase)) + 1,
+	KindMethodDeclaration:             uint16(unsafe.Offsetof(MethodDeclaration{}.DeclarationBase)) + 1,
+	KindPropertySignature:             uint16(unsafe.Offsetof(PropertySignatureDeclaration{}.DeclarationBase)) + 1,
+	KindPropertyDeclaration:           uint16(unsafe.Offsetof(PropertyDeclaration{}.DeclarationBase)) + 1,
+	KindSemicolonClassElement:         uint16(unsafe.Offsetof(SemicolonClassElement{}.DeclarationBase)) + 1,
+	KindClassStaticBlockDeclaration:   uint16(unsafe.Offsetof(ClassStaticBlockDeclaration{}.DeclarationBase)) + 1,
+	KindBinaryExpression:              uint16(unsafe.Offsetof(BinaryExpression{}.DeclarationBase)) + 1,
+	KindArrowFunction:                 uint16(unsafe.Offsetof(ArrowFunction{}.DeclarationBase)) + 1,
+	KindFunctionExpression:            uint16(unsafe.Offsetof(FunctionExpression{}.DeclarationBase)) + 1,
+	KindCallExpression:                uint16(unsafe.Offsetof(CallExpression{}.DeclarationBase)) + 1,
+	KindObjectLiteralExpression:       uint16(unsafe.Offsetof(ObjectLiteralExpression{}.DeclarationBase)) + 1,
+	KindSpreadAssignment:              uint16(unsafe.Offsetof(SpreadAssignment{}.DeclarationBase)) + 1,
+	KindPropertyAssignment:            uint16(unsafe.Offsetof(PropertyAssignment{}.DeclarationBase)) + 1,
+	KindShorthandPropertyAssignment:   uint16(unsafe.Offsetof(ShorthandPropertyAssignment{}.DeclarationBase)) + 1,
+	KindMappedType:                    uint16(unsafe.Offsetof(MappedTypeNode{}.DeclarationBase)) + 1,
+	KindTypeLiteral:                   uint16(unsafe.Offsetof(TypeLiteralNode{}.DeclarationBase)) + 1,
+	KindNamedTupleMember:              uint16(unsafe.Offsetof(NamedTupleMember{}.DeclarationBase)) + 1,
+	KindFunctionType:                  uint16(unsafe.Offsetof(FunctionTypeNode{}.DeclarationBase)) + 1,
+	KindConstructorType:               uint16(unsafe.Offsetof(ConstructorTypeNode{}.DeclarationBase)) + 1,
+	KindJsxAttributes:                 uint16(unsafe.Offsetof(JsxAttributes{}.DeclarationBase)) + 1,
+	KindJsxAttribute:                  uint16(unsafe.Offsetof(JsxAttribute{}.DeclarationBase)) + 1,
+	KindJSDocSignature:                uint16(unsafe.Offsetof(JSDocSignature{}.DeclarationBase)) + 1,
+	KindSourceFile:                    uint16(unsafe.Offsetof(SourceFile{}.DeclarationBase)) + 1,
+	KindModuleDeclaration:             uint16(unsafe.Offsetof(ModuleDeclaration{}.DeclarationBase)) + 1,
+	KindImportEqualsDeclaration:       uint16(unsafe.Offsetof(ImportEqualsDeclaration{}.DeclarationBase)) + 1,
+	KindExportDeclaration:             uint16(unsafe.Offsetof(ExportDeclaration{}.DeclarationBase)) + 1,
+	KindImportClause:                  uint16(unsafe.Offsetof(ImportClause{}.DeclarationBase)) + 1,
+	KindImportSpecifier:               uint16(unsafe.Offsetof(ImportSpecifier{}.DeclarationBase)) + 1,
+	KindTypeParameter:                 uint16(unsafe.Offsetof(TypeParameterDeclaration{}.DeclarationBase)) + 1,
+	KindJSDocTypeLiteral:              uint16(unsafe.Offsetof(JSDocTypeLiteral{}.DeclarationBase)) + 1,
 }
 
 func (n *Node) DeclarationData() *DeclarationBase {
-	switch n.Kind {
-	case KindNoSubstitutionTemplateLiteral:
-		return (*NoSubstitutionTemplateLiteral)(unsafe.Pointer(n)).DeclarationData()
-	case KindVariableDeclaration:
-		return (*VariableDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindParameter:
-		return (*ParameterDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindBindingElement:
-		return (*BindingElement)(unsafe.Pointer(n)).DeclarationData()
-	case KindMissingDeclaration:
-		return (*MissingDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindFunctionDeclaration:
-		return (*FunctionDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindClassDeclaration:
-		return (*ClassDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindClassExpression:
-		return (*ClassExpression)(unsafe.Pointer(n)).DeclarationData()
-	case KindInterfaceDeclaration:
-		return (*InterfaceDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
-		return (*TypeAliasDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindEnumMember:
-		return (*EnumMember)(unsafe.Pointer(n)).DeclarationData()
-	case KindEnumDeclaration:
-		return (*EnumDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindImportDeclaration, KindJSImportDeclaration:
-		return (*ImportDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindNamespaceImport:
-		return (*NamespaceImport)(unsafe.Pointer(n)).DeclarationData()
-	case KindExportAssignment:
-		return (*ExportAssignment)(unsafe.Pointer(n)).DeclarationData()
-	case KindNamespaceExportDeclaration:
-		return (*NamespaceExportDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindNamespaceExport:
-		return (*NamespaceExport)(unsafe.Pointer(n)).DeclarationData()
-	case KindExportSpecifier:
-		return (*ExportSpecifier)(unsafe.Pointer(n)).DeclarationData()
-	case KindCallSignature:
-		return (*CallSignatureDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindConstructSignature:
-		return (*ConstructSignatureDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindConstructor:
-		return (*ConstructorDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindGetAccessor:
-		return (*GetAccessorDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindSetAccessor:
-		return (*SetAccessorDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindIndexSignature:
-		return (*IndexSignatureDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindMethodSignature:
-		return (*MethodSignatureDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindMethodDeclaration:
-		return (*MethodDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindPropertySignature:
-		return (*PropertySignatureDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindPropertyDeclaration:
-		return (*PropertyDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindSemicolonClassElement:
-		return (*SemicolonClassElement)(unsafe.Pointer(n)).DeclarationData()
-	case KindClassStaticBlockDeclaration:
-		return (*ClassStaticBlockDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindBinaryExpression:
-		return (*BinaryExpression)(unsafe.Pointer(n)).DeclarationData()
-	case KindArrowFunction:
-		return (*ArrowFunction)(unsafe.Pointer(n)).DeclarationData()
-	case KindFunctionExpression:
-		return (*FunctionExpression)(unsafe.Pointer(n)).DeclarationData()
-	case KindCallExpression:
-		return (*CallExpression)(unsafe.Pointer(n)).DeclarationData()
-	case KindObjectLiteralExpression:
-		return (*ObjectLiteralExpression)(unsafe.Pointer(n)).DeclarationData()
-	case KindSpreadAssignment:
-		return (*SpreadAssignment)(unsafe.Pointer(n)).DeclarationData()
-	case KindPropertyAssignment:
-		return (*PropertyAssignment)(unsafe.Pointer(n)).DeclarationData()
-	case KindShorthandPropertyAssignment:
-		return (*ShorthandPropertyAssignment)(unsafe.Pointer(n)).DeclarationData()
-	case KindMappedType:
-		return (*MappedTypeNode)(unsafe.Pointer(n)).DeclarationData()
-	case KindTypeLiteral:
-		return (*TypeLiteralNode)(unsafe.Pointer(n)).DeclarationData()
-	case KindNamedTupleMember:
-		return (*NamedTupleMember)(unsafe.Pointer(n)).DeclarationData()
-	case KindFunctionType:
-		return (*FunctionTypeNode)(unsafe.Pointer(n)).DeclarationData()
-	case KindConstructorType:
-		return (*ConstructorTypeNode)(unsafe.Pointer(n)).DeclarationData()
-	case KindJsxAttributes:
-		return (*JsxAttributes)(unsafe.Pointer(n)).DeclarationData()
-	case KindJsxAttribute:
-		return (*JsxAttribute)(unsafe.Pointer(n)).DeclarationData()
-	case KindJSDocSignature:
-		return (*JSDocSignature)(unsafe.Pointer(n)).DeclarationData()
-	case KindSourceFile:
-		return (*SourceFile)(unsafe.Pointer(n)).DeclarationData()
-	case KindModuleDeclaration:
-		return (*ModuleDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindImportEqualsDeclaration:
-		return (*ImportEqualsDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindExportDeclaration:
-		return (*ExportDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindImportClause:
-		return (*ImportClause)(unsafe.Pointer(n)).DeclarationData()
-	case KindImportSpecifier:
-		return (*ImportSpecifier)(unsafe.Pointer(n)).DeclarationData()
-	case KindTypeParameter:
-		return (*TypeParameterDeclaration)(unsafe.Pointer(n)).DeclarationData()
-	case KindJSDocTypeLiteral:
-		return (*JSDocTypeLiteral)(unsafe.Pointer(n)).DeclarationData()
-	default:
+	kind := uint16(n.Kind)
+	if kind >= uint16(len(nodeDeclarationDataOffsets)) {
 		return nil
 	}
+	offset := nodeDeclarationDataOffsets[kind]
+	if offset == 0 {
+		return nil
+	}
+	return (*DeclarationBase)(unsafe.Add(unsafe.Pointer(n), uintptr(offset-1)))
+}
+
+var nodeLocalsContainerDataOffsets = [KindCount]uint16{
+	KindForStatement:                uint16(unsafe.Offsetof(ForStatement{}.LocalsContainerBase)) + 1,
+	KindForInStatement:              uint16(unsafe.Offsetof(ForInOrOfStatement{}.LocalsContainerBase)) + 1,
+	KindForOfStatement:              uint16(unsafe.Offsetof(ForInOrOfStatement{}.LocalsContainerBase)) + 1,
+	KindCaseBlock:                   uint16(unsafe.Offsetof(CaseBlock{}.LocalsContainerBase)) + 1,
+	KindCatchClause:                 uint16(unsafe.Offsetof(CatchClause{}.LocalsContainerBase)) + 1,
+	KindBlock:                       uint16(unsafe.Offsetof(Block{}.LocalsContainerBase)) + 1,
+	KindFunctionDeclaration:         uint16(unsafe.Offsetof(FunctionDeclaration{}.LocalsContainerBase)) + 1,
+	KindClassDeclaration:            uint16(unsafe.Offsetof(ClassDeclaration{}.LocalsContainerBase)) + 1,
+	KindClassExpression:             uint16(unsafe.Offsetof(ClassExpression{}.LocalsContainerBase)) + 1,
+	KindTypeAliasDeclaration:        uint16(unsafe.Offsetof(TypeAliasDeclaration{}.LocalsContainerBase)) + 1,
+	KindJSTypeAliasDeclaration:      uint16(unsafe.Offsetof(TypeAliasDeclaration{}.LocalsContainerBase)) + 1,
+	KindCallSignature:               uint16(unsafe.Offsetof(CallSignatureDeclaration{}.LocalsContainerBase)) + 1,
+	KindConstructSignature:          uint16(unsafe.Offsetof(ConstructSignatureDeclaration{}.LocalsContainerBase)) + 1,
+	KindConstructor:                 uint16(unsafe.Offsetof(ConstructorDeclaration{}.LocalsContainerBase)) + 1,
+	KindGetAccessor:                 uint16(unsafe.Offsetof(GetAccessorDeclaration{}.LocalsContainerBase)) + 1,
+	KindSetAccessor:                 uint16(unsafe.Offsetof(SetAccessorDeclaration{}.LocalsContainerBase)) + 1,
+	KindIndexSignature:              uint16(unsafe.Offsetof(IndexSignatureDeclaration{}.LocalsContainerBase)) + 1,
+	KindMethodSignature:             uint16(unsafe.Offsetof(MethodSignatureDeclaration{}.LocalsContainerBase)) + 1,
+	KindMethodDeclaration:           uint16(unsafe.Offsetof(MethodDeclaration{}.LocalsContainerBase)) + 1,
+	KindClassStaticBlockDeclaration: uint16(unsafe.Offsetof(ClassStaticBlockDeclaration{}.LocalsContainerBase)) + 1,
+	KindArrowFunction:               uint16(unsafe.Offsetof(ArrowFunction{}.LocalsContainerBase)) + 1,
+	KindFunctionExpression:          uint16(unsafe.Offsetof(FunctionExpression{}.LocalsContainerBase)) + 1,
+	KindConditionalType:             uint16(unsafe.Offsetof(ConditionalTypeNode{}.LocalsContainerBase)) + 1,
+	KindMappedType:                  uint16(unsafe.Offsetof(MappedTypeNode{}.LocalsContainerBase)) + 1,
+	KindFunctionType:                uint16(unsafe.Offsetof(FunctionTypeNode{}.LocalsContainerBase)) + 1,
+	KindConstructorType:             uint16(unsafe.Offsetof(ConstructorTypeNode{}.LocalsContainerBase)) + 1,
+	KindJSDocSignature:              uint16(unsafe.Offsetof(JSDocSignature{}.LocalsContainerBase)) + 1,
+	KindSourceFile:                  uint16(unsafe.Offsetof(SourceFile{}.LocalsContainerBase)) + 1,
+	KindModuleDeclaration:           uint16(unsafe.Offsetof(ModuleDeclaration{}.LocalsContainerBase)) + 1,
 }
 
 func (n *Node) LocalsContainerData() *LocalsContainerBase {
-	switch n.Kind {
-	case KindForStatement:
-		return (*ForStatement)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindForInStatement, KindForOfStatement:
-		return (*ForInOrOfStatement)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindCaseBlock:
-		return (*CaseBlock)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindCatchClause:
-		return (*CatchClause)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindBlock:
-		return (*Block)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindFunctionDeclaration:
-		return (*FunctionDeclaration)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindClassDeclaration:
-		return (*ClassDeclaration)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindClassExpression:
-		return (*ClassExpression)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
-		return (*TypeAliasDeclaration)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindCallSignature:
-		return (*CallSignatureDeclaration)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindConstructSignature:
-		return (*ConstructSignatureDeclaration)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindConstructor:
-		return (*ConstructorDeclaration)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindGetAccessor:
-		return (*GetAccessorDeclaration)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindSetAccessor:
-		return (*SetAccessorDeclaration)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindIndexSignature:
-		return (*IndexSignatureDeclaration)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindMethodSignature:
-		return (*MethodSignatureDeclaration)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindMethodDeclaration:
-		return (*MethodDeclaration)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindClassStaticBlockDeclaration:
-		return (*ClassStaticBlockDeclaration)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindArrowFunction:
-		return (*ArrowFunction)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindFunctionExpression:
-		return (*FunctionExpression)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindConditionalType:
-		return (*ConditionalTypeNode)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindMappedType:
-		return (*MappedTypeNode)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindFunctionType:
-		return (*FunctionTypeNode)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindConstructorType:
-		return (*ConstructorTypeNode)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindJSDocSignature:
-		return (*JSDocSignature)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindSourceFile:
-		return (*SourceFile)(unsafe.Pointer(n)).LocalsContainerData()
-	case KindModuleDeclaration:
-		return (*ModuleDeclaration)(unsafe.Pointer(n)).LocalsContainerData()
-	default:
+	kind := uint16(n.Kind)
+	if kind >= uint16(len(nodeLocalsContainerDataOffsets)) {
 		return nil
 	}
+	offset := nodeLocalsContainerDataOffsets[kind]
+	if offset == 0 {
+		return nil
+	}
+	return (*LocalsContainerBase)(unsafe.Add(unsafe.Pointer(n), uintptr(offset-1)))
+}
+
+var nodeFunctionLikeDataOffsets = [KindCount]uint16{
+	KindFunctionDeclaration: uint16(unsafe.Offsetof(FunctionDeclaration{}.FunctionLikeBase)) + 1,
+	KindCallSignature:       uint16(unsafe.Offsetof(CallSignatureDeclaration{}.FunctionLikeBase)) + 1,
+	KindConstructSignature:  uint16(unsafe.Offsetof(ConstructSignatureDeclaration{}.FunctionLikeBase)) + 1,
+	KindConstructor:         uint16(unsafe.Offsetof(ConstructorDeclaration{}.FunctionLikeBase)) + 1,
+	KindGetAccessor:         uint16(unsafe.Offsetof(GetAccessorDeclaration{}.FunctionLikeBase)) + 1,
+	KindSetAccessor:         uint16(unsafe.Offsetof(SetAccessorDeclaration{}.FunctionLikeBase)) + 1,
+	KindIndexSignature:      uint16(unsafe.Offsetof(IndexSignatureDeclaration{}.FunctionLikeBase)) + 1,
+	KindMethodSignature:     uint16(unsafe.Offsetof(MethodSignatureDeclaration{}.FunctionLikeBase)) + 1,
+	KindMethodDeclaration:   uint16(unsafe.Offsetof(MethodDeclaration{}.FunctionLikeBase)) + 1,
+	KindArrowFunction:       uint16(unsafe.Offsetof(ArrowFunction{}.FunctionLikeBase)) + 1,
+	KindFunctionExpression:  uint16(unsafe.Offsetof(FunctionExpression{}.FunctionLikeBase)) + 1,
+	KindFunctionType:        uint16(unsafe.Offsetof(FunctionTypeNode{}.FunctionLikeBase)) + 1,
+	KindConstructorType:     uint16(unsafe.Offsetof(ConstructorTypeNode{}.FunctionLikeBase)) + 1,
+	KindJSDocSignature:      uint16(unsafe.Offsetof(JSDocSignature{}.FunctionLikeBase)) + 1,
 }
 
 func (n *Node) FunctionLikeData() *FunctionLikeBase {
-	switch n.Kind {
-	case KindFunctionDeclaration:
-		return (*FunctionDeclaration)(unsafe.Pointer(n)).FunctionLikeData()
-	case KindCallSignature:
-		return (*CallSignatureDeclaration)(unsafe.Pointer(n)).FunctionLikeData()
-	case KindConstructSignature:
-		return (*ConstructSignatureDeclaration)(unsafe.Pointer(n)).FunctionLikeData()
-	case KindConstructor:
-		return (*ConstructorDeclaration)(unsafe.Pointer(n)).FunctionLikeData()
-	case KindGetAccessor:
-		return (*GetAccessorDeclaration)(unsafe.Pointer(n)).FunctionLikeData()
-	case KindSetAccessor:
-		return (*SetAccessorDeclaration)(unsafe.Pointer(n)).FunctionLikeData()
-	case KindIndexSignature:
-		return (*IndexSignatureDeclaration)(unsafe.Pointer(n)).FunctionLikeData()
-	case KindMethodSignature:
-		return (*MethodSignatureDeclaration)(unsafe.Pointer(n)).FunctionLikeData()
-	case KindMethodDeclaration:
-		return (*MethodDeclaration)(unsafe.Pointer(n)).FunctionLikeData()
-	case KindArrowFunction:
-		return (*ArrowFunction)(unsafe.Pointer(n)).FunctionLikeData()
-	case KindFunctionExpression:
-		return (*FunctionExpression)(unsafe.Pointer(n)).FunctionLikeData()
-	case KindFunctionType:
-		return (*FunctionTypeNode)(unsafe.Pointer(n)).FunctionLikeData()
-	case KindConstructorType:
-		return (*ConstructorTypeNode)(unsafe.Pointer(n)).FunctionLikeData()
-	case KindJSDocSignature:
-		return (*JSDocSignature)(unsafe.Pointer(n)).FunctionLikeData()
-	default:
+	kind := uint16(n.Kind)
+	if kind >= uint16(len(nodeFunctionLikeDataOffsets)) {
 		return nil
 	}
+	offset := nodeFunctionLikeDataOffsets[kind]
+	if offset == 0 {
+		return nil
+	}
+	return (*FunctionLikeBase)(unsafe.Add(unsafe.Pointer(n), uintptr(offset-1)))
+}
+
+var nodePropagateSubtreeFactsExclusions = [KindCount]SubtreeFacts{
+	KindCatchClause:              SubtreeExclusionsCatchClause,
+	KindVariableDeclarationList:  SubtreeExclusionsVariableDeclarationList,
+	KindObjectBindingPattern:     SubtreeExclusionsBindingPattern,
+	KindArrayBindingPattern:      SubtreeExclusionsBindingPattern,
+	KindParameter:                SubtreeExclusionsParameter,
+	KindFunctionDeclaration:      SubtreeExclusionsFunction,
+	KindClassDeclaration:         SubtreeExclusionsClass,
+	KindClassExpression:          SubtreeExclusionsClass,
+	KindModuleDeclaration:        SubtreeExclusionsModule,
+	KindConstructor:              SubtreeExclusionsConstructor,
+	KindArrowFunction:            SubtreeExclusionsArrowFunction,
+	KindFunctionExpression:       SubtreeExclusionsFunction,
+	KindAsExpression:             SubtreeExclusionsOuterExpression,
+	KindSatisfiesExpression:      SubtreeExclusionsOuterExpression,
+	KindPropertyAccessExpression: SubtreeExclusionsPropertyAccess,
+	KindElementAccessExpression:  SubtreeExclusionsElementAccess,
+	KindCallExpression:           SubtreeExclusionsCall,
+	KindNewExpression:            SubtreeExclusionsNew,
+	KindArrayLiteralExpression:   SubtreeExclusionsArrayLiteral,
+	KindObjectLiteralExpression:  SubtreeExclusionsObjectLiteral,
+	KindTypeAssertionExpression:  SubtreeExclusionsOuterExpression,
 }
 
 func (n *Node) propagateSubtreeFacts() SubtreeFacts {
+	facts := n.SubtreeFacts()
 	switch n.Kind {
-	case KindUnknown, KindEndOfFile, KindSingleLineCommentTrivia, KindMultiLineCommentTrivia, KindNewLineTrivia, KindWhitespaceTrivia, KindConflictMarkerTrivia, KindNonTextFileMarkerTrivia, KindJsxTextAllWhiteSpaces, KindOpenBraceToken, KindCloseBraceToken, KindOpenParenToken, KindCloseParenToken, KindOpenBracketToken, KindCloseBracketToken, KindDotToken, KindDotDotDotToken, KindSemicolonToken, KindCommaToken, KindQuestionDotToken, KindLessThanToken, KindLessThanSlashToken, KindGreaterThanToken, KindLessThanEqualsToken, KindGreaterThanEqualsToken, KindEqualsEqualsToken, KindExclamationEqualsToken, KindEqualsEqualsEqualsToken, KindExclamationEqualsEqualsToken, KindEqualsGreaterThanToken, KindPlusToken, KindMinusToken, KindAsteriskToken, KindAsteriskAsteriskToken, KindSlashToken, KindPercentToken, KindPlusPlusToken, KindMinusMinusToken, KindLessThanLessThanToken, KindGreaterThanGreaterThanToken, KindGreaterThanGreaterThanGreaterThanToken, KindAmpersandToken, KindBarToken, KindCaretToken, KindExclamationToken, KindTildeToken, KindAmpersandAmpersandToken, KindBarBarToken, KindQuestionToken, KindColonToken, KindAtToken, KindQuestionQuestionToken, KindBacktickToken, KindHashToken, KindEqualsToken, KindPlusEqualsToken, KindMinusEqualsToken, KindAsteriskEqualsToken, KindAsteriskAsteriskEqualsToken, KindSlashEqualsToken, KindPercentEqualsToken, KindLessThanLessThanEqualsToken, KindGreaterThanGreaterThanEqualsToken, KindGreaterThanGreaterThanGreaterThanEqualsToken, KindAmpersandEqualsToken, KindBarEqualsToken, KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken, KindQuestionQuestionEqualsToken, KindCaretEqualsToken, KindJSDocCommentTextToken, KindBreakKeyword, KindCaseKeyword, KindCatchKeyword, KindClassKeyword, KindConstKeyword, KindContinueKeyword, KindDebuggerKeyword, KindDefaultKeyword, KindDeleteKeyword, KindDoKeyword, KindElseKeyword, KindEnumKeyword, KindExportKeyword, KindExtendsKeyword, KindFinallyKeyword, KindForKeyword, KindFunctionKeyword, KindIfKeyword, KindInKeyword, KindInstanceOfKeyword, KindNewKeyword, KindReturnKeyword, KindSwitchKeyword, KindThrowKeyword, KindTryKeyword, KindTypeOfKeyword, KindVarKeyword, KindWhileKeyword, KindWithKeyword, KindImplementsKeyword, KindInterfaceKeyword, KindLetKeyword, KindPackageKeyword, KindPrivateKeyword, KindProtectedKeyword, KindPublicKeyword, KindStaticKeyword, KindYieldKeyword, KindAbstractKeyword, KindAccessorKeyword, KindAsKeyword, KindAssertsKeyword, KindAssertKeyword, KindAsyncKeyword, KindAwaitKeyword, KindConstructorKeyword, KindDeclareKeyword, KindGetKeyword, KindImmediateKeyword, KindInferKeyword, KindIsKeyword, KindKeyOfKeyword, KindModuleKeyword, KindNamespaceKeyword, KindOutKeyword, KindReadonlyKeyword, KindRequireKeyword, KindSatisfiesKeyword, KindSetKeyword, KindTypeKeyword, KindUniqueKeyword, KindUsingKeyword, KindFromKeyword, KindGlobalKeyword, KindOverrideKeyword, KindOfKeyword, KindDeferKeyword:
-		return (*Token)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindNumericLiteral:
-		return (*NumericLiteral)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindBigIntLiteral:
-		return (*BigIntLiteral)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindStringLiteral:
-		return (*StringLiteral)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJsxText:
-		return (*JsxText)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindRegularExpressionLiteral:
-		return (*RegularExpressionLiteral)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindNoSubstitutionTemplateLiteral:
-		return (*NoSubstitutionTemplateLiteral)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindTemplateHead:
-		return (*TemplateHead)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindTemplateMiddle:
-		return (*TemplateMiddle)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindTemplateTail:
-		return (*TemplateTail)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindIdentifier:
-		return (*Identifier)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindPrivateIdentifier:
-		return (*PrivateIdentifier)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindFalseKeyword, KindImportKeyword, KindNullKeyword, KindSuperKeyword, KindThisKeyword, KindTrueKeyword:
-		return (*KeywordExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindVoidKeyword, KindAnyKeyword, KindBooleanKeyword, KindIntrinsicKeyword, KindNeverKeyword, KindNumberKeyword, KindObjectKeyword, KindStringKeyword, KindSymbolKeyword, KindUndefinedKeyword, KindUnknownKeyword, KindBigIntKeyword:
-		return (*KeywordTypeNode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindQualifiedName:
-		return (*QualifiedName)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindComputedPropertyName:
-		return (*ComputedPropertyName)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindDecorator:
-		return (*Decorator)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindEmptyStatement:
-		return (*EmptyStatement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindIfStatement:
-		return (*IfStatement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindDoStatement:
-		return (*DoStatement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindWhileStatement:
-		return (*WhileStatement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindForStatement:
-		return (*ForStatement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindForInStatement, KindForOfStatement:
-		return (*ForInOrOfStatement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindBreakStatement:
-		return (*BreakStatement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindContinueStatement:
-		return (*ContinueStatement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindReturnStatement:
-		return (*ReturnStatement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindWithStatement:
-		return (*WithStatement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindSwitchStatement:
-		return (*SwitchStatement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindCaseBlock:
-		return (*CaseBlock)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindCaseClause, KindDefaultClause:
-		return (*CaseOrDefaultClause)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindThrowStatement:
-		return (*ThrowStatement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindTryStatement:
-		return (*TryStatement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindCatchClause:
-		return (*CatchClause)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindDebuggerStatement:
-		return (*DebuggerStatement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindLabeledStatement:
-		return (*LabeledStatement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindExpressionStatement:
-		return (*ExpressionStatement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindBlock:
-		return (*Block)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindVariableStatement:
-		return (*VariableStatement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindVariableDeclaration:
-		return (*VariableDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindVariableDeclarationList:
-		return (*VariableDeclarationList)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindObjectBindingPattern, KindArrayBindingPattern:
-		return (*BindingPattern)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindParameter:
-		return (*ParameterDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindBindingElement:
-		return (*BindingElement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindMissingDeclaration:
-		return (*MissingDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindFunctionDeclaration:
-		return (*FunctionDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindClassDeclaration:
-		return (*ClassDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindClassExpression:
-		return (*ClassExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindHeritageClause:
-		return (*HeritageClause)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindInterfaceDeclaration:
-		return (*InterfaceDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
-		return (*TypeAliasDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindEnumMember:
-		return (*EnumMember)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindEnumDeclaration:
-		return (*EnumDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindModuleBlock:
-		return (*ModuleBlock)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindNotEmittedStatement:
-		return (*NotEmittedStatement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindNotEmittedTypeElement:
-		return (*NotEmittedTypeElement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindImportDeclaration, KindJSImportDeclaration:
-		return (*ImportDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindExternalModuleReference:
-		return (*ExternalModuleReference)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindNamespaceImport:
-		return (*NamespaceImport)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindNamedImports:
-		return (*NamedImports)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindExportAssignment:
-		return (*ExportAssignment)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindNamespaceExportDeclaration:
-		return (*NamespaceExportDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindNamespaceExport:
-		return (*NamespaceExport)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindNamedExports:
-		return (*NamedExports)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindExportSpecifier:
-		return (*ExportSpecifier)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindCallSignature:
-		return (*CallSignatureDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindConstructSignature:
-		return (*ConstructSignatureDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindConstructor:
-		return (*ConstructorDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindGetAccessor:
-		return (*GetAccessorDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindSetAccessor:
-		return (*SetAccessorDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindIndexSignature:
-		return (*IndexSignatureDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindMethodSignature:
-		return (*MethodSignatureDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
+	case KindGetAccessor, KindSetAccessor:
+		return facts & ^SubtreeExclusionsAccessor | propagateSubtreeFacts(n.Name())
 	case KindMethodDeclaration:
-		return (*MethodDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindPropertySignature:
-		return (*PropertySignatureDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
+		return facts & ^SubtreeExclusionsMethod | propagateSubtreeFacts(n.Name())
 	case KindPropertyDeclaration:
-		return (*PropertyDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindSemicolonClassElement:
-		return (*SemicolonClassElement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindClassStaticBlockDeclaration:
-		return (*ClassStaticBlockDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindOmittedExpression:
-		return (*OmittedExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindBinaryExpression:
-		return (*BinaryExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindPrefixUnaryExpression:
-		return (*PrefixUnaryExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindPostfixUnaryExpression:
-		return (*PostfixUnaryExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindYieldExpression:
-		return (*YieldExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindArrowFunction:
-		return (*ArrowFunction)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindFunctionExpression:
-		return (*FunctionExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindAsExpression:
-		return (*AsExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindSatisfiesExpression:
-		return (*SatisfiesExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindConditionalExpression:
-		return (*ConditionalExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindPropertyAccessExpression:
-		return (*PropertyAccessExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindElementAccessExpression:
-		return (*ElementAccessExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindCallExpression:
-		return (*CallExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindNewExpression:
-		return (*NewExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindMetaProperty:
-		return (*MetaProperty)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindNonNullExpression:
-		return (*NonNullExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindSpreadElement:
-		return (*SpreadElement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindTemplateExpression:
-		return (*TemplateExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindTemplateSpan:
-		return (*TemplateSpan)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindTaggedTemplateExpression:
-		return (*TaggedTemplateExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindParenthesizedExpression:
-		return (*ParenthesizedExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindArrayLiteralExpression:
-		return (*ArrayLiteralExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindObjectLiteralExpression:
-		return (*ObjectLiteralExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindSpreadAssignment:
-		return (*SpreadAssignment)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindPropertyAssignment:
-		return (*PropertyAssignment)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindShorthandPropertyAssignment:
-		return (*ShorthandPropertyAssignment)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindDeleteExpression:
-		return (*DeleteExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindTypeOfExpression:
-		return (*TypeOfExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindVoidExpression:
-		return (*VoidExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindAwaitExpression:
-		return (*AwaitExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindTypeAssertionExpression:
-		return (*TypeAssertion)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindUnionType:
-		return (*UnionTypeNode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindIntersectionType:
-		return (*IntersectionTypeNode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindConditionalType:
-		return (*ConditionalTypeNode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindTypeOperator:
-		return (*TypeOperatorNode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindInferType:
-		return (*InferTypeNode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindArrayType:
-		return (*ArrayTypeNode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindIndexedAccessType:
-		return (*IndexedAccessTypeNode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindTypeReference:
-		return (*TypeReferenceNode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindExpressionWithTypeArguments:
-		return (*ExpressionWithTypeArguments)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindLiteralType:
-		return (*LiteralTypeNode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindThisType:
-		return (*ThisTypeNode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindTypePredicate:
-		return (*TypePredicateNode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindImportAttribute:
-		return (*ImportAttribute)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindImportAttributes:
-		return (*ImportAttributes)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindTypeQuery:
-		return (*TypeQueryNode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindMappedType:
-		return (*MappedTypeNode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindTypeLiteral:
-		return (*TypeLiteralNode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindTupleType:
-		return (*TupleTypeNode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindNamedTupleMember:
-		return (*NamedTupleMember)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindOptionalType:
-		return (*OptionalTypeNode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindRestType:
-		return (*RestTypeNode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindParenthesizedType:
-		return (*ParenthesizedTypeNode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindFunctionType:
-		return (*FunctionTypeNode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindConstructorType:
-		return (*ConstructorTypeNode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindTemplateLiteralType:
-		return (*TemplateLiteralTypeNode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindTemplateLiteralTypeSpan:
-		return (*TemplateLiteralTypeSpan)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindSyntheticExpression:
-		return (*SyntheticExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindPartiallyEmittedExpression:
-		return (*PartiallyEmittedExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJsxElement:
-		return (*JsxElement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJsxAttributes:
-		return (*JsxAttributes)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJsxNamespacedName:
-		return (*JsxNamespacedName)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJsxOpeningElement:
-		return (*JsxOpeningElement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJsxSelfClosingElement:
-		return (*JsxSelfClosingElement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJsxFragment:
-		return (*JsxFragment)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJsxOpeningFragment:
-		return (*JsxOpeningFragment)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJsxClosingFragment:
-		return (*JsxClosingFragment)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJsxAttribute:
-		return (*JsxAttribute)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJsxSpreadAttribute:
-		return (*JsxSpreadAttribute)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJsxClosingElement:
-		return (*JsxClosingElement)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJsxExpression:
-		return (*JsxExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindSyntaxList:
-		return (*SyntaxList)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDoc:
-		return (*JSDoc)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocTypeExpression:
-		return (*JSDocTypeExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocNonNullableType:
-		return (*JSDocNonNullableType)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocNullableType:
-		return (*JSDocNullableType)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocAllType:
-		return (*JSDocAllType)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocVariadicType:
-		return (*JSDocVariadicType)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocOptionalType:
-		return (*JSDocOptionalType)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocTypeTag:
-		return (*JSDocTypeTag)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocUnknownTag:
-		return (*JSDocUnknownTag)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocTemplateTag:
-		return (*JSDocTemplateTag)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocReturnTag:
-		return (*JSDocReturnTag)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocPublicTag:
-		return (*JSDocPublicTag)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocPrivateTag:
-		return (*JSDocPrivateTag)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocProtectedTag:
-		return (*JSDocProtectedTag)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocReadonlyTag:
-		return (*JSDocReadonlyTag)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocOverrideTag:
-		return (*JSDocOverrideTag)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocDeprecatedTag:
-		return (*JSDocDeprecatedTag)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocSeeTag:
-		return (*JSDocSeeTag)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocImplementsTag:
-		return (*JSDocImplementsTag)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocAugmentsTag:
-		return (*JSDocAugmentsTag)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocSatisfiesTag:
-		return (*JSDocSatisfiesTag)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocThrowsTag:
-		return (*JSDocThrowsTag)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocThisTag:
-		return (*JSDocThisTag)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocImportTag:
-		return (*JSDocImportTag)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocCallbackTag:
-		return (*JSDocCallbackTag)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocOverloadTag:
-		return (*JSDocOverloadTag)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocTypedefTag:
-		return (*JSDocTypedefTag)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocSignature:
-		return (*JSDocSignature)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocNameReference:
-		return (*JSDocNameReference)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindSourceFile:
-		return (*SourceFile)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindModuleDeclaration:
-		return (*ModuleDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindImportEqualsDeclaration:
-		return (*ImportEqualsDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindExportDeclaration:
-		return (*ExportDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindImportType:
-		return (*ImportTypeNode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindImportClause:
-		return (*ImportClause)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindImportSpecifier:
-		return (*ImportSpecifier)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocText:
-		return (*JSDocText)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocLink:
-		return (*JSDocLink)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocLinkPlain:
-		return (*JSDocLinkPlain)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocLinkCode:
-		return (*JSDocLinkCode)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindTypeParameter:
-		return (*TypeParameterDeclaration)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindSyntheticReferenceExpression:
-		return (*SyntheticReferenceExpression)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocTypeLiteral:
-		return (*JSDocTypeLiteral)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	case KindJSDocParameterTag, KindJSDocPropertyTag:
-		return (*JSDocParameterOrPropertyTag)(unsafe.Pointer(n)).propagateSubtreeFacts()
-	default:
-		return SubtreeFactsNone
+		return facts & ^SubtreeExclusionsProperty | propagateSubtreeFacts(n.Name())
 	}
+	kind := uint16(n.Kind)
+	if kind >= uint16(len(nodePropagateSubtreeFactsExclusions)) {
+		return facts
+	}
+	return facts & ^nodePropagateSubtreeFactsExclusions[kind]
 }
 
 func (n *Node) ExportableData() *ExportableBase {
@@ -11767,76 +11146,15 @@ func (n *Node) Clone(f NodeFactoryCoercible) *Node {
 
 func (n *MutableNode) SetModifiers(modifiers *ModifierList) {
 	node := (*Node)(unsafe.Pointer(n))
-	switch node.Kind {
-	case KindVariableStatement:
-		(*VariableStatement)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindParameter:
-		(*ParameterDeclaration)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindMissingDeclaration:
-		(*MissingDeclaration)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindFunctionDeclaration:
-		(*FunctionDeclaration)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindClassDeclaration:
-		(*ClassDeclaration)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindClassExpression:
-		(*ClassExpression)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindInterfaceDeclaration:
-		(*InterfaceDeclaration)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
-		(*TypeAliasDeclaration)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindEnumMember:
-		(*EnumMember)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindEnumDeclaration:
-		(*EnumDeclaration)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindImportDeclaration, KindJSImportDeclaration:
-		(*ImportDeclaration)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindExportAssignment:
-		(*ExportAssignment)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindNamespaceExportDeclaration:
-		(*NamespaceExportDeclaration)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindConstructor:
-		(*ConstructorDeclaration)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindGetAccessor:
-		(*GetAccessorDeclaration)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindSetAccessor:
-		(*SetAccessorDeclaration)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindIndexSignature:
-		(*IndexSignatureDeclaration)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindMethodSignature:
-		(*MethodSignatureDeclaration)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindMethodDeclaration:
-		(*MethodDeclaration)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindPropertySignature:
-		(*PropertySignatureDeclaration)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindPropertyDeclaration:
-		(*PropertyDeclaration)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindClassStaticBlockDeclaration:
-		(*ClassStaticBlockDeclaration)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindBinaryExpression:
-		(*BinaryExpression)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindArrowFunction:
-		(*ArrowFunction)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindFunctionExpression:
-		(*FunctionExpression)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindPropertyAssignment:
-		(*PropertyAssignment)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindShorthandPropertyAssignment:
-		(*ShorthandPropertyAssignment)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindFunctionType:
-		(*FunctionTypeNode)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindConstructorType:
-		(*ConstructorTypeNode)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindModuleDeclaration:
-		(*ModuleDeclaration)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindImportEqualsDeclaration:
-		(*ImportEqualsDeclaration)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindExportDeclaration:
-		(*ExportDeclaration)(unsafe.Pointer(node)).setModifiers(modifiers)
-	case KindTypeParameter:
-		(*TypeParameterDeclaration)(unsafe.Pointer(node)).setModifiers(modifiers)
-	default:
+	kind := uint16(node.Kind)
+	if kind >= uint16(len(nodeModifiersOffsets)) {
 		panic("Cannot set modifiers on " + node.Kind.String())
 	}
+	offset := nodeModifiersOffsets[kind]
+	if offset == 0 {
+		panic("Cannot set modifiers on " + node.Kind.String())
+	}
+	*(**ModifierList)(unsafe.Add(unsafe.Pointer(node), uintptr(offset-1))) = modifiers
 }
 
 // ──────────────────────────────────────────────────────────────────────

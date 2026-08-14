@@ -701,19 +701,22 @@ function generateSubtreeFactsDispatch(w: CodeWriter) {
     w.write("switch n.Kind {");
     w.write("case kindFlowSwitchClauseData:");
     w.push();
-    w.write("data := (*FlowSwitchClauseData)(unsafe.Pointer(n))");
-    w.write("return data.subtreeFactsWorker(data.AsNode())");
+    w.write("return SubtreeFactsNone");
     w.pop();
     w.write("case kindFlowReduceLabelData:");
     w.push();
-    w.write("data := (*FlowReduceLabelData)(unsafe.Pointer(n))");
-    w.write("return data.subtreeFactsWorker(data.AsNode())");
+    w.write("return SubtreeFactsNone");
     w.pop();
     for (const [node, kinds] of canonicalNodesByKind()) {
         w.write(`case ${kinds.join(", ")}:`);
         w.push();
-        w.write(`data := (*${node.name})(unsafe.Pointer(n))`);
-        w.write("return data.subtreeFactsWorker(data.AsNode())");
+        if (extendsBase(node.extendsKeys, "CompositeBase")) {
+            w.write(`data := (*${node.name})(unsafe.Pointer(n))`);
+            w.write("return data.subtreeFactsWorker(data.AsNode())");
+        }
+        else {
+            w.write(`return (*${node.name})(unsafe.Pointer(n)).computeSubtreeFacts()`);
+        }
         w.pop();
     }
     w.write("default:");
@@ -721,6 +724,67 @@ function generateSubtreeFactsDispatch(w: CodeWriter) {
     w.write('panic("Unhandled case in Node.SubtreeFacts: " + n.Kind.String())');
     w.pop();
     w.write("}");
+    w.pop();
+    w.write("}");
+    w.write("");
+}
+
+function generatePropagateSubtreeFactsDispatch(w: CodeWriter) {
+    const exclusions = new Map<string, string>([
+        ["KindCatchClause", "SubtreeExclusionsCatchClause"],
+        ["KindVariableDeclarationList", "SubtreeExclusionsVariableDeclarationList"],
+        ["KindObjectBindingPattern", "SubtreeExclusionsBindingPattern"],
+        ["KindArrayBindingPattern", "SubtreeExclusionsBindingPattern"],
+        ["KindParameter", "SubtreeExclusionsParameter"],
+        ["KindFunctionDeclaration", "SubtreeExclusionsFunction"],
+        ["KindClassDeclaration", "SubtreeExclusionsClass"],
+        ["KindClassExpression", "SubtreeExclusionsClass"],
+        ["KindModuleDeclaration", "SubtreeExclusionsModule"],
+        ["KindConstructor", "SubtreeExclusionsConstructor"],
+        ["KindArrowFunction", "SubtreeExclusionsArrowFunction"],
+        ["KindFunctionExpression", "SubtreeExclusionsFunction"],
+        ["KindAsExpression", "SubtreeExclusionsOuterExpression"],
+        ["KindSatisfiesExpression", "SubtreeExclusionsOuterExpression"],
+        ["KindPropertyAccessExpression", "SubtreeExclusionsPropertyAccess"],
+        ["KindElementAccessExpression", "SubtreeExclusionsElementAccess"],
+        ["KindCallExpression", "SubtreeExclusionsCall"],
+        ["KindNewExpression", "SubtreeExclusionsNew"],
+        ["KindArrayLiteralExpression", "SubtreeExclusionsArrayLiteral"],
+        ["KindObjectLiteralExpression", "SubtreeExclusionsObjectLiteral"],
+        ["KindTypeAssertionExpression", "SubtreeExclusionsOuterExpression"],
+    ]);
+    w.write("var nodePropagateSubtreeFactsExclusions = [KindCount]SubtreeFacts{");
+    w.push();
+    for (const [kind, exclusion] of exclusions) {
+        w.write(`${kind}: ${exclusion},`);
+    }
+    w.pop();
+    w.write("}");
+    w.write("");
+    w.write("func (n *Node) propagateSubtreeFacts() SubtreeFacts {");
+    w.push();
+    w.write("facts := n.SubtreeFacts()");
+    w.write("switch n.Kind {");
+    w.write("case KindGetAccessor, KindSetAccessor:");
+    w.push();
+    w.write("return facts & ^SubtreeExclusionsAccessor | propagateSubtreeFacts(n.Name())");
+    w.pop();
+    w.write("case KindMethodDeclaration:");
+    w.push();
+    w.write("return facts & ^SubtreeExclusionsMethod | propagateSubtreeFacts(n.Name())");
+    w.pop();
+    w.write("case KindPropertyDeclaration:");
+    w.push();
+    w.write("return facts & ^SubtreeExclusionsProperty | propagateSubtreeFacts(n.Name())");
+    w.pop();
+    w.write("}");
+    w.write("kind := uint16(n.Kind)");
+    w.write("if kind >= uint16(len(nodePropagateSubtreeFactsExclusions)) {");
+    w.push();
+    w.write("return facts");
+    w.pop();
+    w.write("}");
+    w.write("return facts & ^nodePropagateSubtreeFactsExclusions[kind]");
     w.pop();
     w.write("}");
     w.write("");
@@ -757,6 +821,52 @@ function generateNodeDataAccessorDispatch(
     w.write("");
 }
 
+function generateNodeOffsetAccessorDispatch(
+    w: CodeWriter,
+    methodName: string,
+    returnType: string,
+    selector: string,
+    handlesNode: (node: NodeType) => boolean,
+    indirect: boolean,
+) {
+    const offsetsName = `node${methodName}Offsets`;
+    w.write(`var ${offsetsName} = [KindCount]uint16{`);
+    w.push();
+    for (const [node, kinds] of canonicalNodesByKind()) {
+        if (!handlesNode(node)) continue;
+        for (const kind of kinds) {
+            w.write(`${kind}: uint16(unsafe.Offsetof(${node.name}{}.${selector})) + 1,`);
+        }
+    }
+    w.pop();
+    w.write("}");
+    w.write("");
+    w.write(`func (n *Node) ${methodName}() ${returnType} {`);
+    w.push();
+    w.write("kind := uint16(n.Kind)");
+    w.write(`if kind >= uint16(len(${offsetsName})) {`);
+    w.push();
+    w.write("return nil");
+    w.pop();
+    w.write("}");
+    w.write(`offset := ${offsetsName}[kind]`);
+    w.write("if offset == 0 {");
+    w.push();
+    w.write("return nil");
+    w.pop();
+    w.write("}");
+    const pointer = "unsafe.Add(unsafe.Pointer(n), uintptr(offset-1))";
+    if (indirect) {
+        w.write(`return *(*${returnType})(${pointer})`);
+    }
+    else {
+        w.write(`return (${returnType})(${pointer})`);
+    }
+    w.pop();
+    w.write("}");
+    w.write("");
+}
+
 function generateCloneDispatch(w: CodeWriter) {
     w.write("func (n *Node) Clone(f NodeFactoryCoercible) *Node {");
     w.push();
@@ -785,19 +895,19 @@ function generateSetModifiersDispatch(w: CodeWriter) {
     w.write("func (n *MutableNode) SetModifiers(modifiers *ModifierList) {");
     w.push();
     w.write("node := (*Node)(unsafe.Pointer(n))");
-    w.write("switch node.Kind {");
-    for (const [data, kinds] of canonicalNodesByKind()) {
-        if (!extendsBase(data.extendsKeys, "ModifiersBase")) continue;
-        w.write(`case ${kinds.join(", ")}:`);
-        w.push();
-        w.write(`(*${data.name})(unsafe.Pointer(node)).setModifiers(modifiers)`);
-        w.pop();
-    }
-    w.write("default:");
+    w.write("kind := uint16(node.Kind)");
+    w.write("if kind >= uint16(len(nodeModifiersOffsets)) {");
     w.push();
     w.write('panic("Cannot set modifiers on " + node.Kind.String())');
     w.pop();
     w.write("}");
+    w.write("offset := nodeModifiersOffsets[kind]");
+    w.write("if offset == 0 {");
+    w.push();
+    w.write('panic("Cannot set modifiers on " + node.Kind.String())');
+    w.pop();
+    w.write("}");
+    w.write("*(**ModifierList)(unsafe.Add(unsafe.Pointer(node), uintptr(offset-1))) = modifiers");
     w.pop();
     w.write("}");
     w.write("");
@@ -1177,13 +1287,13 @@ function generate(): string {
     w.write("// Node data accessor dispatch");
     w.write("// ──────────────────────────────────────────────────────────────────────");
     w.write("");
-    generateNodeDataAccessorDispatch(w, "Name", "*DeclarationName", node => schemaMembers(node).some(m => m.name === "name"), "nil");
-    generateNodeDataAccessorDispatch(w, "Modifiers", "*ModifierList", node => extendsBase(node.extendsKeys, "ModifiersBase"), "nil");
-    generateNodeDataAccessorDispatch(w, "FlowNodeData", "*FlowNodeBase", node => extendsBase(node.extendsKeys, "FlowNodeBase"), "nil");
-    generateNodeDataAccessorDispatch(w, "DeclarationData", "*DeclarationBase", node => extendsBase(node.extendsKeys, "DeclarationBase"), "nil");
-    generateNodeDataAccessorDispatch(w, "LocalsContainerData", "*LocalsContainerBase", node => extendsBase(node.extendsKeys, "LocalsContainerBase"), "nil");
-    generateNodeDataAccessorDispatch(w, "FunctionLikeData", "*FunctionLikeBase", node => extendsBase(node.extendsKeys, "FunctionLikeBase"), "nil");
-    generateNodeDataAccessorDispatch(w, "propagateSubtreeFacts", "SubtreeFacts", () => true, "SubtreeFactsNone");
+    generateNodeOffsetAccessorDispatch(w, "Name", "*DeclarationName", "name", node => schemaMembers(node).some(m => m.name === "name"), true);
+    generateNodeOffsetAccessorDispatch(w, "Modifiers", "*ModifierList", "modifiers", node => extendsBase(node.extendsKeys, "ModifiersBase"), true);
+    generateNodeOffsetAccessorDispatch(w, "FlowNodeData", "*FlowNodeBase", "FlowNodeBase", node => extendsBase(node.extendsKeys, "FlowNodeBase"), false);
+    generateNodeOffsetAccessorDispatch(w, "DeclarationData", "*DeclarationBase", "DeclarationBase", node => extendsBase(node.extendsKeys, "DeclarationBase"), false);
+    generateNodeOffsetAccessorDispatch(w, "LocalsContainerData", "*LocalsContainerBase", "LocalsContainerBase", node => extendsBase(node.extendsKeys, "LocalsContainerBase"), false);
+    generateNodeOffsetAccessorDispatch(w, "FunctionLikeData", "*FunctionLikeBase", "FunctionLikeBase", node => extendsBase(node.extendsKeys, "FunctionLikeBase"), false);
+    generatePropagateSubtreeFactsDispatch(w);
     generateNodeDataAccessorDispatch(w, "ExportableData", "*ExportableBase", node => extendsBase(node.extendsKeys, "ExportableBase"), "nil");
     generateNodeDataAccessorDispatch(w, "ClassLikeData", "*ClassLikeBase", node => extendsBase(node.extendsKeys, "ClassLikeBase"), "nil");
     generateNodeDataAccessorDispatch(w, "BodyData", "*BodyBase", node => extendsBase(node.extendsKeys, "BodyBase"), "nil");
