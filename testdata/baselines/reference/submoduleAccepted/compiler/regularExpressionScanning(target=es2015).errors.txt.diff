@@ -1,6 +1,29 @@
 --- old.regularExpressionScanning(target=es2015).errors.txt
 +++ new.regularExpressionScanning(target=es2015).errors.txt
-@@= skipped -194, +194 lines =@@
+@@= skipped -12, +12 lines =@@
+ regularExpressionScanning.ts(3,20): error TS1499: Unknown regular expression flag.
+ regularExpressionScanning.ts(3,21): error TS1500: Duplicate regular expression flag.
+ regularExpressionScanning.ts(3,22): error TS1499: Unknown regular expression flag.
++regularExpressionScanning.ts(5,5): error TS18062: Regular expression pattern modifiers are only available when targeting 'es2025' or later.
+ regularExpressionScanning.ts(5,6): error TS1499: Unknown regular expression flag.
+ regularExpressionScanning.ts(5,7): error TS1509: This regular expression flag cannot be toggled within a subpattern.
+ regularExpressionScanning.ts(5,10): error TS1509: This regular expression flag cannot be toggled within a subpattern.
+@@= skipped -32, +33 lines =@@
+ regularExpressionScanning.ts(14,14): error TS1503: Named capturing groups are only available when targeting 'ES2018' or later.
+ regularExpressionScanning.ts(14,29): error TS1503: Named capturing groups are only available when targeting 'ES2018' or later.
+ regularExpressionScanning.ts(14,45): error TS1503: Named capturing groups are only available when targeting 'ES2018' or later.
++regularExpressionScanning.ts(14,46): error TS18063: Duplicate named capturing groups are only available when targeting 'es2025' or later.
+ regularExpressionScanning.ts(14,57): error TS1503: Named capturing groups are only available when targeting 'ES2018' or later.
++regularExpressionScanning.ts(14,58): error TS18063: Duplicate named capturing groups are only available when targeting 'es2025' or later.
+ regularExpressionScanning.ts(15,15): error TS1532: There is no capturing group named 'absent' in this regular expression.
+ regularExpressionScanning.ts(15,24): error TS1503: Named capturing groups are only available when targeting 'ES2018' or later.
+ regularExpressionScanning.ts(15,36): error TS1503: Named capturing groups are only available when targeting 'ES2018' or later.
+ regularExpressionScanning.ts(15,45): error TS1503: Named capturing groups are only available when targeting 'ES2018' or later.
++regularExpressionScanning.ts(15,46): error TS18063: Duplicate named capturing groups are only available when targeting 'es2025' or later.
+ regularExpressionScanning.ts(15,58): error TS1503: Named capturing groups are only available when targeting 'ES2018' or later.
+ regularExpressionScanning.ts(15,59): error TS1515: Named capturing groups with the same name must be mutually exclusive to each other.
+ regularExpressionScanning.ts(17,31): error TS1507: There is nothing available for repetition.
+@@= skipped -150, +153 lines =@@
  regularExpressionScanning.ts(39,56): error TS1519: Operators must not be mixed within a character class. Wrap it in a nested class instead.
  regularExpressionScanning.ts(39,67): error TS1005: '&&' expected.
  regularExpressionScanning.ts(39,77): error TS1501: This regular expression flag is only available when targeting 'es2024' or later.
@@ -29,11 +52,42 @@
 
 
 -==== regularExpressionScanning.ts (219 errors) ====
-+==== regularExpressionScanning.ts (223 errors) ====
++==== regularExpressionScanning.ts (227 errors) ====
      const regexes: RegExp[] = [
      	// Flags
      	/foo/visualstudiocode,
-@@= skipped -435, +435 lines =@@
+@@= skipped -36, +36 lines =@@
+ !!! error TS1499: Unknown regular expression flag.
+     	// Pattern modifiers
+     	/(?med-ium:bar)/,
++    	   ~~~~~~~
++!!! error TS18062: Regular expression pattern modifiers are only available when targeting 'es2025' or later.
+     	    ~
+ !!! error TS1499: Unknown regular expression flag.
+     	     ~
+@@= skipped -73, +75 lines =@@
+ !!! error TS1503: Named capturing groups are only available when targeting 'ES2018' or later.
+     	                                           ~~~~~
+ !!! error TS1503: Named capturing groups are only available when targeting 'ES2018' or later.
++    	                                            ~~~
++!!! error TS18063: Duplicate named capturing groups are only available when targeting 'es2025' or later.
+     	                                                       ~~~~~
+ !!! error TS1503: Named capturing groups are only available when targeting 'ES2018' or later.
++    	                                                        ~~~
++!!! error TS18063: Duplicate named capturing groups are only available when targeting 'es2025' or later.
+     	/(\k<bar>)\k<absent>(?<foo>foo)|(?<bar>)((?<foo>)|(bar(?<bar>bar)))/,
+     	             ~~~~~~
+ !!! error TS1532: There is no capturing group named 'absent' in this regular expression.
+@@= skipped -11, +15 lines =@@
+ !!! error TS1503: Named capturing groups are only available when targeting 'ES2018' or later.
+     	                                           ~~~~~
+ !!! error TS1503: Named capturing groups are only available when targeting 'ES2018' or later.
++    	                                            ~~~
++!!! error TS18063: Duplicate named capturing groups are only available when targeting 'es2025' or later.
+     	                                                        ~~~~~
+ !!! error TS1503: Named capturing groups are only available when targeting 'ES2018' or later.
+     	                                                         ~~~
+@@= skipped -315, +317 lines =@@
      	                                                                           ~
  !!! error TS1501: This regular expression flag is only available when targeting 'es2024' or later.
      	/[^\p{Emoji}\p{RGI_Emoji}][^\p{Emoji}--\p{RGI_Emoji}][^\p{Emoji}&&\p{RGI_Emoji}]/v,

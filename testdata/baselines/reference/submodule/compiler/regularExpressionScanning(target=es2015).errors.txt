@@ -227,7 +227,7 @@ regularExpressionScanning.ts(47,89): error TS1518: Anything that would possibly 
 regularExpressionScanning.ts(47,101): error TS1501: This regular expression flag is only available when targeting 'es2024' or later.
 
 
-==== regularExpressionScanning.ts (223 errors) ====
+==== regularExpressionScanning.ts (227 errors) ====
     const regexes: RegExp[] = [
     	// Flags
     	/foo/visualstudiocode,
