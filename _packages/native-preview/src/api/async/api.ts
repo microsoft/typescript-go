@@ -60,6 +60,7 @@ import type {
     ProfileResult,
     ProjectReference,
     ProjectResponse,
+    ReadConfigFileResult,
     SignatureResponse,
     SourceFileMetadata,
     SymbolResponse,
@@ -129,12 +130,24 @@ import type {
 
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 export { CheckFlags, CompletionItemKind, DiagnosticCategory, ElementFlags, EmitOnly, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
-export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutput, EmitOutputFile, EmitResult, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ParsedCommandLine, ProjectReference, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeAcquisition, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutput, EmitOutputFile, EmitResult, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ParsedCommandLine, ProjectReference, ReadConfigFileResult, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeAcquisition, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 
 interface EmitOutputResponse {
     readonly emitSkipped: boolean;
     readonly diagnostics: readonly Diagnostic[];
     readonly outputFiles: readonly (EmitOutputFile & { readonly fileName: string; })[];
+}
+
+export interface TranspileOptions {
+    compilerOptions?: CompilerOptions;
+    fileName?: string;
+    reportDiagnostics?: boolean;
+}
+
+export interface TranspileOutput {
+    outputText: string;
+    diagnostics?: readonly Diagnostic[];
+    sourceMapText?: string;
 }
 
 export class API<FromLSP extends boolean = false> {
@@ -175,6 +188,46 @@ export class API<FromLSP extends boolean = false> {
     async parseConfigFile(file: DocumentIdentifier): Promise<ParsedCommandLine> {
         await this.ensureInitialized();
         return this.client.apiRequest<ParsedCommandLine>("parseConfigFile", { file });
+    }
+
+    async parseCommandLine(commandLine: readonly string[]): Promise<ParsedCommandLine> {
+        await this.ensureInitialized();
+        return this.client.apiRequest<ParsedCommandLine>("parseCommandLine", { commandLine });
+    }
+
+    async readConfigFile(file: DocumentIdentifier): Promise<ReadConfigFileResult> {
+        await this.ensureInitialized();
+        return this.client.apiRequest<ReadConfigFileResult>("readConfigFile", { file });
+    }
+
+    async parseJsonConfigFileContent(
+        json: any,
+        options:
+            | { configDirectory: string; configFileName?: never; }
+            | { configFileName: DocumentIdentifier; configDirectory?: never; },
+    ): Promise<ParsedCommandLine> {
+        await this.ensureInitialized();
+        return this.client.apiRequest<ParsedCommandLine>("parseJsonConfigFileContent", { json, ...options });
+    }
+
+    async transpileModule(input: string, options: TranspileOptions = {}): Promise<TranspileOutput> {
+        await this.ensureInitialized();
+        return this.client.apiRequest<TranspileOutput>("transpileModule", { input, options });
+    }
+
+    async transpileModuleFromFile(fileName: string, options: TranspileOptions = {}): Promise<TranspileOutput> {
+        await this.ensureInitialized();
+        return this.client.apiRequest<TranspileOutput>("transpileModuleFromFile", { fileName, options });
+    }
+
+    async transpileDeclaration(input: string, options: TranspileOptions = {}): Promise<TranspileOutput> {
+        await this.ensureInitialized();
+        return this.client.apiRequest<TranspileOutput>("transpileDeclaration", { input, options });
+    }
+
+    async transpileDeclarationFromFile(fileName: string, options: TranspileOptions = {}): Promise<TranspileOutput> {
+        await this.ensureInitialized();
+        return this.client.apiRequest<TranspileOutput>("transpileDeclarationFromFile", { fileName, options });
     }
 
     async updateSnapshot(params?: FromLSP extends true ? LSPUpdateSnapshotParams : UpdateSnapshotParams): Promise<Snapshot> {
