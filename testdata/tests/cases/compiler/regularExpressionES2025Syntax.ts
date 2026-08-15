@@ -1,4 +1,4 @@
-// @target: es2022,es2025
+// @target: es2017,es2022,es2025
 // @noEmit: true
 
 // Pattern modifiers are only available from ES2025.

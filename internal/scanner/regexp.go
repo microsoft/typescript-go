@@ -275,7 +275,7 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 							p.error(diagnostics.Subpattern_flags_must_be_present_when_there_is_a_minus_sign, flagsStart, p.pos()-flagsStart)
 						}
 					}
-					// A group that consumed no modifier characters is a plain non-capturing group `(?:`.
+					// Modifier characters were consumed, so this is `(?flags:` rather than a plain `(?:` group.
 					if p.pos() != flagsStart && p.scanner.languageVersion() < core.ScriptTargetES2025 {
 						p.error(diagnostics.Regular_expression_pattern_modifiers_are_only_available_when_targeting_0_or_later, flagsStart, p.pos()-flagsStart, strings.ToLower(core.ScriptTargetES2025.String()))
 					}
@@ -507,9 +507,11 @@ func (p *regExpParser) scanGroupName(isReference bool) {
 	} else if p.namedCapturingGroupsContains(p.scanner.tokenValue) {
 		p.error(diagnostics.Named_capturing_groups_with_the_same_name_must_be_mutually_exclusive_to_each_other, p.scanner.tokenStart, p.pos()-p.scanner.tokenStart)
 	} else {
-		// The name is not in scope for any enclosing alternative, so a previous definition of it
-		// can only have come from a mutually exclusive alternative.
-		if p.groupSpecifiers[p.scanner.tokenValue] && p.scanner.languageVersion() < core.ScriptTargetES2025 {
+		// A previous definition can only have come from a mutually exclusive alternative.
+		// Below ES2018 the group itself is already reported, so don't stack a second error on it.
+		if p.groupSpecifiers[p.scanner.tokenValue] &&
+			p.scanner.languageVersion() >= core.ScriptTargetES2018 &&
+			p.scanner.languageVersion() < core.ScriptTargetES2025 {
 			p.error(diagnostics.Duplicate_named_capturing_groups_are_only_available_when_targeting_0_or_later, p.scanner.tokenStart, p.pos()-p.scanner.tokenStart, strings.ToLower(core.ScriptTargetES2025.String()))
 		}
 		if len(p.namedCapturingGroups) > 0 {
