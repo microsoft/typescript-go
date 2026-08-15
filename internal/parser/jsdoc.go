@@ -113,14 +113,16 @@ func (p *Parser) parseJSDocTypeExpression(mayOmitBraces bool) *ast.Node {
 		hasBrace = p.parseExpected(ast.KindOpenBraceToken)
 	}
 	saveContextFlags := p.contextFlags
-	p.setContextFlags(ast.NodeFlagsJSDoc, true)
+	p.setContextFlags(ast.NodeFlagsJSDoc|ast.NodeFlagsInJSDocType, true)
 	t := p.parseJSDocType()
 	p.contextFlags = saveContextFlags
 	if hasBrace {
 		p.parseExpectedJSDoc(ast.KindCloseBraceToken)
 	}
 
-	return p.finishNode(p.factory.NewJSDocTypeExpression(t), pos)
+	result := p.finishNode(p.factory.NewJSDocTypeExpression(t), pos)
+	result.Flags |= ast.NodeFlagsInJSDocType
+	return result
 }
 
 func (p *Parser) parseJSDocNameReference() *ast.Node {

@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
 func tokenIsIdentifierOrKeyword(token ast.Kind) bool {
@@ -22,17 +23,49 @@ func GetSourceTextOfNodeFromSourceFile(sourceFile *ast.SourceFile, node *ast.Nod
 	return GetTextOfNodeFromSourceText(sourceFile.Text(), node, includeTrivia)
 }
 
+func normalizeJSDocTypeSourceText(text string) string {
+	lineStarts := core.ComputeECMALineStarts(text)
+	if len(lineStarts) == 1 {
+		return stripLeadingJSDocComment(text)
+	}
+
+	var result strings.Builder
+	result.Grow(len(text))
+	newLine := core.NewLineKindLF.GetNewLineCharacter()
+	for i, lineStart := range lineStarts {
+		if i > 0 {
+			result.WriteString(newLine)
+		}
+		lineEnd := len(text)
+		if i+1 < len(lineStarts) {
+			lineEnd = int(lineStarts[i+1])
+		}
+		line := strings.TrimRightFunc(text[lineStart:lineEnd], stringutil.IsLineBreak)
+		result.WriteString(stripLeadingJSDocComment(line))
+	}
+	return result.String()
+}
+
+func stripLeadingJSDocComment(line string) string {
+	line = strings.TrimLeftFunc(line, stringutil.IsWhiteSpaceLike)
+	if len(line) > 0 && line[0] == '*' {
+		line = line[1:]
+	}
+	return strings.TrimLeftFunc(line, stringutil.IsWhiteSpaceLike)
+}
+
 func GetTextOfNodeFromSourceText(sourceText string, node *ast.Node, includeTrivia bool) string {
 	if ast.NodeIsMissing(node) {
 		return ""
 	}
 	pos := node.Pos()
 	if !includeTrivia {
-		pos = SkipTriviaEx(sourceText, pos, &SkipTriviaOptions{
-			InJSDoc: node.Flags&ast.NodeFlagsJSDoc != 0,
-		})
+		pos = SkipTrivia(sourceText, pos)
 	}
 	text := sourceText[pos:node.End()]
+	if node.Flags&ast.NodeFlagsInJSDocType != 0 {
+		text = normalizeJSDocTypeSourceText(text)
+	}
 	if node.Flags&ast.NodeFlagsReparserTransformedLiteral != 0 {
 		// This is similar to `getLiteralTextOfNode` in the printer, but without the context of an `emitContext` to provide overrides
 		if ast.IsStringLiteral(node) {
@@ -48,10 +81,6 @@ func GetTextOfNodeFromSourceText(sourceText string, node *ast.Node, includeTrivi
 		// Fail on any other kinds.
 		debug.FailBadSyntaxKind(node, "Unexpected reparser-transformed node kind")
 	}
-	// if (isJSDocTypeExpressionOrChild(node)) {
-	//     // strip space + asterisk at line start
-	//     text = text.split(/\r\n|\n|\r/).map(line => line.replace(/^\s*\*/, "").trimStart()).join("\n");
-	// }
 	return text
 }
 

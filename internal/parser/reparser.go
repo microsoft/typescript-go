@@ -11,7 +11,7 @@ import (
 )
 
 func (p *Parser) finishReparsedNode(node *ast.Node, locationNode *ast.Node) {
-	node.Flags = p.contextFlags | ast.NodeFlagsReparsed
+	node.Flags = p.contextFlags | ast.NodeFlagsReparsed | (locationNode.Flags & ast.NodeFlagsInJSDocType)
 	node.Loc = locationNode.Loc
 	p.overrideParentInImmediateChildren(node)
 }
