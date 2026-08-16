@@ -141,10 +141,30 @@ func generateDiagnostics(diagnosticMessages []*diagnosticMessage) *bytes.Buffer 
 	buf.WriteString("\n")
 	buf.WriteString("package diagnostics\n")
 
-	for _, m := range diagnosticMessages {
-		varName, key := convertPropertyName(m.key, m.Code)
+	if len(diagnosticMessages) >= 1<<16 {
+		log.Fatalf("too many diagnostic messages: %d", len(diagnosticMessages))
+	}
 
-		fmt.Fprintf(&buf, "var %s = &Message{code: %d, category: Category%s, key: %q, text: %q", varName, m.Code, m.Category, key, m.key)
+	buf.WriteString("\nconst (\n")
+	for i, m := range diagnosticMessages {
+		if i == 0 {
+			fmt.Fprintf(&buf, "\tindex%d = iota\n", m.Code)
+		} else {
+			fmt.Fprintf(&buf, "\tindex%d\n", m.Code)
+		}
+	}
+	buf.WriteString(")\n")
+
+	for _, m := range diagnosticMessages {
+		varName, _ := convertPropertyName(m.key, m.Code)
+		fmt.Fprintf(&buf, "\nvar %s = &messages[index%d]\n", varName, m.Code)
+	}
+
+	buf.WriteString("\nvar messages = [...]Message{\n")
+	for _, m := range diagnosticMessages {
+		_, key := convertPropertyName(m.key, m.Code)
+
+		fmt.Fprintf(&buf, "\t{code: %d, category: Category%s, key: %q, text: %q", m.Code, m.Category, key, m.key)
 
 		if m.ReportsUnnecessary {
 			buf.WriteString(`, reportsUnnecessary: true`)
@@ -156,19 +176,72 @@ func generateDiagnostics(diagnosticMessages []*diagnosticMessage) *bytes.Buffer 
 			buf.WriteString(`, reportsDeprecated: true`)
 		}
 
-		buf.WriteString("}\n\n")
+		buf.WriteString("},\n")
+	}
+	buf.WriteString("}\n")
+
+	tableSize := 1
+	var messageIndexByCode []uint16
+	for {
+		messageIndexByCode = make([]uint16, tableSize)
+		collision := false
+		for i, m := range diagnosticMessages {
+			slot := m.Code & (tableSize - 1)
+			if messageIndexByCode[slot] != 0 {
+				collision = true
+				break
+			}
+			messageIndexByCode[slot] = uint16(i + 1)
+		}
+		if !collision {
+			break
+		}
+		tableSize *= 2
 	}
 
-	buf.WriteString("func keyToMessage(key Key) *Message {\n")
-	buf.WriteString("\tswitch key {\n")
-	for _, m := range diagnosticMessages {
-		_, key := convertPropertyName(m.key, m.Code)
-		varName, _ := convertPropertyName(m.key, m.Code)
-		fmt.Fprintf(&buf, "\tcase %q:\n\t\treturn %s\n", key, varName)
+	buf.WriteString(`
+func codeFromKey(key Key) (int, bool) {
+	end := len(key)
+	start := end
+	for start > 0 && key[start-1] >= '0' && key[start-1] <= '9' {
+		start--
 	}
-	buf.WriteString("\tdefault:\n\t\treturn nil\n")
-	buf.WriteString("\t}\n")
+	if start == end || start == 0 || key[start-1] != '_' {
+		return 0, false
+	}
+	code := 0
+	for i := start; i < end; i++ {
+		code = code*10 + int(key[i]-'0')
+	}
+	return code, true
+}
+`)
+
+	fmt.Fprintf(&buf, "\nvar indexByCode = [%d]uint16{\n", tableSize)
+	for slot, index := range messageIndexByCode {
+		if index != 0 {
+			fmt.Fprintf(&buf, "\t%d: index%d + 1,\n", slot, diagnosticMessages[index-1].Code)
+		}
+	}
 	buf.WriteString("}\n")
+
+	fmt.Fprintf(&buf, `
+func keyToMessage(key Key) *Message {
+	code, ok := codeFromKey(key)
+	if !ok {
+		return nil
+	}
+	index := indexByCode[code&%d]
+	if index == 0 {
+		return nil
+	}
+	message := &messages[index-1]
+	if message.key == key {
+		return message
+	}
+	return nil
+}
+`, tableSize-1)
 
 	return &buf
 }
