@@ -2,6 +2,7 @@ package outputpaths
 
 import (
 	"strings"
+	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -165,9 +166,34 @@ func GetSourceFilePathInNewDirWorker(fileName string, newDirPath string, current
 	canonFile := tspath.GetCanonicalFileName(sourceFilePath, useCaseSensitiveFileNames)
 	isSourceFileInCommonSourceDirectory := strings.HasPrefix(canonFile, commonDir)
 	if isSourceFileInCommonSourceDirectory {
-		sourceFilePath = sourceFilePath[len(commonSourceDirectory):]
+		// The reference implementation strips the prefix by slicing on
+		// commonSourceDirectory's length (in UTF-16 code units), relying on the fact that
+		// String.prototype.substring silently clamps out-of-range indices instead of
+		// throwing. Go slice expressions panic on out-of-range indices instead, and
+		// GetCanonicalFileName's case-folding can change a string's UTF-8 byte length
+		// (e.g. the Kelvin sign '\u212A' folds to the single-byte 'k'), so byte-length
+		// slicing here isn't safe even when the (rune-preserving) canonical prefix
+		// check above succeeds. Trim by the canonicalized prefix's rune count instead
+		// (canonicalization preserves rune count, so this matches the boundary the
+		// prefix check verified), clamping to the end of the string to mirror
+		// substring's behavior.
+		sourceFilePath = trimRunePrefix(sourceFilePath, utf8.RuneCountInString(commonDir))
 	}
 	return tspath.CombinePaths(newDirPath, sourceFilePath)
+}
+
+// trimRunePrefix returns the suffix of s after skipping up to runeCount runes,
+// clamping to the end of s if it has fewer runes than runeCount.
+func trimRunePrefix(s string, runeCount int) string {
+	i := 0
+	for range runeCount {
+		if i >= len(s) {
+			break
+		}
+		_, size := utf8.DecodeRuneInString(s[i:])
+		i += size
+	}
+	return s[i:]
 }
 
 func getOwnEmitOutputFilePath(fileName string, options *core.CompilerOptions, host OutputPathsHost, extension string) string {
