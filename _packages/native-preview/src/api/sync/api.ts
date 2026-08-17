@@ -6,7 +6,6 @@
 // Source: src/api/async/api.ts
 // Regenerate: npm run generate (from _packages/native-preview)
 //
-/// <reference path="../node/node.ts" preserve="true" />
 import { CheckFlags } from "#enums/checkFlags";
 import { CompletionItemKind } from "#enums/completionItemKind";
 import { DiagnosticCategory } from "#enums/diagnosticCategory";
@@ -22,8 +21,10 @@ import { TypeFlags } from "#enums/typeFlags";
 import { TypePredicateKind } from "#enums/typePredicateKind";
 import {
     type __String,
+    type Declaration,
     type Expression,
     type Identifier,
+    type IndexSignatureDeclaration,
     ModifierFlags,
     type Node,
     type Path,
@@ -68,6 +69,7 @@ import type {
     ProfileResult,
     ProjectReference,
     ProjectResponse,
+    ReadConfigFileResult,
     SignatureResponse,
     SourceFileMetadata,
     SymbolResponse,
@@ -137,12 +139,24 @@ import type {
 
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 export { CheckFlags, CompletionItemKind, DiagnosticCategory, ElementFlags, EmitOnly, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
-export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutput, EmitOutputFile, EmitResult, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ParsedCommandLine, ProjectReference, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeAcquisition, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutput, EmitOutputFile, EmitResult, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ParsedCommandLine, ProjectReference, ReadConfigFileResult, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeAcquisition, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 
 interface EmitOutputResponse {
     readonly emitSkipped: boolean;
     readonly diagnostics: readonly Diagnostic[];
     readonly outputFiles: readonly (EmitOutputFile & { readonly fileName: string; })[];
+}
+
+export interface TranspileOptions {
+    compilerOptions?: CompilerOptions;
+    fileName?: string;
+    reportDiagnostics?: boolean;
+}
+
+export interface TranspileOutput {
+    outputText: string;
+    diagnostics?: readonly Diagnostic[];
+    sourceMapText?: string;
 }
 
 export class API<FromLSP extends boolean = false> {
@@ -183,6 +197,46 @@ export class API<FromLSP extends boolean = false> {
     parseConfigFile(file: DocumentIdentifier): ParsedCommandLine {
         this.ensureInitialized();
         return this.client.apiRequest<ParsedCommandLine>("parseConfigFile", { file });
+    }
+
+    parseCommandLine(commandLine: readonly string[]): ParsedCommandLine {
+        this.ensureInitialized();
+        return this.client.apiRequest<ParsedCommandLine>("parseCommandLine", { commandLine });
+    }
+
+    readConfigFile(file: DocumentIdentifier): ReadConfigFileResult {
+        this.ensureInitialized();
+        return this.client.apiRequest<ReadConfigFileResult>("readConfigFile", { file });
+    }
+
+    parseJsonConfigFileContent(
+        json: any,
+        options:
+            | { configDirectory: string; configFileName?: never; }
+            | { configFileName: DocumentIdentifier; configDirectory?: never; },
+    ): ParsedCommandLine {
+        this.ensureInitialized();
+        return this.client.apiRequest<ParsedCommandLine>("parseJsonConfigFileContent", { json, ...options });
+    }
+
+    transpileModule(input: string, options: TranspileOptions = {}): TranspileOutput {
+        this.ensureInitialized();
+        return this.client.apiRequest<TranspileOutput>("transpileModule", { input, options });
+    }
+
+    transpileModuleFromFile(fileName: string, options: TranspileOptions = {}): TranspileOutput {
+        this.ensureInitialized();
+        return this.client.apiRequest<TranspileOutput>("transpileModuleFromFile", { fileName, options });
+    }
+
+    transpileDeclaration(input: string, options: TranspileOptions = {}): TranspileOutput {
+        this.ensureInitialized();
+        return this.client.apiRequest<TranspileOutput>("transpileDeclaration", { input, options });
+    }
+
+    transpileDeclarationFromFile(fileName: string, options: TranspileOptions = {}): TranspileOutput {
+        this.ensureInitialized();
+        return this.client.apiRequest<TranspileOutput>("transpileDeclarationFromFile", { fileName, options });
     }
 
     updateSnapshot(params?: FromLSP extends true ? LSPUpdateSnapshotParams : UpdateSnapshotParams): Snapshot {
@@ -325,6 +379,7 @@ export class Snapshot {
     private disposed: boolean = false;
     private onDispose: () => void;
     private snapshotRegistry: SnapshotObjectRegistry;
+    readonly internal: SnapshotInternalAPI;
 
     constructor(
         data: UpdateSnapshotResponse,
@@ -344,6 +399,8 @@ export class Snapshot {
             const project = new Project(projData, this.id, client, sourceFileCache, toPath, this.snapshotRegistry);
             this.projectMap.set(toPath(projData.configFileName), project);
         }
+
+        this.internal = new SnapshotInternalAPI(this.id, client);
     }
 
     getProjects(): readonly Project[] {
@@ -652,7 +709,7 @@ class ProjectObjectRegistry {
             keyType: this.getOrCreateType(info.keyType),
             valueType: this.getOrCreateType(info.valueType),
             isReadonly: info.isReadonly ?? false,
-            declaration: info.declaration ? new NodeHandle(info.declaration, this.project) : undefined,
+            declaration: info.declaration ? new NodeHandle<IndexSignatureDeclaration>(info.declaration, this.project) : undefined,
         }));
     }
 
@@ -679,6 +736,7 @@ export class Project {
     readonly program: Program;
     readonly checker: Checker;
     readonly emitter: Emitter;
+    readonly languageService: LanguageService;
     private client: Client;
     private snapshotId: number;
 
@@ -712,6 +770,40 @@ export class Project {
             objectRegistry,
         );
         this.emitter = new Emitter(client);
+        this.languageService = new LanguageService(snapshotId, this, client, objectRegistry);
+    }
+
+    /** @deprecated Use `languageService.getImportAdderEdits`. */
+    getImportAdderEdits(file: DocumentIdentifier, actions: readonly ImportAdderAction[]): readonly TextEdit[] {
+        return this.languageService.getImportAdderEdits(file, actions);
+    }
+
+    /** @deprecated Use `languageService.getImportEditsForSymbols`. */
+    getImportEditsForSymbols(file: DocumentIdentifier, symbols: readonly Symbol[], options: GetImportEditsForSymbolsOptions = {}): readonly TextEdit[] {
+        return this.languageService.getImportEditsForSymbols(file, symbols, options);
+    }
+
+    dispose(): void {
+        this.checker.dispose();
+    }
+}
+
+export class LanguageService {
+    private snapshotId: number;
+    private project: Project;
+    private client: Client;
+    private objectRegistry: ProjectObjectRegistry;
+
+    constructor(
+        snapshotId: number,
+        project: Project,
+        client: Client,
+        objectRegistry: ProjectObjectRegistry,
+    ) {
+        this.snapshotId = snapshotId;
+        this.project = project;
+        this.client = client;
+        this.objectRegistry = objectRegistry;
     }
 
     getImportAdderEdits(file: DocumentIdentifier, actions: readonly ImportAdderAction[]): readonly TextEdit[] {
@@ -733,7 +825,7 @@ export class Project {
 
         const data = this.client.apiRequest<TextEdit[]>("getImportAdderEdits", {
             snapshot: this.snapshotId,
-            project: this.id,
+            project: this.project.id,
             file,
             actions: requestActions,
         });
@@ -759,8 +851,49 @@ export class Project {
         );
     }
 
-    dispose(): void {
-        this.checker.dispose();
+    getReferencedSymbolsForNode(node: Node, position: number): ReferencedSymbolEntry[] {
+        const data = this.client.apiRequest<{ definition: string; symbol?: SymbolResponse; references: string[]; }[] | null>("getReferencedSymbolsForNode", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            node: getNodeId(node),
+            position,
+        });
+        return (data ?? []).map(entry => ({
+            definition: new NodeHandle(entry.definition, this.project),
+            symbol: entry.symbol ? this.objectRegistry.getOrCreateSymbol(entry.symbol) : undefined,
+            references: (entry.references ?? []).map(h => new NodeHandle(h, this.project)),
+        }));
+    }
+
+    getSignatureUsage(signatureDecl: Node): SignatureUsage[] {
+        const data = this.client.apiRequest<{ name: string; call?: string; }[] | null>("getSignatureUsages", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            signatureDecl: getNodeId(signatureDecl),
+        });
+        return (data ?? []).map(entry => ({
+            name: new NodeHandle(entry.name, this.project),
+            call: entry.call ? new NodeHandle(entry.call, this.project) : undefined,
+        }));
+    }
+
+    getCompletionsAtPosition(document: string, position: number, options?: CompletionOptions): CompletionInfo | undefined {
+        const data = this.client.apiRequest<CompletionInfoResponse | null>("getCompletionsAtPosition", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            file: document,
+            position,
+            triggerCharacter: options?.triggerCharacter,
+            includeSymbol: options?.includeSymbol,
+        });
+        if (!data) return undefined;
+        return {
+            isIncomplete: data.isIncomplete,
+            entries: data.entries.map(e => ({
+                ...e,
+                symbol: e.symbol ? this.objectRegistry.getOrCreateSymbol(e.symbol) : undefined,
+            })),
+        };
     }
 }
 
@@ -1202,49 +1335,19 @@ export class Checker {
         return (data ?? []).map(h => new NodeHandle(h, this.project));
     }
 
+    /** @deprecated Use `project.languageService.getReferencedSymbolsForNode`. */
     getReferencedSymbolsForNode(node: Node, position: number): ReferencedSymbolEntry[] {
-        const data = this.client.apiRequest<{ definition: string; symbol?: SymbolResponse; references: string[]; }[] | null>("getReferencedSymbolsForNode", {
-            snapshot: this.snapshotId,
-            project: this.project.id,
-            node: getNodeId(node),
-            position,
-        });
-        return (data ?? []).map(entry => ({
-            definition: new NodeHandle(entry.definition, this.project),
-            symbol: entry.symbol ? this.objectRegistry.getOrCreateSymbol(entry.symbol) : undefined,
-            references: (entry.references ?? []).map(h => new NodeHandle(h, this.project)),
-        }));
+        return this.project.languageService.getReferencedSymbolsForNode(node, position);
     }
 
+    /** @deprecated Use `project.languageService.getSignatureUsage`. */
     getSignatureUsage(signatureDecl: Node): SignatureUsage[] {
-        const data = this.client.apiRequest<{ name: string; call?: string; }[] | null>("getSignatureUsages", {
-            snapshot: this.snapshotId,
-            project: this.project.id,
-            signatureDecl: getNodeId(signatureDecl),
-        });
-        return (data ?? []).map(entry => ({
-            name: new NodeHandle(entry.name, this.project),
-            call: entry.call ? new NodeHandle(entry.call, this.project) : undefined,
-        }));
+        return this.project.languageService.getSignatureUsage(signatureDecl);
     }
 
+    /** @deprecated Use `project.languageService.getCompletionsAtPosition`. */
     getCompletionsAtPosition(document: string, position: number, options?: CompletionOptions): CompletionInfo | undefined {
-        const data = this.client.apiRequest<CompletionInfoResponse | null>("getCompletionsAtPosition", {
-            snapshot: this.snapshotId,
-            project: this.project.id,
-            file: document,
-            position,
-            triggerCharacter: options?.triggerCharacter,
-            includeSymbol: options?.includeSymbol,
-        });
-        if (!data) return undefined;
-        return {
-            isIncomplete: data.isIncomplete,
-            entries: data.entries.map(e => ({
-                ...e,
-                symbol: e.symbol ? this.objectRegistry.getOrCreateSymbol(e.symbol) : undefined,
-            })),
-        };
+        return this.project.languageService.getCompletionsAtPosition(document, position, options);
     }
 
     /**
@@ -1329,6 +1432,23 @@ export class Checker {
             excludeGlobals,
         });
         return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
+    }
+
+    /**
+     * Returns all symbols with the given meaning that are visible at `location`.
+     */
+    getSymbolsInScope(location: Node | DocumentPosition, meaning: SymbolFlags): readonly Symbol[] {
+        // Distinguish Node (has `kind`) from DocumentPosition (has `document` and `position`)
+        const isNode = "kind" in location;
+        const data = this.client.apiRequest<SymbolResponse[] | null>("getSymbolsInScope", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            meaning,
+            location: isNode ? getNodeId(location as Node) : undefined,
+            file: isNode ? undefined : (location as DocumentPosition).document,
+            position: isNode ? undefined : (location as DocumentPosition).position,
+        });
+        return data ? data.map(d => this.objectRegistry.getOrCreateSymbol(d)) : [];
     }
 
     getResolvedSymbol(node: Identifier): Symbol | undefined {
@@ -1805,7 +1925,46 @@ export class Emitter {
     }
 }
 
-export class NodeHandle {
+export class SnapshotInternalAPI {
+    private snapshotId: number;
+    private client: Client;
+
+    constructor(snapshotId: number, client: Client) {
+        this.snapshotId = snapshotId;
+        this.client = client;
+    }
+
+    /**
+     * Format a synthesized node with the correct indentation for insertion at a
+     * specific position in an existing source file.
+     *
+     * @param node The synthesized AST node to format.
+     * @param file The target file where the node will be inserted.
+     * @param position The UTF-16 code-unit offset in the target file for insertion.
+     * @returns The formatted text of the node, indented for the insertion position.
+     */
+    formatNodeForInsertion(node: Node, file: DocumentIdentifier, position: number): string {
+        const data = this.client.apiRequest<ProjectResponse | null>("getDefaultProjectForFile", {
+            snapshot: this.snapshotId,
+            file,
+        });
+        if (!data) {
+            throw new Error(`No project found for file: ${typeof file === "string" ? file : file.uri}`);
+        }
+
+        const encoded = encodeNode(node);
+        const base64 = uint8ArrayToBase64(encoded);
+        return this.client.apiRequest<string>("formatNodeForInsertion", {
+            snapshot: this.snapshotId,
+            project: data.id,
+            file,
+            position,
+            data: base64,
+        });
+    }
+}
+
+export class NodeHandle<out T extends Node = Node> {
     /**
      * The project this handle was produced in, used as the default for {@link resolve}.
      * Node handles are only meaningful within a project's program, so the producing project
@@ -1829,12 +1988,12 @@ export class NodeHandle {
      * and looking up the node by index. If no project is passed, the project that produced
      * the handle is used.
      */
-    resolve(project: Project = this.canonicalProject): Node | undefined {
+    resolve(project: Project = this.canonicalProject): T | undefined {
         const sourceFile = project.program.getSourceFile(this.path);
         if (!sourceFile) {
             return undefined;
         }
-        return (sourceFile as unknown as RemoteSourceFile).getOrCreateNodeAtIndex(this.index);
+        return (sourceFile as unknown as RemoteSourceFile).getOrCreateNodeAtIndex(this.index) as T | undefined;
     }
 }
 
@@ -1872,8 +2031,8 @@ export class Symbol {
     readonly name: string;
     readonly flags: SymbolFlags;
     readonly checkFlags: CheckFlags;
-    readonly declarations: readonly NodeHandle[];
-    readonly valueDeclaration: NodeHandle | undefined;
+    readonly declarations: readonly NodeHandle<Declaration>[];
+    readonly valueDeclaration: NodeHandle<Declaration> | undefined;
     private readonly parent!: number;
     private readonly exportSymbol!: number;
     private membersCache: ReadonlyMap<__String, Symbol> | undefined;
@@ -1892,8 +2051,8 @@ export class Symbol {
             throw new Error(`Symbol ${data.id} references unknown canonical project '${data.project}'`);
         }
         this.canonicalProject = canonicalProject;
-        this.declarations = (data.declarations ?? []).map(d => new NodeHandle(d, canonicalProject));
-        this.valueDeclaration = data.valueDeclaration ? new NodeHandle(data.valueDeclaration, canonicalProject) : undefined;
+        this.declarations = (data.declarations ?? []).map(d => new NodeHandle<Declaration>(d, canonicalProject));
+        this.valueDeclaration = data.valueDeclaration ? new NodeHandle<Declaration>(data.valueDeclaration, canonicalProject) : undefined;
 
         if (data.parent !== undefined) this.parent = data.parent;
         if (data.exportSymbol !== undefined) this.exportSymbol = data.exportSymbol;
@@ -2398,7 +2557,7 @@ export class Signature {
     private objectRegistry: ProjectObjectRegistry;
 
     readonly id: number;
-    readonly declaration?: NodeHandle | undefined;
+    readonly declaration?: NodeHandle<Declaration> | undefined;
     readonly typeParameters?: readonly number[] | undefined;
     readonly parameters: readonly number[];
     readonly thisParameter?: number | undefined;
@@ -2409,7 +2568,7 @@ export class Signature {
         this.id = data.id;
         this.flags = data.flags;
         this.objectRegistry = objectRegistry;
-        this.declaration = data.declaration ? new NodeHandle(data.declaration, project) : undefined;
+        this.declaration = data.declaration ? new NodeHandle<Declaration>(data.declaration, project) : undefined;
         this.typeParameters = data.typeParameters ?? [];
         this.parameters = data.parameters ?? [];
         this.thisParameter = data.thisParameter;

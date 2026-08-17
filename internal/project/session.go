@@ -44,6 +44,7 @@ const (
 	UpdateReasonRequestedLoadProjectTree
 	UpdateReasonRequestedLanguageServiceWithAutoImports
 	UpdateReasonIdleCleanDiskCache
+	UpdateReasonDidChangeConfigFile
 )
 
 // watchRequestTimeout is the maximum time to wait for the client to respond to
@@ -370,6 +371,8 @@ func (s *Session) DidSaveFile(ctx context.Context, uri lsproto.DocumentUri) {
 func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.FileEvent) {
 	fileChanges := make([]FileChange, 0, len(changes))
 	hasRelevantChange := false
+	hasConfigChange := false
+	configFileRegistry := s.Snapshot().ConfigFileRegistry
 	for _, change := range changes {
 		var kind FileChangeKind
 		switch change.Type {
@@ -386,6 +389,10 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 			Kind: kind,
 			URI:  change.Uri,
 		})
+
+		if !hasConfigChange && configFileRegistry.isTracked(s.toPath(change.Uri.FileName())) {
+			hasConfigChange = true
+		}
 
 		if !hasRelevantChange {
 			fileName := change.Uri.FileName()
@@ -422,6 +429,12 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 		// Schedule a debounced diagnostics refresh only for paths
 		// that can affect the TypeScript program (relevant extensions or directories).
 		s.ScheduleDiagnosticsRefresh()
+	}
+	if hasConfigChange {
+		// Config file diagnostics are pushed on snapshot updates rather than pulled,
+		// so they must not depend on the client re-pulling diagnostics in response to
+		// the refresh request above.
+		s.ScheduleSnapshotUpdate(UpdateReasonDidChangeConfigFile)
 	}
 	s.cancelWarmAutoImportCache()
 	s.scheduleIdleCacheClean()
@@ -1059,10 +1072,18 @@ func (s *Session) GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUr
 	return allProjects, nil
 }
 
-func (s *Session) GetLanguageServicesForDocuments(ctx context.Context, uris []lsproto.DocumentUri) []*ls.LanguageService {
+// GetLanguageServicesForDocumentsLoadingProjectTree returns language services for
+// every project in the snapshot, loading all project trees first so that projects
+// that were never opened but reference the given documents are included. Loading the
+// trees is expensive, so this should only be used by operations that need to touch
+// every project in a solution, like file rename.
+func (s *Session) GetLanguageServicesForDocumentsLoadingProjectTree(ctx context.Context, uris []lsproto.DocumentUri) []*ls.LanguageService {
 	snapshot := s.getSnapshot(
 		ctx,
-		ResourceRequest{Documents: uris},
+		ResourceRequest{
+			Documents:   uris,
+			ProjectTree: &ProjectTreeRequest{},
+		},
 		false, /*callerRef*/
 	)
 
@@ -1113,6 +1134,20 @@ func (s *Session) WithSnapshotLoadingProjectTree(
 	snapshot := s.getSnapshot(
 		ctx,
 		ResourceRequest{ProjectTree: &ProjectTreeRequest{requestedProjectTrees}},
+		true, /*callerRef*/
+	)
+	defer snapshot.Deref(s)
+	fn(snapshot)
+}
+
+func (s *Session) WithSnapshotForDocument(
+	ctx context.Context,
+	uri lsproto.DocumentUri,
+	fn func(*Snapshot),
+) {
+	snapshot := s.getSnapshot(
+		ctx,
+		ResourceRequest{Documents: []lsproto.DocumentUri{uri}},
 		true, /*callerRef*/
 	)
 	defer snapshot.Deref(s)

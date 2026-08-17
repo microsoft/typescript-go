@@ -160,6 +160,11 @@ const customStructures: Structure[] = [
                 optional: true,
                 documentation: "Auto-import data for this completion item.",
             },
+            {
+                name: "isImportStatementCompletion",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
+            },
         ],
         documentation: "CompletionItemData is preserved on a CompletionItem between CompletionRequest and CompletionResolveRequest.",
     },
@@ -1048,6 +1053,17 @@ function patchAndPreprocessModel() {
                 type: { kind: "base", name: "integer" },
                 optional: true,
                 documentation: "Controls how many levels of type definitions will be expanded. Default is 0.",
+            });
+        }
+
+        // Patch WorkspaceSymbolParams to optionally scope the search to projects
+        // containing a document, matching Strada's currentProject mode.
+        if (structure.name === "WorkspaceSymbolParams") {
+            structure.properties.push({
+                name: "textDocument",
+                type: { kind: "reference", name: "TextDocumentIdentifier" },
+                optional: true,
+                documentation: "Scopes the workspace symbol search to projects containing this document.",
             });
         }
 
