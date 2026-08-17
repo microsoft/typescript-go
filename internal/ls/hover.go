@@ -650,7 +650,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 					writeTypeClassified(t, container, typeFormatFlags)
 				}
 			}
-			setDeclaration(symbol.ValueDeclaration)
+			setDeclaration(core.OrElse(symbol.ValueDeclaration, core.FirstOrNil(symbol.Declarations)))
 		}
 		if flags&ast.SymbolFlagsEnumMember != 0 {
 			writeNewLine()

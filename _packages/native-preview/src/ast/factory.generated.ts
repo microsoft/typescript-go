@@ -1694,7 +1694,7 @@ export function createPrivateIdentifier(text: string): PrivateIdentifier {
     }) as unknown as PrivateIdentifier;
 }
 
-export function createQualifiedName(left: EntityName, right: Identifier): QualifiedName {
+export function createQualifiedName(left: EntityName, right: MemberName): QualifiedName {
     return new NodeObject(SyntaxKind.QualifiedName, {
         left,
         right,
@@ -3126,7 +3126,7 @@ export function createJSDocPropertyTag(tagName: Identifier, name: EntityName, is
     }) as unknown as JSDocPropertyTag;
 }
 
-export function updateQualifiedName(node: QualifiedName, left: EntityName, right: Identifier): QualifiedName {
+export function updateQualifiedName(node: QualifiedName, left: EntityName, right: MemberName): QualifiedName {
     return node.left !== left || node.right !== right ? createQualifiedName(left, right) : node;
 }
 

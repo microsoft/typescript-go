@@ -1983,7 +1983,7 @@ func (s *Server) handleWillRenameFilesWorker(ctx context.Context, params *lsprot
 		return lsproto.WillRenameFilesResponse{}, nil
 	}
 
-	services := s.session.GetLanguageServicesForDocuments(ctx, uris)
+	services := s.session.GetLanguageServicesForDocumentsLoadingProjectTree(ctx, uris)
 
 	type editKey struct {
 		uri    lsproto.DocumentUri
@@ -2119,16 +2119,15 @@ func (s *Server) handleCompletion(ctx context.Context, languageService *ls.Langu
 
 func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsproto.CompletionItem, reqMsg *lsproto.RequestMessage) (lsproto.CompletionResolveResponse, error) {
 	data := params.Data
+	if data == nil {
+		return nil, errors.New("completion item data is nil")
+	}
 	languageService, err := s.session.GetLanguageService(ctx, lsconv.FileNameToDocumentURI(data.FileName))
 	if err != nil {
 		return nil, err
 	}
 	defer s.recover(reqMsg)
-	return languageService.ResolveCompletionItem(
-		ctx,
-		params,
-		data,
-	)
+	return languageService.ResolveCompletionItem(ctx, params, data)
 }
 
 func (s *Server) handleDocumentFormat(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentFormattingParams) (lsproto.DocumentFormattingResponse, error) {
