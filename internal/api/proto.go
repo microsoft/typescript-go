@@ -86,7 +86,7 @@ const (
 	MethodGetSymbolsAtPositions        Method = "getSymbolsAtPositions"
 	MethodGetSymbolAtLocation          Method = "getSymbolAtLocation"
 	MethodGetSymbolsAtLocations        Method = "getSymbolsAtLocations"
-  MethodGetSymbolOfSourceFile        Method = "getSymbolOfSourceFile"
+	MethodGetSymbolOfSourceFile        Method = "getSymbolOfSourceFile"
 	MethodGetSymbolsOfSourceFiles      Method = "getSymbolsOfSourceFiles"
 	MethodGetTypeOfSymbol              Method = "getTypeOfSymbol"
 	MethodGetTypesOfSymbols            Method = "getTypesOfSymbols"
@@ -419,7 +419,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetSymbolsAtPositions:        unmarshallerFor[GetSymbolsAtPositionsParams],
 	MethodGetSymbolAtLocation:          unmarshallerFor[GetSymbolAtLocationParams],
 	MethodGetSymbolsAtLocations:        unmarshallerFor[GetSymbolsAtLocationsParams],
-  MethodGetSymbolOfSourceFile:        unmarshallerFor[GetSymbolOfSourceFileParams],
+	MethodGetSymbolOfSourceFile:        unmarshallerFor[GetSymbolOfSourceFileParams],
 	MethodGetSymbolsOfSourceFiles:      unmarshallerFor[GetSymbolsOfSourceFilesParams],
 	MethodGetTypeOfSymbol:              unmarshallerFor[GetTypeOfSymbolParams],
 	MethodGetTypesOfSymbols:            unmarshallerFor[GetTypesOfSymbolsParams],
