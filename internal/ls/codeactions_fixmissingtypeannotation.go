@@ -163,12 +163,6 @@ func getAllIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *Code
 		}
 	}
 
-	if importAdder == nil {
-		for _, sym := range fixer.symbolsToImport {
-			fixer.addSymbolToExistingImport(sym)
-		}
-	}
-
 	changes := changeTracker.GetChanges()
 	fileChanges := changes[fixContext.SourceFile.FileName()]
 	if importAdder != nil && importAdder.HasFixes() {
@@ -206,12 +200,6 @@ func tryCodeAction(ctx context.Context, fixContext *CodeFixContext, ch *checker.
 		return nil, nil
 	}
 
-	if importAdder == nil {
-		for _, sym := range fixer.symbolsToImport {
-			fixer.addSymbolToExistingImport(sym)
-		}
-	}
-
 	changes := changeTracker.GetChanges()
 	fileChanges := changes[fixContext.SourceFile.FileName()]
 
@@ -234,16 +222,15 @@ func tryCodeAction(ctx context.Context, fixContext *CodeFixContext, ch *checker.
 
 // isolatedDeclarationsFixer encapsulates the state for fixing isolated declarations errors.
 type isolatedDeclarationsFixer struct {
-	sourceFile      *ast.SourceFile
-	program         *compiler.Program
-	checker         *checker.Checker
-	changeTracker   *change.Tracker
-	importAdder     autoimport.ImportAdder
-	locale          locale.Locale
-	fixedNodes      map[*ast.Node]bool
-	typePrintMode   typePrintMode
-	symbolsToImport []*ast.Symbol
-	mutatedTarget   bool // set by inferType/relativeType when the target was mutated (e.g., spread decomposition)
+	sourceFile    *ast.SourceFile
+	program       *compiler.Program
+	checker       *checker.Checker
+	changeTracker *change.Tracker
+	importAdder   autoimport.ImportAdder
+	locale        locale.Locale
+	fixedNodes    map[*ast.Node]bool
+	typePrintMode typePrintMode
+	mutatedTarget bool // set by inferType/relativeType when the target was mutated (e.g., spread decomposition)
 }
 
 func (f *isolatedDeclarationsFixer) addTypeAnnotation(span core.TextRange) string {
@@ -1216,16 +1203,25 @@ func (f *isolatedDeclarationsFixer) typeToMinimizedReferenceType(t *checker.Type
 	// and collect symbols that need to be imported
 	referenceTypeNode, importableSymbols := autoimport.TryGetAutoImportableReferenceFromTypeNode(typeNode, idToSymbol)
 	if referenceTypeNode != nil {
-		typeNode = referenceTypeNode
 		if f.importAdder != nil {
 			for _, symbol := range importableSymbols {
 				f.importAdder.AddImportFromExportedSymbol(symbol, true /*isValidTypeOnlyUseSite*/)
 			}
-		} else {
-			f.symbolsToImport = append(f.symbolsToImport, importableSymbols...)
+		} else if !f.allSymbolsAccessibleInScope(importableSymbols, enclosingDecl) {
+			return nil
 		}
+		typeNode = referenceTypeNode
 	}
 	return typeNode
+}
+
+func (f *isolatedDeclarationsFixer) allSymbolsAccessibleInScope(symbols []*ast.Symbol, enclosingDecl *ast.Node) bool {
+	for _, symbol := range symbols {
+		if symbol == nil || !f.checker.IsSymbolAccessibleByFlags(symbol, enclosingDecl, ast.SymbolFlagsType) {
+			return false
+		}
+	}
+	return true
 }
 
 // endOfRequiredTypeParameters finds the number of type arguments that are
@@ -1398,48 +1394,4 @@ func getIdentifierNameForNode(node *ast.Node) string {
 		}
 	}
 	return "newLocal"
-}
-
-// addSymbolToExistingImport finds the existing import declaration for the symbol's module
-// and adds the symbol name to the named imports.
-func (f *isolatedDeclarationsFixer) addSymbolToExistingImport(sym *ast.Symbol) {
-	if sym == nil || sym.Parent == nil {
-		return
-	}
-
-	// Find the module specifier for this symbol
-	moduleSymbol := sym.Parent
-	symbolName := sym.Name
-
-	// Walk the source file's import declarations to find the one importing from the same module
-	for _, stmt := range f.sourceFile.Statements.Nodes {
-		if !ast.IsImportDeclaration(stmt) {
-			continue
-		}
-		importDecl := stmt.AsImportDeclaration()
-		if importDecl.ImportClause == nil {
-			continue
-		}
-
-		// Check if this import is from the same module
-		importModuleSymbol := f.checker.GetSymbolAtLocation(importDecl.ModuleSpecifier)
-		if importModuleSymbol == nil || f.checker.GetMergedSymbol(importModuleSymbol) != f.checker.GetMergedSymbol(moduleSymbol) {
-			continue
-		}
-
-		// Found the matching import - add the symbol to named imports
-		importClause := importDecl.ImportClause.AsImportClause()
-		if importClause.NamedBindings != nil && ast.IsNamedImports(importClause.NamedBindings) {
-			// Add to existing named imports
-			existingElements := importClause.NamedBindings.AsNamedImports().Elements.Nodes
-			factory := f.changeTracker.NodeFactory
-			newSpecifier := factory.NewImportSpecifier(false, nil, factory.NewIdentifier(symbolName))
-			newElements := append(existingElements, newSpecifier.AsNode())
-			newNamedImports := factory.NewNamedImports(factory.NewNodeList(newElements))
-			newImportClause := factory.UpdateImportClause(importClause, importClause.PhaseModifier, importClause.Name(), newNamedImports)
-			newImportDecl := factory.UpdateImportDeclaration(importDecl, importDecl.Modifiers(), newImportClause, importDecl.ModuleSpecifier, importDecl.Attributes)
-			f.changeTracker.ReplaceNode(f.sourceFile, stmt, newImportDecl.AsNode(), nil)
-		}
-		return
-	}
 }
