@@ -351,13 +351,19 @@ func (tx *DeclarationTransformer) transformSourceFile(node *ast.SourceFile) *ast
 	tx.expressionVisitor.VisitNode(node.AsNode())          // collect expando members (requires any export assignment be located in advance)
 	var combinedStatements *ast.StatementList
 	statements := tx.Visitor().VisitNodes(node.Statements)
+	firstStatementWasElided := ast.IsInJSFile(node.AsNode()) && len(node.Statements.Nodes) > 0
+	if firstStatementWasElided {
+		firstStatement := node.Statements.Nodes[0]
+		for _, statement := range flattenSyntaxLists(statements.Nodes) {
+			if tx.EmitContext().MostOriginal(statement) == firstStatement {
+				firstStatementWasElided = false
+				break
+			}
+		}
+	}
 	combinedStatements = tx.transformAndReplaceLatePaintedStatements(statements)
 	combinedStatements = tx.appendCjsExports(combinedStatements)
-	if ast.IsInJSFile(node.AsNode()) {
-		combinedStatements = tx.Factory().NewNodeList(combinedStatements.Nodes)
-	} else {
-		combinedStatements.Loc = statements.Loc // setTextRange
-	}
+	combinedStatements.Loc = statements.Loc // setTextRange
 	if ast.IsExternalOrCommonJSModule(node) {
 		if ast.IsInJSFile(node.AsNode()) {
 			if exportEquals := node.Symbol.Exports[ast.InternalSymbolNameExportEquals]; exportEquals != nil && len(exportEquals.Declarations) > 1 {
@@ -380,6 +386,9 @@ func (tx *DeclarationTransformer) transformSourceFile(node *ast.SourceFile) *ast
 	result.AsSourceFile().TypeReferenceDirectives = tx.getTypeReferences()
 	result.AsSourceFile().IsDeclarationFile = true
 	result.AsSourceFile().ReferencedFiles = tx.getReferencedFiles(outputFilePath)
+	if firstStatementWasElided {
+		tx.EmitContext().AddEmitFlags(result, printer.EFNoLeadingComments)
+	}
 	return result.AsNode()
 }
 
