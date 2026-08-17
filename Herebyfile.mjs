@@ -14,6 +14,7 @@ import url from "node:url";
 import { parseArgs } from "node:util";
 import pLimit from "p-limit";
 import pc from "picocolors";
+import * as tar from "tar";
 import tmp from "tmp";
 import which from "which";
 
@@ -90,11 +91,15 @@ const nativePreviewReleaseProfile = /** @type {"native-preview" | "typescript"} 
 const nativePreviewReleaseVersion = /** @type {string | undefined} */ (undefined);
 const produceNativePreviewVsix = /** @type {boolean} */ (false);
 const produceTypeScriptNightlyVsix = /** @type {boolean} */ (true);
+const usePublishedPlatformPackagesForVsix = /** @type {boolean} */ (false);
 const produceAnyVsix = produceNativePreviewVsix || produceTypeScriptNightlyVsix;
 const publishAsTypescript = nativePreviewReleaseProfile === "typescript";
 
 if (options.forRelease && !options.setPrerelease && (!nativePreviewReleaseVersion || produceAnyVsix)) {
     throw new Error("forRelease requires setPrerelease unless nativePreviewReleaseVersion is hardcoded and VSIX production is disabled");
+}
+if (usePublishedPlatformPackagesForVsix && !publishAsTypescript) {
+    throw new Error("usePublishedPlatformPackagesForVsix requires nativePreviewReleaseProfile to be 'typescript'");
 }
 
 const defaultGoBuildTags = [
@@ -322,6 +327,7 @@ export const generateExtension = task({
  *   goFile: string;
  *   outDir: string;
  *   stringEnum?: boolean;
+ *   excludeMembers?: readonly string[];
  *   valueReplacements?: Record<string, string>;
  * }} EnumDef
  */
@@ -329,6 +335,7 @@ export const generateExtension = task({
 /** @type {EnumDef[]} */
 const enumDefs = [
     { name: "SymbolFlags", goPrefix: "SymbolFlags", goFile: "internal/ast/symbolflags.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "CheckFlags", goPrefix: "CheckFlags", goFile: "internal/ast/checkflags.go", outDir: "_packages/native-preview/src/enums" },
     { name: "TypeFlags", goPrefix: "TypeFlags", goFile: "internal/checker/types.go", outDir: "_packages/native-preview/src/enums" },
     { name: "ObjectFlags", goPrefix: "ObjectFlags", goFile: "internal/checker/types.go", outDir: "_packages/native-preview/src/enums" },
     { name: "SignatureFlags", goPrefix: "SignatureFlags", goFile: "internal/checker/types.go", outDir: "_packages/native-preview/src/enums" },
@@ -348,6 +355,7 @@ const enumDefs = [
     { name: "TokenFlags", goPrefix: "TokenFlags", goFile: "internal/ast/tokenflags.go", outDir: "_packages/native-preview/src/enums" },
     { name: "NodeBuilderFlags", goPrefix: "Flags", goFile: "internal/nodebuilder/types.go", outDir: "_packages/native-preview/src/enums" },
     { name: "CompletionItemKind", goPrefix: "CompletionItemKind", goFile: "internal/lsp/lsproto/lsp_generated.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "EmitOnly", goPrefix: "Emit", goFile: "internal/compiler/emitter.go", outDir: "_packages/native-preview/src/enums", excludeMembers: ["OnlyBuilderSignature"] },
     // String enum: Go stores internal names with a "\xFE" sentinel prefix, but the escaped
     // form sent over the wire uses "__" (see EscapeSymbolName), so map the sentinel accordingly.
     { name: "InternalSymbolName", goPrefix: "InternalSymbolName", goFile: "internal/ast/symbol.go", outDir: "_packages/native-preview/src/enums", stringEnum: true, valueReplacements: { InternalSymbolNamePrefix: "__" } },
@@ -440,7 +448,7 @@ function parseGoEnum(def) {
     const constBlockRegex = /const\s*\(([\s\S]*?)\n\)/g;
 
     for (const match of source.matchAll(constBlockRegex)) {
-        const members = parseGoConstBlock(match[1], def);
+        const members = parseGoConstBlock(match[1], def).filter(member => !def.excludeMembers?.includes(member.name));
         if (members.length > 0) return topoSortMembers(members);
     }
 
@@ -1238,7 +1246,10 @@ const extensionDir = path.resolve("./_extension");
 const nightlyExtensionDir = path.resolve("./_extension-nightly");
 const builtNpm = path.resolve("./built/npm");
 const builtVsix = path.resolve("./built/vsix");
+const builtPublishedPlatformPackages = path.resolve("./built/published-platform-packages");
 const builtSignTmp = path.resolve("./built/sign-tmp");
+const publishedTypeScriptAliasPackageName = "@typescript/bundled-typescript";
+const releasePackageEnv = { COREPACK_ENABLE_STRICT: "0" };
 
 const getSignTempDir = memoize(async () => {
     const dir = path.resolve(builtSignTmp);
@@ -1474,13 +1485,48 @@ const mainNativePreviewPackage = {
     npmTarball: path.join(builtNpm, publishAsTypescript ? "typescript.tgz" : "native-preview.tgz"),
 };
 
+const typescriptMacEntitlements = [
+    "com.apple.security.cs.allow-dyld-environment-variables",
+    "com.apple.security.cs.disable-library-validation",
+];
+
+function createTypeScriptMacEntitlementsPlist() {
+    const entries = typescriptMacEntitlements.map(entitlement => `    <key>${entitlement}</key>\n    <true/>`).join("\n");
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+${entries}
+</dict>
+</plist>
+`;
+}
+
+/**
+ * @param {string} filePath
+ */
+async function verifyTypeScriptMacEntitlements(filePath) {
+    const { stdout } = await $pipe`go tool quill describe --quiet --output json ${filePath}`;
+    const details = JSON.parse(stdout);
+    const entitlements = details[0]?.superBlob?.entitlements?.entitlements;
+    if (typeof entitlements !== "string") {
+        throw new Error(`Signed file has no macOS entitlements: ${filePath}`);
+    }
+    for (const entitlement of typescriptMacEntitlements) {
+        const escapedEntitlement = entitlement.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        if (!new RegExp(`<key>\\s*${escapedEntitlement}\\s*</key>\\s*<true\\s*/>`).test(entitlements)) {
+            throw new Error(`Signed file is missing macOS entitlement '${entitlement}': ${filePath}`);
+        }
+    }
+}
+
 /**
  * @typedef {"win32" | "linux" | "darwin" | "aix" | "android" | "freebsd" | "netbsd" | "openbsd" | "sunos"} OS
  * @typedef {"x64" | "arm" | "arm64" | "ia32" | "ppc64" | "loong64" | "mips64el" | "riscv64" | "s390x"} Arch
  * @typedef {"Microsoft400" | "LinuxSign" | "MacDeveloperHarden" | "8020" | "VSCodePublisher"} Cert
  * @typedef {`${OS | "alpine"}-${Exclude<Arch, "arm"> | "armhf"}`} VSCodeTarget
  * @typedef {{ name: string; sourceDir: string }} VsixExtensionPackage
- * @typedef {{ vscodeTarget: string; sourceDir: string; extensionDir: string; vsixPath: string; vsixManifestPath: string; vsixSignaturePath: string }} VsixExtension
+ * @typedef {{ nodeOs: string; vscodeTarget: string; sourceDir: string; extensionDir: string; vsixPath: string; vsixManifestPath: string; vsixSignaturePath: string }} VsixExtension
  * @typedef {{ GOOS: string; GOARCH: string }} GoDistTarget
  * @typedef {{ os: OS; arch: Arch; cert?: Cert; vsix?: boolean; alpine?: boolean }} Platform
  */
@@ -1511,6 +1557,7 @@ const platforms = [
     { os: "darwin", arch: "x64", vsix: true, cert: "MacDeveloperHarden" },
     { os: "darwin", arch: "arm64", vsix: true, cert: "MacDeveloperHarden" },
     { os: "aix", arch: "ppc64" },
+    { os: "android", arch: "arm64" },
     { os: "freebsd", arch: "arm64" },
     { os: "freebsd", arch: "x64" },
     { os: "linux", arch: "loong64" },
@@ -1530,7 +1577,6 @@ const ignoredGoTargets = new Map([
     ["android/386", "Android is not a Node runtime target TypeScript supports"],
     ["android/amd64", "Android is not a Node runtime target TypeScript supports"],
     ["android/arm", "Android is not a Node runtime target TypeScript supports"],
-    ["android/arm64", "Android is not a Node runtime target TypeScript supports"],
     ["freebsd/386", "FreeBSD is experimental in Node and limited here to mainstream 64-bit x64/arm64"],
     ["freebsd/arm", "FreeBSD is experimental in Node and limited here to mainstream 64-bit x64/arm64"],
     ["linux/386", "ia32 means 32-bit x86, which TypeScript does not support for native packages"],
@@ -1628,6 +1674,7 @@ const getPlatforms = memoize(() => {
                     const vsixManifestPath = extensionDir + ".manifest";
                     const vsixSignaturePath = extensionDir + ".signature.p7s";
                     return {
+                        nodeOs: os,
                         vscodeTarget,
                         sourceDir,
                         extensionDir,
@@ -1799,6 +1846,13 @@ export const buildNativePreviewPackages = task({
 });
 
 async function runBuildNativePreviewPackages() {
+    if (usePublishedPlatformPackagesForVsix) {
+        checkPublishedPlatformPackagesForVsix();
+        await rimraf(builtNpm);
+        console.log("Skipping npm package builds; VSIX packaging will use published platform packages.");
+        return;
+    }
+
     await rimraf(builtNpm);
 
     const platforms = getPlatforms();
@@ -1967,6 +2021,11 @@ async function runSignNativePreviewPackages() {
     if (!options.forRelease) {
         throw new Error("This task should not be run in non-release builds.");
     }
+    if (usePublishedPlatformPackagesForVsix) {
+        checkPublishedPlatformPackagesForVsix();
+        console.log("Skipping npm package signing; VSIX packaging will use published platform packages.");
+        return;
+    }
 
     const platforms = getPlatforms();
 
@@ -1984,6 +2043,8 @@ async function runSignNativePreviewPackages() {
     }
 
     const tmp = await getSignTempDir();
+    const typescriptMacEntitlementsPath = path.join(tmp, "typescript-macos-entitlements.plist");
+    await fs.promises.writeFile(typescriptMacEntitlementsPath, createTypeScriptMacEntitlementsPlist());
 
     /** @type {DDSignFileList} */
     const filelist = {
@@ -2015,6 +2076,9 @@ async function runSignNativePreviewPackages() {
                 // Mac signing requires putting files into zips and then signing those,
                 // along with a notarization step.
                 for (const p of filelistPaths) {
+                    // ESRP preserves entitlements from an existing ad-hoc signature.
+                    await $pipe`go tool quill sign --quiet --ad-hoc --identity ${path.basename(p.path)} --entitlements ${typescriptMacEntitlementsPath} ${p.path}`;
+
                     const unsignedZipPath = path.join(tmp, `${p.tmpName}.unsigned.zip`);
                     const signedZipPath = path.join(tmp, `${p.tmpName}.signed.zip`);
                     const notarizedZipPath = path.join(tmp, `${p.tmpName}.notarized.zip`);
@@ -2074,6 +2138,7 @@ async function runSignNativePreviewPackages() {
 
         for (const p of macZips) {
             await fs.promises.chmod(p.path, 0o755);
+            await verifyTypeScriptMacEntitlements(p.path);
         }
     }
 }
@@ -2086,6 +2151,13 @@ export const packNativePreviewPackages = task({
 });
 
 async function runPackNativePreviewPackages() {
+    if (usePublishedPlatformPackagesForVsix) {
+        checkPublishedPlatformPackagesForVsix();
+        await rimraf(builtNpm);
+        console.log("Skipping npm package packing; VSIX packaging will use published platform packages.");
+        return;
+    }
+
     const platforms = getPlatforms();
     await Promise.all([mainNativePreviewPackage, ...platforms].map(async ({ npmDir, npmTarball }) => {
         const { stdout } = await $pipe`npm pack --json ${npmDir}`;
@@ -2115,23 +2187,132 @@ async function runPackNativePreviewPackages() {
 export const packVsixExtensions = task({
     name: "native-preview:pack-extensions",
     hiddenFromTaskList: true,
-    dependencies: options.forRelease ? undefined : [buildNativePreviewPackages, cleanSignTempDirectory],
+    dependencies: options.forRelease || usePublishedPlatformPackagesForVsix ? undefined : [buildNativePreviewPackages, cleanSignTempDirectory],
     run: runPackVsixExtensions,
 });
+
+/** @type {Map<string, Promise<string>>} */
+const publishedPlatformPackageLibDirs = new Map();
+
+const getPublishedTypeScriptPackageJson = memoize(() => {
+    const candidates = [
+        path.join(extensionDir, "node_modules", publishedTypeScriptAliasPackageName, "package.json"),
+        path.join(__dirname, "node_modules", publishedTypeScriptAliasPackageName, "package.json"),
+    ];
+
+    for (const candidate of candidates) {
+        if (fs.existsSync(candidate)) {
+            const packageJson = JSON.parse(fs.readFileSync(candidate, "utf8"));
+            if (packageJson.name !== "typescript") {
+                throw new Error(`${publishedTypeScriptAliasPackageName} should alias the typescript package, but found ${packageJson.name}.`);
+            }
+            if (!packageJson.version || typeof packageJson.version !== "string") {
+                throw new Error(`${publishedTypeScriptAliasPackageName} package.json did not contain a version.`);
+            }
+            if (!packageJson.optionalDependencies || typeof packageJson.optionalDependencies !== "object") {
+                throw new Error(`${publishedTypeScriptAliasPackageName} package.json did not contain platform optionalDependencies.`);
+            }
+            return packageJson;
+        }
+    }
+
+    throw new Error(`Could not find ${publishedTypeScriptAliasPackageName}; run npm install first.`);
+});
+
+function getPublishedTypeScriptVersion() {
+    const version = getPublishedTypeScriptPackageJson().version;
+    const expectedVersion = getVersion();
+    if (usePublishedPlatformPackagesForVsix && version !== expectedVersion) {
+        throw new Error(`usePublishedPlatformPackagesForVsix requires ${publishedTypeScriptAliasPackageName}'s installed version (${version}) to match release version ${expectedVersion}.`);
+    }
+    return version;
+}
+
+function checkPublishedPlatformPackagesForVsix() {
+    if (!options.forRelease) {
+        throw new Error("usePublishedPlatformPackagesForVsix requires forRelease");
+    }
+    getPublishedTypeScriptVersion();
+}
+
+const getPackageLock = memoize(() => JSON.parse(fs.readFileSync(path.join(__dirname, "package-lock.json"), "utf8")));
+
+/**
+ * @param {string} npmPackageName
+ */
+async function getPublishedPlatformPackageLibDir(npmPackageName) {
+    let promise = publishedPlatformPackageLibDirs.get(npmPackageName);
+    if (!promise) {
+        promise = getPublishedPlatformPackageLibDirWorker(npmPackageName);
+        publishedPlatformPackageLibDirs.set(npmPackageName, promise);
+    }
+    return promise;
+}
+
+/**
+ * @param {string} npmPackageName
+ */
+async function getPublishedPlatformPackageLibDirWorker(npmPackageName) {
+    const dest = path.join(builtPublishedPlatformPackages, "node_modules", ...npmPackageName.split("/"));
+    const lib = path.join(dest, "lib");
+    if (fs.existsSync(lib)) {
+        return lib;
+    }
+
+    await fs.promises.mkdir(dest, { recursive: true });
+
+    const tarballDestination = path.join(builtPublishedPlatformPackages, "tarballs");
+    await fs.promises.mkdir(tarballDestination, { recursive: true });
+
+    const version = getPublishedTypeScriptPackageJson().optionalDependencies[npmPackageName];
+    if (!version || typeof version !== "string") {
+        throw new Error(`${publishedTypeScriptAliasPackageName} does not depend on ${npmPackageName}.`);
+    }
+
+    const lockEntry = getPackageLock().packages[`node_modules/${npmPackageName}`];
+    if (!lockEntry) {
+        throw new Error(`package-lock.json does not contain ${npmPackageName}; run npm install.`);
+    }
+    if (lockEntry.version !== version) {
+        throw new Error(`package-lock.json has ${npmPackageName}@${lockEntry.version}, but ${publishedTypeScriptAliasPackageName} depends on ${version}.`);
+    }
+    if (!lockEntry.resolved || typeof lockEntry.resolved !== "string") {
+        throw new Error(`package-lock.json entry for ${npmPackageName}@${version} does not contain a tarball URL.`);
+    }
+
+    console.log(`Fetching ${npmPackageName}@${version} with npm.`);
+    const { stdout } = await $pipe({ cwd: tarballDestination, env: releasePackageEnv })`npm pack --json ${npmPackageName}@${version}`;
+    const [packed] = JSON.parse(stdout);
+    if (!packed.filename || typeof packed.filename !== "string") {
+        throw new Error(`npm pack ${npmPackageName}@${version} did not return a filename.`);
+    }
+    await tar.x({ file: path.join(tarballDestination, packed.filename), cwd: dest, strip: 1 });
+
+    if (!fs.existsSync(lib)) {
+        throw new Error(`Published platform package ${npmPackageName}@${version} did not contain a lib directory.`);
+    }
+
+    return lib;
+}
 
 async function runPackVsixExtensions() {
     await rimraf(builtVsix);
     await fs.promises.mkdir(builtVsix, { recursive: true });
+    if (usePublishedPlatformPackagesForVsix) {
+        checkPublishedPlatformPackagesForVsix();
+        publishedPlatformPackageLibDirs.clear();
+        await rimraf(builtPublishedPlatformPackages);
+    }
 
     const platforms = getPlatforms();
-    const extensions = platforms.flatMap(({ npmDir, extensions }) => extensions.map(e => ({ npmDir, ...e })));
+    const extensions = platforms.flatMap(({ npmDir, npmPackageName, extensions }) => extensions.map(e => ({ npmDir, npmPackageName, ...e })));
     if (!extensions.length) {
         console.log("No VSIX targets configured; skipping extension packaging.");
         return;
     }
 
     // We don't use vscode:prepublish, as that would run the build for each package below.
-    await $({ cwd: extensionDir })`npm run bundle:release`;
+    await $({ cwd: extensionDir, env: releasePackageEnv })`npm run bundle:release`;
 
     let version = "0.0.0";
     if (options.forRelease) {
@@ -2151,26 +2332,29 @@ async function runPackVsixExtensions() {
 
     console.log("Version:", version);
 
-    await Promise.all(extensions.map(async ({ npmDir, vscodeTarget, sourceDir, extensionDir: thisExtensionDir, vsixPath, vsixManifestPath, vsixSignaturePath }) => {
-        const npmLibDir = path.join(npmDir, "lib");
+    await Promise.all(extensions.map(async ({ npmDir, npmPackageName, nodeOs, vscodeTarget, sourceDir, extensionDir: thisExtensionDir, vsixPath, vsixManifestPath, vsixSignaturePath }) => {
+        const npmLibDir = usePublishedPlatformPackagesForVsix
+            ? await getPublishedPlatformPackageLibDir(npmPackageName)
+            : path.join(npmDir, "lib");
         const extensionLibDir = path.join(thisExtensionDir, "lib");
         await fs.promises.mkdir(extensionLibDir, { recursive: true });
 
         await cpWithoutNodeModulesOrTsconfig(sourceDir, thisExtensionDir);
         await cpWithoutNodeModulesOrTsconfig(npmLibDir, extensionLibDir);
+        await fs.promises.chmod(path.join(extensionLibDir, nativePreviewExeName(nodeOs)), 0o755);
 
         const packageJsonPath = path.join(thisExtensionDir, "package.json");
         const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
         packageJson.version = version;
-        packageJson.bundledTypeScriptVersion = getVersion();
+        packageJson.bundledTypeScriptVersion = usePublishedPlatformPackagesForVsix ? getPublishedTypeScriptVersion() : getVersion();
         fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, undefined, 4));
 
         await fs.promises.copyFile("NOTICE.txt", path.join(thisExtensionDir, "NOTICE.txt"));
 
-        await $({ cwd: thisExtensionDir })`vsce package ${version} --no-update-package-json --no-dependencies --out ${vsixPath} --target ${vscodeTarget}`;
+        await $({ cwd: thisExtensionDir, env: releasePackageEnv })`vsce package ${version} --no-update-package-json --no-dependencies --out ${vsixPath} --target ${vscodeTarget}`;
 
         if (options.forRelease) {
-            await $({ cwd: thisExtensionDir })`vsce generate-manifest --packagePath ${vsixPath} --out ${vsixManifestPath}`;
+            await $({ cwd: thisExtensionDir, env: releasePackageEnv })`vsce generate-manifest --packagePath ${vsixPath} --out ${vsixManifestPath}`;
             await fs.promises.cp(vsixManifestPath, vsixSignaturePath);
         }
     }));

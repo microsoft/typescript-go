@@ -492,7 +492,11 @@ func (r *EmitResolver) IsImplementationOfOverload(node *ast.SignatureDeclaration
 		//           return a;
 		//       }
 		if len(signaturesOfSymbol) == 1 {
-			declaration := signaturesOfSymbol[0].declaration
+			signature := signaturesOfSymbol[0]
+			if signature == r.checker.getSignatureOfFullSignatureType(node) {
+				return false
+			}
+			declaration := signature.declaration
 			if declaration != node && declaration.Flags&ast.NodeFlagsJSDoc == 0 {
 				return true
 			}
@@ -644,7 +648,11 @@ func (r *EmitResolver) IsLiteralConstDeclaration(node *ast.Node) bool {
 	if isDeclarationReadonly(node) || ast.IsVariableDeclaration(node) && ast.IsVarConst(node) {
 		r.checkerMu.Lock()
 		defer r.checkerMu.Unlock()
-		return isFreshLiteralType(r.checker.getTypeOfSymbol(r.checker.getSymbolOfDeclaration(node)))
+		s := r.checker.getSymbolOfDeclaration(node)
+		if s == nil {
+			return false
+		}
+		return isFreshLiteralType(r.checker.getTypeOfSymbol(s))
 	}
 	return false
 }

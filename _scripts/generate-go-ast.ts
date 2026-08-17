@@ -139,13 +139,90 @@ function generateHeader(w: CodeWriter) {
 
 // ── Generate struct definitions ────────────────────────────────────────────
 
+/**
+ * Verifies that nothing inherits a base along more than one path.
+ */
+function verifyNoDuplicateBases(): void {
+    const problems: string[] = [];
+    const check = (name: string, extendsKeys: string[]) => {
+        const copies = new Map<string, number>();
+        const walk = (keys: string[]) => {
+            for (const key of keys) {
+                copies.set(key, (copies.get(key) ?? 0) + 1);
+                walk(api.getBase(key)?.extendsKeys ?? []);
+            }
+        };
+        walk(extendsKeys);
+        for (const [base, count] of copies) {
+            if (count > 1) problems.push(`${name} inherits ${base} ${count} times`);
+        }
+    };
+    for (const base of api.bases()) check(base.key, base.extendsKeys);
+    for (const node of api.nodes()) check(node.name, node.extendsKeys);
+
+    if (problems.length > 0) {
+        throw new Error(`ast.json declares duplicate embedded bases:\n  ${problems.sort().join("\n  ")}`);
+    }
+}
+
+/**
+ * Verifies that the inheritance path containing NodeBase is embedded first.
+ */
+function verifyNodeBaseAtOffsetZero(): void {
+    const containsNodeBase = (key: string): boolean => {
+        if (key === "NodeBase") return true;
+        return api.getBase(key)?.extendsKeys.some(containsNodeBase) ?? false;
+    };
+    const problems: string[] = [];
+    const check = (name: string, extendsKeys: string[], requireNodeBase: boolean) => {
+        const nodeBaseIndex = extendsKeys.findIndex(containsNodeBase);
+        if (nodeBaseIndex < 0 && requireNodeBase) {
+            problems.push(`${name} does not embed NodeBase`);
+        }
+        else if (nodeBaseIndex > 0) {
+            problems.push(`${name} embeds ${extendsKeys[nodeBaseIndex]} after ${extendsKeys.slice(0, nodeBaseIndex).join(", ")}`);
+        }
+    };
+    for (const base of api.bases()) check(base.key, base.extendsKeys, false);
+    for (const node of api.nodes()) check(node.name, node.extendsKeys, true);
+
+    if (problems.length > 0) {
+        throw new Error(`ast.json does not embed NodeBase at offset zero:\n  ${problems.sort().join("\n  ")}`);
+    }
+}
+
+verifyNoDuplicateBases();
+verifyNodeBaseAtOffsetZero();
+
+// A base with no fields and no extends is a struct{} marker. Go pads a struct whose last field is
+// zero-size (so the field's address stays in bounds), so markers are embedded first, never last; being
+// zero-size, they don't move NodeBase off offset zero.
+function isZeroSizeBase(key: string): boolean {
+    const base = api.getBase(key);
+    return !!base && base.extendsKeys.length === 0 && base.fields.length === 0;
+}
+
+function goEmbeds(extendsKeys: string[]): string[] {
+    const zeroSized: string[] = [];
+    const nonZeroSized: string[] = [];
+    for (const key of extendsKeys) {
+        if (isZeroSizeBase(key)) {
+            zeroSized.push(key);
+        }
+        else {
+            nonZeroSized.push(key);
+        }
+    }
+    return [...zeroSized, ...nonZeroSized];
+}
+
 function generateStructDef(w: CodeWriter, node: NodeType) {
     const structName = node.name;
     w.write(`type ${structName} struct {`);
     w.push();
 
     // Embeddings from extends (each maps to a Go struct via convention)
-    for (const ext of node.extendsKeys) {
+    for (const ext of goEmbeds(node.extendsKeys)) {
         w.write(ext);
     }
 
@@ -232,7 +309,7 @@ function generateBaseStructDefs(w: CodeWriter) {
 
         const structName = base.key;
 
-        const goExts = base.extendsKeys;
+        const goExts = goEmbeds(base.extendsKeys);
 
         w.write(`type ${structName} struct {`);
         w.push();
