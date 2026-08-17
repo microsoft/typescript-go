@@ -1,6 +1,0 @@
-//// [tests/cases/compiler/emitOutputPathWithCaseInsensitiveRootDir.ts] ////
-
-=== /a/k.ts ===
-export const x = 1;
->x : Symbol(x, Decl(k.ts, 0, 12))
-
