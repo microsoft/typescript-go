@@ -58,6 +58,27 @@ class Bar {
 >42 : 42
 }
 
+// Object binding pattern property key should not be renamed
+@dec
+>dec : (t: any) => any
+
+class Baz {
+>Baz : Baz
+
+    static unwrap(value: any) {
+>unwrap : (value: any) => any
+>value : any
+
+        const { Baz: renamed } = value;
+>Baz : any
+>renamed : any
+>value : any
+
+        return renamed;
+>renamed : any
+    }
+}
+
 // Self-reference in expression positions SHOULD still be renamed
 @dec
 >dec : (t: any) => any

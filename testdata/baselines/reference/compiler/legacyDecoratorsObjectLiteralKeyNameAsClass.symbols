@@ -51,22 +51,42 @@ class Bar {
 >Bar : Symbol(Bar.Bar, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 23, 11))
 }
 
+// Object binding pattern property key should not be renamed
+@dec
+>dec : Symbol(dec, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 2, 5))
+
+class Baz {
+>Baz : Symbol(Baz, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 25, 1))
+
+    static unwrap(value: any) {
+>unwrap : Symbol(Baz.unwrap, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 29, 11))
+>value : Symbol(value, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 30, 18))
+
+        const { Baz: renamed } = value;
+>renamed : Symbol(renamed, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 31, 15))
+>value : Symbol(value, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 30, 18))
+
+        return renamed;
+>renamed : Symbol(renamed, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 31, 15))
+    }
+}
+
 // Self-reference in expression positions SHOULD still be renamed
 @dec
 >dec : Symbol(dec, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 2, 5))
 
 class SelfRef {
->SelfRef : Symbol(SelfRef, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 25, 1))
+>SelfRef : Symbol(SelfRef, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 34, 1))
 
     static instance = new SelfRef();
->instance : Symbol(SelfRef.instance, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 29, 15))
->SelfRef : Symbol(SelfRef, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 25, 1))
+>instance : Symbol(SelfRef.instance, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 38, 15))
+>SelfRef : Symbol(SelfRef, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 34, 1))
 
     method() {
->method : Symbol(SelfRef.method, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 30, 36))
+>method : Symbol(SelfRef.method, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 39, 36))
 
         return SelfRef;
->SelfRef : Symbol(SelfRef, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 25, 1))
+>SelfRef : Symbol(SelfRef, Decl(legacyDecoratorsObjectLiteralKeyNameAsClass.ts, 34, 1))
     }
 }
 

@@ -42,6 +42,8 @@ func (tx *LegacyDecoratorsTransformer) visit(node *ast.Node) *ast.Node {
 		return tx.visitPropertyAccessExpression(node.AsPropertyAccessExpression())
 	case ast.KindPropertyAssignment:
 		return tx.visitPropertyAssignment(node.AsPropertyAssignment())
+	case ast.KindBindingElement:
+		return tx.visitBindingElement(node.AsBindingElement())
 	case ast.KindDecorator:
 		// Decorators are elided. They will be emitted as part of `visitClassDeclaration`.
 		return nil
@@ -108,6 +110,22 @@ func (tx *LegacyDecoratorsTransformer) visitPropertyAssignment(node *ast.Propert
 	initializer := tx.Visitor().VisitNode(node.Initializer)
 	if visitedName != name || initializer != node.Initializer {
 		return tx.Factory().UpdatePropertyAssignment(node, node.Modifiers(), visitedName, node.PostfixToken, node.Type, initializer)
+	}
+	return node.AsNode()
+}
+
+func (tx *LegacyDecoratorsTransformer) visitBindingElement(node *ast.BindingElement) *ast.Node {
+	// Visit the binding name and initializer but not a non-computed property name, since the
+	// property name of an object binding element is not a value reference to the class.
+	propertyName := node.PropertyName
+	visitedPropertyName := propertyName
+	if propertyName != nil && ast.IsComputedPropertyName(propertyName) {
+		visitedPropertyName = tx.Visitor().VisitNode(propertyName)
+	}
+	name := tx.Visitor().VisitNode(node.Name())
+	initializer := tx.Visitor().VisitNode(node.Initializer)
+	if visitedPropertyName != propertyName || name != node.Name() || initializer != node.Initializer {
+		return tx.Factory().UpdateBindingElement(node, node.DotDotDotToken, visitedPropertyName, name, initializer)
 	}
 	return node.AsNode()
 }
@@ -558,6 +576,19 @@ func (tx *LegacyDecoratorsTransformer) hasInternalStaticReference(node *ast.Clas
 					isOrContainsStaticSelfReference(pa.Initializer)
 			}
 			return isOrContainsStaticSelfReference(pa.Initializer)
+		case ast.KindBindingElement:
+			// Only check the binding name, initializer, and computed property name expression,
+			// not a non-computed property name of an object binding element.
+			be := n.AsBindingElement()
+			if be.PropertyName != nil && ast.IsComputedPropertyName(be.PropertyName) {
+				if isOrContainsStaticSelfReference(be.PropertyName.AsComputedPropertyName().Expression) {
+					return true
+				}
+			}
+			if isOrContainsStaticSelfReference(be.Name()) {
+				return true
+			}
+			return be.Initializer != nil && isOrContainsStaticSelfReference(be.Initializer)
 		case ast.KindPropertyDeclaration:
 			// Only check the initializer (and computed key expression), not the declaration name.
 			pd := n.AsPropertyDeclaration()

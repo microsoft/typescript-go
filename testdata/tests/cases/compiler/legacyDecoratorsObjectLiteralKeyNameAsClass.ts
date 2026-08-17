@@ -29,6 +29,15 @@ class Bar {
     Bar = 42;
 }
 
+// Object binding pattern property key should not be renamed
+@dec
+class Baz {
+    static unwrap(value: any) {
+        const { Baz: renamed } = value;
+        return renamed;
+    }
+}
+
 // Self-reference in expression positions SHOULD still be renamed
 @dec
 class SelfRef {
