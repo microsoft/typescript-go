@@ -173,10 +173,17 @@ func GetSourceFilePathInNewDirWorker(fileName string, newDirPath string, current
 		// GetCanonicalFileName's case-folding can change a string's UTF-8 byte length
 		// (e.g. the Kelvin sign '\u212A' folds to the single-byte 'k'), so byte-length
 		// slicing here isn't safe even when the (rune-preserving) canonical prefix
-		// check above succeeds. Trim by the canonicalized prefix's rune count instead
-		// (canonicalization preserves rune count, so this matches the boundary the
-		// prefix check verified), clamping to the end of the string to mirror
-		// substring's behavior.
+		// check above succeeds. GetCanonicalFileName preserves rune count: when
+		// useCaseSensitiveFileNames is true it returns its input unchanged, and
+		// otherwise it delegates to ToFileNameLowerCase, which either rewrites ASCII
+		// bytes in place (same length) or maps every rune through unicode.ToLower
+		// via strings.Map — a function that always substitutes exactly one rune for
+		// one rune (it can neither drop nor expand runes, and the one exception,
+		// '\u0130', is mapped to itself). So trimming by the canonicalized prefix's
+		// rune count matches the boundary the prefix check verified. trimRunePrefix
+		// additionally clamps to the end of the string to mirror substring's
+		// behavior, so this remains panic-safe even if that invariant were ever
+		// violated.
 		sourceFilePath = trimRunePrefix(sourceFilePath, utf8.RuneCountInString(commonDir))
 	}
 	return tspath.CombinePaths(newDirPath, sourceFilePath)
