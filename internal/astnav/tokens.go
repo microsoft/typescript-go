@@ -74,9 +74,10 @@ func getTokenAtPosition(
 	testNode := func(node *ast.Node) int {
 		if node.Kind != ast.KindEndOfFile && node.End() == position &&
 			includePrecedingTokenAtEndPosition != nil && node.Flags&ast.NodeFlagsReparsed == 0 {
-			if prevSubtree == nil || getIncludedPrecedingToken(prevSubtree) == nil {
-				prevSubtree = node
+			if prevSubtree != nil && getIncludedPrecedingToken(prevSubtree) != nil {
+				return 0
 			}
+			prevSubtree = node
 		}
 
 		// A node "contains" the position if position < end, except nodes at the file end
