@@ -388,8 +388,9 @@ func (p *regExpParser) scanPatternModifiers(currFlags regularExpressionFlags) re
 		} else if flag&regularExpressionFlagsModifiers == 0 {
 			p.error(diagnostics.This_regular_expression_flag_cannot_be_toggled_within_a_subpattern, p.pos(), size)
 		} else {
+			// Modifier syntax itself requires ES2025, which is later than any flag that can appear
+			// here, so the group's own diagnostic already covers availability.
 			currFlags |= flag
-			p.scanner.checkRegularExpressionFlagAvailability(flag, p.pos(), size)
 		}
 		p.incPos(size)
 	}

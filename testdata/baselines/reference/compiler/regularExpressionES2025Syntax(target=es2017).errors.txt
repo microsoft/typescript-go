@@ -1,7 +1,6 @@
 regularExpressionES2025Syntax.ts(2,24): error TS18062: Regular expression pattern modifiers are only available when targeting 'es2025' or later.
 regularExpressionES2025Syntax.ts(3,27): error TS18062: Regular expression pattern modifiers are only available when targeting 'es2025' or later.
 regularExpressionES2025Syntax.ts(4,34): error TS18062: Regular expression pattern modifiers are only available when targeting 'es2025' or later.
-regularExpressionES2025Syntax.ts(4,37): error TS1501: This regular expression flag is only available when targeting 'es2018' or later.
 regularExpressionES2025Syntax.ts(10,27): error TS1503: Named capturing groups are only available when targeting 'ES2018' or later.
 regularExpressionES2025Syntax.ts(10,55): error TS1503: Named capturing groups are only available when targeting 'ES2018' or later.
 regularExpressionES2025Syntax.ts(11,40): error TS1503: Named capturing groups are only available when targeting 'ES2018' or later.
@@ -13,7 +12,7 @@ regularExpressionES2025Syntax.ts(17,37): error TS1503: Named capturing groups ar
 regularExpressionES2025Syntax.ts(17,38): error TS1515: Named capturing groups with the same name must be mutually exclusive to each other.
 
 
-==== regularExpressionES2025Syntax.ts (13 errors) ====
+==== regularExpressionES2025Syntax.ts (12 errors) ====
     // Pattern modifiers are only available from ES2025.
     const addModifier = /(?i:abc)/;
                            ~
@@ -24,8 +23,6 @@ regularExpressionES2025Syntax.ts(17,38): error TS1515: Named capturing groups wi
     const addAndRemoveModifiers = /(?i-ms:abc)/;
                                      ~~~~
 !!! error TS18062: Regular expression pattern modifiers are only available when targeting 'es2025' or later.
-                                        ~
-!!! error TS1501: This regular expression flag is only available when targeting 'es2018' or later.
     
     // A plain non-capturing group is not a pattern modifier and is available at every target.
     const nonCapturingGroup = /(?:abc)/;
