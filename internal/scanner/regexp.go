@@ -8,6 +8,7 @@ import (
 	"unicode/utf16"
 	"unicode/utf8"
 
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
@@ -153,14 +154,32 @@ func compareDecimalStrings(a string, b string) int {
 
 // Disjunction ::= Alternative ('|' Alternative)*
 func (p *regExpParser) scanDisjunction(isInGroup bool) {
+	// Names defined by any of this disjunction's alternatives. Since exactly one
+	// alternative is chosen at runtime, these names are unioned together (rather
+	// than intersected) and, when this disjunction is nested inside a group,
+	// bubbled up into the enclosing alternative's scope once the group closes.
+	// This ensures a name defined inside a nested group (e.g. `(?:(?<a>x))`) is
+	// still visible to a duplicate check for a sibling group later in the same
+	// enclosing alternative (e.g. `(?:(?<a>x))(?<a>z)`).
+	var disjunctionNames collections.Set[string]
 	for {
 		p.namedCapturingGroups = append(p.namedCapturingGroups, make(map[string]bool))
 		p.scanAlternative(isInGroup)
+		alternativeNames := p.namedCapturingGroups[len(p.namedCapturingGroups)-1]
 		p.namedCapturingGroups = p.namedCapturingGroups[:len(p.namedCapturingGroups)-1]
+		for name := range alternativeNames {
+			disjunctionNames.Add(name)
+		}
 		if p.char() != '|' {
-			return
+			break
 		}
 		p.incPos(1)
+	}
+	if isInGroup && len(p.namedCapturingGroups) > 0 {
+		parentScope := p.namedCapturingGroups[len(p.namedCapturingGroups)-1]
+		for name := range disjunctionNames.Keys() {
+			parentScope[name] = true
+		}
 	}
 }
 
@@ -605,8 +624,6 @@ func (p *regExpParser) scanClassSetExpression() {
 			expressionMayContainStrings = p.mayContainStrings
 			p.mayContainStrings = !isCharacterComplement && expressionMayContainStrings
 			return
-		} else {
-			p.error(diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, p.pos(), 1, string(ch))
 		}
 	default:
 		if isCharacterComplement && p.mayContainStrings {
@@ -651,20 +668,17 @@ func (p *regExpParser) scanClassSetExpression() {
 				}
 			}
 		case '&':
-			start = p.pos()
-			p.incPos(1)
-			if p.char() == '&' {
-				p.incPos(1)
+			if p.pos()+1 < p.end && p.charAt(p.pos()+1) == '&' {
+				start = p.pos()
+				p.incPos(2)
 				p.error(diagnostics.Operators_must_not_be_mixed_within_a_character_class_Wrap_it_in_a_nested_class_instead, p.pos()-2, 2)
 				if p.char() == '&' {
 					p.error(diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, p.pos(), 1, string(ch))
 					p.incPos(1)
 				}
-			} else {
-				p.error(diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, p.pos()-1, 1, string(ch))
+				operand = p.text()[start:p.pos()]
+				continue
 			}
-			operand = p.text()[start:p.pos()]
-			continue
 		}
 		if p.isClassContentExit(p.char()) {
 			break
@@ -681,6 +695,10 @@ func (p *regExpParser) scanClassSetExpression() {
 			operand = p.text()[start:p.pos()]
 		default:
 			operand = p.scanClassSetOperand()
+			if isCharacterComplement && p.mayContainStrings {
+				p.error(diagnostics.Anything_that_would_possibly_match_more_than_a_single_character_is_invalid_inside_a_negated_character_class, start, p.pos()-start)
+			}
+			expressionMayContainStrings = expressionMayContainStrings || p.mayContainStrings
 		}
 	}
 	p.mayContainStrings = !isCharacterComplement && expressionMayContainStrings

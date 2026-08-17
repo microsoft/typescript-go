@@ -225,7 +225,10 @@ func (p *Parser) parseJSONText() *ast.SourceFile {
 }
 
 func getErrorSpanForNode(sourceText string, node *ast.Node) core.TextRange {
-	pos := scanner.SkipTrivia(sourceText, node.Pos())
+	pos := node.Pos()
+	if !ast.NodeIsMissing(node) {
+		pos = scanner.SkipTrivia(sourceText, pos)
+	}
 	return core.NewTextRange(pos, node.End())
 }
 
@@ -281,7 +284,7 @@ func ParseIsolatedEntityName(text string) *ast.EntityName {
 	defer putParser(p)
 	p.initializeState(ast.SourceFileParseOptions{}, text, core.ScriptKindJS)
 	p.nextToken()
-	entityName := p.parseEntityName(true, nil)
+	entityName := p.parseEntityName(true, false, nil)
 	return core.IfElse(p.token == ast.KindEndOfFile && len(p.diagnostics) == 0, entityName, nil)
 }
 
@@ -2350,7 +2353,7 @@ func (p *Parser) parseModuleReference() *ast.Node {
 	if p.token == ast.KindRequireKeyword && p.lookAhead((*Parser).nextTokenIsOpenParen) {
 		return p.parseExternalModuleReference()
 	}
-	return p.parseEntityName(false /*allowReservedWords*/, nil /*diagnosticMessage*/)
+	return p.parseEntityName(false /*allowReservedWords*/, false /*allowPrivateName*/, nil /*diagnosticMessage*/)
 }
 
 func (p *Parser) parseExternalModuleReference() *ast.Node {
@@ -2941,10 +2944,10 @@ func (p *Parser) parseTypeReference() *ast.Node {
 }
 
 func (p *Parser) parseEntityNameOfTypeReference() *ast.Node {
-	return p.parseEntityName(true /*allowReservedWords*/, diagnostics.Type_expected)
+	return p.parseEntityName(true /*allowReservedWords*/, false /*allowPrivateName*/, diagnostics.Type_expected)
 }
 
-func (p *Parser) parseEntityName(allowReservedWords bool, diagnosticMessage *diagnostics.Message) *ast.Node {
+func (p *Parser) parseEntityName(allowReservedWords bool, allowPrivateName bool, diagnosticMessage *diagnostics.Message) *ast.Node {
 	pos := p.nodePos()
 	var entity *ast.Node
 	if allowReservedWords {
@@ -2958,7 +2961,7 @@ func (p *Parser) parseEntityName(allowReservedWords bool, diagnosticMessage *dia
 			// `typeArguments` to report it as a grammar error in the checker.
 			break
 		}
-		entity = p.finishNode(p.factory.NewQualifiedName(entity, p.parseRightSideOfDot(allowReservedWords, false /*allowPrivateIdentifiers*/, true /*allowUnicodeEscapeSequenceInIdentifierName*/)), pos)
+		entity = p.finishNode(p.factory.NewQualifiedName(entity, p.parseRightSideOfDot(allowReservedWords, allowPrivateName, true /*allowUnicodeEscapeSequenceInIdentifierName*/)), pos)
 	}
 	return entity
 }
@@ -3157,7 +3160,7 @@ func (p *Parser) parseImportAttributes(token ast.Kind, skipKeyword bool) *ast.No
 func (p *Parser) parseTypeQuery() *ast.Node {
 	pos := p.nodePos()
 	p.parseExpected(ast.KindTypeOfKeyword)
-	entityName := p.parseEntityName(true /*allowReservedWords*/, nil)
+	entityName := p.parseEntityName(true /*allowReservedWords*/, true /*allowPrivateName*/, nil)
 	// Make sure we perform ASI to prevent parsing the next line's type arguments as part of an instantiation expression
 	var typeArguments *ast.NodeList
 	if !p.hasPrecedingLineBreak() {
@@ -4623,6 +4626,15 @@ func (p *Parser) parseBinaryExpressionOrHigher(precedence ast.OperatorPrecedence
 	return p.parseBinaryExpressionRest(precedence, leftOperand, pos)
 }
 
+// shouldConsumeBinaryOperator reports whether an operator binds before the operator represented by currentPrecedence.
+// At equal precedence, only the right-associative exponentiation operator binds first.
+func shouldConsumeBinaryOperator(operator ast.Kind, operatorPrecedence ast.OperatorPrecedence, currentPrecedence ast.OperatorPrecedence) bool {
+	if operatorPrecedence > currentPrecedence {
+		return true
+	}
+	return operatorPrecedence == currentPrecedence && operator == ast.KindAsteriskAsteriskToken
+}
+
 func (p *Parser) parseBinaryExpressionRest(precedence ast.OperatorPrecedence, leftOperand *ast.Expression, pos int) *ast.Expression {
 	lastOperand := leftOperand
 	for {
@@ -4651,13 +4663,7 @@ func (p *Parser) parseBinaryExpressionRest(precedence ast.OperatorPrecedence, le
 		//            ^^token; leftOperand = b. Return b ** c to the caller as a rightOperand
 		//      a ** b - c
 		//             ^token; leftOperand = b. Return b to the caller as a rightOperand
-		var consumeCurrentOperator bool
-		if operator == ast.KindAsteriskAsteriskToken {
-			consumeCurrentOperator = newPrecedence >= precedence
-		} else {
-			consumeCurrentOperator = newPrecedence > precedence
-		}
-		if !consumeCurrentOperator {
+		if !shouldConsumeBinaryOperator(operator, newPrecedence, precedence) {
 			break
 		}
 		if operator == ast.KindInKeyword && p.inDisallowInContext() {
@@ -4673,10 +4679,9 @@ func (p *Parser) parseBinaryExpressionRest(precedence ast.OperatorPrecedence, le
 				break
 			} else {
 				p.nextToken()
-				// When we have 'a ## b as SomeType' or 'a ## b satisfies SomeType', where ## is some binary
-				// operator, we want to stop parsing on any following operator with a higher precedence than ##
-				// because continuing would make it impossible to erase the `as` or `satisfies` without changing
-				// the meaning of the expression. See https://github.com/microsoft/TypeScript/issues/63527.
+				// When we have 'a ## b as SomeType $$ c' or 'a ## b satisfies SomeType $$ c', where ## and $$
+				// are binary operators, we want to stop parsing when $$ would bind before ## after erasing the
+				// assertion. See https://github.com/microsoft/TypeScript/issues/63527.
 				lastPrecedence := ast.OperatorPrecedenceHighest
 				if ast.IsBinaryExpression(lastOperand) {
 					lastPrecedence = ast.GetBinaryOperatorPrecedence(lastOperand.AsBinaryExpression().OperatorToken.Kind)
@@ -4686,8 +4691,10 @@ func (p *Parser) parseBinaryExpressionRest(precedence ast.OperatorPrecedence, le
 				} else {
 					leftOperand = p.makeAsExpression(leftOperand, p.parseType())
 				}
-				// Stop if the precedence of the next operator is too high.
-				if ast.GetBinaryOperatorPrecedence(p.reScanGreaterThanToken()) > lastPrecedence {
+				// Stop if the next operator would bind before the last operator when the assertion is erased.
+				nextOperator := p.reScanGreaterThanToken()
+				nextPrecedence := ast.GetBinaryOperatorPrecedence(nextOperator)
+				if shouldConsumeBinaryOperator(nextOperator, nextPrecedence, lastPrecedence) {
 					break
 				}
 			}
