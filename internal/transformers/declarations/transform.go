@@ -266,9 +266,6 @@ func (tx *DeclarationTransformer) visit(node *ast.Node) *ast.Node {
 		ast.KindBlock,
 		ast.KindMissingDeclaration,
 		ast.KindExpressionStatement:
-		if ast.IsSourceFile(node.Parent) {
-			return tx.EmitContext().NewNotEmittedStatement(node).AsNode()
-		}
 		return nil
 	// parts of things, things we just visit children of
 	default:
@@ -355,11 +352,11 @@ func (tx *DeclarationTransformer) transformSourceFile(node *ast.SourceFile) *ast
 	var combinedStatements *ast.StatementList
 	statements := tx.Visitor().VisitNodes(node.Statements)
 	combinedStatements = tx.transformAndReplaceLatePaintedStatements(statements)
-	startsWithNotEmittedStatement := len(combinedStatements.Nodes) > 0 && ast.IsNotEmittedStatement(combinedStatements.Nodes[0])
 	combinedStatements = tx.appendCjsExports(combinedStatements)
-	combinedStatements.Loc = statements.Loc // setTextRange
-	if startsWithNotEmittedStatement {
-		combinedStatements.Loc = core.NewTextRange(-1, statements.Loc.End())
+	if ast.IsInJSFile(node.AsNode()) {
+		combinedStatements = tx.Factory().NewNodeList(combinedStatements.Nodes)
+	} else {
+		combinedStatements.Loc = statements.Loc // setTextRange
 	}
 	if ast.IsExternalOrCommonJSModule(node) {
 		if ast.IsInJSFile(node.AsNode()) {

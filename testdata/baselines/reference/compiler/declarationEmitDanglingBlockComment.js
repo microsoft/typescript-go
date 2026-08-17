@@ -91,6 +91,7 @@ export declare var pi: 3;
 declare const _exports = 3;
 export = _exports;
 //// [topComment-ts.d.ts]
+/** Comment on nothing */
 export declare const pi = 3;
 //// [nonTopComment-ts.d.ts]
 export declare const e = 3;
