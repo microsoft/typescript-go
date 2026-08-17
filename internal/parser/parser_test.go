@@ -284,8 +284,6 @@ const value = 0;`
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Assert(t, test.node.Flags&ast.NodeFlagsInJSDocType != 0)
-
 			assert.Equal(t, scanner.GetTextOfNode(test.node), expected)
 		})
 	}
@@ -312,7 +310,6 @@ function foo(options) {}`
 	typeNode := function.Parameters()[0].Type()
 	assert.Assert(t, typeNode != nil)
 	assert.Assert(t, typeNode.Flags&ast.NodeFlagsReparsed != 0)
-	assert.Assert(t, typeNode.Flags&ast.NodeFlagsInJSDocType != 0)
 
 	expected := strings.Join([]string{"{", "value: string", "}"}, core.NewLineKindLF.GetNewLineCharacter())
 	assert.Equal(t, scanner.GetTextOfNode(typeNode), expected)

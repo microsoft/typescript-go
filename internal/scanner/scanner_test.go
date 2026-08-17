@@ -46,13 +46,46 @@ func TestNormalizeJSDocTypeSourceText(t *testing.T) {
 	}
 }
 
+func TestIsJSDocTypeExpressionOrChild(t *testing.T) {
+	t.Parallel()
+
+	jsDocType := &ast.Node{Kind: ast.KindTypeReference, Flags: ast.NodeFlagsJSDoc}
+	jsDocTypeChild := &ast.Node{Kind: ast.KindIdentifier, Flags: ast.NodeFlagsJSDoc, Parent: jsDocType}
+	reparsedType := &ast.Node{Kind: ast.KindTypeLiteral, Flags: ast.NodeFlagsReparsed}
+	reparsedTypeChild := &ast.Node{Kind: ast.KindIdentifier, Flags: ast.NodeFlagsReparsed, Parent: reparsedType}
+	ordinaryType := &ast.Node{Kind: ast.KindTypeReference}
+	jsDocTag := &ast.Node{Kind: ast.KindJSDocParameterTag, Flags: ast.NodeFlagsJSDoc}
+	jsDocTagChild := &ast.Node{Kind: ast.KindIdentifier, Flags: ast.NodeFlagsJSDoc, Parent: jsDocTag}
+
+	tests := []struct {
+		name     string
+		node     *ast.Node
+		expected bool
+	}{
+		{name: "type expression", node: &ast.Node{Kind: ast.KindJSDocTypeExpression}, expected: true},
+		{name: "JSDoc type", node: jsDocType, expected: true},
+		{name: "JSDoc type child", node: jsDocTypeChild, expected: true},
+		{name: "reparsed type", node: reparsedType, expected: true},
+		{name: "reparsed type child", node: reparsedTypeChild, expected: true},
+		{name: "ordinary type", node: ordinaryType, expected: false},
+		{name: "other JSDoc child", node: jsDocTagChild, expected: false},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, isJSDocTypeExpressionOrChild(test.node), test.expected)
+		})
+	}
+}
+
 func TestGetTextOfNodeFromJSDocTypePreservesAsteriskType(t *testing.T) {
 	t.Parallel()
 
 	sourceText := strings.Join([]string{"", " * *"}, core.NewLineKindLF.GetNewLineCharacter())
 	node := &ast.Node{
 		Kind:  ast.KindJSDocAllType,
-		Flags: ast.NodeFlagsJSDoc | ast.NodeFlagsInJSDocType,
+		Flags: ast.NodeFlagsJSDoc,
 		Loc:   core.NewTextRange(0, len(sourceText)),
 	}
 

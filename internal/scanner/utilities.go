@@ -23,6 +23,21 @@ func GetSourceTextOfNodeFromSourceFile(sourceFile *ast.SourceFile, node *ast.Nod
 	return GetTextOfNodeFromSourceText(sourceFile.Text(), node, includeTrivia)
 }
 
+func isJSDocTypeExpressionOrChild(node *ast.Node) bool {
+	if ast.IsJSDocTypeExpression(node) {
+		return true
+	}
+	if node.Flags&(ast.NodeFlagsJSDoc|ast.NodeFlagsReparsed) == 0 {
+		return false
+	}
+	for current := node; current != nil; current = current.Parent {
+		if ast.IsTypeNode(current) {
+			return true
+		}
+	}
+	return false
+}
+
 func normalizeJSDocTypeSourceText(text string) string {
 	lineStarts := core.ComputeECMALineStarts(text)
 	if len(lineStarts) == 1 {
@@ -63,7 +78,7 @@ func GetTextOfNodeFromSourceText(sourceText string, node *ast.Node, includeTrivi
 		pos = SkipTrivia(sourceText, pos)
 	}
 	text := sourceText[pos:node.End()]
-	if node.Flags&ast.NodeFlagsInJSDocType != 0 {
+	if isJSDocTypeExpressionOrChild(node) {
 		text = normalizeJSDocTypeSourceText(text)
 	}
 	if node.Flags&ast.NodeFlagsReparserTransformedLiteral != 0 {
