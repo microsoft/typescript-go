@@ -352,12 +352,12 @@ func (tx *DeclarationTransformer) transformSourceFile(node *ast.SourceFile) *ast
 	var combinedStatements *ast.StatementList
 	statements := tx.Visitor().VisitNodes(node.Statements)
 	combinedStatements = tx.transformAndReplaceLatePaintedStatements(statements)
-	firstStatementWasElided := ast.IsInJSFile(node.AsNode()) && len(node.Statements.Nodes) > 0
-	if firstStatementWasElided {
+	suppressLeadingComments := ast.IsInJSFile(node.AsNode()) && len(node.Statements.Nodes) > 0
+	if suppressLeadingComments {
 		firstStatement := node.Statements.Nodes[0]
 		for _, statement := range combinedStatements.Nodes {
 			if tx.EmitContext().MostOriginal(statement) == firstStatement {
-				firstStatementWasElided = false
+				suppressLeadingComments = false
 				break
 			}
 		}
@@ -386,7 +386,7 @@ func (tx *DeclarationTransformer) transformSourceFile(node *ast.SourceFile) *ast
 	result.AsSourceFile().TypeReferenceDirectives = tx.getTypeReferences()
 	result.AsSourceFile().IsDeclarationFile = true
 	result.AsSourceFile().ReferencedFiles = tx.getReferencedFiles(outputFilePath)
-	if firstStatementWasElided {
+	if suppressLeadingComments {
 		tx.EmitContext().AddEmitFlags(result, printer.EFNoLeadingComments)
 	}
 	return result.AsNode()
