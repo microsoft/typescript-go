@@ -33,9 +33,11 @@ type commandLineParser struct {
 	workerDiagnostics *ParseCommandLineWorkerDiagnostics
 	optionsMap        *NameMap
 	fs                vfs.FS
+	currentDirectory  string
 	options           *collections.OrderedMap[string, any]
 	fileNames         []string
 	errors            []*ast.Diagnostic
+	responseFileStack collections.Set[tspath.Path]
 }
 
 func ParseCommandLine(
@@ -45,10 +47,10 @@ func ParseCommandLine(
 	if commandLine == nil {
 		commandLine = []string{}
 	}
-	parser := parseCommandLineWorker(CompilerOptionsDidYouMeanDiagnostics, commandLine, host.FS())
-	optionsWithAbsolutePaths := convertToOptionsWithAbsolutePaths(parser.options.Clone(), CommandLineCompilerOptionsMap, host.GetCurrentDirectory())
-	compilerOptions := convertMapToOptions(optionsWithAbsolutePaths, &compilerOptionsParser{&core.CompilerOptions{}}).CompilerOptions
-	watchOptions := convertMapToOptions(optionsWithAbsolutePaths, &watchOptionsParser{&core.WatchOptions{}}).WatchOptions
+	parser := parseCommandLineWorker(CompilerOptionsDidYouMeanDiagnostics, commandLine, host.FS(), host.GetCurrentDirectory())
+	options := convertToOptionsWithAbsolutePaths(parser.options.Clone(), CommandLineCompilerOptionsMap, host.GetCurrentDirectory())
+	compilerOptions := convertMapToOptions(options, &compilerOptionsParser{&core.CompilerOptions{}}).CompilerOptions
+	watchOptions := convertMapToOptions(options, &watchOptionsParser{&core.WatchOptions{}}).WatchOptions
 	result := NewParsedCommandLine(compilerOptions, parser.fileNames, tspath.ComparePathsOptions{
 		UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
 		CurrentDirectory:          host.GetCurrentDirectory(),
@@ -66,7 +68,7 @@ func ParseBuildCommandLine(
 	if commandLine == nil {
 		commandLine = []string{}
 	}
-	parser := parseCommandLineWorker(buildOptionsDidYouMeanDiagnostics, commandLine, host.FS())
+	parser := parseCommandLineWorker(buildOptionsDidYouMeanDiagnostics, commandLine, host.FS(), host.GetCurrentDirectory())
 	compilerOptions := &core.CompilerOptions{}
 	for key, value := range parser.options.Entries() {
 		buildOption := BuildNameMap.Get(key)
@@ -114,9 +116,11 @@ func parseCommandLineWorker(
 	parseCommandLineWithDiagnostics *ParseCommandLineWorkerDiagnostics,
 	commandLine []string,
 	fs vfs.FS,
+	currentDirectory string,
 ) *commandLineParser {
 	parser := &commandLineParser{
 		fs:                fs,
+		currentDirectory:  currentDirectory,
 		workerDiagnostics: parseCommandLineWithDiagnostics,
 		fileNames:         []string{},
 		options:           &collections.OrderedMap[string, any]{},
@@ -163,6 +167,14 @@ func getInputOptionName(input string) string {
 }
 
 func (p *commandLineParser) parseResponseFile(fileName string) {
+	fileName = tspath.GetNormalizedAbsolutePath(fileName, p.currentDirectory)
+	path := tspath.ToPath(fileName, p.currentDirectory, p.fs.UseCaseSensitiveFileNames())
+	if p.responseFileStack.Has(path) {
+		return
+	}
+	p.responseFileStack.Add(path)
+	defer p.responseFileStack.Delete(path)
+
 	fileContents, errors := tryReadFile(fileName, func(fileName string) (string, bool) {
 		if p.fs == nil {
 			return "", false
@@ -200,7 +212,7 @@ func (p *commandLineParser) parseResponseFile(fileName string) {
 				p.errors = append(p.errors, ast.NewCompilerDiagnostic(diagnostics.Unterminated_quoted_string_in_response_file_0, fileName))
 			}
 		} else {
-			for text[pos] > ' ' {
+			for pos < textLength && text[pos] > ' ' {
 				pos++
 			}
 			args = append(args, string(text[start:pos]))
@@ -213,7 +225,7 @@ func tryReadFile(fileName string, readFile func(string) (string, bool), errors [
 	// this function adds a compiler diagnostic if the file cannot be read
 	text, e := readFile(fileName)
 
-	if !e || text == "" {
+	if !e {
 		// !!! Divergence: the returned error will not give a useful message
 		// errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Cannot_read_file_0_Colon_1, *e));
 		text = ""

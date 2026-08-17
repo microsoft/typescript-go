@@ -56,7 +56,7 @@ const (
 	SymbolFlagsBlockScopedVariableExcludes = SymbolFlagsValue
 
 	SymbolFlagsParameterExcludes                   = SymbolFlagsValue
-	SymbolFlagsPropertyExcludes                    = SymbolFlagsValue & ^SymbolFlagsProperty
+	SymbolFlagsPropertyExcludes                    = SymbolFlagsValue & ^(SymbolFlagsProperty | SymbolFlagsAccessor)
 	SymbolFlagsEnumMemberExcludes                  = SymbolFlagsValue | SymbolFlagsType
 	SymbolFlagsFunctionExcludes                    = SymbolFlagsValue & ^(SymbolFlagsFunction | SymbolFlagsValueModule | SymbolFlagsClass)
 	SymbolFlagsClassExcludes                       = (SymbolFlagsValue | SymbolFlagsType) & ^(SymbolFlagsValueModule | SymbolFlagsInterface | SymbolFlagsFunction) // class-interface mergability done in checker.ts
@@ -66,9 +66,9 @@ const (
 	SymbolFlagsValueModuleExcludes                 = SymbolFlagsValue & ^(SymbolFlagsFunction | SymbolFlagsClass | SymbolFlagsRegularEnum | SymbolFlagsValueModule)
 	SymbolFlagsNamespaceModuleExcludes             = SymbolFlagsNone
 	SymbolFlagsMethodExcludes                      = SymbolFlagsValue & ^SymbolFlagsMethod
-	SymbolFlagsGetAccessorExcludes                 = SymbolFlagsValue & ^SymbolFlagsSetAccessor
-	SymbolFlagsSetAccessorExcludes                 = SymbolFlagsValue & ^SymbolFlagsGetAccessor
-	SymbolFlagsAccessorExcludes                    = SymbolFlagsValue
+	SymbolFlagsGetAccessorExcludes                 = SymbolFlagsValue & ^(SymbolFlagsSetAccessor | SymbolFlagsProperty)
+	SymbolFlagsSetAccessorExcludes                 = SymbolFlagsValue & ^(SymbolFlagsGetAccessor | SymbolFlagsProperty)
+	SymbolFlagsAccessorExcludes                    = SymbolFlagsValue & ^SymbolFlagsProperty
 	SymbolFlagsTypeParameterExcludes               = SymbolFlagsType & ^SymbolFlagsTypeParameter
 	SymbolFlagsTypeAliasExcludes                   = SymbolFlagsType
 	SymbolFlagsAliasExcludes                       = SymbolFlagsAlias
@@ -79,8 +79,5 @@ const (
 	SymbolFlagsClassMember                         = SymbolFlagsMethod | SymbolFlagsAccessor | SymbolFlagsProperty
 	SymbolFlagsExportSupportsDefaultModifier       = SymbolFlagsClass | SymbolFlagsFunction | SymbolFlagsInterface
 	SymbolFlagsExportDoesNotSupportDefaultModifier = ^SymbolFlagsExportSupportsDefaultModifier
-	// The set of things we consider semantically classifiable.  Used to speed up the LS during
-	// classification.
-	SymbolFlagsClassifiable         = SymbolFlagsClass | SymbolFlagsEnum | SymbolFlagsTypeAlias | SymbolFlagsInterface | SymbolFlagsTypeParameter | SymbolFlagsModule | SymbolFlagsAlias
-	SymbolFlagsLateBindingContainer = SymbolFlagsClass | SymbolFlagsInterface | SymbolFlagsTypeLiteral | SymbolFlagsObjectLiteral | SymbolFlagsFunction
+	SymbolFlagsLateBindingContainer                = SymbolFlagsClass | SymbolFlagsInterface | SymbolFlagsTypeLiteral | SymbolFlagsObjectLiteral | SymbolFlagsFunction
 )

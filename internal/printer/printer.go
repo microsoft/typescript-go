@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"slices"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -32,10 +33,10 @@ import (
 )
 
 type PrinterOptions struct {
-	RemoveComments bool
-	NewLine        core.NewLineKind
-	// OmitTrailingSemicolon         bool
-	NoEmitHelpers bool
+	RemoveComments        bool
+	NewLine               core.NewLineKind
+	OmitTrailingSemicolon bool
+	NoEmitHelpers         bool
 	// Module                        core.ModuleKind
 	// ModuleResolution              core.ModuleResolutionKind
 	Target                      core.ScriptTarget
@@ -139,6 +140,7 @@ type Printer struct {
 	makeFileLevelOptimisticUniqueName func(string) string
 	commentStateArena                 core.Arena[commentState]
 	sourceMapStateArena               core.Arena[sourceMapState]
+	IdToSymbol                        map[*ast.IdentifierNode]*ast.Symbol
 }
 
 type detachedCommentsInfo struct {
@@ -547,7 +549,7 @@ func (p *Printer) getLeadingLineTerminatorCount(parentNode *ast.Node, firstChild
 					},
 				)
 			}
-			return core.IfElse(rangeStartPositionsAreOnSameLine(parentNode.Loc, firstChild.Loc, p.currentSourceFile), 0, 1)
+			return core.IfElse(RangeStartPositionsAreOnSameLine(parentNode.Loc, firstChild.Loc, p.currentSourceFile), 0, 1)
 		}
 		if p.shouldEmitOnNewLine(firstChild, format) {
 			return 1
@@ -565,7 +567,7 @@ func (p *Printer) getSeparatingLineTerminatorCount(previousNode *ast.Node, nextN
 			// JsxText will be written with its leading whitespace, so don't add more manually.
 			return 0
 		} else if p.currentSourceFile != nil && !ast.NodeIsSynthesized(previousNode) && !ast.NodeIsSynthesized(nextNode) {
-			if p.Options.PreserveSourceNewlines && siblingNodePositionsAreComparable(previousNode, nextNode) {
+			if p.Options.PreserveSourceNewlines && siblingNodePositionsAreComparable(p.emitContext, previousNode, nextNode) {
 				return p.getEffectiveLines(
 					func(includeComments bool) int {
 						return getLinesBetweenRangeEndAndRangeStart(
@@ -576,7 +578,7 @@ func (p *Printer) getSeparatingLineTerminatorCount(previousNode *ast.Node, nextN
 						)
 					},
 				)
-			} else if !p.Options.PreserveSourceNewlines && originalNodesHaveSameParent(previousNode, nextNode) {
+			} else if !p.Options.PreserveSourceNewlines && originalNodesHaveSameParent(p.emitContext, previousNode, nextNode) {
 				// If `preserveSourceNewlines` is `false` we do not intend to preserve the effective lines between the
 				// previous and next node. Instead we naively check whether nodes are on separate lines within the
 				// same node parent. If so, we intend to preserve a single line terminator. This is less precise and
@@ -699,7 +701,18 @@ func (p *Printer) writeCommentRangeWorker(text string, lineMap []core.TextPos, k
 			}
 
 			// Write the comment line text
-			end := min(loc.End(), nextLineStart-1)
+			end := min(loc.End(), nextLineStart)
+			for scan := pos; scan < end; {
+				ch, size := utf8.DecodeRuneInString(text[scan:end])
+				if size == 0 {
+					break
+				}
+				if stringutil.IsLineBreak(ch) {
+					end = scan
+					break
+				}
+				scan += size
+			}
 			currentLineText := strings.TrimSpace(text[pos:end])
 			if len(currentLineText) > 0 {
 				p.writeComment(currentLineText)
@@ -1081,7 +1094,19 @@ func (p *Printer) emitTemplateMiddleTail(node *ast.TemplateMiddleOrTail) {
 // Snippet Elements
 //
 
-// !!! Snippet elements
+func (p *Printer) emitSnippetNode(node *ast.Node, snippetElement *SnippetElement) {
+	switch snippetElement.Kind {
+	case SnippetKindTabStop:
+		p.emitTabStop(node, snippetElement)
+	default:
+		panic(fmt.Sprintf("Unhandled snippet element kind: %v", snippetElement.Kind))
+	}
+}
+
+func (p *Printer) emitTabStop(node *ast.Node, snippetElement *SnippetElement) {
+	debug.Assert(node.Kind == ast.KindEmptyStatement, "Snippet tab stops can only be emitted on empty statements")
+	p.writer.RawWrite(fmt.Sprintf("$%d", snippetElement.Order))
+}
 
 //
 // Names
@@ -1092,13 +1117,13 @@ func (p *Printer) emitIdentifierText(node *ast.Identifier) {
 	debug.Assert(f == nil || p.currentSourceFile == nil || f.FileName() == p.currentSourceFile.FileName())
 	text := p.getTextOfNode(node.AsNode(), false /*includeTrivia*/)
 
-	// !!! In the old emitter, an Identifier could have a Symbol associated with it. That
-	// doesn't seem to be the case in the new emitter. Do we need to get the symbol from somewhere else?
-	////p.writeSymbol(text, node.Symbol())
+	if p.IdToSymbol != nil {
+		if symbol, ok := p.IdToSymbol[node.AsNode()]; ok {
+			p.writeSymbol(text, symbol)
+			return
+		}
+	}
 	p.write(text)
-
-	// !!! In the old emitter, an Identifier could have type arguments for use with quickinfo:
-	////p.emitList(node, getIdentifierTypeArguments(node), LFTypeParameters); // Call emitList directly since it could be an array of TypeParameterDeclarations _or_ type arguments
 }
 
 func (p *Printer) emitIdentifierName(node *ast.Identifier) {
@@ -1183,7 +1208,7 @@ func (p *Printer) emitQualifiedName(node *ast.QualifiedName) {
 	state := p.enterNode(node.AsNode())
 	p.emitEntityName(node.Left)
 	p.writePunctuation(".")
-	p.emitIdentifierName(node.Right.AsIdentifier())
+	p.emitMemberName(node.Right)
 	p.exitNode(node.AsNode(), state)
 }
 
@@ -1962,10 +1987,25 @@ func (p *Printer) emitTypeLiteral(node *ast.TypeLiteralNode) {
 
 func (p *Printer) emitArrayType(node *ast.ArrayTypeNode) {
 	state := p.enterNode(node.AsNode())
-	p.emitTypeNode(node.ElementType, ast.TypePrecedencePostfix)
+	p.emitPostfixTypeOperand(node.ElementType, node.AsNode())
 	p.writePunctuation("[")
 	p.writePunctuation("]")
 	p.exitNode(node.AsNode(), state)
+}
+
+// emitPostfixTypeOperand emits the operand of a postfix type (ArrayType, IndexedAccessType,
+// OptionalType). It is equivalent to `emitTypeNode(operand, TypePrecedencePostfix)` except
+// that it preserves a parsed `typeof X` operand without adding parentheses (e.g.,
+// `typeof C[K]` instead of `(typeof C)[K]`). TypeScript's `parenthesizeNonArrayTypeOfPostfixType`
+// factory rule wraps `TypeQuery` in `ParenthesizedType` only when a postfix type is constructed
+// via the factory, so parsed postfix types preserve the source as written during round-trip
+// emit while synthesized postfix types (e.g., from declaration emit) still get the parentheses.
+func (p *Printer) emitPostfixTypeOperand(operand *ast.TypeNode, parent *ast.Node) {
+	if ast.IsParseTreeNode(parent) && operand.Kind == ast.KindTypeQuery {
+		p.emitTypeNode(operand, ast.TypePrecedenceTypeOperator)
+		return
+	}
+	p.emitTypeNode(operand, ast.TypePrecedencePostfix)
 }
 
 func (p *Printer) emitTupleElementType(node *ast.Node) {
@@ -1991,7 +2031,7 @@ func (p *Printer) emitRestType(node *ast.RestTypeNode) {
 func (p *Printer) emitOptionalType(node *ast.OptionalTypeNode) {
 	state := p.enterNode(node.AsNode())
 	// !!! May need extra parenthesization if we also have JSDocNullableType
-	p.emitTypeNode(node.Type, ast.TypePrecedencePostfix)
+	p.emitPostfixTypeOperand(node.Type, node.AsNode())
 	p.writePunctuation("?")
 	p.exitNode(node.AsNode(), state)
 }
@@ -2089,7 +2129,7 @@ func (p *Printer) emitTypeOperator(node *ast.TypeOperatorNode) {
 
 func (p *Printer) emitIndexedAccessType(node *ast.IndexedAccessTypeNode) {
 	state := p.enterNode(node.AsNode())
-	p.emitTypeNode(node.ObjectType, ast.TypePrecedencePostfix)
+	p.emitPostfixTypeOperand(node.ObjectType, node.AsNode())
 	p.writePunctuation("[")
 	p.emitTypeNodeOutsideExtends(node.IndexType)
 	p.writePunctuation("]")
@@ -2942,10 +2982,6 @@ func (p *Printer) emitExpressionWithTypeArguments(node *ast.ExpressionWithTypeAr
 	p.emitExpression(node.Expression, ast.OperatorPrecedenceMember)
 	p.emitTypeArguments(node.AsNode(), node.TypeArguments)
 	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitExpressionWithTypeArgumentsNode(node *ast.ExpressionWithTypeArgumentsNode) {
-	p.emitExpressionWithTypeArguments(node.AsExpressionWithTypeArguments())
 }
 
 func (p *Printer) emitAsExpression(node *ast.AsExpression) {
@@ -4110,6 +4146,11 @@ func (p *Printer) emitEmbeddedStatement(parentNode *ast.Node, node *ast.Statemen
 }
 
 func (p *Printer) emitStatement(node *ast.Statement) {
+	if snippetElement := p.emitContext.SnippetElement(node); snippetElement != nil {
+		p.emitSnippetNode(node, snippetElement)
+		return
+	}
+
 	switch node.Kind {
 	// Statements
 	case ast.KindBlock:
@@ -4390,7 +4431,7 @@ func (p *Printer) emitJsxAttributeValue(node *ast.JsxAttributeValue) {
 	case ast.KindJsxFragment:
 		p.emitJsxFragment(node.AsJsxFragment())
 	default:
-		panic(fmt.Sprintf("unhandled JsxAttributeValue: %v", node.Kind))
+		p.emitExpression(node, ast.OperatorPrecedenceLowest)
 	}
 }
 
@@ -4404,7 +4445,7 @@ func (p *Printer) emitCaseOrDefaultClauseStatements(node *ast.CaseOrDefaultClaus
 		(p.currentSourceFile == nil ||
 			ast.NodeIsSynthesized(node.AsNode()) ||
 			ast.NodeIsSynthesized(node.Statements.Nodes[0]) ||
-			rangeStartPositionsAreOnSameLine(node.Loc, node.Statements.Nodes[0].Loc, p.currentSourceFile))
+			RangeStartPositionsAreOnSameLine(node.Loc, node.Statements.Nodes[0].Loc, p.currentSourceFile))
 
 	format := LFCaseOrDefaultClauseStatements
 	if emitAsSingleStatement {
@@ -4452,8 +4493,19 @@ func (p *Printer) emitHeritageClause(node *ast.HeritageClause) {
 	p.writeSpace()
 	p.emitToken(node.Token, node.Pos(), WriteKindKeyword, node.AsNode())
 	p.writeSpace()
-	p.emitList((*Printer).emitExpressionWithTypeArgumentsNode, node.AsNode(), node.Types, LFHeritageClauseTypes)
+	p.emitList((*Printer).emitHeritageClauseElement, node.AsNode(), node.Types, LFHeritageClauseTypes)
 	p.exitNode(node.AsNode(), state)
+}
+
+func (p *Printer) emitHeritageClauseElement(node *ast.HeritageClauseElement) {
+	switch node.Kind {
+	case ast.KindExpressionWithTypeArguments:
+		p.emitExpressionWithTypeArguments(node.AsExpressionWithTypeArguments())
+	case ast.KindTypeReference:
+		p.emitTypeReference(node.AsTypeReferenceNode())
+	default:
+		panic(fmt.Sprintf("unhandled HeritageClauseElement: %v", node.Kind))
+	}
 }
 
 func (p *Printer) emitHeritageClauseNode(node *ast.HeritageClauseNode) {
@@ -5031,6 +5083,9 @@ func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitT
 	p.sourceMapLineCharCache = nil
 
 	p.setSourceFile(sourceFile)
+	if p.Options.OmitTrailingSemicolon {
+		writer = getTrailingSemicolonDeferringWriter(writer)
+	}
 	p.writer = writer
 	p.writer.Clear()
 	if sourceFile != nil {
@@ -5656,10 +5711,7 @@ func (p *Printer) emitDetachedComments(textRange core.TextRange) (result detache
 				}
 			}
 
-			if p.shouldWriteComment(comment) {
-				detachedComments = append(detachedComments, comment)
-			}
-
+			detachedComments = append(detachedComments, comment)
 			lastComment = comment
 		}
 
@@ -5672,11 +5724,21 @@ func (p *Printer) emitDetachedComments(textRange core.TextRange) (result detache
 			if nodeLine >= lastCommentLine+2 {
 				// Valid detachedComments
 
-				if len(leadingComments) > 0 && p.shouldEmitNewLineBeforeLeadingCommentOfPosition(textRange.Pos(), leadingComments[0].Pos()) {
-					p.writeLine()
+				// Filter to only comments that should be written (e.g., JSDoc-style in declaration emit)
+				var commentsToEmit []ast.CommentRange
+				for _, comment := range detachedComments {
+					if p.shouldWriteComment(comment) {
+						commentsToEmit = append(commentsToEmit, comment)
+					}
 				}
 
-				p.emitComments(detachedComments, commentSeparatorAfter)
+				if len(commentsToEmit) > 0 {
+					if p.shouldEmitNewLineBeforeLeadingCommentOfPosition(textRange.Pos(), commentsToEmit[0].Pos()) {
+						p.writeLine()
+					}
+
+					p.emitComments(commentsToEmit, commentSeparatorAfter)
+				}
 				result = detachedCommentsInfo{nodePos: textRange.Pos(), detachedCommentEndPos: core.LastOrNil(detachedComments).End()}
 				hasResult = true
 			}
@@ -6046,7 +6108,7 @@ func (p *Printer) generateName(name *ast.MemberName) {
 // Returns a value indicating whether a name is unique globally or within the current file.
 func (p *Printer) isFileLevelUniqueNameInCurrentFile(name string, _ bool) bool {
 	if p.currentSourceFile != nil {
-		return IsFileLevelUniqueName(p.currentSourceFile, name, p.HasGlobalName)
+		return p.emitContext.IsFileLevelUniqueName(p.currentSourceFile, name, p.HasGlobalName)
 	} else {
 		return true
 	}

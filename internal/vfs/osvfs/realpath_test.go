@@ -8,7 +8,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"gotest.tools/v3/assert"
-	"gotest.tools/v3/assert/cmp"
 )
 
 func TestSymlinkRealpath(t *testing.T) {
@@ -25,7 +24,8 @@ func TestSymlinkRealpath(t *testing.T) {
 	targetRealpath := fs.Realpath(tspath.NormalizePath(targetFile))
 	linkRealpath := fs.Realpath(tspath.NormalizePath(linkFile))
 
-	if !assert.Check(t, cmp.Equal(targetRealpath, linkRealpath)) {
+	if targetRealpath != linkRealpath {
+		t.Errorf("expected realpath of target and link to be equal, got %q and %q", targetRealpath, linkRealpath)
 		cmd := exec.Command("node", "-e", `console.log({ native: fs.realpathSync.native(process.argv[1]), node: fs.realpathSync(process.argv[1]) })`, linkFile)
 		out, err := cmd.CombinedOutput()
 		assert.NilError(t, err)
@@ -74,6 +74,33 @@ func BenchmarkRealpath(b *testing.B) {
 			fs.Realpath(normalizedLinkFile)
 		}
 	})
+
+	// Simulate a deep node_modules path to show scaling with depth.
+	deepDir := b.TempDir()
+	for _, seg := range []string{"project", "node_modules", "@scope", "package", "node_modules", "dep", "lib", "dist", "esm", "internal", "utils"} {
+		deepDir = filepath.Join(deepDir, seg)
+	}
+	assert.NilError(b, os.MkdirAll(deepDir, 0o777))
+	deepFile := filepath.Join(deepDir, "index.js")
+	assert.NilError(b, os.WriteFile(deepFile, []byte("module.exports = {}"), 0o666))
+	normalizedDeepFile := tspath.NormalizePath(deepFile)
+
+	b.Run("deep", func(b *testing.B) {
+		b.ReportAllocs()
+
+		for b.Loop() {
+			fs.Realpath(normalizedDeepFile)
+		}
+	})
+
+	b.Run("deep_evalSymlinks", func(b *testing.B) {
+		b.ReportAllocs()
+		deepNative := filepath.FromSlash(normalizedDeepFile)
+
+		for b.Loop() {
+			filepath.EvalSymlinks(deepNative) //nolint:errcheck
+		}
+	})
 }
 
 func TestGetAccessibleEntries(t *testing.T) {
@@ -109,4 +136,17 @@ func TestGetAccessibleEntries(t *testing.T) {
 
 	assert.DeepEqual(t, entries.Directories, []string{"dir1", "dir2"})
 	assert.DeepEqual(t, entries.Files, []string{"file1", "file2"})
+	assert.Check(t, entries.Symlinks != nil, "expected Symlinks to be set for directory with symlinks")
+	assert.Equal(t, len(entries.Symlinks), 4)
+	for _, name := range []string{"file1", "file2", "dir1", "dir2"} {
+		_, ok := entries.Symlinks[name]
+		assert.Check(t, ok, "expected %q to be in Symlinks", name)
+	}
+
+	// Non-symlink directory should have empty Symlinks.
+	entries = fs.GetAccessibleEntries(tspath.NormalizePath(target))
+	assert.DeepEqual(t, entries.Directories, []string{"dir1", "dir2"})
+	assert.DeepEqual(t, entries.Files, []string{"file1", "file2"})
+	assert.Check(t, entries.Symlinks != nil, "expected Symlinks to be non-nil for directory without symlinks")
+	assert.Equal(t, len(entries.Symlinks), 0)
 }

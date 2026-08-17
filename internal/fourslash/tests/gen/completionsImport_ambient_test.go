@@ -67,7 +67,8 @@ Ba/**/`
 						AdditionalTextEdits: fourslash.AnyTextEdits,
 						SortText:            new(string(ls.SortTextAutoImportSuggestions)),
 					},
-				}, false),
+				}, false,
+			),
 		},
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, new(""), &fourslash.ApplyCodeActionFromCompletionOptions{
@@ -77,5 +78,6 @@ Ba/**/`
 		NewFileContent: new(`import { Bar } from "path2longer";
 
 Ba`),
+		UserPreferences: nil, /*preferences*/
 	})
 }

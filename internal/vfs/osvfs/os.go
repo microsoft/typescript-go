@@ -12,6 +12,8 @@ import (
 	"unicode"
 
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/nativepath"
+	"github.com/microsoft/typescript-go/internal/osutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/internal"
@@ -57,7 +59,7 @@ var isFileSystemCaseSensitive = func() bool {
 	// As a proxy for case-insensitivity, we check if the current executable exists under a different case.
 	// This is not entirely correct, since different OSs can have differing case sensitivity in different paths,
 	// but this is largely good enough for our purposes (and what sys.ts used to do with __filename).
-	exe, err := os.Executable()
+	exe, err := osutil.Executable()
 	if err != nil {
 		panic(fmt.Sprintf("vfs: failed to get executable path: %v", err))
 	}
@@ -159,7 +161,7 @@ func osFSRealpath(path string) string {
 
 	orig := path
 	path = filepath.FromSlash(path)
-	path, err := realpath(path)
+	path, err := nativepath.Realpath(path)
 	if err != nil {
 		return orig
 	}
@@ -168,6 +170,10 @@ func osFSRealpath(path string) string {
 		return orig
 	}
 	return tspath.NormalizeSlashes(path)
+}
+
+func isReparsePoint(path string) bool {
+	return nativepath.IsSymlinkOrReparsePoint(filepath.FromSlash(path))
 }
 
 func (vfs *osFS) writeFileWithFlag(path string, content string, flag int) error {

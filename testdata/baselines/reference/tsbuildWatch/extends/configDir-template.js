@@ -120,6 +120,12 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 
+Watch Registrations::
+Directory watches::
+  /home/src/projects/configs/first
+  /home/src/projects/configs/second
+  /home/src/projects/myproject
+  /home/src/projects/myproject/types
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts
@@ -174,6 +180,12 @@ main.ts
 //// [/home/src/projects/myproject/outDir/tsconfig.tsbuildinfo.readable.baseline.txt] *rewrite with same content*
 //// [/home/src/projects/myproject/outDir/types/sometype.js] *rewrite with same content*
 
+Watch Registrations::
+Directory watches::
+  /home/src/projects/configs/first
+  /home/src/projects/configs/second
+  /home/src/projects/myproject
+  /home/src/projects/myproject/types
 tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.es2025.full.d.ts

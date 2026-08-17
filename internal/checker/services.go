@@ -414,7 +414,8 @@ func (c *Checker) getImmediateRootSymbols(symbol *ast.Symbol) []*ast.Symbol {
 			c.valueSymbolLinks.Get(symbol).containingType.Types(),
 			func(t *Type) *ast.Symbol {
 				return c.getPropertyOfType(t, symbol.Name)
-			})
+			},
+		)
 	}
 	if symbol.Flags&ast.SymbolFlagsTransient != 0 {
 		if c.spreadLinks.Has(symbol) {
@@ -569,6 +570,44 @@ func (c *Checker) IsSymbolReferencedInFile(
 		}
 	}
 	return false
+}
+
+// GetReferencesToSymbolInFile returns all identifier nodes in the file that reference the given symbol.
+func (c *Checker) GetReferencesToSymbolInFile(
+	sourceFile *ast.SourceFile,
+	symbol *ast.Symbol,
+) []*ast.Node {
+	identifierText := symbol.Name
+	var result []*ast.Node
+	for _, token := range getPossibleSymbolReferenceNodes(sourceFile, identifierText, sourceFile.AsNode()) {
+		if !ast.IsIdentifier(token) {
+			continue
+		}
+		id := token.AsIdentifier()
+		if id.Text != identifierText {
+			continue
+		}
+		refSymbol := c.GetSymbolAtLocation(token)
+		if refSymbol == symbol {
+			result = append(result, token)
+			continue
+		}
+		if token.Parent != nil && token.Parent.Kind == ast.KindShorthandPropertyAssignment {
+			shorthandSymbol := c.GetShorthandAssignmentValueSymbol(token.Parent)
+			if shorthandSymbol == symbol {
+				result = append(result, token)
+				continue
+			}
+		}
+		if token.Parent != nil && ast.IsExportSpecifier(token.Parent) {
+			localSymbol := c.getLocalSymbolForExportSpecifier(token.AsIdentifier(), refSymbol, token.Parent.AsExportSpecifier())
+			if localSymbol == symbol {
+				result = append(result, token)
+				continue
+			}
+		}
+	}
+	return result
 }
 
 func (c *Checker) getLocalSymbolForExportSpecifier(referenceLocation *ast.Identifier, referenceSymbol *ast.Symbol, exportSpecifier *ast.ExportSpecifier) *ast.Symbol {
@@ -755,7 +794,8 @@ func (c *Checker) getTypeArgumentConstraint(node *ast.Node) *Type {
 			if constraint != nil {
 				return c.instantiateType(
 					constraint,
-					newTypeMapper(typeParameters, c.getEffectiveTypeArguments(node.Parent, typeParameters)))
+					newTypeMapper(typeParameters, c.getEffectiveTypeArguments(node.Parent, typeParameters)),
+				)
 			}
 		}
 	}
@@ -831,7 +871,8 @@ func (c *Checker) GetConstantValue(node *ast.Node) any {
 			ast.SymbolFlagsValue,
 			true,  /*ignoreErrors*/
 			false, /*dontResolveAlias*/
-			nil /*location*/)
+			nil,   /*location*/
+		)
 	}
 	if symbol != nil && symbol.Flags&ast.SymbolFlagsEnumMember != 0 {
 		// inline property\index accesses only for const enums

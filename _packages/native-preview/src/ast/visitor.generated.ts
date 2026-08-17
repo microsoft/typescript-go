@@ -373,6 +373,7 @@ import {
     isImportAttributeName,
     isImportAttributes,
     isImportClause,
+    isJSDocFullName,
     isJsxAttributeName,
     isJsxAttributes,
     isJsxAttributeValue,
@@ -514,7 +515,7 @@ type VisitEachChildFunction = (node: any, visitor: Visitor) => Node;
 const visitEachChildTable: Record<number, VisitEachChildFunction> = {
     [SyntaxKind.QualifiedName]: (node: QualifiedName, visitor: Visitor): QualifiedName => {
         const _left = visitNode(node.left, visitor, isEntityName);
-        const _right = visitNode(node.right, visitor, isIdentifier);
+        const _right = visitNode(node.right, visitor, isMemberName);
         return updateQualifiedName(node, _left, _right);
     },
     [SyntaxKind.ComputedPropertyName]: (node: ComputedPropertyName, visitor: Visitor): ComputedPropertyName => {
@@ -1306,9 +1307,9 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
     [SyntaxKind.JSDocCallbackTag]: (node: JSDocCallbackTag, visitor: Visitor): JSDocCallbackTag => {
         const _tagName = visitNode(node.tagName, visitor, isIdentifier);
         const _typeExpression = visitNode(node.typeExpression, visitor, isTypeNode);
-        const _fullName = visitNode(node.fullName, visitor);
+        const _name = visitNode(node.name, visitor, isJSDocFullName);
         const _comment = visitNodes(node.comment, visitor);
-        return updateJSDocCallbackTag(node, _tagName, _typeExpression, _fullName, _comment);
+        return updateJSDocCallbackTag(node, _tagName, _typeExpression, _name, _comment);
     },
     [SyntaxKind.JSDocOverloadTag]: (node: JSDocOverloadTag, visitor: Visitor): JSDocOverloadTag => {
         const _tagName = visitNode(node.tagName, visitor, isIdentifier);
@@ -1319,7 +1320,7 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
     [SyntaxKind.JSDocTypedefTag]: (node: JSDocTypedefTag, visitor: Visitor): JSDocTypedefTag => {
         const _tagName = visitNode(node.tagName, visitor, isIdentifier);
         const _typeExpression = visitNode(node.typeExpression, visitor);
-        const _name = visitNode(node.name, visitor, isIdentifier);
+        const _name = visitNode(node.name, visitor, isJSDocFullName);
         const _comment = visitNodes(node.comment, visitor);
         return updateJSDocTypedefTag(node, _tagName, _typeExpression, _name, _comment);
     },

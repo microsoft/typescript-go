@@ -574,7 +574,7 @@ func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool, isVali
 		}
 	}
 
-	importKind := getImportKind(v.importingFile, export, v.program)
+	importKind := getImportKind(v.importingFile, export, v.program, false /*forceImportKeyword*/)
 	addAsTypeOnly := getAddAsTypeOnly(isValidTypeOnlyUseSite, export, v.program.Options())
 
 	name := export.Name()
@@ -621,7 +621,7 @@ func (v *View) tryUseExistingNamespaceImport(ctx context.Context, export *Export
 		return nil
 	}
 
-	if getImportKind(v.importingFile, export, v.program) != lsproto.ImportKindNamed {
+	if getImportKind(v.importingFile, export, v.program, false /*forceImportKeyword*/) != lsproto.ImportKindNamed {
 		return nil
 	}
 
@@ -688,7 +688,7 @@ func (v *View) tryAddToExistingImport(
 		return nil
 	}
 
-	importKind := getImportKind(v.importingFile, export, v.program)
+	importKind := getImportKind(v.importingFile, export, v.program, false /*forceImportKeyword*/)
 	if importKind == lsproto.ImportKindCommonJS || importKind == lsproto.ImportKindNamespace {
 		return nil
 	}
@@ -777,7 +777,11 @@ func (v *View) tryAddToExistingImport(
 	return best
 }
 
-func getImportKind(importingFile *ast.SourceFile, export *Export, program *compiler.Program) lsproto.ImportKind {
+func GetImportKindForImportStatement(importingFile *ast.SourceFile, export *Export, program *compiler.Program) lsproto.ImportKind {
+	return getImportKind(importingFile, export, program, true /*forceImportKeyword*/)
+}
+
+func getImportKind(importingFile *ast.SourceFile, export *Export, program *compiler.Program, forceImportKeyword bool) lsproto.ImportKind {
 	if program.Options().VerbatimModuleSyntax.IsTrue() && program.GetEmitModuleFormatOfFile(importingFile) == core.ModuleKindCommonJS {
 		return lsproto.ImportKindCommonJS
 	}
@@ -808,7 +812,7 @@ func getImportKind(importingFile *ast.SourceFile, export *Export, program *compi
 		//     a require or an es6 import. The latter, compiled to CJS, has interop built in that will
 		//     avoid accessing .default, but if we write a require directly and call it a default import,
 		//     we emit an unconditional .default access.
-		if importingFile.ExternalModuleIndicator != nil || !ast.IsSourceFileJS(importingFile) {
+		if importingFile.ExternalModuleIndicator != nil || forceImportKeyword || !ast.IsSourceFileJS(importingFile) {
 			return lsproto.ImportKindDefault
 		}
 		return lsproto.ImportKindCommonJS
@@ -838,11 +842,15 @@ func (v *View) getExistingImports(ctx context.Context) *collections.MultiMap[Mod
 			panic("error: did not expect node kind " + moduleSpecifier.Kind.String())
 		} else if ast.IsVariableDeclarationInitializedToRequire(node.Parent) {
 			if moduleSymbol := ch.ResolveExternalModuleName(moduleSpecifier); moduleSymbol != nil {
-				result.Add(core.FirstResult(getModuleIDAndFileNameOfModuleSymbol(moduleSymbol)), existingImport{node: node.Parent, moduleSpecifier: moduleSpecifier.Text(), index: i})
+				if moduleID, _, ok := tryGetModuleIDAndFileNameOfModuleSymbol(moduleSymbol); ok {
+					result.Add(moduleID, existingImport{node: node.Parent, moduleSpecifier: moduleSpecifier.Text(), index: i})
+				}
 			}
 		} else if node.Kind == ast.KindImportDeclaration || node.Kind == ast.KindImportEqualsDeclaration || node.Kind == ast.KindJSDocImportTag {
 			if moduleSymbol := ch.GetSymbolAtLocation(moduleSpecifier); moduleSymbol != nil {
-				result.Add(core.FirstResult(getModuleIDAndFileNameOfModuleSymbol(moduleSymbol)), existingImport{node: node, moduleSpecifier: moduleSpecifier.Text(), index: i})
+				if moduleID, _, ok := tryGetModuleIDAndFileNameOfModuleSymbol(moduleSymbol); ok {
+					result.Add(moduleID, existingImport{node: node, moduleSpecifier: moduleSpecifier.Text(), index: i})
+				}
 			}
 		}
 	}
@@ -1284,14 +1292,20 @@ func getModuleSpecifierText(promotedDeclaration *ast.Node) string {
 		importEqualsDeclaration := promotedDeclaration.AsImportEqualsDeclaration()
 		if ast.IsExternalModuleReference(importEqualsDeclaration.ModuleReference) {
 			expr := importEqualsDeclaration.ModuleReference.Expression()
-			if expr != nil && expr.Kind == ast.KindStringLiteral {
-				return expr.Text()
+			if expr != nil {
+				if ast.IsStringLiteralLike(expr) {
+					return expr.Text()
+				}
+				return scanner.GetTextOfNode(expr)
 			}
-
 		}
-		return importEqualsDeclaration.ModuleReference.Text()
+		return scanner.GetTextOfNode(importEqualsDeclaration.ModuleReference)
 	}
-	return promotedDeclaration.Parent.ModuleSpecifier().Text()
+	moduleSpecifier := promotedDeclaration.Parent.ModuleSpecifier()
+	if ast.IsStringLiteralLike(moduleSpecifier) {
+		return moduleSpecifier.Text()
+	}
+	return scanner.GetTextOfNode(moduleSpecifier)
 }
 
 // returns `-1` if `a` is better than `b`

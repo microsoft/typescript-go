@@ -1,10 +1,14 @@
 package main
 
 import (
+	"context"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/execute"
+	"github.com/microsoft/typescript-go/internal/osutil"
 )
 
 func main() {
@@ -13,7 +17,7 @@ func main() {
 
 func runMain() int {
 	core.ApplyDebugStackLimit()
-	args := os.Args[1:]
+	args := osutil.Args()[1:]
 	if len(args) > 0 {
 		switch args[0] {
 		case "--lsp":
@@ -22,6 +26,8 @@ func runMain() int {
 			return runAPI(args[1:])
 		}
 	}
-	result := execute.CommandLine(newSystem(), args, nil)
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+	result := execute.CommandLine(ctx, newSystem(), args, nil)
 	return int(result.Status)
 }

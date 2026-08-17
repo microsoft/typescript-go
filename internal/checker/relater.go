@@ -4,15 +4,14 @@ import (
 	"slices"
 	"strconv"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tracing"
 )
 
@@ -419,7 +418,7 @@ func (c *Checker) reportDiagnostic(diagnostic *ast.Diagnostic, diagnosticOutput 
 		if diagnosticOutput != nil {
 			*diagnosticOutput = append(*diagnosticOutput, diagnostic)
 		} else {
-			c.diagnostics.Add(diagnostic)
+			c.addDiagnostic(diagnostic)
 		}
 	}
 }
@@ -440,6 +439,9 @@ func (c *Checker) checkTypeRelatedToAndOptionallyElaborate(source *Type, target 
 
 func (c *Checker) elaborateError(node *ast.Node, source *Type, target *Type, relation *Relation, headMessage *diagnostics.Message, diagnosticOutput *[]*ast.Diagnostic) bool {
 	if node == nil || c.isOrHasGenericConditional(target) {
+		return false
+	}
+	if c.compilerOptions.NoCheck.IsTrue() {
 		return false
 	}
 	if c.elaborateDidYouMeanToCallOrConstruct(node, source, target, relation, SignatureKindConstruct, headMessage, diagnosticOutput) ||
@@ -1352,60 +1354,100 @@ func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type)
 				popFn()
 			}()
 		}
-		oldVarianceComputation := c.inVarianceComputation
-		saveResolutionStart := c.resolutionStart
-		if !c.inVarianceComputation {
-			c.inVarianceComputation = true
-			c.resolutionStart = len(c.typeResolutions)
-		}
-		links.variances = []VarianceFlags{}
-		variances := make([]VarianceFlags, len(typeParameters))
-		for i, tp := range typeParameters {
-			modifiers := c.getTypeParameterModifiers(tp)
-			var variance VarianceFlags
-			switch {
-			case modifiers&ast.ModifierFlagsOut != 0:
-				if modifiers&ast.ModifierFlagsIn != 0 {
-					variance = VarianceFlagsInvariant
-				} else {
-					variance = VarianceFlagsCovariant
-				}
-			case modifiers&ast.ModifierFlagsIn != 0:
-				variance = VarianceFlagsContravariant
-			default:
-				saveReliabilityFlags := c.reliabilityFlags
-				c.reliabilityFlags = 0
-				// We first compare instantiations where the type parameter is replaced with
-				// marker types that have a known subtype relationship. From this we can infer
-				// invariance, covariance, contravariance or bivariance.
-				typeWithSuper := c.createMarkerType(symbol, tp, c.markerSuperType)
-				typeWithSub := c.createMarkerType(symbol, tp, c.markerSubType)
-				variance = (core.IfElse(c.isTypeAssignableTo(typeWithSub, typeWithSuper), VarianceFlagsCovariant, 0)) |
-					(core.IfElse(c.isTypeAssignableTo(typeWithSuper, typeWithSub), VarianceFlagsContravariant, 0))
-				// If the instantiations appear to be related bivariantly it may be because the
-				// type parameter is independent (i.e. it isn't witnessed anywhere in the generic
-				// type). To determine this we compare instantiations where the type parameter is
-				// replaced with marker types that are known to be unrelated.
-				if variance == VarianceFlagsBivariant && c.isTypeAssignableTo(c.createMarkerType(symbol, tp, c.markerOtherType), typeWithSuper) {
-					variance = VarianceFlagsIndependent
-				}
-				if c.reliabilityFlags&RelationComparisonResultReportsUnmeasurable != 0 {
-					variance |= VarianceFlagsUnmeasurable
-				}
-				if c.reliabilityFlags&RelationComparisonResultReportsUnreliable != 0 {
-					variance |= VarianceFlagsUnreliable
-				}
-				c.reliabilityFlags = saveReliabilityFlags
+		stackIndex := c.getVarianceStackIndex(symbol)
+		if stackIndex < 0 {
+			saveResolutionStart := c.resolutionStart
+			if len(c.varianceStack) == 0 {
+				c.resolutionStart = len(c.typeResolutions)
 			}
-			variances[i] = variance
+			c.varianceStack = append(c.varianceStack, VarianceStackEntry{symbol, typeParameters})
+			variances := make([]VarianceFlags, len(typeParameters))
+			for i, tp := range typeParameters {
+				modifiers := c.getTypeParameterModifiers(tp)
+				var variance VarianceFlags
+				switch {
+				case modifiers&ast.ModifierFlagsOut != 0:
+					if modifiers&ast.ModifierFlagsIn != 0 {
+						variance = VarianceFlagsInvariant
+					} else {
+						variance = VarianceFlagsCovariant
+					}
+				case modifiers&ast.ModifierFlagsIn != 0:
+					variance = VarianceFlagsContravariant
+				default:
+					saveReliabilityFlags := c.reliabilityFlags
+					c.reliabilityFlags = 0
+					// We first compare instantiations where the type parameter is replaced with
+					// marker types that have a known subtype relationship. From this we can infer
+					// invariance, covariance, contravariance or bivariance.
+					typeWithSuper := c.createMarkerType(symbol, tp, c.markerSuperType)
+					typeWithSub := c.createMarkerType(symbol, tp, c.markerSubType)
+					variance = core.IfElse(c.isTypeAssignableTo(typeWithSub, typeWithSuper), VarianceFlagsCovariant, 0) |
+						core.IfElse(c.isTypeAssignableTo(typeWithSuper, typeWithSub), VarianceFlagsContravariant, 0)
+					// If the instantiations appear to be related bivariantly it may be because the
+					// type parameter is independent (i.e. it isn't witnessed anywhere in the generic
+					// type). To determine this we compare instantiations where the type parameter is
+					// replaced with marker types that are known to be unrelated.
+					if variance == VarianceFlagsBivariant && c.isTypeAssignableTo(c.createMarkerType(symbol, tp, c.markerOtherType), typeWithSuper) {
+						variance = VarianceFlagsIndependent
+					}
+					if c.reliabilityFlags&RelationComparisonResultReportsUnmeasurable != 0 {
+						variance |= VarianceFlagsUnmeasurable
+					}
+					if c.reliabilityFlags&RelationComparisonResultReportsUnreliable != 0 {
+						variance |= VarianceFlagsUnreliable
+					}
+					c.reliabilityFlags = saveReliabilityFlags
+				}
+				// If variance computation was restarted due to a circularity we may have already
+				// computed variances for this generic type. If so, we exit early.
+				if len(links.variances) != 0 {
+					break
+				}
+				variances[i] = variance
+			}
+			// Store the results unless a restarted computation has already stored them.
+			if len(links.variances) == 0 {
+				links.variances = variances
+			}
+			c.varianceStack = c.varianceStack[:len(c.varianceStack)-1]
+			if len(c.varianceStack) == 0 {
+				c.resolutionStart = saveResolutionStart
+			}
+		} else {
+			// We've detected a circularity. Since we may compute different variances depending on where
+			// we enter a circularity, we find the generic type with the "smallest" symbol in the circular
+			// region of the variance stack and restart the computation from there if necessary. This
+			// ensures stable results for circular generic types.
+			minIndex := stackIndex
+			for i := stackIndex + 1; i < len(c.varianceStack); i++ {
+				if c.compareSymbols(c.varianceStack[i].symbol, c.varianceStack[minIndex].symbol) < 0 {
+					minIndex = i
+				}
+			}
+			if minIndex > stackIndex {
+				saveVarianceStack := c.varianceStack
+				c.varianceStack = nil
+				c.getVariancesWorker(saveVarianceStack[minIndex].symbol, saveVarianceStack[minIndex].typeParameters)
+				c.varianceStack = saveVarianceStack
+			}
+			// Store an empty slice to mark that we can't compute variances for this type. We treat type
+			// parameters as co-variant in this case.
+			if len(links.variances) == 0 {
+				links.variances = []VarianceFlags{}
+			}
 		}
-		if !oldVarianceComputation {
-			c.inVarianceComputation = false
-			c.resolutionStart = saveResolutionStart
-		}
-		links.variances = variances
 	}
 	return links.variances
+}
+
+func (c *Checker) getVarianceStackIndex(symbol *ast.Symbol) int {
+	for i, entry := range c.varianceStack {
+		if entry.symbol == symbol {
+			return i
+		}
+	}
+	return -1
 }
 
 func (c *Checker) createMarkerType(symbol *ast.Symbol, source *Type, target *Type) *Type {
@@ -1802,8 +1844,12 @@ func (c *Checker) getRestTypeAtPosition(source *Signature, pos int, readonly boo
 			return c.createArrayType(c.getIndexedAccessType(restType, c.numberType))
 		}
 	}
-	types := make([]*Type, parameterCount-pos)
-	infos := make([]TupleElementInfo, parameterCount-pos)
+	length := parameterCount - pos
+	if length <= 0 {
+		return c.createTupleTypeEx(nil, nil, readonly)
+	}
+	types := make([]*Type, length)
+	infos := make([]TupleElementInfo, length)
 	for i := range types {
 		var flags ElementFlags
 		if restType == nil || i < len(types)-1 {
@@ -1882,6 +1928,9 @@ func (c *Checker) sliceTupleType(t *Type, index int, endSkipCount int) *Type {
 		}
 		return c.createTupleType(nil)
 	}
+	if index >= endIndex {
+		return c.createTupleType(nil)
+	}
 	return c.createTupleTypeEx(c.getTypeArguments(t)[index:endIndex], target.elementInfos[index:endIndex], false /*readonly*/)
 }
 
@@ -1926,7 +1975,7 @@ func (c *Checker) getParameterNameAtPosition(signature *Signature, pos int) stri
 	restType := c.getTypeOfSymbol(restParameter)
 	if isTupleType(restType) {
 		index := pos - paramCount
-		c.getTupleElementLabel(restType.TargetTupleType().elementInfos[index], restParameter, index)
+		return c.getTupleElementLabel(restType.TargetTupleType().elementInfos[index], restParameter, index)
 	}
 	return restParameter.Name
 }
@@ -2397,7 +2446,7 @@ func (c *Checker) inferFromLiteralPartsToTemplateLiteral(sourceTexts []string, s
 	addMatch := func(s int, p int) {
 		var matchType *Type
 		if s == seg {
-			matchType = c.getStringLiteralType(getSourceText(s)[pos:p])
+			matchType = c.getStringLiteralType(stringutil.CombineSurrogatePairs(getSourceText(s)[pos:p]))
 		} else {
 			matchTexts := make([]string, s-seg+1)
 			matchTexts[0] = sourceTexts[seg][pos:]
@@ -2429,7 +2478,23 @@ func (c *Checker) inferFromLiteralPartsToTemplateLiteral(sourceTexts []string, s
 			addMatch(s, p)
 			pos += len(delim)
 		} else if sourceText := getSourceText(seg); pos < len(sourceText) {
-			_, size := utf8.DecodeRuneInString(sourceText[pos:])
+			// Consume one code point at a time, matching the string iterator
+			// (`[x, ..._] = s`) rather than UTF-16 code-unit indexing (`s[0]`).
+			// DecodeJSStringRune is required rather than utf8.DecodeRuneInString
+			// because a lone surrogate is stored as an invalid-UTF-8 sentinel;
+			// utf8 would treat that as an error and advance a single byte,
+			// breaking the sentinel into stray bytes, whereas DecodeJSStringRune
+			// pulls the whole sentinel off as one code point.
+			//
+			// This intentionally diverges from Strada, which advances one UTF-16
+			// code unit at a time (`s[0]` semantics) and therefore splits a
+			// supplementary code point such as an emoji into its surrogate
+			// halves. If we ever need to match that, expand sourceTexts and
+			// targetTexts into code-unit space up front with a SplitSurrogatePairs
+			// helper (the inverse of CombineSurrogatePairs) and decode by code
+			// unit here; the CombineSurrogatePairs call in addMatch already
+			// recombines captured halves back into canonical form.
+			_, size := stringutil.DecodeJSStringRune(sourceText[pos:])
 			addMatch(seg, pos+size)
 		} else if seg < lastSourceIndex {
 			addMatch(seg+1, 0)
@@ -3035,6 +3100,8 @@ func (r *Relater) eachTypeRelatedToSomeType(source *Type, target *Type) Ternary 
 // and issue an error. Otherwise, actually compare the structure of the two types.
 func (r *Relater) recursiveTypeRelatedTo(source *Type, target *Type, reportErrors bool, intersectionState IntersectionState, recursionFlags RecursionFlags) Ternary {
 	if r.overflow {
+		// Note that stack depth overflows can cause _any_ relation involving structured types to become false, so it is
+		// important to have well-defined behavior even in cases that shouldn't normally occur.
 		return TernaryFalse
 	}
 	id, constrained := getRelationKey(source, target, intersectionState, r.relation == r.c.identityRelation, false /*ignoreConstraints*/)
@@ -3436,7 +3503,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			baseObjectType := r.c.getBaseConstraintOrType(objectType)
 			baseIndexType := r.c.getBaseConstraintOrType(indexType)
 			if !r.c.isGenericObjectType(baseObjectType) && !r.c.isGenericIndexType(baseIndexType) {
-				accessFlags := AccessFlagsWriting | (core.IfElse(baseObjectType != objectType, AccessFlagsNoIndexSignatures, 0))
+				accessFlags := AccessFlagsWriting | core.IfElse(baseObjectType != objectType, AccessFlagsNoIndexSignatures, 0)
 				constraint := r.c.getIndexedAccessTypeOrUndefined(baseObjectType, baseIndexType, accessFlags, nil, nil)
 				if constraint != nil {
 					if reportErrors && originalErrorChain != nil {
@@ -3903,8 +3970,8 @@ func (r *Relater) typeArgumentsRelatedTo(sources []*Type, targets []*Type, varia
 					related = r.c.compareTypesIdentical(s, t)
 				}
 			} else {
-				// Propagate unreliable variance flag
-				if r.c.inVarianceComputation && varianceFlags&VarianceFlagsUnreliable != 0 {
+				// Propagate unreliable variance flag in variance computations
+				if len(r.c.varianceStack) != 0 && varianceFlags&VarianceFlagsUnreliable != 0 {
 					r.c.instantiateType(s, r.c.reportUnreliableMapper)
 				}
 				if variance == VarianceFlagsCovariant {
@@ -4088,7 +4155,8 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 			} else {
 				sourceRest = true
 			}
-			targetHasRestElement := target.TargetTupleType().combinedFlags&ElementFlagsVariable != 0
+			targetHasRestElement := target.TargetTupleType().combinedFlags&ElementFlagsRest != 0
+			targetHasVariableElement := target.TargetTupleType().combinedFlags&ElementFlagsVariable != 0
 			var sourceMinLength int
 			if isTupleType(source) {
 				sourceMinLength = source.TargetTupleType().minLength
@@ -4102,13 +4170,13 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 				}
 				return TernaryFalse
 			}
-			if !targetHasRestElement && targetArity < sourceMinLength {
+			if !targetHasVariableElement && targetArity < sourceMinLength {
 				if reportErrors {
 					r.reportError(diagnostics.Source_has_0_element_s_but_target_allows_only_1, sourceMinLength, targetArity)
 				}
 				return TernaryFalse
 			}
-			if !targetHasRestElement && (sourceRest || targetArity < sourceArity) {
+			if !targetHasVariableElement && (sourceRest || targetArity < sourceArity) {
 				if reportErrors {
 					if sourceMinLength < targetMinLength {
 						r.reportError(diagnostics.Target_requires_0_element_s_but_source_may_have_fewer, targetMinLength)
@@ -4135,6 +4203,12 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 				if targetHasRestElement && sourcePosition >= targetStartCount {
 					targetPosition = targetArity - 1 - min(sourcePositionFromEnd, targetEndCount)
 				} else {
+					if sourcePosition >= targetArity {
+						if reportErrors {
+							r.reportError(diagnostics.Target_allows_only_0_element_s_but_source_may_have_more, targetArity)
+						}
+						return TernaryFalse
+					}
 					targetPosition = sourcePosition
 				}
 				targetFlags := ElementFlagsNone
@@ -4583,17 +4657,17 @@ func (r *Relater) typeRelatedToIndexInfo(source *Type, targetInfo *IndexInfo, re
 	return TernaryFalse
 }
 
-/**
- * Return true if type was inferred from an object literal, written as an object type literal, or is the shape of a module
- * with no call or construct signatures.
- */
+// Return true if the type was inferred from
+//   - an object literal, object type literal, enum type, or a value module and has no call or construct signatures, or
+//   - a JS expando object literal or a rest type, or
+//   - a reverse mapped type with a source for which one of the above is true.
 func (c *Checker) isObjectTypeWithInferableIndex(t *Type) bool {
 	if t.flags&TypeFlagsIntersection != 0 {
 		return core.Every(t.Types(), c.isObjectTypeWithInferableIndex)
 	}
-	return t.symbol != nil && t.symbol.Flags&(ast.SymbolFlagsObjectLiteral|ast.SymbolFlagsTypeLiteral|ast.SymbolFlagsEnum|ast.SymbolFlagsValueModule) != 0 &&
-		t.symbol.Flags&ast.SymbolFlagsClass == 0 && !c.typeHasCallOrConstructSignatures(t) ||
-		t.objectFlags&ObjectFlagsObjectRestType != 0 ||
+	return t.symbol != nil &&
+		t.symbol.Flags&(ast.SymbolFlagsObjectLiteral|ast.SymbolFlagsTypeLiteral|ast.SymbolFlagsEnum|ast.SymbolFlagsValueModule) != 0 && t.symbol.Flags&ast.SymbolFlagsClass == 0 && !c.typeHasCallOrConstructSignatures(t) ||
+		t.objectFlags&(ObjectFlagsJSLiteral|ObjectFlagsObjectRestType) != 0 ||
 		t.objectFlags&ObjectFlagsReverseMapped != 0 && c.isObjectTypeWithInferableIndex(t.AsReverseMappedType().source)
 }
 
@@ -4722,7 +4796,6 @@ func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type
 	// to be displayed for use-cases like 'assertNever'.
 	if target.flags&TypeFlagsNever == 0 && isLiteralType(source) && !r.c.typeCouldHaveTopLevelSingletonTypes(target) {
 		generalizedSource = r.c.getBaseTypeOfLiteralType(source)
-		debug.Assert(!r.c.isTypeAssignableTo(generalizedSource, target), "generalized source shouldn't be assignable")
 		generalizedSourceType = r.c.getTypeNameForErrorDisplay(generalizedSource)
 	}
 	// If `target` is of indexed access type (and `source` it is not), we use the object type of `target` for better error reporting
@@ -4762,6 +4835,8 @@ func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type
 			}
 			message = diagnostics.Type_0_is_not_assignable_to_type_1
 		}
+	} else if message == diagnostics.Argument_of_type_0_is_not_assignable_to_parameter_of_type_1 && r.c.exactOptionalPropertyTypes && len(r.c.getExactOptionalUnassignableProperties(source, target)) > 0 {
+		message = diagnostics.Argument_of_type_0_is_not_assignable_to_parameter_of_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_types_of_the_target_s_properties
 	}
 	switch r.getChainMessage(0) {
 	// Suppress if next message is an excess property error

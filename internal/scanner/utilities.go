@@ -2,52 +2,14 @@ package scanner
 
 import (
 	"strings"
+	"unicode"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 )
-
-const (
-	surr1    = 0xd800
-	surr2    = 0xdc00
-	surr3    = 0xe000
-	surrSelf = 0x10000
-)
-
-func codePointIsHighSurrogate(r rune) bool {
-	return surr1 <= r && r < surr2
-}
-
-func codePointIsLowSurrogate(r rune) bool {
-	return surr2 <= r && r < surr3
-}
-
-func surrogatePairToCodepoint(r1, r2 rune) rune {
-	return (r1-surr1)<<10 | (r2 - surr2) + surrSelf
-}
-
-// encodeSurrogate encodes a surrogate code unit (0xD800–0xDFFF) as a 3-byte
-// CESU-8 sequence. Standard UTF-8 decoders reject this range, so it acts as a
-// sentinel that decodeClassAtomRune can identify when comparing class ranges in
-// non-unicode regex mode (where surrogates are valid individual characters).
-func encodeSurrogate(r rune) string {
-	return string([]byte{
-		0xED,
-		byte(0x80 | ((r >> 6) & 0x3F)),
-		byte(0x80 | (r & 0x3F)),
-	})
-}
-
-// decodeClassAtomRune is like utf8.DecodeRuneInString but also handles
-// surrogate code units encoded by encodeSurrogate.
-func decodeClassAtomRune(s string) (rune, int) {
-	if len(s) >= 3 && s[0] == 0xED && s[1] >= 0xA0 && s[1] <= 0xBF && s[2] >= 0x80 && s[2] <= 0xBF {
-		r := rune(0xD000) | rune(s[1]&0x3F)<<6 | rune(s[2]&0x3F)
-		return r, 3
-	}
-	return utf8.DecodeRuneInString(s)
-}
 
 func tokenIsIdentifierOrKeyword(token ast.Kind) bool {
 	return token >= ast.KindIdentifier
@@ -61,6 +23,52 @@ func GetSourceTextOfNodeFromSourceFile(sourceFile *ast.SourceFile, node *ast.Nod
 	return GetTextOfNodeFromSourceText(sourceFile.Text(), node, includeTrivia)
 }
 
+func isJSDocTypeExpressionOrChild(node *ast.Node) bool {
+	if ast.IsJSDocTypeExpression(node) {
+		return true
+	}
+	if node.Flags&(ast.NodeFlagsJSDoc|ast.NodeFlagsReparsed) == 0 {
+		return false
+	}
+	for current := node; current != nil; current = current.Parent {
+		if ast.IsTypeNode(current) {
+			return true
+		}
+	}
+	return false
+}
+
+func normalizeJSDocTypeSourceText(text string) string {
+	lineStarts := core.ComputeECMALineStarts(text)
+	if len(lineStarts) == 1 {
+		return stripLeadingJSDocComment(text)
+	}
+
+	var result strings.Builder
+	result.Grow(len(text))
+	newLine := core.NewLineKindLF.GetNewLineCharacter()
+	for i, lineStart := range lineStarts {
+		if i > 0 {
+			result.WriteString(newLine)
+		}
+		lineEnd := len(text)
+		if i+1 < len(lineStarts) {
+			lineEnd = int(lineStarts[i+1])
+		}
+		line := strings.TrimRightFunc(text[lineStart:lineEnd], stringutil.IsLineBreak)
+		result.WriteString(stripLeadingJSDocComment(line))
+	}
+	return result.String()
+}
+
+func stripLeadingJSDocComment(line string) string {
+	line = strings.TrimLeftFunc(line, stringutil.IsWhiteSpaceLike)
+	if len(line) > 0 && line[0] == '*' {
+		line = line[1:]
+	}
+	return strings.TrimLeftFunc(line, stringutil.IsWhiteSpaceLike)
+}
+
 func GetTextOfNodeFromSourceText(sourceText string, node *ast.Node, includeTrivia bool) string {
 	if ast.NodeIsMissing(node) {
 		return ""
@@ -70,15 +78,45 @@ func GetTextOfNodeFromSourceText(sourceText string, node *ast.Node, includeTrivi
 		pos = SkipTrivia(sourceText, pos)
 	}
 	text := sourceText[pos:node.End()]
-	// if (isJSDocTypeExpressionOrChild(node)) {
-	//     // strip space + asterisk at line start
-	//     text = text.split(/\r\n|\n|\r/).map(line => line.replace(/^\s*\*/, "").trimStart()).join("\n");
-	// }
+	if isJSDocTypeExpressionOrChild(node) {
+		text = normalizeJSDocTypeSourceText(text)
+	}
+	if node.Flags&ast.NodeFlagsReparserTransformedLiteral != 0 {
+		// This is similar to `getLiteralTextOfNode` in the printer, but without the context of an `emitContext` to provide overrides
+		if ast.IsStringLiteral(node) {
+			if node.AsStringLiteral().TokenFlags&ast.TokenFlagsSingleQuote != 0 {
+				return "'" + text + "'"
+			}
+			return "\"" + text + "\""
+		} else if ast.IsIdentifier(node) {
+			return node.Text()
+		}
+		// Only the above node kinds are currently transformed into one another by the reparser, requiring the textual remapping.
+		// (Any reamppings done by emit transforms are handled by `getLiteralTextOfNode` in the printer)
+		// Fail on any other kinds.
+		debug.FailBadSyntaxKind(node, "Unexpected reparser-transformed node kind")
+	}
 	return text
 }
 
 func GetTextOfNode(node *ast.Node) string {
 	return GetSourceTextOfNodeFromSourceFile(ast.GetSourceFileOfNode(node), node, false /*includeTrivia*/)
+}
+
+func GetTextOfJSDocComment(comment *ast.NodeList) string {
+	if comment == nil {
+		return ""
+	}
+	var b strings.Builder
+	for _, n := range comment.Nodes {
+		switch n.Kind {
+		case ast.KindJSDocText:
+			b.WriteString(n.Text())
+		case ast.KindJSDocLink, ast.KindJSDocLinkCode, ast.KindJSDocLinkPlain:
+			b.WriteString(GetTextOfNode(n))
+		}
+	}
+	return strings.TrimRightFunc(b.String(), unicode.IsSpace)
 }
 
 func DeclarationNameToString(name *ast.Node) string {

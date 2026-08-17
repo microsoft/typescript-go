@@ -28,4 +28,8 @@ function foo() {
 
 
 //// [index.d.ts]
-export {};
+export = _exports;
+declare function _exports(o: any): any;
+declare namespace _exports {
+    export var methods: () => void;
+}
