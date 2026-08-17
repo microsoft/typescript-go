@@ -63,10 +63,20 @@ func getTokenAtPosition(
 	// When scanning in between nodes for token, we should only scan up to the start of `nodeAfterLeft`.
 	var nodeAfterLeft *ast.Node
 
+	getIncludedPrecedingToken := func(subtree *ast.Node) *ast.Node {
+		child := FindPrecedingTokenEx(sourceFile, position, subtree, false /*excludeJSDoc*/)
+		if child != nil && child.End() == position && includePrecedingTokenAtEndPosition(child) {
+			return child
+		}
+		return nil
+	}
+
 	testNode := func(node *ast.Node) int {
 		if node.Kind != ast.KindEndOfFile && node.End() == position &&
-			node.Pos() < node.End() && includePrecedingTokenAtEndPosition != nil && node.Flags&ast.NodeFlagsReparsed == 0 {
-			prevSubtree = node
+			includePrecedingTokenAtEndPosition != nil && node.Flags&ast.NodeFlagsReparsed == 0 {
+			if prevSubtree == nil || getIncludedPrecedingToken(prevSubtree) == nil {
+				prevSubtree = node
+			}
 		}
 
 		// A node "contains" the position if position < end, except nodes at the file end
@@ -191,8 +201,7 @@ func getTokenAtPosition(
 		// Check if the rightmost token of prevSubtree should be returned based on the
 		// `includePrecedingTokenAtEndPosition` callback.
 		if prevSubtree != nil {
-			child := FindPrecedingTokenEx(sourceFile, position, prevSubtree, false /*excludeJSDoc*/)
-			if child != nil && child.End() == position && includePrecedingTokenAtEndPosition(child) {
+			if child := getIncludedPrecedingToken(prevSubtree); child != nil {
 				// Optimization: includePrecedingTokenAtEndPosition only ever returns true
 				// for real AST nodes, so we don't run the scanner here.
 				return child
