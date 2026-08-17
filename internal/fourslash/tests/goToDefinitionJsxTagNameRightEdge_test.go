@@ -10,7 +10,9 @@ import (
 func TestGoToDefinitionJsxTagNameRightEdge(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @jsx: react-jsx
+	const content = `// @allowJs: true
+// @jsx: react-jsx
+// @filename: /a.jsx
 export function Component() {
     return null;
 }
