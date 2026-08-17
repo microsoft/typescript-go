@@ -32,121 +32,86 @@ function createFixture(t: test.TestContext): string {
     return root;
 }
 
-test("resolves the TypeScript 7 package", t => {
-    const root = createFixture(t);
-    const packageJsonPath = createPackage(root, "node_modules/typescript");
-    const platformPackageJson = createPackage(root, `node_modules/@typescript/${platformPackage}`);
+interface ResolutionCase {
+    packagePath: string;
+    platformPath: string;
+    dependencyLink?: string;
+    platformPackage?: string;
+    exeName?: string;
+}
 
-    assert.equal(
-        resolvePackageExecutable(packageJsonPath, platformPackage, exeName),
-        path.join(path.dirname(platformPackageJson), "lib", exeName),
-    );
+function testResolution(name: string, resolutionCase: ResolutionCase): void {
+    test(name, t => {
+        const root = createFixture(t);
+        const packageJsonPath = createPackage(root, resolutionCase.packagePath);
+        const platformPackageJson = createPackage(root, resolutionCase.platformPath);
+        if (resolutionCase.dependencyLink) {
+            linkPackage(root, resolutionCase.dependencyLink, platformPackageJson);
+        }
+
+        const resolvedExeName = resolutionCase.exeName ?? exeName;
+        assert.equal(
+            resolvePackageExecutable(packageJsonPath, resolutionCase.platformPackage ?? platformPackage, resolvedExeName),
+            path.join(path.dirname(platformPackageJson), "lib", resolvedExeName),
+        );
+    });
+}
+
+testResolution("resolves the TypeScript 7 package", {
+    packagePath: "node_modules/typescript",
+    platformPath: `node_modules/@typescript/${platformPackage}`,
 });
 
-test("resolves the TypeScript 7 scoped alias recommended in the 7.0 release post", t => {
-    const root = createFixture(t);
-    const packageJsonPath = createPackage(root, "node_modules/@typescript/native");
-    const platformPackageJson = createPackage(root, `node_modules/@typescript/${platformPackage}`);
-
-    assert.equal(
-        resolvePackageExecutable(packageJsonPath, platformPackage, exeName),
-        path.join(path.dirname(platformPackageJson), "lib", exeName),
-    );
+testResolution("resolves the TypeScript 7 scoped alias recommended in the 7.0 release post", {
+    packagePath: "node_modules/@typescript/native",
+    platformPath: `node_modules/@typescript/${platformPackage}`,
 });
 
-test("resolves an unscoped TypeScript 7 alias", t => {
-    const root = createFixture(t);
-    const packageJsonPath = createPackage(root, "node_modules/typescript-next");
-    const platformPackageJson = createPackage(root, `node_modules/@typescript/${platformPackage}`);
-
-    assert.equal(
-        resolvePackageExecutable(packageJsonPath, platformPackage, exeName),
-        path.join(path.dirname(platformPackageJson), "lib", exeName),
-    );
+testResolution("resolves an unscoped TypeScript 7 alias", {
+    packagePath: "node_modules/typescript-next",
+    platformPath: `node_modules/@typescript/${platformPackage}`,
 });
 
-test("resolves the native-preview package", t => {
-    const root = createFixture(t);
-    const packageJsonPath = createPackage(root, "node_modules/@typescript/native-preview");
-    const nativePlatformPackage = "native-preview-linux-x64";
-    const platformPackageJson = createPackage(root, `node_modules/@typescript/${nativePlatformPackage}`);
-
-    assert.equal(
-        resolvePackageExecutable(packageJsonPath, nativePlatformPackage, "tsgo"),
-        path.join(path.dirname(platformPackageJson), "lib", "tsgo"),
-    );
+const nativePlatformPackage = "native-preview-linux-x64";
+testResolution("resolves the native-preview package", {
+    packagePath: "node_modules/@typescript/native-preview",
+    platformPath: `node_modules/@typescript/${nativePlatformPackage}`,
+    platformPackage: nativePlatformPackage,
+    exeName: "tsgo",
 });
 
-test("resolves a non-hoisted platform package", t => {
-    const root = createFixture(t);
-    const packageJsonPath = createPackage(root, "node_modules/@typescript/native");
-    const platformPackageJson = createPackage(root, `node_modules/@typescript/native/node_modules/@typescript/${platformPackage}`);
-
-    assert.equal(
-        resolvePackageExecutable(packageJsonPath, platformPackage, exeName),
-        path.join(path.dirname(platformPackageJson), "lib", exeName),
-    );
+testResolution("resolves a non-hoisted platform package", {
+    packagePath: "node_modules/@typescript/native",
+    platformPath: `node_modules/@typescript/native/node_modules/@typescript/${platformPackage}`,
 });
 
-test("resolves a platform package hoisted above a workspace", t => {
-    const root = createFixture(t);
-    const packageJsonPath = createPackage(root, "packages/app/node_modules/@typescript/native");
-    const platformPackageJson = createPackage(root, `node_modules/@typescript/${platformPackage}`);
-
-    assert.equal(
-        resolvePackageExecutable(packageJsonPath, platformPackage, exeName),
-        path.join(path.dirname(platformPackageJson), "lib", exeName),
-    );
+testResolution("resolves a platform package hoisted above a workspace", {
+    packagePath: "packages/app/node_modules/@typescript/native",
+    platformPath: `node_modules/@typescript/${platformPackage}`,
 });
 
-test("resolves a pnpm virtual-store package", t => {
-    const root = createFixture(t);
-    const virtualStore = "node_modules/.pnpm/typescript@7.0.2/node_modules";
-    const packageJsonPath = createPackage(root, `${virtualStore}/typescript`);
-    const platformPackageJson = createPackage(
-        root,
-        `node_modules/.pnpm/@typescript+${platformPackage}@7.0.2/node_modules/@typescript/${platformPackage}`,
-    );
-    linkPackage(root, `${virtualStore}/@typescript/${platformPackage}`, platformPackageJson);
-
-    assert.equal(
-        resolvePackageExecutable(packageJsonPath, platformPackage, exeName),
-        path.join(path.dirname(platformPackageJson), "lib", exeName),
-    );
+const pnpmStore = "node_modules/.pnpm/typescript@7.0.2/node_modules";
+testResolution("resolves a pnpm virtual-store package", {
+    packagePath: `${pnpmStore}/typescript`,
+    platformPath: `node_modules/.pnpm/@typescript+${platformPackage}@7.0.2/node_modules/@typescript/${platformPackage}`,
+    dependencyLink: `${pnpmStore}/@typescript/${platformPackage}`,
 });
 
-test("resolves a pnpm native-preview virtual-store package", t => {
-    const root = createFixture(t);
-    const version = "7.0.0-dev.20260707.2";
-    const nativePlatformPackage = "native-preview-linux-x64";
-    const virtualStore = `node_modules/.pnpm/@typescript+native-preview@${version}/node_modules`;
-    const packageJsonPath = createPackage(root, `${virtualStore}/@typescript/native-preview`);
-    const platformPackageJson = createPackage(
-        root,
-        `node_modules/.pnpm/@typescript+${nativePlatformPackage}@${version}/node_modules/@typescript/${nativePlatformPackage}`,
-    );
-    linkPackage(root, `${virtualStore}/@typescript/${nativePlatformPackage}`, platformPackageJson);
-
-    assert.equal(
-        resolvePackageExecutable(packageJsonPath, nativePlatformPackage, "tsgo"),
-        path.join(path.dirname(platformPackageJson), "lib", "tsgo"),
-    );
+const nativePreviewVersion = "7.0.0-dev.20260707.2";
+const pnpmNativePreviewStore = `node_modules/.pnpm/@typescript+native-preview@${nativePreviewVersion}/node_modules`;
+testResolution("resolves a pnpm native-preview virtual-store package", {
+    packagePath: `${pnpmNativePreviewStore}/@typescript/native-preview`,
+    platformPath: `node_modules/.pnpm/@typescript+${nativePlatformPackage}@${nativePreviewVersion}/node_modules/@typescript/${nativePlatformPackage}`,
+    dependencyLink: `${pnpmNativePreviewStore}/@typescript/${nativePlatformPackage}`,
+    platformPackage: nativePlatformPackage,
+    exeName: "tsgo",
 });
 
-test("resolves an npm linked-store package", t => {
-    const root = createFixture(t);
-    const store = "node_modules/.store/typescript@7.0.2-hash/node_modules";
-    const packageJsonPath = createPackage(root, `${store}/typescript`);
-    const platformPackageJson = createPackage(
-        root,
-        `node_modules/.store/@typescript+${platformPackage}@7.0.2-hash/node_modules/@typescript/${platformPackage}`,
-    );
-    linkPackage(root, `${store}/@typescript/${platformPackage}`, platformPackageJson);
-
-    assert.equal(
-        resolvePackageExecutable(packageJsonPath, platformPackage, exeName),
-        path.join(path.dirname(platformPackageJson), "lib", exeName),
-    );
+const npmStore = "node_modules/.store/typescript@7.0.2-hash/node_modules";
+testResolution("resolves an npm linked-store package", {
+    packagePath: `${npmStore}/typescript`,
+    platformPath: `node_modules/.store/@typescript+${platformPackage}@7.0.2-hash/node_modules/@typescript/${platformPackage}`,
+    dependencyLink: `${npmStore}/@typescript/${platformPackage}`,
 });
 
 test("throws when the platform package is missing", t => {
