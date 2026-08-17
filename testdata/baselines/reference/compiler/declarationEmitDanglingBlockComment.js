@@ -23,6 +23,8 @@ export const pi = 3;
 export const pi = 3;
 
 //// [elidedDeclarationComment-js.js]
+/** Comment on nothing */
+
 /** Comment on unused */
 const unused = 1;
 
@@ -67,6 +69,8 @@ export const pi = 3;
 export const pi = 3;
 
 //// [elidedDeclarationComment-ts.ts]
+/** Comment on nothing */
+
 /** Comment on unused */
 const unused = 1;
 
@@ -100,4 +104,5 @@ export declare const pi = 3;
 /** Comment on pi */
 export declare const pi = 3;
 //// [elidedDeclarationComment-ts.d.ts]
+/** Comment on nothing */
 export declare const pi = 3;

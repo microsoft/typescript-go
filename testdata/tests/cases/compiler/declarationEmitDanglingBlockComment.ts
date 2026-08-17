@@ -26,6 +26,8 @@ export const pi = 3;
 export const pi = 3;
 
 // @filename: elidedDeclarationComment-js.js
+/** Comment on nothing */
+
 /** Comment on unused */
 const unused = 1;
 
@@ -71,6 +73,8 @@ export const pi = 3;
 export const pi = 3;
 
 // @filename: elidedDeclarationComment-ts.ts
+/** Comment on nothing */
+
 /** Comment on unused */
 const unused = 1;
 

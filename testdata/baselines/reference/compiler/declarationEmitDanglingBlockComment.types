@@ -39,6 +39,8 @@ export const pi = 3;
 >3 : 3
 
 === elidedDeclarationComment-js.js ===
+/** Comment on nothing */
+
 /** Comment on unused */
 const unused = 1;
 >unused : 1
@@ -121,6 +123,8 @@ export const pi = 3;
 >3 : 3
 
 === elidedDeclarationComment-ts.ts ===
+/** Comment on nothing */
+
 /** Comment on unused */
 const unused = 1;
 >unused : 1

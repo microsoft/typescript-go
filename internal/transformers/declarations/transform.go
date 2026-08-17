@@ -351,17 +351,17 @@ func (tx *DeclarationTransformer) transformSourceFile(node *ast.SourceFile) *ast
 	tx.expressionVisitor.VisitNode(node.AsNode())          // collect expando members (requires any export assignment be located in advance)
 	var combinedStatements *ast.StatementList
 	statements := tx.Visitor().VisitNodes(node.Statements)
+	combinedStatements = tx.transformAndReplaceLatePaintedStatements(statements)
 	firstStatementWasElided := ast.IsInJSFile(node.AsNode()) && len(node.Statements.Nodes) > 0
 	if firstStatementWasElided {
 		firstStatement := node.Statements.Nodes[0]
-		for _, statement := range flattenSyntaxLists(statements.Nodes) {
+		for _, statement := range combinedStatements.Nodes {
 			if tx.EmitContext().MostOriginal(statement) == firstStatement {
 				firstStatementWasElided = false
 				break
 			}
 		}
 	}
-	combinedStatements = tx.transformAndReplaceLatePaintedStatements(statements)
 	combinedStatements = tx.appendCjsExports(combinedStatements)
 	combinedStatements.Loc = statements.Loc // setTextRange
 	if ast.IsExternalOrCommonJSModule(node) {
