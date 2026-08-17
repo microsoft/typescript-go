@@ -5,8 +5,10 @@ import path from "node:path";
 import test from "node:test";
 import { resolvePackageExecutable } from "../src/tsdkPackage";
 
-const platformPackage = "typescript-linux-x64";
-const exeName = "tsc";
+const platformPackage = `typescript-${process.platform}-${process.arch}`;
+const exeSuffix = process.platform === "win32" ? ".exe" : "";
+const exeName = `tsc${exeSuffix}`;
+const nativeExeName = `tsgo${exeSuffix}`;
 
 function createPackage(root: string, relativePath: string): string {
     const packagePath = path.join(root, relativePath);
@@ -72,12 +74,12 @@ testResolution("resolves an unscoped TypeScript 7 alias", {
     platformPath: `node_modules/@typescript/${platformPackage}`,
 });
 
-const nativePlatformPackage = "native-preview-linux-x64";
+const nativePlatformPackage = `native-preview-${process.platform}-${process.arch}`;
 testResolution("resolves the native-preview package", {
     packagePath: "node_modules/@typescript/native-preview",
     platformPath: `node_modules/@typescript/${nativePlatformPackage}`,
     platformPackage: nativePlatformPackage,
-    exeName: "tsgo",
+    exeName: nativeExeName,
 });
 
 testResolution("resolves a non-hoisted platform package", {
@@ -104,7 +106,7 @@ testResolution("resolves a pnpm native-preview virtual-store package", {
     platformPath: `node_modules/.pnpm/@typescript+${nativePlatformPackage}@${nativePreviewVersion}/node_modules/@typescript/${nativePlatformPackage}`,
     dependencyLink: `${pnpmNativePreviewStore}/@typescript/${nativePlatformPackage}`,
     platformPackage: nativePlatformPackage,
-    exeName: "tsgo",
+    exeName: nativeExeName,
 });
 
 const npmStore = "node_modules/.store/typescript@7.0.2-hash/node_modules";
