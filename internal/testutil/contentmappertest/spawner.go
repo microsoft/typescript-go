@@ -11,7 +11,7 @@ import (
 
 // Serve drives the transforming mapper over the connection until it closes or ctx is cancelled.
 func Serve(ctx context.Context, rwc io.ReadWriteCloser) error {
-	return ipc.NewAsyncConn(rwc, staticProjectHandler{Handler: Handler{}}).Run(ctx)
+	return ipc.NewAsyncConn(rwc, staticProjectHandler{Handler: &Handler{}}).Run(ctx)
 }
 
 // NewSpawner returns an in-process spawner for the test mapper implementations.

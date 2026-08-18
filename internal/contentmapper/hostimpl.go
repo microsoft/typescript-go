@@ -16,7 +16,6 @@ import (
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/ipc"
@@ -80,8 +79,8 @@ type OpenProjectResult struct {
 	ConfigIdentity string `json:"configIdentity"`
 	// WatchedFiles are absolute files whose changes may alter ConfigIdentity or transform output.
 	WatchedFiles []string `json:"watchedFiles,omitempty"`
-	// Diagnostics report invalid mapper options. Paths are relative to the mapper entry's options object.
-	Diagnostics []OptionDiagnosticResult `json:"diagnostics,omitempty"`
+	// OptionDiagnostics report invalid mapper options. Paths are relative to the mapper entry's options object.
+	OptionDiagnostics []OptionDiagnosticResult `json:"optionDiagnostics,omitempty"`
 }
 
 type OptionDiagnosticResult struct {
@@ -109,13 +108,8 @@ type TransformParams struct {
 	FileName string `json:"fileName"`
 	// Content is the content-mapped source file's text.
 	Content string `json:"content"`
-	// Options is the mapper entry's options from the project's contentMappers configuration.
-	Options json.Value `json:"options,omitempty"`
 	// ProjectHandle identifies the mapper project configuration opened for this transform.
 	ProjectHandle string `json:"projectHandle"`
-	// CompilerOptions holds the values of the options the mapper declared in initialize, keyed by option
-	// name and ordered by the mapper's declaration. It is an empty object when the mapper declared none.
-	CompilerOptions *collections.OrderedMap[string, json.Value] `json:"compilerOptions"`
 }
 
 // MappedOutput is virtual source text and its mapping to an original input.
@@ -677,8 +671,8 @@ func (h *host) openProjectLocked(ctx context.Context, entry *projectEntry) error
 		}
 	}
 	entry.watchedFiles = slices.Clone(result.WatchedFiles)
-	entry.optionDiagnostics = make([]OptionDiagnostic, len(result.Diagnostics))
-	for i, diagnostic := range result.Diagnostics {
+	entry.optionDiagnostics = make([]OptionDiagnostic, len(result.OptionDiagnostics))
+	for i, diagnostic := range result.OptionDiagnostics {
 		path := make([]OptionPathSegment, len(diagnostic.Path))
 		for j, rawSegment := range diagnostic.Path {
 			switch rawSegment.Kind() {
@@ -743,32 +737,30 @@ func (h *host) Acquire(mappers []*Mapper) func() {
 	return sync.OnceFunc(func() { h.release(identities) })
 }
 
-// Transform sends the file's content to the mapper's process and decodes the transformed result. The
-// mapper receives the subset of the project's compiler options it declared in its manifest (an empty
-// object if it declared none).
+// Transform sends the file's content to the mapper's process and decodes the transformed result.
 func (h *host) Transform(mapper *Mapper, request Request) (Result, error) {
-	h.lifecycleMu.RLock()
-	defer h.lifecycleMu.RUnlock()
-	return h.transformLocked(mapper, request, "")
+	project := h.Project(ProjectSpec{
+		Mappers:         []*Mapper{mapper},
+		CompilerOptions: &core.CompilerOptions{},
+	})
+	defer project.Close()
+	return project.Transform(mapper, request)
 }
 
 func (h *host) transformLocked(mapper *Mapper, request Request, projectHandle string) (Result, error) {
+	if projectHandle == "" {
+		return Result{}, errors.New("content mapper project handle is required")
+	}
 	conn, positionEncoding, diagnosticSource, err := h.connFor(mapper)
 	if err != nil {
 		return Result{}, NewTransformError(TransformErrorKindInitialize, err)
 	}
-	options, err := mapper.MarshalDeclaredOptions(request.CompilerOptions)
-	if err != nil {
-		return Result{}, NewTransformError(TransformErrorKindCompilerOptions, err)
-	}
 	mapperTiming := h.timing.mapper(mapper.Identity())
 	start := mapperTiming.startRequest()
 	raw, err := conn.Call(h.ctx, MethodTransform, TransformParams{
-		FileName:        request.FileName,
-		Content:         request.Content,
-		Options:         mapper.Options,
-		ProjectHandle:   projectHandle,
-		CompilerOptions: options,
+		FileName:      request.FileName,
+		Content:       request.Content,
+		ProjectHandle: projectHandle,
 	})
 	mapperTiming.finishRequest(&mapperTiming.transform, start)
 	if err != nil {

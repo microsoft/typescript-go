@@ -7,7 +7,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
-	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/project/logging"
@@ -111,7 +110,7 @@ func (c *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.Sourc
 }
 
 // GetContentMappedSourceFile implements compiler.CompilerHost.
-func (c *compilerHost) GetContentMappedSourceFiles(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper, options *core.CompilerOptions) (contentmapper.SourceFiles, error) {
+func (c *compilerHost) GetContentMappedSourceFiles(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper) (contentmapper.SourceFiles, error) {
 	c.ensureAlive()
 	fh := c.sourceFS.GetFileByPath(parseOptions.FileName, parseOptions.Path)
 	if fh == nil {
@@ -132,7 +131,7 @@ func (c *compilerHost) GetContentMappedSourceFiles(parseOptions ast.SourceFilePa
 	transformIdentity := xxh3.Hash128([]byte(identity))
 	key := contentMappedParseCacheKey(parseOptions, fh.Hash(), transformIdentity, diagnosticLocale)
 	files, err := c.builder.contentMappedParseCache.AcquireOrError(key, func() (contentmapper.SourceFiles, error) {
-		files, transformErr := contentmapper.TransformAndParse(parseOptions, fh.Content(), mapper, options, c.contentMapperProject)
+		files, transformErr := contentmapper.TransformAndParse(parseOptions, fh.Content(), mapper, c.contentMapperProject)
 		if transformErr != nil {
 			return contentmapper.SourceFiles{}, transformErr
 		}

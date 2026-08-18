@@ -53,9 +53,8 @@ func testMapper() *contentmapper.Mapper {
 
 func transformRequest() contentmapper.Request {
 	return contentmapper.Request{
-		FileName:        "/app.box",
-		Content:         "export const version = #{target};\n",
-		CompilerOptions: &core.CompilerOptions{Target: core.ScriptTargetES2020},
+		FileName: "/app.box",
+		Content:  "export const version = #{target};\n",
 	}
 }
 
@@ -65,8 +64,17 @@ func TestOutOfProcess(t *testing.T) {
 	t.Parallel()
 	host := contentmapper.NewHost(t.Context(), execSpawner{}, locale.Default)
 	defer host.Close()
+	mapper := testMapper()
+	request := transformRequest()
+	compilerOptions := &core.CompilerOptions{Target: core.ScriptTargetES2020}
+	project := host.Project(contentmapper.ProjectSpec{
+		ConfigFileName:  "/tsconfig.json",
+		Mappers:         []*contentmapper.Mapper{mapper},
+		CompilerOptions: compilerOptions,
+	})
+	defer project.Close()
 
-	result, err := host.Transform(testMapper(), transformRequest())
+	result, err := project.Transform(mapper, request)
 	assert.NilError(t, err)
 	assert.Assert(t, strings.Contains(result.Text, "export const version = 7;"), "got %q", result.Text)
 	assert.Assert(t, result.Mappings != nil)

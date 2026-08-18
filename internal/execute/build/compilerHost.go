@@ -6,7 +6,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
-	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -41,7 +40,7 @@ func (h *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.Sourc
 	return h.host.GetSourceFile(opts)
 }
 
-func (h *compilerHost) GetContentMappedSourceFiles(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper, options *core.CompilerOptions) (contentmapper.SourceFiles, error) {
+func (h *compilerHost) GetContentMappedSourceFiles(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper) (contentmapper.SourceFiles, error) {
 	if h.contentMapperProject == nil {
 		return contentmapper.SourceFiles{}, errors.New("content mapper project is unavailable")
 	}
@@ -49,7 +48,7 @@ func (h *compilerHost) GetContentMappedSourceFiles(parseOptions ast.SourceFilePa
 	if !ok {
 		return contentmapper.SourceFiles{}, nil
 	}
-	files, err := contentmapper.TransformAndParse(parseOptions, content, mapper, options, h.contentMapperProject)
+	files, err := contentmapper.TransformAndParse(parseOptions, content, mapper, h.contentMapperProject)
 	if err == nil {
 		err = contentmapper.CheckSupplementalFileNameCollisions(files, h.FS().FileExists)
 	}

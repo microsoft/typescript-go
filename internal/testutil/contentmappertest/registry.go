@@ -27,7 +27,7 @@ const (
 type handlerConstructor func(*ProjectLifecycle) ipc.Handler
 
 var mapperHandlers = map[string]handlerConstructor{
-	TransformingMapper:            func(*ProjectLifecycle) ipc.Handler { return Handler{} },
+	TransformingMapper:            func(*ProjectLifecycle) ipc.Handler { return &Handler{} },
 	VerbatimMapper:                func(*ProjectLifecycle) ipc.Handler { return verbatimHandler{} },
 	DynamicVerbatimMapper:         func(lifecycle *ProjectLifecycle) ipc.Handler { return dynamicVerbatimHandler{lifecycle: lifecycle} },
 	FailingMapper:                 func(*ProjectLifecycle) ipc.Handler { return failingHandler{} },

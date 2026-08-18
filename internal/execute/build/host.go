@@ -8,7 +8,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
-	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
@@ -61,7 +60,7 @@ func (h *host) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
 	return h.host.GetSourceFile(opts)
 }
 
-func (h *host) GetContentMappedSourceFiles(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper, options *core.CompilerOptions) (contentmapper.SourceFiles, error) {
+func (h *host) GetContentMappedSourceFiles(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper) (contentmapper.SourceFiles, error) {
 	return contentmapper.SourceFiles{}, errors.New("content mapper project is unavailable")
 }
 

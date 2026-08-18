@@ -17,7 +17,6 @@ const (
 	TransformErrorKindUnknown TransformErrorKind = iota
 	TransformErrorKindInitialize
 	TransformErrorKindProject
-	TransformErrorKindCompilerOptions
 	TransformErrorKindRequest
 	TransformErrorKindResponse
 	TransformErrorKindMappings
@@ -199,9 +198,6 @@ type Request struct {
 	FileName string
 	// Content is the content-mapped source file's text.
 	Content string
-	// CompilerOptions is the project's compiler options. The host marshals and forwards only the subset
-	// each mapper declared it depends on; a mapper that declares none receives an empty object.
-	CompilerOptions *core.CompilerOptions
 }
 
 // ProjectSpec describes the project configuration visible to its content mappers.
@@ -312,7 +308,8 @@ type Host interface {
 	// SetLocale updates the locale used to initialize mapper processes. Existing processes are stopped
 	// and respawned lazily so subsequent transforms use the new locale.
 	SetLocale(locale locale.Locale)
-	// Transform maps a content-mapped source file to virtual TypeScript using the given content mapper.
+	// Transform maps a content-mapped source file to virtual TypeScript using the given content mapper
+	// in a short-lived project with default compiler options.
 	//
 	// A non-nil error indicates the mapper itself failed to produce a result — for example the
 	// host hit a broken pipe, a process crash, or could not deserialize the mapper's response.

@@ -4360,61 +4360,59 @@ var The_content_mapper_0_produced_a_position_mapping_with_an_invalid_kind_near_v
 
 var The_content_mapper_process_could_not_be_started_or_initialized = &Message{code: 100041, category: CategoryMessage, key: "The_content_mapper_process_could_not_be_started_or_initialized_100041", text: "The content mapper process could not be started or initialized."}
 
-var The_compiler_options_requested_by_the_content_mapper_could_not_be_prepared = &Message{code: 100042, category: CategoryMessage, key: "The_compiler_options_requested_by_the_content_mapper_could_not_be_prepared_100042", text: "The compiler options requested by the content mapper could not be prepared."}
+var The_content_mapper_process_failed_while_handling_the_transform_request = &Message{code: 100042, category: CategoryMessage, key: "The_content_mapper_process_failed_while_handling_the_transform_request_100042", text: "The content mapper process failed while handling the transform request."}
 
-var The_content_mapper_process_failed_while_handling_the_transform_request = &Message{code: 100043, category: CategoryMessage, key: "The_content_mapper_process_failed_while_handling_the_transform_request_100043", text: "The content mapper process failed while handling the transform request."}
+var The_content_mapper_returned_an_invalid_transform_response = &Message{code: 100043, category: CategoryMessage, key: "The_content_mapper_returned_an_invalid_transform_response_100043", text: "The content mapper returned an invalid transform response."}
 
-var The_content_mapper_returned_an_invalid_transform_response = &Message{code: 100044, category: CategoryMessage, key: "The_content_mapper_returned_an_invalid_transform_response_100044", text: "The content mapper returned an invalid transform response."}
+var The_content_mapper_uses_unsupported_protocol_version_0_expected_version_1 = &Message{code: 100044, category: CategoryMessage, key: "The_content_mapper_uses_unsupported_protocol_version_0_expected_version_1_100044", text: "The content mapper uses unsupported protocol version {0}; expected version {1}."}
 
-var The_content_mapper_uses_unsupported_protocol_version_0_expected_version_1 = &Message{code: 100045, category: CategoryMessage, key: "The_content_mapper_uses_unsupported_protocol_version_0_expected_version_1_100045", text: "The content mapper uses unsupported protocol version {0}; expected version {1}."}
+var The_content_mapper_selected_unsupported_position_encoding_0 = &Message{code: 100045, category: CategoryMessage, key: "The_content_mapper_selected_unsupported_position_encoding_0_100045", text: "The content mapper selected unsupported position encoding '{0}'."}
 
-var The_content_mapper_selected_unsupported_position_encoding_0 = &Message{code: 100046, category: CategoryMessage, key: "The_content_mapper_selected_unsupported_position_encoding_0_100046", text: "The content mapper selected unsupported position encoding '{0}'."}
+var The_content_mapper_diagnostic_source_must_not_be_empty = &Message{code: 100046, category: CategoryMessage, key: "The_content_mapper_diagnostic_source_must_not_be_empty_100046", text: "The content mapper diagnostic source must not be empty."}
 
-var The_content_mapper_diagnostic_source_must_not_be_empty = &Message{code: 100047, category: CategoryMessage, key: "The_content_mapper_diagnostic_source_must_not_be_empty_100047", text: "The content mapper diagnostic source must not be empty."}
+var The_content_mapper_diagnostic_source_0_is_reserved_by_TypeScript = &Message{code: 100047, category: CategoryMessage, key: "The_content_mapper_diagnostic_source_0_is_reserved_by_TypeScript_100047", text: "The content mapper diagnostic source '{0}' is reserved by TypeScript."}
 
-var The_content_mapper_diagnostic_source_0_is_reserved_by_TypeScript = &Message{code: 100048, category: CategoryMessage, key: "The_content_mapper_diagnostic_source_0_is_reserved_by_TypeScript_100048", text: "The content mapper diagnostic source '{0}' is reserved by TypeScript."}
+var The_content_mapper_returned_a_project_response_that_could_not_be_decoded = &Message{code: 100048, category: CategoryMessage, key: "The_content_mapper_returned_a_project_response_that_could_not_be_decoded_100048", text: "The content mapper returned a project response that could not be decoded."}
 
-var The_content_mapper_returned_a_project_response_that_could_not_be_decoded = &Message{code: 100049, category: CategoryMessage, key: "The_content_mapper_returned_a_project_response_that_could_not_be_decoded_100049", text: "The content mapper returned a project response that could not be decoded."}
+var The_content_mapper_process_failed_while_handling_the_project_request = &Message{code: 100049, category: CategoryMessage, key: "The_content_mapper_process_failed_while_handling_the_project_request_100049", text: "The content mapper process failed while handling the project request."}
 
-var The_content_mapper_process_failed_while_handling_the_project_request = &Message{code: 100050, category: CategoryMessage, key: "The_content_mapper_process_failed_while_handling_the_project_request_100050", text: "The content mapper process failed while handling the project request."}
+var The_content_mapper_did_not_return_configIdentity_which_is_required_when_the_content_mapper_has_dynamicConfig_Colon_true_in_its_package_json = &Message{code: 100050, category: CategoryMessage, key: "The_content_mapper_did_not_return_configIdentity_which_is_required_when_the_content_mapper_has_dynam_100050", text: "The content mapper did not return 'configIdentity', which is required when the content mapper has '\"dynamicConfig\": true' in its package.json."}
 
-var The_content_mapper_did_not_return_configIdentity_which_is_required_when_the_content_mapper_has_dynamicConfig_Colon_true_in_its_package_json = &Message{code: 100051, category: CategoryMessage, key: "The_content_mapper_did_not_return_configIdentity_which_is_required_when_the_content_mapper_has_dynam_100051", text: "The content mapper did not return 'configIdentity', which is required when the content mapper has '\"dynamicConfig\": true' in its package.json."}
+var The_content_mapper_returned_a_non_absolute_path_in_watchedFiles = &Message{code: 100051, category: CategoryMessage, key: "The_content_mapper_returned_a_non_absolute_path_in_watchedFiles_100051", text: "The content mapper returned a non-absolute path in 'watchedFiles'."}
 
-var The_content_mapper_returned_a_non_absolute_path_in_watchedFiles = &Message{code: 100052, category: CategoryMessage, key: "The_content_mapper_returned_a_non_absolute_path_in_watchedFiles_100052", text: "The content mapper returned a non-absolute path in 'watchedFiles'."}
+var The_content_mapper_returned_configIdentity_which_is_only_allowed_when_it_declares_dynamicConfig_Colon_true_in_its_package_json = &Message{code: 100052, category: CategoryMessage, key: "The_content_mapper_returned_configIdentity_which_is_only_allowed_when_it_declares_dynamicConfig_Colo_100052", text: "The content mapper returned 'configIdentity', which is only allowed when it declares '\"dynamicConfig\": true' in its package.json."}
 
-var The_content_mapper_returned_configIdentity_which_is_only_allowed_when_it_declares_dynamicConfig_Colon_true_in_its_package_json = &Message{code: 100053, category: CategoryMessage, key: "The_content_mapper_returned_configIdentity_which_is_only_allowed_when_it_declares_dynamicConfig_Colo_100053", text: "The content mapper returned 'configIdentity', which is only allowed when it declares '\"dynamicConfig\": true' in its package.json."}
+var The_content_mapper_returned_watchedFiles_which_is_only_allowed_when_it_declares_dynamicConfig_Colon_true_in_its_package_json = &Message{code: 100053, category: CategoryMessage, key: "The_content_mapper_returned_watchedFiles_which_is_only_allowed_when_it_declares_dynamicConfig_Colon__100053", text: "The content mapper returned 'watchedFiles', which is only allowed when it declares '\"dynamicConfig\": true' in its package.json."}
 
-var The_content_mapper_returned_watchedFiles_which_is_only_allowed_when_it_declares_dynamicConfig_Colon_true_in_its_package_json = &Message{code: 100054, category: CategoryMessage, key: "The_content_mapper_returned_watchedFiles_which_is_only_allowed_when_it_declares_dynamicConfig_Colon__100054", text: "The content mapper returned 'watchedFiles', which is only allowed when it declares '\"dynamicConfig\": true' in its package.json."}
+var Content_mapper_supplemental_output_file_0_conflicts_with_an_existing_file = &Message{code: 100054, category: CategoryMessage, key: "Content_mapper_supplemental_output_file_0_conflicts_with_an_existing_file_100054", text: "Content mapper supplemental output file '{0}' conflicts with an existing file."}
 
-var Content_mapper_supplemental_output_file_0_conflicts_with_an_existing_file = &Message{code: 100055, category: CategoryMessage, key: "Content_mapper_supplemental_output_file_0_conflicts_with_an_existing_file_100055", text: "Content mapper supplemental output file '{0}' conflicts with an existing file."}
+var Supplemental_virtual_file_produced_by_the_content_mapper_for_file_0 = &Message{code: 100055, category: CategoryMessage, key: "Supplemental_virtual_file_produced_by_the_content_mapper_for_file_0_100055", text: "Supplemental virtual file produced by the content mapper for file '{0}'."}
 
-var Supplemental_virtual_file_produced_by_the_content_mapper_for_file_0 = &Message{code: 100056, category: CategoryMessage, key: "Supplemental_virtual_file_produced_by_the_content_mapper_for_file_0_100056", text: "Supplemental virtual file produced by the content mapper for file '{0}'."}
+var The_content_mapper_returned_an_output_with_unsupported_virtual_extension_0 = &Message{code: 100056, category: CategoryMessage, key: "The_content_mapper_returned_an_output_with_unsupported_virtual_extension_0_100056", text: "The content mapper returned an output with unsupported virtual extension '{0}'."}
 
-var The_content_mapper_returned_an_output_with_unsupported_virtual_extension_0 = &Message{code: 100057, category: CategoryMessage, key: "The_content_mapper_returned_an_output_with_unsupported_virtual_extension_0_100057", text: "The content mapper returned an output with unsupported virtual extension '{0}'."}
+var The_content_mapper_0_could_not_be_initialized = &Message{code: 100057, category: CategoryError, key: "The_content_mapper_0_could_not_be_initialized_100057", text: "The content mapper '{0}' could not be initialized."}
 
-var The_content_mapper_0_could_not_be_initialized = &Message{code: 100058, category: CategoryError, key: "The_content_mapper_0_could_not_be_initialized_100058", text: "The content mapper '{0}' could not be initialized."}
+var The_content_mapper_command_0_could_not_be_started_Colon_1 = &Message{code: 100058, category: CategoryMessage, key: "The_content_mapper_command_0_could_not_be_started_Colon_1_100058", text: "The content mapper command '{0}' could not be started: {1}"}
 
-var The_content_mapper_command_0_could_not_be_started_Colon_1 = &Message{code: 100059, category: CategoryMessage, key: "The_content_mapper_command_0_could_not_be_started_Colon_1_100059", text: "The content mapper command '{0}' could not be started: {1}"}
+var The_content_mapper_process_exited_before_responding_to_the_initialize_request_exit_code_0 = &Message{code: 100059, category: CategoryMessage, key: "The_content_mapper_process_exited_before_responding_to_the_initialize_request_exit_code_0_100059", text: "The content mapper process exited before responding to the 'initialize' request (exit code {0})."}
 
-var The_content_mapper_process_exited_before_responding_to_the_initialize_request_exit_code_0 = &Message{code: 100060, category: CategoryMessage, key: "The_content_mapper_process_exited_before_responding_to_the_initialize_request_exit_code_0_100060", text: "The content mapper process exited before responding to the 'initialize' request (exit code {0})."}
+var The_content_mapper_did_not_respond_to_the_initialize_request_within_0_seconds = &Message{code: 100060, category: CategoryMessage, key: "The_content_mapper_did_not_respond_to_the_initialize_request_within_0_seconds_100060", text: "The content mapper did not respond to the 'initialize' request within {0} seconds."}
 
-var The_content_mapper_did_not_respond_to_the_initialize_request_within_0_seconds = &Message{code: 100061, category: CategoryMessage, key: "The_content_mapper_did_not_respond_to_the_initialize_request_within_0_seconds_100061", text: "The content mapper did not respond to the 'initialize' request within {0} seconds."}
+var The_content_mapper_returned_an_initialize_response_that_could_not_be_decoded_Colon_0 = &Message{code: 100061, category: CategoryMessage, key: "The_content_mapper_returned_an_initialize_response_that_could_not_be_decoded_Colon_0_100061", text: "The content mapper returned an 'initialize' response that could not be decoded: {0}"}
 
-var The_content_mapper_returned_an_initialize_response_that_could_not_be_decoded_Colon_0 = &Message{code: 100062, category: CategoryMessage, key: "The_content_mapper_returned_an_initialize_response_that_could_not_be_decoded_Colon_0_100062", text: "The content mapper returned an 'initialize' response that could not be decoded: {0}"}
+var The_content_mapper_s_initialize_request_failed_Colon_0 = &Message{code: 100062, category: CategoryMessage, key: "The_content_mapper_s_initialize_request_failed_Colon_0_100062", text: "The content mapper's 'initialize' request failed: {0}"}
 
-var The_content_mapper_s_initialize_request_failed_Colon_0 = &Message{code: 100063, category: CategoryMessage, key: "The_content_mapper_s_initialize_request_failed_Colon_0_100063", text: "The content mapper's 'initialize' request failed: {0}"}
+var Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_range = &Message{code: 100063, category: CategoryMessage, key: "Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_range_100063", text: "Diagnostic directive {0} returned by the content mapper has an invalid range."}
 
-var Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_range = &Message{code: 100064, category: CategoryMessage, key: "Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_range_100064", text: "Diagnostic directive {0} returned by the content mapper has an invalid range."}
+var The_content_mapper_returned_a_diagnostic_directive_with_invalid_policy_0 = &Message{code: 100064, category: CategoryMessage, key: "The_content_mapper_returned_a_diagnostic_directive_with_invalid_policy_0_100064", text: "The content mapper returned a diagnostic directive with invalid policy '{0}'."}
 
-var The_content_mapper_returned_a_diagnostic_directive_with_invalid_policy_0 = &Message{code: 100065, category: CategoryMessage, key: "The_content_mapper_returned_a_diagnostic_directive_with_invalid_policy_0_100065", text: "The content mapper returned a diagnostic directive with invalid policy '{0}'."}
+var Diagnostic_directive_0_returned_by_the_content_mapper_must_specify_unusedExpectDirectiveIndex_when_there_is_not_exactly_one_unusedExpectDirectiveDiagnostics_entry = &Message{code: 100065, category: CategoryMessage, key: "Diagnostic_directive_0_returned_by_the_content_mapper_must_specify_unusedExpectDirectiveIndex_when_t_100065", text: "Diagnostic directive {0} returned by the content mapper must specify 'unusedExpectDirectiveIndex' when there is not exactly one 'unusedExpectDirectiveDiagnostics' entry."}
 
-var Diagnostic_directive_0_returned_by_the_content_mapper_must_specify_unusedExpectDirectiveIndex_when_there_is_not_exactly_one_unusedExpectDirectiveDiagnostics_entry = &Message{code: 100066, category: CategoryMessage, key: "Diagnostic_directive_0_returned_by_the_content_mapper_must_specify_unusedExpectDirectiveIndex_when_t_100066", text: "Diagnostic directive {0} returned by the content mapper must specify 'unusedExpectDirectiveIndex' when there is not exactly one 'unusedExpectDirectiveDiagnostics' entry."}
+var The_content_mapper_returned_diagnostic_directives_with_overlapping_virtual_ranges = &Message{code: 100066, category: CategoryMessage, key: "The_content_mapper_returned_diagnostic_directives_with_overlapping_virtual_ranges_100066", text: "The content mapper returned diagnostic directives with overlapping virtual ranges."}
 
-var The_content_mapper_returned_diagnostic_directives_with_overlapping_virtual_ranges = &Message{code: 100067, category: CategoryMessage, key: "The_content_mapper_returned_diagnostic_directives_with_overlapping_virtual_ranges_100067", text: "The content mapper returned diagnostic directives with overlapping virtual ranges."}
+var The_invalid_diagnostic_directive_is_in_supplemental_output_0_returned_by_the_content_mapper = &Message{code: 100067, category: CategoryMessage, key: "The_invalid_diagnostic_directive_is_in_supplemental_output_0_returned_by_the_content_mapper_100067", text: "The invalid diagnostic directive is in supplemental output {0} returned by the content mapper."}
 
-var The_invalid_diagnostic_directive_is_in_supplemental_output_0_returned_by_the_content_mapper = &Message{code: 100068, category: CategoryMessage, key: "The_invalid_diagnostic_directive_is_in_supplemental_output_0_returned_by_the_content_mapper_100068", text: "The invalid diagnostic directive is in supplemental output {0} returned by the content mapper."}
-
-var Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_unusedExpectDirectiveIndex = &Message{code: 100069, category: CategoryMessage, key: "Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_unusedExpectDirectiveIndex_100069", text: "Diagnostic directive {0} returned by the content mapper has an invalid 'unusedExpectDirectiveIndex'."}
+var Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_unusedExpectDirectiveIndex = &Message{code: 100068, category: CategoryMessage, key: "Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_unusedExpectDirectiveIndex_100068", text: "Diagnostic directive {0} returned by the content mapper has an invalid 'unusedExpectDirectiveIndex'."}
 
 func keyToMessage(key Key) *Message {
 	switch key {
@@ -8776,61 +8774,59 @@ func keyToMessage(key Key) *Message {
 		return The_content_mapper_0_produced_a_position_mapping_with_an_invalid_kind_near_virtual_offset_1
 	case "The_content_mapper_process_could_not_be_started_or_initialized_100041":
 		return The_content_mapper_process_could_not_be_started_or_initialized
-	case "The_compiler_options_requested_by_the_content_mapper_could_not_be_prepared_100042":
-		return The_compiler_options_requested_by_the_content_mapper_could_not_be_prepared
-	case "The_content_mapper_process_failed_while_handling_the_transform_request_100043":
+	case "The_content_mapper_process_failed_while_handling_the_transform_request_100042":
 		return The_content_mapper_process_failed_while_handling_the_transform_request
-	case "The_content_mapper_returned_an_invalid_transform_response_100044":
+	case "The_content_mapper_returned_an_invalid_transform_response_100043":
 		return The_content_mapper_returned_an_invalid_transform_response
-	case "The_content_mapper_uses_unsupported_protocol_version_0_expected_version_1_100045":
+	case "The_content_mapper_uses_unsupported_protocol_version_0_expected_version_1_100044":
 		return The_content_mapper_uses_unsupported_protocol_version_0_expected_version_1
-	case "The_content_mapper_selected_unsupported_position_encoding_0_100046":
+	case "The_content_mapper_selected_unsupported_position_encoding_0_100045":
 		return The_content_mapper_selected_unsupported_position_encoding_0
-	case "The_content_mapper_diagnostic_source_must_not_be_empty_100047":
+	case "The_content_mapper_diagnostic_source_must_not_be_empty_100046":
 		return The_content_mapper_diagnostic_source_must_not_be_empty
-	case "The_content_mapper_diagnostic_source_0_is_reserved_by_TypeScript_100048":
+	case "The_content_mapper_diagnostic_source_0_is_reserved_by_TypeScript_100047":
 		return The_content_mapper_diagnostic_source_0_is_reserved_by_TypeScript
-	case "The_content_mapper_returned_a_project_response_that_could_not_be_decoded_100049":
+	case "The_content_mapper_returned_a_project_response_that_could_not_be_decoded_100048":
 		return The_content_mapper_returned_a_project_response_that_could_not_be_decoded
-	case "The_content_mapper_process_failed_while_handling_the_project_request_100050":
+	case "The_content_mapper_process_failed_while_handling_the_project_request_100049":
 		return The_content_mapper_process_failed_while_handling_the_project_request
-	case "The_content_mapper_did_not_return_configIdentity_which_is_required_when_the_content_mapper_has_dynam_100051":
+	case "The_content_mapper_did_not_return_configIdentity_which_is_required_when_the_content_mapper_has_dynam_100050":
 		return The_content_mapper_did_not_return_configIdentity_which_is_required_when_the_content_mapper_has_dynamicConfig_Colon_true_in_its_package_json
-	case "The_content_mapper_returned_a_non_absolute_path_in_watchedFiles_100052":
+	case "The_content_mapper_returned_a_non_absolute_path_in_watchedFiles_100051":
 		return The_content_mapper_returned_a_non_absolute_path_in_watchedFiles
-	case "The_content_mapper_returned_configIdentity_which_is_only_allowed_when_it_declares_dynamicConfig_Colo_100053":
+	case "The_content_mapper_returned_configIdentity_which_is_only_allowed_when_it_declares_dynamicConfig_Colo_100052":
 		return The_content_mapper_returned_configIdentity_which_is_only_allowed_when_it_declares_dynamicConfig_Colon_true_in_its_package_json
-	case "The_content_mapper_returned_watchedFiles_which_is_only_allowed_when_it_declares_dynamicConfig_Colon__100054":
+	case "The_content_mapper_returned_watchedFiles_which_is_only_allowed_when_it_declares_dynamicConfig_Colon__100053":
 		return The_content_mapper_returned_watchedFiles_which_is_only_allowed_when_it_declares_dynamicConfig_Colon_true_in_its_package_json
-	case "Content_mapper_supplemental_output_file_0_conflicts_with_an_existing_file_100055":
+	case "Content_mapper_supplemental_output_file_0_conflicts_with_an_existing_file_100054":
 		return Content_mapper_supplemental_output_file_0_conflicts_with_an_existing_file
-	case "Supplemental_virtual_file_produced_by_the_content_mapper_for_file_0_100056":
+	case "Supplemental_virtual_file_produced_by_the_content_mapper_for_file_0_100055":
 		return Supplemental_virtual_file_produced_by_the_content_mapper_for_file_0
-	case "The_content_mapper_returned_an_output_with_unsupported_virtual_extension_0_100057":
+	case "The_content_mapper_returned_an_output_with_unsupported_virtual_extension_0_100056":
 		return The_content_mapper_returned_an_output_with_unsupported_virtual_extension_0
-	case "The_content_mapper_0_could_not_be_initialized_100058":
+	case "The_content_mapper_0_could_not_be_initialized_100057":
 		return The_content_mapper_0_could_not_be_initialized
-	case "The_content_mapper_command_0_could_not_be_started_Colon_1_100059":
+	case "The_content_mapper_command_0_could_not_be_started_Colon_1_100058":
 		return The_content_mapper_command_0_could_not_be_started_Colon_1
-	case "The_content_mapper_process_exited_before_responding_to_the_initialize_request_exit_code_0_100060":
+	case "The_content_mapper_process_exited_before_responding_to_the_initialize_request_exit_code_0_100059":
 		return The_content_mapper_process_exited_before_responding_to_the_initialize_request_exit_code_0
-	case "The_content_mapper_did_not_respond_to_the_initialize_request_within_0_seconds_100061":
+	case "The_content_mapper_did_not_respond_to_the_initialize_request_within_0_seconds_100060":
 		return The_content_mapper_did_not_respond_to_the_initialize_request_within_0_seconds
-	case "The_content_mapper_returned_an_initialize_response_that_could_not_be_decoded_Colon_0_100062":
+	case "The_content_mapper_returned_an_initialize_response_that_could_not_be_decoded_Colon_0_100061":
 		return The_content_mapper_returned_an_initialize_response_that_could_not_be_decoded_Colon_0
-	case "The_content_mapper_s_initialize_request_failed_Colon_0_100063":
+	case "The_content_mapper_s_initialize_request_failed_Colon_0_100062":
 		return The_content_mapper_s_initialize_request_failed_Colon_0
-	case "Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_range_100064":
+	case "Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_range_100063":
 		return Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_range
-	case "The_content_mapper_returned_a_diagnostic_directive_with_invalid_policy_0_100065":
+	case "The_content_mapper_returned_a_diagnostic_directive_with_invalid_policy_0_100064":
 		return The_content_mapper_returned_a_diagnostic_directive_with_invalid_policy_0
-	case "Diagnostic_directive_0_returned_by_the_content_mapper_must_specify_unusedExpectDirectiveIndex_when_t_100066":
+	case "Diagnostic_directive_0_returned_by_the_content_mapper_must_specify_unusedExpectDirectiveIndex_when_t_100065":
 		return Diagnostic_directive_0_returned_by_the_content_mapper_must_specify_unusedExpectDirectiveIndex_when_there_is_not_exactly_one_unusedExpectDirectiveDiagnostics_entry
-	case "The_content_mapper_returned_diagnostic_directives_with_overlapping_virtual_ranges_100067":
+	case "The_content_mapper_returned_diagnostic_directives_with_overlapping_virtual_ranges_100066":
 		return The_content_mapper_returned_diagnostic_directives_with_overlapping_virtual_ranges
-	case "The_invalid_diagnostic_directive_is_in_supplemental_output_0_returned_by_the_content_mapper_100068":
+	case "The_invalid_diagnostic_directive_is_in_supplemental_output_0_returned_by_the_content_mapper_100067":
 		return The_invalid_diagnostic_directive_is_in_supplemental_output_0_returned_by_the_content_mapper
-	case "Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_unusedExpectDirectiveIndex_100069":
+	case "Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_unusedExpectDirectiveIndex_100068":
 		return Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_unusedExpectDirectiveIndex
 	default:
 		return nil

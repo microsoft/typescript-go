@@ -334,7 +334,7 @@ func (p *Program) ReuseProgram(changedFilePath tspath.Path, newHost CompilerHost
 		// a full rebuild so the file loader's failure policy runs.
 		mapper := newOpts.Config.GetContentMapperForFileName(oldFile.FileName())
 		var err error
-		files, transformErr := newHost.GetContentMappedSourceFiles(oldFile.ParseOptions(), mapper, newOpts.Config.CompilerOptions())
+		files, transformErr := newHost.GetContentMappedSourceFiles(oldFile.ParseOptions(), mapper)
 		newFile, err = files.Canonical, transformErr
 		if err != nil {
 			return nil, nil, false

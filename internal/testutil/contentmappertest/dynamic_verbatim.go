@@ -45,9 +45,9 @@ func (h dynamicVerbatimHandler) HandleRequest(ctx context.Context, method string
 			watchDirectory = "/"
 		}
 		return contentmapper.OpenProjectResult{
-			ConfigIdentity: identity,
-			WatchedFiles:   []string{tspath.CombinePaths(watchDirectory, "mapper.config.json")},
-			Diagnostics:    diagnostics,
+			ConfigIdentity:    identity,
+			WatchedFiles:      []string{tspath.CombinePaths(watchDirectory, "mapper.config.json")},
+			OptionDiagnostics: diagnostics,
 		}, nil
 	case contentmapper.MethodCloseProject:
 		if h.lifecycle != nil {

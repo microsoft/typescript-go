@@ -194,11 +194,27 @@ type fakeSpawner struct {
 	handler ipc.Handler
 }
 
+type noOpProjectMapper struct{ ipc.Handler }
+
+func (m noOpProjectMapper) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
+	switch method {
+	case contentmapper.MethodOpenProject:
+		return contentmapper.OpenProjectResult{}, nil
+	case contentmapper.MethodCloseProject:
+		return nil, nil
+	default:
+		return m.Handler.HandleRequest(ctx, method, params)
+	}
+}
+
 func (s *fakeSpawner) Spawn(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error) {
 	s.spawns.Add(1)
 	handler := s.handler
 	if handler == nil {
 		handler = fakeMapper{}
+	}
+	if _, ok := handler.(interface{ handlesProjects() }); !ok {
+		handler = noOpProjectMapper{Handler: handler}
 	}
 	client, server := net.Pipe()
 	go func() { _ = ipc.NewAsyncConn(server, handler).Run(context.Background()) }()
@@ -698,9 +714,11 @@ func TestRunnerConsolidatesByIdentity(t *testing.T) {
 	vueA := &contentmapper.Mapper{Definition: contentmapper.Definition{Package: "a"}, Manifest: contentmapper.Manifest{Name: "vue", Version: "1.0.0", Exec: []string{"vue-mapper"}}}
 	vueB := &contentmapper.Mapper{Definition: contentmapper.Definition{Package: "b"}, Manifest: contentmapper.Manifest{Name: "vue", Version: "1.0.0", Exec: []string{"vue-mapper"}}}
 	svelte := &contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "svelte", Version: "2.0.0", Exec: []string{"svelte-mapper"}}}
+	project := r.Project(contentmapper.ProjectSpec{Mappers: []*contentmapper.Mapper{vueA, vueB, svelte}, CompilerOptions: &core.CompilerOptions{}})
+	defer project.Close()
 
 	for _, m := range []*contentmapper.Mapper{vueA, vueB, vueA, svelte} {
-		_, err := r.Transform(m, contentmapper.Request{FileName: "/x", Content: "y"})
+		_, err := project.Transform(m, contentmapper.Request{FileName: "/x", Content: "y"})
 		assert.NilError(t, err)
 	}
 	assert.Equal(t, spawner.spawns.Load(), int32(2), "expected one process per identity")
@@ -741,8 +759,7 @@ func TestRunnerLeaseLifecycle(t *testing.T) {
 	assert.Equal(t, spawner.closes.Load(), int32(3))
 }
 
-// recordingMapper captures (as JSON) the options it receives on transform so a test can assert the host
-// forwarded only the declared subset, in order.
+// recordingMapper captures project configuration and lifecycle requests for host protocol tests.
 type recordingMapper struct {
 	mu                sync.Mutex
 	received          string
@@ -751,6 +768,7 @@ type recordingMapper struct {
 	projectHandles    []string
 	closedHandles     []string
 	transformHandle   string
+	transformParams   string
 	watchedFiles      []string
 	configIdentity    *string
 	dynamicConfig     bool
@@ -762,6 +780,8 @@ type blockingMapper struct {
 	started chan struct{}
 	proceed chan struct{}
 }
+
+func (*recordingMapper) handlesProjects() {}
 
 func (m *blockingMapper) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	if method == contentmapper.MethodTransform {
@@ -787,8 +807,14 @@ func (m *recordingMapper) HandleRequest(ctx context.Context, method string, para
 		if err := json.Unmarshal(params, &p); err != nil {
 			return nil, err
 		}
+		raw, err := json.Marshal(p.CompilerOptions)
+		if err != nil {
+			return nil, err
+		}
 		m.mu.Lock()
 		m.projectHandles = append(m.projectHandles, p.ProjectHandle)
+		m.received = string(raw)
+		m.receivedOptions = string(p.Options)
 		watchedFiles := m.watchedFiles
 		dynamicConfig := m.dynamicConfig
 		configIdentityOverride := m.configIdentity
@@ -808,9 +834,9 @@ func (m *recordingMapper) HandleRequest(ctx context.Context, method string, para
 			configIdentity = *configIdentityOverride
 		}
 		return contentmapper.OpenProjectResult{
-			ConfigIdentity: configIdentity,
-			WatchedFiles:   watchedFiles,
-			Diagnostics:    optionDiagnostics,
+			ConfigIdentity:    configIdentity,
+			WatchedFiles:      watchedFiles,
+			OptionDiagnostics: optionDiagnostics,
 		}, nil
 	case contentmapper.MethodCloseProject:
 		var p contentmapper.CloseProjectParams
@@ -826,14 +852,9 @@ func (m *recordingMapper) HandleRequest(ctx context.Context, method string, para
 		if err := json.Unmarshal(params, &p); err != nil {
 			return nil, err
 		}
-		raw, err := json.Marshal(p.CompilerOptions)
-		if err != nil {
-			return nil, err
-		}
 		m.mu.Lock()
-		m.received = string(raw)
-		m.receivedOptions = string(p.Options)
 		m.transformHandle = p.ProjectHandle
+		m.transformParams = string(params)
 		m.mu.Unlock()
 		return contentmapper.TransformResult{MappedOutput: contentmapper.MappedOutput{Text: p.Content, Extension: ".ts"}}, nil
 	default:
@@ -1046,7 +1067,7 @@ func (m *recordingMapper) HandleNotification(ctx context.Context, method string,
 	return nil
 }
 
-func TestRunnerForwardsDeclaredOptions(t *testing.T) {
+func TestRunnerForwardsProjectOptions(t *testing.T) {
 	t.Parallel()
 	mapper := &recordingMapper{}
 	diagnosticLocale, ok := locale.Parse("cs-CZ")
@@ -1054,25 +1075,28 @@ func TestRunnerForwardsDeclaredOptions(t *testing.T) {
 	r := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: mapper}, diagnosticLocale)
 	defer r.Close()
 
-	// target is declared and set (forwarded); jsx is declared but unset (omitted); strict is set but
-	// undeclared (excluded).
-	_, err := r.Transform(
-		&contentmapper.Mapper{Definition: contentmapper.Definition{Options: []byte(`{"strictTemplates":true}`)}, Manifest: contentmapper.Manifest{Name: "vue", Version: "1.0.0", Exec: []string{"vue-mapper"}, CompilerOptions: []string{"target", "jsx"}}},
+	mapperDefinition := &contentmapper.Mapper{Definition: contentmapper.Definition{Options: []byte(`{"strictTemplates":true}`)}, Manifest: contentmapper.Manifest{Name: "vue", Version: "1.0.0", Exec: []string{"vue-mapper"}, CompilerOptions: []string{"target", "jsx"}}}
+	compilerOptions := &core.CompilerOptions{Target: core.ScriptTargetES2020, Strict: core.TSTrue}
+	project := r.Project(contentmapper.ProjectSpec{Mappers: []*contentmapper.Mapper{mapperDefinition}, CompilerOptions: compilerOptions})
+	defer project.Close()
+	_, err := project.Transform(
+		mapperDefinition,
 		contentmapper.Request{
-			FileName:        "/a.vue",
-			Content:         "x",
-			CompilerOptions: &core.CompilerOptions{Target: core.ScriptTargetES2020, Strict: core.TSTrue},
+			FileName: "/a.vue",
+			Content:  "x",
 		},
 	)
 	assert.NilError(t, err)
 
-	want, err := json.Marshal(core.ScriptTargetES2020)
+	want, err := json.Marshal(compilerOptions)
 	assert.NilError(t, err)
 	mapper.mu.Lock()
 	defer mapper.mu.Unlock()
-	assert.Equal(t, mapper.received, fmt.Sprintf(`{"target":%s}`, want))
+	assert.Equal(t, mapper.received, string(want))
 	assert.Equal(t, mapper.receivedOptions, `{"strictTemplates":true}`)
 	assert.Equal(t, mapper.receivedLocale, "cs-CZ")
+	assert.Assert(t, !strings.Contains(mapper.transformParams, `"options"`))
+	assert.Assert(t, !strings.Contains(mapper.transformParams, `"compilerOptions"`))
 }
 
 func TestHostSetLocaleRestartsMapper(t *testing.T) {

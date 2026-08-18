@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
@@ -23,11 +24,35 @@ const (
 )
 
 // Handler implements the transforming content mapper protocol.
-type Handler struct{ noNotifications }
+type Handler struct {
+	noNotifications
+	mu              sync.Mutex
+	compilerOptions map[string]*collections.OrderedMap[string, json.Value]
+}
 
-var _ ipc.Handler = Handler{}
+var _ ipc.Handler = (*Handler)(nil)
 
-func (Handler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
+func (h *Handler) OpenProject(p contentmapper.OpenProjectParams) error {
+	var options *collections.OrderedMap[string, json.Value]
+	if err := json.Unmarshal(p.CompilerOptions, &options); err != nil {
+		return err
+	}
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	if h.compilerOptions == nil {
+		h.compilerOptions = make(map[string]*collections.OrderedMap[string, json.Value])
+	}
+	h.compilerOptions[p.ProjectHandle] = options
+	return nil
+}
+
+func (h *Handler) CloseProject(p contentmapper.CloseProjectParams) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	delete(h.compilerOptions, p.ProjectHandle)
+}
+
+func (h *Handler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
 	case contentmapper.MethodInitialize:
 		return initializeResult(diagnosticSource), nil
@@ -36,7 +61,13 @@ func (Handler) HandleRequest(ctx context.Context, method string, params json.Val
 		if err := json.Unmarshal(params, &p); err != nil {
 			return nil, err
 		}
-		text, mappings, diagnostics, diagnosticDirectives, err := transform(p.Content, p.CompilerOptions)
+		h.mu.Lock()
+		options := h.compilerOptions[p.ProjectHandle]
+		h.mu.Unlock()
+		if options == nil {
+			return nil, fmt.Errorf("contentmappertest: project %q is not open", p.ProjectHandle)
+		}
+		text, mappings, diagnostics, diagnosticDirectives, err := transform(p.Content, options)
 		if err != nil {
 			return nil, err
 		}

@@ -27,7 +27,6 @@ func TransformAndParse(
 	parseOptions ast.SourceFileParseOptions,
 	content string,
 	mapper *Mapper,
-	compilerOptions *core.CompilerOptions,
 	project Project,
 ) (SourceFiles, error) {
 	transformIdentity, err := project.Identity(mapper)
@@ -35,9 +34,8 @@ func TransformAndParse(
 		return SourceFiles{}, NewTransformError(TransformErrorKindProject, err)
 	}
 	result, err := project.Transform(mapper, Request{
-		FileName:        parseOptions.FileName,
-		Content:         content,
-		CompilerOptions: compilerOptions,
+		FileName: parseOptions.FileName,
+		Content:  content,
 	})
 	if err != nil {
 		return SourceFiles{}, err

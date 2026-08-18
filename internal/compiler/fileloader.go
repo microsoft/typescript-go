@@ -421,7 +421,7 @@ func (p *fileLoader) parseContentMappedFile(opts ast.SourceFileParseOptions) *as
 		// The mapper failed initialization or exceeded its failure budget; add the file empty without re-reporting.
 		return p.emptyContentMappedFile(opts, mapper.Identity(), transformIdentity)
 	}
-	files, err := p.opts.Host.GetContentMappedSourceFiles(opts, mapper, p.opts.Config.CompilerOptions())
+	files, err := p.opts.Host.GetContentMappedSourceFiles(opts, mapper)
 	if err != nil {
 		sourceFile := p.emptyContentMappedFile(opts, mapper.Identity(), transformIdentity)
 		if transformError, ok := errors.AsType[*contentmapper.TransformError](err); ok && transformError.Kind == contentmapper.TransformErrorKindInitialize {
@@ -464,8 +464,6 @@ func contentMapperTransformDiagnostic(file *ast.SourceFile, label string, err er
 			return contentMapperTransformDiagnosticChain(file, label, diagnostics.The_content_mapper_process_could_not_be_started_or_initialized)
 		case contentmapper.TransformErrorKindProject:
 			return contentMapperTransformDiagnosticChain(file, label, ContentMapperProjectErrorDiagnostic(transformError))
-		case contentmapper.TransformErrorKindCompilerOptions:
-			return contentMapperTransformDiagnosticChain(file, label, diagnostics.The_compiler_options_requested_by_the_content_mapper_could_not_be_prepared)
 		case contentmapper.TransformErrorKindRequest:
 			return contentMapperTransformDiagnosticChain(file, label, diagnostics.The_content_mapper_process_failed_while_handling_the_transform_request)
 		case contentmapper.TransformErrorKindResponse:

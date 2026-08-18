@@ -40,12 +40,22 @@ func identityMappedOutput(content string) (contentmapper.MappedOutput, error) {
 
 type staticProjectHandler struct{ ipc.Handler }
 
+type projectLifecycleHandler interface {
+	OpenProject(params contentmapper.OpenProjectParams) error
+	CloseProject(params contentmapper.CloseProjectParams)
+}
+
 func (h staticProjectHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
 	case contentmapper.MethodOpenProject:
 		var p contentmapper.OpenProjectParams
 		if err := json.Unmarshal(params, &p); err != nil {
 			return nil, err
+		}
+		if handler, ok := h.Handler.(projectLifecycleHandler); ok {
+			if err := handler.OpenProject(p); err != nil {
+				return nil, err
+			}
 		}
 		var diagnostics []contentmapper.OptionDiagnosticResult
 		if string(p.Options) == `{"plugins":[{"name":1}]}` {
@@ -55,8 +65,15 @@ func (h staticProjectHandler) HandleRequest(ctx context.Context, method string, 
 				Code:        123,
 			}}
 		}
-		return contentmapper.OpenProjectResult{Diagnostics: diagnostics}, nil
+		return contentmapper.OpenProjectResult{OptionDiagnostics: diagnostics}, nil
 	case contentmapper.MethodCloseProject:
+		var p contentmapper.CloseProjectParams
+		if err := json.Unmarshal(params, &p); err != nil {
+			return nil, err
+		}
+		if handler, ok := h.Handler.(projectLifecycleHandler); ok {
+			handler.CloseProject(p)
+		}
 		return nil, nil
 	default:
 		return h.Handler.HandleRequest(ctx, method, params)

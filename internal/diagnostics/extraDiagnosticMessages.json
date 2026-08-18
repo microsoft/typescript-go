@@ -235,116 +235,112 @@
         "category": "Message",
         "code": 100041
     },
-    "The compiler options requested by the content mapper could not be prepared.": {
+    "The content mapper process failed while handling the transform request.": {
         "category": "Message",
         "code": 100042
     },
-    "The content mapper process failed while handling the transform request.": {
+    "The content mapper returned an invalid transform response.": {
         "category": "Message",
         "code": 100043
     },
-    "The content mapper returned an invalid transform response.": {
+    "The content mapper uses unsupported protocol version {0}; expected version {1}.": {
         "category": "Message",
         "code": 100044
     },
-    "The content mapper uses unsupported protocol version {0}; expected version {1}.": {
+    "The content mapper selected unsupported position encoding '{0}'.": {
         "category": "Message",
         "code": 100045
     },
-    "The content mapper selected unsupported position encoding '{0}'.": {
+    "The content mapper diagnostic source must not be empty.": {
         "category": "Message",
         "code": 100046
     },
-    "The content mapper diagnostic source must not be empty.": {
+    "The content mapper diagnostic source '{0}' is reserved by TypeScript.": {
         "category": "Message",
         "code": 100047
     },
-    "The content mapper diagnostic source '{0}' is reserved by TypeScript.": {
+    "The content mapper returned a project response that could not be decoded.": {
         "category": "Message",
         "code": 100048
     },
-    "The content mapper returned a project response that could not be decoded.": {
+    "The content mapper process failed while handling the project request.": {
         "category": "Message",
         "code": 100049
     },
-    "The content mapper process failed while handling the project request.": {
+    "The content mapper did not return 'configIdentity', which is required when the content mapper has '\"dynamicConfig\": true' in its package.json.": {
         "category": "Message",
         "code": 100050
     },
-    "The content mapper did not return 'configIdentity', which is required when the content mapper has '\"dynamicConfig\": true' in its package.json.": {
+    "The content mapper returned a non-absolute path in 'watchedFiles'.": {
         "category": "Message",
         "code": 100051
     },
-    "The content mapper returned a non-absolute path in 'watchedFiles'.": {
+    "The content mapper returned 'configIdentity', which is only allowed when it declares '\"dynamicConfig\": true' in its package.json.": {
         "category": "Message",
         "code": 100052
     },
-    "The content mapper returned 'configIdentity', which is only allowed when it declares '\"dynamicConfig\": true' in its package.json.": {
+    "The content mapper returned 'watchedFiles', which is only allowed when it declares '\"dynamicConfig\": true' in its package.json.": {
         "category": "Message",
         "code": 100053
     },
-    "The content mapper returned 'watchedFiles', which is only allowed when it declares '\"dynamicConfig\": true' in its package.json.": {
+    "Content mapper supplemental output file '{0}' conflicts with an existing file.": {
         "category": "Message",
         "code": 100054
     },
-    "Content mapper supplemental output file '{0}' conflicts with an existing file.": {
+    "Supplemental virtual file produced by the content mapper for file '{0}'.": {
         "category": "Message",
         "code": 100055
     },
-    "Supplemental virtual file produced by the content mapper for file '{0}'.": {
+    "The content mapper returned an output with unsupported virtual extension '{0}'.": {
         "category": "Message",
         "code": 100056
     },
-    "The content mapper returned an output with unsupported virtual extension '{0}'.": {
-        "category": "Message",
-        "code": 100057
-    },
     "The content mapper '{0}' could not be initialized.": {
         "category": "Error",
-        "code": 100058
+        "code": 100057
     },
     "The content mapper command '{0}' could not be started: {1}": {
         "category": "Message",
-        "code": 100059
+        "code": 100058
     },
     "The content mapper process exited before responding to the 'initialize' request (exit code {0}).": {
         "category": "Message",
-        "code": 100060
+        "code": 100059
     },
     "The content mapper did not respond to the 'initialize' request within {0} seconds.": {
         "category": "Message",
-        "code": 100061
+        "code": 100060
     },
     "The content mapper returned an 'initialize' response that could not be decoded: {0}": {
         "category": "Message",
-        "code": 100062
+        "code": 100061
     },
     "The content mapper's 'initialize' request failed: {0}": {
         "category": "Message",
-        "code": 100063
+        "code": 100062
     },
     "Diagnostic directive {0} returned by the content mapper has an invalid range.": {
         "category": "Message",
-        "code": 100064
+        "code": 100063
     },
     "The content mapper returned a diagnostic directive with invalid policy '{0}'.": {
         "category": "Message",
-        "code": 100065
+        "code": 100064
     },
     "Diagnostic directive {0} returned by the content mapper must specify 'unusedExpectDirectiveIndex' when there is not exactly one 'unusedExpectDirectiveDiagnostics' entry.": {
         "category": "Message",
-        "code": 100066
+        "code": 100065
     },
     "The content mapper returned diagnostic directives with overlapping virtual ranges.": {
         "category": "Message",
-        "code": 100067
+        "code": 100066
     },
     "The invalid diagnostic directive is in supplemental output {0} returned by the content mapper.": {
         "category": "Message",
-        "code": 100068
+        "code": 100067
     },
     "Diagnostic directive {0} returned by the content mapper has an invalid 'unusedExpectDirectiveIndex'.": {
         "category": "Message",
-        "code": 100069
+        "code": 100068
     }
 }
