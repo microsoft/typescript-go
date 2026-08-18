@@ -1,9 +1,6 @@
 package outputpaths
 
 import (
-	"strings"
-	"unicode/utf8"
-
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -162,45 +159,10 @@ func getOutputPathWithoutChangingExtension(inputFileName string, outputDirectory
 
 func GetSourceFilePathInNewDirWorker(fileName string, newDirPath string, currentDirectory string, commonSourceDirectory string, useCaseSensitiveFileNames bool) string {
 	sourceFilePath := tspath.GetNormalizedAbsolutePath(fileName, currentDirectory)
-	commonDir := tspath.GetCanonicalFileName(commonSourceDirectory, useCaseSensitiveFileNames)
-	canonFile := tspath.GetCanonicalFileName(sourceFilePath, useCaseSensitiveFileNames)
-	isSourceFileInCommonSourceDirectory := strings.HasPrefix(canonFile, commonDir)
-	if isSourceFileInCommonSourceDirectory {
-		// The reference implementation strips the prefix by slicing on
-		// commonSourceDirectory's length (in UTF-16 code units), relying on the fact that
-		// String.prototype.substring silently clamps out-of-range indices instead of
-		// throwing. Go slice expressions panic on out-of-range indices instead, and
-		// GetCanonicalFileName's case-folding can change a string's UTF-8 byte length
-		// (e.g. the Kelvin sign '\u212A' folds to the single-byte 'k'), so byte-length
-		// slicing here isn't safe even when the (rune-preserving) canonical prefix
-		// check above succeeds. GetCanonicalFileName preserves rune count: when
-		// useCaseSensitiveFileNames is true it returns its input unchanged, and
-		// otherwise it delegates to ToFileNameLowerCase, which either rewrites ASCII
-		// bytes in place (same length) or maps every rune through unicode.ToLower
-		// via strings.Map — a function that always substitutes exactly one rune for
-		// one rune (it can neither drop nor expand runes, and the one exception,
-		// '\u0130', is mapped to itself). So trimming by the canonicalized prefix's
-		// rune count matches the boundary the prefix check verified. trimRunePrefix
-		// additionally clamps to the end of the string to mirror substring's
-		// behavior, so this remains panic-safe even if that invariant were ever
-		// violated.
-		sourceFilePath = trimRunePrefix(sourceFilePath, utf8.RuneCountInString(commonDir))
+	if trimmed, ok := tspath.TrimFilePathPrefix(sourceFilePath, commonSourceDirectory, useCaseSensitiveFileNames); ok {
+		sourceFilePath = trimmed
 	}
 	return tspath.CombinePaths(newDirPath, sourceFilePath)
-}
-
-// trimRunePrefix returns the suffix of s after skipping up to runeCount runes,
-// clamping to the end of s if it has fewer runes than runeCount.
-func trimRunePrefix(s string, runeCount int) string {
-	i := 0
-	for range runeCount {
-		if i >= len(s) {
-			break
-		}
-		_, size := utf8.DecodeRuneInString(s[i:])
-		i += size
-	}
-	return s[i:]
 }
 
 func getOwnEmitOutputFilePath(fileName string, options *core.CompilerOptions, host OutputPathsHost, extension string) string {

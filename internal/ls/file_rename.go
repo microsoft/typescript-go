@@ -90,7 +90,15 @@ func (l *LanguageService) createPathUpdater(oldPath string, newPath string) path
 			return newPath, true
 		}
 		if tspath.StartsWithDirectory(path, oldPath, l.UseCaseSensitiveFileNames()) {
-			return newPath + path[len(oldPath):], true
+			// StartsWithDirectory only confirms a case-insensitive directory match;
+			// re-derive the suffix with TrimFilePathPrefix rather than slicing on
+			// len(oldPath), since case-folding can change a path's UTF-8 byte length
+			// without changing its rune count (e.g. the Kelvin sign '\u212A' folds to
+			// the single-byte 'k'), which could otherwise put len(oldPath) out of
+			// range of path.
+			if suffix, ok := tspath.TrimFilePathPrefix(path, oldPath, l.UseCaseSensitiveFileNames()); ok {
+				return newPath + suffix, true
+			}
 		}
 		return "", false
 	}
