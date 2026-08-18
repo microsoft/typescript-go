@@ -13,6 +13,7 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
@@ -1193,6 +1194,34 @@ func TestContentMappers(t *testing.T) {
 			assert.Assert(t, slices.Contains(parsed.FileNames(), "/src/app.ts"), "expected /src/app.ts in %v", parsed.FileNames())
 		})
 	}
+}
+
+func TestContentMapperOptionDiagnosticLocation(t *testing.T) {
+	t.Parallel()
+	config := testConfig{
+		jsonText: `{
+			"contentMappers": [{
+				"package": "mapper",
+				"extensions": [".vue"],
+				"options": { "plugins": [{ "name": 1 }] }
+			}]
+		}`,
+		configFileName: "tsconfig.json",
+		basePath:       "/",
+		allFileList: map[string]string{
+			"/index.ts":                         "export {};",
+			"/node_modules/mapper/package.json": `{ "name": "mapper", "version": "1.0.0", "typescript": { "contentMapper": { "exec": ["mapper"] } } }`,
+		},
+		existingOptions: &core.CompilerOptions{RunExternalCode: core.TSTrue},
+	}
+	host := tsoptionstest.NewVFSParseConfigHost(config.allFileList, config.basePath, true /*useCaseSensitiveFileNames*/)
+	parsed := getParsedWithJsonSourceFileApi(config, host, config.basePath)
+	file, loc := tsoptions.GetContentMapperOptionDiagnosticLocation(parsed, parsed.ContentMappers()[0], []contentmapper.OptionPathSegment{
+		{Property: "plugins"},
+		{Index: 0, IsIndex: true},
+		{Property: "name"},
+	})
+	assert.Equal(t, file.Text()[loc.Pos():loc.End()], "1")
 }
 
 func TestContentMappersAreInheritedFromExtendedConfig(t *testing.T) {

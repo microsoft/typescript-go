@@ -1697,6 +1697,41 @@ func getContentMapperSyntax(sourceFile *ast.SourceFile, index int, subKey string
 	})
 }
 
+func GetContentMapperOptionDiagnosticLocation(config *ParsedCommandLine, mapper *contentmapper.Mapper, path []contentmapper.OptionPathSegment) (*ast.SourceFile, core.TextRange) {
+	if config == nil || config.ConfigFile == nil {
+		return nil, core.UndefinedTextRange()
+	}
+	index := slices.Index(config.ContentMappers(), mapper)
+	mapperNode := getContentMapperSyntax(config.ConfigFile.SourceFile, index, "")
+	node := getContentMapperSyntax(config.ConfigFile.SourceFile, index, "options")
+	if node == nil {
+		node = mapperNode
+	}
+	for _, segment := range path {
+		var next *ast.Node
+		switch {
+		case segment.IsIndex && ast.IsArrayLiteralExpression(node):
+			elements := node.Elements()
+			if segment.Index < len(elements) {
+				next = elements[segment.Index]
+			}
+		case !segment.IsIndex && ast.IsObjectLiteralExpression(node):
+			next = ForEachPropertyAssignment(node.AsObjectLiteralExpression(), segment.Property, func(property *ast.PropertyAssignment) *ast.Node {
+				return property.Initializer
+			})
+		}
+		if next == nil {
+			break
+		}
+		node = next
+	}
+	if node == nil {
+		return nil, core.UndefinedTextRange()
+	}
+	file := config.ConfigFile.SourceFile
+	return file, core.NewTextRange(scanner.SkipTrivia(file.Text(), node.Pos()), node.End())
+}
+
 // getContentMappersKeySyntax returns the "contentMappers" property key node, used to attribute a
 // diagnostic about the setting as a whole rather than a specific mapper.
 func getContentMappersKeySyntax(sourceFile *ast.SourceFile) *ast.Node {

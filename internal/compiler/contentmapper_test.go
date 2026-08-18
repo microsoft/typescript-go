@@ -27,7 +27,10 @@ func (r fakeContentMapperHost) Refresh() error                                 {
 func (r fakeContentMapperHost) Identities() ([]string, error)                  { return nil, nil }
 func (r fakeContentMapperHost) Identity(*contentmapper.Mapper) (string, error) { return "test", nil }
 func (r fakeContentMapperHost) WatchedFiles() ([]string, error)                { return nil, nil }
-func (r fakeContentMapperHost) Close() error                                   { return nil }
+func (r fakeContentMapperHost) Diagnostics() []contentmapper.OptionDiagnostic {
+	return nil
+}
+func (r fakeContentMapperHost) Close() error { return nil }
 
 func (r fakeContentMapperHost) Transform(mapper *contentmapper.Mapper, request contentmapper.Request) (contentmapper.Result, error) {
 	return r.transform(request.FileName, request.Content)

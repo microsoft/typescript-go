@@ -98,8 +98,9 @@ type Program struct {
 
 	declarationDiagnosticCache collections.SyncMap[*ast.SourceFile, []*ast.Diagnostic]
 
-	programDiagnostics         []*ast.Diagnostic
-	hasEmitBlockingDiagnostics collections.Set[tspath.Path]
+	programDiagnostics             []*ast.Diagnostic
+	hasEmitBlockingDiagnostics     collections.Set[tspath.Path]
+	contentMapperOptionDiagnostics []*ast.Diagnostic
 
 	sourceFilesToEmitOnce sync.Once
 	sourceFilesToEmit     []*ast.SourceFile
@@ -285,6 +286,7 @@ func NewProgram(opts ProgramOptions) *Program {
 	p.processedFiles = processAllProgramFiles(p.opts, p.SingleThreaded())
 	p.initCheckerPool()
 	p.verifyCompilerOptions()
+	p.collectContentMapperOptionDiagnostics()
 	return p
 }
 
@@ -381,12 +383,13 @@ func (p *Program) ReuseProgram(changedFilePath tspath.Path, newHost CompilerHost
 	}
 	// TODO: reverify compiler options when config has changed?
 	result := &Program{
-		opts:                        newOpts,
-		comparePathsOptions:         p.comparePathsOptions,
-		processedFiles:              p.processedFiles,
-		usesUriStyleNodeCoreModules: p.usesUriStyleNodeCoreModules,
-		programDiagnostics:          p.programDiagnostics,
-		hasEmitBlockingDiagnostics:  p.hasEmitBlockingDiagnostics,
+		opts:                           newOpts,
+		comparePathsOptions:            p.comparePathsOptions,
+		processedFiles:                 p.processedFiles,
+		usesUriStyleNodeCoreModules:    p.usesUriStyleNodeCoreModules,
+		programDiagnostics:             p.programDiagnostics,
+		hasEmitBlockingDiagnostics:     p.hasEmitBlockingDiagnostics,
+		contentMapperOptionDiagnostics: slices.Clone(p.contentMapperOptionDiagnostics),
 	}
 	result.unresolvedImports.tryReuse(&p.unresolvedImports)
 	result.knownSymlinks.tryReuse(&p.knownSymlinks)
@@ -789,8 +792,21 @@ func (p *Program) GetProgramDiagnostics() []*ast.Diagnostic {
 	return SortAndDeduplicateDiagnostics(slices.Concat(
 		p.programDiagnostics,
 		p.contentMapperDiagnostics,
+		p.contentMapperOptionDiagnostics,
 		p.includeProcessor.getDiagnostics(p).GetGlobalDiagnostics(),
 	))
+}
+
+func (p *Program) collectContentMapperOptionDiagnostics() {
+	project := p.ContentMapperProject()
+	if project == nil {
+		return
+	}
+	optionDiagnostics := project.Diagnostics()
+	p.contentMapperOptionDiagnostics = core.Map(optionDiagnostics, func(diagnostic contentmapper.OptionDiagnostic) *ast.Diagnostic {
+		file, loc := tsoptions.GetContentMapperOptionDiagnosticLocation(p.opts.Config, diagnostic.Mapper, diagnostic.Path)
+		return ast.NewExternalDiagnostic(file, loc, diagnostic.Source, diagnostics.CategoryError, diagnostic.Code, diagnostic.MessageText)
+	})
 }
 
 func (p *Program) GetIncludeProcessorDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {

@@ -214,6 +214,20 @@ type ProjectSpec struct {
 	CompilerOptions *core.CompilerOptions
 }
 
+type OptionPathSegment struct {
+	Property string
+	Index    int
+	IsIndex  bool
+}
+
+type OptionDiagnostic struct {
+	Mapper      *Mapper
+	Path        []OptionPathSegment
+	Source      string
+	Code        int32
+	MessageText string
+}
+
 // OperationTiming is the cumulative wall time and invocation count for one mapper operation.
 type OperationTiming struct {
 	Count    uint64
@@ -276,6 +290,8 @@ type Project interface {
 	// WatchedFiles returns the absolute files reported by mappers whose package.json declares dynamicConfig.
 	// It returns an error if project configuration cannot be opened or validated.
 	WatchedFiles() ([]string, error)
+	// Diagnostics returns option diagnostics cached by mapper projects that have already been opened.
+	Diagnostics() []OptionDiagnostic
 	// Transform transforms one content-mapped source file using mapper in this project's configuration.
 	Transform(mapper *Mapper, request Request) (result Result, err error)
 	// Close releases this project reference and closes mapper project handles when no references remain.

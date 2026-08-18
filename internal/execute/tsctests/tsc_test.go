@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/testutil/contentmappertest"
 	"github.com/microsoft/typescript-go/internal/testutil/stringtestutil"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
@@ -4852,6 +4853,28 @@ func TestTscContentMapperExplainFiles(t *testing.T) {
 		},
 		commandLineArgs: []string{"--runExternalCode", "--explainFiles"},
 	}).run(t, "contentMapperExplainFiles")
+}
+
+func TestTscContentMapperOptionDiagnostics(t *testing.T) {
+	t.Parallel()
+	(&tscInput{
+		subScenario: "nested mapper option diagnostic",
+		files: FileMap{
+			"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+			{
+				"contentMappers": [
+					{
+						"package": "mapper",
+						"extensions": [".vue"],
+						"options": { "plugins": [{ "name": 1 }] }
+					}
+				]
+			}`),
+			"/home/src/workspaces/project/app.vue":                          `export const value = 1;`,
+			"/home/src/workspaces/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.DynamicVerbatimMapper),
+		},
+		commandLineArgs: []string{"--runExternalCode", "--pretty", "false"},
+	}).run(t, "contentMapperOptionDiagnostics")
 }
 
 func TestTscContentMapperFailures(t *testing.T) {

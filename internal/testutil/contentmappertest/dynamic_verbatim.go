@@ -32,6 +32,14 @@ func (h dynamicVerbatimHandler) HandleRequest(ctx context.Context, method string
 			return nil, err
 		}
 		identity := p.ConfigFileName + ":" + string(p.Options)
+		var diagnostics []contentmapper.OptionDiagnosticResult
+		if string(p.Options) == `{"plugins":[{"name":1}]}` {
+			diagnostics = []contentmapper.OptionDiagnosticResult{{
+				Path:        []json.Value{json.Value(`"plugins"`), json.Value(`0`), json.Value(`"name"`)},
+				MessageText: "Option 'name' requires a string.",
+				Code:        123,
+			}}
+		}
 		watchDirectory := tspath.GetDirectoryPath(p.ConfigFileName)
 		if watchDirectory == "" {
 			watchDirectory = "/"
@@ -39,6 +47,7 @@ func (h dynamicVerbatimHandler) HandleRequest(ctx context.Context, method string
 		return contentmapper.OpenProjectResult{
 			ConfigIdentity: identity,
 			WatchedFiles:   []string{tspath.CombinePaths(watchDirectory, "mapper.config.json")},
+			Diagnostics:    diagnostics,
 		}, nil
 	case contentmapper.MethodCloseProject:
 		if h.lifecycle != nil {

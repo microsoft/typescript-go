@@ -65,6 +65,10 @@ func (p fakeContentMapperProject) Identities() ([]string, error)                
 func (p fakeContentMapperProject) Identity(*contentmapper.Mapper) (string, error) { return "", nil }
 func (p fakeContentMapperProject) WatchedFiles() ([]string, error)                { return nil, nil }
 
+func (p fakeContentMapperProject) Diagnostics() []contentmapper.OptionDiagnostic {
+	return nil
+}
+
 func (p fakeContentMapperProject) Transform(*contentmapper.Mapper, contentmapper.Request) (contentmapper.Result, error) {
 	return contentmapper.Result{}, nil
 }

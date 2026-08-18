@@ -80,6 +80,14 @@ type OpenProjectResult struct {
 	ConfigIdentity string `json:"configIdentity"`
 	// WatchedFiles are absolute files whose changes may alter ConfigIdentity or transform output.
 	WatchedFiles []string `json:"watchedFiles,omitempty"`
+	// Diagnostics report invalid mapper options. Paths are relative to the mapper entry's options object.
+	Diagnostics []OptionDiagnosticResult `json:"diagnostics,omitempty"`
+}
+
+type OptionDiagnosticResult struct {
+	Path        []json.Value `json:"path"`
+	MessageText string       `json:"messageText"`
+	Code        int32        `json:"code,omitempty"`
 }
 
 // CloseProjectParams is the parameter object for the closeProject request.
@@ -239,12 +247,13 @@ type host struct {
 }
 
 type projectEntry struct {
-	mapper         *Mapper
-	spec           ProjectSpec
-	projectHandle  string
-	opened         bool
-	configIdentity string
-	watchedFiles   []string
+	mapper            *Mapper
+	spec              ProjectSpec
+	projectHandle     string
+	opened            bool
+	configIdentity    string
+	watchedFiles      []string
+	optionDiagnostics []OptionDiagnostic
 }
 
 type mapperConn struct {
@@ -628,7 +637,7 @@ func (h *host) openProjectLocked(ctx context.Context, entry *projectEntry) error
 	if entry.opened {
 		return nil
 	}
-	conn, _, _, err := h.connForLocked(entry.mapper)
+	conn, _, diagnosticSource, err := h.connForLocked(entry.mapper)
 	if err != nil {
 		return err
 	}
@@ -668,6 +677,36 @@ func (h *host) openProjectLocked(ctx context.Context, entry *projectEntry) error
 		}
 	}
 	entry.watchedFiles = slices.Clone(result.WatchedFiles)
+	entry.optionDiagnostics = make([]OptionDiagnostic, len(result.Diagnostics))
+	for i, diagnostic := range result.Diagnostics {
+		path := make([]OptionPathSegment, len(diagnostic.Path))
+		for j, rawSegment := range diagnostic.Path {
+			switch rawSegment.Kind() {
+			case '"':
+				var property string
+				if err := json.Unmarshal(rawSegment, &property); err != nil {
+					return &ProjectError{Kind: ProjectErrorKindMalformedResponse}
+				}
+				path[j].Property = property
+			case '0':
+				var index int
+				if err := json.Unmarshal(rawSegment, &index); err != nil || index < 0 {
+					return &ProjectError{Kind: ProjectErrorKindMalformedResponse}
+				}
+				path[j].Index = index
+				path[j].IsIndex = true
+			default:
+				return &ProjectError{Kind: ProjectErrorKindMalformedResponse}
+			}
+		}
+		entry.optionDiagnostics[i] = OptionDiagnostic{
+			Mapper:      entry.mapper,
+			Path:        path,
+			Source:      diagnosticSource,
+			Code:        diagnostic.Code,
+			MessageText: diagnostic.MessageText,
+		}
+	}
 	entry.opened = true
 	return nil
 }
@@ -894,6 +933,20 @@ func (p *projectLease) WatchedFiles() ([]string, error) {
 	}
 	slices.Sort(files)
 	return slices.Compact(files), nil
+}
+
+func (p *projectLease) Diagnostics() []OptionDiagnostic {
+	p.host.mu.Lock()
+	defer p.host.mu.Unlock()
+	var diagnostics []OptionDiagnostic
+	for _, mapper := range p.mappers {
+		entry := p.host.projects[p.entries[mapper]]
+		if entry == nil || !entry.opened {
+			continue
+		}
+		diagnostics = append(diagnostics, entry.optionDiagnostics...)
+	}
+	return diagnostics
 }
 
 func (p *projectLease) Transform(mapper *Mapper, request Request) (Result, error) {

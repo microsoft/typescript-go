@@ -744,16 +744,17 @@ func TestRunnerLeaseLifecycle(t *testing.T) {
 // recordingMapper captures (as JSON) the options it receives on transform so a test can assert the host
 // forwarded only the declared subset, in order.
 type recordingMapper struct {
-	mu              sync.Mutex
-	received        string
-	receivedOptions string
-	receivedLocale  string
-	projectHandles  []string
-	closedHandles   []string
-	transformHandle string
-	watchedFiles    []string
-	configIdentity  *string
-	dynamicConfig   bool
+	mu                sync.Mutex
+	received          string
+	receivedOptions   string
+	receivedLocale    string
+	projectHandles    []string
+	closedHandles     []string
+	transformHandle   string
+	watchedFiles      []string
+	configIdentity    *string
+	dynamicConfig     bool
+	optionDiagnostics []contentmapper.OptionDiagnosticResult
 }
 
 type blockingMapper struct {
@@ -791,8 +792,9 @@ func (m *recordingMapper) HandleRequest(ctx context.Context, method string, para
 		watchedFiles := m.watchedFiles
 		dynamicConfig := m.dynamicConfig
 		configIdentityOverride := m.configIdentity
+		optionDiagnostics := m.optionDiagnostics
 		m.mu.Unlock()
-		if !dynamicConfig && watchedFiles == nil && configIdentityOverride == nil {
+		if !dynamicConfig && watchedFiles == nil && configIdentityOverride == nil && len(optionDiagnostics) == 0 {
 			return contentmapper.OpenProjectResult{}, nil
 		}
 		if dynamicConfig && watchedFiles == nil {
@@ -808,6 +810,7 @@ func (m *recordingMapper) HandleRequest(ctx context.Context, method string, para
 		return contentmapper.OpenProjectResult{
 			ConfigIdentity: configIdentity,
 			WatchedFiles:   watchedFiles,
+			Diagnostics:    optionDiagnostics,
 		}, nil
 	case contentmapper.MethodCloseProject:
 		var p contentmapper.CloseProjectParams
@@ -1018,6 +1021,25 @@ func TestStaticMapperRejectsDynamicProjectResponseFields(t *testing.T) {
 			assert.Equal(t, projectError.Kind, test.kind)
 		})
 	}
+}
+
+func TestProjectRejectsInvalidOptionDiagnosticPath(t *testing.T) {
+	t.Parallel()
+	mapperProcess := &recordingMapper{optionDiagnostics: []contentmapper.OptionDiagnosticResult{{
+		Path:        []json.Value{json.Value(`null`)},
+		MessageText: "Invalid option.",
+	}}}
+	host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: mapperProcess}, locale.Default)
+	defer host.Close()
+	projectMapper := &contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "mapper", Version: "1.0.0", Exec: []string{"mapper"}}}
+	project := host.Project(contentmapper.ProjectSpec{Mappers: []*contentmapper.Mapper{projectMapper}, CompilerOptions: &core.CompilerOptions{}})
+	defer project.Close()
+	_, err := project.Transform(projectMapper, contentmapper.Request{FileName: "/repo/file.ext", Content: "x"})
+	transformError, ok := errors.AsType[*contentmapper.TransformError](err)
+	assert.Assert(t, ok)
+	projectError, ok := errors.AsType[*contentmapper.ProjectError](transformError)
+	assert.Assert(t, ok)
+	assert.Equal(t, projectError.Kind, contentmapper.ProjectErrorKindMalformedResponse)
 }
 
 func (m *recordingMapper) HandleNotification(ctx context.Context, method string, params json.Value) error {
