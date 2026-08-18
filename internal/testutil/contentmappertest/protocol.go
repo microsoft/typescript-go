@@ -43,7 +43,19 @@ type staticProjectHandler struct{ ipc.Handler }
 func (h staticProjectHandler) HandleRequest(ctx context.Context, method string, params json.Value) (any, error) {
 	switch method {
 	case contentmapper.MethodOpenProject:
-		return contentmapper.OpenProjectResult{}, nil
+		var p contentmapper.OpenProjectParams
+		if err := json.Unmarshal(params, &p); err != nil {
+			return nil, err
+		}
+		var diagnostics []contentmapper.OptionDiagnosticResult
+		if string(p.Options) == `{"plugins":[{"name":1}]}` {
+			diagnostics = []contentmapper.OptionDiagnosticResult{{
+				Path:        []json.Value{json.Value(`"plugins"`), json.Value(`0`), json.Value(`"name"`)},
+				MessageText: "Option 'name' requires a string.",
+				Code:        123,
+			}}
+		}
+		return contentmapper.OpenProjectResult{Diagnostics: diagnostics}, nil
 	case contentmapper.MethodCloseProject:
 		return nil, nil
 	default:
