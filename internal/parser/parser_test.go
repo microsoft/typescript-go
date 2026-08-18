@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
+	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/testrunner"
 	"github.com/microsoft/typescript-go/internal/testutil/fixtures"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -162,6 +163,37 @@ func FuzzParser(f *testing.F) {
 	})
 }
 
+func TestHeritageClauseElementKinds(t *testing.T) {
+	t.Parallel()
+	sourceText := `
+class C extends Base<number> implements Contract<string> {}
+interface I extends Parent<boolean> {}
+interface Invalid implements Recovery {}
+interface MissingExtends extends A. {}
+class MissingImplements implements B. {}
+`
+	file := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: "/index.ts",
+		Path:     "/index.ts",
+	}, sourceText, core.ScriptKindTS)
+
+	classDecl := file.Statements.Nodes[0].AsClassDeclaration()
+	assert.Equal(t, classDecl.HeritageClauses.Nodes[0].AsHeritageClause().Types.Nodes[0].Kind, ast.KindExpressionWithTypeArguments)
+	assert.Equal(t, classDecl.HeritageClauses.Nodes[1].AsHeritageClause().Types.Nodes[0].Kind, ast.KindTypeReference)
+
+	interfaceDecl := file.Statements.Nodes[1].AsInterfaceDeclaration()
+	assert.Equal(t, interfaceDecl.HeritageClauses.Nodes[0].AsHeritageClause().Types.Nodes[0].Kind, ast.KindTypeReference)
+
+	invalidInterfaceDecl := file.Statements.Nodes[2].AsInterfaceDeclaration()
+	assert.Equal(t, invalidInterfaceDecl.HeritageClauses.Nodes[0].AsHeritageClause().Types.Nodes[0].Kind, ast.KindExpressionWithTypeArguments)
+
+	missingExtendsDecl := file.Statements.Nodes[3].AsInterfaceDeclaration()
+	assert.Equal(t, missingExtendsDecl.HeritageClauses.Nodes[0].AsHeritageClause().Types.Nodes[0].Kind, ast.KindExpressionWithTypeArguments)
+
+	missingImplementsDecl := file.Statements.Nodes[4].AsClassDeclaration()
+	assert.Equal(t, missingImplementsDecl.HeritageClauses.Nodes[0].AsHeritageClause().Types.Nodes[0].Kind, ast.KindExpressionWithTypeArguments)
+}
+
 func TestJSDocImportTypeParentChain(t *testing.T) {
 	t.Parallel()
 	sourceText := `test("", async function () {
@@ -209,7 +241,82 @@ test("", async function () {
 	}
 }
 
-func TestSourceFileContainsNonASCIIInStringLiteralFastPath(t *testing.T) {
+func TestJSDocTypeSourceSurvivesReparse(t *testing.T) {
+	t.Parallel()
+	sourceText := `/**
+ * @typedef {(
+ *   "a" |
+ *   "b"
+ * )[]} T
+ */
+const value = 0;`
+	opts := ast.SourceFileParseOptions{
+		FileName: "/index.js",
+		Path:     "/index.js",
+	}
+
+	file := parser.ParseSourceFile(opts, sourceText, core.ScriptKindJS)
+	var typeAlias *ast.Node
+	for _, statement := range file.Statements.Nodes {
+		if ast.IsJSTypeAliasDeclaration(statement) {
+			typeAlias = statement
+			break
+		}
+	}
+	assert.Assert(t, typeAlias != nil)
+
+	jsDocs := typeAlias.JSDoc(file)
+	assert.Equal(t, len(jsDocs), 1)
+	assert.Assert(t, jsDocs[0].AsJSDoc().Tags != nil)
+	assert.Equal(t, len(jsDocs[0].AsJSDoc().Tags.Nodes), 1)
+
+	typeExpression := jsDocs[0].AsJSDoc().Tags.Nodes[0].TypeExpression()
+	assert.Assert(t, typeExpression != nil)
+
+	expected := strings.Join([]string{"(", `"a" |`, `"b"`, ")[]"}, core.NewLineKindLF.GetNewLineCharacter())
+	tests := []struct {
+		name string
+		node *ast.Node
+	}{
+		{name: "original", node: typeExpression.Type()},
+		{name: "reparsed", node: typeAlias.Type()},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, scanner.GetTextOfNode(test.node), expected)
+		})
+	}
+}
+
+func TestJSDocTypeSourcePropagatesToConstructedReparse(t *testing.T) {
+	t.Parallel()
+	sourceText := `/**
+ * @param {{
+ *   value: string
+ * }} options
+ */
+function foo(options) {}`
+	opts := ast.SourceFileParseOptions{
+		FileName: "/index.js",
+		Path:     "/index.js",
+	}
+
+	file := parser.ParseSourceFile(opts, sourceText, core.ScriptKindJS)
+	function := file.Statements.Nodes[0]
+	assert.Assert(t, ast.IsFunctionDeclaration(function))
+	assert.Equal(t, len(function.Parameters()), 1)
+
+	typeNode := function.Parameters()[0].Type()
+	assert.Assert(t, typeNode != nil)
+	assert.Assert(t, typeNode.Flags&ast.NodeFlagsReparsed != 0)
+
+	expected := strings.Join([]string{"{", "value: string", "}"}, core.NewLineKindLF.GetNewLineCharacter())
+	assert.Equal(t, scanner.GetTextOfNode(typeNode), expected)
+	assert.Equal(t, scanner.GetTokenPosOfNode(typeNode, file, false /*includeJSDoc*/), strings.Index(sourceText, "{{")+1)
+}
+
+func TestSourceFilePositionMapWithNonASCIIStringLiteral(t *testing.T) {
 	t.Parallel()
 	sourceText := `const x = "─";
 
@@ -224,7 +331,6 @@ namespace N {
 
 	file := parser.ParseSourceFile(opts, sourceText, core.ScriptKindTS)
 
-	assert.Assert(t, file.ContainsNonASCII)
 	positionMap := file.GetPositionMap()
 	assert.Assert(t, !positionMap.IsAsciiOnly())
 	afterBoxDrawingCharacter := strings.Index(sourceText, "─") + len("─")

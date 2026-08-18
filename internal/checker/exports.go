@@ -54,6 +54,10 @@ func (c *Checker) GetESSymbolType() *Type {
 	return c.esSymbolType
 }
 
+func (c *Checker) GetNonPrimitiveType() *Type {
+	return c.nonPrimitiveType
+}
+
 func (c *Checker) GetBaseTypeOfLiteralType(t *Type) *Type {
 	return c.getBaseTypeOfLiteralType(t)
 }
@@ -290,8 +294,18 @@ func (c *Checker) GetApparentType(t *Type) *Type {
 	return c.getApparentType(t)
 }
 
+// GetFullyQualifiedName returns the fully qualified name of a symbol, walking up
+// its parent chain (e.g. `"/path/to/module".Namespace.Name`).
+func (c *Checker) GetFullyQualifiedName(symbol *ast.Symbol) string {
+	return c.getFullyQualifiedName(symbol, nil /*containingLocation*/)
+}
+
 func (c *Checker) GetBaseConstructorTypeOfClass(t *Type) *Type {
 	return c.getBaseConstructorTypeOfClass(t)
+}
+
+func (c *Checker) GetMemberOverrideModifierStatus(node *ast.Node, member *ast.Node, memberSymbol *ast.Symbol) MemberOverrideStatus {
+	return c.getMemberOverrideModifierStatus(node, member, memberSymbol)
 }
 
 func (c *Checker) GetRestTypeOfSignature(sig *Signature) *Type {

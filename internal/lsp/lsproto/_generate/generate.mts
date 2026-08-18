@@ -68,6 +68,12 @@ const customStructures: Structure[] = [
                 optional: true,
                 documentation: "The initial log verbosity level, matching the client's output channel log level at startup. Subsequent changes are sent via custom/setLogVerbosity.",
             },
+            {
+                name: "trackFlakyDiagnostics",
+                type: { kind: "reference", name: "DiagnosticFlakeLogLevel" },
+                optional: true,
+                documentation: "The level at which we track flaky diagnostics, if at all.",
+            },
         ],
         documentation: "InitializationOptions contains user-provided initialization options.",
     },
@@ -153,6 +159,11 @@ const customStructures: Structure[] = [
                 type: { kind: "reference", name: "AutoImportFix" },
                 optional: true,
                 documentation: "Auto-import data for this completion item.",
+            },
+            {
+                name: "isImportStatementCompletion",
+                type: { kind: "base", name: "boolean" },
+                omitzeroValue: true,
             },
         ],
         documentation: "CompletionItemData is preserved on a CompletionItem between CompletionRequest and CompletionResolveRequest.",
@@ -607,9 +618,86 @@ const customStructures: Structure[] = [
         ],
         documentation: "A classified text element containing an array of classified text runs, used for colorized labels in VS.",
     },
+    {
+        name: "VSImageId",
+        properties: [
+            {
+                name: "Guid",
+                type: { kind: "base", name: "string" },
+                documentation: "The GUID of the image catalog containing this image.",
+            },
+            {
+                name: "Id",
+                type: { kind: "base", name: "integer" },
+                documentation: "The numeric identifier of the image within its catalog.",
+            },
+            {
+                name: "_vs_type",
+                type: { kind: "stringLiteral", value: "ImageId" },
+                documentation: "VS type discriminator required by ObjectContentConverter for deserialization.",
+            },
+        ],
+        documentation: "Identifies an image in a VS image catalog. Used to render symbol-kind icons (e.g. in hover tooltips).",
+    },
+    {
+        name: "VSImageElement",
+        properties: [
+            {
+                name: "ImageId",
+                type: { kind: "reference", name: "VSImageId" },
+                documentation: "The image to display.",
+            },
+            {
+                name: "_vs_type",
+                type: { kind: "stringLiteral", value: "ImageElement" },
+                documentation: "VS type discriminator required by ObjectContentConverter for deserialization.",
+            },
+        ],
+        documentation: "An image element (e.g. a symbol-kind icon) for use in VS rich content such as hover tooltips.",
+    },
+    {
+        name: "VSContainerElement",
+        properties: [
+            {
+                name: "Style",
+                type: { kind: "reference", name: "VSContainerElementStyle" },
+                documentation: "Layout style for the child elements.",
+            },
+            {
+                name: "Elements",
+                type: {
+                    kind: "array",
+                    element: {
+                        kind: "or",
+                        items: [
+                            { kind: "reference", name: "VSImageElement" },
+                            { kind: "reference", name: "VSClassifiedTextElement" },
+                            { kind: "reference", name: "VSContainerElement" },
+                        ],
+                    },
+                },
+                documentation: "The child elements contained within this container.",
+            },
+            {
+                name: "_vs_type",
+                type: { kind: "stringLiteral", value: "ContainerElement" },
+                documentation: "VS type discriminator required by ObjectContentConverter for deserialization.",
+            },
+        ],
+        documentation: "A container element that groups other VS rich-content elements (images, classified text, or nested containers). Used to build the VS hover raw content that combines a symbol icon with colorized text.",
+    },
 ];
 
 const customEnumerations: Enumeration[] = [
+    {
+        name: "VSContainerElementStyle",
+        type: { kind: "base", name: "integer" },
+        values: [
+            { name: "Wrapped", value: 0, documentation: "Child elements are laid out inline, wrapping as needed (e.g. an icon next to a signature line)." },
+            { name: "Stacked", value: 1, documentation: "Child elements are stacked vertically, each on its own line (e.g. a signature line followed by documentation)." },
+        ],
+        documentation: "Layout style for a VSContainerElement's children, mirroring VS's Microsoft.VisualStudio.Text.Adornments.ContainerElementStyle.",
+    },
     {
         name: "LogVerbosity",
         type: { kind: "base", name: "integer" },
@@ -622,6 +710,16 @@ const customEnumerations: Enumeration[] = [
             { name: "Error", value: 5, documentation: "Errors only." },
         ],
         documentation: "Log verbosity level, mirroring the VS Code LogLevel enum values.",
+    },
+    {
+        name: "DiagnosticFlakeLogLevel",
+        type: { kind: "base", name: "integer" },
+        values: [
+            { name: "Off", value: 0, documentation: "All flake logging disabled." },
+            { name: "Log", value: 1, documentation: "Log flaky diagnostics to the error log." },
+            { name: "Panic", value: 2, documentation: "Panic on flaky diagnostics." },
+        ],
+        documentation: "Behavior for tracking and logging flaky diagnostics.",
     },
     {
         name: "VSReferenceKind",
@@ -958,6 +1056,17 @@ function patchAndPreprocessModel() {
             });
         }
 
+        // Patch WorkspaceSymbolParams to optionally scope the search to projects
+        // containing a document, matching Strada's currentProject mode.
+        if (structure.name === "WorkspaceSymbolParams") {
+            structure.properties.push({
+                name: "textDocument",
+                type: { kind: "reference", name: "TextDocumentIdentifier" },
+                optional: true,
+                documentation: "Scopes the workspace symbol search to projects containing this document.",
+            });
+        }
+
         // Patch Hover to add canIncreaseVerbosity
         if (structure.name === "Hover") {
             structure.properties.push(
@@ -966,6 +1075,12 @@ function patchAndPreprocessModel() {
                     type: { kind: "base", name: "boolean" },
                     omitzeroValue: true,
                     documentation: "Whether the verbosity level can be increased for this hover.",
+                },
+                {
+                    name: "_vs_rawContent",
+                    type: { kind: "reference", name: "VSContainerElement" },
+                    optional: true,
+                    documentation: "VS-specific rich content (symbol icon + colorized/classified text) rendered by clients that support Visual Studio extensions, in place of `contents`.",
                 },
             );
         }

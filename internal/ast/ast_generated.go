@@ -111,8 +111,8 @@ type PrimaryExpressionBase struct {
 }
 
 type TypeNodeBase struct {
-	NodeBase
 	TypeSyntaxBase
+	NodeBase
 }
 
 type NodeWithTypeArgumentsBase struct {
@@ -152,7 +152,6 @@ type CompositeBase struct {
 type TypeSyntaxBase struct{}
 
 type FunctionLikeBase struct {
-	DeclarationBase
 	LocalsContainerBase
 	TypeParameters *TypeParameterList // Optional
 	Parameters     *ParameterList
@@ -172,7 +171,6 @@ type FunctionLikeWithBodyBase struct {
 }
 
 type ClassLikeBase struct {
-	DeclarationBase
 	ExportableBase
 	ModifiersBase
 	LocalsContainerBase
@@ -189,8 +187,8 @@ type LiteralLikeNodeBase struct {
 }
 
 type LiteralExpressionBase struct {
-	LiteralLikeNodeBase
 	PrimaryExpressionBase
+	LiteralLikeNodeBase
 }
 
 type TemplateLiteralLikeNodeBase struct {
@@ -204,7 +202,6 @@ type TypeElementBase struct{}
 type ClassElementBase struct{}
 
 type NamedMemberBase struct {
-	DeclarationBase
 	ModifiersBase
 	name         *PropertyName
 	PostfixToken *TokenNode // Optional
@@ -213,18 +210,20 @@ type NamedMemberBase struct {
 type ObjectLiteralElementBase struct{}
 
 type AccessorDeclarationBase struct {
-	NamedMemberBase
-	FunctionLikeWithBodyBase
-	FlowNodeBase
 	TypeElementBase
 	ClassElementBase
 	ObjectLiteralElementBase
-	CompositeBase
 	NodeBase
+	DeclarationBase
+	NamedMemberBase
+	FunctionLikeWithBodyBase
+	FlowNodeBase
+	CompositeBase
 }
 
 type FunctionOrConstructorTypeNodeBase struct {
 	TypeNodeBase
+	DeclarationBase
 	ModifiersBase
 	FunctionLikeBase
 }
@@ -494,6 +493,7 @@ type (
 	ClassElementList                = NodeList // NodeList[*ClassElement]
 	TypeElementList                 = NodeList // NodeList[*TypeElement]
 	ExpressionWithTypeArgumentsList = NodeList // NodeList[*ExpressionWithTypeArguments]
+	HeritageClauseElementList       = NodeList // NodeList[*HeritageClauseElement]
 	EnumMemberList                  = NodeList // NodeList[*EnumMember]
 	ImportSpecifierList             = NodeList // NodeList[*ImportSpecifier]
 	ExportSpecifierList             = NodeList // NodeList[*ExportSpecifier]
@@ -517,6 +517,7 @@ type (
 	Expression                     = Node // Node with ExpressionBase
 	Statement                      = Node // Node with StatementBase
 	TypeNode                       = Node // Node with TypeNodeBase
+	HeritageClauseElement          = Node // ExpressionWithTypeArguments | TypeReferenceNode
 	BlockOrExpression              = Node // Block | Expression
 	NodeBody                       = Node // Block | Expression | ModuleBlock | ModuleDeclaration
 	AccessExpression               = Node // PropertyAccessExpression | ElementAccessExpression
@@ -671,17 +672,17 @@ type QualifiedName struct {
 	FlowNodeBase
 	CompositeBase
 	Left  *EntityName
-	Right *IdentifierNode
+	Right *MemberName
 }
 
-func (f *NodeFactory) NewQualifiedName(left *EntityName, right *IdentifierNode) *Node {
+func (f *NodeFactory) NewQualifiedName(left *EntityName, right *MemberName) *Node {
 	data := &QualifiedName{}
 	data.Left = left
 	data.Right = right
 	return f.newNode(KindQualifiedName, data)
 }
 
-func (f *NodeFactory) UpdateQualifiedName(node *QualifiedName, left *EntityName, right *IdentifierNode) *Node {
+func (f *NodeFactory) UpdateQualifiedName(node *QualifiedName, left *EntityName, right *MemberName) *Node {
 	if left != node.Left || right != node.Right {
 		return updateNode(f.NewQualifiedName(left, right), node.AsNode(), f.hooks)
 	}
@@ -1986,8 +1987,8 @@ func IsMissingDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type FunctionDeclaration struct {
-	DeclarationBase
 	StatementBase
+	DeclarationBase
 	ExportableBase
 	ModifiersBase
 	FunctionLikeWithBodyBase
@@ -2048,8 +2049,8 @@ func IsFunctionDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type ClassDeclaration struct {
-	DeclarationBase
 	StatementBase
+	DeclarationBase
 	ClassLikeBase
 }
 
@@ -2100,6 +2101,7 @@ func IsClassDeclaration(node *Node) bool {
 
 type ClassExpression struct {
 	PrimaryExpressionBase
+	DeclarationBase
 	ClassLikeBase
 }
 
@@ -2152,17 +2154,17 @@ type HeritageClause struct {
 	NodeBase
 	CompositeBase
 	Token Kind
-	Types *ExpressionWithTypeArgumentsList
+	Types *HeritageClauseElementList
 }
 
-func (f *NodeFactory) NewHeritageClause(token Kind, types *ExpressionWithTypeArgumentsList) *Node {
+func (f *NodeFactory) NewHeritageClause(token Kind, types *HeritageClauseElementList) *Node {
 	data := f.heritageClauseArena.New()
 	data.Token = token
 	data.Types = types
 	return f.newNode(KindHeritageClause, data)
 }
 
-func (f *NodeFactory) UpdateHeritageClause(node *HeritageClause, token Kind, types *ExpressionWithTypeArgumentsList) *Node {
+func (f *NodeFactory) UpdateHeritageClause(node *HeritageClause, token Kind, types *HeritageClauseElementList) *Node {
 	if token != node.Token || types != node.Types {
 		return updateNode(f.NewHeritageClause(token, types), node.AsNode(), f.hooks)
 	}
@@ -2190,11 +2192,11 @@ func IsHeritageClause(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type InterfaceDeclaration struct {
-	DeclarationBase
+	TypeSyntaxBase
 	StatementBase
+	DeclarationBase
 	ExportableBase
 	ModifiersBase
-	TypeSyntaxBase
 	name            *IdentifierNode
 	TypeParameters  *TypeParameterList  // Optional
 	HeritageClauses *HeritageClauseList // Optional
@@ -2247,12 +2249,12 @@ func IsInterfaceDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type TypeAliasDeclaration struct {
-	DeclarationBase
+	TypeSyntaxBase
 	StatementBase
+	DeclarationBase
 	ExportableBase
 	ModifiersBase
 	LocalsContainerBase
-	TypeSyntaxBase
 	name           *IdentifierNode
 	TypeParameters *TypeParameterList // Optional
 	Type           *TypeNode
@@ -2330,6 +2332,7 @@ func IsJSTypeAliasDeclaration(node *Node) bool {
 
 type EnumMember struct {
 	NodeBase
+	DeclarationBase
 	NamedMemberBase
 	CompositeBase
 	Initializer *Expression // Optional
@@ -2374,8 +2377,8 @@ func IsEnumMember(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type EnumDeclaration struct {
-	DeclarationBase
 	StatementBase
+	DeclarationBase
 	ExportableBase
 	ModifiersBase
 	CompositeBase
@@ -2487,8 +2490,8 @@ func IsNotEmittedStatement(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type NotEmittedTypeElement struct {
-	NodeBase
 	TypeElementBase
+	NodeBase
 }
 
 func (f *NodeFactory) NewNotEmittedTypeElement() *Node {
@@ -2725,8 +2728,8 @@ func IsNamedImports(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type ExportAssignment struct {
-	DeclarationBase
 	StatementBase
+	DeclarationBase
 	ModifiersBase
 	CompositeBase
 	IsExportEquals bool
@@ -2771,10 +2774,10 @@ func IsExportAssignment(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type NamespaceExportDeclaration struct {
-	DeclarationBase
-	StatementBase
-	ModifiersBase
 	TypeSyntaxBase
+	StatementBase
+	DeclarationBase
+	ModifiersBase
 	name *IdentifierNode
 }
 
@@ -2956,11 +2959,11 @@ func IsExportSpecifier(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type CallSignatureDeclaration struct {
+	TypeElementBase
+	TypeSyntaxBase
 	NodeBase
 	DeclarationBase
 	FunctionLikeBase
-	TypeElementBase
-	TypeSyntaxBase
 }
 
 func (f *NodeFactory) NewCallSignatureDeclaration(typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode) *Node {
@@ -2999,11 +3002,11 @@ func IsCallSignatureDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type ConstructSignatureDeclaration struct {
+	TypeElementBase
+	TypeSyntaxBase
 	NodeBase
 	DeclarationBase
 	FunctionLikeBase
-	TypeElementBase
-	TypeSyntaxBase
 }
 
 func (f *NodeFactory) NewConstructSignatureDeclaration(typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode) *Node {
@@ -3042,11 +3045,11 @@ func IsConstructSignatureDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type ConstructorDeclaration struct {
+	ClassElementBase
 	NodeBase
 	DeclarationBase
 	ModifiersBase
 	FunctionLikeWithBodyBase
-	ClassElementBase
 	CompositeBase
 	ReturnFlowNode *FlowNode
 }
@@ -3201,13 +3204,13 @@ func IsSetAccessorDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type IndexSignatureDeclaration struct {
+	TypeElementBase
+	ClassElementBase
+	TypeSyntaxBase
 	NodeBase
 	DeclarationBase
 	ModifiersBase
 	FunctionLikeBase
-	TypeElementBase
-	ClassElementBase
-	TypeSyntaxBase
 }
 
 func (f *NodeFactory) NewIndexSignatureDeclaration(modifiers *ModifierList, parameters *ParameterList, typeNode *TypeNode) *Node {
@@ -3246,11 +3249,12 @@ func IsIndexSignatureDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type MethodSignatureDeclaration struct {
-	NodeBase
-	NamedMemberBase
-	FunctionLikeBase
 	TypeElementBase
 	TypeSyntaxBase
+	NodeBase
+	DeclarationBase
+	NamedMemberBase
+	FunctionLikeBase
 }
 
 func (f *NodeFactory) NewMethodSignatureDeclaration(modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode) *Node {
@@ -3301,12 +3305,13 @@ func IsMethodSignatureDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type MethodDeclaration struct {
+	ClassElementBase
+	ObjectLiteralElementBase
 	NodeBase
+	DeclarationBase
 	NamedMemberBase
 	FunctionLikeWithBodyBase
 	FlowNodeBase
-	ClassElementBase
-	ObjectLiteralElementBase
 	CompositeBase
 }
 
@@ -3364,10 +3369,11 @@ func IsMethodDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type PropertySignatureDeclaration struct {
-	NodeBase
-	NamedMemberBase
 	TypeElementBase
 	TypeSyntaxBase
+	NodeBase
+	DeclarationBase
+	NamedMemberBase
 	Type        *TypeNode
 	Initializer *Expression
 }
@@ -3418,9 +3424,10 @@ func IsPropertySignatureDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type PropertyDeclaration struct {
-	NodeBase
-	NamedMemberBase
 	ClassElementBase
+	NodeBase
+	DeclarationBase
+	NamedMemberBase
 	CompositeBase
 	Type        *TypeNode   // Optional
 	Initializer *Expression // Optional
@@ -3472,9 +3479,9 @@ func IsPropertyDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type SemicolonClassElement struct {
+	ClassElementBase
 	NodeBase
 	DeclarationBase
-	ClassElementBase
 }
 
 func (f *NodeFactory) NewSemicolonClassElement() *Node {
@@ -3495,11 +3502,11 @@ func IsSemicolonClassElement(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type ClassStaticBlockDeclaration struct {
+	ClassElementBase
 	NodeBase
 	DeclarationBase
 	ModifiersBase
 	LocalsContainerBase
-	ClassElementBase
 	CompositeBase
 	Body           *BlockNode
 	ReturnFlowNode *FlowNode
@@ -4739,9 +4746,9 @@ func IsObjectLiteralExpression(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type SpreadAssignment struct {
+	ObjectLiteralElementBase
 	NodeBase
 	DeclarationBase
-	ObjectLiteralElementBase
 	Expression *Expression
 }
 
@@ -4779,9 +4786,10 @@ func IsSpreadAssignment(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type PropertyAssignment struct {
-	NodeBase
-	NamedMemberBase
 	ObjectLiteralElementBase
+	NodeBase
+	DeclarationBase
+	NamedMemberBase
 	CompositeBase
 	Type        *TypeNode
 	Initializer *Expression
@@ -4833,9 +4841,10 @@ func IsPropertyAssignment(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type ShorthandPropertyAssignment struct {
-	NodeBase
-	NamedMemberBase
 	ObjectLiteralElementBase
+	NodeBase
+	DeclarationBase
+	NamedMemberBase
 	CompositeBase
 	Type                        *TypeNode
 	EqualsToken                 *EqualsToken // Optional
@@ -5119,7 +5128,6 @@ func IsKeywordTypeNode(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type UnionTypeNode struct {
-	TypeNodeBase
 	UnionOrIntersectionTypeNodeBase
 }
 
@@ -5157,7 +5165,6 @@ func IsUnionTypeNode(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type IntersectionTypeNode struct {
-	TypeNodeBase
 	UnionOrIntersectionTypeNodeBase
 }
 
@@ -6014,7 +6021,6 @@ func IsParenthesizedTypeNode(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type FunctionTypeNode struct {
-	TypeNodeBase
 	FunctionOrConstructorTypeNodeBase
 }
 
@@ -6054,7 +6060,6 @@ func IsFunctionTypeNode(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type ConstructorTypeNode struct {
-	TypeNodeBase
 	FunctionOrConstructorTypeNodeBase
 }
 
@@ -7936,6 +7941,7 @@ func IsJSDocTypedefTag(node *Node) bool {
 
 type JSDocSignature struct {
 	JSDocTypeBase
+	DeclarationBase
 	FunctionLikeBase
 }
 
@@ -8026,8 +8032,8 @@ func IsSourceFile(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type ModuleDeclaration struct {
-	DeclarationBase
 	StatementBase
+	DeclarationBase
 	ExportableBase
 	ModifiersBase
 	LocalsContainerBase
@@ -8078,8 +8084,8 @@ func IsModuleDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type ImportEqualsDeclaration struct {
-	DeclarationBase
 	StatementBase
+	DeclarationBase
 	ExportableBase
 	ModifiersBase
 	CompositeBase
@@ -8129,8 +8135,8 @@ func IsImportEqualsDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type ExportDeclaration struct {
-	DeclarationBase
 	StatementBase
+	DeclarationBase
 	ModifiersBase
 	CompositeBase
 	IsTypeOnly      bool
@@ -8481,10 +8487,10 @@ func IsJSDocLinkCode(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type TypeParameterDeclaration struct {
+	TypeSyntaxBase
 	NodeBase
 	DeclarationBase
 	ModifiersBase
-	TypeSyntaxBase
 	name        *IdentifierNode
 	Constraint  *TypeNode   // Optional
 	Expression  *Expression // Optional

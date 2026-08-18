@@ -1,4 +1,6 @@
+import type { CheckFlags } from "#enums/checkFlags";
 import type { CompletionItemKind } from "#enums/completionItemKind";
+import type { DiagnosticCategory } from "#enums/diagnosticCategory";
 import type { ModuleKind } from "#enums/moduleKind";
 import type {
     __String,
@@ -34,6 +36,20 @@ export interface DocumentPosition {
     position: number;
 }
 
+export interface TextEdit {
+    pos: number;
+    end: number;
+    newText: string;
+}
+
+export interface ImportSymbolActionRequest {
+    kind: "importSymbol";
+    symbol: number;
+    isValidTypeOnlyUseSite?: boolean;
+}
+
+export type ImportAdderActionRequest = ImportSymbolActionRequest;
+
 /**
  * Resolves a DocumentIdentifier to a file name.
  * If the identifier contains a URI, it is converted to a file name.
@@ -66,9 +82,61 @@ export interface InitializeResponse {
     currentDirectory: string;
 }
 
-export interface ConfigResponse {
-    options: Record<string, unknown>;
+export interface TypeAcquisition {
+    enable?: boolean;
+    include?: string[];
+    exclude?: string[];
+    disableFilenameBasedTypeAcquisition?: boolean;
+}
+
+export interface ProjectReference {
+    /** A normalized path on disk */
+    path: string;
+    /** The path as the user originally wrote it */
+    originalPath?: string;
+    /** True if it is intended that this reference form a circularity */
+    circular?: boolean;
+}
+
+/**
+ * A diagnostic message from the TypeScript compiler.
+ */
+export interface Diagnostic {
+    /** File name of the source file this diagnostic belongs to, if any */
+    readonly fileName?: string | undefined;
+    /** Start position of the diagnostic */
+    readonly pos: number;
+    /** End position of the diagnostic */
+    readonly end: number;
+    /** Diagnostic error code */
+    readonly code: number;
+    /** Diagnostic category (error, warning, suggestion, message) */
+    readonly category: DiagnosticCategory;
+    /** Localized diagnostic message text */
+    readonly text: string;
+    /** Whether this diagnostic highlights unnecessary code */
+    readonly reportsUnnecessary?: boolean | undefined;
+    /** Whether this diagnostic highlights deprecated code */
+    readonly reportsDeprecated?: boolean | undefined;
+    /** Chained diagnostic messages */
+    readonly messageChain?: readonly Diagnostic[] | undefined;
+    /** Related diagnostic information */
+    readonly relatedInformation?: readonly Diagnostic[] | undefined;
+}
+
+export interface ParsedCommandLine {
+    options: CompilerOptions;
     fileNames: string[];
+    projectReferences?: ProjectReference[];
+    typeAcquisition?: TypeAcquisition;
+    compileOnSave?: boolean;
+    raw?: any;
+    errors: readonly Diagnostic[];
+}
+
+export interface ReadConfigFileResult {
+    config: any;
+    error?: Diagnostic;
 }
 
 export interface LSPUpdateSnapshotParams {
@@ -118,6 +186,21 @@ export type FileChanges = FileChangeSummary | { invalidateAll: true; };
  */
 export interface UpdateSnapshotParams extends LSPUpdateSnapshotParams {
     fileChanges?: FileChanges;
+}
+
+/**
+ * Parameters for updateTemporarySnapshot. Unlike {@link UpdateSnapshotParams}, this
+ * only overrides a single file's content: it does not open or close projects/files
+ * and does not advance the session's latest snapshot. The resulting snapshot is only
+ * for the caller's own queries and must be released when done.
+ */
+export interface UpdateTemporarySnapshotParams {
+    /** The current client snapshot on which to layer the temporary update. */
+    snapshot: number;
+    /** The file whose content is temporarily overridden. */
+    file: DocumentIdentifier;
+    /** The temporary content for the file. */
+    newText: string;
 }
 
 /**
@@ -171,7 +254,10 @@ export interface UpdateSnapshotResponse {
 export interface ProjectResponse {
     id: Path;
     configFileName: string;
+    parsedCommandLine: ParsedCommandLine;
+    /** @deprecated Use `parsedCommandLine.options`. */
     compilerOptions: CompilerOptions;
+    /** @deprecated Use `parsedCommandLine.fileNames`. */
     rootFiles: string[];
 }
 
@@ -198,7 +284,7 @@ export interface SymbolResponse {
     project: Path;
     name: __String;
     flags: number;
-    checkFlags: number;
+    checkFlags: CheckFlags;
     declarations?: string[];
     valueDeclaration?: string;
     parent?: number;

@@ -1,5 +1,7 @@
+import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
+import { resolvePackageExecutable } from "./tsdkPackage";
 
 export const aiConnectionString = "0c6ae279ed8443289764825290e4f9e2-1a736e7c-1324-4338-be46-fc2a58ae4d14-7255";
 
@@ -319,7 +321,7 @@ export function resolveTsdkPath(tsdkPath: string): string {
 }
 
 export async function resolveTsdkPathToExe(tsdkPath: string): Promise<ExeInfo | undefined> {
-    const resolved = workspaceResolve(tsdkPath);
+    const resolved = await realpathUri(workspaceResolve(tsdkPath));
     for (const packagePath of [resolved, vscode.Uri.joinPath(resolved, "..")]) {
         try {
             const packageJsonPath = vscode.Uri.joinPath(packagePath, "package.json");
@@ -336,10 +338,7 @@ export async function resolveTsdkPathToExe(tsdkPath: string): Promise<ExeInfo | 
 
             const exeName = `${expectedBinName}${process.platform === "win32" ? ".exe" : ""}`;
             const platformPackage = `${baseName}-${process.platform}-${process.arch}`;
-            const nodeModules = name.startsWith("@")
-                ? vscode.Uri.joinPath(packagePath, "..", "..")
-                : vscode.Uri.joinPath(packagePath, "..");
-            const exePath = vscode.Uri.joinPath(nodeModules, "@typescript", platformPackage, "lib", exeName);
+            const exePath = vscode.Uri.file(resolvePackageExecutable(packageJsonPath.fsPath, platformPackage, exeName));
             await vscode.workspace.fs.stat(exePath);
             return { path: withLongPathPrefix(exePath.fsPath), version: typeof packageJson.version === "string" ? packageJson.version : "unknown", name: expectedBinName };
         }
@@ -352,6 +351,18 @@ export async function resolveTsdkPathToExe(tsdkPath: string): Promise<ExeInfo | 
             return { path: withLongPathPrefix(exePath.fsPath), version: "(local)", name: baseName, isLocal: true };
         }
         catch {}
+    }
+}
+
+async function realpathUri(uri: vscode.Uri): Promise<vscode.Uri> {
+    if (uri.scheme !== "file") {
+        return uri;
+    }
+    try {
+        return vscode.Uri.file(await fs.promises.realpath(uri.fsPath));
+    }
+    catch {
+        return uri;
     }
 }
 

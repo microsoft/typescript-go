@@ -1,13 +1,17 @@
 import type { CompletionItemKind } from "#enums/completionItemKind";
-import type { DiagnosticCategory } from "#enums/diagnosticCategory";
 import type { ElementFlags } from "#enums/elementFlags";
 import type { ObjectFlags } from "#enums/objectFlags";
 import type { TypeFlags } from "#enums/typeFlags";
 import type { TypePredicateKind } from "#enums/typePredicateKind";
+import type { IndexSignatureDeclaration } from "../../ast/ast.ts";
+import type { Diagnostic } from "../proto.ts";
 import type {
     NodeHandle,
+    Signature,
     Symbol,
 } from "./api.ts";
+
+export type { Diagnostic } from "../proto.ts";
 
 /**
  * A TypeScript type.
@@ -30,6 +34,36 @@ export interface Type {
 
     /** Get the symbol associated with this type, if any */
     getSymbol(): Promise<Symbol | undefined>;
+
+    /** Get the properties of this type. */
+    getProperties(): Promise<readonly Symbol[]>;
+
+    /** Get a named property of this type, if present. */
+    getProperty(propertyName: string): Promise<Symbol | undefined>;
+
+    /** Get the properties of the apparent type of this type. */
+    getApparentProperties(): Promise<readonly Symbol[]>;
+
+    /** Get the apparent type of this type. */
+    getApparentType(): Promise<Type>;
+
+    /** Get the call signatures of this type. */
+    getCallSignatures(): Promise<readonly Signature[]>;
+
+    /** Get the construct signatures of this type. */
+    getConstructSignatures(): Promise<readonly Signature[]>;
+
+    /** Get this type with `null` and `undefined` removed. */
+    getNonNullableType(): Promise<Type>;
+
+    /** Get this type's string index value type, if present. */
+    getStringIndexType(): Promise<Type | undefined>;
+
+    /** Get this type's number index value type, if present. */
+    getNumberIndexType(): Promise<Type | undefined>;
+
+    /** Get all index information for this type. */
+    getIndexInfos(): Promise<readonly IndexInfo[]>;
 
     /** Get the type arguments of the type alias this type was instantiated from, if any */
     getAliasTypeArguments(): Promise<readonly Type[]>;
@@ -174,10 +208,17 @@ export interface UnionType extends UnionOrIntersectionType {
 export interface IntersectionType extends UnionOrIntersectionType {
 }
 
+/** Structured types (TypeFlags.StructuredType) */
+export type StructuredType = ObjectType | UnionType | IntersectionType;
+
 /** Type parameters (TypeFlags.TypeParameter) */
 export interface TypeParameter extends Type {
     /** True if this is the synthetic `this` type of an interface, class, or tuple */
     readonly isThisType?: boolean | undefined;
+    /** Get the constraint (the `T` in `<U extends T>`), or undefined if it has none */
+    getConstraint(): Promise<Type | undefined>;
+    /** Get the default type (the `T` in `<U = T>`), or undefined if it has none */
+    getDefault(): Promise<Type | undefined>;
 }
 
 /** Index types — keyof T (TypeFlags.Index) */
@@ -282,7 +323,7 @@ export interface IndexInfo {
     /** Whether the index signature is readonly */
     readonly isReadonly: boolean;
     /** The index signature declaration, if any */
-    readonly declaration?: NodeHandle | undefined;
+    readonly declaration?: NodeHandle<IndexSignatureDeclaration> | undefined;
 }
 
 /**
@@ -300,14 +341,14 @@ export interface CompletionEntryLabelDetails {
     description?: string | undefined;
 }
 
-/** Options for {@link Checker.getCompletionsAtPosition}. */
+/** Options for {@link LanguageService.getCompletionsAtPosition}. */
 export interface CompletionOptions {
     triggerCharacter?: string | undefined;
     /** Include a `symbol` property on each completion entry. Only populated for symbol-based completions (not keywords or literals). */
     includeSymbol?: boolean | undefined;
 }
 
-/** A single completion item returned by {@link Checker.getCompletionsAtPosition}. */
+/** A single completion item returned by {@link LanguageService.getCompletionsAtPosition}. */
 export interface CompletionEntry {
     readonly name: string;
     readonly kind?: CompletionItemKind | undefined;
@@ -320,34 +361,37 @@ export interface CompletionEntry {
     readonly symbol?: Symbol | undefined;
 }
 
-/** The result of {@link Checker.getCompletionsAtPosition}. */
+/** The result of {@link LanguageService.getCompletionsAtPosition}. */
 export interface CompletionInfo {
     readonly isIncomplete: boolean;
     readonly entries: readonly CompletionEntry[];
 }
 
-/**
- * A diagnostic message from the TypeScript compiler.
- */
-export interface Diagnostic {
-    /** File name of the source file this diagnostic belongs to, if any */
-    readonly fileName?: string | undefined;
-    /** Start position of the diagnostic */
-    readonly pos: number;
-    /** End position of the diagnostic */
-    readonly end: number;
-    /** Diagnostic error code */
-    readonly code: number;
-    /** Diagnostic category (error, warning, suggestion, message) */
-    readonly category: DiagnosticCategory;
-    /** Localized diagnostic message text */
+export interface EmitOutputFile {
     readonly text: string;
-    /** Whether this diagnostic highlights unnecessary code */
-    readonly reportsUnnecessary?: boolean | undefined;
-    /** Whether this diagnostic highlights deprecated code */
-    readonly reportsDeprecated?: boolean | undefined;
-    /** Chained diagnostic messages */
-    readonly messageChain?: readonly Diagnostic[] | undefined;
-    /** Related diagnostic information */
-    readonly relatedInformation?: readonly Diagnostic[] | undefined;
+    readonly sourceFileName?: string | undefined;
+}
+
+export interface EmitResult {
+    readonly emitSkipped: boolean;
+    readonly diagnostics: readonly Diagnostic[];
+    readonly emittedFiles: readonly string[];
+}
+
+export interface EmitOutput {
+    readonly emitSkipped: boolean;
+    readonly diagnostics: readonly Diagnostic[];
+    readonly outputFiles: ReadonlyMap<string, EmitOutputFile>;
+}
+
+export interface ImportSymbolAction {
+    readonly kind: "importSymbol";
+    readonly symbol: Symbol;
+    readonly isValidTypeOnlyUseSite?: boolean;
+}
+
+export type ImportAdderAction = ImportSymbolAction;
+
+export interface GetImportEditsForSymbolsOptions {
+    readonly isValidTypeOnlyUseSite?: boolean;
 }
