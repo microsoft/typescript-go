@@ -190,6 +190,27 @@
                         "default": "auto",
                         "description": "%native-preview.showFailedResponses.description%",
                         "scope": "window"
+                    },
+                    "js/ts.server.trackFlakyDiagnostics": {
+                        "type": "string",
+                        "enum": [
+                            "panic",
+                            "log",
+                            "never",
+                            "auto"
+                        ],
+                        "enumDescriptions": [
+                            "%native-preview.trackFlakyDiagnostics.panic%",
+                            "%native-preview.trackFlakyDiagnostics.log%",
+                            "%native-preview.trackFlakyDiagnostics.never%",
+                            "%native-preview.trackFlakyDiagnostics.auto%"
+                        ],
+                        "default": "auto",
+                        "tags": [
+                            "experimental"
+                        ],
+                        "description": "%native-preview.trackFlakyDiagnostics.description%",
+                        "scope": "window"
                     }
                 }
             }
@@ -340,6 +361,7 @@
     "scripts": {
         "build": "tsc && npm run bundle",
         "bundle": "esbuild src/extension.ts --bundle --external:vscode --platform=node --format=cjs --outfile=dist/extension.bundle.js --sourcemap",
+        "test": "esbuild test/tsdkPackage.test.ts --bundle --platform=node --format=cjs --outfile=dist/test/tsdkPackage.test.cjs && node --test dist/test/tsdkPackage.test.cjs",
         "watch": "npm run bundle -- --watch",
         "generateLocTest": "npx @vscode/l10n-dev generate-pseudo -o ./l10n/ ./l10n/bundle.l10n.json ./package.nls.json",
         "generateLocBundle": "npx @vscode/l10n-dev export --outDir ./l10n ./src",
@@ -353,6 +375,7 @@
     },
     "devDependencies": {
         "@types/vscode": "~1.125.0",
+        "@typescript/bundled-typescript": "npm:typescript@7.0.2",
         "@vscode/vsce": "^3.9.2",
         "esbuild": "^0.28.1"
     }

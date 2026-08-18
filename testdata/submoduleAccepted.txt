@@ -302,6 +302,33 @@ compiler/indexTypeNoSubstitutionTemplateLiteral.symbols.diff
 compiler/indexTypeNoSubstitutionTemplateLiteral.types.diff
 compiler/inferenceFromIncompleteSource.errors.txt.diff
 
+## Heritage clause type references use type-space qualified names ##
+compiler/bluebirdStaticThis.types.diff
+compiler/classdecl(target=es2015).types.diff
+compiler/complexRecursiveCollections.types.diff
+compiler/complicatedPrivacy(target=es2015).types.diff
+compiler/declFileGenericType.types.diff
+compiler/declFileGenericType2.types.diff
+compiler/declFileModuleContinuation.types.diff
+compiler/declFileWithInternalModuleNameConflictsInExtendsClause1.types.diff
+compiler/declFileWithInternalModuleNameConflictsInExtendsClause2.types.diff
+compiler/declFileWithInternalModuleNameConflictsInExtendsClause3.types.diff
+compiler/declarationEmitNameConflicts.types.diff
+compiler/genericConstraintOnExtendedBuiltinTypes.types.diff
+compiler/genericConstraintOnExtendedBuiltinTypes2.types.diff
+compiler/interfaceDeclaration3.types.diff
+compiler/interfaceDeclaration4.types.diff
+compiler/interfacePropertiesWithSameName2.types.diff
+compiler/jsxComplexSignatureHasApplicabilityError.types.diff
+compiler/privacyClassImplementsClauseDeclFile.types.diff
+compiler/recursiveClassReferenceTest.types.diff
+compiler/unionReductionWithStringMappingAndIdenticalBaseTypeExistsNoCrash.types.diff
+conformance/extendsClause.types.diff
+conformance/genericTypeReferenceWithoutTypeArgument.types.diff
+conformance/implementsClause.types.diff
+conformance/inlineJsxFactoryDeclarationsLocalTypes.types.diff
+conformance/nestedNamespace.types.diff
+
 ## more concise errors ##
 compiler/arrayBestCommonTypes.errors.txt.diff
 compiler/arrayCast.errors.txt.diff
@@ -592,6 +619,7 @@ conformance/subtypingWithNumericIndexer4.errors.txt.diff
 conformance/subtypingWithStringIndexer2.errors.txt.diff
 conformance/subtypingWithStringIndexer3.errors.txt.diff
 conformance/subtypingWithStringIndexer4.errors.txt.diff
+conformance/thisTypeInFunctionsNegative.errors.txt.diff
 conformance/typedefMultipleTypeParameters.errors.txt.diff
 conformance/typeSatisfaction.errors.txt.diff
 conformance/typeSatisfaction_errorLocations1.errors.txt.diff
@@ -647,6 +675,7 @@ compiler/deeplyNestedAssignabilityIssue.errors.txt.diff
 compiler/esModuleInteropPrettyErrorRelatedInformation.errors.txt.diff
 compiler/prettyContextNotDebugAssertion.errors.txt.diff
 compiler/prettyFileWithErrorsAndTabs.errors.txt.diff
+compiler/manyCompilerErrorsInTheTwoFiles.errors.txt.diff
 
 ## "Call signature return type" layer removed from error pyramid
 compiler/promisePermutations.errors.txt.diff
@@ -664,6 +693,8 @@ conformance/types.asyncGenerators.es2018.2.errors.txt.diff
 
 ## Error spans for non-BMP characters (surrogate pairs) are measured by code points instead of UTF-16 code units, causing span widths and positions to shift
 compiler/regularExpressionCharacterClassRangeOrder.errors.txt.diff
+compiler/regularExpressionScanning(target=es2015).errors.txt.diff
+compiler/regularExpressionScanning(target=esnext).errors.txt.diff
 compiler/regularExpressionWithNonBMPFlags.errors.txt.diff
 compiler/unicodeEscapesInNames02(target=es2015).errors.txt.diff
 
@@ -787,12 +818,6 @@ conformance/jsdocImplements_missingType.errors.txt.diff
 compiler/mixinPrivateAndProtected.errors.txt.diff
 conformance/mixinAccessors3.errors.txt.diff
 conformance/typeArgumentInferenceWithClassExpression2.errors.txt.diff
-
-## One error instead of 3 emitted for `<T>(arg) => expr` in JSX-syntax files
-conformance/nodeModulesForbidenSyntax(module=node16).errors.txt.diff
-conformance/nodeModulesForbidenSyntax(module=node18).errors.txt.diff
-conformance/nodeModulesForbidenSyntax(module=node20).errors.txt.diff
-conformance/nodeModulesForbidenSyntax(module=nodenext).errors.txt.diff
 
 ## `super()` call no longer flagged as error when the class heritage clause already has an error. Immaterial.
 compiler/interfaceMergeWithNonGenericTypeArguments.errors.txt.diff
@@ -1060,6 +1085,7 @@ conformance/nestedDestructuringOfRequire.js.diff
 conformance/jsDeclarationsFunctionKeywordProp(target=es2015).js.diff
 conformance/jsDeclarationsFunctionKeywordPropExhaustive(target=es2015).js.diff
 conformance/nullPropertyName.js.diff
+conformance/typeFromPropertyAssignment29.js.diff
 
 ## Namespace converted to type alias in declaration emit (Documented in CHANGES.md in section "JSDoc Tags and Types")
 ## `namespace Dotted { type Name = number }` → `type Dotted = number`
@@ -1284,6 +1310,7 @@ compiler/letDeclarations.js.diff
 compiler/allowJscheckJsTypeParameterNoCrash.types.diff
 compiler/fieldAndGetterWithSameName.symbols.diff
 conformance/autoAccessor11.symbols.diff
+conformance/objectLiteralErrors(target=es2015).errors.txt.diff
 conformance/objectLiteralErrors(target=es2015).symbols.diff
 conformance/objectLiteralErrors(target=es2015).types.diff
 conformance/propertyAndAccessorWithSameName.symbols.diff
@@ -1424,3 +1451,69 @@ conformance/noInferRedeclaration.js.diff
 
 # Better isolatedDeclarations error issued on cast initializer before required parameter
 compiler/isolatedDeclarationsAddUndefined.errors.txt.diff
+
+# Fixed bogus circularity error caused by reporting missing `this.` member in a return expression
+compiler/checkingObjectWithThisInNamePositionNoCrash.errors.txt.diff
+compiler/accessorInferredReturnTypeErrorInReturnStatement.errors.txt.diff
+conformance/thisInObjectLiterals.errors.txt.diff
+
+# Better circularity handling in computed name checking
+compiler/blockScopedBindingUsedBeforeDef.errors.txt.diff
+
+# Minor differences in related spans or error locations for circular mapped types
+compiler/incorrectRecursiveMappedTypeConstraint.errors.txt.diff
+compiler/typeParameterWithInvalidConstraintType.errors.txt.diff
+conformance/recursiveMappedTypes.errors.txt.diff
+
+# Slight difference in checking parse errors
+compiler/reachabilityChecksNoCrash1.errors.txt.diff
+
+# Reduction in follow-on errors after erroneous use of `in` in computed name
+conformance/mappedTypeProperties.errors.txt.diff
+
+# Vastly different parsing
+conformance/jsdocDisallowedInTypescript.errors.txt.diff
+
+# Differing/better spans/related info for some errors
+compiler/constructorWithIncompleteTypeAnnotation.errors.txt.diff
+
+## checkchildren: dispatch methods now always check their child nodes ##
+# The checker methods dispatched from checkSourceElementWorker/checkExpressionWorker
+# (checkReturnStatement, checkYieldExpression, checkExportAssignment, checkTypePredicate,
+# checkAssertion) now always check their child nodes, even when an early return fires for a
+# grammar error or a misplaced construct (e.g. `yield`/`return` outside a function, `export =`
+# in a namespace). This keeps diagnostics stable regardless of traversal order and removes the
+# emit-resolver "pre-emit/post-emit diagnostic counts do not match" instability. The TypeScript
+# submodule skips these children on error paths (surfacing the diagnostics only lazily via the
+# emit resolver, if at all), so we now report some additional, correct diagnostics up front.
+compiler/multiLinePropertyAccessAndArrowFunctionIndent1.errors.txt.diff
+compiler/parseErrorIncorrectReturnToken.errors.txt.diff
+conformance/parserErrorRecovery_ModuleElement1.errors.txt.diff
+conformance/parserExportAssignment5.errors.txt.diff
+conformance/parserExportAssignment9.errors.txt.diff
+conformance/parserStatementIsNotAMemberVariableDeclaration1(alwaysstrict=true).errors.txt.diff
+conformance/YieldExpression12_es6.errors.txt.diff
+conformance/YieldExpression14_es6.errors.txt.diff
+conformance/YieldExpression15_es6.errors.txt.diff
+conformance/YieldExpression17_es6.errors.txt.diff
+conformance/YieldExpression2_es6.errors.txt.diff
+
+# Binding patterns are now preserved in declaration emit
+compiler/declarationEmitDestructuringArrayPattern1.js.diff
+compiler/declarationEmitDestructuringArrayPattern2.js.diff
+compiler/declarationEmitDestructuringArrayPattern3.js.diff
+compiler/declarationEmitDestructuringArrayPattern4.js.diff
+compiler/declarationEmitDestructuringArrayPattern5.js.diff
+compiler/declarationEmitDestructuringObjectLiteralPattern.js.diff
+compiler/declarationEmitDestructuringObjectLiteralPattern1.js.diff
+compiler/declarationEmitDestructuringObjectLiteralPattern2.js.diff
+compiler/declarationEmitDestructuringPrivacyError.js.diff
+compiler/declarationEmitExpressionInExtends6.js.diff
+compiler/declarationEmitNonExportedBindingPattern.js.diff
+compiler/declarationEmitOptionalMappedTypePropertyNoStrictNullChecks1.js.diff
+compiler/declarationEmitOptionalMappedTypePropertyNoStrictNullChecks2.js.diff
+compiler/declarationEmitOptionalMappedTypePropertyNoStrictNullChecks3.js.diff
+compiler/destructuredDeclarationEmit.js.diff
+compiler/isolatedDeclarationErrorsExpressions.errors.txt.diff
+conformance/dependentDestructuredVariables.js.diff
+conformance/stringLiteralTypesAndTuples01.js.diff

@@ -586,12 +586,24 @@ func (c *Checker) narrowTypeByEquality(t *Type, operator ast.Kind, value *ast.No
 				return c.nonPrimitiveType
 			}
 		}
+		if !doubleEquals && valueType.flags&TypeFlagsPrimitive != 0 && c.isUniformUnionType(t) {
+			regularType := c.getRegularTypeOfLiteralType(valueType)
+			if c.unionContainsType(t, regularType, false /*matchSymbol*/) {
+				return regularType
+			}
+		}
 		filteredType := c.filterType(t, func(t *Type) bool {
 			return c.areTypesComparable(t, valueType) || doubleEquals && isCoercibleUnderDoubleEquals(t, valueType)
 		})
 		return c.replacePrimitivesWithLiterals(filteredType, valueType)
 	}
 	if isUnitType(valueType) {
+		if c.isUniformUnionType(t) {
+			filteredType := c.removeType(t, c.getRegularTypeOfLiteralType(valueType))
+			if filteredType != t {
+				return filteredType
+			}
+		}
 		return c.filterType(t, func(t *Type) bool {
 			return !(c.isUnitLikeType(t) && c.areTypesComparable(t, valueType))
 		})
@@ -736,12 +748,13 @@ func (c *Checker) narrowTypeByDiscriminant(t *Type, access *ast.Node, narrowType
 }
 
 func (c *Checker) isMatchingConstructorReference(f *FlowState, expr *ast.Node) bool {
-	if ast.IsAccessExpression(expr) {
-		if accessedName, ok := c.getAccessedPropertyName(expr); ok && accessedName == "constructor" && c.isMatchingReference(f.reference, expr.Expression()) {
-			return true
-		}
+	var name *ast.Node
+	if ast.IsPropertyAccessExpression(expr) {
+		name = expr.AsPropertyAccessExpression().Name()
+	} else if ast.IsElementAccessExpression(expr) && ast.IsStringLiteralLike(expr.AsElementAccessExpression().ArgumentExpression) {
+		name = expr.AsElementAccessExpression().ArgumentExpression
 	}
-	return false
+	return name != nil && name.Text() == "constructor" && c.isMatchingReference(f.reference, expr.Expression())
 }
 
 func (c *Checker) narrowTypeByConstructor(t *Type, operator ast.Kind, identifier *ast.Node, assumeTrue bool) *Type {
@@ -1109,8 +1122,16 @@ func (c *Checker) narrowTypeBySwitchOnDiscriminant(t *Type, data *ast.FlowSwitch
 	if discriminantType.flags&TypeFlagsNever != 0 {
 		caseType = c.neverType
 	} else {
-		filtered := c.filterType(t, func(t *Type) bool { return c.areTypesComparable(discriminantType, t) })
-		caseType = c.replacePrimitivesWithLiterals(filtered, discriminantType)
+		if discriminantType.flags&TypeFlagsPrimitive != 0 && c.isUniformUnionType(t) {
+			regularType := c.getRegularTypeOfLiteralType(discriminantType)
+			if c.unionContainsType(t, regularType, false /*matchSymbol*/) {
+				caseType = regularType
+			}
+		}
+		if caseType == nil {
+			filtered := c.filterType(t, func(t *Type) bool { return c.areTypesComparable(discriminantType, t) })
+			caseType = c.replacePrimitivesWithLiterals(filtered, discriminantType)
+		}
 	}
 	if !hasDefaultClause {
 		return caseType
@@ -2133,6 +2154,10 @@ func (c *Checker) getTypeOfDottedName(node *ast.Node, diagnostic *ast.Diagnostic
 
 func (c *Checker) getExplicitTypeOfSymbol(symbol *ast.Symbol, diagnostic *ast.Diagnostic) *Type {
 	symbol = c.resolveSymbol(symbol)
+	if !c.resolvingExplicitTypeOfSymbol.AddIfAbsent(symbol) {
+		return nil
+	}
+	defer c.resolvingExplicitTypeOfSymbol.Delete(symbol)
 	if symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsMethod|ast.SymbolFlagsClass|ast.SymbolFlagsValueModule) != 0 {
 		return c.getTypeOfSymbol(symbol)
 	}
@@ -2410,7 +2435,12 @@ func (c *Checker) typeMaybeAssignableTo(source *Type, target *Type) bool {
 	if source.flags&TypeFlagsUnion == 0 {
 		return c.isTypeAssignableTo(source, target)
 	}
-	for _, t := range source.AsUnionType().types {
+	// Quick exit when source union contains the target type
+	if containsType(source.Types(), target) {
+		return true
+	}
+	// Otherwise, check if any constituent type of the source union is assignable to the target type
+	for _, t := range source.Types() {
 		if c.isTypeAssignableTo(t, target) {
 			return true
 		}

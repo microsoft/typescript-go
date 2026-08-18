@@ -8,8 +8,12 @@ import type {
     VariableStatement,
 } from "@typescript/native-preview/unstable/ast";
 import {
+    getTokenAtPosition,
+    isClassDeclaration,
     isImportDeclaration,
+    isInterfaceDeclaration,
     isNamedImports,
+    isValidTypeOnlyAliasUseSite,
     SyntaxKind,
     TokenFlags,
 } from "@typescript/native-preview/unstable/ast";
@@ -448,6 +452,58 @@ describe("getSynthesizedDeepClones", () => {
 });
 
 // ---------------------------------------------------------------------------
+// Type-only import use sites
+// ---------------------------------------------------------------------------
+
+describe("isValidTypeOnlyAliasUseSite", () => {
+    test("classifies syntactic type-only import use sites", () => {
+        const source = `
+type TypeUse = TypeOnlyName;
+const valueUse = ValueName;
+const shorthandUse = { ShorthandName };
+interface InterfaceUse extends InterfaceBase {}
+class ImplementsUse implements ImplementsBase {}
+class ExtendsUse extends ExtendsBase {}
+abstract class AbstractComputed {
+    abstract [AbstractKey](): void;
+}
+interface InterfaceComputed {
+    [InterfaceKey]: string;
+}
+type TypeQueryUse = typeof TypeQueryName;
+/** @link JSDocLinkBase#JSDocLinkMember */
+class JSDocLinkUse {}
+/** @augments JSDocAugmentsBase */
+class JSDocAugmentsUse {}
+`;
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/index.ts": source,
+        });
+        try {
+            const sourceFile = getRemoteSourceFile(api, "/tsconfig.json", "/src/index.ts");
+            const tokenAt = (text: string) => getTokenAtPosition(sourceFile, source.indexOf(text));
+
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("TypeOnlyName")), true);
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("ValueName")), false);
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("ShorthandName")), false);
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("InterfaceBase")), true);
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("ImplementsBase")), true);
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("ExtendsBase")), false);
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("AbstractKey")), true);
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("InterfaceKey")), true);
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("TypeQueryName")), true);
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("JSDocLinkBase")), true);
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("JSDocLinkMember")), true);
+            assert.equal(isValidTypeOnlyAliasUseSite(tokenAt("JSDocAugmentsBase")), true);
+        }
+        finally {
+            api.close();
+        }
+    });
+});
+
+// ---------------------------------------------------------------------------
 // Integration: visitor transformation
 // ---------------------------------------------------------------------------
 
@@ -523,6 +579,29 @@ function getRemoteSourceFile(api: API, configPath: string, filePath: string) {
 }
 
 describe("RemoteNode + cloneNode", () => {
+    test("uses distinct nodes for expression and type heritage", () => {
+        const api = spawnAPI({
+            "/tsconfig.json": "{}",
+            "/src/heritage.ts": `
+class C extends Base<number> implements Contract<string> {}
+interface I extends Parent<boolean> {}
+`,
+        });
+        try {
+            const sf = getRemoteSourceFile(api, "/tsconfig.json", "/src/heritage.ts");
+            const classDecl = sf.statements[0];
+            const interfaceDecl = sf.statements[1];
+            assert.ok(isClassDeclaration(classDecl));
+            assert.ok(isInterfaceDeclaration(interfaceDecl));
+            assert.strictEqual(classDecl.heritageClauses?.[0].types[0].kind, SyntaxKind.ExpressionWithTypeArguments);
+            assert.strictEqual(classDecl.heritageClauses?.[1].types[0].kind, SyntaxKind.TypeReference);
+            assert.strictEqual(interfaceDecl.heritageClauses?.[0].types[0].kind, SyntaxKind.TypeReference);
+        }
+        finally {
+            api.close();
+        }
+    });
+
     test("cloneNode produces a NodeObject from a RemoteNode", () => {
         const api = spawnAPI();
         try {
