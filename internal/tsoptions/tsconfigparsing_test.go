@@ -1195,6 +1195,37 @@ func TestContentMappers(t *testing.T) {
 	}
 }
 
+func TestContentMappersAreInheritedFromExtendedConfig(t *testing.T) {
+	t.Parallel()
+	config := testConfig{
+		jsonText:       `{ "extends": "./base.json" }`,
+		configFileName: "tsconfig.json",
+		basePath:       "/project",
+		allFileList: map[string]string{
+			"/project/base.json":                            `{ "contentMappers": [{ "package": "vue-mapper", "extensions": [".vue"] }], "include": ["src"] }`,
+			"/project/src/index.ts":                         "export {};",
+			"/project/src/component.vue":                    "<template></template>",
+			"/project/node_modules/vue-mapper/package.json": `{ "name": "vue-mapper", "version": "1.2.3", "typescript": { "contentMapper": { "exec": ["node", "./mapper.js"] } } }`,
+		},
+		existingOptions: &core.CompilerOptions{RunExternalCode: core.TSTrue},
+	}
+	for name, getParsed := range map[string]func(testConfig, tsoptions.ParseConfigHost, string) *tsoptions.ParsedCommandLine{
+		"json api":           getParsedWithJsonApi,
+		"jsonSourceFile api": getParsedWithJsonSourceFileApi,
+	} {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			host := tsoptionstest.NewVFSParseConfigHost(config.allFileList, config.basePath, true /*useCaseSensitiveFileNames*/)
+			parsed := getParsed(config, host, config.basePath)
+			assert.Equal(t, len(parsed.Errors), 0)
+			assert.Equal(t, len(parsed.ContentMappers()), 1)
+			assert.Equal(t, parsed.ContentMappers()[0].Package, "vue-mapper")
+			assert.DeepEqual(t, parsed.ContentMapperExtensions(), []string{".vue"})
+			assert.Assert(t, slices.Contains(parsed.FileNames(), "/project/src/component.vue"))
+		})
+	}
+}
+
 func TestContentMappersRequireFlag(t *testing.T) {
 	t.Parallel()
 

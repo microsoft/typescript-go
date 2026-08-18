@@ -28,6 +28,7 @@ type extendsResult struct {
 	include             []any
 	exclude             []any
 	files               []any
+	contentMappers      []any
 	compileOnSave       bool
 	extendedSourceFiles collections.Set[string]
 }
@@ -1165,6 +1166,9 @@ func parseConfig(
 			setPropertyValue("include")
 			setPropertyValue("exclude")
 			setPropertyValue("files")
+			if extendedRawMap, ok := extendsRaw.(*collections.OrderedMap[string, any]); ok && extendedRawMap.Has("contentMappers") {
+				result.contentMappers, _ = extendedRawMap.GetOrZero("contentMappers").([]any)
+			}
 			if extendedRawMap, ok := extendsRaw.(*collections.OrderedMap[string, any]); ok && extendedRawMap.Has("compileOnSave") {
 				if compileOnSave, ok := extendedRawMap.GetOrZero("compileOnSave").(bool); ok {
 					result.compileOnSave = compileOnSave
@@ -1195,6 +1199,9 @@ func parseConfig(
 		}
 		if result.files != nil {
 			ownConfig.raw.(*collections.OrderedMap[string, any]).Set("files", result.files)
+		}
+		if result.contentMappers != nil && !ownConfig.raw.(*collections.OrderedMap[string, any]).Has("contentMappers") {
+			ownConfig.raw.(*collections.OrderedMap[string, any]).Set("contentMappers", result.contentMappers)
 		}
 		if result.compileOnSave && !ownConfig.raw.(*collections.OrderedMap[string, any]).Has("compileOnSave") {
 			ownConfig.raw.(*collections.OrderedMap[string, any]).Set("compileOnSave", result.compileOnSave)
