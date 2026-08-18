@@ -102,6 +102,7 @@ func NewInferredProject(
 	currentDirectory string,
 	compilerOptions *core.CompilerOptions,
 	rootFileNames []string,
+	projectReferences []*core.ProjectReference,
 	builder *ProjectCollectionBuilder,
 	logger *logging.LogTree,
 ) *Project {
@@ -124,12 +125,30 @@ func NewInferredProject(
 	p.CommandLine = tsoptions.NewParsedCommandLine(
 		compilerOptions,
 		rootFileNames,
+		projectReferences,
 		tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: builder.fs.fs.UseCaseSensitiveFileNames(),
 			CurrentDirectory:          currentDirectory,
 		},
 	)
 	return p
+}
+
+// newInferredProjectFromProject creates an isolated synthetic project seeded with
+// the selected project's compiler state.
+func newInferredProjectFromProject(
+	project *Project,
+	builder *ProjectCollectionBuilder,
+	logger *logging.LogTree,
+) *Project {
+	inferred := NewProject(inferredProjectName, KindInferred, project.currentDirectory, builder, logger)
+	inferred.CommandLine = project.Program.CommandLine()
+	inferred.Program = project.Program
+	inferred.ProgramLastUpdate = project.ProgramLastUpdate
+	inferred.host = project.host
+	inferred.checkerPool = project.checkerPool // !!!
+	inferred.dirty = false
+	return inferred
 }
 
 func NewProject(
@@ -307,11 +326,13 @@ func (p *Project) getCommandLineWithTypingsFiles() *tsoptions.ParsedCommandLine 
 			p.commandLineWithTypingsFiles = tsoptions.NewParsedCommandLine(
 				p.CommandLine.CompilerOptions(),
 				newRootNames,
+				p.CommandLine.ProjectReferences(),
 				tspath.ComparePathsOptions{
 					UseCaseSensitiveFileNames: p.host.FS().UseCaseSensitiveFileNames(),
 					CurrentDirectory:          p.currentDirectory,
 				},
 			)
+			p.commandLineWithTypingsFiles.Errors = p.CommandLine.Errors
 		}
 	})
 	return p.commandLineWithTypingsFiles

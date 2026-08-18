@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"maps"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
@@ -68,11 +69,45 @@ func (s *Session) APIUpdateTemporary(ctx context.Context, baseSnapshot *Snapshot
 	return newSnapshot, nil
 }
 
-// APICreateProgram creates an isolated snapshot containing one synthetic project
-// with the supplied root files and compiler options. The caller owns the returned
+// APICreateProgram creates an isolated snapshot containing one synthetic project.
+// Without an old snapshot it starts from the underlying filesystem; otherwise it
+// derives from the old snapshot and applies fileChanges. The caller owns the returned
 // snapshot reference and must call snapshot.Deref(s) when done.
-func (s *Session) APICreateProgram(ctx context.Context, rootFileNames []string, options *core.CompilerOptions) *Snapshot {
-	baseSnapshot := s.getSnapshot(ctx, ResourceRequest{}, true)
-	defer baseSnapshot.Deref(s)
-	return baseSnapshot.cloneForProgram(ctx, rootFileNames, options, s)
+func (s *Session) APICreateProgram(
+	ctx context.Context,
+	rootFileNames []string,
+	options *core.CompilerOptions,
+	projectReferences []*core.ProjectReference,
+	configFileParsingDiagnostics []*ast.Diagnostic,
+	oldSnapshot *Snapshot,
+	oldProject *Project,
+	fileChanges FileChangeSummary,
+) *Snapshot {
+	if oldSnapshot != nil {
+		newSnapshot := oldSnapshot.cloneForProgram(
+			ctx,
+			rootFileNames,
+			options,
+			projectReferences,
+			configFileParsingDiagnostics,
+			oldProject,
+			fileChanges,
+			s,
+		)
+		return newSnapshot
+	}
+
+	snapshot, _ := s.APIUpdate(ctx, fileChanges, nil /*apiREquest*/)
+	defer snapshot.Deref(s)
+	newSnapshot := snapshot.cloneForProgram(
+		ctx,
+		rootFileNames,
+		options,
+		projectReferences,
+		configFileParsingDiagnostics,
+		nil,
+		fileChanges,
+		s,
+	)
+	return newSnapshot
 }

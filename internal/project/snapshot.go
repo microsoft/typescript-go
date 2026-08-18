@@ -8,7 +8,9 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
@@ -19,6 +21,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
+	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
@@ -79,26 +82,42 @@ func NewSnapshot(
 	return s
 }
 
-// cloneForProgram creates a snapshot whose project collection contains
-// only a synthetic project described by rootFileNames and options.
-func (s *Snapshot) cloneForProgram(ctx context.Context, rootFileNames []string, options *core.CompilerOptions, session *Session) *Snapshot {
+// Clones a snapshot and creates a single program in it containing the specified root files and compiler options.
+func (s *Snapshot) cloneForProgram(
+	ctx context.Context,
+	rootFileNames []string,
+	compilerOptions *core.CompilerOptions,
+	projectReferences []*core.ProjectReference,
+	configFileParsingDiagnostics []*ast.Diagnostic,
+	oldProject *Project,
+	fileChanges FileChangeSummary,
+	session *Session,
+) *Snapshot {
 	var logger *logging.LogTree
+
+	// Print in-progress logs immediately if cloning fails
 	if session.options.LoggingEnabled {
-		logger = logging.NewLogTree(fmt.Sprintf("Creating program snapshot from snapshot %d", s.id))
+		defer func() {
+			if r := recover(); r != nil {
+				session.logger.Log(logger.String())
+				panic(r)
+			}
+		}()
+
+		logger = logging.NewLogTree(fmt.Sprintf("Cloning snapshot %d for program", s.id))
 	}
 
 	start := time.Now()
-	fs := newSnapshotFSBuilder(
-		session.fs.fs,
-		s.fs.overlays,
-		s.fs.overlays,
-		s.fs.diskFiles,
-		s.fs.diskDirectories,
-		s.fs.nodeModulesRealpathAliases,
-		session.options.PositionEncoding,
-		s.toPath,
-	)
+	fs := newSnapshotFSBuilder(session.fs.fs, s.fs.overlays, s.fs.overlays, s.fs.diskFiles, s.fs.diskDirectories, s.fs.nodeModulesRealpathAliases, session.options.PositionEncoding, s.toPath)
+	fileChanges = processFileChanges(fs, s.fs, fileChanges, logger)
+
+	// We start out with a new config file registry and project collection instead of
+	// the ones from the base snapshot because we want to retain only the projects that are reachable from the new program,
+	// and the base snapshot isn't necessarily a result of a previous `cloneForProgram`.
 	configFileRegistry := &ConfigFileRegistry{}
+	if oldProject != nil && oldProject.Program != nil {
+		configFileRegistry = configFileRegistryForProgram(oldProject.Program)
+	}
 	projectCollection := &ProjectCollection{
 		toPath:              s.toPath,
 		configFileRegistry:  configFileRegistry,
@@ -110,50 +129,144 @@ func (s *Snapshot) cloneForProgram(ctx context.Context, rootFileNames []string, 
 			openFiles:    make(map[tspath.Path]apiOpenedFile),
 		},
 	}
+
 	newSnapshotID := session.snapshotID.Add(1)
-	builder := newProjectCollectionBuilder(
+	projectCollectionBuilder := newProjectCollectionBuilder(
 		ctx,
 		newSnapshotID,
 		fs,
 		projectCollection,
 		configFileRegistry,
 		projectCollection.apiState,
-		options,
+		compilerOptions,
 		s.sessionOptions,
-		"",
+		configFileRegistry.customConfigFileName,
 		session.parseCache,
 		session.extendedConfigCache,
 		session.client,
 	)
-	builder.inferredProject.Set(NewInferredProject(s.sessionOptions.CurrentDirectory, options, rootFileNames, builder, logger))
-	builder.updateProgram(builder.inferredProject, logger.Fork("CreateProgram"))
-	projectCollection, configFileRegistry = builder.Finalize(logger)
+
+	// A program created by `createProgram` is represented by a synthetic inferred project and its program.
+	projectCollectionBuilder.seedInferredProjectForProgram(oldProject, logger)
+	projectCollectionBuilder.updateInferredProject(rootFileNames, compilerOptions, projectReferences, configFileParsingDiagnostics, logger.Fork("UpdateProgramConfig"))
+	if !fileChanges.IsEmpty() {
+		projectCollectionBuilder.DidChangeFiles(fileChanges, logger.Fork("DidChangeFiles"))
+	}
+	// Make sure the program is created and up to date.
+	if projectCollectionBuilder.inferredProject.Value().dirty {
+		projectCollectionBuilder.updateProgram(projectCollectionBuilder.inferredProject, logger.Fork("CreateProgram"))
+	}
+	projectCollectionBuilder.configFileRegistryBuilder.Cleanup()
+
+	newProjectCollection, newConfigFileRegistry := projectCollectionBuilder.Finalize(logger)
+
+	// !!! only cleanDiskCache if `project.ProgramUpdateKind == ProgramUpdateKindNewFiles` or
+	// if base snapshot wasn't a program snapshot.
+	cleanFilesStart := time.Now()
+	removedFiles := 0
+	fs.diskFiles.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) bool {
+		for _, project := range newProjectCollection.Projects() {
+			if project.host != nil && project.host.sourceFS.SeenFile(entry.Key()) {
+				return true
+			}
+		}
+		entry.Delete()
+		removedFiles++
+		return true
+	})
+	if session.options.LoggingEnabled {
+		logger.Logf("Removed %d cached file(s) in %v", removedFiles, time.Since(cleanFilesStart))
+	}
 
 	snapshotFS, _ := fs.Finalize()
 	newSnapshot := NewSnapshot(
 		newSnapshotID,
 		snapshotFS,
 		s.sessionOptions,
-		configFileRegistry,
-		options,
+		newConfigFileRegistry,
+		compilerOptions,
 		s.userPreferences,
 		nil,
 		nil,
 		s.toPath,
 	)
 	newSnapshot.parentId = s.id
-	newSnapshot.ProjectCollection = projectCollection
+	newSnapshot.ProjectCollection = newProjectCollection
+	newSnapshot.ConfigFileRegistry = newConfigFileRegistry
 	newSnapshot.builderLogs = logger
 
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
 		if project.Program != nil {
 			session.programCounter.Ref(project.Program)
-			project.host.freeze(snapshotFS, configFileRegistry)
+			if project.ProgramLastUpdate == newSnapshotID {
+				project.host.freeze(snapshotFS, newConfigFileRegistry)
+			}
 		}
 	}
 
-	logger.Logf("Finished creating program snapshot %d from snapshot %d in %v", newSnapshot.id, s.id, time.Since(start))
+	for _, config := range newSnapshot.ConfigFileRegistry.configs {
+		if config.commandLine != nil && config.commandLine.ConfigFile != nil {
+			for _, file := range config.commandLine.ConfigFile.ExtendedSourceFiles {
+				session.extendedConfigCache.AddOwner(newSnapshot.toPath(file), newSnapshot.id)
+			}
+		}
+	}
+
+	logger.Logf("Finished cloning snapshot %d into snapshot %d for program in %v", s.id, newSnapshot.id, time.Since(start))
 	return newSnapshot
+}
+
+// configFileRegistryForProgram retains only project-reference configs reachable
+// from the selected program. Retaining-project metadata is rewritten for the
+// synthetic project so unrelated projects from the base snapshot are not kept alive.
+func configFileRegistryForProgram(program *compiler.Program) *ConfigFileRegistry {
+	registry := &ConfigFileRegistry{}
+	program.RangeResolvedProjectReference(func(path tspath.Path, config *tsoptions.ParsedCommandLine, _ *tsoptions.ParsedCommandLine, _ int) bool {
+		if config == nil {
+			return true
+		}
+		if registry.configs == nil {
+			registry.configs = make(map[tspath.Path]*configFileEntry)
+		}
+		fileName := config.ConfigName()
+		if fileName == "" {
+			fileName = string(path)
+		}
+		registry.configs[path] = &configFileEntry{
+			fileName:          fileName,
+			commandLine:       config,
+			retainingProjects: map[tspath.Path]struct{}{inferredProjectName: {}},
+		}
+		return true
+	})
+	return registry
+}
+
+// Handles normalization of file changes and snapshotFSBuilder cache invalidation.
+func processFileChanges(fs *snapshotFSBuilder, previousFS *SnapshotFS, fileChanges FileChangeSummary, logger *logging.LogTree) FileChangeSummary {
+	if fileChanges.HasExcessiveWatchEvents() {
+		invalidateStart := time.Now()
+		if fileChanges.InvalidateAll {
+			fs.invalidateCache()
+			logger.Logf("InvalidateAll: invalidated file cache in %v", time.Since(invalidateStart))
+		} else if !fs.watchChangesOverlapCache(fileChanges) {
+			// All watch changes/deletes are files we haven't seen; they should be irrelevant.
+			fileChanges.Changed = collections.Set[lsproto.DocumentUri]{}
+			fileChanges.Deleted = collections.Set[lsproto.DocumentUri]{}
+		} else if fileChanges.IncludesWatchChangeOutsideNodeModules {
+			fs.invalidateCache()
+			logger.Logf("Excessive watch changes detected, invalidated file cache in %v", time.Since(invalidateStart))
+		} else {
+			fs.invalidateNodeModulesCache()
+			logger.Logf("npm install detected, invalidated node_modules cache in %v", time.Since(invalidateStart))
+		}
+	} else {
+		fileChanges = fs.expandAndFilterWatchEvents(fileChanges)
+		fileChanges = previousFS.expandRealpathAliases(fileChanges)
+		fileChanges = fs.markDirtyFiles(fileChanges)
+		fileChanges = fs.convertOpenAndCloseToChanges(fileChanges)
+	}
+	return fileChanges
 }
 
 func (s *Snapshot) GetDefaultProject(uri lsproto.DocumentUri) *Project {
@@ -366,32 +479,10 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	start := time.Now()
 	fs := newSnapshotFSBuilder(session.fs.fs, s.fs.overlays, overlays, s.fs.diskFiles, s.fs.diskDirectories, s.fs.nodeModulesRealpathAliases, session.options.PositionEncoding, s.toPath)
-	if change.fileChanges.HasExcessiveWatchEvents() {
-		invalidateStart := time.Now()
-		if change.fileChanges.InvalidateAll {
-			fs.invalidateCache()
-			logger.Logf("InvalidateAll: invalidated file cache in %v", time.Since(invalidateStart))
-		} else if !fs.watchChangesOverlapCache(change.fileChanges) {
-			// All watch changes/deletes are files we haven't seen; should be irrelevant to us (probably an external tool's build or something)
-			change.fileChanges.Changed = collections.Set[lsproto.DocumentUri]{}
-			change.fileChanges.Deleted = collections.Set[lsproto.DocumentUri]{}
-		} else if change.fileChanges.IncludesWatchChangeOutsideNodeModules {
-			fs.invalidateCache()
-			logger.Logf("Excessive watch changes detected, invalidated file cache in %v", time.Since(invalidateStart))
-		} else {
-			fs.invalidateNodeModulesCache()
-			logger.Logf("npm install detected, invalidated node_modules cache in %v", time.Since(invalidateStart))
-		}
-	} else {
-		change.fileChanges = fs.expandAndFilterWatchEvents(change.fileChanges)
-		change.fileChanges = s.fs.expandRealpathAliases(change.fileChanges)
-		change.fileChanges = fs.markDirtyFiles(change.fileChanges)
-		change.fileChanges = fs.convertOpenAndCloseToChanges(change.fileChanges)
-	}
+	change.fileChanges = processFileChanges(fs, s.fs, change.fileChanges, logger)
 
 	compilerOptionsForInferredProjects := s.compilerOptionsForInferredProjects
 	if change.compilerOptionsForInferredProjects != nil {
-		// !!! mark inferred projects as dirty?
 		compilerOptionsForInferredProjects = change.compilerOptionsForInferredProjects
 	}
 
@@ -422,6 +513,16 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	}
 
 	projectCollectionBuilder.DidChangeCustomConfigFileName(logger.Fork("DidChangeCustomConfigFileName"))
+	// compiler options changed, update inferred project and program
+	if change.compilerOptionsForInferredProjects != nil && projectCollectionBuilder.inferredProject.Value() != nil {
+		if projectCollectionBuilder.updateInferredProject(
+			projectCollectionBuilder.inferredProject.Value().CommandLine.FileNames(),
+			change.compilerOptionsForInferredProjects,
+			projectCollectionBuilder.inferredProject.Value().CommandLine.ProjectReferences(),
+			projectCollectionBuilder.inferredProject.Value().CommandLine.Errors,
+			logger.Fork("DidChangeCompilerOptionsForInferredProjects"),
+		)
+	}
 
 	if !change.fileChanges.IsEmpty() {
 		projectCollectionBuilder.DidChangeFiles(change.fileChanges, logger.Fork("DidChangeFiles"))

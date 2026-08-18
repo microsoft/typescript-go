@@ -1088,7 +1088,33 @@ func (s *Session) handleCreateProgram(ctx context.Context, params *CreateProgram
 		rootFileNames[i] = rootFile.ToAbsoluteFileName(s.projectSession.GetCurrentDirectory())
 	}
 
-	snapshot := s.projectSession.APICreateProgram(ctx, rootFileNames, &params.Options)
+	var oldSnapshot *project.Snapshot
+	var oldProject *project.Project
+	if params.OldProgram != nil {
+		oldSnapshotId := params.OldProgram.Snapshot
+		oldSD, err := s.retainSnapshotData(oldSnapshotId)
+		if err != nil {
+			return nil, err
+		}
+		defer func() { _ = s.releaseSnapshot(oldSnapshotId) }()
+
+		oldSnapshot = oldSD.snapshot
+		oldProject, err = oldSD.getProject(params.OldProgram.Project)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	snapshot := s.projectSession.APICreateProgram(
+		ctx,
+		rootFileNames,
+		&params.CreateProgramOptions.CompilerOptions,
+		params.CreateProgramOptions.ProjectReferences,
+		core.Map(params.CreateProgramOptions.ConfigFileParsingDiagnostics, func(d *DiagnosticResponse) *ast.Diagnostic { return d.ToDiagnostic() }),
+		oldSnapshot,
+		oldProject,
+		s.toFileChangeSummary(params.FileChanges),
+	)
 	project := snapshot.ProjectCollection.InferredProject()
 	if project == nil {
 		snapshot.Deref(s.projectSession)

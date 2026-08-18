@@ -94,14 +94,203 @@ describe("API", () => {
             "/src/index.ts": `export const value: string = 1;`,
         });
         try {
-            const program = await api.createProgram(["/src/index.ts"], { noLib: true, strict: true });
+            // Basic creation exposes the requested options, roots, and diagnostics.
+            const program = await api.createProgram(["/src/index.ts"], { compilerOptions: { noLib: true, strict: true } });
 
             assert.deepEqual(program.getCompilerOptions(), { noLib: true, strict: true });
             assert.deepEqual(await program.getSourceFileNames(), ["/src/index.ts"]);
             assert.equal((await program.getSemanticDiagnostics("/src/index.ts")).length, 1);
 
+            // Program disposal releases its private backing snapshot.
             await program.dispose();
             await assert.rejects(program.getSourceFileNames(), /snapshot .* not found/); // @sync: assert.throws(() => program.getSourceFileNames(), /snapshot .* not found/);
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("createProgram ignores an on-disk tsconfig", async () => {
+        const api = spawnAPI({
+            "/tsconfig.json": JSON.stringify({
+                compilerOptions: { noLib: false, strict: false },
+                files: ["src/from-config.ts"],
+            }),
+            "/src/index.ts": `export const explicitRoot = 1;`,
+            "/src/from-config.ts": `export const configRoot = 1;`,
+        });
+        try {
+            // createProgram is defined entirely by its arguments; it must not
+            // discover the nearby tsconfig or inherit its roots/options.
+            const program = await api.createProgram(
+                ["/src/index.ts"],
+                { compilerOptions: { noLib: true, strict: true } },
+            );
+
+            assert.deepEqual(program.getCompilerOptions(), { noLib: true, strict: true });
+            assert.deepEqual(await program.getSourceFileNames(), ["/src/index.ts"]);
+            assert.deepEqual(await program.getConfigFileNames(), []);
+            assert.equal(await program.getSourceFile("/src/from-config.ts"), undefined);
+            await program.dispose();
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("createProgram includes project references", async () => {
+        const reference = { path: "/lib/tsconfig.json", originalPath: "/lib/tsconfig.json" };
+        const api = spawnAPI({
+            "/src/index.ts": `export const value = 1;`,
+            "/lib/tsconfig.json": JSON.stringify({ compilerOptions: { composite: true, noLib: true }, files: ["index.ts"] }),
+            "/lib/index.ts": `export const lib = 1;`,
+        });
+        try {
+            // createProgram has no root config file, but its synthetic command line
+            // should still carry project references through the server.
+            const program = await api.createProgram(
+                ["/src/index.ts"],
+                { compilerOptions: { noLib: true }, projectReferences: [reference] },
+            );
+            assert.deepEqual(program.getProject().parsedCommandLine.projectReferences, [{ ...reference, circular: false }]);
+            await program.dispose();
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("createProgram includes config file parsing diagnostics", async () => {
+        const diagnostic = {
+            pos: 0,
+            end: 0,
+            code: 9001,
+            category: DiagnosticCategory.Error,
+            text: "Synthetic config parsing error.",
+        };
+        const api = spawnAPI({ "/src/index.ts": `export const value = 1;` });
+        try {
+            // createProgram has no parsed tsconfig of its own, so callers may
+            // attach diagnostics produced while constructing its options.
+            const program = await api.createProgram(
+                ["/src/index.ts"],
+                {
+                    compilerOptions: { noLib: true },
+                    configFileParsingDiagnostics: [diagnostic],
+                },
+            );
+
+            assert.deepEqual(await program.getConfigFileParsingDiagnostics(), [diagnostic]);
+            await program.dispose();
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("createProgram updates an old program with file changes", async () => {
+        const fileName = "/src/index.ts";
+        const options = { compilerOptions: { noLib: true, strict: true } };
+        const { api, fs } = spawnAPIWithFS({
+            [fileName]: `export const value: string = 1;`,
+        });
+        try {
+            // Start with an erroneous program, then update exactly one named file.
+            const oldProgram = await api.createProgram([fileName], options);
+            assert.equal((await oldProgram.getSemanticDiagnostics(fileName)).length, 1);
+
+            fs.writeFile!(fileName, `export const value: string = "valid";`);
+            const newProgram = await api.createProgram(
+                [fileName],
+                options,
+                oldProgram,
+                { changed: [fileName] },
+            );
+
+            // The new program sees the disk edit while the old snapshot remains immutable.
+            assert.equal((await newProgram.getSemanticDiagnostics(fileName)).length, 0);
+            assert.equal((await oldProgram.getSemanticDiagnostics(fileName)).length, 1);
+
+            await newProgram.dispose();
+            await oldProgram.dispose();
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("createProgram updates an old program with invalidateAll", async () => {
+        const fileName = "/src/index.ts";
+        const options = { compilerOptions: { noLib: true, strict: true } };
+        const { api, fs } = spawnAPIWithFS({
+            [fileName]: `export const value: string = 1;`,
+        });
+        try {
+            // invalidateAll reloads inherited file state without naming individual changed files.
+            const oldProgram = await api.createProgram([fileName], options);
+            assert.equal((await oldProgram.getSemanticDiagnostics(fileName)).length, 1);
+
+            fs.writeFile!(fileName, `export const value: string = "valid";`);
+            const newProgram = await api.createProgram(
+                [fileName],
+                options,
+                oldProgram,
+                { invalidateAll: true },
+            );
+
+            // Full invalidation updates only the new program; the old program keeps its original diagnostics.
+            assert.equal((await newProgram.getSemanticDiagnostics(fileName)).length, 0);
+            assert.equal((await oldProgram.getSemanticDiagnostics(fileName)).length, 1);
+
+            await newProgram.dispose();
+            await oldProgram.dispose();
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("createProgram accepts a regular project program as the old program", async () => {
+        const fileName = "/src/index.ts";
+        const { api, fs } = spawnAPIWithFS({
+            "/tsconfig.json": JSON.stringify({ compilerOptions: { noLib: true, strict: true } }),
+            [fileName]: `export const value: string = 1;`,
+        });
+        try {
+            // A Program from a regular configured-project snapshot is also a valid reuse base.
+            const snapshot = await api.updateSnapshot({ openProject: "/tsconfig.json" });
+            const project = snapshot.getProject("/tsconfig.json")!;
+            assert.equal((await project.program.getSemanticDiagnostics(fileName)).length, 1);
+
+            fs.writeFile!(fileName, `export const value: string = "valid";`);
+            const newProgram = await api.createProgram(
+                project.parsedCommandLine.fileNames,
+                {
+                    compilerOptions: project.parsedCommandLine.options,
+                    ...(project.parsedCommandLine.projectReferences
+                        ? { projectReferences: project.parsedCommandLine.projectReferences }
+                        : {}),
+                },
+                project.program,
+                { changed: [fileName] },
+            );
+
+            // The derived synthetic program updates independently of the configured base program.
+            assert.equal((await newProgram.getSemanticDiagnostics(fileName)).length, 0);
+            assert.equal((await project.program.getSemanticDiagnostics(fileName)).length, 1);
+            await newProgram.dispose();
+        }
+        finally {
+            await api.close();
+        }
+    });
+
+    test("createProgram rejects file changes without an old program", async () => {
+        const api = spawnAPI({ "/src/index.ts": `export const value = 1;` });
+        try {
+            // A selective summary has no snapshot state to update unless oldProgram is supplied.
+            const createWithChanges = () => api.createProgram(["/src/index.ts"], { compilerOptions: { noLib: true } }, undefined, { changed: ["/src/index.ts"] });
+            await assert.rejects(createWithChanges, /fileChanges summary requires an oldProgram/); // @sync: assert.throws(createWithChanges, /fileChanges summary requires an oldProgram/);
         }
         finally {
             await api.close();

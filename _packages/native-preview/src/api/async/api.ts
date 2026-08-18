@@ -49,9 +49,11 @@ import {
 import type {
     CompilerOptions,
     CompletionInfoResponse,
+    CreateProgramOptions,
     CreateProgramResponse,
     DocumentIdentifier,
     DocumentPosition,
+    FileChanges,
     ImportAdderActionRequest,
     ImportSymbolActionRequest,
     IndexInfoResponse,
@@ -130,7 +132,7 @@ import type {
 
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 export { CheckFlags, CompletionItemKind, DiagnosticCategory, ElementFlags, EmitOnly, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
-export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutput, EmitOutputFile, EmitResult, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ParsedCommandLine, ProjectReference, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeAcquisition, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, CreateProgramOptions, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutput, EmitOutputFile, EmitResult, FileChanges, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ParsedCommandLine, ProjectReference, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeAcquisition, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 
 interface EmitOutputResponse {
     readonly emitSkipped: boolean;
@@ -281,14 +283,28 @@ export class API<FromLSP extends boolean = false> {
         return this.client.resetTimingInfo();
     }
 
-    // !!! projectReferences
-    // !!! FileChangeSummary, old program
-    // do we expect clients to send us a FileChangeSummary like for `updateSnapshot`?
-    // or somehow check the FS again?
-    async createProgram(rootFiles: DocumentIdentifier[], options: CompilerOptions): Promise<Program> {
+    /**
+     * Creates a program from the current filesystem state, or derives one from
+     * oldProgram after applying fileChanges. fileChanges requires oldProgram.
+     */
+    async createProgram(
+        rootFiles: readonly DocumentIdentifier[],
+        createProgramOptions: CreateProgramOptions,
+        oldProgram?: Program,
+        fileChanges?: FileChanges,
+    ): Promise<Program> {
         await this.ensureInitialized();
 
-        const data = await this.client.apiRequest<CreateProgramResponse>("createProgram", { rootFiles, options });
+        if (fileChanges && !oldProgram) {
+            throw new Error("fileChanges requires an oldProgram");
+        }
+
+        const data = await this.client.apiRequest<CreateProgramResponse>("createProgram", {
+            rootFiles,
+            createProgramOptions,
+            oldProgram: oldProgram ? { snapshot: oldProgram.snapshotId, project: oldProgram.getProject().id } : undefined,
+            fileChanges,
+        });
         const snapshot = new Snapshot(
             { snapshot: data.snapshot, projects: [data.project] },
             this.client,
@@ -782,13 +798,14 @@ export class Project {
 }
 
 export class Program {
-    private snapshotId: number;
-    private project: Project;
-    private client: Client;
-    private sourceFileCache: SourceFileCache;
-    private toPath: (fileName: string) => Path;
-    private decoder = new Wtf8Decoder();
-    private sourceFileMetadataCache = new Map<Path, Promise<SourceFileMetadata | undefined>>();
+    /** @internal */
+    readonly snapshotId: number;
+    private readonly project: Project;
+    private readonly client: Client;
+    private readonly sourceFileCache: SourceFileCache;
+    private readonly toPath: (fileName: string) => Path;
+    private readonly decoder = new Wtf8Decoder();
+    private readonly sourceFileMetadataCache = new Map<Path, Promise<SourceFileMetadata | undefined>>();
     private ownedSnapshot: Snapshot | undefined;
 
     constructor(
@@ -1089,6 +1106,10 @@ export class Program {
             files,
         });
         return toEmitOutput(response);
+    }
+
+    getProject(): Project {
+        return this.project;
     }
 }
 

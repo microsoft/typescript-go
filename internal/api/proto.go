@@ -347,16 +347,29 @@ type UpdateSnapshotParams struct {
 // snapshot that overrides a single file's content.
 type UpdateTemporarySnapshotParams struct {
 	// Snapshot is the current client snapshot on which to layer the temporary update.
-	Snapshot SnapshotID `json:"snapshot"`
+	Snapshot SnapshotID `json:"snapshot,omitempty"`
 	// File identifies the file whose content is temporarily overridden.
 	File DocumentIdentifier `json:"file"`
 	// NewText is the temporary content for the file.
-	NewText string `json:"newText"`
+	NewText string `json:"newText,omitempty"`
 }
 
 type CreateProgramParams struct {
-	RootFiles []DocumentIdentifier `json:"rootFiles"`
-	Options   core.CompilerOptions `json:"options"`
+	RootFiles            []DocumentIdentifier           `json:"rootFiles"`
+	CreateProgramOptions CreateProgramOptions           `json:"createProgramOptions"`
+	OldProgram           *CreateProgramOldProgramParams `json:"oldProgramReference,omitempty"`
+	FileChanges          *APIFileChanges                `json:"fileChanges,omitempty"`
+}
+
+type CreateProgramOptions struct {
+	CompilerOptions              core.CompilerOptions     `json:"compilerOptions"`
+	ProjectReferences            []*core.ProjectReference `json:"projectReferences,omitempty"`
+	ConfigFileParsingDiagnostics []*DiagnosticResponse    `json:"configFileParsingDiagnostics,omitempty"`
+}
+
+type CreateProgramOldProgramParams struct {
+	Snapshot SnapshotID `json:"snapshot,omitempty"`
+	Project  ProjectID  `json:"project,omitempty"`
 }
 
 type CreateProgramResponse struct {
@@ -1319,6 +1332,20 @@ func NewDiagnosticResponse(d *ast.Diagnostic) *DiagnosticResponse {
 	}
 
 	return resp
+}
+
+func (d *DiagnosticResponse) ToDiagnostic() *ast.Diagnostic {
+	return ast.NewDiagnosticFromText(
+		nil,
+		core.NewTextRange(d.Pos, d.End),
+		d.Code,
+		d.Category,
+		d.Text,
+		core.Map(d.MessageChain, func(d *DiagnosticResponse) *ast.Diagnostic { return d.ToDiagnostic() }),
+		core.Map(d.RelatedInformation, func(d *DiagnosticResponse) *ast.Diagnostic { return d.ToDiagnostic() }),
+		d.ReportsUnnecessary,
+		d.ReportsDeprecated,
+	)
 }
 
 // NewDiagnosticResponses converts a slice of ast.Diagnostics to DiagnosticResponses.
