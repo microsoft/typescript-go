@@ -3,6 +3,7 @@ package lsp
 import (
 	"context"
 	"io"
+	"slices"
 	"testing"
 	"time"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
+	"gotest.tools/v3/assert"
 )
 
 type shutdownTestReader struct{}
@@ -20,6 +22,48 @@ func (shutdownTestReader) Read() (*lsproto.Message, error) { return nil, io.EOF 
 type shutdownTestWriter struct{}
 
 func (shutdownTestWriter) Write(*lsproto.Message) error { return nil }
+
+func TestInitializeAdvertisesTypeScriptSourceActionKinds(t *testing.T) {
+	t.Parallel()
+
+	if !bundled.Embedded {
+		t.Skip("bundled files are not embedded")
+	}
+
+	fs := bundled.WrapFS(vfstest.FromMap(map[string]string{}, false))
+	server := NewServer(&ServerOptions{
+		In:                 shutdownTestReader{},
+		Out:                shutdownTestWriter{},
+		Err:                io.Discard,
+		Cwd:                "/home/projects",
+		FS:                 fs,
+		DefaultLibraryPath: bundled.LibPath(),
+	})
+	server.backgroundCtx = t.Context()
+
+	result, err := server.handleInitialize(t.Context(), &lsproto.InitializeParams{
+		Capabilities: &lsproto.ClientCapabilities{},
+	}, nil)
+	assert.NilError(t, err, "Initialize failed")
+
+	codeActionProvider := result.Capabilities.CodeActionProvider
+	assert.Assert(t, codeActionProvider != nil && codeActionProvider.CodeActionOptions != nil)
+	kinds := codeActionProvider.CodeActionOptions.CodeActionKinds
+	assert.Assert(t, kinds != nil)
+
+	for _, kind := range []lsproto.CodeActionKind{
+		lsproto.CodeActionKindSourceOrganizeImports,
+		lsproto.CodeActionKindSourceOrganizeImportsTs,
+		lsproto.CodeActionKindSourceRemoveUnusedImports,
+		lsproto.CodeActionKindSourceRemoveUnusedImportsTs,
+		lsproto.CodeActionKindSourceSortImports,
+		lsproto.CodeActionKindSourceSortImportsTs,
+		lsproto.CodeActionKindSourceFixAll,
+		lsproto.CodeActionKindSourceFixAllTs,
+	} {
+		assert.Assert(t, slices.Contains(*kinds, kind), "missing code action kind %q", kind)
+	}
+}
 
 // TestServerShutdownNoDeadlock verifies that operations after shutdown
 // don't block.
