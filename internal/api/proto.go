@@ -1,5 +1,7 @@
 package api
 
+//go:generate npx hereby generate:api
+
 import (
 	"errors"
 	"fmt"
@@ -242,6 +244,16 @@ type InitializeResponse struct {
 
 // DocumentIdentifier identifies a document by either a file name (plain string) or a URI object.
 // On the wire it is string | { uri: string }.
+//
+// @example
+//
+// Using a file name:
+//
+//	project.program.getSourceFile("/path/to/file.ts");
+//
+// Using a URI:
+//
+//	project.program.getSourceFile({ uri: "file:///path/to/file.ts" });
 type DocumentIdentifier struct {
 	FileName string              `json:"fileName,omitempty"`
 	URI      lsproto.DocumentUri `json:"uri,omitempty"`
@@ -392,7 +404,7 @@ type UpdateSnapshotResponse struct {
 	// Snapshot is the handle for the newly created snapshot.
 	Snapshot SnapshotID `json:"snapshot"`
 	// Projects is the list of projects in the snapshot.
-	Projects []*ProjectResponse `json:"projects"`
+	Projects []*ProjectResponse `json:"projects" nonnil:"true"`
 	// Changes describes source file differences from the previous snapshot.
 	// Nil for the first snapshot in a session.
 	Changes *SnapshotChanges `json:"changes,omitempty"`
@@ -621,13 +633,13 @@ type ProfileResult struct {
 }
 
 type ConfigFileResponse struct {
-	FileNames         []string                 `json:"fileNames"`
-	Options           *core.CompilerOptions    `json:"options"`
+	FileNames         []string                 `json:"fileNames,format:emitempty" nonnil:"true"`
+	Options           *core.CompilerOptions    `json:"options" nonnil:"true"`
 	ProjectReferences []*core.ProjectReference `json:"projectReferences,omitempty"`
 	TypeAcquisition   *core.TypeAcquisition    `json:"typeAcquisition,omitempty"`
 	CompileOnSave     *bool                    `json:"compileOnSave,omitempty"`
 	Raw               any                      `json:"raw,omitempty"`
-	Errors            []*DiagnosticResponse    `json:"errors"`
+	Errors            []*DiagnosticResponse    `json:"errors,format:emitempty" nonnil:"true"`
 }
 
 type ReadConfigFileResponse struct {
@@ -641,11 +653,13 @@ type GetDefaultProjectForFileParams struct {
 }
 
 type ProjectResponse struct {
-	Id                ProjectID             `json:"id"`
-	ConfigFileName    string                `json:"configFileName"`
-	ParsedCommandLine *ConfigFileResponse   `json:"parsedCommandLine"`
-	RootFiles         []string              `json:"rootFiles"`
-	CompilerOptions   *core.CompilerOptions `json:"compilerOptions"`
+	Id                ProjectID           `json:"id"`
+	ConfigFileName    string              `json:"configFileName"`
+	ParsedCommandLine *ConfigFileResponse `json:"parsedCommandLine"`
+	// Deprecated: Use parsedCommandLine.fileNames.
+	RootFiles []string `json:"rootFiles"`
+	// Deprecated: Use parsedCommandLine.options.
+	CompilerOptions *core.CompilerOptions `json:"compilerOptions"`
 }
 
 func NewConfigFileResponse(parsedCommandLine *tsoptions.ParsedCommandLine) *ConfigFileResponse {
@@ -753,7 +767,9 @@ type GetSymbolsAtLocationsParams struct {
 }
 
 type SymbolResponse struct {
-	Id               SymbolID     `json:"id"`
+	Id SymbolID `json:"id"`
+	// Project is the project in which the symbol was first observed. It is the
+	// default project for follow-up lookups whose results can vary by project.
 	Project          ProjectID    `json:"project"`
 	Name             string       `json:"name"`
 	Flags            uint32       `json:"flags"`
@@ -792,7 +808,8 @@ type TypeResponse struct {
 	Flags       uint32 `json:"flags"`
 	ObjectFlags uint32 `json:"objectFlags,omitempty"`
 
-	// LiteralType data
+	// Value is literal type data. BigInt literals are encoded as signed decimal
+	// strings because JSON cannot represent bigint; absent values are null.
 	Value any `json:"value"`
 
 	// ObjectType / TypeReference / StringMappingType / IndexType target
@@ -1063,7 +1080,7 @@ type GetReferencedSymbolsForNodeParams struct {
 type ReferencedSymbolEntry struct {
 	Definition NodeHandle      `json:"definition"`
 	Symbol     *SymbolResponse `json:"symbol,omitempty"`
-	References []NodeHandle    `json:"references"`
+	References []NodeHandle    `json:"references" nonnil:"true"`
 }
 
 // GetSignatureUsagesParams are the parameters for the getSignatureUsages method.
@@ -1110,7 +1127,7 @@ type CompletionEntryResponse struct {
 // CompletionInfoResponse wraps a list of completion entries.
 type CompletionInfoResponse struct {
 	IsIncomplete bool                       `json:"isIncomplete"`
-	Entries      []*CompletionEntryResponse `json:"entries"`
+	Entries      []*CompletionEntryResponse `json:"entries" nonnil:"true"`
 }
 
 // GetIntrinsicTypeParams is used for intrinsic type getters (anyType, stringType, etc.).
@@ -1291,8 +1308,8 @@ type SelectedFilesEmitParams struct {
 
 type EmitResponse struct {
 	EmitSkipped  bool                  `json:"emitSkipped"`
-	Diagnostics  []*DiagnosticResponse `json:"diagnostics"`
-	EmittedFiles []string              `json:"emittedFiles"`
+	Diagnostics  []*DiagnosticResponse `json:"diagnostics" nonnil:"true"`
+	EmittedFiles []string              `json:"emittedFiles" nonnil:"true"`
 }
 
 type EmitOutputFile struct {
@@ -1303,8 +1320,8 @@ type EmitOutputFile struct {
 
 type EmitOutputResponse struct {
 	EmitSkipped bool                  `json:"emitSkipped"`
-	Diagnostics []*DiagnosticResponse `json:"diagnostics"`
-	OutputFiles []*EmitOutputFile     `json:"outputFiles"`
+	Diagnostics []*DiagnosticResponse `json:"diagnostics" nonnil:"true"`
+	OutputFiles []*EmitOutputFile     `json:"outputFiles" nonnil:"true"`
 }
 
 // FormatNodeForInsertionParams are the parameters for the formatNodeForInsertion method.
@@ -1386,6 +1403,7 @@ type IndexInfoResponse struct {
 // SourceFileResponse contains the binary-encoded AST data for a source file.
 // The Data field is base64-encoded binary data in the encoder's format.
 type SourceFileResponse struct {
+	// Data is the base64-encoded binary AST data in the encoder's format.
 	Data string `json:"data"`
 }
 

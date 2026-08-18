@@ -13,8 +13,7 @@ import (
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=ScriptTarget -trimprefix=ScriptTarget -output=scripttarget_stringer_generated.go
 //go:generate npx dprint fmt modulekind_stringer_generated.go scripttarget_stringer_generated.go
 
-// Keep in sync with the API's compilerOptions.ts
-
+// CompilerOptions contains the compiler options exposed by the API.
 type CompilerOptions struct {
 	_ noCopy
 
