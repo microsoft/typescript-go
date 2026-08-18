@@ -6,8 +6,8 @@
 // panicked here since that byte length exceeded the directory portion's.
 // @currentDirectory: /a
 // @useCaseSensitiveFileNames: false
-// @rootDir: /a/KKK
+// @rootDir: /a/KKKK
 // @outDir: /a/out
 
-// @filename: /a/kkk/a.ts
+// @filename: /a/kkkk/a.ts
 export const x = 1;

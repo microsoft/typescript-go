@@ -22,8 +22,8 @@ func TestGetSourceFilePathInNewDirCanonicalizationShrinksCommonDirectory(t *test
 	// file path it's a case-insensitive prefix of, even though the file path itself
 	// is longer overall once its own (already-lowercase) suffix is included.
 	// Slicing sourceFilePath by len(commonSourceDirectory) bytes would still panic
-	// here ([11:9]); this must clamp per-rune instead, like the reference
+	// here ([14:11]); this must clamp per-rune instead, like the reference
 	// implementation's substring does.
-	actual := outputpaths.GetSourceFilePathInNewDir("/kkk/a.ts", "/out", "/", "/\u212A\u212A\u212A/", false)
+	actual := outputpaths.GetSourceFilePathInNewDir("/kkkk/a.ts", "/out", "/", "/\u212A\u212A\u212A\u212A/", false)
 	assert.Equal(t, actual, "/out/a.ts")
 }
