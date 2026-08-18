@@ -428,4 +428,5 @@ export function createShapeAtNearestAdjacentEmptyPosition<
   newShape: N;
 } {
   newShapePartial.props?.w;
+  return undefined as any;
 }

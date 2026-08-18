@@ -1096,5 +1096,8 @@ export function createShapeAtNearestAdjacentEmptyPosition<
 >newShapePartial : Symbol(newShapePartial, Decl(crossProductUnionIntersectionRepeatedPropDeclarationsNoOOM1.ts, 419, 3))
 >props : Symbol(props, Decl(crossProductUnionIntersectionRepeatedPropDeclarationsNoOOM1.ts, 381, 32), Decl(crossProductUnionIntersectionRepeatedPropDeclarationsNoOOM1.ts, 413, 5))
 >w : Symbol(w, Decl(crossProductUnionIntersectionRepeatedPropDeclarationsNoOOM1.ts, 402, 19), Decl(crossProductUnionIntersectionRepeatedPropDeclarationsNoOOM1.ts, 155, 32), Decl(crossProductUnionIntersectionRepeatedPropDeclarationsNoOOM1.ts, 180, 29), Decl(crossProductUnionIntersectionRepeatedPropDeclarationsNoOOM1.ts, 188, 29), Decl(crossProductUnionIntersectionRepeatedPropDeclarationsNoOOM1.ts, 200, 14) ... and 6 more)
+
+  return undefined as any;
+>undefined : Symbol(undefined)
 }
 
