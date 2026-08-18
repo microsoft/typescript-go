@@ -73,7 +73,8 @@ type OpenProjectParams struct {
 	CompilerOptions json.Value `json:"compilerOptions"`
 }
 
-// OpenProjectResult is the mapper's response to an openProject request.
+// OpenProjectResult is the mapper's response to an openProject request. ConfigIdentity and WatchedFiles
+// may only be returned by mappers that declare dynamicConfig.
 type OpenProjectResult struct {
 	// ConfigIdentity is a stable fingerprint of all dynamic configuration that can affect transforms.
 	ConfigIdentity string `json:"configIdentity"`
@@ -102,8 +103,8 @@ type TransformParams struct {
 	Content string `json:"content"`
 	// Options is the mapper entry's options from the project's contentMappers configuration.
 	Options json.Value `json:"options,omitempty"`
-	// ProjectHandle identifies the dynamic mapper project configuration, when one is required.
-	ProjectHandle string `json:"projectHandle,omitempty"`
+	// ProjectHandle identifies the mapper project configuration opened for this transform.
+	ProjectHandle string `json:"projectHandle"`
 	// CompilerOptions holds the values of the options the mapper declared in initialize, keyed by option
 	// name and ordered by the mapper's declaration. It is an empty object when the mapper declared none.
 	CompilerOptions *collections.OrderedMap[string, json.Value] `json:"compilerOptions"`
@@ -654,6 +655,12 @@ func (h *host) openProjectLocked(ctx context.Context, entry *projectEntry) error
 	if entry.mapper.DynamicConfig && result.ConfigIdentity == "" {
 		return &ProjectError{Kind: ProjectErrorKindMissingConfigIdentity}
 	}
+	if !entry.mapper.DynamicConfig && result.ConfigIdentity != "" {
+		return &ProjectError{Kind: ProjectErrorKindUnexpectedConfigIdentity}
+	}
+	if !entry.mapper.DynamicConfig && len(result.WatchedFiles) != 0 {
+		return &ProjectError{Kind: ProjectErrorKindUnexpectedWatchedFiles}
+	}
 	entry.configIdentity = result.ConfigIdentity
 	for _, fileName := range result.WatchedFiles {
 		if !tspath.PathIsAbsolute(fileName) {
@@ -898,17 +905,14 @@ func (p *projectLease) Transform(mapper *Mapper, request Request) (Result, error
 		p.host.mu.Unlock()
 		return Result{}, errors.New("content mapper project is closed")
 	}
-	handle := ""
-	if mapper.DynamicConfig {
-		if err := p.host.openProjectLocked(p.host.ctx, entry); err != nil {
-			p.host.mu.Unlock()
-			if _, ok := errors.AsType[*InitializeError](err); ok {
-				return Result{}, NewTransformError(TransformErrorKindInitialize, err)
-			}
-			return Result{}, NewTransformError(TransformErrorKindProject, err)
+	if err := p.host.openProjectLocked(p.host.ctx, entry); err != nil {
+		p.host.mu.Unlock()
+		if _, ok := errors.AsType[*InitializeError](err); ok {
+			return Result{}, NewTransformError(TransformErrorKindInitialize, err)
 		}
-		handle = entry.projectHandle
+		return Result{}, NewTransformError(TransformErrorKindProject, err)
 	}
+	handle := entry.projectHandle
 	p.host.mu.Unlock()
 	return p.host.transformLocked(mapper, request, handle)
 }

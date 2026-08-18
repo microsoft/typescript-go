@@ -4374,7 +4374,7 @@ var The_content_mapper_returned_a_project_response_that_could_not_be_decoded = &
 
 var The_content_mapper_process_failed_while_handling_the_project_request = &Message{code: 100053, category: CategoryMessage, key: "The_content_mapper_process_failed_while_handling_the_project_request_100053", text: "The content mapper process failed while handling the project request."}
 
-var The_content_mapper_did_not_return_configIdentity_for_its_dynamic_configuration = &Message{code: 100054, category: CategoryMessage, key: "The_content_mapper_did_not_return_configIdentity_for_its_dynamic_configuration_100054", text: "The content mapper did not return 'configIdentity' for its dynamic configuration."}
+var The_content_mapper_did_not_return_configIdentity_which_is_required_when_the_content_mapper_has_dynamicConfig_Colon_true_in_its_package_json = &Message{code: 100054, category: CategoryMessage, key: "The_content_mapper_did_not_return_configIdentity_which_is_required_when_the_content_mapper_has_dynam_100054", text: "The content mapper did not return 'configIdentity', which is required when the content mapper has '\"dynamicConfig\": true' in its package.json."}
 
 var The_content_mapper_returned_a_non_absolute_path_in_watchedFiles = &Message{code: 100055, category: CategoryMessage, key: "The_content_mapper_returned_a_non_absolute_path_in_watchedFiles_100055", text: "The content mapper returned a non-absolute path in 'watchedFiles'."}
 
@@ -4407,6 +4407,10 @@ var The_content_mapper_returned_diagnostic_directives_with_overlapping_virtual_r
 var The_invalid_diagnostic_directive_is_in_supplemental_output_0_returned_by_the_content_mapper = &Message{code: 100076, category: CategoryMessage, key: "The_invalid_diagnostic_directive_is_in_supplemental_output_0_returned_by_the_content_mapper_100076", text: "The invalid diagnostic directive is in supplemental output {0} returned by the content mapper."}
 
 var Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_unusedExpectDirectiveIndex = &Message{code: 100077, category: CategoryMessage, key: "Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_unusedExpectDirectiveIndex_100077", text: "Diagnostic directive {0} returned by the content mapper has an invalid 'unusedExpectDirectiveIndex'."}
+
+var The_content_mapper_returned_configIdentity_which_is_only_allowed_when_it_declares_dynamicConfig_Colon_true_in_its_package_json = &Message{code: 100078, category: CategoryMessage, key: "The_content_mapper_returned_configIdentity_which_is_only_allowed_when_it_declares_dynamicConfig_Colo_100078", text: "The content mapper returned 'configIdentity', which is only allowed when it declares '\"dynamicConfig\": true' in its package.json."}
+
+var The_content_mapper_returned_watchedFiles_which_is_only_allowed_when_it_declares_dynamicConfig_Colon_true_in_its_package_json = &Message{code: 100079, category: CategoryMessage, key: "The_content_mapper_returned_watchedFiles_which_is_only_allowed_when_it_declares_dynamicConfig_Colon__100079", text: "The content mapper returned 'watchedFiles', which is only allowed when it declares '\"dynamicConfig\": true' in its package.json."}
 
 func keyToMessage(key Key) *Message {
 	switch key {
@@ -8782,8 +8786,8 @@ func keyToMessage(key Key) *Message {
 		return The_content_mapper_returned_a_project_response_that_could_not_be_decoded
 	case "The_content_mapper_process_failed_while_handling_the_project_request_100053":
 		return The_content_mapper_process_failed_while_handling_the_project_request
-	case "The_content_mapper_did_not_return_configIdentity_for_its_dynamic_configuration_100054":
-		return The_content_mapper_did_not_return_configIdentity_for_its_dynamic_configuration
+	case "The_content_mapper_did_not_return_configIdentity_which_is_required_when_the_content_mapper_has_dynam_100054":
+		return The_content_mapper_did_not_return_configIdentity_which_is_required_when_the_content_mapper_has_dynamicConfig_Colon_true_in_its_package_json
 	case "The_content_mapper_returned_a_non_absolute_path_in_watchedFiles_100055":
 		return The_content_mapper_returned_a_non_absolute_path_in_watchedFiles
 	case "Content_mapper_supplemental_output_file_0_conflicts_with_an_existing_file_100057":
@@ -8816,6 +8820,10 @@ func keyToMessage(key Key) *Message {
 		return The_invalid_diagnostic_directive_is_in_supplemental_output_0_returned_by_the_content_mapper
 	case "Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_unusedExpectDirectiveIndex_100077":
 		return Diagnostic_directive_0_returned_by_the_content_mapper_has_an_invalid_unusedExpectDirectiveIndex
+	case "The_content_mapper_returned_configIdentity_which_is_only_allowed_when_it_declares_dynamicConfig_Colo_100078":
+		return The_content_mapper_returned_configIdentity_which_is_only_allowed_when_it_declares_dynamicConfig_Colon_true_in_its_package_json
+	case "The_content_mapper_returned_watchedFiles_which_is_only_allowed_when_it_declares_dynamicConfig_Colon__100079":
+		return The_content_mapper_returned_watchedFiles_which_is_only_allowed_when_it_declares_dynamicConfig_Colon_true_in_its_package_json
 	default:
 		return nil
 	}

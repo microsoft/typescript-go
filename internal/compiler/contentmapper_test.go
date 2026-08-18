@@ -11,6 +11,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/locale"
 	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -168,4 +170,36 @@ func TestContentMapperSourceFileState(t *testing.T) {
 		})
 		assert.Assert(t, found, "expected a localized project response diagnostic, got: %v", diagnostics)
 	})
+}
+
+func TestContentMapperProjectErrorDiagnostics(t *testing.T) {
+	t.Parallel()
+	for _, test := range []struct {
+		kind    contentmapper.ProjectErrorKind
+		code    int32
+		message string
+	}{
+		{
+			kind:    contentmapper.ProjectErrorKindMissingConfigIdentity,
+			code:    100054,
+			message: `The content mapper did not return 'configIdentity', which is required when the content mapper has '"dynamicConfig": true' in its package.json.`,
+		},
+		{
+			kind:    contentmapper.ProjectErrorKindUnexpectedConfigIdentity,
+			code:    100078,
+			message: `The content mapper returned 'configIdentity', which is only allowed when it declares '"dynamicConfig": true' in its package.json.`,
+		},
+		{
+			kind:    contentmapper.ProjectErrorKindUnexpectedWatchedFiles,
+			code:    100079,
+			message: `The content mapper returned 'watchedFiles', which is only allowed when it declares '"dynamicConfig": true' in its package.json.`,
+		},
+	} {
+		t.Run(test.message, func(t *testing.T) {
+			t.Parallel()
+			message := compiler.ContentMapperProjectErrorDiagnostic(&contentmapper.ProjectError{Kind: test.kind})
+			assert.Equal(t, message.Code(), test.code)
+			assert.Equal(t, diagnostics.Localize(locale.Default, message, message.Key()), test.message)
+		})
+	}
 }

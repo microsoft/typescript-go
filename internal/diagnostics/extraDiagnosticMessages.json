@@ -263,13 +263,21 @@
         "category": "Message",
         "code": 100053
     },
-    "The content mapper did not return 'configIdentity' for its dynamic configuration.": {
+    "The content mapper did not return 'configIdentity', which is required when the content mapper has '\"dynamicConfig\": true' in its package.json.": {
         "category": "Message",
         "code": 100054
     },
     "The content mapper returned a non-absolute path in 'watchedFiles'.": {
         "category": "Message",
         "code": 100055
+    },
+    "The content mapper returned 'configIdentity', which is only allowed when it declares '\"dynamicConfig\": true' in its package.json.": {
+        "category": "Message",
+        "code": 100078
+    },
+    "The content mapper returned 'watchedFiles', which is only allowed when it declares '\"dynamicConfig\": true' in its package.json.": {
+        "category": "Message",
+        "code": 100079
     },
     "Content mapper supplemental output file '{0}' conflicts with an existing file.": {
         "category": "Message",

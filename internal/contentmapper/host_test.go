@@ -753,6 +753,7 @@ type recordingMapper struct {
 	transformHandle string
 	watchedFiles    []string
 	configIdentity  *string
+	dynamicConfig   bool
 }
 
 type blockingMapper struct {
@@ -788,13 +789,21 @@ func (m *recordingMapper) HandleRequest(ctx context.Context, method string, para
 		m.mu.Lock()
 		m.projectHandles = append(m.projectHandles, p.ProjectHandle)
 		watchedFiles := m.watchedFiles
+		dynamicConfig := m.dynamicConfig
+		configIdentityOverride := m.configIdentity
 		m.mu.Unlock()
-		if watchedFiles == nil {
+		if !dynamicConfig && watchedFiles == nil && configIdentityOverride == nil {
+			return contentmapper.OpenProjectResult{}, nil
+		}
+		if dynamicConfig && watchedFiles == nil {
 			watchedFiles = []string{tspath.CombinePaths(tspath.GetDirectoryPath(p.ConfigFileName), "mapper.config.js")}
 		}
-		configIdentity := "config:" + string(p.Options)
-		if m.configIdentity != nil {
-			configIdentity = *m.configIdentity
+		configIdentity := ""
+		if dynamicConfig {
+			configIdentity = "config:" + string(p.Options)
+		}
+		if configIdentityOverride != nil {
+			configIdentity = *configIdentityOverride
 		}
 		return contentmapper.OpenProjectResult{
 			ConfigIdentity: configIdentity,
@@ -831,7 +840,7 @@ func (m *recordingMapper) HandleRequest(ctx context.Context, method string, para
 
 func TestProjectLifecycle(t *testing.T) {
 	t.Parallel()
-	mapperProcess := &recordingMapper{}
+	mapperProcess := &recordingMapper{dynamicConfig: true}
 	spawner := &fakeSpawner{handler: mapperProcess}
 	host := contentmapper.NewHost(t.Context(), spawner, locale.Default)
 	defer host.Close()
@@ -934,7 +943,7 @@ func TestProjectLifecycle(t *testing.T) {
 
 func TestProjectRejectsRelativeWatchedFiles(t *testing.T) {
 	t.Parallel()
-	mapperProcess := &recordingMapper{watchedFiles: []string{"mapper.config.js"}}
+	mapperProcess := &recordingMapper{watchedFiles: []string{"mapper.config.js"}, dynamicConfig: true}
 	host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: mapperProcess}, locale.Default)
 	defer host.Close()
 
@@ -958,7 +967,7 @@ func TestProjectRejectsRelativeWatchedFiles(t *testing.T) {
 func TestDynamicProjectRequiresConfigIdentity(t *testing.T) {
 	t.Parallel()
 	empty := ""
-	mapperProcess := &recordingMapper{configIdentity: &empty}
+	mapperProcess := &recordingMapper{configIdentity: &empty, dynamicConfig: true}
 	host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: mapperProcess}, locale.Default)
 	defer host.Close()
 
@@ -979,29 +988,36 @@ func TestDynamicProjectRequiresConfigIdentity(t *testing.T) {
 	assert.Equal(t, projectError.Kind, contentmapper.ProjectErrorKindMissingConfigIdentity)
 }
 
-func TestStaticMapperDoesNotUseProjectProtocol(t *testing.T) {
+func TestStaticMapperRejectsDynamicProjectResponseFields(t *testing.T) {
 	t.Parallel()
-	mapperProcess := &recordingMapper{}
-	host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: mapperProcess}, locale.Default)
-	defer host.Close()
-
-	projectMapper := &contentmapper.Mapper{
-		Definition: contentmapper.Definition{Package: "static"},
-		Manifest:   contentmapper.Manifest{Name: "static", Version: "1.0.0", Exec: []string{"mapper"}},
+	configIdentity := "dynamic"
+	for _, test := range []struct {
+		name   string
+		mapper *recordingMapper
+		kind   contentmapper.ProjectErrorKind
+	}{
+		{name: "config identity", mapper: &recordingMapper{configIdentity: &configIdentity}, kind: contentmapper.ProjectErrorKindUnexpectedConfigIdentity},
+		{name: "watched files", mapper: &recordingMapper{watchedFiles: []string{"/repo/mapper.config.js"}}, kind: contentmapper.ProjectErrorKindUnexpectedWatchedFiles},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: test.mapper}, locale.Default)
+			defer host.Close()
+			projectMapper := &contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "static", Version: "1.0.0", Exec: []string{"mapper"}}}
+			project := host.Project(contentmapper.ProjectSpec{
+				ConfigFileName:  "/repo/tsconfig.json",
+				Mappers:         []*contentmapper.Mapper{projectMapper},
+				CompilerOptions: &core.CompilerOptions{},
+			})
+			defer project.Close()
+			_, err := project.Transform(projectMapper, contentmapper.Request{FileName: "/repo/file.ext", Content: "x"})
+			transformError, ok := errors.AsType[*contentmapper.TransformError](err)
+			assert.Assert(t, ok)
+			projectError, ok := errors.AsType[*contentmapper.ProjectError](transformError)
+			assert.Assert(t, ok)
+			assert.Equal(t, projectError.Kind, test.kind)
+		})
 	}
-	project := host.Project(contentmapper.ProjectSpec{
-		ConfigFileName:  "/repo/tsconfig.json",
-		Mappers:         []*contentmapper.Mapper{projectMapper},
-		CompilerOptions: &core.CompilerOptions{},
-	})
-	_, err := project.Transform(projectMapper, contentmapper.Request{FileName: "/repo/file.ext", Content: "x"})
-	assert.NilError(t, err)
-	assert.NilError(t, project.Close())
-	mapperProcess.mu.Lock()
-	defer mapperProcess.mu.Unlock()
-	assert.Equal(t, len(mapperProcess.projectHandles), 0)
-	assert.Equal(t, len(mapperProcess.closedHandles), 0)
-	assert.Equal(t, mapperProcess.transformHandle, "")
 }
 
 func (m *recordingMapper) HandleNotification(ctx context.Context, method string, params json.Value) error {

@@ -10,7 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-// ProjectLifecycle records dynamic mapper project protocol calls.
+// ProjectLifecycle records mapper project protocol calls.
 type ProjectLifecycle struct {
 	Opens  atomic.Int32
 	Closes atomic.Int32
@@ -51,7 +51,7 @@ func (h dynamicVerbatimHandler) HandleRequest(ctx context.Context, method string
 			return nil, err
 		}
 		if p.ProjectHandle == "" {
-			return nil, errors.New("dynamic mapper transform requires a project handle")
+			return nil, errors.New("content mapper transform requires a project handle")
 		}
 	}
 	return h.verbatimHandler.HandleRequest(ctx, method, params)

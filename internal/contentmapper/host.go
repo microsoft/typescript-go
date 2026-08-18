@@ -79,6 +79,8 @@ const (
 	ProjectErrorKindMalformedResponse ProjectErrorKind = iota
 	ProjectErrorKindMissingConfigIdentity
 	ProjectErrorKindNonAbsoluteWatchedFile
+	ProjectErrorKindUnexpectedConfigIdentity
+	ProjectErrorKindUnexpectedWatchedFiles
 )
 
 // ProjectError reports an invalid mapper openProject response.
@@ -94,6 +96,10 @@ func (e *ProjectError) Error() string {
 		return "content mapper did not return configIdentity for dynamic configuration"
 	case ProjectErrorKindNonAbsoluteWatchedFile:
 		return "content mapper returned a non-absolute path in watchedFiles"
+	case ProjectErrorKindUnexpectedConfigIdentity:
+		return "content mapper returned configIdentity without declaring dynamicConfig"
+	case ProjectErrorKindUnexpectedWatchedFiles:
+		return "content mapper returned watchedFiles without declaring dynamicConfig"
 	default:
 		return "content mapper returned an invalid project response"
 	}
@@ -256,10 +262,10 @@ func operationTimingSince(current OperationTiming, previous OperationTiming) Ope
 }
 
 // Project is the project-scoped view of a Host. It owns mapper configuration handles and provides the
-// identities and watch dependencies needed for caching and incremental builds. Dynamic-config mapper projects
-// are opened lazily when an identity, watch dependency, or transform is first requested.
+// identities and watch dependencies needed for caching and incremental builds. Mapper projects are opened
+// lazily when a transform is requested, or earlier when dynamic configuration is needed.
 type Project interface {
-	// Refresh invalidates dynamic mapper configuration so it is reopened on the next operation that needs it.
+	// Refresh closes opened mapper projects so they are reopened on the next transform or configuration identity query.
 	Refresh() error
 	// Identities returns sorted transform identities for all configured mappers. It returns an error if
 	// dynamic project configuration cannot be opened or validated.
@@ -267,8 +273,8 @@ type Project interface {
 	// Identity returns the transform identity for mapper, or an empty string if mapper is not in this
 	// project. It returns an error if dynamic project configuration cannot be opened or validated.
 	Identity(mapper *Mapper) (string, error)
-	// WatchedFiles returns the absolute files on which dynamic mapper configuration depends. It returns an
-	// error if dynamic project configuration cannot be opened or validated.
+	// WatchedFiles returns the absolute files reported by mappers whose package.json declares dynamicConfig.
+	// It returns an error if project configuration cannot be opened or validated.
 	WatchedFiles() ([]string, error)
 	// Transform transforms one content-mapped source file using mapper in this project's configuration.
 	Transform(mapper *Mapper, request Request) (result Result, err error)
