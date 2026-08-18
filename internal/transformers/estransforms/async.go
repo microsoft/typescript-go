@@ -842,6 +842,9 @@ func (tx *asyncTransformer) transformAsyncFunctionBody(node *ast.Node, outerPara
 
 		if captureLexicalArguments && tx.lexicalArguments.used {
 			block := tx.EmitContext().ConvertToFunctionBlock(result, true /*multiLine*/)
+			if !ast.IsBlock(result) {
+				tx.EmitContext().SetOriginal(block.StatementList().Nodes[0], result)
+			}
 			result = tx.Factory().UpdateBlock(
 				block.AsBlock(),
 				tx.EmitContext().MergeEnvironmentList(block.StatementList(), []*ast.Node{tx.createCaptureArgumentsStatement()}),
