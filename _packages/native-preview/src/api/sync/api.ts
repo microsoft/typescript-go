@@ -124,6 +124,7 @@ import type {
     ObjectType,
     StringLiteralType,
     StringMappingType,
+    StructuredType,
     SubstitutionType,
     TemplateLiteralType,
     ThisTypePredicate,
@@ -139,7 +140,7 @@ import type {
 
 export { documentURIToFileName, fileNameToDocumentURI } from "../path.ts";
 export { CheckFlags, CompletionItemKind, DiagnosticCategory, ElementFlags, EmitOnly, ModifierFlags, ModuleKind, NodeBuilderFlags, ObjectFlags, SignatureFlags, SignatureKind, SymbolFlags, TypeFlags, TypePredicateKind };
-export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutput, EmitOutputFile, EmitResult, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ParsedCommandLine, ProjectReference, ReadConfigFileResult, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeAcquisition, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
+export type { APIOptions, AssertsIdentifierTypePredicate, AssertsThisTypePredicate, BigIntLiteralType, BooleanLiteralType, ClientSocketOptions, ClientSpawnOptions, CompilerOptions, CompletionEntry, CompletionInfo, CompletionOptions, ConditionalType, Diagnostic, DocumentIdentifier, DocumentPosition, EmitOutput, EmitOutputFile, EmitResult, FreshableType, GetImportEditsForSymbolsOptions, IdentifierTypePredicate, ImportAdderAction, IndexedAccessType, IndexInfo, IndexType, InterfaceType, IntersectionType, IntrinsicType, JSDocTagInfo, LiteralType, LSPConnectionOptions, NumberLiteralType, ObjectType, ParsedCommandLine, ProjectReference, ReadConfigFileResult, RequestTiming, SourceFileMetadata, StringLiteralType, StringMappingType, StructuredType, SubstitutionType, TemplateLiteralType, TextEdit, ThisTypePredicate, TimingAccumulators, TimingInfo, TupleType, Type, TypeAcquisition, TypeParameter, TypePredicate, TypePredicateBase, TypeReference, UnionOrIntersectionType, UnionType };
 
 interface EmitOutputResponse {
     readonly emitSkipped: boolean;
@@ -379,6 +380,7 @@ export class Snapshot {
     private disposed: boolean = false;
     private onDispose: () => void;
     private snapshotRegistry: SnapshotObjectRegistry;
+    readonly internal: SnapshotInternalAPI;
 
     constructor(
         data: UpdateSnapshotResponse,
@@ -398,6 +400,8 @@ export class Snapshot {
             const project = new Project(projData, this.id, client, sourceFileCache, toPath, this.snapshotRegistry);
             this.projectMap.set(toPath(projData.configFileName), project);
         }
+
+        this.internal = new SnapshotInternalAPI(this.id, client);
     }
 
     getProjects(): readonly Project[] {
@@ -1043,64 +1047,81 @@ export class Program {
     /**
      * Get syntactic (parse) diagnostics for a specific file or all files.
      * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
+     * Get syntactic (parse) diagnostics for specific files or all files.
+     * @param file - Optional file(s) to get diagnostics for. If omitted, returns diagnostics for all files.
      */
-    getSyntacticDiagnostics(file?: DocumentIdentifier): readonly Diagnostic[] {
+    getSyntacticDiagnostics(file?: DocumentIdentifier | readonly DocumentIdentifier[]): readonly Diagnostic[] {
+        const files = file === undefined ? undefined
+            : Array.isArray(file) ? file
+            : [file];
         const data = this.client.apiRequest<Diagnostic[]>("getSyntacticDiagnostics", {
             snapshot: this.snapshotId,
             project: this.project.id,
-            ...(file !== undefined ? { file } : {}),
+            files,
         });
         return data ?? [];
     }
 
     /**
-     * Get binder diagnostics for a specific file or all files.
-     * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
+     * Get binder diagnostics for specific files or all files.
+     * @param file - Optional file(s) to get diagnostics for. If omitted, returns diagnostics for all files.
      */
-    getBindDiagnostics(file?: DocumentIdentifier): readonly Diagnostic[] {
+    getBindDiagnostics(file?: DocumentIdentifier | readonly DocumentIdentifier[]): readonly Diagnostic[] {
+        const files = file === undefined ? undefined
+            : Array.isArray(file) ? file
+            : [file];
         const data = this.client.apiRequest<Diagnostic[]>("getBindDiagnostics", {
             snapshot: this.snapshotId,
             project: this.project.id,
-            ...(file !== undefined ? { file } : {}),
+            files,
         });
         return data ?? [];
     }
 
     /**
-     * Get semantic (type-check) diagnostics for a specific file or all files.
-     * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
+     * Get semantic (type-check) diagnostics for specific files or all files.
+     * @param file - Optional file(s) to get diagnostics for. If omitted, returns diagnostics for all files.
      */
-    getSemanticDiagnostics(file?: DocumentIdentifier): readonly Diagnostic[] {
+    getSemanticDiagnostics(file?: DocumentIdentifier | readonly DocumentIdentifier[]): readonly Diagnostic[] {
+        const files = file === undefined ? undefined
+            : Array.isArray(file) ? file
+            : [file];
         const data = this.client.apiRequest<Diagnostic[]>("getSemanticDiagnostics", {
             snapshot: this.snapshotId,
             project: this.project.id,
-            ...(file !== undefined ? { file } : {}),
+            files,
         });
         return data ?? [];
     }
 
     /**
-     * Get suggestion diagnostics for a specific file or all files.
-     * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
+     * Get suggestion diagnostics for specific files or all files.
+     * @param file - Optional file(s) to get diagnostics for. If omitted, returns diagnostics for all files.
      */
-    getSuggestionDiagnostics(file?: DocumentIdentifier): readonly Diagnostic[] {
+    getSuggestionDiagnostics(file?: DocumentIdentifier | readonly DocumentIdentifier[]): readonly Diagnostic[] {
+        const files = file === undefined ? undefined
+            : Array.isArray(file) ? file
+            : [file];
         const data = this.client.apiRequest<Diagnostic[]>("getSuggestionDiagnostics", {
             snapshot: this.snapshotId,
             project: this.project.id,
-            ...(file !== undefined ? { file } : {}),
+            files,
         });
         return data ?? [];
     }
 
     /**
-     * Get declaration emit diagnostics for a specific file or all files.
-     * @param file - Optional file to get diagnostics for. If omitted, returns diagnostics for all files.
+     * Get declaration emit diagnostics for specific files or all files.
+     * @param file - Optional file(s) to get diagnostics for. If omitted, returns diagnostics for all files.
      */
-    getDeclarationDiagnostics(file?: DocumentIdentifier): readonly Diagnostic[] {
+    getDeclarationDiagnostics(file?: DocumentIdentifier | readonly DocumentIdentifier[]): readonly Diagnostic[] {
+        const files = file === undefined ? undefined
+            : Array.isArray(file) ? file
+            : [file];
         const data = this.client.apiRequest<Diagnostic[]>("getDeclarationDiagnostics", {
             snapshot: this.snapshotId,
             project: this.project.id,
-            ...(file !== undefined ? { file } : {}),
+            files,
         });
         return data ?? [];
     }
@@ -1263,6 +1284,25 @@ export class Checker {
             positions: positionOrPositions,
         });
         return data.map(d => d ? this.objectRegistry.getOrCreateSymbol(d) : undefined);
+    }
+
+    getSymbolOfSourceFile(file: DocumentIdentifier): Symbol | undefined;
+    getSymbolOfSourceFile(files: readonly DocumentIdentifier[]): (Symbol | undefined)[];
+    getSymbolOfSourceFile(fileOrFiles: DocumentIdentifier | readonly DocumentIdentifier[]): Symbol | (Symbol | undefined)[] | undefined {
+        if (Array.isArray(fileOrFiles)) {
+            const data = this.client.apiRequest<(SymbolResponse | null)[]>("getSymbolsOfSourceFiles", {
+                snapshot: this.snapshotId,
+                project: this.project.id,
+                files: fileOrFiles,
+            });
+            return data.map(d => d ? this.objectRegistry.getOrCreateSymbol(d) : undefined);
+        }
+        const data = this.client.apiRequest<SymbolResponse | null>("getSymbolOfSourceFile", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            file: fileOrFiles as DocumentIdentifier,
+        });
+        return data ? this.objectRegistry.getOrCreateSymbol(data) : undefined;
     }
 
     /**
@@ -1579,6 +1619,9 @@ export class Checker {
     getESSymbolType(): Type {
         return this.getIntrinsicType("getESSymbolType");
     }
+    getNonPrimitiveType(): Type {
+        return this.getIntrinsicType("getNonPrimitiveType");
+    }
 
     typeToTypeNode(type: Type, enclosingDeclaration?: Node, flags?: number): TypeNode | undefined {
         const binaryData = this.client.apiRequestBinary("typeToTypeNode", {
@@ -1766,6 +1809,18 @@ export class Checker {
         return this.objectRegistry.getOrCreateSymbol(data);
     }
 
+    /**
+     * Get the fully qualified name of a symbol, walking up its parent chain
+     * (e.g. `"/path/to/module".Namespace.Name`).
+     */
+    getFullyQualifiedName(symbol: Symbol): string {
+        return this.client.apiRequest<string>("getFullyQualifiedName", {
+            snapshot: this.snapshotId,
+            project: this.project.id,
+            symbol: symbol.id,
+        });
+    }
+
     getImmediateAliasedSymbol(symbol: Symbol): Symbol | undefined {
         const data = this.client.apiRequest<SymbolResponse | null>("getImmediateAliasedSymbol", {
             snapshot: this.snapshotId,
@@ -1899,6 +1954,45 @@ export class Emitter {
         return this.client.apiRequest<string>("printNode", {
             data: base64,
             ...options,
+        });
+    }
+}
+
+export class SnapshotInternalAPI {
+    private snapshotId: number;
+    private client: Client;
+
+    constructor(snapshotId: number, client: Client) {
+        this.snapshotId = snapshotId;
+        this.client = client;
+    }
+
+    /**
+     * Format a synthesized node with the correct indentation for insertion at a
+     * specific position in an existing source file.
+     *
+     * @param node The synthesized AST node to format.
+     * @param file The target file where the node will be inserted.
+     * @param position The UTF-16 code-unit offset in the target file for insertion.
+     * @returns The formatted text of the node, indented for the insertion position.
+     */
+    formatNodeForInsertion(node: Node, file: DocumentIdentifier, position: number): string {
+        const data = this.client.apiRequest<ProjectResponse | null>("getDefaultProjectForFile", {
+            snapshot: this.snapshotId,
+            file,
+        });
+        if (!data) {
+            throw new Error(`No project found for file: ${typeof file === "string" ? file : file.uri}`);
+        }
+
+        const encoded = encodeNode(node);
+        const base64 = uint8ArrayToBase64(encoded);
+        return this.client.apiRequest<string>("formatNodeForInsertion", {
+            snapshot: this.snapshotId,
+            project: data.id,
+            file,
+            position,
+            data: base64,
         });
     }
 }

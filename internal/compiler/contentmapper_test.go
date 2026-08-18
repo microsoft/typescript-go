@@ -119,9 +119,11 @@ func TestContentMapperInvalidMappings(t *testing.T) {
 		},
 	}
 	program := newContentMapperProgram(t, contentMapperHost, files, []string{"/src/app.ts"})
-	diagnostics := collectContentMapperDiagnostics(program)
-	found := slices.ContainsFunc(diagnostics, func(diagnostic *ast.Diagnostic) bool { return diagnostic.Code() == 100038 })
-	assert.Assert(t, found, "expected an invalid mapping diagnostic, got: %v", diagnostics)
+	programDiagnostics := collectContentMapperDiagnostics(program)
+	found := slices.ContainsFunc(programDiagnostics, func(diagnostic *ast.Diagnostic) bool {
+		return diagnostic.Code() == diagnostics.The_content_mapper_0_produced_overlapping_or_out_of_order_position_mappings_near_virtual_offset_1.Code()
+	})
+	assert.Assert(t, found, "expected an invalid mapping diagnostic, got: %v", programDiagnostics)
 }
 
 func TestContentMapperSourceFileState(t *testing.T) {
@@ -165,13 +167,13 @@ func TestContentMapperSourceFileState(t *testing.T) {
 				)
 			},
 		}, map[string]string{"/src/fail.vue": "original"}, []string{"/src/fail.vue"})
-		diagnostics := collectContentMapperDiagnostics(program)
-		found := slices.ContainsFunc(diagnostics, func(diagnostic *ast.Diagnostic) bool {
+		programDiagnostics := collectContentMapperDiagnostics(program)
+		found := slices.ContainsFunc(programDiagnostics, func(diagnostic *ast.Diagnostic) bool {
 			return slices.ContainsFunc(diagnostic.MessageChain(), func(message *ast.Diagnostic) bool {
-				return message.Code() == 100051
+				return message.Code() == diagnostics.The_content_mapper_returned_a_project_response_that_could_not_be_decoded.Code()
 			})
 		})
-		assert.Assert(t, found, "expected a localized project response diagnostic, got: %v", diagnostics)
+		assert.Assert(t, found, "expected a localized project response diagnostic, got: %v", programDiagnostics)
 	})
 }
 
@@ -184,17 +186,17 @@ func TestContentMapperProjectErrorDiagnostics(t *testing.T) {
 	}{
 		{
 			kind:    contentmapper.ProjectErrorKindMissingConfigIdentity,
-			code:    100054,
+			code:    diagnostics.The_content_mapper_did_not_return_configIdentity_which_is_required_when_the_content_mapper_has_dynamicConfig_Colon_true_in_its_package_json.Code(),
 			message: `The content mapper did not return 'configIdentity', which is required when the content mapper has '"dynamicConfig": true' in its package.json.`,
 		},
 		{
 			kind:    contentmapper.ProjectErrorKindUnexpectedConfigIdentity,
-			code:    100078,
+			code:    diagnostics.The_content_mapper_returned_configIdentity_which_is_only_allowed_when_it_declares_dynamicConfig_Colon_true_in_its_package_json.Code(),
 			message: `The content mapper returned 'configIdentity', which is only allowed when it declares '"dynamicConfig": true' in its package.json.`,
 		},
 		{
 			kind:    contentmapper.ProjectErrorKindUnexpectedWatchedFiles,
-			code:    100079,
+			code:    diagnostics.The_content_mapper_returned_watchedFiles_which_is_only_allowed_when_it_declares_dynamicConfig_Colon_true_in_its_package_json.Code(),
 			message: `The content mapper returned 'watchedFiles', which is only allowed when it declares '"dynamicConfig": true' in its package.json.`,
 		},
 	} {

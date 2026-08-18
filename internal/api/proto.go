@@ -86,6 +86,8 @@ const (
 	MethodGetSymbolsAtPositions        Method = "getSymbolsAtPositions"
 	MethodGetSymbolAtLocation          Method = "getSymbolAtLocation"
 	MethodGetSymbolsAtLocations        Method = "getSymbolsAtLocations"
+	MethodGetSymbolOfSourceFile        Method = "getSymbolOfSourceFile"
+	MethodGetSymbolsOfSourceFiles      Method = "getSymbolsOfSourceFiles"
 	MethodGetTypeOfSymbol              Method = "getTypeOfSymbol"
 	MethodGetTypesOfSymbols            Method = "getTypesOfSymbols"
 	MethodGetDeclaredTypeOfSymbol      Method = "getDeclaredTypeOfSymbol"
@@ -170,6 +172,7 @@ const (
 	MethodGetExportSpecifierLocalTarget     Method = "getExportSpecifierLocalTargetSymbol"
 	MethodGetAliasedSymbol                  Method = "getAliasedSymbol"
 	MethodGetImmediateAliasedSymbol         Method = "getImmediateAliasedSymbol"
+	MethodGetFullyQualifiedName             Method = "getFullyQualifiedName"
 	MethodGetExportsOfModule                Method = "getExportsOfModule"
 	MethodGetMemberInModuleExports          Method = "getMemberInModuleExports"
 	MethodGetJSDocTags                      Method = "getJsDocTags"
@@ -196,24 +199,26 @@ const (
 	MethodGetConfigFileParsingDiagnostics Method = "getConfigFileParsingDiagnostics"
 
 	// Emitter methods
-	MethodPrintNode          Method = "printNode"
-	MethodEmit               Method = "emit"
-	MethodEmitToString       Method = "emitToString"
-	MethodGetJavaScriptEmit  Method = "getJavaScriptEmit"
-	MethodGetDeclarationEmit Method = "getDeclarationEmit"
+	MethodPrintNode              Method = "printNode"
+	MethodFormatNodeForInsertion Method = "formatNodeForInsertion"
+	MethodEmit                   Method = "emit"
+	MethodEmitToString           Method = "emitToString"
+	MethodGetJavaScriptEmit      Method = "getJavaScriptEmit"
+	MethodGetDeclarationEmit     Method = "getDeclarationEmit"
 
 	// Intrinsic type getters
-	MethodGetAnyType       Method = "getAnyType"
-	MethodGetStringType    Method = "getStringType"
-	MethodGetNumberType    Method = "getNumberType"
-	MethodGetBooleanType   Method = "getBooleanType"
-	MethodGetVoidType      Method = "getVoidType"
-	MethodGetUndefinedType Method = "getUndefinedType"
-	MethodGetNullType      Method = "getNullType"
-	MethodGetNeverType     Method = "getNeverType"
-	MethodGetUnknownType   Method = "getUnknownType"
-	MethodGetBigIntType    Method = "getBigIntType"
-	MethodGetESSymbolType  Method = "getESSymbolType"
+	MethodGetAnyType          Method = "getAnyType"
+	MethodGetStringType       Method = "getStringType"
+	MethodGetNumberType       Method = "getNumberType"
+	MethodGetBooleanType      Method = "getBooleanType"
+	MethodGetVoidType         Method = "getVoidType"
+	MethodGetUndefinedType    Method = "getUndefinedType"
+	MethodGetNullType         Method = "getNullType"
+	MethodGetNeverType        Method = "getNeverType"
+	MethodGetUnknownType      Method = "getUnknownType"
+	MethodGetBigIntType       Method = "getBigIntType"
+	MethodGetESSymbolType     Method = "getESSymbolType"
+	MethodGetNonPrimitiveType Method = "getNonPrimitiveType"
 
 	// Well-known per-checker symbols
 	MethodGetWellKnownSymbols Method = "getWellKnownSymbols"
@@ -416,6 +421,8 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetSymbolsAtPositions:        unmarshallerFor[GetSymbolsAtPositionsParams],
 	MethodGetSymbolAtLocation:          unmarshallerFor[GetSymbolAtLocationParams],
 	MethodGetSymbolsAtLocations:        unmarshallerFor[GetSymbolsAtLocationsParams],
+	MethodGetSymbolOfSourceFile:        unmarshallerFor[GetSymbolOfSourceFileParams],
+	MethodGetSymbolsOfSourceFiles:      unmarshallerFor[GetSymbolsOfSourceFilesParams],
 	MethodGetTypeOfSymbol:              unmarshallerFor[GetTypeOfSymbolParams],
 	MethodGetTypesOfSymbols:            unmarshallerFor[GetTypesOfSymbolsParams],
 	MethodGetDeclaredTypeOfSymbol:      unmarshallerFor[GetTypeOfSymbolParams],
@@ -491,6 +498,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetExportSpecifierLocalTarget:     unmarshallerFor[CheckerNodeParams],
 	MethodGetAliasedSymbol:                  unmarshallerFor[CheckerSymbolParams],
 	MethodGetImmediateAliasedSymbol:         unmarshallerFor[CheckerSymbolParams],
+	MethodGetFullyQualifiedName:             unmarshallerFor[CheckerSymbolParams],
 	MethodGetExportsOfModule:                unmarshallerFor[CheckerSymbolParams],
 	MethodGetMemberInModuleExports:          unmarshallerFor[GetMemberInModuleExportsParams],
 	MethodGetJSDocTags:                      unmarshallerFor[CheckerSymbolParams],
@@ -502,6 +510,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetSignatureUsages:                unmarshallerFor[GetSignatureUsagesParams],
 	MethodGetCompletionsAtPosition:          unmarshallerFor[GetCompletionsAtPositionParams],
 	MethodPrintNode:                         unmarshallerFor[PrintNodeParams],
+	MethodFormatNodeForInsertion:            unmarshallerFor[FormatNodeForInsertionParams],
 	MethodEmit:                              unmarshallerFor[EmitParams],
 	MethodEmitToString:                      unmarshallerFor[EmitParams],
 	MethodGetJavaScriptEmit:                 unmarshallerFor[SelectedFilesEmitParams],
@@ -517,6 +526,7 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetUnknownType:                    unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetBigIntType:                     unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetESSymbolType:                   unmarshallerFor[GetIntrinsicTypeParams],
+	MethodGetNonPrimitiveType:               unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetWellKnownSymbols:               unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetWellKnownSignatures:            unmarshallerFor[GetIntrinsicTypeParams],
 	MethodGetSyntacticDiagnostics:           unmarshallerFor[GetDiagnosticsParams],
@@ -716,6 +726,18 @@ type GetSymbolsAtPositionsParams struct {
 	Project   ProjectID          `json:"project"`
 	File      DocumentIdentifier `json:"file"`
 	Positions []uint32           `json:"positions"`
+}
+
+type GetSymbolOfSourceFileParams struct {
+	Snapshot SnapshotID         `json:"snapshot"`
+	Project  ProjectID          `json:"project"`
+	File     DocumentIdentifier `json:"file"`
+}
+
+type GetSymbolsOfSourceFilesParams struct {
+	Snapshot SnapshotID           `json:"snapshot"`
+	Project  ProjectID            `json:"project"`
+	Files    []DocumentIdentifier `json:"files"`
 }
 
 type GetSymbolAtLocationParams struct {
@@ -1285,6 +1307,15 @@ type EmitOutputResponse struct {
 	OutputFiles []*EmitOutputFile     `json:"outputFiles"`
 }
 
+// FormatNodeForInsertionParams are the parameters for the formatNodeForInsertion method.
+type FormatNodeForInsertionParams struct {
+	Snapshot SnapshotID         `json:"snapshot"`
+	Project  ProjectID          `json:"project"`
+	File     DocumentIdentifier `json:"file"`     // target file where the node will be inserted
+	Position uint32             `json:"position"` // UTF-16 code-unit offset of the insertion position in the target file
+	Data     string             `json:"data"`     // base64-encoded binary AST data for the synthesized node
+}
+
 // CheckerTypeParams are parameters for checker methods that operate on a type.
 type CheckerTypeParams struct {
 	Snapshot SnapshotID `json:"snapshot"`
@@ -1360,9 +1391,9 @@ type SourceFileResponse struct {
 
 // GetDiagnosticsParams are parameters for per-file diagnostic methods.
 type GetDiagnosticsParams struct {
-	Snapshot SnapshotID          `json:"snapshot"`
-	Project  ProjectID           `json:"project"`
-	File     *DocumentIdentifier `json:"file,omitempty"`
+	Snapshot SnapshotID           `json:"snapshot"`
+	Project  ProjectID            `json:"project"`
+	Files    []DocumentIdentifier `json:"files,omitempty"`
 }
 
 // GetProjectDiagnosticsParams are parameters for project-wide diagnostic methods.
