@@ -767,67 +767,70 @@ func isExcessPropertyCheckTarget(t *Type) bool {
 // structurally equal to at least maxDepth levels, but unequal at some level beyond that.
 func (c *Checker) isDeeplyNestedType(t *Type, stack []*Type, maxDepth int) bool {
 	if len(stack) >= maxDepth {
-		if t.objectFlags&ObjectFlagsInstantiatedMapped == ObjectFlagsInstantiatedMapped {
-			t = c.getMappedTargetWithSymbol(t)
-		}
-		if t.flags&TypeFlagsIntersection != 0 {
-			for _, t := range t.Types() {
+		target := getRecursionIdentityTarget(t)
+		if target.flags&TypeFlagsIntersection != 0 {
+			for _, t := range target.Types() {
 				if c.isDeeplyNestedType(t, stack, maxDepth) {
 					return true
 				}
 			}
-		}
-		identity := getRecursionIdentity(t)
-		count := 0
-		lastTypeId := TypeId(0)
-		for _, t := range stack {
-			if c.hasMatchingRecursionIdentity(t, identity) {
-				// We only count occurrences with a higher type id than the previous occurrence, since higher
-				// type ids are an indicator of newer instantiations caused by recursion.
-				if t.id >= lastTypeId {
-					count++
-					if count >= maxDepth {
-						return true
+		} else {
+			identity := getRecursionIdentityFromTarget(target)
+			count := 0
+			lastTypeId := TypeId(0)
+			for _, t := range stack {
+				if hasMatchingRecursionIdentity(t, identity) {
+					// We only count occurrences with a higher type id than the previous occurrence, since higher
+					// type ids are an indicator of newer instantiations caused by recursion.
+					if t.id >= lastTypeId {
+						count++
+						if count >= maxDepth {
+							return true
+						}
 					}
+					lastTypeId = t.id
 				}
-				lastTypeId = t.id
 			}
 		}
 	}
 	return false
 }
 
-// Unwrap nested homomorphic mapped types and return the deepest target type that has a symbol. This better
-// preserves unique type identities for mapped types applied to explicitly written object literals. For example
-// in `Mapped<{ x: Mapped<{ x: Mapped<{ x: string }>}>}>`, each of the mapped type applications will have a
-// unique recursion identity (that of their target object type literal) and thus avoid appearing deeply nested.
-func (c *Checker) getMappedTargetWithSymbol(t *Type) *Type {
-	for {
-		if t.objectFlags&ObjectFlagsInstantiatedMapped == ObjectFlagsInstantiatedMapped {
-			target := c.getModifiersTypeFromMappedType(t)
-			if target != nil && (target.symbol != nil || target.flags&TypeFlagsIntersection != 0 &&
-				core.Some(target.Types(), func(t *Type) bool { return t.symbol != nil })) {
-				t = target
-				continue
-			}
-		}
-		return t
-	}
-}
-
-func (c *Checker) hasMatchingRecursionIdentity(t *Type, identity RecursionId) bool {
-	if t.objectFlags&ObjectFlagsInstantiatedMapped == ObjectFlagsInstantiatedMapped {
-		t = c.getMappedTargetWithSymbol(t)
-	}
-	if t.flags&TypeFlagsIntersection != 0 {
-		for _, t := range t.Types() {
-			if c.hasMatchingRecursionIdentity(t, identity) {
+func hasMatchingRecursionIdentity(t *Type, identity RecursionId) bool {
+	target := getRecursionIdentityTarget(t)
+	if target.flags&TypeFlagsIntersection != 0 {
+		for _, t := range target.Types() {
+			if hasMatchingRecursionIdentity(t, identity) {
 				return true
 			}
 		}
 		return false
 	}
-	return getRecursionIdentity(t) == identity
+	return getRecursionIdentityFromTarget(target) == identity
+}
+
+func getRecursionIdentity(t *Type) RecursionId {
+	return getRecursionIdentityFromTarget(getRecursionIdentityTarget(t))
+}
+
+// Get the recursion identity target type from a type. Recursively (a) obtain the target object type of an
+// indexed access (i.e. the T in T[K]), and (b) unwrap nested homomorphic mapped types and return the deepest
+// target type that has a symbol. The unwrapping better preserves unique type identities for mapped types applied
+// to explicitly written object literals. For example in `Mapped<{ x: Mapped<{ x: Mapped<{ x: string }>}>}>`,
+// each of the mapped type applications will have a unique recursion identity (that of their target object type
+// literal) and thus avoid appearing deeply nested.
+func getRecursionIdentityTarget(t *Type) *Type {
+	if t.flags&TypeFlagsIndexedAccess != 0 {
+		return getRecursionIdentityTarget(t.AsIndexedAccessType().objectType)
+	}
+	if t.objectFlags&ObjectFlagsInstantiatedMapped == ObjectFlagsInstantiatedMapped {
+		target := t.checker.getModifiersTypeFromMappedType(t)
+		if target != nil && (target.symbol != nil || target.flags&TypeFlagsIntersection != 0 &&
+			core.Some(target.Types(), func(t *Type) bool { return t.symbol != nil })) {
+			return getRecursionIdentityTarget(target)
+		}
+	}
+	return t
 }
 
 // The recursion identity of a type is an object identity that is shared among multiple instantiations of the type.
@@ -836,7 +839,7 @@ func (c *Checker) hasMatchingRecursionIdentity(t *Type, identity RecursionId) bo
 // instantiations of that type have the same recursion identity. The default recursion identity is the object
 // identity of the type, meaning that every type is unique. Generally, types with constituents that could circularly
 // reference the type have a recursion identity that differs from the object identity.
-func getRecursionIdentity(t *Type) RecursionId {
+func getRecursionIdentityFromTarget(t *Type) RecursionId {
 	// Object and array literals are known not to contain recursive references and don't need a recursion identity.
 	if t.flags&TypeFlagsObject != 0 && !isObjectOrArrayLiteralType(t) {
 		if t.objectFlags&ObjectFlagsReference != 0 && t.AsTypeReference().node != nil {
@@ -860,14 +863,6 @@ func getRecursionIdentity(t *Type) RecursionId {
 		// We use the symbol of the type parameter such that all "fresh" instantiations of that type parameter
 		// have the same recursion identity.
 		return asRecursionId(t.symbol)
-	}
-	if t.flags&TypeFlagsIndexedAccess != 0 {
-		// Identity is the leftmost object type in a chain of indexed accesses, eg, in A[P1][P2][P3] it is A.
-		t = t.AsIndexedAccessType().objectType
-		for t.flags&TypeFlagsIndexedAccess != 0 {
-			t = t.AsIndexedAccessType().objectType
-		}
-		return asRecursionId(t)
 	}
 	if t.flags&TypeFlagsConditional != 0 {
 		// The root object represents the origin of the conditional type
