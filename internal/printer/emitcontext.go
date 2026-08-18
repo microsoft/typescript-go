@@ -900,6 +900,19 @@ func (c *EmitContext) AddInitializationStatement(node *ast.Node) {
 	scope.initializationStatements = append(scope.initializationStatements, node)
 }
 
+func (c *EmitContext) ConvertToFunctionBlock(node *ast.Node, multiLine bool) *ast.Node {
+	if ast.IsBlock(node) {
+		return node
+	}
+	returnStatement := c.Factory.NewReturnStatement(node)
+	returnStatement.Loc = node.Loc
+	statements := c.Factory.NewNodeList([]*ast.Node{returnStatement})
+	statements.Loc = node.Loc
+	block := c.Factory.NewBlock(statements, multiLine)
+	block.Loc = node.Loc
+	return block
+}
+
 func (c *EmitContext) VisitFunctionBody(node *ast.BlockOrExpression, visitor *ast.NodeVisitor) *ast.BlockOrExpression {
 	// !!! c.resumeVariableEnvironment()
 	updated := visitor.VisitNode(node)
@@ -913,13 +926,13 @@ func (c *EmitContext) VisitFunctionBody(node *ast.BlockOrExpression, visitor *as
 	}
 
 	if !ast.IsBlock(updated) {
-		returnStatement := c.Factory.NewReturnStatement(updated)
-		returnStatement.Loc = updated.Loc
 		c.AddEmitFlags(updated, EFNoComments)
-		statements := c.MergeEnvironment([]*ast.Statement{returnStatement}, declarations)
-		block := c.Factory.NewBlock(c.Factory.NewNodeList(statements), false /*multiLine*/)
-		block.Loc = updated.Loc
-		return block
+		block := c.ConvertToFunctionBlock(updated, false /*multiLine*/)
+		return c.Factory.UpdateBlock(
+			block.AsBlock(),
+			c.MergeEnvironmentList(block.StatementList(), declarations),
+			block.AsBlock().MultiLine,
+		)
 	}
 
 	return c.Factory.UpdateBlock(
