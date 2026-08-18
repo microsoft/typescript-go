@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"slices"
 	"strconv"
@@ -17,6 +18,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
@@ -26,6 +29,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/project"
+	"github.com/microsoft/typescript-go/internal/transpile"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -515,6 +519,22 @@ func (setup checkerSetup) resolveSignatureHandle(id SignatureID) (*checker.Signa
 	return setup.sd.resolveSignatureHandle(setup.projectID, id)
 }
 
+// resolveLocation resolves an optional location, given either as a node handle or as a
+// file and position. Returns nil when neither is provided.
+func (setup checkerSetup) resolveLocation(handle NodeHandle, file *DocumentIdentifier, position *uint32) (*ast.Node, error) {
+	if handle != "" {
+		return setup.sd.resolveNodeHandle(setup.program, handle)
+	}
+	if file != nil && position != nil {
+		sourceFile := setup.program.GetSourceFile(file.ToFileName())
+		if sourceFile == nil {
+			return nil, fmt.Errorf("%w: source file not found: %v", ErrClientError, *file)
+		}
+		return astnav.GetTouchingPropertyName(sourceFile, sourceFile.GetPositionMap().UTF16ToUTF8(int(*position))), nil
+	}
+	return nil, nil
+}
+
 // setupChecker resolves snapshot, program, and type checker for a project.
 // Callers must defer setup.done() to release the checker.
 func (s *Session) setupChecker(ctx context.Context, snapshot SnapshotID, projectHandle ProjectID) (checkerSetup, error) {
@@ -586,8 +606,22 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleUpdateSnapshot(ctx, parsed.(*UpdateSnapshotParams))
 	case string(MethodUpdateTemporarySnapshot):
 		return s.handleUpdateTemporarySnapshot(ctx, parsed.(*UpdateTemporarySnapshotParams))
+	case string(MethodParseCommandLine):
+		return s.handleParseCommandLine(ctx, parsed.(*ParseCommandLineParams))
+	case string(MethodReadConfigFile):
+		return s.handleReadConfigFile(ctx, parsed.(*ReadConfigFileParams))
+	case string(MethodParseJsonConfigFile):
+		return s.handleParseJsonConfigFileContent(ctx, parsed.(*ParseJsonConfigFileContentParams))
 	case string(MethodParseConfigFile):
 		return s.handleParseConfigFile(ctx, parsed.(*ParseConfigFileParams))
+	case string(MethodTranspileModule):
+		return s.handleTranspile(ctx, parsed.(*TranspileParams), false)
+	case string(MethodTranspileModuleFromFile):
+		return s.handleTranspileFromFile(ctx, parsed.(*TranspileFromFileParams), false)
+	case string(MethodTranspileDeclaration):
+		return s.handleTranspile(ctx, parsed.(*TranspileParams), true)
+	case string(MethodTranspileDeclarationFromFile):
+		return s.handleTranspileFromFile(ctx, parsed.(*TranspileFromFileParams), true)
 	case string(MethodGetDefaultProjectForFile):
 		return s.handleGetDefaultProjectForFile(ctx, parsed.(*GetDefaultProjectForFileParams))
 	case string(MethodGetSourceFile):
@@ -596,6 +630,10 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetSourceFileNames(ctx, parsed.(*GetSourceFileNamesParams))
 	case string(MethodGetSourceFileMetadata):
 		return s.handleGetSourceFileMetadata(ctx, parsed.(*GetSourceFileParams))
+	case string(MethodGetConfigFileNames):
+		return s.handleGetConfigFileNames(ctx, parsed.(*GetProjectDiagnosticsParams))
+	case string(MethodGetConfigSourceFile):
+		return s.handleGetConfigSourceFile(ctx, parsed.(*GetSourceFileParams))
 	case string(MethodGetSymbolAtPosition):
 		return s.handleGetSymbolAtPosition(ctx, parsed.(*GetSymbolAtPositionParams))
 	case string(MethodGetSymbolsAtPositions):
@@ -604,6 +642,10 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetSymbolAtLocation(ctx, parsed.(*GetSymbolAtLocationParams))
 	case string(MethodGetSymbolsAtLocations):
 		return s.handleGetSymbolsAtLocations(ctx, parsed.(*GetSymbolsAtLocationsParams))
+	case string(MethodGetSymbolOfSourceFile):
+		return s.handleGetSymbolOfSourceFile(ctx, parsed.(*GetSymbolOfSourceFileParams))
+	case string(MethodGetSymbolsOfSourceFiles):
+		return s.handleGetSymbolsOfSourceFiles(ctx, parsed.(*GetSymbolsOfSourceFilesParams))
 	case string(MethodGetTypeOfSymbol):
 		return s.handleGetTypeOfSymbol(ctx, parsed.(*GetTypeOfSymbolParams))
 	case string(MethodGetTypesOfSymbols):
@@ -612,6 +654,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetDeclaredTypeOfSymbol(ctx, parsed.(*GetTypeOfSymbolParams))
 	case string(MethodResolveName):
 		return s.handleResolveName(ctx, parsed.(*ResolveNameParams))
+	case string(MethodGetSymbolsInScope):
+		return s.handleGetSymbolsInScope(ctx, parsed.(*GetSymbolsInScopeParams))
 	case string(MethodGetSignaturesOfType):
 		return s.handleGetSignaturesOfType(ctx, parsed.(*GetSignaturesOfTypeParams))
 	case string(MethodGetResolvedSignature):
@@ -706,6 +750,16 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleTypeToString(ctx, parsed.(*TypeToTypeNodeParams))
 	case string(MethodPrintNode):
 		return s.handlePrintNode(ctx, parsed.(*PrintNodeParams))
+	case string(MethodFormatNodeForInsertion):
+		return s.handleFormatNodeForInsertion(ctx, parsed.(*FormatNodeForInsertionParams))
+	case string(MethodEmit):
+		return s.handleEmit(ctx, parsed.(*EmitParams))
+	case string(MethodEmitToString):
+		return s.handleEmitToString(ctx, parsed.(*EmitParams))
+	case string(MethodGetJavaScriptEmit):
+		return s.handleSelectedFilesEmit(ctx, parsed.(*SelectedFilesEmitParams), compiler.EmitOnlyJs)
+	case string(MethodGetDeclarationEmit):
+		return s.handleSelectedFilesEmit(ctx, parsed.(*SelectedFilesEmitParams), compiler.EmitOnlyDts)
 	case string(MethodIsContextSensitive):
 		return s.handleIsContextSensitive(ctx, parsed.(*GetContextualTypeParams))
 	case string(MethodGetReturnTypeOfSignature):
@@ -746,6 +800,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetAliasedSymbol(ctx, parsed.(*CheckerSymbolParams))
 	case string(MethodGetImmediateAliasedSymbol):
 		return s.handleGetImmediateAliasedSymbol(ctx, parsed.(*CheckerSymbolParams))
+	case string(MethodGetFullyQualifiedName):
+		return s.handleGetFullyQualifiedName(ctx, parsed.(*CheckerSymbolParams))
 	case string(MethodGetExportsOfModule):
 		return s.handleGetExportsOfModule(ctx, parsed.(*CheckerSymbolParams))
 	case string(MethodGetMemberInModuleExports):
@@ -780,6 +836,8 @@ func (s *Session) HandleRequest(ctx context.Context, method string, params json.
 		return s.handleGetIntrinsicType(ctx, parsed.(*GetIntrinsicTypeParams), (*checker.Checker).GetBigIntType)
 	case string(MethodGetESSymbolType):
 		return s.handleGetIntrinsicType(ctx, parsed.(*GetIntrinsicTypeParams), (*checker.Checker).GetESSymbolType)
+	case string(MethodGetNonPrimitiveType):
+		return s.handleGetIntrinsicType(ctx, parsed.(*GetIntrinsicTypeParams), (*checker.Checker).GetNonPrimitiveType)
 	case string(MethodGetWellKnownSymbols):
 		return s.handleGetWellKnownSymbols(ctx, parsed.(*GetIntrinsicTypeParams))
 	case string(MethodGetWellKnownSignatures):
@@ -1097,6 +1155,62 @@ func (s *Session) handleGetDefaultProjectForFile(ctx context.Context, params *Ge
 	return NewProjectResponse(proj), nil
 }
 
+// handleParseCommandLine parses command-line arguments.
+func (s *Session) handleParseCommandLine(ctx context.Context, params *ParseCommandLineParams) (*ConfigFileResponse, error) {
+	return NewConfigFileResponse(tsoptions.ParseCommandLine(params.CommandLine, s.projectSession)), nil
+}
+
+// handleReadConfigFile reads and parses a JSON configuration file.
+func (s *Session) handleReadConfigFile(ctx context.Context, params *ReadConfigFileParams) (*ReadConfigFileResponse, error) {
+	configFileName := params.File.ToAbsoluteFileName(s.projectSession.GetCurrentDirectory())
+	configFileContent, ok := s.projectSession.FS().ReadFile(configFileName)
+	if !ok {
+		return &ReadConfigFileResponse{
+			Config: map[string]any{},
+			Error:  NewDiagnosticResponse(ast.NewCompilerDiagnostic(diagnostics.Cannot_read_file_0, configFileName)),
+		}, nil
+	}
+
+	config, parseErrors := tsoptions.ParseConfigFileTextToJson(
+		configFileName,
+		s.toPath(configFileName),
+		configFileContent,
+	)
+	response := &ReadConfigFileResponse{Config: config}
+	if len(parseErrors) > 0 {
+		response.Error = NewDiagnosticResponse(parseErrors[0])
+	}
+	return response, nil
+}
+
+// handleParseJsonConfigFileContent parses an in-memory JSON configuration.
+func (s *Session) handleParseJsonConfigFileContent(ctx context.Context, params *ParseJsonConfigFileContentParams) (*ConfigFileResponse, error) {
+	if (params.ConfigDirectory == nil) == (params.ConfigFileName == nil) {
+		return nil, fmt.Errorf("%w: exactly one of configDirectory or configFileName is required", ErrClientError)
+	}
+
+	var basePath string
+	var configFileName string
+	if params.ConfigDirectory != nil {
+		basePath = tspath.GetNormalizedAbsolutePath(*params.ConfigDirectory, s.projectSession.GetCurrentDirectory())
+	} else {
+		configFileName = params.ConfigFileName.ToAbsoluteFileName(s.projectSession.GetCurrentDirectory())
+		basePath = tspath.GetDirectoryPath(configFileName)
+	}
+
+	parsedCommandLine := tsoptions.ParseJsonConfigFileContent(
+		jsonValueToAny(params.JSON),
+		s.projectSession,
+		basePath,
+		nil, /*existingOptions*/
+		configFileName,
+		nil, /*resolutionStack*/
+		nil, /*extraFileExtensions*/
+		nil, /*extendedConfigCache*/
+	)
+	return NewConfigFileResponse(parsedCommandLine), nil
+}
+
 // handleParseConfigFile parses a tsconfig.json file and returns its contents.
 func (s *Session) handleParseConfigFile(ctx context.Context, params *ParseConfigFileParams) (*ConfigFileResponse, error) {
 	configFileName := params.File.ToAbsoluteFileName(s.projectSession.GetCurrentDirectory())
@@ -1122,11 +1236,46 @@ func (s *Session) handleParseConfigFile(ctx context.Context, params *ParseConfig
 		nil, /*extraFileExtensions*/
 		nil, /*extendedConfigCache*/
 	)
+	return NewConfigFileResponse(parsedCommandLine), nil
+}
 
-	return &ConfigFileResponse{
-		FileNames:         parsedCommandLine.FileNames(),
-		Options:           parsedCommandLine.CompilerOptions(),
-		ProjectReferences: parsedCommandLine.ProjectReferences(),
+func (s *Session) handleTranspile(ctx context.Context, params *TranspileParams, declaration bool) (*TranspileOutputResponse, error) {
+	return transpileOutput(ctx, params.Input, params.Options, declaration)
+}
+
+func (s *Session) handleTranspileFromFile(ctx context.Context, params *TranspileFromFileParams, declaration bool) (*TranspileOutputResponse, error) {
+	fileName := tspath.GetNormalizedAbsolutePath(params.FileName, s.projectSession.GetCurrentDirectory())
+	input, ok := s.projectSession.FS().ReadFile(fileName)
+	if !ok {
+		return nil, fmt.Errorf("%w: could not read file %q", ErrClientError, fileName)
+	}
+	options := params.Options
+	options.FileName = fileName
+	return transpileOutput(ctx, input, options, declaration)
+}
+
+func transpileOutput(ctx context.Context, input string, options TranspileOptions, declaration bool) (*TranspileOutputResponse, error) {
+	transpileOptions := transpile.Options{
+		CompilerOptions:   options.CompilerOptions,
+		FileName:          options.FileName,
+		ReportDiagnostics: options.ReportDiagnostics,
+	}
+	var output *transpile.Output
+	if declaration {
+		output = transpile.TranspileDeclaration(ctx, input, transpileOptions)
+	} else {
+		output = transpile.TranspileModule(ctx, input, transpileOptions)
+	}
+	if output == nil {
+		if err := ctx.Err(); err != nil {
+			return nil, err
+		}
+		return nil, errors.New("transpilation produced no output")
+	}
+	return &TranspileOutputResponse{
+		OutputText:    output.OutputText,
+		Diagnostics:   NewDiagnosticResponses(output.Diagnostics),
+		SourceMapText: output.SourceMapText,
 	}, nil
 }
 
@@ -1142,7 +1291,74 @@ func (s *Session) handleGetSourceFile(ctx context.Context, params *GetSourceFile
 		return nil, err
 	}
 
-	sourceFile := program.GetSourceFile(params.File.ToFileName())
+	return s.encodeSourceFileResponse(program.GetSourceFile(params.File.ToFileName()))
+}
+
+// handleGetConfigFileNames returns tsconfig file names associated with the project's command line.
+func (s *Session) handleGetConfigFileNames(ctx context.Context, params *GetProjectDiagnosticsParams) ([]string, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	commandLine := program.CommandLine()
+	if commandLine == nil || commandLine.ConfigFile == nil || commandLine.ConfigFile.SourceFile == nil {
+		return nil, nil
+	}
+
+	extendedFiles := commandLine.ExtendedSourceFiles()
+	configFiles := make([]string, 0, len(extendedFiles)+1)
+	configFiles = append(configFiles, commandLine.ConfigFile.SourceFile.FileName())
+	configFiles = append(configFiles, extendedFiles...)
+	return configFiles, nil
+}
+
+// handleGetConfigSourceFile returns a tsconfig source file associated with the project's command line.
+func (s *Session) handleGetConfigSourceFile(ctx context.Context, params *GetSourceFileParams) (any, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	commandLine := program.CommandLine()
+	if commandLine == nil || commandLine.ConfigFile == nil || commandLine.ConfigFile.SourceFile == nil {
+		return s.encodeSourceFileResponse(nil)
+	}
+
+	requestedPath := tspath.ToPath(params.File.ToFileName(), program.GetCurrentDirectory(), program.UseCaseSensitiveFileNames())
+	rootConfigSourceFile := commandLine.ConfigFile.SourceFile
+	if rootConfigSourceFile.Path() == requestedPath {
+		return s.encodeSourceFileResponse(rootConfigSourceFile)
+	}
+
+	for _, configFileName := range commandLine.ExtendedSourceFiles() {
+		if tspath.ToPath(configFileName, program.GetCurrentDirectory(), program.UseCaseSensitiveFileNames()) != requestedPath {
+			continue
+		}
+
+		configFileContent, ok := sd.snapshot.ReadFile(configFileName)
+		if !ok {
+			return s.encodeSourceFileResponse(nil)
+		}
+
+		configSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(configFileName, requestedPath, configFileContent)
+		return s.encodeSourceFileResponse(configSourceFile.SourceFile)
+	}
+
+	return s.encodeSourceFileResponse(nil)
+}
+
+func (s *Session) encodeSourceFileResponse(sourceFile *ast.SourceFile) (any, error) {
 	if sourceFile == nil {
 		if s.useBinaryResponses {
 			return RawBinary(nil), nil
@@ -1156,7 +1372,6 @@ func (s *Session) handleGetSourceFile(ctx context.Context, params *GetSourceFile
 		return nil, fmt.Errorf("failed to encode source file: %w", err)
 	}
 
-	// Return raw binary for msgpack protocol, or base64 for JSON
 	if s.useBinaryResponses {
 		return RawBinary(data), nil
 	}
@@ -1238,6 +1453,49 @@ func (s *Session) handleGetSymbolAtPosition(ctx context.Context, params *GetSymb
 	}
 
 	return setup.newSymbolResponse(symbol), nil
+}
+
+// handleGetSymbolOfSourceFile returns the module symbol for a source file, if any.
+// For non-module (script) files, returns nil.
+func (s *Session) handleGetSymbolOfSourceFile(ctx context.Context, params *GetSymbolOfSourceFileParams) (*SymbolResponse, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
+
+	sourceFile := setup.program.GetSourceFile(params.File.ToFileName())
+	if sourceFile == nil {
+		return nil, fmt.Errorf("%w: source file not found: %v", ErrClientError, params.File)
+	}
+
+	symbol := setup.checker.GetSymbolAtLocation(sourceFile.AsNode())
+	if symbol == nil {
+		return nil, nil
+	}
+	return setup.newSymbolResponse(symbol), nil
+}
+
+// handleGetSymbolsOfSourceFiles returns the module symbols for multiple source files.
+func (s *Session) handleGetSymbolsOfSourceFiles(ctx context.Context, params *GetSymbolsOfSourceFilesParams) ([]*SymbolResponse, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
+
+	results := make([]*SymbolResponse, len(params.Files))
+	for i, file := range params.Files {
+		sourceFile := setup.program.GetSourceFile(file.ToFileName())
+		if sourceFile == nil {
+			return nil, fmt.Errorf("%w: source file not found: %v", ErrClientError, file)
+		}
+		symbol := setup.checker.GetSymbolAtLocation(sourceFile.AsNode())
+		if symbol != nil {
+			results[i] = setup.newSymbolResponse(symbol)
+		}
+	}
+	return results, nil
 }
 
 // handleGetSymbolsAtPositions returns symbols at multiple positions in a file.
@@ -1382,18 +1640,9 @@ func (s *Session) handleResolveName(ctx context.Context, params *ResolveNamePara
 	defer setup.done()
 
 	// Resolve location node - either from node handle or from fileName+position
-	var location *ast.Node
-	if params.Location != "" {
-		location, err = setup.sd.resolveNodeHandle(setup.program, params.Location)
-		if err != nil {
-			return nil, err
-		}
-	} else if params.File != nil && params.Position != nil {
-		sourceFile := setup.program.GetSourceFile(params.File.ToFileName())
-		if sourceFile == nil {
-			return nil, fmt.Errorf("%w: source file not found: %v", ErrClientError, *params.File)
-		}
-		location = astnav.GetTouchingPropertyName(sourceFile, sourceFile.GetPositionMap().UTF16ToUTF8(int(*params.Position)))
+	location, err := setup.resolveLocation(params.Location, params.File, params.Position)
+	if err != nil {
+		return nil, err
 	}
 
 	symbol := setup.checker.ResolveName(params.Name, location, ast.SymbolFlags(params.Meaning), params.ExcludeGlobals)
@@ -1402,6 +1651,31 @@ func (s *Session) handleResolveName(ctx context.Context, params *ResolveNamePara
 	}
 
 	return setup.newSymbolResponse(symbol), nil
+}
+
+// handleGetSymbolsInScope returns all symbols with the given meaning that are visible at a location.
+func (s *Session) handleGetSymbolsInScope(ctx context.Context, params *GetSymbolsInScopeParams) ([]*SymbolResponse, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	defer setup.done()
+
+	location, err := setup.resolveLocation(params.Location, params.File, params.Position)
+	if err != nil {
+		return nil, err
+	}
+	if location == nil {
+		return nil, fmt.Errorf("%w: getSymbolsInScope requires a location", ErrClientError)
+	}
+
+	symbols := setup.checker.GetSymbolsInScope(location, ast.SymbolFlags(params.Meaning))
+	results := make([]*SymbolResponse, len(symbols))
+	for i, symbol := range symbols {
+		results[i] = setup.newSymbolResponse(symbol)
+	}
+
+	return results, nil
 }
 
 // handleGetSignaturesOfType returns the call or construct signatures of a type.
@@ -2294,6 +2568,191 @@ func (s *Session) handlePrintNode(_ context.Context, params *PrintNodeParams) (s
 	return p.Emit(node, nil), nil
 }
 
+func (s *Session) handleEmit(ctx context.Context, params *EmitParams) (*EmitResponse, error) {
+	program, options, err := s.getEmitOptions(params)
+	if err != nil {
+		return nil, err
+	}
+	options.WriteFile = func(fileName string, text string, _ *compiler.WriteFileData) error {
+		return s.projectSession.FS().WriteFile(fileName, text)
+	}
+	result, err := emitProgram(ctx, program, options)
+	if err != nil {
+		return nil, err
+	}
+	emittedFiles := slices.Clone(result.EmittedFiles)
+	if emittedFiles == nil {
+		emittedFiles = []string{}
+	}
+	return &EmitResponse{
+		EmitSkipped:  result.EmitSkipped,
+		Diagnostics:  nonNilDiagnostics(result.Diagnostics),
+		EmittedFiles: emittedFiles,
+	}, nil
+}
+
+func (s *Session) handleEmitToString(ctx context.Context, params *EmitParams) (*EmitOutputResponse, error) {
+	program, options, err := s.getEmitOptions(params)
+	if err != nil {
+		return nil, err
+	}
+	return emitToOutput(ctx, program, options)
+}
+
+func (s *Session) handleSelectedFilesEmit(ctx context.Context, params *SelectedFilesEmitParams, emitOnly compiler.EmitOnly) (*EmitOutputResponse, error) {
+	program, err := s.getEmitProgram(params.Snapshot, params.Project)
+	if err != nil {
+		return nil, err
+	}
+	if params.Files == nil {
+		return nil, fmt.Errorf("%w: files is required", ErrClientError)
+	}
+	targetSourceFiles := make([]*ast.SourceFile, 0, len(params.Files))
+	for _, file := range params.Files {
+		sourceFile, err := s.resolveOptionalSourceFile(program, &file)
+		if err != nil {
+			return nil, err
+		}
+		targetSourceFiles = append(targetSourceFiles, sourceFile)
+	}
+	return emitToOutput(ctx, program, compiler.EmitOptions{
+		TargetSourceFiles: targetSourceFiles,
+		EmitOnly:          emitOnly,
+		ForceEmit:         true,
+	})
+}
+
+func emitToOutput(ctx context.Context, program *compiler.Program, options compiler.EmitOptions) (*EmitOutputResponse, error) {
+	var mu sync.Mutex
+	outputFiles := make([]*EmitOutputFile, 0)
+	options.WriteFile = func(fileName string, text string, data *compiler.WriteFileData) error {
+		var sourceFileName *string
+		if data.SourceFile != nil {
+			name := data.SourceFile.FileName()
+			sourceFileName = &name
+		}
+		mu.Lock()
+		outputFiles = append(outputFiles, &EmitOutputFile{FileName: fileName, Text: text, SourceFileName: sourceFileName})
+		mu.Unlock()
+		return nil
+	}
+
+	result, err := emitProgram(ctx, program, options)
+	if err != nil {
+		return nil, err
+	}
+	slices.SortFunc(outputFiles, func(a, b *EmitOutputFile) int {
+		return strings.Compare(a.FileName, b.FileName)
+	})
+	return &EmitOutputResponse{
+		EmitSkipped: result.EmitSkipped,
+		Diagnostics: nonNilDiagnostics(result.Diagnostics),
+		OutputFiles: outputFiles,
+	}, nil
+}
+
+func (s *Session) getEmitOptions(params *EmitParams) (*compiler.Program, compiler.EmitOptions, error) {
+	program, err := s.getEmitProgram(params.Snapshot, params.Project)
+	if err != nil {
+		return nil, compiler.EmitOptions{}, err
+	}
+	emitOnly, err := getEmitOnly(params.EmitOnly)
+	if err != nil {
+		return nil, compiler.EmitOptions{}, err
+	}
+	return program, compiler.EmitOptions{
+		EmitOnly: emitOnly,
+	}, nil
+}
+
+func (s *Session) getEmitProgram(snapshot SnapshotID, projectID ProjectID) (*compiler.Program, error) {
+	sd, err := s.getSnapshotData(snapshot)
+	if err != nil {
+		return nil, err
+	}
+	return sd.getProgram(projectID)
+}
+
+func getEmitOnly(value *uint32) (compiler.EmitOnly, error) {
+	if value == nil {
+		return compiler.EmitAll, nil
+	}
+	if *value > uint32(compiler.EmitOnlyDts) {
+		return compiler.EmitAll, fmt.Errorf("%w: invalid emitOnly value: %d", ErrClientError, *value)
+	}
+	emitOnly := compiler.EmitOnly(*value)
+	return emitOnly, nil
+}
+
+func emitProgram(ctx context.Context, program *compiler.Program, options compiler.EmitOptions) (*compiler.EmitResult, error) {
+	result := program.Emit(ctx, options)
+	if result != nil {
+		return result, nil
+	}
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+	return nil, errors.New("compiler emit returned nil result")
+}
+
+func nonNilDiagnostics(diags []*ast.Diagnostic) []*DiagnosticResponse {
+	result := NewDiagnosticResponses(diags)
+	if result == nil {
+		return []*DiagnosticResponse{}
+	}
+	return result
+}
+
+// handleFormatNodeForInsertion formats a synthesized node with the correct indentation
+// for insertion at a specific position in an existing file.
+func (s *Session) handleFormatNodeForInsertion(ctx context.Context, params *FormatNodeForInsertionParams) (string, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return "", err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return "", err
+	}
+
+	targetSourceFile, err := s.resolveOptionalSourceFile(program, &params.File)
+	if err != nil {
+		return "", err
+	}
+
+	data, err := base64.StdEncoding.DecodeString(params.Data)
+	if err != nil {
+		return "", fmt.Errorf("%w: invalid base64 data: %w", ErrClientError, err)
+	}
+
+	node, err := encoder.DecodeNodes(data)
+	if err != nil {
+		return "", fmt.Errorf("%w: failed to decode AST: %w", ErrClientError, err)
+	}
+
+	pos := targetSourceFile.GetPositionMap().UTF16ToUTF8(int(params.Position))
+	formatOptions := sd.snapshot.UserPreferences().FormatCodeSettings
+	newLine := formatOptions.NewLineCharacter
+
+	factory := ast.NewNodeFactory(ast.NodeFactoryHooks{})
+	text, nodeWithPos := printer.PrintAndPositionNode(factory, node, nil, newLine, formatOptions.IndentSize, nil)
+	syntheticFile := printer.CreateSyntheticSourceFile(factory, nodeWithPos, text, targetSourceFile.ParseOptions())
+
+	isAtLineStart := format.GetLineStartPositionForPosition(pos, targetSourceFile) == pos
+	initialIndentation := format.GetIndentation(pos, targetSourceFile, formatOptions, isAtLineStart)
+
+	var delta int
+	if formatOptions.IndentSize != 0 && format.ShouldIndentChildNode(formatOptions, node, nil, nil) {
+		delta = formatOptions.IndentSize
+	}
+
+	ctx = format.WithFormatCodeSettings(ctx, formatOptions, newLine)
+	changes := format.FormatNodeGivenIndentation(ctx, nodeWithPos, syntheticFile, targetSourceFile.LanguageVariant, initialIndentation, delta)
+
+	return core.ApplyBulkEdits(text, changes), nil
+}
+
 // handleGetIntrinsicType returns an intrinsic type (any, string, number, etc.).
 func (s *Session) handleGetIntrinsicType(ctx context.Context, params *GetIntrinsicTypeParams, getter func(*checker.Checker) *checker.Type) (*TypeResponse, error) {
 	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
@@ -2733,6 +3192,26 @@ func (s *Session) handleGetAliasedSymbol(ctx context.Context, params *CheckerSym
 	return setup.newSymbolResponse(setup.checker.GetAliasedSymbol(symbol)), nil
 }
 
+// handleGetFullyQualifiedName returns the fully qualified name of a symbol
+// (e.g. `"/path/to/module".Namespace.Name`).
+func (s *Session) handleGetFullyQualifiedName(ctx context.Context, params *CheckerSymbolParams) (string, error) {
+	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
+	if err != nil {
+		return "", err
+	}
+	defer setup.done()
+
+	symbol, err := setup.resolveSymbolHandle(params.Symbol)
+	if err != nil {
+		return "", err
+	}
+	if symbol == nil {
+		return "", nil
+	}
+
+	return setup.checker.GetFullyQualifiedName(symbol), nil
+}
+
 // handleGetImmediateAliasedSymbol resolves one level of alias indirection.
 func (s *Session) handleGetImmediateAliasedSymbol(ctx context.Context, params *CheckerSymbolParams) (*SymbolResponse, error) {
 	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
@@ -2828,12 +3307,7 @@ func (s *Session) handleGetJSDocTags(ctx context.Context, params *CheckerSymbolP
 		return nil, nil
 	}
 
-	langSvc, err := s.setupLanguageService(setup.sd, setup.program, params.Project, "")
-	if err != nil {
-		return nil, err
-	}
-
-	tags := langSvc.GetSymbolJSDocTags(symbol)
+	tags := ls.GetSymbolJSDocTags(symbol)
 	if len(tags) == 0 {
 		return nil, nil
 	}
@@ -2860,12 +3334,7 @@ func (s *Session) handleGetDocumentationComment(ctx context.Context, params *Che
 		return "", nil
 	}
 
-	langSvc, err := s.setupLanguageService(setup.sd, setup.program, params.Project, "")
-	if err != nil {
-		return "", err
-	}
-
-	return langSvc.GetSymbolDocumentationComment(setup.checker, symbol), nil
+	return ls.GetSymbolDocumentationComment(setup.checker, symbol), nil
 }
 
 // handleGetTypeArguments returns the type arguments of a type reference.
@@ -3093,114 +3562,55 @@ func (s *Session) toFileChangeSummary(changes *APIFileChanges) project.FileChang
 	return summary
 }
 
-// handleGetSyntacticDiagnostics returns syntactic diagnostics for a file or all files.
+func (s *Session) getDiagnostics(ctx context.Context, params *GetDiagnosticsParams, getter func(*compiler.Program, context.Context, *ast.SourceFile) []*ast.Diagnostic) ([]*DiagnosticResponse, error) {
+	sd, err := s.getSnapshotData(params.Snapshot)
+	if err != nil {
+		return nil, err
+	}
+
+	program, err := sd.getProgram(params.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	if params.Files != nil {
+		var allDiags []*ast.Diagnostic
+		for _, file := range params.Files {
+			sourceFile, err := s.resolveOptionalSourceFile(program, &file)
+			if err != nil {
+				return nil, err
+			}
+			allDiags = append(allDiags, getter(program, ctx, sourceFile)...)
+		}
+		return NewDiagnosticResponses(allDiags), nil
+	}
+
+	return NewDiagnosticResponses(getter(program, ctx, nil)), nil
+}
+
 func (s *Session) handleGetSyntacticDiagnostics(ctx context.Context, params *GetDiagnosticsParams) ([]*DiagnosticResponse, error) {
 	ctx = core.WithCheckerLifetime(ctx, core.CheckerLifetimeDiagnostics)
-	sd, err := s.getSnapshotData(params.Snapshot)
-	if err != nil {
-		return nil, err
-	}
-
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	sourceFile, err := s.resolveOptionalSourceFile(program, params.File)
-	if err != nil {
-		return nil, err
-	}
-
-	diags := program.GetSyntacticDiagnostics(ctx, sourceFile)
-	return NewDiagnosticResponses(diags), nil
+	return s.getDiagnostics(ctx, params, (*compiler.Program).GetSyntacticDiagnostics)
 }
 
-// handleGetBindDiagnostics returns bind diagnostics for a file or all files.
 func (s *Session) handleGetBindDiagnostics(ctx context.Context, params *GetDiagnosticsParams) ([]*DiagnosticResponse, error) {
 	ctx = core.WithCheckerLifetime(ctx, core.CheckerLifetimeDiagnostics)
-	sd, err := s.getSnapshotData(params.Snapshot)
-	if err != nil {
-		return nil, err
-	}
-
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	sourceFile, err := s.resolveOptionalSourceFile(program, params.File)
-	if err != nil {
-		return nil, err
-	}
-
-	diags := program.GetBindDiagnostics(ctx, sourceFile)
-	return NewDiagnosticResponses(diags), nil
+	return s.getDiagnostics(ctx, params, (*compiler.Program).GetBindDiagnostics)
 }
 
-// handleGetSemanticDiagnostics returns semantic diagnostics for a file or all files.
 func (s *Session) handleGetSemanticDiagnostics(ctx context.Context, params *GetDiagnosticsParams) ([]*DiagnosticResponse, error) {
 	ctx = core.WithCheckerLifetime(ctx, core.CheckerLifetimeDiagnostics)
-	sd, err := s.getSnapshotData(params.Snapshot)
-	if err != nil {
-		return nil, err
-	}
-
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	sourceFile, err := s.resolveOptionalSourceFile(program, params.File)
-	if err != nil {
-		return nil, err
-	}
-
-	diags := program.GetSemanticDiagnostics(ctx, sourceFile)
-	return NewDiagnosticResponses(diags), nil
+	return s.getDiagnostics(ctx, params, (*compiler.Program).GetSemanticDiagnostics)
 }
 
-// handleGetSuggestionDiagnostics returns suggestion diagnostics for a file or all files.
 func (s *Session) handleGetSuggestionDiagnostics(ctx context.Context, params *GetDiagnosticsParams) ([]*DiagnosticResponse, error) {
 	ctx = core.WithCheckerLifetime(ctx, core.CheckerLifetimeDiagnostics)
-	sd, err := s.getSnapshotData(params.Snapshot)
-	if err != nil {
-		return nil, err
-	}
-
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	sourceFile, err := s.resolveOptionalSourceFile(program, params.File)
-	if err != nil {
-		return nil, err
-	}
-
-	diags := program.GetSuggestionDiagnostics(ctx, sourceFile)
-	return NewDiagnosticResponses(diags), nil
+	return s.getDiagnostics(ctx, params, (*compiler.Program).GetSuggestionDiagnostics)
 }
 
-// handleGetDeclarationDiagnostics returns declaration diagnostics for a file or all files.
 func (s *Session) handleGetDeclarationDiagnostics(ctx context.Context, params *GetDiagnosticsParams) ([]*DiagnosticResponse, error) {
 	ctx = core.WithCheckerLifetime(ctx, core.CheckerLifetimeDiagnostics)
-	sd, err := s.getSnapshotData(params.Snapshot)
-	if err != nil {
-		return nil, err
-	}
-
-	program, err := sd.getProgram(params.Project)
-	if err != nil {
-		return nil, err
-	}
-
-	sourceFile, err := s.resolveOptionalSourceFile(program, params.File)
-	if err != nil {
-		return nil, err
-	}
-
-	diags := program.GetDeclarationDiagnostics(ctx, sourceFile)
-	return NewDiagnosticResponses(diags), nil
+	return s.getDiagnostics(ctx, params, (*compiler.Program).GetDeclarationDiagnostics)
 }
 
 // handleGetConfigFileParsingDiagnostics returns config file parsing diagnostics.

@@ -239,13 +239,15 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 					"importModuleSpecifier": "relative"
 				},
 				"workspaceSymbols": {
-					"excludeLibrarySymbols": true
+					"excludeLibrarySymbols": true,
+					"scope": "currentProject"
 				}
 			}`,
 			expected: UserPreferences{
 				DisplayPartsForJSDoc:            core.TSTrue,
 				ImportModuleSpecifierPreference: modulespecifiers.ImportModuleSpecifierPreferenceRelative,
 				ExcludeLibrarySymbolsInNavTo:    core.TSTrue,
+				WorkspaceSymbolsScope:           WorkspaceSymbolsScopeCurrentProject,
 			},
 		},
 		{
@@ -422,6 +424,21 @@ func TestUserPreferencesParseUnstable(t *testing.T) {
 			assert.DeepEqual(t, tt.expected, parsed)
 		})
 	}
+}
+
+func TestUserPreferencesLocale(t *testing.T) {
+	t.Parallel()
+
+	prefs := ParseUserPreferences(map[string]any{
+		"typescript": map[string]any{
+			"locale": "de",
+		},
+		"js/ts": map[string]any{
+			"locale": "fr",
+		},
+	})
+
+	assert.Equal(t, prefs.Locale, "fr")
 }
 
 func TestUserPreferencesReportStyleChecksAsWarnings(t *testing.T) {
