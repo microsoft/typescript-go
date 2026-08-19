@@ -31,9 +31,13 @@ func TestParseResultSupplementalFileExtensions(t *testing.T) {
 		ast.SourceFileParseOptions{FileName: "/component.astro", Path: "/component.astro"},
 		"",
 		&contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".astro"}}, Manifest: contentmapper.Manifest{Name: "mapper"}},
+		"transform-identity",
 		result,
 	)
 	assert.NilError(t, err)
+	assert.Equal(t, files.Canonical.ContentMapperTransformIdentity(), "transform-identity")
+	canonicalSupplementals := files.Canonical.SupplementalSourceFiles()
+	assert.Equal(t, len(canonicalSupplementals), len(files.Supplemental))
 
 	expected := []struct {
 		fileName   string
@@ -52,6 +56,9 @@ func TestParseResultSupplementalFileExtensions(t *testing.T) {
 		assert.Equal(t, files.Supplemental[i].FileName(), expected.fileName)
 		assert.Equal(t, files.Supplemental[i].Path(), tspath.Path(expected.fileName))
 		assert.Equal(t, files.Supplemental[i].ScriptKind, expected.scriptKind)
+		assert.Equal(t, files.Supplemental[i].ContentMapperTransformIdentity(), "transform-identity")
+		assert.Assert(t, canonicalSupplementals[i] == files.Supplemental[i])
+		assert.Assert(t, files.Supplemental[i].CanonicalSourceFile() == files.Canonical)
 	}
 }
 
@@ -62,6 +69,7 @@ func TestParseResultAllowsSupplementalModules(t *testing.T) {
 		ast.SourceFileParseOptions{FileName: "/component.astro", Path: "/component.astro"},
 		"",
 		&contentmapper.Mapper{Definition: contentmapper.Definition{Extensions: []string{".astro"}}, Manifest: contentmapper.Manifest{Name: "mapper"}},
+		"",
 		contentmapper.Result{
 			Text:             "export {};",
 			VirtualExtension: ".ts",
@@ -84,6 +92,7 @@ func TestParseResultDoesNotLeakCanonicalModuleForcingToSupplementals(t *testing.
 		ast.SourceFileParseOptions{FileName: "/component.astro", Path: "/component.astro"},
 		"",
 		&contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "mapper"}},
+		"",
 		contentmapper.Result{
 			Text:             "const canonical = 1;",
 			VirtualExtension: ".mts",

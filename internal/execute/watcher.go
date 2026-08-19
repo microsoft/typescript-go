@@ -67,11 +67,9 @@ type Watcher struct {
 	reportWatchStatus              tsc.DiagnosticReporter
 	testing                        tsc.CommandLineTesting
 
-	// ctx bounds the whole watch session (the CLI signal context); it is set by start and used to bound
-	// resources that outlive a single cycle, such as content mapper processes.
-	ctx context.Context
 	// contentMapperHost transforms content-mapped files; it is created once per watch session (when
-	// enabled) and reused across cycles. It closes itself when ctx is cancelled (see contentmapper.New).
+	// enabled) and reused across cycles. It closes itself when the session context is cancelled (see
+	// contentmapper.New).
 	contentMapperHost    contentmapper.Host
 	contentMapperProject contentmapper.Project
 
@@ -136,8 +134,10 @@ func createWatcher(
 }
 
 func (w *Watcher) start(ctx context.Context) {
-	w.ctx = ctx
 	w.contentMapperHost = tsc.NewContentMapperHost(ctx, w.sys, w.config.CompilerOptions())
+	if w.contentMapperHost != nil && w.testing == nil {
+		defer w.contentMapperHost.Close()
+	}
 	w.replaceContentMapperProject(w.config)
 	w.wm.Lock()
 	w.extendedConfigCache = &tsc.ExtendedConfigCache{}

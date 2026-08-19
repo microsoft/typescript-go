@@ -7,6 +7,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/execute"
@@ -28,6 +29,7 @@ type recordingContentMapperSpawner struct {
 	inner  contentmapper.Spawner
 	spawns atomic.Int32
 	closes atomic.Int32
+	closed chan<- struct{}
 }
 
 func (s *recordingContentMapperSpawner) Spawn(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error) {
@@ -36,12 +38,13 @@ func (s *recordingContentMapperSpawner) Spawn(command []string, dir string, stde
 		return nil, err
 	}
 	s.spawns.Add(1)
-	return &recordingContentMapperProcess{ReadWriteCloser: process, closes: &s.closes}, nil
+	return &recordingContentMapperProcess{ReadWriteCloser: process, closes: &s.closes, closed: s.closed}, nil
 }
 
 type recordingContentMapperProcess struct {
 	io.ReadWriteCloser
 	closes *atomic.Int32
+	closed chan<- struct{}
 	once   sync.Once
 }
 
@@ -50,6 +53,9 @@ func (p *recordingContentMapperProcess) Close() error {
 	p.once.Do(func() {
 		p.closes.Add(1)
 		err = p.ReadWriteCloser.Close()
+		if p.closed != nil {
+			p.closed <- struct{}{}
+		}
 	})
 	return err
 }
@@ -96,7 +102,8 @@ func TestContentMapperWatchLifecycle(t *testing.T) {
 				"/home/src/workspaces/project/node_modules/mapper-b/package.json": strings.Replace(contentmappertest.PackageJSON(contentmappertest.VerbatimMapper), `"version": "1.0.0"`, `"version": "2.0.0"`, 1),
 			}}
 			testSys := newTestSys(input, false)
-			spawner := &recordingContentMapperSpawner{inner: contentmappertest.NewSpawner()}
+			closed := make(chan struct{}, 3)
+			spawner := &recordingContentMapperSpawner{inner: contentmappertest.NewSpawner(), closed: closed}
 			sys := &recordingContentMapperSystem{TestSys: testSys, spawner: spawner}
 			ctx, cancel := context.WithCancel(t.Context())
 			defer cancel()
@@ -115,12 +122,34 @@ func TestContentMapperWatchLifecycle(t *testing.T) {
 
 			assert.Equal(t, spawner.spawns.Load(), int32(2))
 			assert.Equal(t, spawner.closes.Load(), int32(1))
+			<-closed
 
 			testSys.writeFileNoError(configFileName, `{ "compilerOptions": { "composite": true } }`)
 			testSys.mockWatchBackend.SendEvents([]fswatch.Event{{Kind: fswatch.EventUpdate, Path: configFileName}})
 			result.Watcher.DoCycle()
 
 			assert.Equal(t, spawner.closes.Load(), int32(2))
+			<-closed
+
+			testSys.writeFileNoError(configFileName, `{
+				"compilerOptions": { "composite": true },
+				"contentMappers": [{ "package": "mapper-a", "extensions": [".vue"] }]
+			}`)
+			testSys.mockWatchBackend.SendEvents([]fswatch.Event{{Kind: fswatch.EventUpdate, Path: configFileName}})
+			result.Watcher.DoCycle()
+
+			assert.Equal(t, spawner.spawns.Load(), int32(3))
+			assert.Equal(t, spawner.closes.Load(), int32(2))
+			cancel()
+			closedAfterCancellation := false
+			select {
+			case <-closed:
+				closedAfterCancellation = true
+			case <-time.After(time.Second):
+				closedAfterCancellation = false
+			}
+			assert.Assert(t, closedAfterCancellation, "content mapper process was not closed after cancellation")
+			assert.Equal(t, spawner.closes.Load(), int32(3))
 		})
 	}
 }

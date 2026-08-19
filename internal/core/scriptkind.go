@@ -11,7 +11,10 @@ const (
 	ScriptKindJSX     ScriptKind = 2
 	ScriptKindTS      ScriptKind = 3
 	ScriptKindTSX     ScriptKind = 4
+
 	// Value 5 is reserved (formerly ScriptKindExternal).
+
 	ScriptKindJSON ScriptKind = 6
+
 	// Value 7 is reserved (formerly ScriptKindDeferred).
 )

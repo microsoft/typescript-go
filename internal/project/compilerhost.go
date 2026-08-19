@@ -1,7 +1,6 @@
 package project
 
 import (
-	"errors"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -122,7 +121,7 @@ func (c *compilerHost) GetContentMappedSourceFiles(parseOptions ast.SourceFilePa
 	}
 	c.ensureContentMapperProject()
 	if c.contentMapperProject == nil {
-		return contentmapper.SourceFiles{}, errors.New("content mapper project is unavailable")
+		return contentmapper.SourceFiles{}, contentmapper.ErrProjectUnavailable
 	}
 	identity, err := c.contentMapperProject.Identity(mapper)
 	if err != nil {

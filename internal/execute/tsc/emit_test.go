@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"io"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -42,8 +43,12 @@ func TestContentMapperLoggerEnvironmentVariable(t *testing.T) {
 	sys.enabled = true
 	logger := newContentMapperLogger(sys)
 	assert.Assert(t, logger != nil)
-	logger("mapper log")
-	assert.Equal(t, sys.stderr.String(), "mapper log\n")
+	var wg sync.WaitGroup
+	for range 10 {
+		wg.Go(func() { logger("mapper log") })
+	}
+	wg.Wait()
+	assert.Equal(t, sys.stderr.String(), strings.Repeat("mapper log\n", 10))
 }
 
 type controlledClock struct {

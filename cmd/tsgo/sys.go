@@ -93,8 +93,8 @@ func spawnProcess(command []string, dir string, stderr io.Writer) (io.ReadWriteC
 // Close kills and reaps the process.
 type childProcess struct {
 	cmd    *exec.Cmd
-	stdin  io.WriteCloser
-	stdout io.ReadCloser
+	stdin  io.Writer
+	stdout io.Reader
 }
 
 func (p *childProcess) Read(b []byte) (int, error)  { return p.stdout.Read(b) }

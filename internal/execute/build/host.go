@@ -1,7 +1,6 @@
 package build
 
 import (
-	"errors"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -61,7 +60,7 @@ func (h *host) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
 }
 
 func (h *host) GetContentMappedSourceFiles(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper) (contentmapper.SourceFiles, error) {
-	return contentmapper.SourceFiles{}, errors.New("content mapper project is unavailable")
+	return contentmapper.SourceFiles{}, contentmapper.ErrProjectUnavailable
 }
 
 func (h *host) ContentMapperProject() contentmapper.Project {

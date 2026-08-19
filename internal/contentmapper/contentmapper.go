@@ -12,6 +12,7 @@
 package contentmapper
 
 import (
+	"errors"
 	"reflect"
 	"strings"
 	"sync"
@@ -21,6 +22,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/zeebo/xxh3"
 )
+
+var ErrProjectUnavailable = errors.New("content mapper project is unavailable")
 
 // Definition is a content mapper as declared in a tsconfig's "contentMappers": the npm package that
 // implements the mapper and the otherwise unsupported file extensions it registers.

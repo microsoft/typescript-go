@@ -18,8 +18,10 @@ func TestToAPITextEditsUsesOriginalCoordinates(t *testing.T) {
 		FileName: "/app.vue",
 		Path:     tspath.Path("/app.vue"),
 	}, "const transformed = true;", core.ScriptKindTS)
-	sourceFile.SetOriginalText("😀\nabc")
-	sourceFile.SetContentMapper("mapper")
+	sourceFile.SetContentMapperInfo(ast.ContentMapperSourceFileInfo{
+		OriginalText:  "😀\nabc",
+		ContentMapper: "mapper",
+	})
 
 	edits := toAPITextEdits(sourceFile, []*lsproto.TextEdit{{
 		Range: lsproto.Range{

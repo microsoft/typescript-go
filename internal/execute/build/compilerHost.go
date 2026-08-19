@@ -1,8 +1,6 @@
 package build
 
 import (
-	"errors"
-
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
@@ -42,7 +40,7 @@ func (h *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.Sourc
 
 func (h *compilerHost) GetContentMappedSourceFiles(parseOptions ast.SourceFileParseOptions, mapper *contentmapper.Mapper) (contentmapper.SourceFiles, error) {
 	if h.contentMapperProject == nil {
-		return contentmapper.SourceFiles{}, errors.New("content mapper project is unavailable")
+		return contentmapper.SourceFiles{}, contentmapper.ErrProjectUnavailable
 	}
 	content, ok := h.FS().ReadFile(parseOptions.FileName)
 	if !ok {

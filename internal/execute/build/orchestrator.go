@@ -65,12 +65,9 @@ type Orchestrator struct {
 	comparePathsOptions tspath.ComparePathsOptions
 	host                *host
 
-	// ctx bounds the whole build session (the CLI signal context); it is set by Start and used to bound
-	// resources that outlive a single project build, such as content mapper processes.
-	ctx context.Context
 	// contentMapperHost transforms content-mapped files; it is created once per build session (when
 	// enabled) and shared across all projects so mapper processes are consolidated. It closes itself when
-	// ctx is cancelled (see contentmapper.New).
+	// the session context is cancelled (see contentmapper.New).
 	contentMapperHost contentmapper.Host
 
 	// order generation result
@@ -248,9 +245,8 @@ func (o *Orchestrator) GenerateGraph(oldTasks *collections.SyncMap[tspath.Path, 
 }
 
 func (o *Orchestrator) Start(ctx context.Context) tsc.CommandLineResult {
-	o.ctx = ctx
 	o.contentMapperHost = tsc.NewContentMapperHost(ctx, o.opts.Sys, o.opts.Command.CompilerOptions)
-	if o.contentMapperHost != nil && !o.opts.Command.CompilerOptions.Watch.IsTrue() {
+	if o.contentMapperHost != nil && (!o.opts.Command.CompilerOptions.Watch.IsTrue() || o.opts.Testing == nil) {
 		defer o.contentMapperHost.Close()
 	}
 	if o.opts.Command.CompilerOptions.Watch.IsTrue() {

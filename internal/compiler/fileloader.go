@@ -569,10 +569,12 @@ func (p *fileLoader) getContentMapperTransformIdentity(mapper *contentmapper.Map
 func (p *fileLoader) emptyContentMappedFile(opts ast.SourceFileParseOptions, mapperIdentity string, transformIdentity string) *ast.SourceFile {
 	content, _ := p.opts.Host.FS().ReadFile(opts.FileName)
 	sourceFile := parser.ParseSourceFile(opts, "", core.ScriptKindTS)
-	sourceFile.SetOriginalText(content)
-	sourceFile.SetContentMapper(mapperIdentity)
-	sourceFile.SetContentMapperTransformIdentity(transformIdentity)
-	sourceFile.SetVirtualFileName(opts.FileName + tspath.ExtensionTs)
+	sourceFile.SetContentMapperInfo(ast.ContentMapperSourceFileInfo{
+		ContentMapper:     mapperIdentity,
+		TransformIdentity: transformIdentity,
+		VirtualFileName:   opts.FileName + tspath.ExtensionTs,
+		OriginalText:      content,
+	})
 	return sourceFile
 }
 

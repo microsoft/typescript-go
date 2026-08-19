@@ -44,17 +44,19 @@ func TestEncodeContentMapperSourceFileMetadata(t *testing.T) {
 		FileName: "/component.vue",
 		Path:     "/component.vue",
 	}, "😀virtual", core.ScriptKindTS)
-	sourceFile.SetOriginalText("😀original")
-	sourceFile.SetContentMapper("mapper@1.0.0")
-	sourceFile.SetVirtualFileName("/component.vue.ts")
-	sourceFile.SetDiagnosticDirectives([]ast.MappedDiagnosticDirective{{
-		OriginalRange:     core.NewTextRange(4, 5),
-		VirtualRange:      core.NewTextRange(4, 11),
-		Policy:            ast.MappedDiagnosticDirectivePolicyExpect,
-		UnusedCode:        2578,
-		UnusedMessageText: "Unused framework directive.",
-		Source:            "mapper",
-	}})
+	sourceFile.SetContentMapperInfo(ast.ContentMapperSourceFileInfo{
+		OriginalText:    "😀original",
+		ContentMapper:   "mapper@1.0.0",
+		VirtualFileName: "/component.vue.ts",
+		DiagnosticDirectives: []ast.MappedDiagnosticDirective{{
+			OriginalRange:     core.NewTextRange(4, 5),
+			VirtualRange:      core.NewTextRange(4, 11),
+			Policy:            ast.MappedDiagnosticDirectivePolicyExpect,
+			UnusedCode:        2578,
+			UnusedMessageText: "Unused framework directive.",
+			Source:            "mapper",
+		}},
+	})
 
 	buf, _, err := encoder.EncodeSourceFile(sourceFile)
 	assert.NilError(t, err)

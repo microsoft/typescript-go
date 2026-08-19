@@ -123,16 +123,21 @@ func TestConvertersSourceFileProjectionExpansion(t *testing.T) {
 	original := "x"
 	parseOptions := ast.SourceFileParseOptions{FileName: "/component.vue", Path: "/component.vue"}
 	canonical := parser.ParseSourceFile(parseOptions, " x", core.ScriptKindTS)
-	canonical.SetOriginalText(original)
-	canonical.SetContentMapper("mapper")
-	canonical.SetSpanMap(spanmap.New([]spanmap.Segment{{VirtualStart: 1, VirtualEnd: 2, OriginalEnd: 1, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll}}))
 	supplementalOptions := parseOptions
 	supplementalOptions.Path = "/component.vue::supplemental"
 	supplemental := parser.ParseSourceFile(supplementalOptions, "  x", core.ScriptKindTS)
-	supplemental.SetOriginalText(original)
-	supplemental.SetContentMapper("mapper")
-	supplemental.SetSpanMap(spanmap.New([]spanmap.Segment{{VirtualStart: 2, VirtualEnd: 3, OriginalEnd: 1, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll}}))
-	canonical.SetSupplementalSourceFiles([]*ast.SourceFile{supplemental})
+	canonical.SetContentMapperInfo(ast.ContentMapperSourceFileInfo{
+		OriginalText:            original,
+		ContentMapper:           "mapper",
+		SpanMap:                 spanmap.New([]spanmap.Segment{{VirtualStart: 1, VirtualEnd: 2, OriginalEnd: 1, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll}}),
+		SupplementalSourceFiles: []*ast.SourceFile{supplemental},
+	})
+	supplemental.SetContentMapperInfo(ast.ContentMapperSourceFileInfo{
+		OriginalText:        original,
+		ContentMapper:       "mapper",
+		SpanMap:             spanmap.New([]spanmap.Segment{{VirtualStart: 2, VirtualEnd: 3, OriginalEnd: 1, Kind: spanmap.KindVerbatim, Features: spanmap.FeatureAll}}),
+		CanonicalSourceFile: canonical,
+	})
 	lineMap := lsconv.ComputeLSPLineStarts(original)
 	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF16, func(_ string) *lsconv.LSPLineMap { return lineMap })
 

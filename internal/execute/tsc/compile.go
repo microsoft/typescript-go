@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"sync"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -37,8 +38,12 @@ func newContentMapperLogger(sys System) contentmapper.Logger {
 	if sys.GetEnvironmentVariable("TS_CONTENT_MAPPER_DEBUG") == "" {
 		return nil
 	}
+	writer := sys.ErrorWriter()
+	var mu sync.Mutex
 	return func(message string) {
-		fmt.Fprintln(sys.ErrorWriter(), message)
+		mu.Lock()
+		defer mu.Unlock()
+		fmt.Fprintln(writer, message)
 	}
 }
 

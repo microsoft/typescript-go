@@ -40,19 +40,11 @@ func TransformAndParse(
 	if err != nil {
 		return SourceFiles{}, err
 	}
-	files, err := ParseResult(parseOptions, content, mapper, result)
-	if err != nil {
-		return SourceFiles{}, err
-	}
-	files.Canonical.SetContentMapperTransformIdentity(transformIdentity)
-	for _, supplemental := range files.Supplemental {
-		supplemental.SetContentMapperTransformIdentity(transformIdentity)
-	}
-	return files, nil
+	return ParseResult(parseOptions, content, mapper, transformIdentity, result)
 }
 
 // ParseResult validates and parses one mapper result and all its supplemental outputs.
-func ParseResult(parseOptions ast.SourceFileParseOptions, content string, mapper *Mapper, result Result) (SourceFiles, error) {
+func ParseResult(parseOptions ast.SourceFileParseOptions, content string, mapper *Mapper, transformIdentity string, result Result) (SourceFiles, error) {
 	if result.Mappings == nil {
 		return SourceFiles{}, NewTransformError(TransformErrorKindMappings, nil)
 	}
@@ -70,11 +62,6 @@ func ParseResult(parseOptions ast.SourceFileParseOptions, content string, mapper
 		parseOptions.ExternalModuleIndicatorOptions.Force = true
 	}
 	sourceFile := parser.ParseSourceFile(parseOptions, result.Text, core.GetScriptKindFromFileName(virtualFileName))
-	sourceFile.SetOriginalText(content)
-	sourceFile.SetSpanMap(result.Mappings)
-	sourceFile.SetContentMapper(mapper.Identity())
-	sourceFile.SetVirtualFileName(virtualFileName)
-	sourceFile.SetDiagnosticDirectives(result.DiagnosticDirectives)
 	if len(result.Diagnostics) > 0 {
 		// The runner produces diagnostics without a source file (it doesn't have one yet); associate
 		// them with the file now so they are reported against it.
@@ -104,15 +91,29 @@ func ParseResult(parseOptions ast.SourceFileParseOptions, content string, mapper
 
 		file := parser.ParseSourceFile(supplementalOptions, supplemental.Text, core.GetScriptKindFromFileName(supplementalOptions.FileName))
 
-		file.SetOriginalText(content)
-		file.SetSpanMap(supplemental.Mappings)
-		file.SetContentMapper(mapper.Identity())
-		file.SetVirtualFileName(supplementalOptions.FileName)
-		file.SetDiagnosticDirectives(supplemental.DiagnosticDirectives)
 		files.Supplemental = append(files.Supplemental, file)
 	}
-	if len(files.Supplemental) != 0 {
-		sourceFile.SetSupplementalSourceFiles(files.Supplemental)
+	mapperIdentity := mapper.Identity()
+	sourceFile.SetContentMapperInfo(ast.ContentMapperSourceFileInfo{
+		ContentMapper:           mapperIdentity,
+		TransformIdentity:       transformIdentity,
+		VirtualFileName:         virtualFileName,
+		OriginalText:            content,
+		SpanMap:                 result.Mappings,
+		DiagnosticDirectives:    result.DiagnosticDirectives,
+		SupplementalSourceFiles: files.Supplemental,
+	})
+	for i, file := range files.Supplemental {
+		supplemental := result.Supplemental[i]
+		file.SetContentMapperInfo(ast.ContentMapperSourceFileInfo{
+			ContentMapper:        mapperIdentity,
+			TransformIdentity:    transformIdentity,
+			VirtualFileName:      file.FileName(),
+			OriginalText:         content,
+			SpanMap:              supplemental.Mappings,
+			DiagnosticDirectives: supplemental.DiagnosticDirectives,
+			CanonicalSourceFile:  sourceFile,
+		})
 	}
 	return files, nil
 }
