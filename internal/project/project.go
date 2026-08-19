@@ -146,7 +146,7 @@ func newInferredProjectFromProject(
 	inferred.Program = project.Program
 	inferred.ProgramLastUpdate = project.ProgramLastUpdate
 	inferred.host = project.host
-	inferred.checkerPool = project.checkerPool // !!!
+	inferred.checkerPool = project.checkerPool
 	inferred.dirty = false
 	return inferred
 }
