@@ -2993,6 +2993,9 @@ type WorkspaceSymbolParams struct {
 	// characters of *query* appear in their order in a candidate symbol.
 	// Servers shouldn't use prefix, substring, or similar strict matching.
 	Query string `json:"query" lsp:"required"`
+
+	// Scopes the workspace symbol search to projects containing this document.
+	TextDocument *TextDocumentIdentifier `json:"textDocument,omitzero"`
 }
 
 var _ json.UnmarshalerFrom = (*WorkspaceSymbolParams)(nil)
@@ -8846,6 +8849,8 @@ type CompletionItemData struct {
 
 	// Auto-import data for this completion item.
 	AutoImport *AutoImportFix `json:"autoImport,omitzero"`
+
+	IsImportStatementCompletion bool `json:"isImportStatementCompletion,omitzero" lsp:"nullable"`
 }
 
 var _ json.UnmarshalerFrom = (*CompletionItemData)(nil)

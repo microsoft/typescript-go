@@ -33,10 +33,10 @@ import (
 )
 
 type PrinterOptions struct {
-	RemoveComments bool
-	NewLine        core.NewLineKind
-	// OmitTrailingSemicolon         bool
-	NoEmitHelpers bool
+	RemoveComments        bool
+	NewLine               core.NewLineKind
+	OmitTrailingSemicolon bool
+	NoEmitHelpers         bool
 	// Module                        core.ModuleKind
 	// ModuleResolution              core.ModuleResolutionKind
 	Target                      core.ScriptTarget
@@ -1094,7 +1094,19 @@ func (p *Printer) emitTemplateMiddleTail(node *ast.TemplateMiddleOrTail) {
 // Snippet Elements
 //
 
-// !!! Snippet elements
+func (p *Printer) emitSnippetNode(node *ast.Node, snippetElement *SnippetElement) {
+	switch snippetElement.Kind {
+	case SnippetKindTabStop:
+		p.emitTabStop(node, snippetElement)
+	default:
+		panic(fmt.Sprintf("Unhandled snippet element kind: %v", snippetElement.Kind))
+	}
+}
+
+func (p *Printer) emitTabStop(node *ast.Node, snippetElement *SnippetElement) {
+	debug.Assert(node.Kind == ast.KindEmptyStatement, "Snippet tab stops can only be emitted on empty statements")
+	p.writer.RawWrite(fmt.Sprintf("$%d", snippetElement.Order))
+}
 
 //
 // Names
@@ -1196,7 +1208,7 @@ func (p *Printer) emitQualifiedName(node *ast.QualifiedName) {
 	state := p.enterNode(node.AsNode())
 	p.emitEntityName(node.Left)
 	p.writePunctuation(".")
-	p.emitIdentifierName(node.Right.AsIdentifier())
+	p.emitMemberName(node.Right)
 	p.exitNode(node.AsNode(), state)
 }
 
@@ -2972,10 +2984,6 @@ func (p *Printer) emitExpressionWithTypeArguments(node *ast.ExpressionWithTypeAr
 	p.exitNode(node.AsNode(), state)
 }
 
-func (p *Printer) emitExpressionWithTypeArgumentsNode(node *ast.ExpressionWithTypeArgumentsNode) {
-	p.emitExpressionWithTypeArguments(node.AsExpressionWithTypeArguments())
-}
-
 func (p *Printer) emitAsExpression(node *ast.AsExpression) {
 	state := p.enterNode(node.AsNode())
 	p.emitExpression(node.Expression, ast.OperatorPrecedenceRelational)
@@ -4138,6 +4146,11 @@ func (p *Printer) emitEmbeddedStatement(parentNode *ast.Node, node *ast.Statemen
 }
 
 func (p *Printer) emitStatement(node *ast.Statement) {
+	if snippetElement := p.emitContext.SnippetElement(node); snippetElement != nil {
+		p.emitSnippetNode(node, snippetElement)
+		return
+	}
+
 	switch node.Kind {
 	// Statements
 	case ast.KindBlock:
@@ -4480,8 +4493,19 @@ func (p *Printer) emitHeritageClause(node *ast.HeritageClause) {
 	p.writeSpace()
 	p.emitToken(node.Token, node.Pos(), WriteKindKeyword, node.AsNode())
 	p.writeSpace()
-	p.emitList((*Printer).emitExpressionWithTypeArgumentsNode, node.AsNode(), node.Types, LFHeritageClauseTypes)
+	p.emitList((*Printer).emitHeritageClauseElement, node.AsNode(), node.Types, LFHeritageClauseTypes)
 	p.exitNode(node.AsNode(), state)
+}
+
+func (p *Printer) emitHeritageClauseElement(node *ast.HeritageClauseElement) {
+	switch node.Kind {
+	case ast.KindExpressionWithTypeArguments:
+		p.emitExpressionWithTypeArguments(node.AsExpressionWithTypeArguments())
+	case ast.KindTypeReference:
+		p.emitTypeReference(node.AsTypeReferenceNode())
+	default:
+		panic(fmt.Sprintf("unhandled HeritageClauseElement: %v", node.Kind))
+	}
 }
 
 func (p *Printer) emitHeritageClauseNode(node *ast.HeritageClauseNode) {
@@ -5059,6 +5083,9 @@ func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitT
 	p.sourceMapLineCharCache = nil
 
 	p.setSourceFile(sourceFile)
+	if p.Options.OmitTrailingSemicolon {
+		writer = getTrailingSemicolonDeferringWriter(writer)
+	}
 	p.writer = writer
 	p.writer.Clear()
 	if sourceFile != nil {
