@@ -148,10 +148,10 @@ func (s *Snapshot) cloneForProgram(
 
 	// A program created by `createProgram` is represented by a synthetic inferred project and its program.
 	projectCollectionBuilder.seedInferredProjectForProgram(oldProject, logger)
-	projectCollectionBuilder.updateInferredProject(rootFileNames, compilerOptions, projectReferences, configFileParsingDiagnostics, logger.Fork("UpdateProgramConfig"))
 	if !fileChanges.IsEmpty() {
 		projectCollectionBuilder.DidChangeFiles(fileChanges, logger.Fork("DidChangeFiles"))
 	}
+	projectCollectionBuilder.updateOrCreateInferredProject(slices.Clone(rootFileNames), compilerOptions, projectReferences, configFileParsingDiagnostics, logger.Fork("UpdateProgramConfig"))
 	// Make sure the program is created and up to date.
 	if projectCollectionBuilder.inferredProject.Value().dirty {
 		projectCollectionBuilder.updateProgram(projectCollectionBuilder.inferredProject, logger.Fork("CreateProgram"))

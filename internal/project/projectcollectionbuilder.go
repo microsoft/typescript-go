@@ -1082,24 +1082,37 @@ func (b *ProjectCollectionBuilder) updateInferredProject(
 		}
 		return false
 	}
-
 	rootFileNames = slices.Clone(rootFileNames)
 	slices.Sort(rootFileNames)
-	if b.inferredProject.Value() == nil {
-		b.inferredProject.Set(NewInferredProject(b.sessionOptions.CurrentDirectory, compilerOptions, rootFileNames, projectReferences, b, logger))
-		b.inferredProject.Value().CommandLine.Errors = configFileParsingDiagnostics
+	return b.updateOrCreateInferredProject(rootFileNames, compilerOptions, projectReferences, configFileParsingDiagnostics, logger)
+}
+
+// updateOrCreateInferredProject always retains an inferred project, including when rootFileNames is empty.
+// The caller transfers ownership of rootFileNames.
+func (b *ProjectCollectionBuilder) updateOrCreateInferredProject(
+	rootFileNames []string,
+	compilerOptions *core.CompilerOptions,
+	projectReferences []*core.ProjectReference,
+	configFileParsingDiagnostics []*ast.Diagnostic,
+	logger *logging.LogTree,
+) bool {
+	project := b.inferredProject.Value()
+	if project == nil {
+		project = NewInferredProject(b.sessionOptions.CurrentDirectory, compilerOptions, rootFileNames, projectReferences, b, logger)
+		project.CommandLine.Errors = configFileParsingDiagnostics
+		b.inferredProject.Set(project)
 	} else {
 		if compilerOptions == nil {
-			compilerOptions = b.inferredProject.Value().CommandLine.CompilerOptions()
+			compilerOptions = project.CommandLine.CompilerOptions()
 		}
 		newCommandLine := tsoptions.NewParsedCommandLine(compilerOptions, rootFileNames, projectReferences, tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: b.fs.fs.UseCaseSensitiveFileNames(),
-			CurrentDirectory:          b.inferredProject.Value().currentDirectory,
+			CurrentDirectory:          project.currentDirectory,
 		})
 		newCommandLine.Errors = configFileParsingDiagnostics
 		changed := b.inferredProject.ChangeIf(
 			func(p *Project) bool {
-				return !maps.Equal(p.CommandLine.FileNamesByPath(), newCommandLine.FileNamesByPath()) ||
+				return !slices.Equal(p.CommandLine.FileNames(), newCommandLine.FileNames()) ||
 					!reflect.DeepEqual(p.CommandLine.CompilerOptions(), compilerOptions) ||
 					!projectReferencesEqual(p.CommandLine.ProjectReferences(), projectReferences) ||
 					!reflect.DeepEqual(p.CommandLine.Errors, configFileParsingDiagnostics)

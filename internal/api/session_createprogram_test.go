@@ -117,6 +117,121 @@ func TestCreateProgram(t *testing.T) {
 	assert.NilError(t, err)
 }
 
+func TestCreateProgramWithNoRootFiles(t *testing.T) {
+	t.Parallel()
+
+	projectSession, _ := projecttestutil.Setup(map[string]any{})
+	defer projectSession.Close()
+
+	session := NewSession(projectSession, nil)
+	defer session.Close()
+
+	response, err := session.handleCreateProgram(context.Background(), &CreateProgramParams{
+		CreateProgramOptions: CreateProgramOptions{
+			CompilerOptions: core.CompilerOptions{NoLib: core.TSTrue},
+		},
+	})
+	assert.NilError(t, err)
+	assert.Assert(t, response.Project != nil)
+	assert.Equal(t, len(response.Project.RootFiles), 0)
+
+	snapshot, err := session.getSnapshotData(response.Snapshot)
+	assert.NilError(t, err)
+	project := snapshot.snapshot.ProjectCollection.InferredProject()
+	assert.Assert(t, project != nil)
+	assert.Assert(t, project.Program != nil)
+	assert.Equal(t, len(project.Program.GetSourceFiles()), 0)
+}
+
+func TestCreateProgramRemovesAllRootFiles(t *testing.T) {
+	t.Parallel()
+
+	const fileName = "/home/projects/p/index.ts"
+	projectSession, _ := projecttestutil.Setup(map[string]any{
+		fileName: "export {};",
+	})
+	defer projectSession.Close()
+
+	session := NewSession(projectSession, nil)
+	defer session.Close()
+	ctx := context.Background()
+
+	oldResponse, err := session.handleCreateProgram(ctx, &CreateProgramParams{
+		RootFiles: []DocumentIdentifier{{FileName: fileName}},
+		CreateProgramOptions: CreateProgramOptions{
+			CompilerOptions: core.CompilerOptions{NoLib: core.TSTrue},
+		},
+	})
+	assert.NilError(t, err)
+
+	response, err := session.handleCreateProgram(ctx, &CreateProgramParams{
+		CreateProgramOptions: CreateProgramOptions{
+			CompilerOptions: core.CompilerOptions{NoLib: core.TSTrue},
+		},
+		OldProgram: &CreateProgramOldProgramParams{
+			Snapshot: oldResponse.Snapshot,
+			Project:  oldResponse.Project.Id,
+		},
+		FileChanges: &APIFileChanges{
+			Changed: []DocumentIdentifier{{FileName: fileName}},
+		},
+	})
+	assert.NilError(t, err)
+	assert.Assert(t, response.Project != nil)
+	assert.Equal(t, len(response.Project.RootFiles), 0)
+
+	snapshot, err := session.getSnapshotData(response.Snapshot)
+	assert.NilError(t, err)
+	project := snapshot.snapshot.ProjectCollection.InferredProject()
+	assert.Assert(t, project != nil)
+	assert.Assert(t, project.Program != nil)
+	assert.Equal(t, len(project.Program.GetSourceFiles()), 0)
+}
+
+func TestCreateProgramPreservesRootFileOrder(t *testing.T) {
+	t.Parallel()
+
+	const (
+		fileA = "/home/projects/p/a.ts"
+		fileB = "/home/projects/p/b.ts"
+	)
+	projectSession, _ := projecttestutil.Setup(map[string]any{
+		fileA: "export const a = 1;",
+		fileB: "export const b = 1;",
+	})
+	defer projectSession.Close()
+
+	session := NewSession(projectSession, nil)
+	defer session.Close()
+	ctx := context.Background()
+
+	oldResponse, err := session.handleCreateProgram(ctx, &CreateProgramParams{
+		RootFiles: []DocumentIdentifier{{FileName: fileB}, {FileName: fileA}},
+		CreateProgramOptions: CreateProgramOptions{
+			CompilerOptions: core.CompilerOptions{NoLib: core.TSTrue},
+		},
+	})
+	assert.NilError(t, err)
+	assert.DeepEqual(t, oldResponse.Project.RootFiles, []string{fileB, fileA})
+
+	response, err := session.handleCreateProgram(ctx, &CreateProgramParams{
+		RootFiles: []DocumentIdentifier{{FileName: fileA}, {FileName: fileB}},
+		CreateProgramOptions: CreateProgramOptions{
+			CompilerOptions: core.CompilerOptions{NoLib: core.TSTrue},
+		},
+		OldProgram: &CreateProgramOldProgramParams{
+			Snapshot: oldResponse.Snapshot,
+			Project:  oldResponse.Project.Id,
+		},
+	})
+	assert.NilError(t, err)
+	assert.DeepEqual(t, response.Project.RootFiles, []string{fileA, fileB})
+
+	snapshot, err := session.getSnapshotData(response.Snapshot)
+	assert.NilError(t, err)
+	assert.Equal(t, snapshot.snapshot.ProjectCollection.InferredProject().ProgramUpdateKind, project.ProgramUpdateKindSameFileNames)
+}
+
 func TestCreateProgramReusesProgram(t *testing.T) {
 	t.Parallel()
 

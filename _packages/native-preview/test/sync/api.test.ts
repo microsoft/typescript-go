@@ -403,6 +403,51 @@ describe("API", () => {
         }
     });
 
+    test("createProgram updates roots when given an old program", () => {
+        const options = { compilerOptions: { noLib: true } };
+        const api = spawnAPI({
+            "/src/a.ts": `export const a = 1;`,
+            "/src/b.ts": `export const b = 1;`,
+            "/src/c.ts": `export const c = 1;`,
+        });
+        try {
+            const oldProgram = api.createProgram(["/src/a.ts", "/src/b.ts"], options);
+
+            // The root list is part of each createProgram request, so deriving from
+            // oldProgram must remove b.ts and add c.ts rather than retaining old roots.
+            const newProgram = api.createProgram(["/src/a.ts", "/src/c.ts"], options, oldProgram);
+            assert.deepEqual(newProgram.getSourceFileNames(), ["/src/a.ts", "/src/c.ts"]);
+
+            // Programs own isolated snapshots; changing roots for the new program
+            // must not alter the old program's source-file set.
+            assert.deepEqual(oldProgram.getSourceFileNames(), ["/src/a.ts", "/src/b.ts"]);
+
+            newProgram.dispose();
+            oldProgram.dispose();
+        }
+        finally {
+            api.close();
+        }
+    });
+
+    test("createProgram discovers imported non-root dependencies", () => {
+        const api = spawnAPI({
+            "/src/main.ts": `import { dependency } from "./dependency"; export const value = dependency;`,
+            "/src/dependency.ts": `export const dependency = 1;`,
+        });
+        try {
+            // Only main.ts is a root, but module resolution should still add its
+            // imported dependency to the program's complete source-file set.
+            const program = api.createProgram(["/src/main.ts"], { compilerOptions: { noLib: true } });
+            assert.deepEqual([...program.getSourceFileNames()].sort(), ["/src/dependency.ts", "/src/main.ts"]);
+
+            program.dispose();
+        }
+        finally {
+            api.close();
+        }
+    });
+
     test("createProgram updates an old program with file changes", () => {
         const fileName = "/src/index.ts";
         const options = { compilerOptions: { noLib: true, strict: true } };
@@ -505,7 +550,7 @@ describe("API", () => {
         try {
             // A selective summary has no snapshot state to update unless oldProgram is supplied.
             const createWithChanges = () => api.createProgram(["/src/index.ts"], { compilerOptions: { noLib: true } }, undefined, { changed: ["/src/index.ts"] });
-            assert.throws(createWithChanges, /fileChanges summary requires an oldProgram/);
+            assert.throws(createWithChanges, /fileChanges requires an oldProgram/);
         }
         finally {
             api.close();
