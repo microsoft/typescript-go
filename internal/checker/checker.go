@@ -544,8 +544,9 @@ type WideningContext struct {
 }
 
 type VarianceStackEntry struct {
-	symbol         *ast.Symbol
-	typeParameters []*Type
+	symbol              *ast.Symbol
+	typeParameters      []*Type
+	inCircularTypeCycle bool
 }
 
 const maxSerializationLevel = 2

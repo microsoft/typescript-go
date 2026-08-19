@@ -1353,7 +1353,7 @@ func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type)
 			if len(c.varianceStack) == 0 {
 				c.resolutionStart = len(c.typeResolutions)
 			}
-			c.varianceStack = append(c.varianceStack, VarianceStackEntry{symbol, typeParameters})
+			c.varianceStack = append(c.varianceStack, VarianceStackEntry{symbol: symbol, typeParameters: typeParameters})
 			variances := make([]VarianceFlags, len(typeParameters))
 			for i, tp := range typeParameters {
 				modifiers := c.getTypeParameterModifiers(tp)
@@ -1399,6 +1399,16 @@ func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type)
 				}
 				variances[i] = variance
 			}
+			if c.varianceStack[len(c.varianceStack)-1].inCircularTypeCycle {
+				for i, variance := range variances {
+					if variance&VarianceFlagsVarianceMask == VarianceFlagsIndependent {
+						// Comparisons that traverse a cycle of generic types can short-circuit, so an
+						// independent result for any participant is not trustworthy. Fall back to
+						// covariance, as we do when variance information is unavailable.
+						variances[i] = variance&^VarianceFlagsVarianceMask | VarianceFlagsCovariant
+					}
+				}
+			}
 			// Store the results unless a restarted computation has already stored them.
 			if len(links.variances) == 0 {
 				links.variances = variances
@@ -1413,9 +1423,13 @@ func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type)
 			// region of the variance stack and restart the computation from there if necessary. This
 			// ensures stable results for circular generic types.
 			minIndex := stackIndex
-			for i := stackIndex + 1; i < len(c.varianceStack); i++ {
-				if c.compareSymbols(c.varianceStack[i].symbol, c.varianceStack[minIndex].symbol) < 0 {
-					minIndex = i
+			if stackIndex+1 < len(c.varianceStack) {
+				c.varianceStack[stackIndex].inCircularTypeCycle = true
+				for i := stackIndex + 1; i < len(c.varianceStack); i++ {
+					c.varianceStack[i].inCircularTypeCycle = true
+					if c.compareSymbols(c.varianceStack[i].symbol, c.varianceStack[minIndex].symbol) < 0 {
+						minIndex = i
+					}
 				}
 			}
 			if minIndex > stackIndex {

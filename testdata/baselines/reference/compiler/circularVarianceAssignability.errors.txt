@@ -1,0 +1,33 @@
+circularVarianceAssignability.ts(20,1): error TS2322: Type 'Params<{ value: number; }, {}>' is not assignable to type 'Params<{ value: string; }, {}>'.
+  Type '{ value: number; }' is not assignable to type '{ value: string; }'.
+    Types of property 'value' are incompatible.
+      Type 'number' is not assignable to type 'string'.
+
+
+==== circularVarianceAssignability.ts (1 errors) ====
+    declare namespace Router {
+        interface Params<T, U> {
+            router: Router<U, {}>;
+        }
+    
+        type Context<T, U> =
+            & { state: T }
+            & Params<T, U>;
+    
+        type Middleware<T, U> = (context: Context<T, U>) => void;
+    }
+    
+    declare class Router<T, U> {
+        routes(): Router.Middleware<T, U>;
+    }
+    
+    declare let a: Router.Params<{ value: string }, {}>;
+    declare let b: Router.Params<{ value: number }, {}>;
+    
+    a = b; // Error
+    ~
+!!! error TS2322: Type 'Params<{ value: number; }, {}>' is not assignable to type 'Params<{ value: string; }, {}>'.
+!!! error TS2322:   Type '{ value: number; }' is not assignable to type '{ value: string; }'.
+!!! error TS2322:     Types of property 'value' are incompatible.
+!!! error TS2322:       Type 'number' is not assignable to type 'string'.
+    
