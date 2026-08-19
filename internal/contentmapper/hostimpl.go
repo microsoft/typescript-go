@@ -535,15 +535,18 @@ func NewHostWithOptions(ctx context.Context, spawner Spawner, diagnosticLocale l
 		initializeCtxErr := initializeCtx.Err()
 		cancel()
 		if err != nil {
+			var exitCode int
+			var exited bool
+			if exitState, ok := rwc.(processExitState); ok {
+				exitCode, exited = exitState.ExitCode()
+			}
 			_ = rwc.Close()
 			if initializeError, ok := errors.AsType[*InitializeError](err); ok {
 				initializeError.MapperName = diagnosticName
 				return nil, nil, "", "", initializeError
 			}
-			if exitState, ok := rwc.(processExitState); ok {
-				if exitCode, exited := exitState.ExitCode(); exited {
-					return nil, nil, "", "", &InitializeError{Kind: InitializeErrorKindProcessExit, MapperName: diagnosticName, ExitCode: exitCode}
-				}
+			if exited {
+				return nil, nil, "", "", &InitializeError{Kind: InitializeErrorKindProcessExit, MapperName: diagnosticName, ExitCode: exitCode}
 			}
 			if initializeCtxErr != nil || errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
 				return nil, nil, "", "", &InitializeError{Kind: InitializeErrorKindNoResponse, MapperName: diagnosticName, TimeoutSeconds: initializeTimeoutSeconds}

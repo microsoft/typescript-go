@@ -362,6 +362,66 @@ func TestHostClosesProcessWhenReadLoopFails(t *testing.T) {
 	assert.Assert(t, processClosed, "mapper process was not closed after its read loop failed")
 }
 
+func TestHostReportsInitializationTimeoutBeforeClosingProcess(t *testing.T) {
+	t.Parallel()
+	spawner := contentmapper.SpawnerFunc(func(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error) {
+		client, server := net.Pipe()
+		go func() {
+			defer server.Close()
+			_, _ = ipc.NewJSONRPCProtocol(server).ReadMessage()
+			<-t.Context().Done()
+		}()
+		return &exitOnCloseReadWriteCloser{ReadWriteCloser: client}, nil
+	})
+	host := contentmapper.NewHost(t.Context(), spawner, locale.Default)
+	defer host.Close()
+	mapper := &contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}}}
+	_, err := host.Transform(mapper, contentmapper.Request{FileName: "/a.vue", Content: ""})
+	initializeError, ok := errors.AsType[*contentmapper.InitializeError](err)
+	assert.Assert(t, ok, "expected InitializeError, got %v", err)
+	assert.Equal(t, initializeError.Kind, contentmapper.InitializeErrorKindNoResponse)
+}
+
+func TestHostReportsProcessExitBeforeInitialization(t *testing.T) {
+	t.Parallel()
+	spawner := contentmapper.SpawnerFunc(func(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error) {
+		client, server := net.Pipe()
+		assert.NilError(t, server.Close())
+		return &exitedReadWriteCloser{ReadWriteCloser: client, exitCode: 42}, nil
+	})
+	host := contentmapper.NewHost(t.Context(), spawner, locale.Default)
+	defer host.Close()
+	mapper := &contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}}}
+	_, err := host.Transform(mapper, contentmapper.Request{FileName: "/a.vue", Content: ""})
+	initializeError, ok := errors.AsType[*contentmapper.InitializeError](err)
+	assert.Assert(t, ok, "expected InitializeError, got %v", err)
+	assert.Equal(t, initializeError.Kind, contentmapper.InitializeErrorKindProcessExit)
+	assert.Equal(t, initializeError.ExitCode, 42)
+}
+
+type exitedReadWriteCloser struct {
+	io.ReadWriteCloser
+	exitCode int
+}
+
+func (c *exitedReadWriteCloser) ExitCode() (int, bool) {
+	return c.exitCode, true
+}
+
+type exitOnCloseReadWriteCloser struct {
+	io.ReadWriteCloser
+	exited atomic.Bool
+}
+
+func (c *exitOnCloseReadWriteCloser) Close() error {
+	c.exited.Store(true)
+	return c.ReadWriteCloser.Close()
+}
+
+func (c *exitOnCloseReadWriteCloser) ExitCode() (int, bool) {
+	return 1, c.exited.Load()
+}
+
 type closeSignalReadWriteCloser struct {
 	io.ReadWriteCloser
 	closed chan<- struct{}

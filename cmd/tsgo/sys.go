@@ -75,6 +75,7 @@ func spawnProcess(command []string, dir string, stderr io.Writer) (io.ReadWriteC
 	cmd := exec.Command(command[0], command[1:]...)
 	cmd.Dir = dir
 	cmd.Stderr = stderr
+	cmd.WaitDelay = time.Second
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
 		return nil, err
@@ -93,7 +94,7 @@ func spawnProcess(command []string, dir string, stderr io.Writer) (io.ReadWriteC
 // Close kills and reaps the process.
 type childProcess struct {
 	cmd    *exec.Cmd
-	stdin  io.Writer
+	stdin  io.WriteCloser
 	stdout io.Reader
 }
 
@@ -108,13 +109,13 @@ func (p *childProcess) ExitCode() (int, bool) {
 }
 
 func (p *childProcess) Close() error {
-	// Kill guarantees the process is gone even if it is ignoring stdin's EOF; Wait then reaps it and
-	// closes the stdio pipes it created. Kill is best-effort because Wait reports the real outcome, and a
-	// "signal: killed" ExitError is the expected result of that kill, so only an unexpected Wait error is
-	// surfaced.
+	_ = p.stdin.Close()
 	_ = p.cmd.Process.Kill()
 	err := p.cmd.Wait()
 	if _, ok := errors.AsType[*exec.ExitError](err); ok {
+		return nil
+	}
+	if errors.Is(err, exec.ErrWaitDelay) {
 		return nil
 	}
 	return err
