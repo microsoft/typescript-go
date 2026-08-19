@@ -38,3 +38,16 @@ export const pageTitle = ti/*incoming*/tle;
 	f.GoToMarker(t, "markup")
 	f.VerifyNotQuickInfoExists(t)
 }
+
+func TestContentMapperSupplementalHoverJSDocLink(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	f, done := newContentMapperFourslash(t, `// @Filename: /globals.astro
+const target = 1;
+/** See {@link target}. */
+const val/*hover*/ue = target;
+`, contentmappertest.SupplementalMapper, ".astro")
+	defer done()
+
+	f.VerifyQuickInfoAt(t, "hover", "const value: 1", "See [target](file:///globals.astro#1,7-1,13).")
+}

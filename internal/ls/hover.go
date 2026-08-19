@@ -133,7 +133,7 @@ func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Check
 	}
 	quickInfoRuns := info.displayParts.GetRuns()
 
-	documentation := getDocumentationForSymbol(l.getMappedLocation, c, symbol, node, info.declaration, contentFormat, false /*commentOnly*/)
+	documentation := getDocumentationForSymbol(l.documentationLocationMapper(spanmap.FeatureHover), c, symbol, node, info.declaration, contentFormat, false /*commentOnly*/)
 
 	// VS's rich hover (_vs_rawContent) renders documentation as plain colorized text with no Markdown
 	// parser, so it can't use the tag section (@param/@returns/@example/@see, etc.) that
@@ -145,7 +145,7 @@ func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Check
 	// comment-only, plain-text documentation for the VS path instead of reusing `documentation`.
 	var vsDocumentation string
 	if vsCapability {
-		vsDocumentation = getDocumentationForSymbol(l.getMappedLocation, c, symbol, node, info.declaration, lsproto.MarkupKindPlainText, true /*commentOnly*/)
+		vsDocumentation = getDocumentationForSymbol(l.documentationLocationMapper(spanmap.FeatureHover), c, symbol, node, info.declaration, lsproto.MarkupKindPlainText, true /*commentOnly*/)
 	}
 
 	return quickInfo, documentation, vsDocumentation, quickInfoRuns
@@ -155,7 +155,15 @@ func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Check
 // declaration JSDoc, root-symbol JSDoc, alias target JSDoc) and returns the first non-empty result,
 // formatted for contentFormat. commentOnly restricts the result to the JSDoc summary, excluding the
 // @tag section.
-func getDocumentationForSymbol(getMappedLocation func(string, core.TextRange) (lsproto.Location, spanmap.Fidelity), c *checker.Checker, symbol *ast.Symbol, node *ast.Node, declaration *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
+type documentationLocationMapper func(*ast.SourceFile, core.TextRange) (lsproto.Location, spanmap.Fidelity)
+
+func (l *LanguageService) documentationLocationMapper(feature spanmap.Feature) documentationLocationMapper {
+	return func(file *ast.SourceFile, fileRange core.TextRange) (lsproto.Location, spanmap.Fidelity) {
+		return l.sourceFileRangeToLSPLocationForFeature(file, fileRange, feature)
+	}
+}
+
+func getDocumentationForSymbol(getMappedLocation documentationLocationMapper, c *checker.Checker, symbol *ast.Symbol, node *ast.Node, declaration *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
 	documentation := documentationFromSignature(getMappedLocation, c, symbol, getCallOrNewExpression(node), node, contentFormat, commentOnly)
 	if documentation != "" {
 		return documentation
@@ -174,7 +182,7 @@ func getDocumentationForSymbol(getMappedLocation func(string, core.TextRange) (l
 	return documentationFromAlias(getMappedLocation, c, symbol, node, contentFormat, commentOnly)
 }
 
-func documentationFromSignature(getMappedLocation func(string, core.TextRange) (lsproto.Location, spanmap.Fidelity), c *checker.Checker, symbol *ast.Symbol, node *ast.Node, location *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
+func documentationFromSignature(getMappedLocation documentationLocationMapper, c *checker.Checker, symbol *ast.Symbol, node *ast.Node, location *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
 	if node == nil {
 		return ""
 	}
@@ -192,7 +200,7 @@ func documentationFromSignature(getMappedLocation func(string, core.TextRange) (
 	return ""
 }
 
-func documentationFromAlias(getMappedLocation func(string, core.TextRange) (lsproto.Location, spanmap.Fidelity), c *checker.Checker, symbol *ast.Symbol, node *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
+func documentationFromAlias(getMappedLocation documentationLocationMapper, c *checker.Checker, symbol *ast.Symbol, node *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
 	if symbol == nil || symbol.Flags&ast.SymbolFlagsAlias == 0 {
 		return ""
 	}
@@ -221,7 +229,7 @@ func documentationFromAlias(getMappedLocation func(string, core.TextRange) (lspr
 	return ""
 }
 
-func documentationFromRootSymbols(getMappedLocation func(string, core.TextRange) (lsproto.Location, spanmap.Fidelity), c *checker.Checker, symbol *ast.Symbol, node *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
+func documentationFromRootSymbols(getMappedLocation documentationLocationMapper, c *checker.Checker, symbol *ast.Symbol, node *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
 	if symbol == nil {
 		return ""
 	}
@@ -249,7 +257,7 @@ func documentationFromRootSymbols(getMappedLocation func(string, core.TextRange)
 	return strings.Join(docs, "\n")
 }
 
-func getDocumentationFromDeclaration(getMappedLocation func(string, core.TextRange) (lsproto.Location, spanmap.Fidelity), c *checker.Checker, symbol *ast.Symbol, declaration *ast.Node, location *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
+func getDocumentationFromDeclaration(getMappedLocation documentationLocationMapper, c *checker.Checker, symbol *ast.Symbol, declaration *ast.Node, location *ast.Node, contentFormat lsproto.MarkupKind, commentOnly bool) string {
 	if declaration == nil {
 		return ""
 	}
@@ -964,7 +972,7 @@ func writeCode(b *strings.Builder, lang string, code string) {
 	b.WriteByte('\n')
 }
 
-func writeComments(getMappedLocation func(string, core.TextRange) (lsproto.Location, spanmap.Fidelity), b *strings.Builder, c *checker.Checker, comments []*ast.Node, isMarkdown bool) {
+func writeComments(getMappedLocation documentationLocationMapper, b *strings.Builder, c *checker.Checker, comments []*ast.Node, isMarkdown bool) {
 	for _, comment := range comments {
 		switch comment.Kind {
 		case ast.KindJSDocText:
@@ -977,7 +985,7 @@ func writeComments(getMappedLocation func(string, core.TextRange) (lsproto.Locat
 	}
 }
 
-func writeJSDocLink(getMappedLocation func(string, core.TextRange) (lsproto.Location, spanmap.Fidelity), b *strings.Builder, c *checker.Checker, link *ast.Node, quote bool, isMarkdown bool) {
+func writeJSDocLink(getMappedLocation documentationLocationMapper, b *strings.Builder, c *checker.Checker, link *ast.Node, quote bool, isMarkdown bool) {
 	name := link.Name()
 	text := strings.Trim(link.Text(), " ")
 	if name == nil {
@@ -1009,13 +1017,13 @@ func writeJSDocLink(getMappedLocation func(string, core.TextRange) (lsproto.Loca
 	writeNameLink(getMappedLocation, b, c, name, text, quote, isMarkdown)
 }
 
-func writeNameLink(getMappedLocation func(string, core.TextRange) (lsproto.Location, spanmap.Fidelity), b *strings.Builder, c *checker.Checker, name *ast.Node, text string, quote bool, isMarkdown bool) {
+func writeNameLink(getMappedLocation documentationLocationMapper, b *strings.Builder, c *checker.Checker, name *ast.Node, text string, quote bool, isMarkdown bool) {
 	declarations := getDeclarationsFromLocation(c, name)
 	if len(declarations) != 0 {
 		declaration := declarations[0]
 		file := ast.GetSourceFileOfNode(declaration)
 		node := core.OrElse(ast.GetNameOfDeclaration(declaration), declaration)
-		loc, fidelity := getMappedLocation(file.FileName(), createRangeFromNode(node, file))
+		loc, fidelity := getMappedLocation(file, createRangeFromNode(node, file))
 		prefixLen := core.IfElse(strings.HasPrefix(text, "()"), 2, 0)
 		linkText := trimCommentPrefix(text[prefixLen:])
 		if linkText == "" {

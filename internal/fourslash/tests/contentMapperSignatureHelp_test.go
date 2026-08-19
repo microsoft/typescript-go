@@ -54,3 +54,23 @@ greet("hello", /*incomingCall*/2);
 	f.GoToMarker(t, "markup")
 	f.VerifyNoSignatureHelp(t)
 }
+
+func TestContentMapperSupplementalSignatureHelpJSDocLink(t *testing.T) {
+	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	f, done := newContentMapperFourslash(t, `// @Filename: /globals.astro
+const target = 1;
+/** See {@link target}. */
+function use(value: number) { return value; }
+use(/*call*/target);
+`, contentmappertest.SupplementalMapper, ".astro")
+	defer done()
+
+	f.GoToMarker(t, "call")
+	f.VerifySignatureHelp(t, fourslash.VerifySignatureHelpOptions{
+		Text:          "use(value: number): number",
+		DocComment:    "See [target](file:///globals.astro#1,7-1,13).",
+		ParameterName: "value",
+		ParameterSpan: "value: number",
+	})
+}

@@ -307,6 +307,6 @@ func isNodeWithName(node *ast.Node, name string) bool {
 	return ast.IsIdentifier(nodeName) && nodeName.Text() == name
 }
 
-func noMappedLocation(string, core.TextRange) (lsproto.Location, spanmap.Fidelity) {
+func noMappedLocation(*ast.SourceFile, core.TextRange) (lsproto.Location, spanmap.Fidelity) {
 	return lsproto.Location{}, spanmap.FidelityNone
 }
