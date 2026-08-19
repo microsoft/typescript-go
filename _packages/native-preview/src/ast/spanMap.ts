@@ -90,7 +90,7 @@ export class SpanMap {
      * Results are ordered by virtual position; uncovered or disabled positions produce no results.
      */
     originalToVirtualPositions(position: number, feature: SpanMapFeature): readonly MappedPosition[] {
-        const groups = originalSegmentGroupsAtPoint(this.getOriginalSegments(), position);
+        const groups = segmentGroupsAtOriginalPosition(this.getOriginalSegments(), position);
         const results: MappedPosition[] = [];
         for (const group of groups) {
             for (const segment of group.segments) {
@@ -133,8 +133,8 @@ export class SpanMap {
         const end = Math.max(range.end, start);
         const lastCharacter = end > start ? end - 1 : end;
         const originalSegments = this.getOriginalSegments();
-        const startSegments = originalSegmentsAt(originalSegments, start);
-        const endSegments = originalSegmentsAt(originalSegments, lastCharacter);
+        const startSegments = segmentsAtOriginalPosition(originalSegments, start);
+        const endSegments = segmentsAtOriginalPosition(originalSegments, lastCharacter);
         if (!startSegments || !endSegments) return [];
         if (sameOriginalRange(startSegments[0], endSegments[0])) {
             return originalToVirtualSpansInGroup(startSegments, start, end, feature);
@@ -289,11 +289,12 @@ function sameOriginalRange(left: SpanMapSegment, right: SpanMapSegment): boolean
 }
 
 /**
- * Returns the complete duplicate group containing `position`. Segment ends are exclusive; starts, including
- * zero-length segment starts, are included. It finds a candidate in O(log n), then scans only the duplicate
- * group. `segments` must be ordered by original start, original end, and virtual start.
+ * Returns the complete duplicate group of mapping segments containing the original-text `position`.
+ * Segment ends are exclusive; starts, including zero-length segment starts, are included. It finds a candidate
+ * in O(log n), then scans only the duplicate group. `segments` must be ordered by original start, original end,
+ * and virtual start.
  */
-function originalSegmentsAt(segments: readonly NormalizedSpanMapSegment[], position: number): readonly NormalizedSpanMapSegment[] | undefined {
+function segmentsAtOriginalPosition(segments: readonly NormalizedSpanMapSegment[], position: number): readonly NormalizedSpanMapSegment[] | undefined {
     let low = 0;
     let high = segments.length;
     while (low < high) {
@@ -314,13 +315,25 @@ function originalSegmentsAt(segments: readonly NormalizedSpanMapSegment[], posit
     return segments.slice(index, end);
 }
 
-interface OriginalSegmentGroupAtPoint {
+interface SegmentGroupAtOriginalPosition {
     readonly segments: readonly NormalizedSpanMapSegment[];
     readonly atEnd: boolean;
 }
 
-/** Returns the duplicate original-range groups containing or touching `position`. */
-function originalSegmentGroupsAtPoint(segments: readonly NormalizedSpanMapSegment[], position: number): readonly OriginalSegmentGroupAtPoint[] {
+/**
+ * Returns groups of mapping segments containing or touching the original-text `position`.
+ * At a shared boundary, segments ending at the point and segments starting there form separate groups:
+ *
+ * ```text
+ * original:  [--- A ---)[--- B ---)
+ *                       ^ position
+ *
+ * virtual:   [ A1 ) [ A2 )    [ B1 ) [ B2 )
+ *              left group       right group
+ *              atEnd: true      atEnd: false
+ * ```
+ */
+function segmentGroupsAtOriginalPosition(segments: readonly NormalizedSpanMapSegment[], position: number): readonly SegmentGroupAtOriginalPosition[] {
     let low = 0;
     let high = segments.length;
     while (low < high) {
@@ -329,8 +342,8 @@ function originalSegmentGroupsAtPoint(segments: readonly NormalizedSpanMapSegmen
         else high = middle;
     }
     if (low < segments.length && segments[low].originalStart === position) {
-        const right = originalSegmentsAt(segments, position)!;
-        const groups: OriginalSegmentGroupAtPoint[] = [];
+        const right = segmentsAtOriginalPosition(segments, position)!;
+        const groups: SegmentGroupAtOriginalPosition[] = [];
         if (low > 0 && segments[low - 1].originalEnd === position) {
             let leftStart = low - 1;
             while (leftStart > 0 && sameOriginalRange(segments[leftStart - 1], segments[low - 1])) leftStart--;

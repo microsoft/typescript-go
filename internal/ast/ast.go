@@ -2805,14 +2805,7 @@ func (node *SourceFile) IsJS() bool {
 func (node *SourceFile) copyFrom(other *SourceFile) {
 	// Do not copy fields set by NewSourceFile (Text, FileName, Path, or Statements)
 	if other.contentMapperInfo != nil {
-		node.SetContentMapperInfo(ContentMapperSourceFileInfo{
-			OriginalText:      other.contentMapperInfo.OriginalText,
-			SpanMap:           other.contentMapperInfo.SpanMap,
-			ContentMapper:     other.contentMapperInfo.ContentMapper,
-			TransformIdentity: other.contentMapperInfo.TransformIdentity,
-			ParseOptions:      other.contentMapperInfo.ParseOptions,
-			VirtualFileName:   other.contentMapperInfo.VirtualFileName,
-		})
+		node.SetContentMapperInfo(*other.contentMapperInfo)
 	}
 	node.LanguageVariant = other.LanguageVariant
 	node.ScriptKind = other.ScriptKind

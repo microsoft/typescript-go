@@ -426,7 +426,7 @@ func (m *SpanMap) OriginalToVirtualPositions(pos core.TextPos, feature Feature) 
 	if m == nil {
 		return []MappedPosition{{Position: pos, Fidelity: FidelityExact}}
 	}
-	groups := originalSegmentGroupsAtPoint(m.origIndex(), pos)
+	groups := segmentGroupsAtOriginalPosition(m.origIndex(), pos)
 	if len(groups) == 0 {
 		return nil
 	}
@@ -484,8 +484,8 @@ func (m *SpanMap) OriginalToVirtualSpans(r core.TextRange, feature Feature) []Ma
 		lastCharacter--
 	}
 	originalSegments := m.origIndex()
-	startSegments, startInside := originalSegmentsAt(originalSegments, start)
-	endSegments, endInside := originalSegmentsAt(originalSegments, lastCharacter)
+	startSegments, startInside := segmentsAtOriginalPosition(originalSegments, start)
+	endSegments, endInside := segmentsAtOriginalPosition(originalSegments, lastCharacter)
 	if !startInside || !endInside {
 		return nil
 	}
@@ -642,11 +642,12 @@ func (m *SpanMap) origIndex() []Segment {
 	return m.origSorted
 }
 
-// originalSegmentsAt returns the complete duplicate group containing pos from a slice ordered by original
-// start, original end, and virtual start. Segment ends are exclusive; a segment start, including a zero-length
-// segment, is considered contained. It finds a candidate in O(log n), then scans only the duplicate group.
-// The boolean reports whether any group contains pos.
-func originalSegmentsAt(segments []Segment, pos core.TextPos) ([]Segment, bool) {
+// segmentsAtOriginalPosition returns the complete duplicate group of mapping segments containing the
+// original-text position pos. segments must be ordered by original start, original end, and virtual start.
+// Segment ends are exclusive; a segment start, including a zero-length segment, is considered contained.
+// It finds a candidate in O(log n), then scans only the duplicate group. The boolean reports whether any
+// group contains pos.
+func segmentsAtOriginalPosition(segments []Segment, pos core.TextPos) ([]Segment, bool) {
 	index, found := slices.BinarySearchFunc(segments, pos, func(segment Segment, position core.TextPos) int {
 		return int(segment.OriginalStart - position)
 	})
@@ -667,21 +668,31 @@ func originalSegmentsAt(segments []Segment, pos core.TextPos) ([]Segment, bool) 
 	return segments[start:end], true
 }
 
-type originalSegmentGroupAtPoint struct {
+type segmentGroupAtOriginalPosition struct {
 	segments []Segment
 	atEnd    bool
 }
 
-// originalSegmentGroupsAtPoint returns the duplicate original-range groups containing or touching pos.
-// Interior positions return one group. At a boundary between adjacent groups, both the group ending at pos
-// and the group starting at pos are returned. segments must be ordered by OriginalStart, OriginalEnd, then VirtualStart.
-func originalSegmentGroupsAtPoint(segments []Segment, pos core.TextPos) []originalSegmentGroupAtPoint {
+// segmentGroupsAtOriginalPosition returns groups of mapping segments containing or touching the original-text
+// position pos. Interior positions return one group. At a boundary between adjacent groups, both the group ending
+// at pos and the group starting at pos are returned. segments must be ordered by original start, original end,
+// then virtual start.
+//
+// At a shared boundary, segments ending at pos and segments starting there form separate groups:
+//
+//	original:  [--- A ---)[--- B ---)
+//	                      ^ pos
+//
+//	virtual:   [ A1 ) [ A2 )    [ B1 ) [ B2 )
+//	             left group       right group
+//	             atEnd: true      atEnd: false
+func segmentGroupsAtOriginalPosition(segments []Segment, pos core.TextPos) []segmentGroupAtOriginalPosition {
 	index, startsAtPosition := slices.BinarySearchFunc(segments, pos, func(segment Segment, position core.TextPos) int {
 		return int(segment.OriginalStart - position)
 	})
 	if startsAtPosition {
-		right, _ := originalSegmentsAt(segments, pos)
-		var groups []originalSegmentGroupAtPoint
+		right, _ := segmentsAtOriginalPosition(segments, pos)
+		var groups []segmentGroupAtOriginalPosition
 		if index > 0 {
 			leftIndex := index - 1
 			if segments[leftIndex].OriginalEnd == pos {
@@ -689,10 +700,10 @@ func originalSegmentGroupsAtPoint(segments []Segment, pos core.TextPos) []origin
 				for leftStart > 0 && sameOriginalRange(segments[leftStart-1], segments[leftIndex]) {
 					leftStart--
 				}
-				groups = append(groups, originalSegmentGroupAtPoint{segments: segments[leftStart:index], atEnd: true})
+				groups = append(groups, segmentGroupAtOriginalPosition{segments: segments[leftStart:index], atEnd: true})
 			}
 		}
-		return append(groups, originalSegmentGroupAtPoint{segments: right})
+		return append(groups, segmentGroupAtOriginalPosition{segments: right})
 	}
 	if index == 0 {
 		return nil
@@ -706,7 +717,7 @@ func originalSegmentGroupsAtPoint(segments []Segment, pos core.TextPos) []origin
 	for start > 0 && sameOriginalRange(segments[start-1], segment) {
 		start--
 	}
-	return []originalSegmentGroupAtPoint{{segments: segments[start:index], atEnd: pos == segment.OriginalEnd}}
+	return []segmentGroupAtOriginalPosition{{segments: segments[start:index], atEnd: pos == segment.OriginalEnd}}
 }
 
 // supportsFeature reports whether segment participates in feature.
