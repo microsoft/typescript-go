@@ -490,6 +490,84 @@ func TestDynamicContentMapperInProject(t *testing.T) {
 	assert.Assert(t, !mappedFile.IsContentMapperFailureStub())
 }
 
+func TestDynamicContentMapperRefreshesForMixedWatchBatches(t *testing.T) {
+	t.Parallel()
+	for _, test := range []struct {
+		name   string
+		events func() []*lsproto.FileEvent
+	}{
+		{
+			name: "excessive events",
+			events: func() []*lsproto.FileEvent {
+				events := make([]*lsproto.FileEvent, 1001)
+				for i := range events {
+					events[i] = &lsproto.FileEvent{Uri: lsproto.DocumentUri(fmt.Sprintf("file:///home/project/noise-%d.ts", i)), Type: lsproto.FileChangeTypeChanged}
+				}
+				events[0] = &lsproto.FileEvent{Uri: "file:///home/project/mapper.config.json", Type: lsproto.FileChangeTypeChanged}
+				events[1] = &lsproto.FileEvent{Uri: "file:///home/project/main.ts", Type: lsproto.FileChangeTypeChanged}
+				return events
+			},
+		},
+		{
+			name: "changed files make project fully dirty before mapper deletion",
+			events: func() []*lsproto.FileEvent {
+				return []*lsproto.FileEvent{
+					{Uri: "file:///home/project/main.ts", Type: lsproto.FileChangeTypeChanged},
+					{Uri: "file:///home/project/app.box", Type: lsproto.FileChangeTypeChanged},
+					{Uri: "file:///home/project/mapper.config.json", Type: lsproto.FileChangeTypeDeleted},
+				}
+			},
+		},
+		{
+			name: "changed files make project fully dirty before mapper creation",
+			events: func() []*lsproto.FileEvent {
+				return []*lsproto.FileEvent{
+					{Uri: "file:///home/project/main.ts", Type: lsproto.FileChangeTypeChanged},
+					{Uri: "file:///home/project/app.box", Type: lsproto.FileChangeTypeChanged},
+					{Uri: "file:///home/project/mapper.config.json", Type: lsproto.FileChangeTypeCreated},
+				}
+			},
+		},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			files := map[string]any{
+				"/home/project/tsconfig.json":                    `{ "contentMappers": [{ "package": "mapper", "extensions": [".box"] }] }`,
+				"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.DynamicVerbatimMapper),
+				"/home/project/mapper.config.json":               `{ "version": 1 }`,
+				"/home/project/app.box":                          "export const value = 1;\n",
+				"/home/project/main.ts":                          `import { value } from "./app.box"; value;`,
+			}
+			init, _ := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
+				CurrentDirectory:   "/home/project",
+				DefaultLibraryPath: bundled.LibPath(),
+				TypingsLocation:    projecttestutil.TestTypingsLocation,
+				PositionEncoding:   lsproto.PositionEncodingKindUTF8,
+				RunExternalCode:    true,
+			}, nil)
+			lifecycle := &contentmappertest.ProjectLifecycle{}
+			init.Spawner = contentmappertest.NewSpawnerWithProjectLifecycle(lifecycle)
+			session := project.NewSession(init)
+			defer session.Close()
+
+			ctx := context.Background()
+			mainURI := lsproto.DocumentUri("file:///home/project/main.ts")
+			session.DidOpenFile(ctx, mainURI, 1, files["/home/project/main.ts"].(string), lsproto.LanguageKindTypeScript)
+			_, err := session.GetLanguageService(ctx, mainURI)
+			assert.NilError(t, err)
+			assert.Equal(t, lifecycle.Opens.Load(), int32(1))
+			assert.Equal(t, lifecycle.Closes.Load(), int32(0))
+
+			session.DidChangeWatchedFiles(ctx, test.events())
+			session.WaitForBackgroundTasks()
+			_, err = session.GetLanguageService(ctx, mainURI)
+			assert.NilError(t, err)
+			assert.Equal(t, lifecycle.Closes.Load(), int32(1))
+			assert.Equal(t, lifecycle.Opens.Load(), int32(2))
+		})
+	}
+}
+
 func TestUnusedDynamicContentMapperIsNotOpened(t *testing.T) {
 	t.Parallel()
 	files := map[string]any{

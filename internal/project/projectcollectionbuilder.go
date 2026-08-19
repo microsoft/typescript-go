@@ -269,11 +269,22 @@ func (b *ProjectCollectionBuilder) HandleAPIRequest(apiRequest *APISnapshotReque
 func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, logger *logging.LogTree) {
 	b.openFilesChanged = b.openFilesChanged || summary.Opened != "" || summary.Closed.Len() > 0
 
-	changedFiles := make([]tspath.Path, 0, summary.Changed.Len())
-	for uri := range summary.Changed.Keys() {
-		fileName := uri.FileName()
-		path := b.toPath(fileName)
-		changedFiles = append(changedFiles, path)
+	toPaths := func(uris collections.Set[lsproto.DocumentUri]) []tspath.Path {
+		paths := make([]tspath.Path, 0, uris.Len())
+		for uri := range uris.Keys() {
+			paths = append(paths, b.toPath(uri.FileName()))
+		}
+		return paths
+	}
+	changedFiles := toPaths(summary.Changed)
+	deletedFiles := toPaths(summary.Deleted)
+	createdFiles := toPaths(summary.Created)
+	if b.contentMapperHost != nil {
+		allWatchChanges := slices.Concat(changedFiles, deletedFiles, createdFiles)
+		b.forEachProject(func(entry dirty.Value[*Project]) bool {
+			b.refreshContentMapperProjectForChanges(entry, allWatchChanges, summary.HasExcessiveNonCreateWatchEvents(), logger)
+			return true
+		})
 	}
 
 	configChangeLogger := logger.Fork("Checking for changes affecting config files")
@@ -312,24 +323,12 @@ func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 
 		// Handle deleted files
 		if summary.Deleted.Len() > 0 {
-			deletedPaths := make([]tspath.Path, 0, summary.Deleted.Len())
-			for uri := range summary.Deleted.Keys() {
-				fileName := uri.FileName()
-				path := b.toPath(fileName)
-				deletedPaths = append(deletedPaths, path)
-			}
-			b.markFilesChanged(entry, deletedPaths, lsproto.FileChangeTypeDeleted, logger)
+			b.markFilesChanged(entry, deletedFiles, lsproto.FileChangeTypeDeleted, logger)
 		}
 
 		// Handle created files
 		if summary.Created.Len() > 0 {
-			createdPaths := make([]tspath.Path, 0, summary.Created.Len())
-			for uri := range summary.Created.Keys() {
-				fileName := uri.FileName()
-				path := b.toPath(fileName)
-				createdPaths = append(createdPaths, path)
-			}
-			b.markFilesChanged(entry, createdPaths, lsproto.FileChangeTypeCreated, logger)
+			b.markFilesChanged(entry, createdFiles, lsproto.FileChangeTypeCreated, logger)
 		}
 
 		return true
@@ -342,6 +341,32 @@ func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 		openFileResult := b.ensureConfiguredProjectAndAncestorsForFile(fileName, path, logger)
 		b.cleanupConfiguredProjects(&openFileResult.retain, logger)
 	}
+}
+
+func (b *ProjectCollectionBuilder) refreshContentMapperProjectForChanges(entry dirty.Value[*Project], paths []tspath.Path, refreshAll bool, logger *logging.LogTree) {
+	project := entry.Value()
+	if project.Program == nil || project.contentMapperWatchedFiles == nil {
+		return
+	}
+	affected := refreshAll
+	if !affected {
+		if slices.ContainsFunc(paths, project.contentMapperWatchedFiles.Has) {
+			affected = true
+		}
+	}
+	if !affected {
+		return
+	}
+	if contentMapperProject := project.Program.ContentMapperProject(); contentMapperProject != nil {
+		_ = contentMapperProject.Refresh()
+	}
+	entry.Change(func(project *Project) {
+		project.dirty = true
+		project.dirtyFilePath = ""
+		if logger != nil {
+			logger.Logf("Marking project as dirty due to content mapper configuration changes: %s", project.configFilePath)
+		}
+	})
 }
 
 // cleanupConfiguredProjects sweeps the loaded configured projects and unloads those
@@ -1251,14 +1276,7 @@ func (b *ProjectCollectionBuilder) markFilesChanged(entry dirty.Value[*Project],
 
 			dirtyFilePath = p.dirtyFilePath
 			for _, path := range paths {
-				if p.contentMapperWatchedFiles != nil && p.contentMapperWatchedFiles.Has(path) {
-					if p.Program != nil && p.Program.ContentMapperProject() != nil {
-						_ = p.Program.ContentMapperProject().Refresh()
-					}
-					dirty = true
-					dirtyFilePath = ""
-					break
-				} else if p.containsFile(path) {
+				if p.containsFile(path) {
 					dirty = true
 					if changeType == lsproto.FileChangeTypeDeleted {
 						dirtyFilePath = ""
