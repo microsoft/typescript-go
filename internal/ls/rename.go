@@ -31,6 +31,37 @@ type RenameInfo struct {
 	NewFileName           string
 }
 
+type mappedRenameEdit struct {
+	uri  lsproto.DocumentUri
+	edit *lsproto.TextEdit
+}
+
+type renameEditKey struct {
+	uri       lsproto.DocumentUri
+	textRange lsproto.Range
+}
+
+func deduplicateRenameEdits(mappedEdits []mappedRenameEdit) (map[lsproto.DocumentUri][]*lsproto.TextEdit, bool) {
+	editTexts := make(map[renameEditKey]string)
+	uniqueEdits := make([]mappedRenameEdit, 0, len(mappedEdits))
+	for _, mappedEdit := range mappedEdits {
+		key := renameEditKey{uri: mappedEdit.uri, textRange: mappedEdit.edit.Range}
+		if existingText, ok := editTexts[key]; ok {
+			if existingText != mappedEdit.edit.NewText {
+				return nil, false
+			}
+			continue
+		}
+		editTexts[key] = mappedEdit.edit.NewText
+		uniqueEdits = append(uniqueEdits, mappedEdit)
+	}
+	changes := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
+	for _, mappedEdit := range uniqueEdits {
+		changes[mappedEdit.uri] = append(changes[mappedEdit.uri], mappedEdit.edit)
+	}
+	return changes, true
+}
+
 func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.RenameParams, orchestrator CrossProjectOrchestrator) (lsproto.WorkspaceEditOrNull, error) {
 	return handleCrossProject(
 		l,
@@ -80,7 +111,7 @@ func (l *LanguageService) symbolAndEntriesToRename(ctx context.Context, params *
 	}
 
 	entries := core.FlatMap(data.SymbolsAndEntries, func(s *SymbolAndEntries) []*ReferenceEntry { return s.references })
-	changes := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
+	var mappedEdits []mappedRenameEdit
 	ch, done := program.GetTypeChecker(ctx)
 	defer done()
 
@@ -102,7 +133,11 @@ func (l *LanguageService) symbolAndEntriesToRename(ctx context.Context, params *
 			Range:   rng,
 			NewText: l.getTextForRename(data.OriginalNode, entry, params.NewName, ch, quotePreference, useAliasesForRename),
 		}
-		changes[uri] = append(changes[uri], textEdit)
+		mappedEdits = append(mappedEdits, mappedRenameEdit{uri: uri, edit: textEdit})
+	}
+	changes, ok := deduplicateRenameEdits(mappedEdits)
+	if !ok {
+		return lsproto.WorkspaceEditOrNull{}, nil
 	}
 	return lsproto.WorkspaceEditOrNull{
 		WorkspaceEdit: &lsproto.WorkspaceEdit{
