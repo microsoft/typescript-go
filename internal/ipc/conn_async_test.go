@@ -2,8 +2,11 @@ package ipc_test
 
 import (
 	"context"
+	"errors"
+	"io"
 	"net"
 	"testing"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/ipc"
 	"github.com/microsoft/typescript-go/internal/json"
@@ -38,6 +41,29 @@ func TestAsyncConnCallReturnsWhenPeerCloses(t *testing.T) {
 	assert.NilError(t, err)
 	assert.NilError(t, server.Close())
 	assert.NilError(t, <-runDone)
-	assert.ErrorContains(t, <-callDone, "connection closed before response")
+	assert.Assert(t, errors.Is(<-callDone, ipc.ErrConnClosed))
 	assert.NilError(t, client.Close())
+}
+
+func TestAsyncConnCallAfterReadLoopFailureReturnsImmediately(t *testing.T) {
+	t.Parallel()
+	client, server := net.Pipe()
+	defer client.Close()
+	defer server.Close()
+	conn := ipc.NewAsyncConn(client, noOpHandler{})
+	runDone := make(chan error, 1)
+	go func() { runDone <- conn.Run(t.Context()) }()
+
+	_, err := server.Write([]byte("oops\n"))
+	assert.NilError(t, err)
+	assert.ErrorContains(t, <-runDone, "invalid header")
+	go func() { _, _ = io.Copy(io.Discard, server) }()
+
+	ctx, cancel := context.WithTimeout(t.Context(), time.Second)
+	defer cancel()
+	_, err = conn.Call(ctx, "transform", nil)
+	assert.Assert(t, errors.Is(err, ipc.ErrConnClosed), "expected ErrConnClosed, got %v", err)
+	assert.Assert(t, !errors.Is(err, context.DeadlineExceeded), "call waited for its context deadline: %v", err)
+	err = conn.Notify(ctx, "changed", nil)
+	assert.Assert(t, errors.Is(err, ipc.ErrConnClosed), "expected ErrConnClosed, got %v", err)
 }

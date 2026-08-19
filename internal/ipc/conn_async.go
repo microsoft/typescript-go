@@ -30,6 +30,7 @@ type AsyncConn struct {
 	seq       atomic.Int64
 	pending   map[jsonrpc.ID]chan *Message
 	pendingMu sync.Mutex
+	terminal  error
 	writeMu   sync.Mutex
 }
 
@@ -62,8 +63,8 @@ func (c *AsyncConn) SetCollectTiming(enabled bool) {
 
 // Run starts processing messages on the connection.
 // It blocks until the context is cancelled or an error occurs.
-func (c *AsyncConn) Run(ctx context.Context) error {
-	defer c.closePendingCalls()
+func (c *AsyncConn) Run(ctx context.Context) (err error) {
+	defer func() { c.closePendingCalls(err) }()
 	for {
 		if ctx.Err() != nil {
 			return ctx.Err()
@@ -87,10 +88,16 @@ func (c *AsyncConn) Run(ctx context.Context) error {
 	}
 }
 
-// closePendingCalls unblocks requests waiting for a response when the connection read loop exits.
-func (c *AsyncConn) closePendingCalls() {
+// closePendingCalls records that the read loop has exited and unblocks requests waiting for a response.
+func (c *AsyncConn) closePendingCalls(runErr error) {
 	c.pendingMu.Lock()
 	defer c.pendingMu.Unlock()
+	if c.terminal == nil {
+		c.terminal = ErrConnClosed
+		if runErr != nil {
+			c.terminal = errors.Join(c.terminal, runErr)
+		}
+	}
 	for id, ch := range c.pending {
 		close(ch)
 		delete(c.pending, id)
@@ -202,6 +209,11 @@ func (c *AsyncConn) Call(ctx context.Context, method string, params any) (json.V
 	// Register response channel BEFORE sending request to avoid race
 	responseChan := make(chan *Message, 1)
 	c.pendingMu.Lock()
+	if c.terminal != nil {
+		err := c.terminal
+		c.pendingMu.Unlock()
+		return nil, err
+	}
 	c.pending[*id] = responseChan
 	c.pendingMu.Unlock()
 
@@ -228,7 +240,10 @@ func (c *AsyncConn) Call(ctx context.Context, method string, params any) (json.V
 		return nil, ctx.Err()
 	case resp, ok := <-responseChan:
 		if !ok {
-			return nil, errors.New("ipc: connection closed before response")
+			c.pendingMu.Lock()
+			err := c.terminal
+			c.pendingMu.Unlock()
+			return nil, err
 		}
 		if resp.Error != nil {
 			return nil, fmt.Errorf("ipc: remote error [%d]: %s", resp.Error.Code, resp.Error.Message)
@@ -239,6 +254,13 @@ func (c *AsyncConn) Call(ctx context.Context, method string, params any) (json.V
 
 // Notify sends a notification to the client (no response expected).
 func (c *AsyncConn) Notify(ctx context.Context, method string, params any) error {
+	c.pendingMu.Lock()
+	if c.terminal != nil {
+		err := c.terminal
+		c.pendingMu.Unlock()
+		return err
+	}
+	c.pendingMu.Unlock()
 	c.writeMu.Lock()
 	defer c.writeMu.Unlock()
 	return c.protocol.WriteNotification(method, params)

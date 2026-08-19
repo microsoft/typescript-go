@@ -467,6 +467,24 @@ func (p *loggedProcess) Close() error {
 	return err
 }
 
+type closeOnceReadWriteCloser struct {
+	io.ReadWriteCloser
+	once sync.Once
+	err  error
+}
+
+func (c *closeOnceReadWriteCloser) Close() error {
+	c.once.Do(func() { c.err = c.ReadWriteCloser.Close() })
+	return c.err
+}
+
+func (c *closeOnceReadWriteCloser) ExitCode() (int, bool) {
+	if state, ok := c.ReadWriteCloser.(processExitState); ok {
+		return state.ExitCode()
+	}
+	return 0, false
+}
+
 // NewHost creates a Host that spawns each mapper's process via the given spawner and drives it over a
 // JSON-RPC connection. The host's lifetime is bound to ctx: cancelling it (e.g. the CLI's signal context
 // on SIGINT, or a build/watch session ending) tears every mapper process down, so owners of a session
@@ -500,12 +518,16 @@ func NewHostWithOptions(ctx context.Context, spawner Spawner, diagnosticLocale l
 		if stderrLog != nil {
 			rwc = &loggedProcess{ReadWriteCloser: rwc, stderr: stderrLog}
 		}
+		rwc = &closeOnceReadWriteCloser{ReadWriteCloser: rwc}
 		protocol := ipc.Protocol(ipc.NewJSONRPCProtocol(rwc))
 		if logger != nil {
 			protocol = &loggingProtocol{Protocol: protocol, mapperName: diagnosticName, logger: logger}
 		}
 		conn := ipc.NewAsyncConnWithProtocol(rwc, protocol, rejectHandler{})
-		go func() { _ = conn.Run(ctx) }()
+		go func() {
+			_ = conn.Run(ctx)
+			_ = rwc.Close()
+		}()
 		initializeCtx, cancel := context.WithTimeout(ctx, initializeTimeout)
 		initializeStart := mapperTiming.startRequest()
 		positionEncoding, diagnosticSource, err := handshake(initializeCtx, conn, diagnosticLocale)

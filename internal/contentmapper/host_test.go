@@ -11,6 +11,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
@@ -323,6 +324,54 @@ func TestRunnerTransformResponseValidation(t *testing.T) {
 		_, err := host.Transform(mapper, request)
 		assert.Assert(t, err != nil)
 	})
+}
+
+func TestHostClosesProcessWhenReadLoopFails(t *testing.T) {
+	t.Parallel()
+	closed := make(chan struct{}, 1)
+	spawner := contentmapper.SpawnerFunc(func(command []string, dir string, stderr io.Writer) (io.ReadWriteCloser, error) {
+		client, server := net.Pipe()
+		go func() {
+			defer server.Close()
+			protocol := ipc.NewJSONRPCProtocol(server)
+			message, err := protocol.ReadMessage()
+			assert.NilError(t, err)
+			assert.Equal(t, message.Method, contentmapper.MethodInitialize)
+			assert.NilError(t, protocol.WriteResponse(message.ID, contentmapper.InitializeResult{
+				ProtocolVersion:  contentmapper.ProtocolVersion,
+				PositionEncoding: contentmapper.PositionEncodingUTF8,
+				DiagnosticSource: "mapper",
+			}))
+			_, err = server.Write([]byte("oops\n"))
+			assert.NilError(t, err)
+		}()
+		return &closeSignalReadWriteCloser{ReadWriteCloser: client, closed: closed}, nil
+	})
+	host := contentmapper.NewHost(t.Context(), spawner, locale.Default)
+	defer host.Close()
+	mapper := &contentmapper.Mapper{Manifest: contentmapper.Manifest{Name: "mapper", Exec: []string{"mapper"}}}
+	_, err := host.Transform(mapper, contentmapper.Request{FileName: "/a.vue", Content: ""})
+	assert.Assert(t, err != nil)
+	processClosed := false
+	select {
+	case <-closed:
+		processClosed = true
+	case <-time.After(time.Second):
+		processClosed = false
+	}
+	assert.Assert(t, processClosed, "mapper process was not closed after its read loop failed")
+}
+
+type closeSignalReadWriteCloser struct {
+	io.ReadWriteCloser
+	closed chan<- struct{}
+	once   sync.Once
+}
+
+func (c *closeSignalReadWriteCloser) Close() error {
+	err := c.ReadWriteCloser.Close()
+	c.once.Do(func() { c.closed <- struct{}{} })
+	return err
 }
 
 func TestRunnerTransformDiagnosticDirectives(t *testing.T) {
