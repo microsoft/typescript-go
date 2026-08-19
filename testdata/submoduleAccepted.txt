@@ -302,6 +302,33 @@ compiler/indexTypeNoSubstitutionTemplateLiteral.symbols.diff
 compiler/indexTypeNoSubstitutionTemplateLiteral.types.diff
 compiler/inferenceFromIncompleteSource.errors.txt.diff
 
+## Heritage clause type references use type-space qualified names ##
+compiler/bluebirdStaticThis.types.diff
+compiler/classdecl(target=es2015).types.diff
+compiler/complexRecursiveCollections.types.diff
+compiler/complicatedPrivacy(target=es2015).types.diff
+compiler/declFileGenericType.types.diff
+compiler/declFileGenericType2.types.diff
+compiler/declFileModuleContinuation.types.diff
+compiler/declFileWithInternalModuleNameConflictsInExtendsClause1.types.diff
+compiler/declFileWithInternalModuleNameConflictsInExtendsClause2.types.diff
+compiler/declFileWithInternalModuleNameConflictsInExtendsClause3.types.diff
+compiler/declarationEmitNameConflicts.types.diff
+compiler/genericConstraintOnExtendedBuiltinTypes.types.diff
+compiler/genericConstraintOnExtendedBuiltinTypes2.types.diff
+compiler/interfaceDeclaration3.types.diff
+compiler/interfaceDeclaration4.types.diff
+compiler/interfacePropertiesWithSameName2.types.diff
+compiler/jsxComplexSignatureHasApplicabilityError.types.diff
+compiler/privacyClassImplementsClauseDeclFile.types.diff
+compiler/recursiveClassReferenceTest.types.diff
+compiler/unionReductionWithStringMappingAndIdenticalBaseTypeExistsNoCrash.types.diff
+conformance/extendsClause.types.diff
+conformance/genericTypeReferenceWithoutTypeArgument.types.diff
+conformance/implementsClause.types.diff
+conformance/inlineJsxFactoryDeclarationsLocalTypes.types.diff
+conformance/nestedNamespace.types.diff
+
 ## more concise errors ##
 compiler/arrayBestCommonTypes.errors.txt.diff
 compiler/arrayCast.errors.txt.diff
@@ -666,6 +693,8 @@ conformance/types.asyncGenerators.es2018.2.errors.txt.diff
 
 ## Error spans for non-BMP characters (surrogate pairs) are measured by code points instead of UTF-16 code units, causing span widths and positions to shift
 compiler/regularExpressionCharacterClassRangeOrder.errors.txt.diff
+compiler/regularExpressionScanning(target=es2015).errors.txt.diff
+compiler/regularExpressionScanning(target=esnext).errors.txt.diff
 compiler/regularExpressionWithNonBMPFlags.errors.txt.diff
 compiler/unicodeEscapesInNames02(target=es2015).errors.txt.diff
 
@@ -1488,3 +1517,23 @@ compiler/destructuredDeclarationEmit.js.diff
 compiler/isolatedDeclarationErrorsExpressions.errors.txt.diff
 conformance/dependentDestructuredVariables.js.diff
 conformance/stringLiteralTypesAndTuples01.js.diff
+
+## Preserve enum members in inferred computed property names ##
+compiler/declarationEmitComputedNameConstEnumAlias.js.diff
+compiler/declarationEmitComputedNameConstEnumAlias.types.diff
+compiler/declarationEmitComputedPropertyNameEnum1.types.diff
+compiler/declarationEmitStringEnumUsedInNonlocalSpread.types.diff
+compiler/duplicateObjectLiteralProperty_computedName2.types.diff
+compiler/duplicateObjectLiteralProperty_computedName3.types.diff
+compiler/isolatedDeclarationErrorsObjects.types.diff
+compiler/objectLiteralEnumPropertyNames.types.diff
+compiler/reducibleIndexedAccessTypes.types.diff
+compiler/typeGuardNarrowsIndexedAccessOfKnownProperty11.types.diff
+compiler/typeGuardNarrowsIndexedAccessOfKnownProperty12.types.diff
+conformance/computedPropertyNames47_ES5(target=es2015).types.diff
+conformance/computedPropertyNames47_ES6.types.diff
+conformance/computedPropertyNames48_ES5(target=es2015).types.diff
+conformance/computedPropertyNames48_ES6.types.diff
+conformance/computedPropertyNames7_ES5(target=es2015).types.diff
+conformance/computedPropertyNames7_ES6.types.diff
+conformance/destructuringObjectBindingPatternAndAssignment7(target=esnext).types.diff

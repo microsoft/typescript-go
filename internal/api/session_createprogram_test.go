@@ -61,7 +61,7 @@ func TestCreateProgram(t *testing.T) {
 	diagnostics, err := session.handleGetSemanticDiagnostics(ctx, &GetDiagnosticsParams{
 		Snapshot: response.Snapshot,
 		Project:  response.Project.Id,
-		File:     &DocumentIdentifier{FileName: fileName},
+		Files:    []DocumentIdentifier{{FileName: fileName}},
 	})
 	assert.NilError(t, err)
 	assert.Equal(t, len(diagnostics), 0)
@@ -93,7 +93,7 @@ func TestCreateProgram(t *testing.T) {
 	updatedDiagnostics, err := session.handleGetSemanticDiagnostics(ctx, &GetDiagnosticsParams{
 		Snapshot: updatedResponse.Snapshot,
 		Project:  updatedResponse.Project.Id,
-		File:     &DocumentIdentifier{FileName: fileName},
+		Files:    []DocumentIdentifier{{FileName: fileName}},
 	})
 	assert.NilError(t, err)
 	assert.Equal(t, len(updatedDiagnostics), 0)
@@ -101,7 +101,7 @@ func TestCreateProgram(t *testing.T) {
 	oldDiagnostics, err := session.handleGetSemanticDiagnostics(ctx, &GetDiagnosticsParams{
 		Snapshot: response.Snapshot,
 		Project:  response.Project.Id,
-		File:     &DocumentIdentifier{FileName: fileName},
+		Files:    []DocumentIdentifier{{FileName: fileName}},
 	})
 	assert.NilError(t, err)
 	assert.Equal(t, len(oldDiagnostics), 0)
@@ -345,7 +345,7 @@ func TestCreateProgramFromConfiguredProgramDoesNotRetainOtherProjects(t *testing
 	updatedDiagnostics, err := session.handleGetSemanticDiagnostics(ctx, &GetDiagnosticsParams{
 		Snapshot: updatedResponse.Snapshot,
 		Project:  updatedResponse.Project.Id,
-		File:     &DocumentIdentifier{FileName: fileName},
+		Files:    []DocumentIdentifier{{FileName: fileName}},
 	})
 	assert.NilError(t, err)
 	assert.Equal(t, len(updatedDiagnostics), 0)
@@ -356,7 +356,7 @@ func TestCreateProgramFromConfiguredProgramDoesNotRetainOtherProjects(t *testing
 	baseDiagnostics, err := session.handleGetSemanticDiagnostics(ctx, &GetDiagnosticsParams{
 		Snapshot: baseResponse.Snapshot,
 		Project:  baseProject.Id,
-		File:     &DocumentIdentifier{FileName: fileName},
+		Files:    []DocumentIdentifier{{FileName: fileName}},
 	})
 	assert.NilError(t, err)
 	assert.Equal(t, len(baseDiagnostics), 1)

@@ -97,6 +97,8 @@ func TestProjectProgramUpdateKind(t *testing.T) {
 			NoLib:  core.TSTrue,
 			Strict: core.TSTrue,
 		})
+		_, err := session.GetLanguageService(context.Background(), uri)
+		assert.NilError(t, err)
 
 		updatedProject := session.Snapshot().ProjectCollection.InferredProject()
 		assert.Assert(t, updatedProject != nil)

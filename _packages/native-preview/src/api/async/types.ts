@@ -3,6 +3,7 @@ import type { ElementFlags } from "#enums/elementFlags";
 import type { ObjectFlags } from "#enums/objectFlags";
 import type { TypeFlags } from "#enums/typeFlags";
 import type { TypePredicateKind } from "#enums/typePredicateKind";
+import type { IndexSignatureDeclaration } from "../../ast/ast.ts";
 import type { Diagnostic } from "../proto.ts";
 import type {
     NodeHandle,
@@ -207,6 +208,9 @@ export interface UnionType extends UnionOrIntersectionType {
 export interface IntersectionType extends UnionOrIntersectionType {
 }
 
+/** Structured types (TypeFlags.StructuredType) */
+export type StructuredType = ObjectType | UnionType | IntersectionType;
+
 /** Type parameters (TypeFlags.TypeParameter) */
 export interface TypeParameter extends Type {
     /** True if this is the synthetic `this` type of an interface, class, or tuple */
@@ -319,7 +323,7 @@ export interface IndexInfo {
     /** Whether the index signature is readonly */
     readonly isReadonly: boolean;
     /** The index signature declaration, if any */
-    readonly declaration?: NodeHandle | undefined;
+    readonly declaration?: NodeHandle<IndexSignatureDeclaration> | undefined;
 }
 
 /**
@@ -337,14 +341,14 @@ export interface CompletionEntryLabelDetails {
     description?: string | undefined;
 }
 
-/** Options for {@link Checker.getCompletionsAtPosition}. */
+/** Options for {@link LanguageService.getCompletionsAtPosition}. */
 export interface CompletionOptions {
     triggerCharacter?: string | undefined;
     /** Include a `symbol` property on each completion entry. Only populated for symbol-based completions (not keywords or literals). */
     includeSymbol?: boolean | undefined;
 }
 
-/** A single completion item returned by {@link Checker.getCompletionsAtPosition}. */
+/** A single completion item returned by {@link LanguageService.getCompletionsAtPosition}. */
 export interface CompletionEntry {
     readonly name: string;
     readonly kind?: CompletionItemKind | undefined;
@@ -357,7 +361,7 @@ export interface CompletionEntry {
     readonly symbol?: Symbol | undefined;
 }
 
-/** The result of {@link Checker.getCompletionsAtPosition}. */
+/** The result of {@link LanguageService.getCompletionsAtPosition}. */
 export interface CompletionInfo {
     readonly isIncomplete: boolean;
     readonly entries: readonly CompletionEntry[];

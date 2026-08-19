@@ -515,7 +515,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	projectCollectionBuilder.DidChangeCustomConfigFileName(logger.Fork("DidChangeCustomConfigFileName"))
 	// compiler options changed, update inferred project and program
 	if change.compilerOptionsForInferredProjects != nil && projectCollectionBuilder.inferredProject.Value() != nil {
-		if projectCollectionBuilder.updateInferredProject(
+		projectCollectionBuilder.updateInferredProject(
 			projectCollectionBuilder.inferredProject.Value().CommandLine.FileNames(),
 			change.compilerOptionsForInferredProjects,
 			projectCollectionBuilder.inferredProject.Value().CommandLine.ProjectReferences(),

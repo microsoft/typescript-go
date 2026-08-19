@@ -136,6 +136,13 @@ export interface ParsedCommandLine {
     projectReferences?: ProjectReference[];
     typeAcquisition?: TypeAcquisition;
     compileOnSave?: boolean;
+    raw?: any;
+    errors: readonly Diagnostic[];
+}
+
+export interface ReadConfigFileResult {
+    config: any;
+    error?: Diagnostic;
 }
 
 export interface LSPUpdateSnapshotParams {
