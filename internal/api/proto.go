@@ -371,7 +371,7 @@ type UpdateTemporarySnapshotParams struct {
 type CreateProgramParams struct {
 	RootFiles            []DocumentIdentifier           `json:"rootFiles"`
 	CreateProgramOptions CreateProgramOptions           `json:"createProgramOptions"`
-	OldProgram           *CreateProgramOldProgramParams `json:"oldProgramReference,omitempty"`
+	OldProgram           *CreateProgramOldProgramParams `json:"oldProgram,omitempty"`
 	FileChanges          *APIFileChanges                `json:"fileChanges,omitempty"`
 }
 
