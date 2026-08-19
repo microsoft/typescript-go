@@ -54,12 +54,28 @@ func (c *Checker) GetESSymbolType() *Type {
 	return c.esSymbolType
 }
 
+func (c *Checker) GetNonPrimitiveType() *Type {
+	return c.nonPrimitiveType
+}
+
 func (c *Checker) GetBaseTypeOfLiteralType(t *Type) *Type {
 	return c.getBaseTypeOfLiteralType(t)
 }
 
 func (c *Checker) GetUnknownSymbol() *ast.Symbol {
 	return c.unknownSymbol
+}
+
+func (c *Checker) GetUndefinedSymbol() *ast.Symbol {
+	return c.undefinedSymbol
+}
+
+func (c *Checker) GetArgumentsSymbol() *ast.Symbol {
+	return c.argumentsSymbol
+}
+
+func (c *Checker) GetUnknownSignature() *Signature {
+	return c.unknownSignature
 }
 
 func (c *Checker) GetUnionType(types []*Type) *Type {
@@ -169,6 +185,14 @@ func (c *Checker) GetConstraintOfTypeParameter(typeParameter *Type) *Type {
 	return c.getConstraintOfTypeParameter(typeParameter)
 }
 
+func (c *Checker) GetTrueTypeOfConditionalType(t *Type) *Type {
+	return c.getTrueTypeFromConditionalType(t)
+}
+
+func (c *Checker) GetFalseTypeOfConditionalType(t *Type) *Type {
+	return c.getFalseTypeFromConditionalType(t)
+}
+
 func (c *Checker) GetDefaultFromTypeParameter(typeParameter *Type) *Type {
 	return c.getDefaultFromTypeParameter(typeParameter)
 }
@@ -191,6 +215,10 @@ func (c *Checker) GetTypePredicateOfSignature(sig *Signature) *TypePredicate {
 
 func IsTupleType(t *Type) bool {
 	return isTupleType(t)
+}
+
+func (c *Checker) IsArrayType(t *Type) bool {
+	return c.isArrayType(t)
 }
 
 func (c *Checker) GetReturnTypeOfSignature(sig *Signature) *Type {
@@ -266,8 +294,18 @@ func (c *Checker) GetApparentType(t *Type) *Type {
 	return c.getApparentType(t)
 }
 
+// GetFullyQualifiedName returns the fully qualified name of a symbol, walking up
+// its parent chain (e.g. `"/path/to/module".Namespace.Name`).
+func (c *Checker) GetFullyQualifiedName(symbol *ast.Symbol) string {
+	return c.getFullyQualifiedName(symbol, nil /*containingLocation*/)
+}
+
 func (c *Checker) GetBaseConstructorTypeOfClass(t *Type) *Type {
 	return c.getBaseConstructorTypeOfClass(t)
+}
+
+func (c *Checker) GetMemberOverrideModifierStatus(node *ast.Node, member *ast.Node, memberSymbol *ast.Symbol) MemberOverrideStatus {
+	return c.getMemberOverrideModifierStatus(node, member, memberSymbol)
 }
 
 func (c *Checker) GetRestTypeOfSignature(sig *Signature) *Type {
@@ -328,4 +366,8 @@ func (c *Checker) RemoveMissingOrUndefinedType(t *Type) *Type {
 
 func (c *Checker) GetWidenedType(t *Type) *Type {
 	return c.getWidenedType(t)
+}
+
+func (c *Checker) CompareSymbols(s1, s2 *ast.Symbol) int {
+	return c.compareSymbols(s1, s2)
 }

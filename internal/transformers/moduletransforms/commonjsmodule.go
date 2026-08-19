@@ -1120,6 +1120,8 @@ func (tx *CommonJSModuleTransformer) transformInitializedVariable(node *ast.Vari
 		// re-aliased or multi-exported names (where native destructuring cannot update all
 		// targets) does `visitDestructuringAssignment` fall back to flattening.
 		assignment := transformers.ConvertVariableDeclarationToAssignmentExpression(tx.EmitContext(), node)
+		grandparentNode := tx.pushNode(assignment)
+		defer tx.popNode(grandparentNode)
 		return tx.visitDestructuringAssignment(assignment.AsBinaryExpression(), true /*valueIsDiscarded*/)
 	}
 	propertyAccess := tx.Factory().NewPropertyAccessExpression(
@@ -1962,7 +1964,7 @@ func (tx *CommonJSModuleTransformer) shimOrRewriteImportOrRequireCall(node *ast.
 	expression := tx.Visitor().VisitNode(node.Expression)
 	argumentsList := node.Arguments
 	if len(node.Arguments.Nodes) > 0 {
-		firstArgument := node.Arguments.Nodes[0]
+		firstArgument := tx.Visitor().VisitNode(node.Arguments.Nodes[0])
 		firstArgumentChanged := false
 		if ast.IsStringLiteralLike(firstArgument) {
 			rewritten := rewriteModuleSpecifier(tx.EmitContext(), firstArgument, tx.compilerOptions)

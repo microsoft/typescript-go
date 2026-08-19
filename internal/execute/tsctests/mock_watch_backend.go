@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/execute/watchmanager"
 	"github.com/microsoft/typescript-go/internal/fswatch"
 	"github.com/microsoft/typescript-go/internal/testutil/fsbaselineutil"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 // MockWatchBackend implements watchmanager.WatchBackend for testing. It
@@ -19,9 +20,10 @@ import (
 // SendEvents, which routes them only through watches whose paths
 // match, enforcing that tests fail if the wrong watches are set up.
 type MockWatchBackend struct {
-	mu              sync.Mutex
-	Dirs            map[string]*MockWatch
-	DirectoryExists func(string) bool // if set, WatchDirectory fails for non-existent dirs
+	mu                        sync.Mutex
+	Dirs                      map[string]*MockWatch
+	DirectoryExists           func(string) bool // if set, WatchDirectory fails for non-existent dirs
+	UseCaseSensitiveFileNames bool
 }
 
 var _ watchmanager.WatchBackend = (*MockWatchBackend)(nil)
@@ -55,14 +57,33 @@ func (w *MockWatch) Close() error {
 }
 
 func (m *MockWatchBackend) WatchDirectory(dir string, fn fswatch.WatchCallback, recursive bool, ignore func(string) bool) (io.Closer, error) {
+	closers, err := m.WatchDirectories([]watchmanager.WatchDirectoryRequest{{
+		Dir:       dir,
+		Callback:  fn,
+		Recursive: recursive,
+		Ignore:    ignore,
+	}})
+	if err != nil {
+		return nil, err
+	}
+	return closers[0], nil
+}
+
+func (m *MockWatchBackend) WatchDirectories(requests []watchmanager.WatchDirectoryRequest) ([]io.Closer, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	if m.DirectoryExists != nil && !m.DirectoryExists(dir) {
-		return nil, fmt.Errorf("directory does not exist: %s", dir)
+	for _, request := range requests {
+		if m.DirectoryExists != nil && !m.DirectoryExists(request.Dir) {
+			return nil, fmt.Errorf("directory does not exist: %s", request.Dir)
+		}
 	}
-	w := &MockWatch{Path: dir, Callback: fn, Recursive: recursive, Ignore: ignore}
-	m.Dirs[dir] = w
-	return w, nil
+	closers := make([]io.Closer, len(requests))
+	for i, request := range requests {
+		w := &MockWatch{Path: request.Dir, Callback: request.Callback, Recursive: request.Recursive, Ignore: request.Ignore}
+		m.Dirs[request.Dir] = w
+		closers[i] = w
+	}
+	return closers, nil
 }
 
 // SendEvents routes events through the registered watch callbacks
@@ -90,7 +111,7 @@ func (m *MockWatchBackend) SendEvents(events []fswatch.Event) {
 			if w.Ignore != nil && w.Ignore(e.Path) {
 				continue
 			}
-			if !pathIsUnder(e.Path, w.Path, w.Recursive) {
+			if !pathIsUnder(e.Path, w.Path, w.Recursive, m.UseCaseSensitiveFileNames) {
 				continue
 			}
 			if t, ok := targets[w]; ok {
@@ -104,6 +125,23 @@ func (m *MockWatchBackend) SendEvents(events []fswatch.Event) {
 
 	for _, t := range targets {
 		t.cb(t.events, nil)
+	}
+}
+
+// SendOverflow simulates a kernel event-queue overflow by invoking every
+// active watch callback with fswatch.ErrOverflow. The watch manager treats
+// this as a signal that events were dropped and a full rebuild is required.
+func (m *MockWatchBackend) SendOverflow() {
+	m.mu.Lock()
+	var cbs []fswatch.WatchCallback
+	for _, w := range m.Dirs {
+		if !w.Closed {
+			cbs = append(cbs, w.Callback)
+		}
+	}
+	m.mu.Unlock()
+	for _, cb := range cbs {
+		cb(nil, fswatch.ErrOverflow)
 	}
 }
 
@@ -143,7 +181,11 @@ func (m *MockWatchBackend) SendChangedPaths(changes []fsbaselineutil.FileChange)
 
 // pathIsUnder reports whether eventPath is inside dir. If recursive is
 // false, only direct children match.
-func pathIsUnder(eventPath, dir string, recursive bool) bool {
+func pathIsUnder(eventPath, dir string, recursive, useCaseSensitiveFileNames bool) bool {
+	if !useCaseSensitiveFileNames {
+		eventPath = tspath.GetCanonicalFileName(eventPath, false)
+		dir = tspath.GetCanonicalFileName(dir, false)
+	}
 	if !strings.HasPrefix(eventPath, dir) {
 		return false
 	}

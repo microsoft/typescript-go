@@ -73,7 +73,6 @@ type Binder struct {
 	inAssignmentPattern     bool
 	seenParseError          bool
 	symbolCount             int
-	classifiableNames       collections.Set[string]
 	notConstEnumOnlyModules collections.Set[*ast.Symbol]
 	symbolArena             core.Arena[ast.Symbol]
 	flowNodeArena           core.Arena[ast.FlowNode]
@@ -127,7 +126,6 @@ func bindSourceFile(file *ast.SourceFile) {
 		b.bind(file.AsNode())
 		b.bindDeferredExpandoAssignments()
 		file.SymbolCount = b.symbolCount
-		file.ClassifiableNames = b.classifiableNames
 	})
 }
 
@@ -192,9 +190,6 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 		// you have multiple 'vars' with the same name in the same container).  In this case
 		// just add this node into the declarations list of the symbol.
 		symbol = symbolTable[name]
-		if includes&ast.SymbolFlagsClassifiable != 0 {
-			b.classifiableNames.Add(name)
-		}
 		if symbol == nil {
 			symbol = b.newSymbol(ast.SymbolFlagsNone, name)
 			symbolTable[name] = symbol
@@ -951,7 +946,6 @@ func (b *Binder) bindClassLikeDeclaration(node *ast.Node) {
 		nameText := ast.InternalSymbolNameClass
 		if name != nil {
 			nameText = name.Text()
-			b.classifiableNames.Add(nameText)
 		}
 		b.bindAnonymousDeclaration(node, ast.SymbolFlagsClass, nameText)
 	}
@@ -1566,7 +1560,6 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		}
 		if node.Kind == ast.KindSourceFile {
 			node.Flags |= b.emitFlags
-			node.AsSourceFile().EndFlowNode = b.currentFlow
 		}
 		if b.currentReturnTarget != nil {
 			b.addAntecedent(b.currentReturnTarget, b.currentFlow)
@@ -1884,11 +1877,22 @@ func (b *Binder) bindDoStatement(node *ast.Node) {
 
 func (b *Binder) bindForStatement(node *ast.Node) {
 	stmt := node.AsForStatement()
+	b.bind(stmt.Initializer)
+	if b.currentFlow == b.unreachableFlow {
+		// Unlike while/do, the for-loop initializer is bound inside this function before the loop's
+		// flow graph is constructed. If it makes flow unreachable (e.g. a throwing IIFE), addAntecedent
+		// will filter out the unreachable entry to preLoopLabel, leaving only the back-edge from the
+		// incrementor. This creates a cycle with no exit that crashes isReachableFlowNodeWorker.
+		// Bail out early and just bind the remaining children with unreachable flow.
+		b.bind(stmt.Condition)
+		b.bind(stmt.Statement)
+		b.bind(stmt.Incrementor)
+		return
+	}
 	preLoopLabel := b.setContinueTarget(node, b.createLoopLabel())
 	preBodyLabel := b.createBranchLabel()
 	preIncrementorLabel := b.createBranchLabel()
 	postLoopLabel := b.createBranchLabel()
-	b.bind(stmt.Initializer)
 	b.addAntecedent(preLoopLabel, b.currentFlow)
 	b.currentFlow = preLoopLabel
 	b.bindCondition(stmt.Condition, preBodyLabel, postLoopLabel)
@@ -2710,21 +2714,6 @@ func (b *Binder) errorOnNode(node *ast.Node, message *diagnostics.Message, args 
 func (b *Binder) errorOnFirstToken(node *ast.Node, message *diagnostics.Message, args ...any) {
 	span := scanner.GetRangeOfTokenAtPosition(b.file, node.Pos())
 	b.addDiagnostic(ast.NewDiagnostic(b.file, span, message, args...))
-}
-
-func (b *Binder) errorOrSuggestionOnNode(isError bool, node *ast.Node, message *diagnostics.Message) {
-	b.errorOrSuggestionOnRange(isError, node, node, message)
-}
-
-func (b *Binder) errorOrSuggestionOnRange(isError bool, startNode *ast.Node, endNode *ast.Node, message *diagnostics.Message) {
-	textRange := core.NewTextRange(scanner.GetRangeOfTokenAtPosition(b.file, startNode.Pos()).Pos(), endNode.End())
-	diagnostic := ast.NewDiagnostic(b.file, textRange, message)
-	if isError {
-		b.addDiagnostic(diagnostic)
-	} else {
-		diagnostic.SetCategory(diagnostics.CategorySuggestion)
-		b.file.BindSuggestionDiagnostics = append(b.file.BindSuggestionDiagnostics, diagnostic)
-	}
 }
 
 // Inside the binder, we may create a diagnostic for an as-yet unbound node (with potentially no parent pointers, implying no accessible source file)

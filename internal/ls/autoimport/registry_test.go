@@ -780,6 +780,65 @@ export declare const otherValue: string;`,
 		}
 	})
 
+	t.Run("circular workspace symlinks do not exclude local project files", func(t *testing.T) {
+		t.Parallel()
+
+		monorepoRoot := "/home/src/circular-workspaces"
+		packageADir := tspath.CombinePaths(monorepoRoot, "packages", "pkg-a")
+		packageBDir := tspath.CombinePaths(monorepoRoot, "packages", "pkg-b")
+		consumerA := tspath.CombinePaths(packageADir, "consumer.ts")
+		helperA := tspath.CombinePaths(packageADir, "helper.ts")
+
+		files := map[string]any{
+			tspath.CombinePaths(packageADir, "tsconfig.json"): `{
+				"compilerOptions": {
+					"module": "esnext",
+					"strict": true
+				}
+			}`,
+			tspath.CombinePaths(packageADir, "package.json"): `{
+				"name": "pkg-a",
+				"dependencies": { "pkg-b": "*" }
+			}`,
+			tspath.CombinePaths(packageADir, "index.ts"): `import { b } from "pkg-b";
+export const a = b;
+`,
+			consumerA: `export const usesHelper = uniqueHelperValueFromHelperA;
+`,
+			helperA: `export const uniqueHelperValueFromHelperA = 1;
+`,
+			tspath.CombinePaths(packageBDir, "tsconfig.json"): `{
+				"compilerOptions": {
+					"module": "esnext",
+					"strict": true
+				}
+			}`,
+			tspath.CombinePaths(packageBDir, "package.json"): `{
+				"name": "pkg-b",
+				"dependencies": { "pkg-a": "*" }
+			}`,
+			tspath.CombinePaths(packageBDir, "index.ts"): `import { a } from "pkg-a";
+export const b = a;
+`,
+			// Circular workspace links
+			tspath.CombinePaths(packageADir, "node_modules", "pkg-b"): vfstest.Symlink(packageBDir),
+			tspath.CombinePaths(packageBDir, "node_modules", "pkg-a"): vfstest.Symlink(packageADir),
+		}
+
+		session, _ := projecttestutil.Setup(files)
+		t.Cleanup(session.Close)
+		ctx := context.Background()
+		consumerAURI := lsconv.FileNameToDocumentURI(consumerA)
+		session.DidOpenFile(ctx, consumerAURI, 1, files[consumerA].(string), lsproto.LanguageKindTypeScript)
+
+		_, err := session.GetCurrentLanguageServiceWithAutoImports(ctx, consumerAURI)
+		assert.NilError(t, err)
+
+		stats := autoImportStats(t, session)
+		projectBucket := singleBucket(t, stats.ProjectBuckets)
+		assert.Equal(t, 3, projectBucket.FileCount, "expected all pkg-a project files despite circular workspace symlinks")
+	})
+
 	t.Run("changed fileExcludePatterns triggers bucket rebuild", func(t *testing.T) {
 		t.Parallel()
 		fixture := autoimporttestutil.SetupLifecycleSession(t, lifecycleProjectRoot, 1)
@@ -1128,6 +1187,41 @@ const (
 	lifecycleProjectRoot = "/home/src/autoimport-lifecycle"
 	monorepoProjectRoot  = "/home/src/autoimport-monorepo"
 )
+
+func TestUpdateIndexesConcurrentMapSafety(t *testing.T) {
+	t.Parallel()
+	const projectRoot = "/home/src/autoimport-fallback-race"
+	const packageCount = 40
+
+	files := map[string]any{
+		projectRoot + "/tsconfig.json": `{
+			"compilerOptions": { "module": "esnext", "target": "esnext", "strict": true }
+		}`,
+		projectRoot + "/index.ts": "export {};\n",
+	}
+	for i := range packageCount {
+		pkgDir := fmt.Sprintf("%s/node_modules/pkg%d", projectRoot, i)
+		files[pkgDir+"/package.json"] = fmt.Sprintf(`{"name":"pkg%d","version":"1.0.0","main":"index.js"}`, i)
+		files[pkgDir+"/index.js"] = "module.exports = {};\n"
+		typesDir := fmt.Sprintf("%s/node_modules/@types/pkg%d", projectRoot, i)
+		files[typesDir+"/package.json"] = fmt.Sprintf(`{"name":"@types/pkg%d","version":"1.0.0","types":"index.d.ts"}`, i)
+		files[typesDir+"/index.d.ts"] = fmt.Sprintf("export declare const foo%d: number;\n", i)
+	}
+
+	session, _ := projecttestutil.Setup(files)
+	t.Cleanup(session.Close)
+
+	ctx := context.Background()
+	indexURI := lsproto.DocumentUri("file://" + projectRoot + "/index.ts")
+	session.DidOpenFile(ctx, indexURI, 1, "export {};\n", lsproto.LanguageKindTypeScript)
+
+	_, err := session.GetCurrentLanguageServiceWithAutoImports(ctx, indexURI)
+	assert.NilError(t, err)
+
+	stats := autoImportStats(t, session)
+	nodeModulesBucket := singleBucket(t, stats.NodeModulesBuckets)
+	assert.Equal(t, nodeModulesBucket.ExportCount, packageCount)
+}
 
 func autoImportStats(t *testing.T, session *project.Session) *autoimport.CacheStats {
 	t.Helper()

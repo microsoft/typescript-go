@@ -3468,6 +3468,8 @@ var This_syntax_is_reserved_in_files_with_the_mts_or_cts_extension_Add_a_trailin
 
 var A_mapped_type_may_not_declare_properties_or_methods = &Message{code: 7061, category: CategoryError, key: "A_mapped_type_may_not_declare_properties_or_methods_7061", text: "A mapped type may not declare properties or methods."}
 
+var Declaration_emit_elides_private_members_but_0_refers_to_a_private_member_Write_an_explicit_type_here = &Message{code: 7080, category: CategoryError, key: "Declaration_emit_elides_private_members_but_0_refers_to_a_private_member_Write_an_explicit_type_here_7080", text: "Declaration emit elides private members, but '{0}' refers to a private member. Write an explicit type here."}
+
 var You_cannot_rename_this_element = &Message{code: 8000, category: CategoryError, key: "You_cannot_rename_this_element_8000", text: "You cannot rename this element."}
 
 var You_cannot_rename_elements_that_are_defined_in_the_standard_TypeScript_library = &Message{code: 8001, category: CategoryError, key: "You_cannot_rename_elements_that_are_defined_in_the_standard_TypeScript_library_8001", text: "You cannot rename elements that are defined in the standard TypeScript library."}
@@ -3570,7 +3572,7 @@ var Only_const_arrays_can_be_inferred_with_isolatedDeclarations = &Message{code:
 
 var Arrays_with_spread_elements_can_t_inferred_with_isolatedDeclarations = &Message{code: 9018, category: CategoryError, key: "Arrays_with_spread_elements_can_t_inferred_with_isolatedDeclarations_9018", text: "Arrays with spread elements can't inferred with --isolatedDeclarations."}
 
-var Binding_elements_can_t_be_exported_directly_with_isolatedDeclarations = &Message{code: 9019, category: CategoryError, key: "Binding_elements_can_t_be_exported_directly_with_isolatedDeclarations_9019", text: "Binding elements can't be exported directly with --isolatedDeclarations."}
+var Binding_elements_with_initializers_can_t_be_exported_directly_with_isolatedDeclarations = &Message{code: 9019, category: CategoryError, key: "Binding_elements_with_initializers_can_t_be_exported_directly_with_isolatedDeclarations_9019", text: "Binding elements with initializers can't be exported directly with --isolatedDeclarations."}
 
 var Enum_member_initializers_must_be_computable_without_references_to_external_symbols_with_isolatedDeclarations = &Message{code: 9020, category: CategoryError, key: "Enum_member_initializers_must_be_computable_without_references_to_external_symbols_with_isolatedDecl_9020", text: "Enum member initializers must be computable without references to external symbols with --isolatedDeclarations."}
 
@@ -3755,6 +3757,10 @@ var Named_imports_are_not_allowed_in_a_deferred_import = &Message{code: 18059, c
 var Deferred_imports_are_only_supported_when_the_module_flag_is_set_to_esnext_or_preserve = &Message{code: 18060, category: CategoryError, key: "Deferred_imports_are_only_supported_when_the_module_flag_is_set_to_esnext_or_preserve_18060", text: "Deferred imports are only supported when the '--module' flag is set to 'esnext' or 'preserve'."}
 
 var X_0_is_not_a_valid_meta_property_for_keyword_import_Did_you_mean_meta_or_defer = &Message{code: 18061, category: CategoryError, key: "_0_is_not_a_valid_meta_property_for_keyword_import_Did_you_mean_meta_or_defer_18061", text: "'{0}' is not a valid meta-property for keyword 'import'. Did you mean 'meta' or 'defer'?"}
+
+var Regular_expression_pattern_modifiers_are_only_available_when_targeting_0_or_later = &Message{code: 18062, category: CategoryError, key: "Regular_expression_pattern_modifiers_are_only_available_when_targeting_0_or_later_18062", text: "Regular expression pattern modifiers are only available when targeting '{0}' or later."}
+
+var Duplicate_named_capturing_groups_are_only_available_when_targeting_0_or_later = &Message{code: 18063, category: CategoryError, key: "Duplicate_named_capturing_groups_are_only_available_when_targeting_0_or_later_18063", text: "Duplicate named capturing groups are only available when targeting '{0}' or later."}
 
 var X_nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler = &Message{code: 69010, category: CategoryMessage, key: "nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler_69010", text: "`nodenext` if `module` is `nodenext`; `node16` if `module` is `node16` or `node18`; otherwise, `bundler`."}
 
@@ -4307,6 +4313,8 @@ var Organize_Imports = &Message{code: 100016, category: CategoryMessage, key: "O
 var Remove_Unused_Imports = &Message{code: 100017, category: CategoryMessage, key: "Remove_Unused_Imports_100017", text: "Remove Unused Imports"}
 
 var Sort_Imports = &Message{code: 100018, category: CategoryMessage, key: "Sort_Imports_100018", text: "Sort Imports"}
+
+var JSDoc_comment = &Message{code: 100019, category: CategoryMessage, key: "JSDoc_comment_100019", text: "JSDoc comment"}
 
 func keyToMessage(key Key) *Message {
 	switch key {
@@ -7776,6 +7784,8 @@ func keyToMessage(key Key) *Message {
 		return This_syntax_is_reserved_in_files_with_the_mts_or_cts_extension_Add_a_trailing_comma_or_explicit_constraint
 	case "A_mapped_type_may_not_declare_properties_or_methods_7061":
 		return A_mapped_type_may_not_declare_properties_or_methods
+	case "Declaration_emit_elides_private_members_but_0_refers_to_a_private_member_Write_an_explicit_type_here_7080":
+		return Declaration_emit_elides_private_members_but_0_refers_to_a_private_member_Write_an_explicit_type_here
 	case "You_cannot_rename_this_element_8000":
 		return You_cannot_rename_this_element
 	case "You_cannot_rename_elements_that_are_defined_in_the_standard_TypeScript_library_8001":
@@ -7878,8 +7888,8 @@ func keyToMessage(key Key) *Message {
 		return Only_const_arrays_can_be_inferred_with_isolatedDeclarations
 	case "Arrays_with_spread_elements_can_t_inferred_with_isolatedDeclarations_9018":
 		return Arrays_with_spread_elements_can_t_inferred_with_isolatedDeclarations
-	case "Binding_elements_can_t_be_exported_directly_with_isolatedDeclarations_9019":
-		return Binding_elements_can_t_be_exported_directly_with_isolatedDeclarations
+	case "Binding_elements_with_initializers_can_t_be_exported_directly_with_isolatedDeclarations_9019":
+		return Binding_elements_with_initializers_can_t_be_exported_directly_with_isolatedDeclarations
 	case "Enum_member_initializers_must_be_computable_without_references_to_external_symbols_with_isolatedDecl_9020":
 		return Enum_member_initializers_must_be_computable_without_references_to_external_symbols_with_isolatedDeclarations
 	case "Extends_clause_can_t_contain_an_expression_with_isolatedDeclarations_9021":
@@ -8064,6 +8074,10 @@ func keyToMessage(key Key) *Message {
 		return Deferred_imports_are_only_supported_when_the_module_flag_is_set_to_esnext_or_preserve
 	case "_0_is_not_a_valid_meta_property_for_keyword_import_Did_you_mean_meta_or_defer_18061":
 		return X_0_is_not_a_valid_meta_property_for_keyword_import_Did_you_mean_meta_or_defer
+	case "Regular_expression_pattern_modifiers_are_only_available_when_targeting_0_or_later_18062":
+		return Regular_expression_pattern_modifiers_are_only_available_when_targeting_0_or_later
+	case "Duplicate_named_capturing_groups_are_only_available_when_targeting_0_or_later_18063":
+		return Duplicate_named_capturing_groups_are_only_available_when_targeting_0_or_later
 	case "nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler_69010":
 		return X_nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler
 	case "File_is_a_CommonJS_module_it_may_be_converted_to_an_ES_module_80001":
@@ -8616,6 +8630,8 @@ func keyToMessage(key Key) *Message {
 		return Remove_Unused_Imports
 	case "Sort_Imports_100018":
 		return Sort_Imports
+	case "JSDoc_comment_100019":
+		return JSDoc_comment
 	default:
 		return nil
 	}

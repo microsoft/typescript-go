@@ -111,8 +111,8 @@ type PrimaryExpressionBase struct {
 }
 
 type TypeNodeBase struct {
-	NodeBase
 	TypeSyntaxBase
+	NodeBase
 }
 
 type NodeWithTypeArgumentsBase struct {
@@ -152,7 +152,6 @@ type CompositeBase struct {
 type TypeSyntaxBase struct{}
 
 type FunctionLikeBase struct {
-	DeclarationBase
 	LocalsContainerBase
 	TypeParameters *TypeParameterList // Optional
 	Parameters     *ParameterList
@@ -172,7 +171,6 @@ type FunctionLikeWithBodyBase struct {
 }
 
 type ClassLikeBase struct {
-	DeclarationBase
 	ExportableBase
 	ModifiersBase
 	LocalsContainerBase
@@ -189,8 +187,8 @@ type LiteralLikeNodeBase struct {
 }
 
 type LiteralExpressionBase struct {
-	LiteralLikeNodeBase
 	PrimaryExpressionBase
+	LiteralLikeNodeBase
 }
 
 type TemplateLiteralLikeNodeBase struct {
@@ -204,7 +202,6 @@ type TypeElementBase struct{}
 type ClassElementBase struct{}
 
 type NamedMemberBase struct {
-	DeclarationBase
 	ModifiersBase
 	name         *PropertyName
 	PostfixToken *TokenNode // Optional
@@ -213,18 +210,20 @@ type NamedMemberBase struct {
 type ObjectLiteralElementBase struct{}
 
 type AccessorDeclarationBase struct {
-	NamedMemberBase
-	FunctionLikeWithBodyBase
-	FlowNodeBase
 	TypeElementBase
 	ClassElementBase
 	ObjectLiteralElementBase
-	CompositeBase
 	NodeBase
+	DeclarationBase
+	NamedMemberBase
+	FunctionLikeWithBodyBase
+	FlowNodeBase
+	CompositeBase
 }
 
 type FunctionOrConstructorTypeNodeBase struct {
 	TypeNodeBase
+	DeclarationBase
 	ModifiersBase
 	FunctionLikeBase
 }
@@ -494,6 +493,7 @@ type (
 	ClassElementList                = NodeList // NodeList[*ClassElement]
 	TypeElementList                 = NodeList // NodeList[*TypeElement]
 	ExpressionWithTypeArgumentsList = NodeList // NodeList[*ExpressionWithTypeArguments]
+	HeritageClauseElementList       = NodeList // NodeList[*HeritageClauseElement]
 	EnumMemberList                  = NodeList // NodeList[*EnumMember]
 	ImportSpecifierList             = NodeList // NodeList[*ImportSpecifier]
 	ExportSpecifierList             = NodeList // NodeList[*ExportSpecifier]
@@ -517,6 +517,7 @@ type (
 	Expression                     = Node // Node with ExpressionBase
 	Statement                      = Node // Node with StatementBase
 	TypeNode                       = Node // Node with TypeNodeBase
+	HeritageClauseElement          = Node // ExpressionWithTypeArguments | TypeReferenceNode
 	BlockOrExpression              = Node // Block | Expression
 	NodeBody                       = Node // Block | Expression | ModuleBlock | ModuleDeclaration
 	AccessExpression               = Node // PropertyAccessExpression | ElementAccessExpression
@@ -538,7 +539,7 @@ type (
 	JsxAttributeLike               = Node // JsxAttribute | JsxSpreadAttribute
 	JsxAttributeName               = Node // Identifier | JsxNamespacedName
 	JsxAttributeValue              = Node // StringLiteral | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment
-	JsxTagNameExpression           = Node // Identifier | KeywordExpression | PropertyAccessExpression | JsxNamespacedName
+	JsxTagNameExpression           = Node // Identifier | ThisExpression | JsxTagNamePropertyAccess | JsxNamespacedName
 	ClassLikeDeclaration           = Node // ClassDeclaration | ClassExpression
 	AccessorDeclaration            = Node // GetAccessorDeclaration | SetAccessorDeclaration
 	LiteralLikeNode                = Node // StringLiteral | NumericLiteral | BigIntLiteral | RegularExpressionLiteral | TemplateLiteralLikeNode | JsxText
@@ -671,17 +672,17 @@ type QualifiedName struct {
 	FlowNodeBase
 	CompositeBase
 	Left  *EntityName
-	Right *IdentifierNode
+	Right *MemberName
 }
 
-func (f *NodeFactory) NewQualifiedName(left *EntityName, right *IdentifierNode) *Node {
+func (f *NodeFactory) NewQualifiedName(left *EntityName, right *MemberName) *Node {
 	data := &QualifiedName{}
 	data.Left = left
 	data.Right = right
 	return f.newNode(KindQualifiedName, data)
 }
 
-func (f *NodeFactory) UpdateQualifiedName(node *QualifiedName, left *EntityName, right *IdentifierNode) *Node {
+func (f *NodeFactory) UpdateQualifiedName(node *QualifiedName, left *EntityName, right *MemberName) *Node {
 	if left != node.Left || right != node.Right {
 		return updateNode(f.NewQualifiedName(left, right), node.AsNode(), f.hooks)
 	}
@@ -1986,8 +1987,8 @@ func IsMissingDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type FunctionDeclaration struct {
-	DeclarationBase
 	StatementBase
+	DeclarationBase
 	ExportableBase
 	ModifiersBase
 	FunctionLikeWithBodyBase
@@ -2048,8 +2049,8 @@ func IsFunctionDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type ClassDeclaration struct {
-	DeclarationBase
 	StatementBase
+	DeclarationBase
 	ClassLikeBase
 }
 
@@ -2100,6 +2101,7 @@ func IsClassDeclaration(node *Node) bool {
 
 type ClassExpression struct {
 	PrimaryExpressionBase
+	DeclarationBase
 	ClassLikeBase
 }
 
@@ -2152,17 +2154,17 @@ type HeritageClause struct {
 	NodeBase
 	CompositeBase
 	Token Kind
-	Types *ExpressionWithTypeArgumentsList
+	Types *HeritageClauseElementList
 }
 
-func (f *NodeFactory) NewHeritageClause(token Kind, types *ExpressionWithTypeArgumentsList) *Node {
+func (f *NodeFactory) NewHeritageClause(token Kind, types *HeritageClauseElementList) *Node {
 	data := f.heritageClauseArena.New()
 	data.Token = token
 	data.Types = types
 	return f.newNode(KindHeritageClause, data)
 }
 
-func (f *NodeFactory) UpdateHeritageClause(node *HeritageClause, token Kind, types *ExpressionWithTypeArgumentsList) *Node {
+func (f *NodeFactory) UpdateHeritageClause(node *HeritageClause, token Kind, types *HeritageClauseElementList) *Node {
 	if token != node.Token || types != node.Types {
 		return updateNode(f.NewHeritageClause(token, types), node.AsNode(), f.hooks)
 	}
@@ -2190,11 +2192,11 @@ func IsHeritageClause(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type InterfaceDeclaration struct {
-	DeclarationBase
+	TypeSyntaxBase
 	StatementBase
+	DeclarationBase
 	ExportableBase
 	ModifiersBase
-	TypeSyntaxBase
 	name            *IdentifierNode
 	TypeParameters  *TypeParameterList  // Optional
 	HeritageClauses *HeritageClauseList // Optional
@@ -2247,12 +2249,12 @@ func IsInterfaceDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type TypeAliasDeclaration struct {
-	DeclarationBase
+	TypeSyntaxBase
 	StatementBase
+	DeclarationBase
 	ExportableBase
 	ModifiersBase
 	LocalsContainerBase
-	TypeSyntaxBase
 	name           *IdentifierNode
 	TypeParameters *TypeParameterList // Optional
 	Type           *TypeNode
@@ -2330,6 +2332,7 @@ func IsJSTypeAliasDeclaration(node *Node) bool {
 
 type EnumMember struct {
 	NodeBase
+	DeclarationBase
 	NamedMemberBase
 	CompositeBase
 	Initializer *Expression // Optional
@@ -2374,8 +2377,8 @@ func IsEnumMember(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type EnumDeclaration struct {
-	DeclarationBase
 	StatementBase
+	DeclarationBase
 	ExportableBase
 	ModifiersBase
 	CompositeBase
@@ -2487,8 +2490,8 @@ func IsNotEmittedStatement(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type NotEmittedTypeElement struct {
-	NodeBase
 	TypeElementBase
+	NodeBase
 }
 
 func (f *NodeFactory) NewNotEmittedTypeElement() *Node {
@@ -2725,8 +2728,8 @@ func IsNamedImports(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type ExportAssignment struct {
-	DeclarationBase
 	StatementBase
+	DeclarationBase
 	ModifiersBase
 	CompositeBase
 	IsExportEquals bool
@@ -2771,10 +2774,10 @@ func IsExportAssignment(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type NamespaceExportDeclaration struct {
-	DeclarationBase
-	StatementBase
-	ModifiersBase
 	TypeSyntaxBase
+	StatementBase
+	DeclarationBase
+	ModifiersBase
 	name *IdentifierNode
 }
 
@@ -2956,11 +2959,11 @@ func IsExportSpecifier(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type CallSignatureDeclaration struct {
+	TypeElementBase
+	TypeSyntaxBase
 	NodeBase
 	DeclarationBase
 	FunctionLikeBase
-	TypeElementBase
-	TypeSyntaxBase
 }
 
 func (f *NodeFactory) NewCallSignatureDeclaration(typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode) *Node {
@@ -2999,11 +3002,11 @@ func IsCallSignatureDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type ConstructSignatureDeclaration struct {
+	TypeElementBase
+	TypeSyntaxBase
 	NodeBase
 	DeclarationBase
 	FunctionLikeBase
-	TypeElementBase
-	TypeSyntaxBase
 }
 
 func (f *NodeFactory) NewConstructSignatureDeclaration(typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode) *Node {
@@ -3042,11 +3045,11 @@ func IsConstructSignatureDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type ConstructorDeclaration struct {
+	ClassElementBase
 	NodeBase
 	DeclarationBase
 	ModifiersBase
 	FunctionLikeWithBodyBase
-	ClassElementBase
 	CompositeBase
 	ReturnFlowNode *FlowNode
 }
@@ -3201,13 +3204,13 @@ func IsSetAccessorDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type IndexSignatureDeclaration struct {
+	TypeElementBase
+	ClassElementBase
+	TypeSyntaxBase
 	NodeBase
 	DeclarationBase
 	ModifiersBase
 	FunctionLikeBase
-	TypeElementBase
-	ClassElementBase
-	TypeSyntaxBase
 }
 
 func (f *NodeFactory) NewIndexSignatureDeclaration(modifiers *ModifierList, parameters *ParameterList, typeNode *TypeNode) *Node {
@@ -3246,11 +3249,12 @@ func IsIndexSignatureDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type MethodSignatureDeclaration struct {
-	NodeBase
-	NamedMemberBase
-	FunctionLikeBase
 	TypeElementBase
 	TypeSyntaxBase
+	NodeBase
+	DeclarationBase
+	NamedMemberBase
+	FunctionLikeBase
 }
 
 func (f *NodeFactory) NewMethodSignatureDeclaration(modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, typeParameters *TypeParameterList, parameters *ParameterList, typeNode *TypeNode) *Node {
@@ -3301,12 +3305,13 @@ func IsMethodSignatureDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type MethodDeclaration struct {
+	ClassElementBase
+	ObjectLiteralElementBase
 	NodeBase
+	DeclarationBase
 	NamedMemberBase
 	FunctionLikeWithBodyBase
 	FlowNodeBase
-	ClassElementBase
-	ObjectLiteralElementBase
 	CompositeBase
 }
 
@@ -3364,10 +3369,11 @@ func IsMethodDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type PropertySignatureDeclaration struct {
-	NodeBase
-	NamedMemberBase
 	TypeElementBase
 	TypeSyntaxBase
+	NodeBase
+	DeclarationBase
+	NamedMemberBase
 	Type        *TypeNode
 	Initializer *Expression
 }
@@ -3418,9 +3424,10 @@ func IsPropertySignatureDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type PropertyDeclaration struct {
-	NodeBase
-	NamedMemberBase
 	ClassElementBase
+	NodeBase
+	DeclarationBase
+	NamedMemberBase
 	CompositeBase
 	Type        *TypeNode   // Optional
 	Initializer *Expression // Optional
@@ -3472,9 +3479,9 @@ func IsPropertyDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type SemicolonClassElement struct {
+	ClassElementBase
 	NodeBase
 	DeclarationBase
-	ClassElementBase
 }
 
 func (f *NodeFactory) NewSemicolonClassElement() *Node {
@@ -3495,11 +3502,11 @@ func IsSemicolonClassElement(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type ClassStaticBlockDeclaration struct {
+	ClassElementBase
 	NodeBase
 	DeclarationBase
 	ModifiersBase
 	LocalsContainerBase
-	ClassElementBase
 	CompositeBase
 	Body           *BlockNode
 	ReturnFlowNode *FlowNode
@@ -4739,9 +4746,9 @@ func IsObjectLiteralExpression(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type SpreadAssignment struct {
+	ObjectLiteralElementBase
 	NodeBase
 	DeclarationBase
-	ObjectLiteralElementBase
 	Expression *Expression
 }
 
@@ -4779,9 +4786,10 @@ func IsSpreadAssignment(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type PropertyAssignment struct {
-	NodeBase
-	NamedMemberBase
 	ObjectLiteralElementBase
+	NodeBase
+	DeclarationBase
+	NamedMemberBase
 	CompositeBase
 	Type        *TypeNode
 	Initializer *Expression
@@ -4833,9 +4841,10 @@ func IsPropertyAssignment(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type ShorthandPropertyAssignment struct {
-	NodeBase
-	NamedMemberBase
 	ObjectLiteralElementBase
+	NodeBase
+	DeclarationBase
+	NamedMemberBase
 	CompositeBase
 	Type                        *TypeNode
 	EqualsToken                 *EqualsToken // Optional
@@ -5119,7 +5128,6 @@ func IsKeywordTypeNode(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type UnionTypeNode struct {
-	TypeNodeBase
 	UnionOrIntersectionTypeNodeBase
 }
 
@@ -5157,7 +5165,6 @@ func IsUnionTypeNode(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type IntersectionTypeNode struct {
-	TypeNodeBase
 	UnionOrIntersectionTypeNodeBase
 }
 
@@ -6014,7 +6021,6 @@ func IsParenthesizedTypeNode(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type FunctionTypeNode struct {
-	TypeNodeBase
 	FunctionOrConstructorTypeNodeBase
 }
 
@@ -6054,7 +6060,6 @@ func IsFunctionTypeNode(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type ConstructorTypeNode struct {
-	TypeNodeBase
 	FunctionOrConstructorTypeNodeBase
 }
 
@@ -7936,6 +7941,7 @@ func IsJSDocTypedefTag(node *Node) bool {
 
 type JSDocSignature struct {
 	JSDocTypeBase
+	DeclarationBase
 	FunctionLikeBase
 }
 
@@ -8026,8 +8032,8 @@ func IsSourceFile(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type ModuleDeclaration struct {
-	DeclarationBase
 	StatementBase
+	DeclarationBase
 	ExportableBase
 	ModifiersBase
 	LocalsContainerBase
@@ -8078,8 +8084,8 @@ func IsModuleDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type ImportEqualsDeclaration struct {
-	DeclarationBase
 	StatementBase
+	DeclarationBase
 	ExportableBase
 	ModifiersBase
 	CompositeBase
@@ -8129,8 +8135,8 @@ func IsImportEqualsDeclaration(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type ExportDeclaration struct {
-	DeclarationBase
 	StatementBase
+	DeclarationBase
 	ModifiersBase
 	CompositeBase
 	IsTypeOnly      bool
@@ -8481,10 +8487,10 @@ func IsJSDocLinkCode(node *Node) bool {
 // ──────────────────────────────────────────────────────────────────────
 
 type TypeParameterDeclaration struct {
+	TypeSyntaxBase
 	NodeBase
 	DeclarationBase
 	ModifiersBase
-	TypeSyntaxBase
 	name        *IdentifierNode
 	Constraint  *TypeNode   // Optional
 	Expression  *Expression // Optional
@@ -8671,6 +8677,351 @@ func IsJSDocParameterTag(node *Node) bool {
 
 func IsJSDocPropertyTag(node *Node) bool {
 	return node.Kind == KindJSDocPropertyTag
+}
+
+// ──────────────────────────────────────────────────────────────────────
+// ForEachChild dispatch
+// ──────────────────────────────────────────────────────────────────────
+
+func (n *Node) ForEachChild(v Visitor) bool {
+	switch n.Kind {
+	case KindQualifiedName:
+		return n.data.(*QualifiedName).ForEachChild(v)
+	case KindComputedPropertyName:
+		return n.data.(*ComputedPropertyName).ForEachChild(v)
+	case KindDecorator:
+		return n.data.(*Decorator).ForEachChild(v)
+	case KindIfStatement:
+		return n.data.(*IfStatement).ForEachChild(v)
+	case KindDoStatement:
+		return n.data.(*DoStatement).ForEachChild(v)
+	case KindWhileStatement:
+		return n.data.(*WhileStatement).ForEachChild(v)
+	case KindForStatement:
+		return n.data.(*ForStatement).ForEachChild(v)
+	case KindForInStatement, KindForOfStatement:
+		return n.data.(*ForInOrOfStatement).ForEachChild(v)
+	case KindBreakStatement:
+		return n.data.(*BreakStatement).ForEachChild(v)
+	case KindContinueStatement:
+		return n.data.(*ContinueStatement).ForEachChild(v)
+	case KindReturnStatement:
+		return n.data.(*ReturnStatement).ForEachChild(v)
+	case KindWithStatement:
+		return n.data.(*WithStatement).ForEachChild(v)
+	case KindSwitchStatement:
+		return n.data.(*SwitchStatement).ForEachChild(v)
+	case KindCaseBlock:
+		return n.data.(*CaseBlock).ForEachChild(v)
+	case KindCaseClause, KindDefaultClause:
+		return n.data.(*CaseOrDefaultClause).ForEachChild(v)
+	case KindThrowStatement:
+		return n.data.(*ThrowStatement).ForEachChild(v)
+	case KindTryStatement:
+		return n.data.(*TryStatement).ForEachChild(v)
+	case KindCatchClause:
+		return n.data.(*CatchClause).ForEachChild(v)
+	case KindLabeledStatement:
+		return n.data.(*LabeledStatement).ForEachChild(v)
+	case KindExpressionStatement:
+		return n.data.(*ExpressionStatement).ForEachChild(v)
+	case KindBlock:
+		return n.data.(*Block).ForEachChild(v)
+	case KindVariableStatement:
+		return n.data.(*VariableStatement).ForEachChild(v)
+	case KindVariableDeclaration:
+		return n.data.(*VariableDeclaration).ForEachChild(v)
+	case KindVariableDeclarationList:
+		return n.data.(*VariableDeclarationList).ForEachChild(v)
+	case KindObjectBindingPattern, KindArrayBindingPattern:
+		return n.data.(*BindingPattern).ForEachChild(v)
+	case KindParameter:
+		return n.data.(*ParameterDeclaration).ForEachChild(v)
+	case KindBindingElement:
+		return n.data.(*BindingElement).ForEachChild(v)
+	case KindMissingDeclaration:
+		return n.data.(*MissingDeclaration).ForEachChild(v)
+	case KindFunctionDeclaration:
+		return n.data.(*FunctionDeclaration).ForEachChild(v)
+	case KindClassDeclaration:
+		return n.data.(*ClassDeclaration).ForEachChild(v)
+	case KindClassExpression:
+		return n.data.(*ClassExpression).ForEachChild(v)
+	case KindHeritageClause:
+		return n.data.(*HeritageClause).ForEachChild(v)
+	case KindInterfaceDeclaration:
+		return n.data.(*InterfaceDeclaration).ForEachChild(v)
+	case KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
+		return n.data.(*TypeAliasDeclaration).ForEachChild(v)
+	case KindEnumMember:
+		return n.data.(*EnumMember).ForEachChild(v)
+	case KindEnumDeclaration:
+		return n.data.(*EnumDeclaration).ForEachChild(v)
+	case KindModuleBlock:
+		return n.data.(*ModuleBlock).ForEachChild(v)
+	case KindImportDeclaration, KindJSImportDeclaration:
+		return n.data.(*ImportDeclaration).ForEachChild(v)
+	case KindExternalModuleReference:
+		return n.data.(*ExternalModuleReference).ForEachChild(v)
+	case KindNamespaceImport:
+		return n.data.(*NamespaceImport).ForEachChild(v)
+	case KindNamedImports:
+		return n.data.(*NamedImports).ForEachChild(v)
+	case KindExportAssignment:
+		return n.data.(*ExportAssignment).ForEachChild(v)
+	case KindNamespaceExportDeclaration:
+		return n.data.(*NamespaceExportDeclaration).ForEachChild(v)
+	case KindNamespaceExport:
+		return n.data.(*NamespaceExport).ForEachChild(v)
+	case KindNamedExports:
+		return n.data.(*NamedExports).ForEachChild(v)
+	case KindExportSpecifier:
+		return n.data.(*ExportSpecifier).ForEachChild(v)
+	case KindCallSignature:
+		return n.data.(*CallSignatureDeclaration).ForEachChild(v)
+	case KindConstructSignature:
+		return n.data.(*ConstructSignatureDeclaration).ForEachChild(v)
+	case KindConstructor:
+		return n.data.(*ConstructorDeclaration).ForEachChild(v)
+	case KindGetAccessor:
+		return n.data.(*GetAccessorDeclaration).ForEachChild(v)
+	case KindSetAccessor:
+		return n.data.(*SetAccessorDeclaration).ForEachChild(v)
+	case KindIndexSignature:
+		return n.data.(*IndexSignatureDeclaration).ForEachChild(v)
+	case KindMethodSignature:
+		return n.data.(*MethodSignatureDeclaration).ForEachChild(v)
+	case KindMethodDeclaration:
+		return n.data.(*MethodDeclaration).ForEachChild(v)
+	case KindPropertySignature:
+		return n.data.(*PropertySignatureDeclaration).ForEachChild(v)
+	case KindPropertyDeclaration:
+		return n.data.(*PropertyDeclaration).ForEachChild(v)
+	case KindClassStaticBlockDeclaration:
+		return n.data.(*ClassStaticBlockDeclaration).ForEachChild(v)
+	case KindBinaryExpression:
+		return n.data.(*BinaryExpression).ForEachChild(v)
+	case KindPrefixUnaryExpression:
+		return n.data.(*PrefixUnaryExpression).ForEachChild(v)
+	case KindPostfixUnaryExpression:
+		return n.data.(*PostfixUnaryExpression).ForEachChild(v)
+	case KindYieldExpression:
+		return n.data.(*YieldExpression).ForEachChild(v)
+	case KindArrowFunction:
+		return n.data.(*ArrowFunction).ForEachChild(v)
+	case KindFunctionExpression:
+		return n.data.(*FunctionExpression).ForEachChild(v)
+	case KindAsExpression:
+		return n.data.(*AsExpression).ForEachChild(v)
+	case KindSatisfiesExpression:
+		return n.data.(*SatisfiesExpression).ForEachChild(v)
+	case KindConditionalExpression:
+		return n.data.(*ConditionalExpression).ForEachChild(v)
+	case KindPropertyAccessExpression:
+		return n.data.(*PropertyAccessExpression).ForEachChild(v)
+	case KindElementAccessExpression:
+		return n.data.(*ElementAccessExpression).ForEachChild(v)
+	case KindCallExpression:
+		return n.data.(*CallExpression).ForEachChild(v)
+	case KindNewExpression:
+		return n.data.(*NewExpression).ForEachChild(v)
+	case KindMetaProperty:
+		return n.data.(*MetaProperty).ForEachChild(v)
+	case KindNonNullExpression:
+		return n.data.(*NonNullExpression).ForEachChild(v)
+	case KindSpreadElement:
+		return n.data.(*SpreadElement).ForEachChild(v)
+	case KindTemplateExpression:
+		return n.data.(*TemplateExpression).ForEachChild(v)
+	case KindTemplateSpan:
+		return n.data.(*TemplateSpan).ForEachChild(v)
+	case KindTaggedTemplateExpression:
+		return n.data.(*TaggedTemplateExpression).ForEachChild(v)
+	case KindParenthesizedExpression:
+		return n.data.(*ParenthesizedExpression).ForEachChild(v)
+	case KindArrayLiteralExpression:
+		return n.data.(*ArrayLiteralExpression).ForEachChild(v)
+	case KindObjectLiteralExpression:
+		return n.data.(*ObjectLiteralExpression).ForEachChild(v)
+	case KindSpreadAssignment:
+		return n.data.(*SpreadAssignment).ForEachChild(v)
+	case KindPropertyAssignment:
+		return n.data.(*PropertyAssignment).ForEachChild(v)
+	case KindShorthandPropertyAssignment:
+		return n.data.(*ShorthandPropertyAssignment).ForEachChild(v)
+	case KindDeleteExpression:
+		return n.data.(*DeleteExpression).ForEachChild(v)
+	case KindTypeOfExpression:
+		return n.data.(*TypeOfExpression).ForEachChild(v)
+	case KindVoidExpression:
+		return n.data.(*VoidExpression).ForEachChild(v)
+	case KindAwaitExpression:
+		return n.data.(*AwaitExpression).ForEachChild(v)
+	case KindTypeAssertionExpression:
+		return n.data.(*TypeAssertion).ForEachChild(v)
+	case KindUnionType:
+		return n.data.(*UnionTypeNode).ForEachChild(v)
+	case KindIntersectionType:
+		return n.data.(*IntersectionTypeNode).ForEachChild(v)
+	case KindConditionalType:
+		return n.data.(*ConditionalTypeNode).ForEachChild(v)
+	case KindTypeOperator:
+		return n.data.(*TypeOperatorNode).ForEachChild(v)
+	case KindInferType:
+		return n.data.(*InferTypeNode).ForEachChild(v)
+	case KindArrayType:
+		return n.data.(*ArrayTypeNode).ForEachChild(v)
+	case KindIndexedAccessType:
+		return n.data.(*IndexedAccessTypeNode).ForEachChild(v)
+	case KindTypeReference:
+		return n.data.(*TypeReferenceNode).ForEachChild(v)
+	case KindExpressionWithTypeArguments:
+		return n.data.(*ExpressionWithTypeArguments).ForEachChild(v)
+	case KindLiteralType:
+		return n.data.(*LiteralTypeNode).ForEachChild(v)
+	case KindTypePredicate:
+		return n.data.(*TypePredicateNode).ForEachChild(v)
+	case KindImportAttribute:
+		return n.data.(*ImportAttribute).ForEachChild(v)
+	case KindImportAttributes:
+		return n.data.(*ImportAttributes).ForEachChild(v)
+	case KindTypeQuery:
+		return n.data.(*TypeQueryNode).ForEachChild(v)
+	case KindMappedType:
+		return n.data.(*MappedTypeNode).ForEachChild(v)
+	case KindTypeLiteral:
+		return n.data.(*TypeLiteralNode).ForEachChild(v)
+	case KindTupleType:
+		return n.data.(*TupleTypeNode).ForEachChild(v)
+	case KindNamedTupleMember:
+		return n.data.(*NamedTupleMember).ForEachChild(v)
+	case KindOptionalType:
+		return n.data.(*OptionalTypeNode).ForEachChild(v)
+	case KindRestType:
+		return n.data.(*RestTypeNode).ForEachChild(v)
+	case KindParenthesizedType:
+		return n.data.(*ParenthesizedTypeNode).ForEachChild(v)
+	case KindFunctionType:
+		return n.data.(*FunctionTypeNode).ForEachChild(v)
+	case KindConstructorType:
+		return n.data.(*ConstructorTypeNode).ForEachChild(v)
+	case KindTemplateLiteralType:
+		return n.data.(*TemplateLiteralTypeNode).ForEachChild(v)
+	case KindTemplateLiteralTypeSpan:
+		return n.data.(*TemplateLiteralTypeSpan).ForEachChild(v)
+	case KindSyntheticExpression:
+		return n.data.(*SyntheticExpression).ForEachChild(v)
+	case KindPartiallyEmittedExpression:
+		return n.data.(*PartiallyEmittedExpression).ForEachChild(v)
+	case KindJsxElement:
+		return n.data.(*JsxElement).ForEachChild(v)
+	case KindJsxAttributes:
+		return n.data.(*JsxAttributes).ForEachChild(v)
+	case KindJsxNamespacedName:
+		return n.data.(*JsxNamespacedName).ForEachChild(v)
+	case KindJsxOpeningElement:
+		return n.data.(*JsxOpeningElement).ForEachChild(v)
+	case KindJsxSelfClosingElement:
+		return n.data.(*JsxSelfClosingElement).ForEachChild(v)
+	case KindJsxFragment:
+		return n.data.(*JsxFragment).ForEachChild(v)
+	case KindJsxAttribute:
+		return n.data.(*JsxAttribute).ForEachChild(v)
+	case KindJsxSpreadAttribute:
+		return n.data.(*JsxSpreadAttribute).ForEachChild(v)
+	case KindJsxClosingElement:
+		return n.data.(*JsxClosingElement).ForEachChild(v)
+	case KindJsxExpression:
+		return n.data.(*JsxExpression).ForEachChild(v)
+	case KindSyntaxList:
+		return n.data.(*SyntaxList).ForEachChild(v)
+	case KindJSDoc:
+		return n.data.(*JSDoc).ForEachChild(v)
+	case KindJSDocTypeExpression:
+		return n.data.(*JSDocTypeExpression).ForEachChild(v)
+	case KindJSDocNonNullableType:
+		return n.data.(*JSDocNonNullableType).ForEachChild(v)
+	case KindJSDocNullableType:
+		return n.data.(*JSDocNullableType).ForEachChild(v)
+	case KindJSDocVariadicType:
+		return n.data.(*JSDocVariadicType).ForEachChild(v)
+	case KindJSDocOptionalType:
+		return n.data.(*JSDocOptionalType).ForEachChild(v)
+	case KindJSDocTypeTag:
+		return n.data.(*JSDocTypeTag).ForEachChild(v)
+	case KindJSDocUnknownTag:
+		return n.data.(*JSDocUnknownTag).ForEachChild(v)
+	case KindJSDocTemplateTag:
+		return n.data.(*JSDocTemplateTag).ForEachChild(v)
+	case KindJSDocReturnTag:
+		return n.data.(*JSDocReturnTag).ForEachChild(v)
+	case KindJSDocPublicTag:
+		return n.data.(*JSDocPublicTag).ForEachChild(v)
+	case KindJSDocPrivateTag:
+		return n.data.(*JSDocPrivateTag).ForEachChild(v)
+	case KindJSDocProtectedTag:
+		return n.data.(*JSDocProtectedTag).ForEachChild(v)
+	case KindJSDocReadonlyTag:
+		return n.data.(*JSDocReadonlyTag).ForEachChild(v)
+	case KindJSDocOverrideTag:
+		return n.data.(*JSDocOverrideTag).ForEachChild(v)
+	case KindJSDocDeprecatedTag:
+		return n.data.(*JSDocDeprecatedTag).ForEachChild(v)
+	case KindJSDocSeeTag:
+		return n.data.(*JSDocSeeTag).ForEachChild(v)
+	case KindJSDocImplementsTag:
+		return n.data.(*JSDocImplementsTag).ForEachChild(v)
+	case KindJSDocAugmentsTag:
+		return n.data.(*JSDocAugmentsTag).ForEachChild(v)
+	case KindJSDocSatisfiesTag:
+		return n.data.(*JSDocSatisfiesTag).ForEachChild(v)
+	case KindJSDocThrowsTag:
+		return n.data.(*JSDocThrowsTag).ForEachChild(v)
+	case KindJSDocThisTag:
+		return n.data.(*JSDocThisTag).ForEachChild(v)
+	case KindJSDocImportTag:
+		return n.data.(*JSDocImportTag).ForEachChild(v)
+	case KindJSDocCallbackTag:
+		return n.data.(*JSDocCallbackTag).ForEachChild(v)
+	case KindJSDocOverloadTag:
+		return n.data.(*JSDocOverloadTag).ForEachChild(v)
+	case KindJSDocTypedefTag:
+		return n.data.(*JSDocTypedefTag).ForEachChild(v)
+	case KindJSDocSignature:
+		return n.data.(*JSDocSignature).ForEachChild(v)
+	case KindJSDocNameReference:
+		return n.data.(*JSDocNameReference).ForEachChild(v)
+	case KindSourceFile:
+		return n.data.(*SourceFile).ForEachChild(v)
+	case KindModuleDeclaration:
+		return n.data.(*ModuleDeclaration).ForEachChild(v)
+	case KindImportEqualsDeclaration:
+		return n.data.(*ImportEqualsDeclaration).ForEachChild(v)
+	case KindExportDeclaration:
+		return n.data.(*ExportDeclaration).ForEachChild(v)
+	case KindImportType:
+		return n.data.(*ImportTypeNode).ForEachChild(v)
+	case KindImportClause:
+		return n.data.(*ImportClause).ForEachChild(v)
+	case KindImportSpecifier:
+		return n.data.(*ImportSpecifier).ForEachChild(v)
+	case KindJSDocLink:
+		return n.data.(*JSDocLink).ForEachChild(v)
+	case KindJSDocLinkPlain:
+		return n.data.(*JSDocLinkPlain).ForEachChild(v)
+	case KindJSDocLinkCode:
+		return n.data.(*JSDocLinkCode).ForEachChild(v)
+	case KindTypeParameter:
+		return n.data.(*TypeParameterDeclaration).ForEachChild(v)
+	case KindSyntheticReferenceExpression:
+		return n.data.(*SyntheticReferenceExpression).ForEachChild(v)
+	case KindJSDocTypeLiteral:
+		return n.data.(*JSDocTypeLiteral).ForEachChild(v)
+	case KindJSDocParameterTag, KindJSDocPropertyTag:
+		return n.data.(*JSDocParameterOrPropertyTag).ForEachChild(v)
+	default:
+		return false
+	}
 }
 
 // ──────────────────────────────────────────────────────────────────────
