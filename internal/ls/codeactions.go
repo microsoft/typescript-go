@@ -239,8 +239,7 @@ func codeActionKindContains(requestedKind, actionKind lsproto.CodeActionKind) bo
 
 // isFixAllKind returns true if the requested kind matches source.fixAll
 func isFixAllKind(kind lsproto.CodeActionKind) bool {
-	return codeActionKindContains(kind, lsproto.CodeActionKindSourceFixAll) ||
-		kind == lsproto.CodeActionKindSourceFixAllTs
+	return codeActionKindContains(kind, lsproto.CodeActionKindSourceFixAllTs)
 }
 
 // wantsQuickFixes returns true if the Only filter is nil/empty (meaning all kinds are wanted)
