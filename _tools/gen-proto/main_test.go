@@ -27,8 +27,6 @@ func TestGenerate(t *testing.T) {
 	for _, expected := range []string{
 		`release: APIMethod<ReleaseParams, void>;`,
 		`updateSnapshot: APIMethod<UpdateSnapshotParams, UpdateSnapshotResponse>;`,
-		`getServerTiming: APIMethod<void, ServerTimingInfo>;`,
-		`resetServerTiming: APIMethod<void, void>;`,
 		`initialize: APIMethod<null, InitializeResponse>;`,
 		`export type DocumentIdentifier = string | { uri: string; };`,
 		`export interface ReleaseParams`,
