@@ -835,6 +835,7 @@ export const buildAPI = task({
 export const buildAPITests = task({
     name: "build:api:test",
     description: "Builds the @typescript/native-preview JS API tests.",
+    dependencies: [generateEnums, generateAPI],
     run: async () => {
         await $`npm run -w @typescript/native-preview build:test`;
     },
@@ -843,7 +844,7 @@ export const buildAPITests = task({
 export const testAPI = task({
     name: "test:api",
     description: "Runs the @typescript/native-preview JS API tests.",
-    dependencies: [tsgo, generateEnums, generateAPI, buildAPITests],
+    dependencies: [tsgo, buildAPITests],
     run: runTestAPI,
 });
 

@@ -298,11 +298,11 @@ export interface GetDefaultProjectForFileParams {
 export interface ProjectResponse {
     id: string;
     configFileName: string;
-    parsedCommandLine: ConfigFileResponse | null;
+    parsedCommandLine: ConfigFileResponse;
     /** @deprecated Use parsedCommandLine.fileNames. */
-    rootFiles: string[] | null;
+    rootFiles: string[];
     /** @deprecated Use parsedCommandLine.options. */
-    compilerOptions: CompilerOptions | null;
+    compilerOptions: CompilerOptions;
 }
 
 export interface GetSymbolAtPositionParams {
@@ -1028,43 +1028,8 @@ export interface CompilerOptions {
     useUnknownInCatchVariables?: boolean;
     verbatimModuleSyntax?: boolean;
     maxNodeModuleJsDepth?: number;
-    /** @deprecated Do not use outside of options parsing and validation. */
-    allowSyntheticDefaultImports?: boolean;
-    /** @deprecated Do not use outside of options parsing and validation. */
-    alwaysStrict?: boolean;
-    /** @deprecated Do not use outside of options parsing and validation. */
-    baseUrl?: string;
-    /** @deprecated Do not use outside of options parsing and validation. */
-    downlevelIteration?: boolean;
-    /** @deprecated Do not use outside of options parsing and validation. */
-    esModuleInterop?: boolean;
-    /** @deprecated Do not use outside of options parsing and validation. */
-    outFile?: string;
     /** Internal fields */
     configFilePath?: string;
-    noDtsResolution?: boolean;
-    pathsBasePath?: string;
-    diagnostics?: boolean;
-    extendedDiagnostics?: boolean;
-    generateCpuProfile?: string;
-    generateTrace?: string;
-    listEmittedFiles?: boolean;
-    listFiles?: boolean;
-    explainFiles?: boolean;
-    listFilesOnly?: boolean;
-    noEmitForJsFiles?: boolean;
-    preserveWatchOutput?: boolean;
-    pretty?: boolean;
-    version?: boolean;
-    watch?: boolean;
-    showConfig?: boolean;
-    build?: boolean;
-    help?: boolean;
-    all?: boolean;
-    pprofDir?: string;
-    singleThreaded?: boolean;
-    quiet?: boolean;
-    checkers?: number;
 }
 
 export interface ProjectReference {

@@ -556,8 +556,8 @@ func (r *typeRenderer) inlineStruct(structType *types.Struct) string {
 	var fields []string
 	multiline := false
 	for i := range structType.NumFields() {
-		field, include, optional, emitEmpty, nonnil := jsonField(structType, i)
-		if !include {
+		field, include, optional, emitEmpty, nonnil, deprecated, internal := jsonField(structType, i)
+		if !include || deprecated || internal {
 			continue
 		}
 		fieldType := r.typeString(structType.Field(i).Type(), !optional && !emitEmpty && !nonnil)
@@ -596,8 +596,8 @@ func (r *typeRenderer) declarations() (string, error) {
 		writeDoc(&out, "", r.docs[named.Obj()])
 		fmt.Fprintf(&out, "export interface %s {\n", exportedName(named.Obj().Name()))
 		for i := range structType.NumFields() {
-			field, include, optional, emitEmpty, nonnil := jsonField(structType, i)
-			if !include {
+			field, include, optional, emitEmpty, nonnil, deprecated, internal := jsonField(structType, i)
+			if !include || deprecated || internal {
 				continue
 			}
 			fieldType := r.typeString(structType.Field(i).Type(), !optional && !emitEmpty && !nonnil)
@@ -669,16 +669,19 @@ func (r *typeRenderer) referencedNames() []string {
 	return names
 }
 
-func jsonField(structType *types.Struct, index int) (name string, include bool, optional bool, emitEmpty bool, nonnil bool) {
+func jsonField(structType *types.Struct, index int) (name string, include bool, optional bool, emitEmpty bool, nonnil bool, deprecated bool, internal bool) {
 	field := structType.Field(index)
 	if !field.Exported() {
-		return "", false, false, false, false
+		return "", false, false, false, false, false, false
 	}
 	tag := reflect.StructTag(structType.Tag(index)).Get("json")
+	noniltag := reflect.StructTag(structType.Tag(index)).Get("nonnil")
+	deprecatedtag := reflect.StructTag(structType.Tag(index)).Get("deprecated")
+	internaltag := reflect.StructTag(structType.Tag(index)).Get("internal")
 	parts := strings.Split(tag, ",")
 	name = parts[0]
 	if name == "-" {
-		return "", false, false, false, false
+		return "", false, false, false, noniltag == "true", deprecatedtag == "true", internaltag == "true"
 	}
 	if name == "" {
 		name = field.Name()
@@ -690,8 +693,7 @@ func jsonField(structType *types.Struct, index int) (name string, include bool, 
 			emitEmpty = true
 		}
 	}
-	noniltag := reflect.StructTag(structType.Tag(index)).Get("nonnil")
-	return name, true, optional, emitEmpty, noniltag == "true"
+	return name, true, optional, emitEmpty, noniltag == "true", deprecatedtag == "true", internaltag == "true"
 }
 
 func exportedName(value string) string {

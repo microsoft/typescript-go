@@ -655,11 +655,11 @@ type GetDefaultProjectForFileParams struct {
 type ProjectResponse struct {
 	Id                ProjectID           `json:"id"`
 	ConfigFileName    string              `json:"configFileName"`
-	ParsedCommandLine *ConfigFileResponse `json:"parsedCommandLine"`
+	ParsedCommandLine *ConfigFileResponse `json:"parsedCommandLine" nonnil:"true"`
 	// Deprecated: Use parsedCommandLine.fileNames.
-	RootFiles []string `json:"rootFiles"`
+	RootFiles []string `json:"rootFiles" nonnil:"true"`
 	// Deprecated: Use parsedCommandLine.options.
-	CompilerOptions *core.CompilerOptions `json:"compilerOptions"`
+	CompilerOptions *core.CompilerOptions `json:"compilerOptions" nonnil:"true"`
 }
 
 func NewConfigFileResponse(parsedCommandLine *tsoptions.ParsedCommandLine) *ConfigFileResponse {

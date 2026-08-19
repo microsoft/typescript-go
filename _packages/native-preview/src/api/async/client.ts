@@ -166,7 +166,7 @@ export class Client {
         }
     }
 
-    async apiRequest<K extends keyof APIMethodInfo>(method: K, params?: APIMethodInfo[K]["params"]): Promise<APIMethodInfo[K]["result"]> {
+    async apiRequest<K extends keyof APIMethodInfo>(method: K, params: APIMethodInfo[K]["params"]): Promise<APIMethodInfo[K]["result"]> {
         if (!this.connected) {
             await this.connect();
         }
@@ -198,7 +198,7 @@ export class Client {
         return result;
     }
 
-    async apiRequestBinary<K extends SourceFileResponseMethod>(method: K, params?: APIMethodInfo[K]["params"]): Promise<Uint8Array | undefined> {
+    async apiRequestBinary<K extends SourceFileResponseMethod>(method: K, params: APIMethodInfo[K]["params"]): Promise<Uint8Array | undefined> {
         const response = await this.apiRequest(method, params);
         if (!response) return undefined;
         const buffer = Buffer.from(response.data, "base64");
