@@ -11,8 +11,6 @@ export type APIMethod<TParams, TResult> = { params: TParams; result: TResult; };
 
 export interface APIMethodInfo {
     release: APIMethod<ReleaseParams, void>;
-    getServerTiming: APIMethod<void, ServerTimingInfo>;
-    resetServerTiming: APIMethod<void, void>;
     initialize: APIMethod<null, InitializeResponse>;
     updateSnapshot: APIMethod<UpdateSnapshotParams, UpdateSnapshotResponse>;
     updateTemporarySnapshot: APIMethod<UpdateTemporarySnapshotParams, UpdateSnapshotResponse>;
@@ -156,22 +154,6 @@ export type DocumentIdentifier = string | { uri: string; };
 /** ReleaseParams are the parameters for the release method. */
 export interface ReleaseParams {
     snapshot: number;
-}
-
-/**
- * serverTimingInfo is a point-in-time snapshot of collected server timing,
- * returned to clients in response to a getServerTiming request.
- */
-export interface ServerTimingInfo {
-    /** Enabled reports whether server-side timing collection is active. */
-    enabled: boolean;
-    /** Totals are the running totals across every handled request. */
-    totals: ServerTimingTotals;
-    /**
-     * RecentRequests are the most recent requests, oldest to newest, up to
-     * serverRecentRequestCapacity.
-     */
-    recentRequests: ServerRequestTiming[] | null;
 }
 
 /** InitializeResponse is returned by the initialize method. */
@@ -873,27 +855,6 @@ export interface ProfileParams {
 
 export interface ProfileResult {
     file: string;
-}
-
-/** serverTimingTotals holds running totals accumulated across every handled request. */
-export interface ServerTimingTotals {
-    /** RequestCount is the total number of requests measured. */
-    requestCount: number;
-    /** TotalProcessingTimeMs is the sum of server processing time, in milliseconds. */
-    totalProcessingTimeMs: number;
-}
-
-/** serverRequestTiming is a single server-side request's processing-time sample. */
-export interface ServerRequestTiming {
-    /** Method is the API method that was handled. */
-    method: string;
-    /**
-     * ProcessingTimeMs is the wall-clock time the server spent handling the
-     * request, in milliseconds.
-     */
-    processingTimeMs: number;
-    /** Timestamp is the Unix time in milliseconds when the request completed. */
-    timestamp: number;
 }
 
 /**
