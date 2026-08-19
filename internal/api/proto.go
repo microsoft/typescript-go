@@ -622,13 +622,13 @@ type ProfileResult struct {
 }
 
 type ConfigFileResponse struct {
-	FileNames         []string                 `json:"fileNames,format:emitempty" nonnil:"true"`
+	FileNames         []string                 `json:"fileNames" nonnil:"true"`
 	Options           *core.CompilerOptions    `json:"options" nonnil:"true"`
 	ProjectReferences []*core.ProjectReference `json:"projectReferences,omitempty"`
 	TypeAcquisition   *core.TypeAcquisition    `json:"typeAcquisition,omitempty"`
 	CompileOnSave     *bool                    `json:"compileOnSave,omitempty"`
 	Raw               any                      `json:"raw,omitempty"`
-	Errors            []*DiagnosticResponse    `json:"errors,format:emitempty" nonnil:"true"`
+	Errors            []*DiagnosticResponse    `json:"errors" nonnil:"true"`
 }
 
 type ReadConfigFileResponse struct {
