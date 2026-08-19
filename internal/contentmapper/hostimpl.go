@@ -884,6 +884,9 @@ func (p *projectLease) Refresh() error {
 	defer p.host.lifecycleMu.RUnlock()
 	p.host.mu.Lock()
 	defer p.host.mu.Unlock()
+	if p.host.projects == nil {
+		return nil
+	}
 	var result error
 	for _, key := range p.entries {
 		entry := p.host.projects[key]
@@ -899,12 +902,20 @@ func (p *projectLease) Refresh() error {
 }
 
 func (p *projectLease) Identities() ([]string, error) {
+	p.host.lifecycleMu.RLock()
+	defer p.host.lifecycleMu.RUnlock()
 	p.host.mu.Lock()
 	defer p.host.mu.Unlock()
+	if p.host.projects == nil {
+		return nil, nil
+	}
 	identities := make([]string, 0, len(p.entries))
 	for _, mapper := range p.mappers {
 		key := p.entries[mapper]
 		entry := p.host.projects[key]
+		if entry == nil {
+			continue
+		}
 		if mapper.DynamicConfig {
 			if err := p.host.openProjectLocked(p.host.ctx, entry); err != nil {
 				return nil, err
@@ -919,9 +930,18 @@ func (p *projectLease) Identities() ([]string, error) {
 }
 
 func (p *projectLease) Identity(mapper *Mapper) (string, error) {
+	p.host.lifecycleMu.RLock()
+	defer p.host.lifecycleMu.RUnlock()
 	p.host.mu.Lock()
 	defer p.host.mu.Unlock()
-	entry := p.host.projects[p.entries[mapper]]
+	if p.host.projects == nil {
+		return "", nil
+	}
+	key, ok := p.entries[mapper]
+	if !ok {
+		return "", nil
+	}
+	entry := p.host.projects[key]
 	if entry == nil {
 		return "", nil
 	}
@@ -936,11 +956,19 @@ func (p *projectLease) Identity(mapper *Mapper) (string, error) {
 }
 
 func (p *projectLease) WatchedFiles() ([]string, error) {
+	p.host.lifecycleMu.RLock()
+	defer p.host.lifecycleMu.RUnlock()
 	p.host.mu.Lock()
 	defer p.host.mu.Unlock()
+	if p.host.projects == nil {
+		return nil, nil
+	}
 	var files []string
 	for _, key := range p.entries {
 		entry := p.host.projects[key]
+		if entry == nil {
+			continue
+		}
 		if entry.mapper.DynamicConfig {
 			if err := p.host.openProjectLocked(p.host.ctx, entry); err != nil {
 				return nil, err
@@ -953,12 +981,20 @@ func (p *projectLease) WatchedFiles() ([]string, error) {
 }
 
 func (p *projectLease) Diagnostics() []OptionDiagnostic {
+	p.host.lifecycleMu.RLock()
+	defer p.host.lifecycleMu.RUnlock()
 	p.host.mu.Lock()
 	defer p.host.mu.Unlock()
+	if p.host.projects == nil {
+		return nil
+	}
 	var diagnostics []OptionDiagnostic
 	for _, mapper := range p.mappers {
 		entry := p.host.projects[p.entries[mapper]]
-		if entry == nil || !entry.opened {
+		if entry == nil {
+			continue
+		}
+		if !entry.opened {
 			continue
 		}
 		diagnostics = append(diagnostics, entry.optionDiagnostics...)

@@ -1074,6 +1074,44 @@ func TestProjectLifecycle(t *testing.T) {
 	assert.Equal(t, len(mapperProcess.closedHandles), 6)
 }
 
+func TestProjectMethodsAfterHostClose(t *testing.T) {
+	t.Parallel()
+	mapperProcess := &recordingMapper{dynamicConfig: true}
+	host := contentmapper.NewHost(t.Context(), &fakeSpawner{handler: mapperProcess}, locale.Default)
+	mapper := &contentmapper.Mapper{
+		Manifest: contentmapper.Manifest{Name: "dynamic", Version: "1.0.0", Exec: []string{"mapper"}, DynamicConfig: true},
+	}
+	project := host.Project(contentmapper.ProjectSpec{
+		ConfigFileName:  "/repo/tsconfig.json",
+		Mappers:         []*contentmapper.Mapper{mapper},
+		CompilerOptions: &core.CompilerOptions{},
+	})
+	defer project.Close()
+	_, err := project.Transform(mapper, contentmapper.Request{FileName: "/repo/file.ext", Content: "x"})
+	assert.NilError(t, err)
+	identity, err := project.Identity(&contentmapper.Mapper{})
+	assert.NilError(t, err)
+	assert.Equal(t, identity, "")
+	assert.NilError(t, host.Close())
+
+	assert.NilError(t, project.Refresh())
+	identities, err := project.Identities()
+	assert.NilError(t, err)
+	assert.Equal(t, len(identities), 0)
+	identity, err = project.Identity(mapper)
+	assert.NilError(t, err)
+	assert.Equal(t, identity, "")
+	identity, err = project.Identity(&contentmapper.Mapper{})
+	assert.NilError(t, err)
+	assert.Equal(t, identity, "")
+	watchedFiles, err := project.WatchedFiles()
+	assert.NilError(t, err)
+	assert.Equal(t, len(watchedFiles), 0)
+	assert.Equal(t, len(project.Diagnostics()), 0)
+	_, err = project.Transform(mapper, contentmapper.Request{FileName: "/repo/file.ext", Content: "x"})
+	assert.ErrorContains(t, err, "content mapper project is closed")
+}
+
 func TestProjectRejectsRelativeWatchedFiles(t *testing.T) {
 	t.Parallel()
 	mapperProcess := &recordingMapper{watchedFiles: []string{"mapper.config.js"}, dynamicConfig: true}
