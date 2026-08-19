@@ -11,6 +11,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/execute"
+	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/fswatch"
 	"github.com/microsoft/typescript-go/internal/testutil/contentmappertest"
 	"gotest.tools/v3/assert"
@@ -78,6 +79,35 @@ func TestContentMapperBuildLifecycle(t *testing.T) {
 	assert.Assert(t, result.Watcher == nil)
 	assert.Equal(t, spawner.spawns.Load(), int32(1))
 	assert.Equal(t, spawner.closes.Load(), int32(1))
+}
+
+func TestContentMapperBuildIdentityFailureExitStatus(t *testing.T) {
+	t.Parallel()
+	const packageJSONPath = "/home/src/workspaces/project/node_modules/mapper/package.json"
+	input := &tscInput{files: FileMap{
+		"/home/src/workspaces/project/tsconfig.json": `{
+			"compilerOptions": { "composite": true },
+			"contentMappers": [{ "package": "mapper", "extensions": [".vue"] }]
+		}`,
+		"/home/src/workspaces/project/app.vue": `export const app = 1;`,
+		packageJSONPath:                        contentmappertest.PackageJSON(contentmappertest.DynamicVerbatimMapper),
+	}}
+	testSys := newTestSys(input, false)
+	sys := &recordingContentMapperSystem{
+		TestSys: testSys,
+		spawner: &recordingContentMapperSpawner{inner: contentmappertest.NewSpawner()},
+	}
+	args := []string{"--build", "--runExternalCode"}
+	result := execute.CommandLine(t.Context(), sys, args, testSys)
+	assert.Equal(t, result.Status, tsc.ExitStatusSuccess)
+
+	testSys.writeFileNoError(packageJSONPath, `{
+		"name": "mapper",
+		"version": "1.0.0",
+		"typescript": { "contentMapper": { "exec": ["missing-mapper"], "dynamicConfig": true } }
+	}`)
+	result = execute.CommandLine(t.Context(), sys, args, testSys)
+	assert.Equal(t, result.Status, tsc.ExitStatusDiagnosticsPresent_OutputsSkipped)
 }
 
 func TestContentMapperWatchLifecycle(t *testing.T) {

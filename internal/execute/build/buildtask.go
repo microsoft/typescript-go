@@ -239,6 +239,7 @@ func (t *BuildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 	if err != nil {
 		t.reportDiagnostic(compiler.ContentMapperProjectDiagnostic(err))
 		t.status = &upToDateStatus{kind: upToDateStatusTypeBuildErrors}
+		t.result.exitStatus = tsc.ExitStatusDiagnosticsPresent_OutputsSkipped
 		return
 	}
 	compilerHost := &compilerHost{
