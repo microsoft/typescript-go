@@ -1,0 +1,70 @@
+//// [tests/cases/compiler/circularVarianceAssignability.ts] ////
+
+=== circularVarianceAssignability.ts ===
+declare namespace Router {
+>Router : Symbol(Router, Decl(circularVarianceAssignability.ts, 0, 0), Decl(circularVarianceAssignability.ts, 10, 1))
+
+    interface Params<T, U> {
+>Params : Symbol(Params, Decl(circularVarianceAssignability.ts, 0, 26))
+>T : Symbol(T, Decl(circularVarianceAssignability.ts, 1, 21))
+>U : Symbol(U, Decl(circularVarianceAssignability.ts, 1, 23))
+
+        router: Router<U, {}>;
+>router : Symbol(Params.router, Decl(circularVarianceAssignability.ts, 1, 28))
+>Router : Symbol(Router, Decl(circularVarianceAssignability.ts, 0, 0), Decl(circularVarianceAssignability.ts, 10, 1))
+>U : Symbol(U, Decl(circularVarianceAssignability.ts, 1, 23))
+    }
+
+    type Context<T, U> =
+>Context : Symbol(Context, Decl(circularVarianceAssignability.ts, 3, 5))
+>T : Symbol(T, Decl(circularVarianceAssignability.ts, 5, 17))
+>U : Symbol(U, Decl(circularVarianceAssignability.ts, 5, 19))
+
+        & { state: T }
+>state : Symbol(state, Decl(circularVarianceAssignability.ts, 6, 11))
+>T : Symbol(T, Decl(circularVarianceAssignability.ts, 5, 17))
+
+        & Params<T, U>;
+>Params : Symbol(Params, Decl(circularVarianceAssignability.ts, 0, 26))
+>T : Symbol(T, Decl(circularVarianceAssignability.ts, 5, 17))
+>U : Symbol(U, Decl(circularVarianceAssignability.ts, 5, 19))
+
+    type Middleware<T, U> = (context: Context<T, U>) => void;
+>Middleware : Symbol(Middleware, Decl(circularVarianceAssignability.ts, 7, 23))
+>T : Symbol(T, Decl(circularVarianceAssignability.ts, 9, 20))
+>U : Symbol(U, Decl(circularVarianceAssignability.ts, 9, 22))
+>context : Symbol(context, Decl(circularVarianceAssignability.ts, 9, 29))
+>Context : Symbol(Context, Decl(circularVarianceAssignability.ts, 3, 5))
+>T : Symbol(T, Decl(circularVarianceAssignability.ts, 9, 20))
+>U : Symbol(U, Decl(circularVarianceAssignability.ts, 9, 22))
+}
+
+declare class Router<T, U> {
+>Router : Symbol(Router, Decl(circularVarianceAssignability.ts, 0, 0), Decl(circularVarianceAssignability.ts, 10, 1))
+>T : Symbol(T, Decl(circularVarianceAssignability.ts, 12, 21))
+>U : Symbol(U, Decl(circularVarianceAssignability.ts, 12, 23))
+
+    routes(): Router.Middleware<T, U>;
+>routes : Symbol(Router.routes, Decl(circularVarianceAssignability.ts, 12, 28))
+>Router : Symbol(Router, Decl(circularVarianceAssignability.ts, 0, 0), Decl(circularVarianceAssignability.ts, 10, 1))
+>Middleware : Symbol(Router.Middleware, Decl(circularVarianceAssignability.ts, 7, 23))
+>T : Symbol(T, Decl(circularVarianceAssignability.ts, 12, 21))
+>U : Symbol(U, Decl(circularVarianceAssignability.ts, 12, 23))
+}
+
+declare let a: Router.Params<{ value: string }, {}>;
+>a : Symbol(a, Decl(circularVarianceAssignability.ts, 16, 11))
+>Router : Symbol(Router, Decl(circularVarianceAssignability.ts, 0, 0), Decl(circularVarianceAssignability.ts, 10, 1))
+>Params : Symbol(Router.Params, Decl(circularVarianceAssignability.ts, 0, 26))
+>value : Symbol(value, Decl(circularVarianceAssignability.ts, 16, 30))
+
+declare let b: Router.Params<{ value: number }, {}>;
+>b : Symbol(b, Decl(circularVarianceAssignability.ts, 17, 11))
+>Router : Symbol(Router, Decl(circularVarianceAssignability.ts, 0, 0), Decl(circularVarianceAssignability.ts, 10, 1))
+>Params : Symbol(Router.Params, Decl(circularVarianceAssignability.ts, 0, 26))
+>value : Symbol(value, Decl(circularVarianceAssignability.ts, 17, 30))
+
+a = b; // Error
+>a : Symbol(a, Decl(circularVarianceAssignability.ts, 16, 11))
+>b : Symbol(b, Decl(circularVarianceAssignability.ts, 17, 11))
+

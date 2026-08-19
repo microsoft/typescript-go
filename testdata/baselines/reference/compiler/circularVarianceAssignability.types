@@ -1,0 +1,45 @@
+//// [tests/cases/compiler/circularVarianceAssignability.ts] ////
+
+=== circularVarianceAssignability.ts ===
+declare namespace Router {
+    interface Params<T, U> {
+        router: Router<U, {}>;
+>router : Router<U, {}>
+    }
+
+    type Context<T, U> =
+>Context : Context<T, U>
+
+        & { state: T }
+>state : T
+
+        & Params<T, U>;
+
+    type Middleware<T, U> = (context: Context<T, U>) => void;
+>Middleware : Middleware<T, U>
+>context : Context<T, U>
+}
+
+declare class Router<T, U> {
+>Router : Router<T, U>
+
+    routes(): Router.Middleware<T, U>;
+>routes : () => Router.Middleware<T, U>
+>Router : any
+}
+
+declare let a: Router.Params<{ value: string }, {}>;
+>a : Router.Params<{ value: string; }, {}>
+>Router : any
+>value : string
+
+declare let b: Router.Params<{ value: number }, {}>;
+>b : Router.Params<{ value: number; }, {}>
+>Router : any
+>value : number
+
+a = b; // Error
+>a = b : Router.Params<{ value: number; }, {}>
+>a : Router.Params<{ value: string; }, {}>
+>b : Router.Params<{ value: number; }, {}>
+

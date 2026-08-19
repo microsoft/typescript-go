@@ -1,0 +1,114 @@
+//// [tests/cases/compiler/circularVarianceInference.ts] ////
+
+=== circularVarianceInference.ts ===
+declare namespace Router {
+>Router : Symbol(Router, Decl(circularVarianceInference.ts, 0, 0), Decl(circularVarianceInference.ts, 15, 1))
+
+    interface Params<T, U> {
+>Params : Symbol(Params, Decl(circularVarianceInference.ts, 0, 26))
+>T : Symbol(T, Decl(circularVarianceInference.ts, 1, 21))
+>U : Symbol(U, Decl(circularVarianceInference.ts, 1, 23))
+
+        router: Router<U, {}>;
+>router : Symbol(Params.router, Decl(circularVarianceInference.ts, 1, 28))
+>Router : Symbol(Router, Decl(circularVarianceInference.ts, 0, 0), Decl(circularVarianceInference.ts, 15, 1))
+>U : Symbol(U, Decl(circularVarianceInference.ts, 1, 23))
+    }
+
+    type Context<State, CustomContext> =
+>Context : Symbol(Context, Decl(circularVarianceInference.ts, 3, 5))
+>State : Symbol(State, Decl(circularVarianceInference.ts, 5, 17))
+>CustomContext : Symbol(CustomContext, Decl(circularVarianceInference.ts, 5, 23))
+
+        & { state: State }
+>state : Symbol(state, Decl(circularVarianceInference.ts, 6, 11))
+>State : Symbol(State, Decl(circularVarianceInference.ts, 5, 17))
+
+        & Params<State, CustomContext>;
+>Params : Symbol(Params, Decl(circularVarianceInference.ts, 0, 26))
+>State : Symbol(State, Decl(circularVarianceInference.ts, 5, 17))
+>CustomContext : Symbol(CustomContext, Decl(circularVarianceInference.ts, 5, 23))
+
+    type Middleware<State, CustomContext> = (
+>Middleware : Symbol(Middleware, Decl(circularVarianceInference.ts, 7, 39))
+>State : Symbol(State, Decl(circularVarianceInference.ts, 9, 20))
+>CustomContext : Symbol(CustomContext, Decl(circularVarianceInference.ts, 9, 26))
+
+        context:
+>context : Symbol(context, Decl(circularVarianceInference.ts, 9, 45))
+
+            & { state: State }
+>state : Symbol(state, Decl(circularVarianceInference.ts, 11, 15))
+>State : Symbol(State, Decl(circularVarianceInference.ts, 9, 20))
+
+            & CustomContext
+>CustomContext : Symbol(CustomContext, Decl(circularVarianceInference.ts, 9, 26))
+
+            & Params<CustomContext, CustomContext>,
+>Params : Symbol(Params, Decl(circularVarianceInference.ts, 0, 26))
+>CustomContext : Symbol(CustomContext, Decl(circularVarianceInference.ts, 9, 26))
+>CustomContext : Symbol(CustomContext, Decl(circularVarianceInference.ts, 9, 26))
+
+    ) => any;
+}
+
+declare class Router<State, CustomContext> {
+>Router : Symbol(Router, Decl(circularVarianceInference.ts, 0, 0), Decl(circularVarianceInference.ts, 15, 1))
+>State : Symbol(State, Decl(circularVarianceInference.ts, 17, 21))
+>CustomContext : Symbol(CustomContext, Decl(circularVarianceInference.ts, 17, 27))
+
+    post<AddedState, AddedContext>(
+>post : Symbol(Router.post, Decl(circularVarianceInference.ts, 17, 44))
+>AddedState : Symbol(AddedState, Decl(circularVarianceInference.ts, 18, 9))
+>AddedContext : Symbol(AddedContext, Decl(circularVarianceInference.ts, 18, 20))
+
+        path: string,
+>path : Symbol(path, Decl(circularVarianceInference.ts, 18, 35))
+
+        ...middleware: Router.Middleware<AddedState, AddedContext>[]
+>middleware : Symbol(middleware, Decl(circularVarianceInference.ts, 19, 21))
+>Router : Symbol(Router, Decl(circularVarianceInference.ts, 0, 0), Decl(circularVarianceInference.ts, 15, 1))
+>Middleware : Symbol(Router.Middleware, Decl(circularVarianceInference.ts, 7, 39))
+>AddedState : Symbol(AddedState, Decl(circularVarianceInference.ts, 18, 9))
+>AddedContext : Symbol(AddedContext, Decl(circularVarianceInference.ts, 18, 20))
+
+    ): Router.Middleware<State, {}>;
+>Router : Symbol(Router, Decl(circularVarianceInference.ts, 0, 0), Decl(circularVarianceInference.ts, 15, 1))
+>Middleware : Symbol(Router.Middleware, Decl(circularVarianceInference.ts, 7, 39))
+>State : Symbol(State, Decl(circularVarianceInference.ts, 17, 21))
+}
+
+interface MyState {
+>MyState : Symbol(MyState, Decl(circularVarianceInference.ts, 22, 1))
+
+    foo: string;
+>foo : Symbol(MyState.foo, Decl(circularVarianceInference.ts, 24, 19))
+}
+
+interface MyContext {}
+>MyContext : Symbol(MyContext, Decl(circularVarianceInference.ts, 26, 1))
+
+declare const router: Router<MyState, MyContext>;
+>router : Symbol(router, Decl(circularVarianceInference.ts, 30, 13))
+>Router : Symbol(Router, Decl(circularVarianceInference.ts, 0, 0), Decl(circularVarianceInference.ts, 15, 1))
+>MyState : Symbol(MyState, Decl(circularVarianceInference.ts, 22, 1))
+>MyContext : Symbol(MyContext, Decl(circularVarianceInference.ts, 26, 1))
+
+declare const routeHandler: (
+>routeHandler : Symbol(routeHandler, Decl(circularVarianceInference.ts, 31, 13))
+
+    context: Router.Context<MyState, MyContext>,
+>context : Symbol(context, Decl(circularVarianceInference.ts, 31, 29))
+>Router : Symbol(Router, Decl(circularVarianceInference.ts, 0, 0), Decl(circularVarianceInference.ts, 15, 1))
+>Context : Symbol(Router.Context, Decl(circularVarianceInference.ts, 3, 5))
+>MyState : Symbol(MyState, Decl(circularVarianceInference.ts, 22, 1))
+>MyContext : Symbol(MyContext, Decl(circularVarianceInference.ts, 26, 1))
+
+) => void;
+
+router.post("/foo", routeHandler);
+>router.post : Symbol(Router.post, Decl(circularVarianceInference.ts, 17, 44))
+>router : Symbol(router, Decl(circularVarianceInference.ts, 30, 13))
+>post : Symbol(Router.post, Decl(circularVarianceInference.ts, 17, 44))
+>routeHandler : Symbol(routeHandler, Decl(circularVarianceInference.ts, 31, 13))
+

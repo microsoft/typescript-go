@@ -1,0 +1,75 @@
+//// [tests/cases/compiler/circularVarianceInference.ts] ////
+
+=== circularVarianceInference.ts ===
+declare namespace Router {
+    interface Params<T, U> {
+        router: Router<U, {}>;
+>router : Router<U, {}>
+    }
+
+    type Context<State, CustomContext> =
+>Context : Context<State, CustomContext>
+
+        & { state: State }
+>state : State
+
+        & Params<State, CustomContext>;
+
+    type Middleware<State, CustomContext> = (
+>Middleware : Middleware<State, CustomContext>
+
+        context:
+>context : { state: State; } & CustomContext & Params<CustomContext, CustomContext>
+
+            & { state: State }
+>state : State
+
+            & CustomContext
+            & Params<CustomContext, CustomContext>,
+    ) => any;
+}
+
+declare class Router<State, CustomContext> {
+>Router : Router<State, CustomContext>
+
+    post<AddedState, AddedContext>(
+>post : <AddedState, AddedContext>(path: string, ...middleware: Router.Middleware<AddedState, AddedContext>[]) => Router.Middleware<State, {}>
+
+        path: string,
+>path : string
+
+        ...middleware: Router.Middleware<AddedState, AddedContext>[]
+>middleware : Router.Middleware<AddedState, AddedContext>[]
+>Router : any
+
+    ): Router.Middleware<State, {}>;
+>Router : any
+}
+
+interface MyState {
+    foo: string;
+>foo : string
+}
+
+interface MyContext {}
+
+declare const router: Router<MyState, MyContext>;
+>router : Router<MyState, MyContext>
+
+declare const routeHandler: (
+>routeHandler : (context: Router.Context<MyState, MyContext>) => void
+
+    context: Router.Context<MyState, MyContext>,
+>context : Router.Context<MyState, MyContext>
+>Router : any
+
+) => void;
+
+router.post("/foo", routeHandler);
+>router.post("/foo", routeHandler) : Router.Middleware<MyState, {}>
+>router.post : <AddedState, AddedContext>(path: string, ...middleware: Router.Middleware<AddedState, AddedContext>[]) => Router.Middleware<MyState, {}>
+>router : Router<MyState, MyContext>
+>post : <AddedState, AddedContext>(path: string, ...middleware: Router.Middleware<AddedState, AddedContext>[]) => Router.Middleware<MyState, {}>
+>"/foo" : "/foo"
+>routeHandler : (context: Router.Context<MyState, MyContext>) => void
+
