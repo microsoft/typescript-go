@@ -1128,6 +1128,10 @@ func (s *Session) handleUpdateTemporarySnapshot(ctx context.Context, params *Upd
 }
 
 func (s *Session) handleCreateProgram(ctx context.Context, params *CreateProgramParams) (*CreateProgramResponse, error) {
+	if params.FileChanges != nil && params.OldProgram == nil {
+		return nil, fmt.Errorf("%w: fileChanges summary requires an oldProgram", ErrClientError)
+	}
+
 	rootFileNames := make([]string, len(params.RootFiles))
 	for i, rootFile := range params.RootFiles {
 		rootFileNames[i] = rootFile.ToAbsoluteFileName(s.projectSession.GetCurrentDirectory())
