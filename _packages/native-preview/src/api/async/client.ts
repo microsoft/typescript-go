@@ -17,6 +17,7 @@ import {
     type ClientOptions,
     type ClientSocketOptions,
     type ClientSpawnOptions,
+    getAPIProcessArgs,
     isSpawnOptions,
     resolveExePath,
 } from "../options.ts";
@@ -69,16 +70,7 @@ export class Client {
         const { spawn } = await import("node:child_process");
 
         return new Promise((resolve, reject) => {
-            const args = [
-                "--api",
-                "--async",
-                "--cwd",
-                options.cwd ?? process.cwd(),
-            ];
-
-            if (options.collectTiming) {
-                args.push("--timing");
-            }
+            const args = getAPIProcessArgs(options, true);
 
             // Enable virtual FS callbacks for each provided FS function
             const enabledCallbacks: string[] = [];

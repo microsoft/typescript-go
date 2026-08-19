@@ -168,6 +168,22 @@ func TestGetDirectoryPath(t *testing.T) {
 	assert.Equal(t, GetDirectoryPath("http://server/path/"), "http://server/")
 }
 
+func TestGetLongestExtensionFromPath(t *testing.T) {
+	t.Parallel()
+	extensions := []string{".z", ".y.z", ".other"}
+	assert.Equal(t, GetLongestExtensionFromPath("/src/Component.y.z", extensions, false), ".y.z")
+	assert.Equal(t, GetLongestExtensionFromPath("/src/Component.z", extensions, false), ".z")
+	assert.Equal(t, GetLongestExtensionFromPath("/src/Component.y.Z", extensions, false), "")
+	assert.Equal(t, GetLongestExtensionFromPath("/src/Component.y.Z", extensions, true), ".y.Z")
+}
+
+func TestRemoveAnyFileExtension(t *testing.T) {
+	t.Parallel()
+	assert.Equal(t, RemoveAnyFileExtension("/src/Component.vue"), "/src/Component")
+	assert.Equal(t, RemoveAnyFileExtension("/src/Component.d.ts"), "/src/Component")
+	assert.Equal(t, RemoveAnyFileExtension("/src/Component"), "/src/Component")
+}
+
 // !!!
 // getBaseFileName
 // getAnyExtensionFromPath
@@ -569,6 +585,59 @@ func FuzzToFileNameLowerCase(f *testing.F) {
 
 	f.Fuzz(func(t *testing.T, p string) {
 		assert.Equal(t, oldToFileNameLowerCase(p), ToFileNameLowerCase(p))
+	})
+}
+
+func TestTrimFilePathPrefix(t *testing.T) {
+	t.Parallel()
+
+	t.Run("case-sensitive exact match", func(t *testing.T) {
+		t.Parallel()
+		suffix, ok := TrimFilePathPrefix("/project/src/file.ts", "/project/src", true /*useCaseSensitiveFileNames*/)
+		assert.Assert(t, ok)
+		assert.Equal(t, suffix, "/file.ts")
+	})
+
+	t.Run("case-sensitive mismatch", func(t *testing.T) {
+		t.Parallel()
+		suffix, ok := TrimFilePathPrefix("/project/SRC/file.ts", "/project/src", true /*useCaseSensitiveFileNames*/)
+		assert.Assert(t, !ok)
+		assert.Equal(t, suffix, "/project/SRC/file.ts")
+	})
+
+	t.Run("case-insensitive match", func(t *testing.T) {
+		t.Parallel()
+		suffix, ok := TrimFilePathPrefix("/project/SRC/file.ts", "/project/src", false /*useCaseSensitiveFileNames*/)
+		assert.Assert(t, ok)
+		assert.Equal(t, suffix, "/file.ts")
+	})
+
+	t.Run("no match", func(t *testing.T) {
+		t.Parallel()
+		suffix, ok := TrimFilePathPrefix("/other/file.ts", "/project/src", false /*useCaseSensitiveFileNames*/)
+		assert.Assert(t, !ok)
+		assert.Equal(t, suffix, "/other/file.ts")
+	})
+
+	t.Run("case-folding shrinks prefix byte length without changing rune count", func(t *testing.T) {
+		t.Parallel()
+		// Each Kelvin sign '\u212A' case-folds to the single-byte 'k', so the raw
+		// (non-canonicalized) prefix is longer, in bytes, than the path it's a
+		// case-insensitive prefix of, even though the path itself is longer overall
+		// once its own (already-lowercase) suffix is included. Slicing path by
+		// len(prefix) bytes would panic here ([10:9]); TrimFilePathPrefix must
+		// clamp per-rune instead, like the reference implementation's substring
+		// does.
+		suffix, ok := TrimFilePathPrefix("/kkk/a.ts", "/\u212A\u212A\u212A", false /*useCaseSensitiveFileNames*/)
+		assert.Assert(t, ok)
+		assert.Equal(t, suffix, "/a.ts")
+	})
+
+	t.Run("path equal to prefix", func(t *testing.T) {
+		t.Parallel()
+		suffix, ok := TrimFilePathPrefix("/project/src", "/project/src", true /*useCaseSensitiveFileNames*/)
+		assert.Assert(t, ok)
+		assert.Equal(t, suffix, "")
 	})
 }
 
