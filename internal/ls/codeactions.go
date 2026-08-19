@@ -114,7 +114,7 @@ func (l *LanguageService) ProvideCodeActions(ctx context.Context, params *lsprot
 			errorCode := *diag.Code.Integer
 
 			for _, provider := range codeFixProviders {
-				if !containsErrorCode(provider.ErrorCodes, errorCode) {
+				if !codeFixProviderMatchesLSPDiagnostic(provider, diag) {
 					continue
 				}
 
@@ -219,7 +219,7 @@ func hasMultipleFixableDiagnostics(ctx context.Context, program *compiler.Progra
 	allDiags := getAllDiagnostics(ctx, program, file)
 	count := 0
 	for _, d := range allDiags {
-		if containsErrorCode(errorCodes, d.Code()) {
+		if isFixableDiagnostic(d, errorCodes) {
 			count++
 			if count >= 2 {
 				return true
@@ -227,6 +227,17 @@ func hasMultipleFixableDiagnostics(ctx context.Context, program *compiler.Progra
 		}
 	}
 	return false
+}
+
+func codeFixProviderMatchesLSPDiagnostic(provider *CodeFixProvider, diagnostic *lsproto.Diagnostic) bool {
+	if diagnostic.Source != nil && *diagnostic.Source != "ts" {
+		return false
+	}
+	return diagnostic.Code != nil && diagnostic.Code.Integer != nil && containsErrorCode(provider.ErrorCodes, *diagnostic.Code.Integer)
+}
+
+func isFixableDiagnostic(diagnostic *ast.Diagnostic, errorCodes []int32) bool {
+	return diagnostic.Source() == "" && containsErrorCode(errorCodes, diagnostic.Code())
 }
 
 // codeActionKindContains returns true if the requested kind equals or is a

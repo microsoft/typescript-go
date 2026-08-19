@@ -143,7 +143,7 @@ func getAllIsolatedDeclarationsCodeActions(ctx context.Context, fixContext *Code
 
 	allDiags := getAllDiagnostics(ctx, fixContext.Program, fixContext.SourceFile)
 	for _, diag := range allDiags {
-		if containsErrorCode(isolatedDeclarationsFixErrorCodes, diag.Code()) {
+		if isFixableDiagnostic(diag, isolatedDeclarationsFixErrorCodes) {
 			span := core.NewTextRange(diag.Loc().Pos(), diag.Loc().End())
 			fixer.addTypeAnnotation(span)
 		}

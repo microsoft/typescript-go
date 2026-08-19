@@ -79,7 +79,7 @@ func getAllCodeActionsToFixClassIncorrectlyImplementsInterface(context context.C
 	seenClassDeclarations := collections.Set[*ast.Node]{}
 
 	for _, diag := range getAllDiagnostics(context, fixContext.Program, fixContext.SourceFile) {
-		if containsErrorCode(fixClassIncorrectlyImplementsInterfaceErrorCodes, diag.Code()) {
+		if isFixableDiagnostic(diag, fixClassIncorrectlyImplementsInterfaceErrorCodes) {
 			classDeclaration := getClass(fixContext.SourceFile, core.NewTextRange(diag.Pos(), diag.End()))
 			if classDeclaration == nil {
 				continue

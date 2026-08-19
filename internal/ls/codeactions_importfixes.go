@@ -102,7 +102,7 @@ func getAllImportCodeActions(ctx context.Context, fixContext *CodeFixContext) (*
 
 	var importDiags []*ast.Diagnostic
 	for _, diag := range allDiagnostics {
-		if containsErrorCode(importFixErrorCodes, diag.Code()) {
+		if isFixableDiagnostic(diag, importFixErrorCodes) {
 			importDiags = append(importDiags, diag)
 		}
 	}
