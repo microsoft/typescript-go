@@ -7,10 +7,14 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/bundled"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/contentmapper"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
+	"github.com/zeebo/xxh3"
 	"gotest.tools/v3/assert"
 )
 
@@ -39,6 +43,30 @@ func TestContentMappedParseCacheBundleLifetime(t *testing.T) {
 	assert.Assert(t, cache.Has(key))
 	cache.Deref(key)
 	assert.Assert(t, !cache.Has(key))
+}
+
+func TestContentMappedParseCacheKeyReconstruction(t *testing.T) {
+	t.Parallel()
+	acquireOptions := ast.SourceFileParseOptions{FileName: "/component.box", Path: "/component.box"}
+	mappedOptions := acquireOptions
+	mappedOptions.ExternalModuleIndicatorOptions.Force = true
+	hash := xxh3.Hash128([]byte("cache key"))
+	file := parser.ParseSourceFile(mappedOptions, "export {};", core.ScriptKindTS)
+	file.Hash = hash
+	file.SetContentMapperInfo(ast.ContentMapperSourceFileInfo{
+		ContentMapper: "mapper",
+		ParseOptions:  acquireOptions,
+	})
+	expected := ContentMappedParseCacheKey{SourceFileParseOptions: acquireOptions, Hash: hash}
+	assert.DeepEqual(t, contentMappedParseCacheKeyForFile(file), expected)
+
+	duplicate := &compiler.DuplicateSourceFile{
+		ParseOptions:              mappedOptions,
+		ContentMapperParseOptions: acquireOptions,
+		Hash:                      hash,
+		ContentMapper:             "mapper",
+	}
+	assert.DeepEqual(t, contentMappedParseCacheKeyForDuplicate(duplicate), expected)
 }
 
 func TestRefCountingCaches(t *testing.T) {

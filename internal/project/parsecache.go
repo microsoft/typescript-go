@@ -56,7 +56,7 @@ func parseCacheKeyForFile(file *ast.SourceFile) ParseCacheKey {
 }
 
 func contentMappedParseCacheKeyForFile(file *ast.SourceFile) ContentMappedParseCacheKey {
-	return ContentMappedParseCacheKey{SourceFileParseOptions: file.ParseOptions(), Hash: file.Hash}
+	return ContentMappedParseCacheKey{SourceFileParseOptions: file.ContentMapperParseOptions(), Hash: file.Hash}
 }
 
 // parseCacheKeyForDuplicate reconstructs an ordinary parse-cache key for a deduplicated source file.
@@ -65,7 +65,7 @@ func parseCacheKeyForDuplicate(file *compiler.DuplicateSourceFile) ParseCacheKey
 }
 
 func contentMappedParseCacheKeyForDuplicate(file *compiler.DuplicateSourceFile) ContentMappedParseCacheKey {
-	return ContentMappedParseCacheKey{SourceFileParseOptions: file.ParseOptions, Hash: file.Hash}
+	return ContentMappedParseCacheKey{SourceFileParseOptions: file.ContentMapperParseOptions, Hash: file.Hash}
 }
 
 type ParseCache = RefCountCache[ParseCacheKey, *ast.SourceFile, FileHandle]

@@ -97,6 +97,7 @@ func ParseResult(parseOptions ast.SourceFileParseOptions, content string, mapper
 	sourceFile.SetContentMapperInfo(ast.ContentMapperSourceFileInfo{
 		ContentMapper:           mapperIdentity,
 		TransformIdentity:       transformIdentity,
+		ParseOptions:            baseParseOptions,
 		VirtualFileName:         virtualFileName,
 		OriginalText:            content,
 		SpanMap:                 result.Mappings,
@@ -108,6 +109,7 @@ func ParseResult(parseOptions ast.SourceFileParseOptions, content string, mapper
 		file.SetContentMapperInfo(ast.ContentMapperSourceFileInfo{
 			ContentMapper:        mapperIdentity,
 			TransformIdentity:    transformIdentity,
+			ParseOptions:         baseParseOptions,
 			VirtualFileName:      file.FileName(),
 			OriginalText:         content,
 			SpanMap:              supplemental.Mappings,

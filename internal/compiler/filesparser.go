@@ -407,6 +407,7 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 					if dups.AddIfAbsent(task.normalizedFilePath) {
 						duplicateSourceFiles = append(duplicateSourceFiles, &DuplicateSourceFile{
 							ParseOptions:               task.file.ParseOptions(),
+							ContentMapperParseOptions:  task.file.ContentMapperParseOptions(),
 							Hash:                       task.file.Hash,
 							ScriptKind:                 task.file.ScriptKind,
 							ContentMapper:              task.file.ContentMapper(),
@@ -452,6 +453,7 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 						// the host, so snapshot disposal must release that extra owner.
 						duplicateSourceFiles = append(duplicateSourceFiles, &DuplicateSourceFile{
 							ParseOptions:               file.ParseOptions(),
+							ContentMapperParseOptions:  file.ContentMapperParseOptions(),
 							Hash:                       file.Hash,
 							ScriptKind:                 file.ScriptKind,
 							ContentMapper:              file.ContentMapper(),

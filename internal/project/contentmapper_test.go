@@ -360,6 +360,45 @@ func TestContentMapperSupplementalFileClonedOnEdit(t *testing.T) {
 	assert.Equal(t, configuredProject.ProgramUpdateKind, project.ProgramUpdateKindSameFileNames)
 }
 
+func TestContentMapperModuleExtensionClonedOnUnrelatedEdit(t *testing.T) {
+	t.Parallel()
+	files := map[string]any{
+		"/home/project/tsconfig.json":                    `{ "contentMappers": [{ "package": "mapper", "extensions": [".box"] }] }`,
+		"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.ModuleVerbatimMapper),
+		"/home/project/app.box":                          "export const value = 1;\n",
+		"/home/project/main.ts":                          `import { value } from "./app.box"; value;`,
+	}
+	init, _ := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
+		CurrentDirectory:   "/home/project",
+		DefaultLibraryPath: bundled.LibPath(),
+		TypingsLocation:    projecttestutil.TestTypingsLocation,
+		PositionEncoding:   lsproto.PositionEncodingKindUTF8,
+		RunExternalCode:    true,
+	}, nil)
+	init.Spawner = contentmappertest.NewSpawner()
+	session := project.NewSession(init)
+	defer session.Close()
+
+	ctx := context.Background()
+	mainURI := lsproto.DocumentUri("file:///home/project/main.ts")
+	session.DidOpenFile(ctx, mainURI, 1, files["/home/project/main.ts"].(string), lsproto.LanguageKindTypeScript)
+	languageService, err := session.GetLanguageService(ctx, mainURI)
+	assert.NilError(t, err)
+	mappedFile := languageService.GetProgram().GetSourceFile("/home/project/app.box")
+	assert.Assert(t, mappedFile != nil)
+	assert.Equal(t, mappedFile.VirtualFileName(), "/home/project/app.box.mts")
+	assert.Assert(t, mappedFile.ParseOptions().ExternalModuleIndicatorOptions.Force)
+
+	session.DidChangeFile(ctx, mainURI, 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{{
+		WholeDocument: &lsproto.TextDocumentContentChangeWholeDocument{Text: `import { value } from "./app.box"; value + 1;`},
+	}})
+	languageService, err = session.GetLanguageService(ctx, mainURI)
+	assert.NilError(t, err)
+	configuredProject := session.Snapshot().GetDefaultProject(mainURI)
+	assert.Equal(t, configuredProject.ProgramUpdateKind, project.ProgramUpdateKindCloned)
+	assert.Assert(t, languageService.GetProgram().GetSourceFile("/home/project/app.box") == mappedFile)
+}
+
 func TestContentMapperLocaleChange(t *testing.T) {
 	t.Parallel()
 	files := map[string]any{

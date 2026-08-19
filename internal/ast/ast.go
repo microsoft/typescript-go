@@ -2631,12 +2631,21 @@ type MappedDiagnosticDirective struct {
 type ContentMapperSourceFileInfo struct {
 	ContentMapper           string
 	TransformIdentity       string
+	ParseOptions            SourceFileParseOptions
 	VirtualFileName         string
 	OriginalText            string
 	SpanMap                 *spanmap.SpanMap
 	DiagnosticDirectives    []MappedDiagnosticDirective
 	SupplementalSourceFiles []*SourceFile
 	CanonicalSourceFile     *SourceFile
+}
+
+// ContentMapperParseOptions returns the parse options used to acquire this file from the mapped parse cache.
+func (node *SourceFile) ContentMapperParseOptions() SourceFileParseOptions {
+	if node.contentMapperInfo == nil {
+		return SourceFileParseOptions{}
+	}
+	return node.contentMapperInfo.ParseOptions
 }
 
 // SetContentMapperInfo initializes all content-mapper metadata before the source file is published.
@@ -2801,6 +2810,7 @@ func (node *SourceFile) copyFrom(other *SourceFile) {
 			SpanMap:           other.contentMapperInfo.SpanMap,
 			ContentMapper:     other.contentMapperInfo.ContentMapper,
 			TransformIdentity: other.contentMapperInfo.TransformIdentity,
+			ParseOptions:      other.contentMapperInfo.ParseOptions,
 			VirtualFileName:   other.contentMapperInfo.VirtualFileName,
 		})
 	}

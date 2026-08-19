@@ -86,8 +86,10 @@ type redirectsFile struct {
 
 type DuplicateSourceFile struct {
 	ParseOptions ast.SourceFileParseOptions
-	Hash         xxh3.Uint128
-	ScriptKind   core.ScriptKind
+	// ContentMapperParseOptions are the acquire-time options for a content-mapped parse-cache entry.
+	ContentMapperParseOptions ast.SourceFileParseOptions
+	Hash                      xxh3.Uint128
+	ScriptKind                core.ScriptKind
 	// ContentMapper is the identity of the content mapper that produced this file,
 	// or "" if the file is not content-mapped.
 	ContentMapper string
@@ -572,6 +574,7 @@ func (p *fileLoader) emptyContentMappedFile(opts ast.SourceFileParseOptions, map
 	sourceFile.SetContentMapperInfo(ast.ContentMapperSourceFileInfo{
 		ContentMapper:     mapperIdentity,
 		TransformIdentity: transformIdentity,
+		ParseOptions:      opts,
 		VirtualFileName:   opts.FileName + tspath.ExtensionTs,
 		OriginalText:      content,
 	})
