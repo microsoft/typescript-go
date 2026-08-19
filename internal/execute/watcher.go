@@ -319,9 +319,9 @@ func (w *Watcher) DoCycle() {
 						continue
 					}
 				}
-				if sourceFile := programFiles[p]; sourceFile != nil && sourceFile.IsContentMapperSupplemental() {
-					// A supplemental path is a failed physical lookup reserved for a virtual source file.
-					// Creating a file there introduces a collision and changes the program shape.
+				if sourceFile := programFiles[p]; sourceFile != nil && sourceFile.ContentMapper() != "" {
+					// Canonical mapped files must be transformed again, and supplemental paths are failed
+					// physical lookups reserved for virtual files. Neither can use single-file AST reuse.
 					w.forceFullRebuild = true
 				} else if _, isSource := programFiles[p]; !isSource && w.seenFiles.Has(p) {
 					// A non-source build dependency changed. Such dependencies

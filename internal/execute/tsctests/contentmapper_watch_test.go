@@ -220,6 +220,47 @@ func TestDynamicContentMapperWatchDependency(t *testing.T) {
 	assert.Equal(t, spawner.closes.Load(), int32(0))
 }
 
+func TestContentMapperMixedWatchBatchForcesFullRebuild(t *testing.T) {
+	t.Parallel()
+	const (
+		mappedFileName = "/home/src/workspaces/project/app.vue"
+		mainFileName   = "/home/src/workspaces/project/main.ts"
+	)
+	input := &tscInput{files: FileMap{
+		"/home/src/workspaces/project/tsconfig.json": `{
+			"compilerOptions": { "noLib": true },
+			"contentMappers": [{ "package": "mapper", "extensions": [".vue"] }]
+		}`,
+		mappedFileName: `export const marker = 1 as const;`,
+		mainFileName:   `import { marker } from "./app.vue"; const check: 1 = marker;`,
+		"/home/src/workspaces/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.VerbatimMapper),
+	}}
+	testSys := newTestSys(input, false)
+	testSys.currentWrite.Reset()
+	sys := &recordingContentMapperSystem{
+		TestSys: testSys,
+		spawner: &recordingContentMapperSpawner{inner: contentmappertest.NewSpawner()},
+	}
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+
+	result := execute.CommandLine(ctx, sys, []string{"--watch", "--pretty", "false", "--runExternalCode"}, testSys)
+	w := result.Watcher.(*execute.Watcher)
+	fastBuilds, fullBuilds := w.FastPathBuilds(), w.FullBuilds()
+	testSys.currentWrite.Reset()
+	testSys.writeFileNoError(mappedFileName, `export const marker = 2 as const;`)
+	testSys.writeFileNoError(mainFileName, `import { marker } from "./app.vue"; const check: 2 = marker;`)
+	testSys.mockWatchBackend.SendEvents([]fswatch.Event{
+		{Kind: fswatch.EventUpdate, Path: mappedFileName},
+		{Kind: fswatch.EventUpdate, Path: mainFileName},
+	})
+	w.DoCycle()
+
+	assert.Equal(t, w.FullBuilds(), fullBuilds+1)
+	assert.Equal(t, w.FastPathBuilds(), fastBuilds)
+	assert.Assert(t, !strings.Contains(testSys.currentWrite.String(), "Type '1' is not assignable to type '2'"), testSys.currentWrite.String())
+}
+
 func TestDynamicContentMapperBuildWatchDependency(t *testing.T) {
 	t.Parallel()
 	const mapperConfigFileName = "/home/src/workspaces/project/mapper.config.json"
