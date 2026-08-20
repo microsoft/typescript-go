@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
+	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
@@ -499,7 +500,7 @@ func (b *NodeBuilderImpl) expandModuleDecl(symbol *ast.Symbol) *ast.Node {
 			merged := b.ch.getMergedSymbol(resolved)
 			hasModuleExports := merged.Flags&(ast.SymbolFlagsValueModule|ast.SymbolFlagsNamespaceModule) != 0 && merged.Exports != nil && len(merged.Exports) != 0
 			if !hasModuleExports {
-				bodyStmts = append(bodyStmts, hoverStatement{node: b.f.NewModuleDeclaration(nil, ast.KindNamespaceKeyword, b.f.NewIdentifier(m.Name), b.f.NewModuleBlock(b.f.NewNodeList(nil)), nil /*attributes*/)})
+				bodyStmts = append(bodyStmts, hoverStatement{node: b.f.NewModuleDeclaration(nil, ast.KindNamespaceKeyword, b.f.NewIdentifier(m.Name), nil /*attributes*/, b.f.NewModuleBlock(b.f.NewNodeList(nil)))})
 			}
 			continue
 		}
@@ -543,7 +544,14 @@ func (b *NodeBuilderImpl) expandModuleDecl(symbol *ast.Symbol) *ast.Node {
 	if !ast.IsIdentifier(localName) {
 		keyword = ast.KindModuleKeyword
 	}
-	return b.f.NewModuleDeclaration(nil, keyword, localName, b.f.NewModuleBlock(b.f.NewNodeList(bodyStatements)), nil) // !!! TODO: fix hover attributes
+	var attributes *ast.TypeLiteralNodeNode
+	if declaration := core.Find(symbol.Declarations, func(declaration *ast.Node) bool {
+		return ast.IsModuleDeclaration(declaration) && declaration.AsModuleDeclaration().Attributes != nil
+	}); declaration != nil {
+		attributes = b.f.DeepCloneNode(declaration.AsModuleDeclaration().Attributes)
+		b.e.SetEmitFlags(attributes, printer.EFSingleLine)
+	}
+	return b.f.NewModuleDeclaration(nil, keyword, localName, attributes, b.f.NewModuleBlock(b.f.NewNodeList(bodyStatements)))
 }
 
 // serializeTypeAliasForNamespace produces a TypeAliasDeclaration for a type alias inside a namespace body.

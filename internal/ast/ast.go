@@ -2355,9 +2355,8 @@ func (node *Node) IsJSDoc() bool {
 // PatternAmbientModule
 
 type PatternAmbientModule struct {
-	Pattern    core.Pattern
-	Symbol     *Symbol
-	Attributes *TypeLiteralNodeNode // !!! Do we need this?
+	Pattern core.Pattern
+	Symbol  *Symbol
 }
 
 type CommentDirectiveKind int32

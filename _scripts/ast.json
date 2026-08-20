@@ -4808,14 +4808,14 @@
                         "private": true
                     },
                     {
-                        "name": "Body",
-                        "inherited": true,
-                        "type": "ModuleBody"
-                    },
-                    {
                         "name": "Attributes",
                         "type": "TypeLiteralNode",
                         "optional": true
+                    },
+                    {
+                        "name": "Body",
+                        "inherited": true,
+                        "type": "ModuleBody"
                     }
                 ]
             },

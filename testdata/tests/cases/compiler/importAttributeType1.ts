@@ -19,6 +19,9 @@ declare module "*.data" with { type: "json" | "json5" } {
   export default data;
 }
 
+declare module "*.augmentable" {
+  export interface Existing {}
+}
 // @filename: /valid.ts
 import stylesheet from "./button.asset" with { type: "css" };
 import text from "./license.text" with { type: "text" };
@@ -31,3 +34,8 @@ data.version.toFixed();
 // @filename: /checkErrors.d.ts
 declare module "*.numberValue" with { type: number } {}
 declare module "*.objectValue" with { type: { name: string } } {}
+// @filename: /augmentation.ts
+export {};
+declare module "file.augmentable" with { type: "css" } {
+  export interface Added {}
+}

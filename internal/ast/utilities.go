@@ -3512,8 +3512,8 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 			modifierArray,
 			node.AsModuleDeclaration().Keyword,
 			node.Name(),
-			node.Body(),
 			node.Attributes(),
+			node.Body(),
 		)
 	case KindImportEqualsDeclaration:
 		return factory.UpdateImportEqualsDeclaration(

@@ -764,6 +764,7 @@ type Checker struct {
 	anyBaseTypeIndexInfo                        *IndexInfo
 	patternAmbientModules                       []*ast.PatternAmbientModule
 	patternAmbientModuleAugmentations           ast.SymbolTable
+	patternAmbientModuleAugmentationTargets     ast.SymbolTable
 	moduleImportAttributesTypes                 map[*ast.Symbol]*Type
 	globalObjectType                            *Type
 	globalFunctionType                          *Type
@@ -1374,6 +1375,7 @@ func (c *Checker) initializeChecker() {
 	for _, symbol := range ambientModuleSymbols {
 		c.mergeGlobalSymbol(symbol)
 	}
+	c.mergePatternAmbientModules()
 	// merge _nonglobal_ module augmentations.
 	// this needs to be done after global symbol table is initialized to make sure that all ambient modules are indexed
 	for _, list := range augmentations {
@@ -1394,6 +1396,33 @@ func (c *Checker) mergeGlobalSymbol(symbol *ast.Symbol) {
 		merged = c.getMergedSymbol(symbol)
 	}
 	c.globals[symbol.Name] = merged
+}
+
+// Pattern ambient modules are merged together if they have the same pattern and identical import attributes type.
+func (c *Checker) mergePatternAmbientModules() {
+	groupsByPattern := make(map[string][]int)
+	grouped := make([]*ast.PatternAmbientModule, 0, len(c.patternAmbientModules))
+	for _, module := range c.patternAmbientModules {
+		attributesType := c.getTypeOfModuleImportAttributes(module.Symbol)
+		groupIndex := -1
+		for _, index := range groupsByPattern[module.Pattern.Text] {
+			if c.isTypeIdenticalTo(attributesType, c.getTypeOfModuleImportAttributes(grouped[index].Symbol)) {
+				groupIndex = index
+				break
+			}
+		}
+		if groupIndex == -1 {
+			groupsByPattern[module.Pattern.Text] = append(groupsByPattern[module.Pattern.Text], len(grouped))
+			grouped = append(grouped, &ast.PatternAmbientModule{Pattern: module.Pattern, Symbol: module.Symbol})
+		} else {
+			grouped[groupIndex].Symbol = c.mergeSymbol(grouped[groupIndex].Symbol, module.Symbol, false /*unidirectional*/)
+		}
+	}
+	for _, module := range c.patternAmbientModules {
+		if _, ok := c.globals[module.Symbol.Name]; ok {
+			c.globals[module.Symbol.Name] = c.getMergedSymbol(module.Symbol)
+		}
+	}
 }
 
 func (c *Checker) mergeModuleAugmentation(moduleName *ast.Node) {
@@ -1428,11 +1457,12 @@ func (c *Checker) mergeModuleAugmentation(moduleName *ast.Node) {
 			// all the exports both from the pattern and from the augmentation, but
 			// 'getMergedSymbol()' on *.foo only gives you exports from *.foo.
 			if core.Some(c.patternAmbientModules, func(module *ast.PatternAmbientModule) bool {
-				return mainModule == module.Symbol
+				return mainModule == c.getMergedSymbol(module.Symbol)
 			}) {
 				merged := c.mergeSymbol(moduleAugmentation.Symbol, mainModule, true /*unidirectional*/)
 				// moduleName will be a StringLiteral since this is not `declare global`.
 				ast.GetSymbolTable(&c.patternAmbientModuleAugmentations)[moduleName.Text()] = merged
+				ast.GetSymbolTable(&c.patternAmbientModuleAugmentationTargets)[moduleName.Text()] = mainModule
 			} else {
 				if mainModule.Exports[ast.InternalSymbolNameExportStar] != nil && len(moduleAugmentation.Symbol.Exports) != 0 {
 					// We may need to merge the module augmentation's exports into the target symbols of the resolved exports
@@ -5172,6 +5202,9 @@ func (c *Checker) checkModuleDeclaration(node *ast.Node) {
 	}
 	if isAmbientExternalModule {
 		if ast.IsExternalModuleAugmentation(node) {
+			if attributes != nil {
+				c.error(attributes, diagnostics.Import_attributes_are_not_allowed_on_a_module_augmentation)
+			}
 			// body of the augmentation should be checked for consistency only if augmentation was applied to its target (either global scope or module)
 			// otherwise we'll be swamped in cascading errors.
 			// We can detect if augmentation was applied using following rules:
@@ -5200,7 +5233,7 @@ func (c *Checker) checkModuleDeclaration(node *ast.Node) {
 		}
 		if attributes != nil {
 			importAttributesType := c.getGlobalImportAttributesTypeChecked()
-			moduleAttributesType := c.getTypeOfModuleImportAttributes(symbol)
+			moduleAttributesType := c.getTypeOfModuleDeclarationImportAttributes(node)
 			if importAttributesType != c.emptyObjectType {
 				c.checkTypeAssignableTo(moduleAttributesType, importAttributesType, attributes, nil)
 			}
@@ -5208,20 +5241,24 @@ func (c *Checker) checkModuleDeclaration(node *ast.Node) {
 	}
 }
 
-// !!! HERE
-// ??? What symbol should we use to cache this?
-// there is the patternAmbientModules symbol,
-// but is that different from the symbol in `checkModuleDeclaration`?
+func (c *Checker) getTypeOfModuleDeclarationImportAttributes(moduleDeclaration *ast.Node) *Type {
+	attributes := moduleDeclaration.AsModuleDeclaration().Attributes
+	if attributes == nil {
+		return c.emptyObjectType
+	}
+	return c.getTypeFromTypeNode(attributes)
+}
+
 func (c *Checker) getTypeOfModuleImportAttributes(symbol *ast.Symbol) *Type {
 	if t, ok := c.moduleImportAttributesTypes[symbol]; ok {
 		return t
 	}
 	var result *Type
 	moduleDecl := core.Find(symbol.Declarations, ast.IsModuleWithStringLiteralName)
-	if moduleDecl == nil || moduleDecl.AsModuleDeclaration().Attributes == nil {
+	if moduleDecl == nil {
 		result = c.emptyObjectType
 	} else {
-		result = c.getTypeFromTypeNode(moduleDecl.AsModuleDeclaration().Attributes)
+		result = c.getTypeOfModuleDeclarationImportAttributes(moduleDecl)
 	}
 	c.moduleImportAttributesTypes[symbol] = result
 	return result
@@ -5452,13 +5489,20 @@ func (c *Checker) getTypeFromImportAttributes(node *ast.Node) *Type {
 	if node == nil {
 		return nil
 	}
+	if ast.IsImportAttributes(node) {
+		return c.checkImportAttributesExpression(node)
+	}
+	return c.checkExpressionCached(node)
+}
+
+func (c *Checker) checkImportAttributesExpression(node *ast.Node) *Type {
 	links := c.typeNodeLinks.Get(node)
 	if links.resolvedType == nil {
 		symbol := c.newSymbol(ast.SymbolFlagsObjectLiteral, ast.InternalSymbolNameImportAttributes)
 		members := make(ast.SymbolTable)
-		for _, attr := range node.AsImportAttributes().Attributes.Nodes {
-			member := c.newSymbol(ast.SymbolFlagsProperty, attr.Name().Text())
-			c.valueSymbolLinks.Get(member).resolvedType = c.getRegularTypeOfLiteralType(c.checkExpression(attr.AsImportAttribute().Value))
+		for _, attribute := range node.AsImportAttributes().Attributes.Nodes {
+			member := c.newSymbol(ast.SymbolFlagsProperty, attribute.Name().Text())
+			c.valueSymbolLinks.Get(member).resolvedType = c.getRegularTypeOfLiteralType(c.checkExpressionCached(attribute.AsImportAttribute().Value))
 			members[member.Name] = member
 		}
 		t := c.newAnonymousType(symbol, members, nil, nil, nil)
@@ -5476,8 +5520,8 @@ func (c *Checker) getImportAttributesTypeForModuleSpecifier(moduleSpecifier *ast
 	case ast.IsLiteralTypeNode(parent) && ast.IsLiteralImportTypeNode(parent.Parent):
 		return c.getTypeFromImportAttributes(ast.GetImportAttributes(parent.Parent))
 	case ast.IsImportCall(parent) && len(parent.Arguments()) > 1:
-		optionsType := c.checkExpressionCached(parent.Arguments()[1])
-		return c.getTypeOfPropertyOfType(optionsType, "with")
+		options := parent.Arguments()[1]
+		return c.getTypeOfPropertyOfType(c.checkExpressionCached(options), "with")
 	}
 	return nil
 }
@@ -13641,9 +13685,26 @@ func (c *Checker) hasDefaultValue(node *ast.Node) bool {
 func (c *Checker) isConstContext(node *ast.Node) bool {
 	parent := node.Parent
 	return ast.IsConstAssertion(parent) ||
+		c.isInlineImportAttributes(node) ||
 		c.isValidConstAssertionArgument(node) && c.isConstTypeVariable(c.getContextualType(node, ContextFlagsNone), 0) ||
 		(ast.IsParenthesizedExpression(parent) || ast.IsArrayLiteralExpression(parent) || ast.IsSpreadElement(parent)) && c.isConstContext(parent) ||
 		(ast.IsPropertyAssignment(parent) || ast.IsShorthandPropertyAssignment(parent) || ast.IsTemplateSpan(parent)) && c.isConstContext(parent.Parent)
+}
+
+func (c *Checker) isInlineImportAttributes(node *ast.Node) bool {
+	if !ast.IsObjectLiteralExpression(node) || !ast.IsPropertyAssignment(node.Parent) || node.Parent.Initializer() != node {
+		return false
+	}
+	property := node.Parent
+	if (!ast.IsIdentifier(property.Name()) && !ast.IsStringLiteralLike(property.Name())) || property.Name().Text() != "with" {
+		return false
+	}
+	options := property.Parent
+	if !ast.IsObjectLiteralExpression(options) {
+		return false
+	}
+	importCall := ast.FindAncestor(options, ast.IsImportCall)
+	return importCall != nil && len(importCall.Arguments()) > 1 && ast.SkipParentheses(importCall.Arguments()[1]) == options
 }
 
 func (c *Checker) isValidConstAssertionArgument(node *ast.Node) bool {
@@ -15410,7 +15471,6 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 	}
 
 	if len(c.patternAmbientModules) != 0 {
-		// !!! HERE: use assignability?
 		candidates := core.Filter(c.patternAmbientModules, func(v *ast.PatternAmbientModule) bool {
 			moduleAttributesType := c.getTypeOfModuleImportAttributes(v.Symbol)
 			return v.Pattern.Matches(moduleReference) && c.isTypeAssignableTo(importAttributesType, moduleAttributesType)
@@ -15418,12 +15478,14 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 
 		if len(candidates) > 0 {
 			augmentation := c.patternAmbientModuleAugmentations[moduleReference]
+			augmentationTarget := c.patternAmbientModuleAugmentationTargets[moduleReference]
 
 			if len(candidates) == 1 {
-				if augmentation != nil {
+				mergedCandidate := c.getMergedSymbol(candidates[0].Symbol)
+				if augmentation != nil && augmentationTarget == mergedCandidate {
 					return c.getMergedSymbol(augmentation)
 				}
-				return c.getMergedSymbol(candidates[0].Symbol)
+				return mergedCandidate
 			}
 
 			var bestTypeCandidates []*ast.PatternAmbientModule
@@ -15439,16 +15501,18 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 				bestTypeCandidates = append(bestTypeCandidates, candidate)
 			}
 			if len(bestTypeCandidates) == 1 {
-				if augmentation != nil {
+				mergedCandidate := c.getMergedSymbol(bestTypeCandidates[0].Symbol)
+				if augmentation != nil && augmentationTarget == mergedCandidate {
 					return c.getMergedSymbol(augmentation)
 				}
-				return c.getMergedSymbol(bestTypeCandidates[0].Symbol)
+				return mergedCandidate
 			}
 			pattern := core.FindBestPatternMatch(bestTypeCandidates, func(v *ast.PatternAmbientModule) core.Pattern { return v.Pattern }, moduleReference)
-			if augmentation != nil {
+			mergedCandidate := c.getMergedSymbol(pattern.Symbol)
+			if augmentation != nil && augmentationTarget == mergedCandidate {
 				return c.getMergedSymbol(augmentation)
 			}
-			return c.getMergedSymbol(pattern.Symbol)
+			return mergedCandidate
 		}
 	}
 
@@ -15624,9 +15688,18 @@ func (c *Checker) tryFindAmbientModule(moduleName string, withAugmentations bool
 
 func (c *Checker) GetAmbientModules() []*ast.Symbol {
 	c.ambientModulesOnce.Do(func() {
+		seen := make(map[*ast.Symbol]struct{})
 		for sym, global := range c.globals {
 			if strings.HasPrefix(sym, "\"") && strings.HasSuffix(sym, "\"") {
 				c.ambientModules = append(c.ambientModules, global)
+				seen[global] = struct{}{}
+			}
+		}
+		for _, module := range c.patternAmbientModules {
+			symbol := c.getMergedSymbol(module.Symbol)
+			if _, ok := seen[symbol]; !ok {
+				c.ambientModules = append(c.ambientModules, symbol)
+				seen[symbol] = struct{}{}
 			}
 		}
 	})
@@ -32109,7 +32182,7 @@ func (c *Checker) getTypeOfNode(node *ast.Node) *Type {
 	}
 
 	if ast.IsImportAttributes(node) {
-		return c.getGlobalImportAttributesType()
+		return c.checkImportAttributesExpression(node)
 	}
 
 	return c.errorType

@@ -79,6 +79,10 @@
         "category": "Error",
         "code": 1550
     },
+    "Import attributes are not allowed on a module augmentation.": {
+        "category": "Error",
+        "code": 1551
+    },
     "tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.": {
         "category": "Error",
         "code": 5112

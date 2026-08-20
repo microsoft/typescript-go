@@ -1,0 +1,11 @@
+--- old.nodeModulesImportModeDeclarationEmitErrors1(module=node18).js
++++ new.nodeModulesImportModeDeclarationEmitErrors1(module=node18).js
+@@= skipped -32, +32 lines =@@
+
+
+ //// [index.d.ts]
+-import type { RequireInterface } from "pkg";
++import type { RequireInterface } from "pkg" with { "resolution-mode": "foobar" };
+ import { ImportInterface } from "pkg" with { "resolution-mode": "import" };
+ export interface LocalInterface extends RequireInterface, ImportInterface {
+ }

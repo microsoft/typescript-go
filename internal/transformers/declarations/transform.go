@@ -1157,7 +1157,7 @@ func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *a
 			input.IsTypeOnly(),
 			input.AsExportDeclaration().ExportClause,
 			tx.rewriteModuleSpecifier(input, input.ModuleSpecifier()),
-			tx.tryGetResolutionModeOverride(input.AsExportDeclaration().Attributes),
+			input.AsExportDeclaration().Attributes,
 		)
 	case ast.KindExportAssignment:
 		return tx.transformExportAssignment(input, input, input.Expression(), input.AsExportAssignment().IsExportEquals)
@@ -1388,8 +1388,8 @@ func (tx *DeclarationTransformer) transformCommonJSExportWorker(input *ast.Node,
 						tx.Factory().NewModifierList(nsMods),
 						ast.KindNamespaceKeyword,
 						nsName,
-						tx.Factory().NewModuleBlock(tx.Factory().NewNodeList([]*ast.Node{classDecl})),
 						nil,
+						tx.Factory().NewModuleBlock(tx.Factory().NewNodeList([]*ast.Node{classDecl})),
 					)
 
 					aliasBase := "_exported"
@@ -1536,8 +1536,8 @@ func (tx *DeclarationTransformer) wrapInCJSExportNamespace(content *ast.Node) *a
 		tx.Factory().NewModifierList(nsMods),
 		ast.KindNamespaceKeyword,
 		nsName,
-		tx.Factory().NewModuleBlock(tx.Factory().NewNodeList(members)),
 		nil,
+		tx.Factory().NewModuleBlock(tx.Factory().NewNodeList(members)),
 	)
 }
 
@@ -1586,17 +1586,6 @@ func (tx *DeclarationTransformer) rewriteModuleSpecifier(parent *ast.Node, input
 	}
 	tx.resultHasExternalModuleIndicator = tx.resultHasExternalModuleIndicator || (parent.Kind != ast.KindModuleDeclaration && parent.Kind != ast.KindImportType)
 	return input
-}
-
-func (tx *DeclarationTransformer) tryGetResolutionModeOverride(node *ast.Node) *ast.Node {
-	if node == nil {
-		return node
-	}
-	mode, _ := node.GetResolutionModeOverride(nil)
-	if mode != core.ResolutionModeNone {
-		return node
-	}
-	return nil
 }
 
 func (tx *DeclarationTransformer) preserveJsDoc(updated *ast.Node, original *ast.Node) {
@@ -1866,8 +1855,8 @@ func (tx *DeclarationTransformer) transformModuleDeclaration(input *ast.ModuleDe
 			mods,
 			keyword,
 			input.Name(),
-			body,
 			attributes,
+			body,
 		)
 	}
 	if inner != nil {
@@ -1883,8 +1872,8 @@ func (tx *DeclarationTransformer) transformModuleDeclaration(input *ast.ModuleDe
 			mods,
 			keyword,
 			input.Name(),
-			body,
 			attributes,
+			body,
 		)
 	}
 	return tx.Factory().UpdateModuleDeclaration(
@@ -1892,8 +1881,8 @@ func (tx *DeclarationTransformer) transformModuleDeclaration(input *ast.ModuleDe
 		mods,
 		keyword,
 		input.Name(),
-		nil,
 		attributes,
+		nil,
 	)
 }
 
@@ -2481,7 +2470,7 @@ func (tx *DeclarationTransformer) transformImportDeclaration(decl *ast.ImportDec
 			decl.Modifiers(),
 			decl.ImportClause,
 			tx.rewriteModuleSpecifier(decl.AsNode(), decl.ModuleSpecifier),
-			tx.tryGetResolutionModeOverride(decl.Attributes),
+			decl.Attributes,
 		)
 	}
 	phaseModifier := decl.ImportClause.AsImportClause().PhaseModifier
@@ -2508,7 +2497,7 @@ func (tx *DeclarationTransformer) transformImportDeclaration(decl *ast.ImportDec
 				/*namedBindings*/ nil,
 			),
 			tx.rewriteModuleSpecifier(decl.AsNode(), decl.ModuleSpecifier),
-			tx.tryGetResolutionModeOverride(decl.Attributes),
+			decl.Attributes,
 		)
 	}
 	if decl.ImportClause.AsImportClause().NamedBindings.Kind == ast.KindNamespaceImport {
@@ -2530,7 +2519,7 @@ func (tx *DeclarationTransformer) transformImportDeclaration(decl *ast.ImportDec
 				namedBindings,
 			),
 			tx.rewriteModuleSpecifier(decl.AsNode(), decl.ModuleSpecifier),
-			tx.tryGetResolutionModeOverride(decl.Attributes),
+			decl.Attributes,
 		)
 	}
 	// Named imports (optionally with visible default)
@@ -2558,7 +2547,7 @@ func (tx *DeclarationTransformer) transformImportDeclaration(decl *ast.ImportDec
 				namedImports,
 			),
 			tx.rewriteModuleSpecifier(decl.AsNode(), decl.ModuleSpecifier),
-			tx.tryGetResolutionModeOverride(decl.Attributes),
+			decl.Attributes,
 		)
 	}
 	// Augmentation of export depends on import
@@ -2571,7 +2560,7 @@ func (tx *DeclarationTransformer) transformImportDeclaration(decl *ast.ImportDec
 			decl.Modifiers(),
 			/*importClause*/ nil,
 			tx.rewriteModuleSpecifier(decl.AsNode(), decl.ModuleSpecifier),
-			tx.tryGetResolutionModeOverride(decl.Attributes),
+			decl.Attributes,
 		)
 	}
 	// Nothing visible
@@ -2810,7 +2799,7 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 		varModifiers = tx.Factory().NewModifierList(ast.CreateModifiersFromModifierFlags(ast.ModifierFlagsExport, tx.Factory().NewModifier))
 	}
 
-	synthesizedNamespace := tx.Factory().NewModuleDeclaration(nil /*modifiers*/, ast.KindNamespaceKeyword, name, tx.Factory().NewModuleBlock(tx.Factory().NewNodeList([]*ast.Node{})), nil)
+	synthesizedNamespace := tx.Factory().NewModuleDeclaration(nil /*modifiers*/, ast.KindNamespaceKeyword, name, nil, tx.Factory().NewModuleBlock(tx.Factory().NewNodeList([]*ast.Node{})))
 	synthesizedNamespace.Parent = tx.enclosingDeclaration
 	declarationData := synthesizedNamespace.DeclarationData()
 	declarationData.Symbol = host
@@ -2957,8 +2946,8 @@ func (tx *DeclarationTransformer) createFullExpandoBlock(id ast.NodeId) *ast.Nod
 				modifiers,
 				ast.KindNamespaceKeyword,
 				name,
-				tx.Factory().NewModuleBlock(tx.Factory().NewNodeList(addOns)),
 				nil,
+				tx.Factory().NewModuleBlock(tx.Factory().NewNodeList(addOns)),
 			)
 			members := append(host, moduleDecl)
 			return tx.Factory().NewSyntaxList(members)

@@ -1,3 +1,4 @@
+/augmentation.ts(2,40): error TS1551: Import attributes are not allowed on a module augmentation.
 /checkErrors.d.ts(1,37): error TS2322: Type '{ type: number; }' is not assignable to type 'ImportAttributes'.
   Property 'type' is incompatible with index signature.
     Type 'number' is not assignable to type 'string'.
@@ -22,6 +23,9 @@
       export default data;
     }
     
+    declare module "*.augmentable" {
+      export interface Existing {}
+    }
 ==== /valid.ts (0 errors) ====
     import stylesheet from "./button.asset" with { type: "css" };
     import text from "./license.text" with { type: "text" };
@@ -42,3 +46,10 @@
 !!! error TS2322: Type '{ type: { name: string; }; }' is not assignable to type 'ImportAttributes'.
 !!! error TS2322:   Property 'type' is incompatible with index signature.
 !!! error TS2322:     Type '{ name: string; }' is not assignable to type 'string'.
+==== /augmentation.ts (1 errors) ====
+    export {};
+    declare module "file.augmentable" with { type: "css" } {
+                                           ~~~~~~~~~~~~~~~
+!!! error TS1551: Import attributes are not allowed on a module augmentation.
+      export interface Added {}
+    }

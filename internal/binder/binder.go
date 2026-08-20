@@ -309,6 +309,9 @@ func (b *Binder) getDeclarationName(node *ast.Node) string {
 			if ast.IsGlobalScopeAugmentation(node) {
 				return ast.InternalSymbolNameGlobal
 			}
+			if pattern := core.TryParsePattern(moduleName); pattern.IsValid() && pattern.StarIndex >= 0 {
+				return "\"" + moduleName + "\"" + ast.InternalSymbolNamePrefix + "pattern@" + strconv.FormatUint(uint64(ast.GetNodeId(node)), 10)
+			}
 			return "\"" + moduleName + "\""
 		}
 		if ast.IsPrivateIdentifier(name) {
@@ -786,10 +789,10 @@ func (b *Binder) bindModuleDeclaration(node *ast.Node) {
 				if !pattern.IsValid() {
 					// An invalid pattern - must have multiple wildcards.
 					b.errorOnFirstToken(name, diagnostics.Pattern_0_can_have_at_most_one_Asterisk_character, name.Text())
-				} else if pattern.StarIndex >= 0 { // !!! HERE: see if we need to add the attributes node or not
-					b.file.PatternAmbientModules = append(b.file.PatternAmbientModules, &ast.PatternAmbientModule{Pattern: pattern, Symbol: symbol, Attributes: attributes})
+				} else if pattern.StarIndex >= 0 {
+					b.file.PatternAmbientModules = append(b.file.PatternAmbientModules, &ast.PatternAmbientModule{Pattern: pattern, Symbol: symbol})
 				} else if attributes != nil {
-					b.errorOnNode(attributes, diagnostics.An_ambient_module_declaration_with_import_attributes_must_use_a_pattern_name_with_an_Asterisk_character)
+					b.errorOnNode(name, diagnostics.An_ambient_module_declaration_with_import_attributes_must_use_a_pattern_name_with_an_Asterisk_character)
 				}
 			}
 		}
