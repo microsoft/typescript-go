@@ -8,6 +8,7 @@ import (
 	"unicode/utf16"
 	"unicode/utf8"
 
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
@@ -153,14 +154,32 @@ func compareDecimalStrings(a string, b string) int {
 
 // Disjunction ::= Alternative ('|' Alternative)*
 func (p *regExpParser) scanDisjunction(isInGroup bool) {
+	// Names defined by any of this disjunction's alternatives. Since exactly one
+	// alternative is chosen at runtime, these names are unioned together (rather
+	// than intersected) and, when this disjunction is nested inside a group,
+	// bubbled up into the enclosing alternative's scope once the group closes.
+	// This ensures a name defined inside a nested group (e.g. `(?:(?<a>x))`) is
+	// still visible to a duplicate check for a sibling group later in the same
+	// enclosing alternative (e.g. `(?:(?<a>x))(?<a>z)`).
+	var disjunctionNames collections.Set[string]
 	for {
 		p.namedCapturingGroups = append(p.namedCapturingGroups, make(map[string]bool))
 		p.scanAlternative(isInGroup)
+		alternativeNames := p.namedCapturingGroups[len(p.namedCapturingGroups)-1]
 		p.namedCapturingGroups = p.namedCapturingGroups[:len(p.namedCapturingGroups)-1]
+		for name := range alternativeNames {
+			disjunctionNames.Add(name)
+		}
 		if p.char() != '|' {
-			return
+			break
 		}
 		p.incPos(1)
+	}
+	if isInGroup && len(p.namedCapturingGroups) > 0 {
+		parentScope := p.namedCapturingGroups[len(p.namedCapturingGroups)-1]
+		for name := range disjunctionNames.Keys() {
+			parentScope[name] = true
+		}
 	}
 }
 
@@ -255,6 +274,10 @@ func (p *regExpParser) scanAlternative(isInGroup bool) {
 						if p.pos() == flagsStart+1 {
 							p.error(diagnostics.Subpattern_flags_must_be_present_when_there_is_a_minus_sign, flagsStart, p.pos()-flagsStart)
 						}
+					}
+					// Modifier characters were consumed, so this is `(?flags:` rather than a plain `(?:` group.
+					if p.pos() != flagsStart && p.scanner.languageVersion() < core.ScriptTargetES2025 {
+						p.error(diagnostics.Regular_expression_pattern_modifiers_are_only_available_when_targeting_0_or_later, flagsStart, p.pos()-flagsStart, strings.ToLower(core.ScriptTargetES2025.String()))
 					}
 					p.scanExpectedChar(':')
 					isPreviousTermQuantifiable = true
@@ -365,8 +388,9 @@ func (p *regExpParser) scanPatternModifiers(currFlags regularExpressionFlags) re
 		} else if flag&regularExpressionFlagsModifiers == 0 {
 			p.error(diagnostics.This_regular_expression_flag_cannot_be_toggled_within_a_subpattern, p.pos(), size)
 		} else {
+			// Modifier syntax itself requires ES2025, which is later than any flag that can appear
+			// here, so the group's own diagnostic already covers availability.
 			currFlags |= flag
-			p.scanner.checkRegularExpressionFlagAvailability(flag, p.pos(), size)
 		}
 		p.incPos(size)
 	}
@@ -484,6 +508,13 @@ func (p *regExpParser) scanGroupName(isReference bool) {
 	} else if p.namedCapturingGroupsContains(p.scanner.tokenValue) {
 		p.error(diagnostics.Named_capturing_groups_with_the_same_name_must_be_mutually_exclusive_to_each_other, p.scanner.tokenStart, p.pos()-p.scanner.tokenStart)
 	} else {
+		// A previous definition can only have come from a mutually exclusive alternative.
+		// Below ES2018 the group itself is already reported, so don't stack a second error on it.
+		if p.groupSpecifiers[p.scanner.tokenValue] &&
+			p.scanner.languageVersion() >= core.ScriptTargetES2018 &&
+			p.scanner.languageVersion() < core.ScriptTargetES2025 {
+			p.error(diagnostics.Duplicate_named_capturing_groups_are_only_available_when_targeting_0_or_later, p.scanner.tokenStart, p.pos()-p.scanner.tokenStart, strings.ToLower(core.ScriptTargetES2025.String()))
+		}
 		if len(p.namedCapturingGroups) > 0 {
 			p.namedCapturingGroups[len(p.namedCapturingGroups)-1][p.scanner.tokenValue] = true
 		}
@@ -605,8 +636,6 @@ func (p *regExpParser) scanClassSetExpression() {
 			expressionMayContainStrings = p.mayContainStrings
 			p.mayContainStrings = !isCharacterComplement && expressionMayContainStrings
 			return
-		} else {
-			p.error(diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, p.pos(), 1, string(ch))
 		}
 	default:
 		if isCharacterComplement && p.mayContainStrings {
@@ -651,20 +680,17 @@ func (p *regExpParser) scanClassSetExpression() {
 				}
 			}
 		case '&':
-			start = p.pos()
-			p.incPos(1)
-			if p.char() == '&' {
-				p.incPos(1)
+			if p.pos()+1 < p.end && p.charAt(p.pos()+1) == '&' {
+				start = p.pos()
+				p.incPos(2)
 				p.error(diagnostics.Operators_must_not_be_mixed_within_a_character_class_Wrap_it_in_a_nested_class_instead, p.pos()-2, 2)
 				if p.char() == '&' {
 					p.error(diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, p.pos(), 1, string(ch))
 					p.incPos(1)
 				}
-			} else {
-				p.error(diagnostics.Unexpected_0_Did_you_mean_to_escape_it_with_backslash, p.pos()-1, 1, string(ch))
+				operand = p.text()[start:p.pos()]
+				continue
 			}
-			operand = p.text()[start:p.pos()]
-			continue
 		}
 		if p.isClassContentExit(p.char()) {
 			break
@@ -681,6 +707,10 @@ func (p *regExpParser) scanClassSetExpression() {
 			operand = p.text()[start:p.pos()]
 		default:
 			operand = p.scanClassSetOperand()
+			if isCharacterComplement && p.mayContainStrings {
+				p.error(diagnostics.Anything_that_would_possibly_match_more_than_a_single_character_is_invalid_inside_a_negated_character_class, start, p.pos()-start)
+			}
+			expressionMayContainStrings = expressionMayContainStrings || p.mayContainStrings
 		}
 	}
 	p.mayContainStrings = !isCharacterComplement && expressionMayContainStrings

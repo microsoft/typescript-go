@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/locale"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 // RepopulateDiagnosticKind indicates the kind of repopulation for a diagnostic chain entry.
@@ -35,8 +36,15 @@ type Diagnostic struct {
 	loc      core.TextRange
 	code     int32
 	category diagnostics.Category
+	// source, when non-empty, is a custom prefix (e.g. a content mapper's name) shown instead of "TS"
+	// before the code. It marks the diagnostic as coming from an external source whose ranges point
+	// into the file's original, untransformed text.
+	source string
 	// Original message; may be nil.
-	message            *diagnostics.Message
+	message *diagnostics.Message
+	// messageText is an already-localized message used when message is nil, e.g. a diagnostic
+	// deserialized from an external process that owns its own localization.
+	messageText        string
 	messageKey         diagnostics.Key
 	messageArgs        []string
 	messageChain       []*Diagnostic
@@ -54,6 +62,8 @@ func (d *Diagnostic) Len() int                                  { return d.loc.L
 func (d *Diagnostic) Loc() core.TextRange                       { return d.loc }
 func (d *Diagnostic) Code() int32                               { return d.code }
 func (d *Diagnostic) Category() diagnostics.Category            { return d.category }
+func (d *Diagnostic) Source() string                            { return d.source }
+func (d *Diagnostic) MessageText() string                       { return d.messageText }
 func (d *Diagnostic) MessageKey() diagnostics.Key               { return d.messageKey }
 func (d *Diagnostic) MessageArgs() []string                     { return d.messageArgs }
 func (d *Diagnostic) MessageChain() []*Diagnostic               { return d.messageChain }
@@ -68,6 +78,12 @@ func (d *Diagnostic) SetLocation(loc core.TextRange)                   { d.loc =
 func (d *Diagnostic) SetCategory(category diagnostics.Category)        { d.category = category }
 func (d *Diagnostic) SetSkippedOnNoEmit()                              { d.skippedOnNoEmit = true }
 func (d *Diagnostic) SetRepopulateInfo(info *RepopulateDiagnosticInfo) { d.repopulateInfo = info }
+
+func (d *Diagnostic) SetExternalData(source string, messageText string) *Diagnostic {
+	d.source = source
+	d.messageText = messageText
+	return d
+}
 
 func (d *Diagnostic) SetMessageChain(messageChain []*Diagnostic) *Diagnostic {
 	d.messageChain = messageChain
@@ -99,12 +115,52 @@ func (d *Diagnostic) Clone() *Diagnostic {
 }
 
 func (d *Diagnostic) Localize(locale locale.Locale) string {
-	return diagnostics.Localize(locale, d.message, d.messageKey, d.messageArgs...)
+	if d.message == nil && d.messageText != "" {
+		return d.messageText
+	}
+	return diagnostics.Localize(locale, d.message, d.messageKey, d.displayMessageArgs()...)
 }
 
 // For debugging only.
 func (d *Diagnostic) String() string {
-	return diagnostics.Localize(locale.Default, d.message, d.messageKey, d.messageArgs...)
+	if d.message == nil && d.messageText != "" {
+		return d.messageText
+	}
+	return diagnostics.Localize(locale.Default, d.message, d.messageKey, d.displayMessageArgs()...)
+}
+
+// displayMessageArgs substitutes the original text for a complete alias span when a diagnostic argument
+// exactly matches the virtual alias. Stored arguments remain unchanged for code fixes and serialization.
+func (d *Diagnostic) displayMessageArgs() []string {
+	if d.file == nil || d.source != "" {
+		return d.messageArgs
+	}
+	segment, ok := d.file.SpanMap().AliasForVirtualSpan(d.loc)
+	if !ok {
+		return d.messageArgs
+	}
+	virtualText := d.file.Text()
+	originalText := d.file.OriginalText()
+	if segment.VirtualStart < 0 || segment.VirtualEnd > core.TextPos(len(virtualText)) ||
+		segment.OriginalStart < 0 || segment.OriginalEnd > core.TextPos(len(originalText)) {
+		return d.messageArgs
+	}
+	virtualName := virtualText[segment.VirtualStart:segment.VirtualEnd]
+	originalName := originalText[segment.OriginalStart:segment.OriginalEnd]
+	var result []string
+	for i, arg := range d.messageArgs {
+		if arg != virtualName {
+			continue
+		}
+		if result == nil {
+			result = slices.Clone(d.messageArgs)
+		}
+		result[i] = originalName
+	}
+	if result != nil {
+		return result
+	}
+	return d.messageArgs
 }
 
 func NewDiagnosticFromSerialized(
@@ -160,31 +216,90 @@ func NewCompilerDiagnostic(message *diagnostics.Message, args ...any) *Diagnosti
 	return NewDiagnostic(nil, core.UndefinedTextRange(), message, args...)
 }
 
+// NewExternalDiagnostic creates a diagnostic reported by an external source such as a content mapper.
+// The message text is already localized (the external source owns localization) and the code is shown
+// with the given source prefix (e.g. "vue") instead of "TS". The location refers to the file's original,
+// untransformed content.
+func NewExternalDiagnostic(file *SourceFile, loc core.TextRange, source string, category diagnostics.Category, code int32, messageText string) *Diagnostic {
+	return &Diagnostic{
+		file:        file,
+		loc:         loc,
+		code:        code,
+		category:    category,
+		source:      source,
+		messageText: messageText,
+	}
+}
+
 type DiagnosticsCollection struct {
 	mu                       sync.Mutex
 	count                    int
-	fileDiagnostics          map[string][]*Diagnostic
-	fileDiagnosticsSorted    collections.Set[string]
+	fileDiagnostics          map[tspath.Path][]*Diagnostic
+	fileDiagnosticsSorted    collections.Set[tspath.Path]
 	nonFileDiagnostics       []*Diagnostic
 	nonFileDiagnosticsSorted bool
+	diagnosticIndex          map[diagnosticLocationKey]*Diagnostic
+	diagnosticCollisions     map[diagnosticLocationKey][]*Diagnostic
 }
 
-func (c *DiagnosticsCollection) Add(diagnostic *Diagnostic) {
+func (c *DiagnosticsCollection) Add(diagnostic *Diagnostic) *Diagnostic {
 	c.mu.Lock()
 	defer c.mu.Unlock()
+
+	key := getDiagnosticLocationKey(diagnostic)
+	if existing := c.diagnosticIndex[key]; existing != nil {
+		if EqualDiagnostics(existing, diagnostic) {
+			return existing
+		}
+		for _, collision := range c.diagnosticCollisions[key] {
+			if EqualDiagnostics(collision, diagnostic) {
+				return collision
+			}
+		}
+	}
+	if c.diagnosticIndex == nil {
+		c.diagnosticIndex = make(map[diagnosticLocationKey]*Diagnostic)
+	}
+	if c.diagnosticIndex[key] == nil {
+		c.diagnosticIndex[key] = diagnostic
+	} else {
+		if c.diagnosticCollisions == nil {
+			c.diagnosticCollisions = make(map[diagnosticLocationKey][]*Diagnostic)
+		}
+		c.diagnosticCollisions[key] = append(c.diagnosticCollisions[key], diagnostic)
+	}
 
 	c.count++
 
 	if diagnostic.File() != nil {
-		fileName := diagnostic.File().FileName()
+		path := diagnostic.File().Path()
 		if c.fileDiagnostics == nil {
-			c.fileDiagnostics = make(map[string][]*Diagnostic)
+			c.fileDiagnostics = make(map[tspath.Path][]*Diagnostic)
 		}
-		c.fileDiagnostics[fileName] = append(c.fileDiagnostics[fileName], diagnostic)
-		c.fileDiagnosticsSorted.Delete(fileName)
+		c.fileDiagnostics[path] = append(c.fileDiagnostics[path], diagnostic)
+		c.fileDiagnosticsSorted.Delete(path)
 	} else {
 		c.nonFileDiagnostics = append(c.nonFileDiagnostics, diagnostic)
 		c.nonFileDiagnosticsSorted = false
+	}
+	return diagnostic
+}
+
+type diagnosticLocationKey struct {
+	path tspath.Path
+	loc  core.TextRange
+	code int32
+}
+
+func getDiagnosticLocationKey(diagnostic *Diagnostic) diagnosticLocationKey {
+	var path tspath.Path
+	if diagnostic.File() != nil {
+		path = diagnostic.File().Path()
+	}
+	return diagnosticLocationKey{
+		path: path,
+		loc:  diagnostic.Loc(),
+		code: diagnostic.Code(),
 	}
 }
 
@@ -194,7 +309,7 @@ func (c *DiagnosticsCollection) Lookup(diagnostic *Diagnostic) *Diagnostic {
 
 	var diagnostics []*Diagnostic
 	if diagnostic.File() != nil {
-		diagnostics = c.getDiagnosticsForFileLocked(diagnostic.File().FileName())
+		diagnostics = c.getDiagnosticsForFileLocked(diagnostic.File())
 	} else {
 		diagnostics = c.getGlobalDiagnosticsLocked()
 	}
@@ -219,19 +334,20 @@ func (c *DiagnosticsCollection) getGlobalDiagnosticsLocked() []*Diagnostic {
 	return slices.Clone(c.nonFileDiagnostics)
 }
 
-func (c *DiagnosticsCollection) GetDiagnosticsForFile(fileName string) []*Diagnostic {
+func (c *DiagnosticsCollection) GetDiagnosticsForFile(file *SourceFile) []*Diagnostic {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	return c.getDiagnosticsForFileLocked(fileName)
+	return c.getDiagnosticsForFileLocked(file)
 }
 
-func (c *DiagnosticsCollection) getDiagnosticsForFileLocked(fileName string) []*Diagnostic {
-	if !c.fileDiagnosticsSorted.Has(fileName) {
-		slices.SortStableFunc(c.fileDiagnostics[fileName], CompareDiagnostics)
-		c.fileDiagnosticsSorted.Add(fileName)
+func (c *DiagnosticsCollection) getDiagnosticsForFileLocked(file *SourceFile) []*Diagnostic {
+	path := file.Path()
+	if !c.fileDiagnosticsSorted.Has(path) {
+		slices.SortStableFunc(c.fileDiagnostics[path], CompareDiagnostics)
+		c.fileDiagnosticsSorted.Add(path)
 	}
-	return slices.Clone(c.fileDiagnostics[fileName])
+	return slices.Clone(c.fileDiagnostics[path])
 }
 
 func (c *DiagnosticsCollection) GetDiagnostics() []*Diagnostic {
@@ -269,8 +385,21 @@ func EqualDiagnosticsNoRelatedInfo(d1, d2 *Diagnostic) bool {
 	return getDiagnosticPath(d1) == getDiagnosticPath(d2) &&
 		d1.Loc() == d2.Loc() &&
 		d1.Code() == d2.Code() &&
+		d1.Category() == d2.Category() &&
+		d1.Source() == d2.Source() &&
+		getDiagnosticMessageIdentity(d1) == getDiagnosticMessageIdentity(d2) &&
 		slices.Equal(d1.MessageArgs(), d2.MessageArgs()) &&
 		slices.EqualFunc(d1.MessageChain(), d2.MessageChain(), equalMessageChain)
+}
+
+func getDiagnosticMessageIdentity(diagnostic *Diagnostic) string {
+	if diagnostic.MessageText() != "" {
+		return diagnostic.MessageText()
+	}
+	if diagnostic.message != nil && diagnostic.Code() == -1 {
+		return diagnostic.message.String()
+	}
+	return string(diagnostic.MessageKey())
 }
 
 func equalMessageChain(c1, c2 *Diagnostic) bool {
@@ -343,6 +472,18 @@ func CompareDiagnostics(d1, d2 *Diagnostic) int {
 		return c
 	}
 	c = int(d1.Code()) - int(d2.Code())
+	if c != 0 {
+		return c
+	}
+	c = int(d1.Category()) - int(d2.Category())
+	if c != 0 {
+		return c
+	}
+	c = strings.Compare(d1.Source(), d2.Source())
+	if c != 0 {
+		return c
+	}
+	c = strings.Compare(getDiagnosticMessageIdentity(d1), getDiagnosticMessageIdentity(d2))
 	if c != 0 {
 		return c
 	}

@@ -15,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/testutil/autoimporttestutil"
+	"github.com/microsoft/typescript-go/internal/testutil/contentmappertest"
 	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -780,6 +781,65 @@ export declare const otherValue: string;`,
 		}
 	})
 
+	t.Run("circular workspace symlinks do not exclude local project files", func(t *testing.T) {
+		t.Parallel()
+
+		monorepoRoot := "/home/src/circular-workspaces"
+		packageADir := tspath.CombinePaths(monorepoRoot, "packages", "pkg-a")
+		packageBDir := tspath.CombinePaths(monorepoRoot, "packages", "pkg-b")
+		consumerA := tspath.CombinePaths(packageADir, "consumer.ts")
+		helperA := tspath.CombinePaths(packageADir, "helper.ts")
+
+		files := map[string]any{
+			tspath.CombinePaths(packageADir, "tsconfig.json"): `{
+				"compilerOptions": {
+					"module": "esnext",
+					"strict": true
+				}
+			}`,
+			tspath.CombinePaths(packageADir, "package.json"): `{
+				"name": "pkg-a",
+				"dependencies": { "pkg-b": "*" }
+			}`,
+			tspath.CombinePaths(packageADir, "index.ts"): `import { b } from "pkg-b";
+export const a = b;
+`,
+			consumerA: `export const usesHelper = uniqueHelperValueFromHelperA;
+`,
+			helperA: `export const uniqueHelperValueFromHelperA = 1;
+`,
+			tspath.CombinePaths(packageBDir, "tsconfig.json"): `{
+				"compilerOptions": {
+					"module": "esnext",
+					"strict": true
+				}
+			}`,
+			tspath.CombinePaths(packageBDir, "package.json"): `{
+				"name": "pkg-b",
+				"dependencies": { "pkg-a": "*" }
+			}`,
+			tspath.CombinePaths(packageBDir, "index.ts"): `import { a } from "pkg-a";
+export const b = a;
+`,
+			// Circular workspace links
+			tspath.CombinePaths(packageADir, "node_modules", "pkg-b"): vfstest.Symlink(packageBDir),
+			tspath.CombinePaths(packageBDir, "node_modules", "pkg-a"): vfstest.Symlink(packageADir),
+		}
+
+		session, _ := projecttestutil.Setup(files)
+		t.Cleanup(session.Close)
+		ctx := context.Background()
+		consumerAURI := lsconv.FileNameToDocumentURI(consumerA)
+		session.DidOpenFile(ctx, consumerAURI, 1, files[consumerA].(string), lsproto.LanguageKindTypeScript)
+
+		_, err := session.GetCurrentLanguageServiceWithAutoImports(ctx, consumerAURI)
+		assert.NilError(t, err)
+
+		stats := autoImportStats(t, session)
+		projectBucket := singleBucket(t, stats.ProjectBuckets)
+		assert.Equal(t, 3, projectBucket.FileCount, "expected all pkg-a project files despite circular workspace symlinks")
+	})
+
 	t.Run("changed fileExcludePatterns triggers bucket rebuild", func(t *testing.T) {
 		t.Parallel()
 		fixture := autoimporttestutil.SetupLifecycleSession(t, lifecycleProjectRoot, 1)
@@ -893,6 +953,53 @@ export declare const otherValue: string;`,
 		assert.Equal(t, len(stats.NodeModulesBuckets), 2, "expected both app and repo node_modules buckets")
 		assert.Equal(t, stats.UniquePackageCount, 1, "expected one unique package after realpath dedup")
 	})
+}
+
+func TestContentMappedNodeModulesFileUsesProjectBucket(t *testing.T) {
+	t.Parallel()
+	if !bundled.Embedded {
+		t.Skip("bundled files are not embedded")
+	}
+
+	files := map[string]any{
+		"/home/project/tsconfig.json": `{
+			"compilerOptions": { "module": "esnext", "moduleResolution": "bundler", "strict": true, "skipLibCheck": true },
+			"contentMappers": [ { "package": "mapper", "extensions": [".vue"] } ]
+		}`,
+		"/home/project/node_modules/mapper/package.json": contentmappertest.PackageJSON(contentmappertest.ComponentMapper),
+		"/home/project/node_modules/profile-package/ProfileCard.vue": `<component name="ProfileCard">
+<script lang="ts">
+export const profileTitle = "Profile";
+</script>`,
+		"/home/project/node_modules/profile-package/HiddenCard.vue": `<component name="HiddenCard">
+<script lang="ts">
+export const hiddenTitle = "Hidden";
+</script>`,
+		"/home/project/node_modules/profile-package/ordinary.ts": `export const ordinary = true;`,
+		"/home/project/load.ts": `import "profile-package/ProfileCard.vue";
+import "profile-package/ordinary";`,
+		"/home/project/main.ts": `profileTitle;`,
+	}
+	init, _ := projecttestutil.GetSessionInitOptions(files, &project.SessionOptions{
+		CurrentDirectory:   "/home/project",
+		DefaultLibraryPath: bundled.LibPath(),
+		TypingsLocation:    projecttestutil.TestTypingsLocation,
+		PositionEncoding:   lsproto.PositionEncodingKindUTF8,
+		RunExternalCode:    true,
+	}, nil)
+	init.Spawner = contentmappertest.NewSpawner()
+	session := project.NewSession(init)
+	defer session.Close()
+
+	ctx := context.Background()
+	mainURI := lsproto.DocumentUri("file:///home/project/main.ts")
+	session.DidOpenFile(ctx, mainURI, 1, files["/home/project/main.ts"].(string), lsproto.LanguageKindTypeScript)
+	_, err := session.GetCurrentLanguageServiceWithAutoImports(ctx, mainURI)
+	assert.NilError(t, err)
+	session.WaitForBackgroundTasks()
+
+	projectBucket := singleBucket(t, autoImportStats(t, session).ProjectBuckets)
+	assert.Equal(t, projectBucket.FileCount, 3, "expected the two project roots and referenced mapped package file")
 }
 
 func TestHiddenDirectoriesInNodeModules(t *testing.T) {

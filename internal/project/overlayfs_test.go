@@ -17,6 +17,7 @@ func TestProcessChanges(t *testing.T) {
 		testFS := vfstest.FromMap(map[string]string{
 			"/test1.ts": "// existing content",
 			"/test2.ts": "// existing content",
+			"/script":   "// extensionless content",
 		}, false /* useCaseSensitiveFileNames */)
 		return newOverlayFS(
 			testFS,
@@ -181,6 +182,35 @@ func TestProcessChanges(t *testing.T) {
 		fh := fs.getFile(uri.FileName())
 		assert.Assert(t, fh != nil)
 		assert.Equal(t, fh.Kind(), core.ScriptKindTS)
+	})
+
+	t.Run("open extensionless file preserves unknown script kind", func(t *testing.T) {
+		t.Parallel()
+		fs := createOverlayFS()
+		uri := lsproto.DocumentUri("file:///script")
+
+		fs.processChanges([]FileChange{
+			{
+				Kind:         FileChangeKindOpen,
+				URI:          uri,
+				Version:      1,
+				Content:      "const x = 1;",
+				LanguageKind: lsproto.LanguageKind("plaintext"),
+			},
+		})
+
+		fh := fs.getFile(uri.FileName())
+		assert.Assert(t, fh != nil)
+		assert.Equal(t, fh.Kind(), core.ScriptKindUnknown)
+	})
+
+	t.Run("extensionless disk file preserves unknown script kind", func(t *testing.T) {
+		t.Parallel()
+		fs := createOverlayFS()
+
+		fh := fs.getFile("/script")
+		assert.Assert(t, fh != nil)
+		assert.Equal(t, fh.Kind(), core.ScriptKindUnknown)
 	})
 
 	t.Run("watch change on overlay marks as not matching disk", func(t *testing.T) {

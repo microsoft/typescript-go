@@ -3,11 +3,13 @@ package ls
 import (
 	"context"
 	"slices"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/ls/change"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -64,7 +66,8 @@ func (l *LanguageService) GetEditsForFileRename(ctx context.Context, oldURI lspr
 		}
 	}
 
-	for fileName, edits := range changeTracker.GetChanges() {
+	changes, _ := changeTracker.GetChanges()
+	for fileName, edits := range changes {
 		uri := lsconv.FileNameToDocumentURI(fileName)
 		lspEdits := make([]lsproto.TextEditOrAnnotatedTextEditOrSnippetTextEdit, 0, len(edits))
 		for _, edit := range edits {
@@ -85,12 +88,22 @@ func (l *LanguageService) GetEditsForFileRename(ctx context.Context, oldURI lspr
 
 func (l *LanguageService) createPathUpdater(oldPath string, newPath string) pathUpdater {
 	compareOptions := tspath.ComparePathsOptions{UseCaseSensitiveFileNames: l.UseCaseSensitiveFileNames()}
+	trimmedOldPath := tspath.RemoveTrailingDirectorySeparator(oldPath)
 	return func(path string) (string, bool) {
 		if tspath.ComparePaths(path, oldPath, compareOptions) == 0 {
 			return newPath, true
 		}
-		if tspath.StartsWithDirectory(path, oldPath, l.UseCaseSensitiveFileNames()) {
-			return newPath + path[len(oldPath):], true
+		// Trim the directory prefix ourselves (rather than using
+		// tspath.StartsWithDirectory followed by a separate slice on
+		// len(oldPath)) so the containment check and the suffix we return can
+		// never disagree, and so we don't slice path by a byte count derived
+		// from a canonicalized/differently-cased string: case-folding can
+		// change a path's UTF-8 byte length without changing its rune count
+		// (e.g. the Kelvin sign '\u212A' folds to the single-byte 'k'), which
+		// could otherwise put len(oldPath) out of range of path.
+		if suffix, ok := tspath.TrimFilePathPrefix(path, trimmedOldPath, l.UseCaseSensitiveFileNames()); ok &&
+			(strings.HasPrefix(suffix, "/") || strings.HasPrefix(suffix, "\\")) {
+			return newPath + suffix, true
 		}
 		return "", false
 	}
@@ -185,10 +198,10 @@ func tryUpdateConfigString(configFile *ast.SourceFile, configDir string, element
 		return false
 	}
 
-	changeTracker.ReplaceRangeWithText(configFile, lsproto.Range{
-		Start: converters.PositionToLineAndCharacter(configFile, core.TextPos(scanner.GetTokenPosOfNode(element, configFile, false)+1)),
-		End:   converters.PositionToLineAndCharacter(configFile, core.TextPos(element.End()-1)),
-	}, relativePathFromDirectory(configDir, updated, useCaseSensitiveFileNames))
+	textRange := core.NewTextRange(scanner.GetTokenPosOfNode(element, configFile, false)+1, element.End()-1)
+	lspRange, fidelity := converters.ToLSPRange(configFile, textRange)
+	debug.Assert(fidelity.IsExact(), "config files are not content-mapped")
+	changeTracker.ReplaceRangeWithText(configFile, lspRange, relativePathFromDirectory(configDir, updated, useCaseSensitiveFileNames))
 	return true
 }
 
@@ -209,15 +222,15 @@ func (l *LanguageService) updateImportsForFileRename(program *compiler.Program, 
 
 	var movedFiles []movedFile
 	for _, sourceFile := range allFiles {
-		if newFileName, ok := oldToNew(sourceFile.FileName()); ok {
+		if newFileName, ok := oldToNew(sourceFile.OriginalFileName()); ok {
 			movedFiles = append(movedFiles, movedFile{sourceFile: sourceFile, newFileName: newFileName})
 		}
 	}
 
 	for _, sourceFile := range allFiles {
-		oldFileName := sourceFile.FileName()
-		newFromOld, fileMoved := oldToNew(sourceFile.FileName())
-		newImportFromPath := sourceFile.FileName()
+		oldFileName := sourceFile.OriginalFileName()
+		newFromOld, fileMoved := oldToNew(oldFileName)
+		newImportFromPath := oldFileName
 		if fileMoved {
 			newImportFromPath = newFromOld
 		}
@@ -228,14 +241,14 @@ func (l *LanguageService) updateImportsForFileRename(program *compiler.Program, 
 			}
 			updated := l.updateRelativePath(oldToNew, oldFileName, newImportFromPath, ref.FileName)
 			if updated != ref.FileName {
-				changeTracker.ReplaceRangeWithText(sourceFile, l.converters.ToLSPRange(sourceFile, ref.TextRange), updated)
+				changeTracker.ReplaceTextRangeWithText(sourceFile, ref.TextRange, updated)
 			}
 		}
 
 		for _, importStringLiteral := range sourceFile.Imports() {
 			updated := l.getUpdatedImportSpecifier(program, checker, sourceFile, importStringLiteral, oldToNew, movedFiles, newImportFromPath, fileMoved, moduleSpecifierPreferences)
 			if updated != "" && updated != importStringLiteral.Text() {
-				changeTracker.ReplaceRangeWithText(sourceFile, l.converters.ToLSPRange(sourceFile, createStringTextRange(sourceFile, importStringLiteral)), updated)
+				changeTracker.ReplaceTextRangeWithText(sourceFile, createStringTextRange(sourceFile, importStringLiteral), updated)
 			}
 		}
 	}

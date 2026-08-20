@@ -1,3 +1,11 @@
+# This Repo Is Closed
+
+This was the staging repo for the TypeScript 7.0 release during the native port process, which is now completed!
+
+Please continue development and discussion in [the original repo](https://github.com/microsoft/TypeScript)
+
+This repo will be permanently archived in September 2026.
+
 # TypeScript 7
 
 [Not sure what this is? Read the announcement post!](https://devblogs.microsoft.com/typescript/typescript-native-port/)

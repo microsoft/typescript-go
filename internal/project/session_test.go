@@ -112,6 +112,27 @@ func TestSession(t *testing.T) {
 			program := ls.GetProgram()
 			assert.Assert(t, program.GetSourceFile("/home/projects/TS/p1/index.js") != nil)
 		})
+
+		t.Run("inferred project extensionless file", func(t *testing.T) {
+			t.Parallel()
+			files := map[string]any{
+				"/home/projects/TS/p1/script": `const x = 1;`,
+			}
+			session, _ := projecttestutil.Setup(files)
+
+			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/script", 1, files["/home/projects/TS/p1/script"].(string), lsproto.LanguageKind("plaintext"))
+
+			snapshot := session.Snapshot()
+			assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
+			assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
+
+			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/script")
+			assert.NilError(t, err)
+			program := ls.GetProgram()
+			file := program.GetSourceFile("/home/projects/TS/p1/script")
+			assert.Assert(t, file != nil)
+			assert.Equal(t, file.ScriptKind, core.ScriptKindTS)
+		})
 	})
 
 	t.Run("watchChange and didOpen in same batch rebuilds program", func(t *testing.T) {
@@ -1493,6 +1514,38 @@ export const value = content;`,
 		setLocaleCalls := utils.Client().SetLocaleCalls()
 		assert.Equal(t, len(setLocaleCalls), 1)
 		assert.Equal(t, setLocaleCalls[0].LocaleMoqParam, "fr")
+	})
+
+	t.Run("locale change invalidates programs", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]any{
+			"/src/tsconfig.json": "{}",
+			"/src/index.ts":      "export const x = 1;",
+		}
+		session, _ := projecttestutil.Setup(files)
+		defer session.Close()
+		ctx := context.Background()
+		uri := lsproto.DocumentUri("file:///src/index.ts")
+		configPath := tspath.Path("/src/tsconfig.json")
+		session.DidOpenFile(ctx, uri, 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		_, err := session.GetLanguageService(ctx, uri)
+		assert.NilError(t, err)
+		initialProgram := session.Snapshot().ProjectCollection.ConfiguredProject(configPath).Program
+
+		preferences := session.Config()
+		preferences.CodeLens.ReferencesCodeLensEnabled = core.TSTrue
+		session.Configure(preferences)
+		_, err = session.GetLanguageService(ctx, uri)
+		assert.NilError(t, err)
+		programAfterCodeLensChange := session.Snapshot().ProjectCollection.ConfiguredProject(configPath).Program
+		assert.Equal(t, programAfterCodeLensChange, initialProgram)
+
+		preferences.Locale = "fr"
+		session.Configure(preferences)
+		_, err = session.GetLanguageService(ctx, uri)
+		assert.NilError(t, err)
+		programAfterLocaleChange := session.Snapshot().ProjectCollection.ConfiguredProject(configPath).Program
+		assert.Assert(t, programAfterLocaleChange != initialProgram)
 	})
 
 	t.Run("adds locale to background contexts", func(t *testing.T) {

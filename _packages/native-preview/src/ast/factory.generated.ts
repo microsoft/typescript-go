@@ -71,6 +71,7 @@ import type {
     FunctionTypeNode,
     GetAccessorDeclaration,
     HeritageClause,
+    HeritageClauseElement,
     Identifier,
     IfStatement,
     ImportAttribute,
@@ -307,6 +308,9 @@ export class NodeObject {
     get body(): any {
         return this._data?.body;
     }
+    get canonicalSourceFileName(): any {
+        return this._data?.canonicalSourceFileName;
+    }
     get caseBlock(): any {
         return this._data?.caseBlock;
     }
@@ -346,6 +350,9 @@ export class NodeObject {
     get containsOnlyTriviaWhiteSpaces(): any {
         return this._data?.containsOnlyTriviaWhiteSpaces;
     }
+    get contentMapper(): any {
+        return this._data?.contentMapper;
+    }
     get declarationList(): any {
         return this._data?.declarationList;
     }
@@ -354,6 +361,9 @@ export class NodeObject {
     }
     get defaultType(): any {
         return this._data?.defaultType;
+    }
+    get diagnosticDirectives(): any {
+        return this._data?.diagnosticDirectives;
     }
     get dotDotDotToken(): any {
         return this._data?.dotDotDotToken;
@@ -526,6 +536,9 @@ export class NodeObject {
     get operatorToken(): any {
         return this._data?.operatorToken;
     }
+    get originalText(): any {
+        return this._data?.originalText;
+    }
     get parameterName(): any {
         return this._data?.parameterName;
     }
@@ -571,11 +584,17 @@ export class NodeObject {
     get scriptKind(): any {
         return this._data?.scriptKind;
     }
+    get spanMap(): any {
+        return this._data?.spanMap;
+    }
     get statement(): any {
         return this._data?.statement;
     }
     get statements(): any {
         return this._data?.statements;
+    }
+    get supplementalSourceFileNames(): any {
+        return this._data?.supplementalSourceFileNames;
     }
     get tag(): any {
         return this._data?.tag;
@@ -651,6 +670,9 @@ export class NodeObject {
     }
     get variableDeclaration(): any {
         return this._data?.variableDeclaration;
+    }
+    get virtualFileName(): any {
+        return this._data?.virtualFileName;
     }
     get whenFalse(): any {
         return this._data?.whenFalse;
@@ -1673,7 +1695,7 @@ export function createPrivateIdentifier(text: string): PrivateIdentifier {
     }) as unknown as PrivateIdentifier;
 }
 
-export function createQualifiedName(left: EntityName, right: Identifier): QualifiedName {
+export function createQualifiedName(left: EntityName, right: MemberName): QualifiedName {
     return new NodeObject(SyntaxKind.QualifiedName, {
         left,
         right,
@@ -1892,7 +1914,7 @@ export function createClassExpression(modifiers: readonly ModifierLike[] | undef
     }) as unknown as ClassExpression;
 }
 
-export function createHeritageClause(token: SyntaxKind.ExtendsKeyword | SyntaxKind.ImplementsKeyword, types: readonly ExpressionWithTypeArguments[]): HeritageClause {
+export function createHeritageClause(token: SyntaxKind.ExtendsKeyword | SyntaxKind.ImplementsKeyword, types: readonly HeritageClauseElement[]): HeritageClause {
     return new NodeObject(SyntaxKind.HeritageClause, {
         token,
         types: createNodeArray(types),
@@ -3106,7 +3128,7 @@ export function createJSDocPropertyTag(tagName: Identifier, name: EntityName, is
     }) as unknown as JSDocPropertyTag;
 }
 
-export function updateQualifiedName(node: QualifiedName, left: EntityName, right: Identifier): QualifiedName {
+export function updateQualifiedName(node: QualifiedName, left: EntityName, right: MemberName): QualifiedName {
     return node.left !== left || node.right !== right ? createQualifiedName(left, right) : node;
 }
 
@@ -3218,7 +3240,7 @@ export function updateClassExpression(node: ClassExpression, modifiers: readonly
     return node.modifiers !== modifiers || node.name !== name || node.typeParameters !== typeParameters || node.heritageClauses !== heritageClauses || node.members !== members ? createClassExpression(modifiers, name, typeParameters, heritageClauses, members) : node;
 }
 
-export function updateHeritageClause(node: HeritageClause, types: readonly ExpressionWithTypeArguments[]): HeritageClause {
+export function updateHeritageClause(node: HeritageClause, types: readonly HeritageClauseElement[]): HeritageClause {
     return node.types !== types ? createHeritageClause(node.token, types) : node;
 }
 
@@ -3791,6 +3813,11 @@ export function createSourceFile(statements: readonly Statement[], endOfFileToke
         statements: createNodeArray(statements),
         endOfFileToken,
         text,
+        originalText: text,
+        spanMap: undefined,
+        contentMapper: undefined,
+        virtualFileName: undefined,
+        diagnosticDirectives: undefined,
         fileName,
         path,
     }) as unknown as SourceFile;

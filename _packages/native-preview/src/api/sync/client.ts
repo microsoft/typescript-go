@@ -3,9 +3,14 @@ import {
     type ClientOptions,
     type ClientSocketOptions,
     type ClientSpawnOptions,
+    getAPIProcessArgs,
     isSpawnOptions,
     resolveExePath,
 } from "../options.ts";
+import type {
+    APIMethodInfo,
+    SourceFileResponseMethod,
+} from "../proto.ts";
 import { SyncRpcChannel } from "../syncChannel.ts";
 import {
     combineTimingInfo,
@@ -27,12 +32,7 @@ export class Client {
             throw new Error("Socket connections are not yet supported in the sync client");
         }
 
-        const cwd = options.cwd ?? process.cwd();
-        const args = [
-            "--api",
-            "--cwd",
-            cwd,
-        ];
+        const args = getAPIProcessArgs(options, false);
 
         // Enable virtual FS callbacks for each provided FS function
         const enabledCallbacks: (typeof fsCallbackNames[number])[] = [];
@@ -49,7 +49,6 @@ export class Client {
 
         const collectTiming = options.collectTiming ?? false;
         if (collectTiming) {
-            args.push("--timing");
             this.timing = new TimingCollector();
         }
 
@@ -86,18 +85,18 @@ export class Client {
         }
     }
 
-    apiRequest<T>(method: string, params?: unknown): T {
+    apiRequest<K extends keyof APIMethodInfo>(method: K, params?: APIMethodInfo[K]["params"]): APIMethodInfo[K]["result"] {
         const encodedPayload = JSON.stringify(params);
         const start = performance.now();
         const result = this.channel.requestSync(method, encodedPayload);
         this.recordTiming(method, start);
         if (result.length) {
-            return JSON.parse(result) as T;
+            return JSON.parse(result) as APIMethodInfo[K]["result"];
         }
-        return undefined as unknown as T;
+        return undefined as APIMethodInfo[K]["result"];
     }
 
-    apiRequestBinary(method: string, params?: unknown): Uint8Array | undefined {
+    apiRequestBinary<K extends SourceFileResponseMethod>(method: K, params?: APIMethodInfo[K]["params"]): Uint8Array | undefined {
         const start = performance.now();
         const result = this.channel.requestBinarySync(method, this.encoder.encode(JSON.stringify(params)));
         this.recordTiming(method, start);

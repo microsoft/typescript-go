@@ -5,20 +5,24 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
-	"github.com/microsoft/typescript-go/internal/ls"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestAutoImportPatternAmbientModule(t *testing.T) {
+// Auto-imports ignores
+func TestAutoImportMergedPatternAmbientModule(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /tsconfig.json
 { "compilerOptions": { "module": "preserve", "moduleResolution": "bundler" } }
 
-// @Filename: /types.d.ts
+// @Filename: /first.d.ts
 declare module "*.asset" with { type: "css" } {
     export const styles: string;
+}
+
+// @Filename: /second.d.ts
+declare module "*.asset" with { type: "css" } {
+    export const styleTokens: string;
 }
 
 // @Filename: /index.ts
@@ -33,29 +37,7 @@ sty/**/`
 			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Includes: []fourslash.CompletionsExpectedItem{
-				&lsproto.CompletionItem{
-					Label: "styles",
-					Data: &lsproto.CompletionItemData{
-						AutoImport: &lsproto.AutoImportFix{
-							ModuleSpecifier: "*.asset",
-						},
-					},
-					AdditionalTextEdits: fourslash.AnyTextEdits,
-					SortText:            new(string(ls.SortTextAutoImportSuggestions)),
-				},
-			},
-		},
-	})
-	f.VerifyApplyCodeActionFromCompletion(t, new(""), &fourslash.ApplyCodeActionFromCompletionOptions{
-		Name:        "styles",
-		Source:      "*.asset",
-		Description: "Add import from \"*.asset\"",
-		NewFileContent: new(`import { styles } from "*.asset";
-
-sty`),
-		AutoImportFix: &lsproto.AutoImportFix{
-			ModuleSpecifier: "*.asset",
+			Excludes: []string{"styles", "styleTokens"},
 		},
 	})
 }

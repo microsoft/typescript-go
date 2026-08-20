@@ -169,7 +169,10 @@ func (adder *importAdder) Edits() []*lsproto.TextEdit {
 		insertImports(tracker, adder.view.importingFile, newDeclarations, true /*blankLineBetween*/, adder.preferences)
 	}
 
-	return tracker.GetChanges()[adder.view.importingFile.FileName()]
+	// Unmappable files are dropped by GetChanges, so a content-mapped importing file that cannot be
+	// faithfully rewritten yields no edits rather than a corrupting one.
+	changes, _ := tracker.GetChanges()
+	return changes[adder.view.importingFile.OriginalFileName()]
 }
 
 func sortedNamedImports(m map[string]*newImportBinding) []*newImportBinding {
@@ -369,9 +372,7 @@ func (adder *importAdder) getNewImportEntry(moduleSpecifier string, importKind l
 	return newEntry
 }
 
-func (adder *importAdder) getAllExportsForSymbol(
-	symbol *ast.Symbol,
-) []*Export {
+func (adder *importAdder) getAllExportsForSymbol(symbol *ast.Symbol) []*Export {
 	if export := SymbolToExport(symbol, adder.checker); export != nil {
 		return adder.view.SearchByExportID(export.ExportID)
 	}

@@ -15,7 +15,9 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/contentmapper"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/execute/tsctests"
@@ -29,6 +31,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/repo"
+	"github.com/microsoft/typescript-go/internal/spanmap"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
@@ -52,7 +55,7 @@ type FourslashTest struct {
 	stateBaseline *stateBaseline
 
 	scriptInfos map[string]*scriptInfo
-	converters  *lsconv.Converters
+	converters  *testConverters
 
 	stateEnableFormatting   bool
 	reportFormatOnTypeCrash bool
@@ -75,6 +78,25 @@ type scriptInfo struct {
 	content  string
 	lineMap  *lsconv.LSPLineMap
 	version  int32
+}
+
+type testConverters struct {
+	*lsconv.Converters
+}
+
+func newTestConverters(converters *lsconv.Converters) *testConverters {
+	return &testConverters{Converters: converters}
+}
+
+func (c *testConverters) PositionToLineAndCharacter(script lsconv.Script, position core.TextPos) lsproto.Position {
+	lspPosition, _ := c.ToLSPPosition(script, position)
+	return lspPosition
+}
+
+func (c *testConverters) LineAndCharacterToPosition(script lsconv.Script, position lsproto.Position) core.TextPos {
+	positions := lsconv.FromLSPPosition(c.Converters, script, position, spanmap.FeatureAll)
+	debug.Assert(len(positions) == 1, "fourslash script must have exactly one position projection")
+	return positions[0].Position
 }
 
 type textEditSpan struct {
@@ -102,9 +124,15 @@ func (s *scriptInfo) Text() string {
 	return s.content
 }
 
+func (s *scriptInfo) OriginalText() string { return s.content }
+
+func (s *scriptInfo) SpanMap() *spanmap.SpanMap { return nil }
+
 func (s *scriptInfo) FileName() string {
 	return s.fileName
 }
+
+func (s *scriptInfo) OriginalFileName() string { return s.fileName }
 
 func (s *scriptInfo) GetLineContent(line int) string {
 	numLines := len(s.lineMap.LineStarts)
@@ -131,6 +159,25 @@ var parseCache = project.NewParseCache(
 )
 
 func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, content string) (*FourslashTest, func()) {
+	_, testPath, _, _ := runtime.Caller(1)
+	return newFourslash(t, content, &FourslashOptions{Capabilities: capabilities}, testPath)
+}
+
+type FourslashOptions struct {
+	Capabilities         *lsproto.ClientCapabilities
+	ContentMapperSpawner contentmapper.Spawner
+	RunExternalCode      bool
+}
+
+func NewFourslashWithOptions(t *testing.T, content string, options *FourslashOptions) (*FourslashTest, func()) {
+	_, testPath, _, _ := runtime.Caller(1)
+	return newFourslash(t, content, options, testPath)
+}
+
+func newFourslash(t *testing.T, content string, options *FourslashOptions, testPath string) (*FourslashTest, func()) {
+	if options == nil {
+		options = &FourslashOptions{}
+	}
 	repo.SkipIfNoTypeScriptSubmodule(t)
 	if !bundled.Embedded {
 		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
@@ -184,14 +231,17 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 
 		ParseCache: parseCache,
 	}
+	if options.ContentMapperSpawner != nil {
+		serverOpts.Spawn = options.ContentMapperSpawner.Spawn
+	}
 
-	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(fileName string) *lsconv.LSPLineMap {
+	converters := newTestConverters(lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(fileName string) *lsconv.LSPLineMap {
 		scriptInfo, ok := scriptInfos[fileName]
 		if !ok {
 			return nil
 		}
 		return scriptInfo.lineMap
-	})
+	}))
 
 	f := &FourslashTest{
 		testData:                &testData,
@@ -212,19 +262,20 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	// !!! replace with a proper request *after initialize*
 	client.SetCompilerOptionsForInferredProjects(compilerOptions)
-	f.initialize(t, capabilities)
+	f.initialize(t, options.Capabilities, options.RunExternalCode)
 
 	if testData.isStateBaseliningEnabled() {
 		// Single baseline, so initialize project state baseline too
 		f.stateBaseline = newStateBaseline(fsFromMap.(iovfs.FsWithSys))
 	} else {
 		for _, file := range testData.Files {
-			f.openFile(t, file.fileName)
+			if file.open {
+				f.openFile(t, file.fileName)
+			}
 		}
 		f.activeFilename = f.testData.Files[0].fileName
 	}
 
-	_, testPath, _, _ := runtime.Caller(1)
 	return f, func() {
 		t.Helper()
 		err := closeClient()
@@ -316,13 +367,17 @@ func getBaseFileNameFromTest(t *testing.T) string {
 
 const showCodeLensLocationsCommandName = "typescript.showCodeLensLocations"
 
-func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCapabilities) {
+func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCapabilities, runExternalCode bool) {
+	initializationOptions := &lsproto.InitializationOptions{
+		CodeLensShowLocationsCommandName: new(showCodeLensLocationsCommandName),
+	}
+	if runExternalCode {
+		initializationOptions.RunExternalCode = new(true)
+	}
 	params := &lsproto.InitializeParams{
 		Locale: new("en-US"),
 		InitializationOptions: &lsproto.InitializationOptionsOrNull{
-			InitializationOptions: &lsproto.InitializationOptions{
-				CodeLensShowLocationsCommandName: new(showCodeLensLocationsCommandName),
-			},
+			InitializationOptions: initializationOptions,
 		},
 	}
 	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
@@ -388,12 +443,13 @@ func defaultSemanticTokenModifiers() []string {
 // If modifying the defaults, update GetDefaultCapabilities too.
 var (
 	ptrTrue                       = new(true)
+	ptrFalse                      = new(false)
 	defaultCompletionCapabilities = &lsproto.CompletionClientCapabilities{
 		CompletionItem: &lsproto.ClientCompletionItemOptions{
-			SnippetSupport:          ptrTrue,
+			SnippetSupport:          ptrFalse,
 			CommitCharactersSupport: ptrTrue,
 			PreselectSupport:        ptrTrue,
-			LabelDetailsSupport:     ptrTrue,
+			LabelDetailsSupport:     ptrFalse,
 			InsertReplaceSupport:    ptrTrue,
 			DocumentationFormat:     &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
 		},
@@ -480,10 +536,10 @@ func GetDefaultCapabilities() *lsproto.ClientCapabilities {
 		TextDocument: &lsproto.TextDocumentClientCapabilities{
 			Completion: &lsproto.CompletionClientCapabilities{
 				CompletionItem: &lsproto.ClientCompletionItemOptions{
-					SnippetSupport:          ptrTrue,
+					SnippetSupport:          ptrFalse,
 					CommitCharactersSupport: ptrTrue,
 					PreselectSupport:        ptrTrue,
-					LabelDetailsSupport:     ptrTrue,
+					LabelDetailsSupport:     ptrFalse,
 					InsertReplaceSupport:    ptrTrue,
 					DocumentationFormat:     &[]lsproto.MarkupKind{lsproto.MarkupKindMarkdown, lsproto.MarkupKindPlainText},
 				},
@@ -561,6 +617,52 @@ func GetDefaultCapabilities() *lsproto.ClientCapabilities {
 			},
 		},
 	}
+}
+
+type ClientCapabilitiesOptions struct {
+	CompletionItem *lsproto.ClientCompletionItemOptions
+}
+
+func GetDefaultCapabilitiesWithOptions(options *ClientCapabilitiesOptions) *lsproto.ClientCapabilities {
+	capabilities := GetDefaultCapabilities()
+	if options == nil {
+		return capabilities
+	}
+	if options.CompletionItem != nil {
+		target := capabilities.TextDocument.Completion.CompletionItem
+		completionItemOptions := options.CompletionItem
+		if completionItemOptions.SnippetSupport != nil {
+			target.SnippetSupport = completionItemOptions.SnippetSupport
+		}
+		if completionItemOptions.CommitCharactersSupport != nil {
+			target.CommitCharactersSupport = completionItemOptions.CommitCharactersSupport
+		}
+		if completionItemOptions.DocumentationFormat != nil {
+			target.DocumentationFormat = completionItemOptions.DocumentationFormat
+		}
+		if completionItemOptions.DeprecatedSupport != nil {
+			target.DeprecatedSupport = completionItemOptions.DeprecatedSupport
+		}
+		if completionItemOptions.PreselectSupport != nil {
+			target.PreselectSupport = completionItemOptions.PreselectSupport
+		}
+		if completionItemOptions.TagSupport != nil {
+			target.TagSupport = completionItemOptions.TagSupport
+		}
+		if completionItemOptions.InsertReplaceSupport != nil {
+			target.InsertReplaceSupport = completionItemOptions.InsertReplaceSupport
+		}
+		if completionItemOptions.ResolveSupport != nil {
+			target.ResolveSupport = completionItemOptions.ResolveSupport
+		}
+		if completionItemOptions.InsertTextModeSupport != nil {
+			target.InsertTextModeSupport = completionItemOptions.InsertTextModeSupport
+		}
+		if completionItemOptions.LabelDetailsSupport != nil {
+			target.LabelDetailsSupport = completionItemOptions.LabelDetailsSupport
+		}
+	}
+	return capabilities
 }
 
 func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lsproto.ClientCapabilities {
@@ -1082,7 +1184,10 @@ func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput,
 	default:
 		t.Fatalf("Invalid marker input type: %T. Expected string, *Marker, []string, or []*Marker.", markerInput)
 	}
+	return f.verifyCompletionsActions(list)
+}
 
+func (f *FourslashTest) verifyCompletionsActions(list *lsproto.CompletionList) VerifyCompletionsResult {
 	return VerifyCompletionsResult{
 		AndApplyCodeAction: func(t *testing.T, expectedAction *CompletionsExpectedCodeAction) {
 			item := core.Find(list.Items, func(item *lsproto.CompletionItem) bool {
@@ -1125,11 +1230,11 @@ func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput,
 
 func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *CompletionsExpectedList) *lsproto.CompletionList {
 	t.Helper()
-	prefix := f.getCurrentPositionPrefix()
 	var userPreferences *lsutil.UserPreferences
 	if expected != nil {
 		userPreferences = expected.UserPreferences
 	}
+	prefix := f.getCurrentPositionPrefix()
 	list := f.getCompletions(t, userPreferences)
 	f.verifyCompletionsResult(t, list, expected, prefix)
 	return list
@@ -1227,7 +1332,9 @@ func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *lsutil.Use
 		Context:  &lsproto.CompletionContext{},
 	}
 	if userPreferences != nil {
-		reset := f.ConfigureWithReset(t, *userPreferences)
+		preferences := *userPreferences
+		preferences.FormatCodeSettings = f.userPreferences.FormatCodeSettings
+		reset := f.ConfigureWithReset(t, preferences)
 		defer reset()
 	}
 	result := sendRequest(t, f, lsproto.TextDocumentCompletionInfo, params)
@@ -1264,7 +1371,7 @@ func (f *FourslashTest) verifyCompletionsResult(
 }
 
 func isEmptyExpectedList(expected *CompletionsExpectedList) bool {
-	return expected == nil || (len(expected.Items.Exact) == 0 && len(expected.Items.Includes) == 0 && len(expected.Items.Excludes) == 0)
+	return expected == nil || (len(expected.Items.Exact) == 0 && len(expected.Items.Includes) == 0 && len(expected.Items.Excludes) == 0 && len(expected.Items.Unsorted) == 0)
 }
 
 func verifyCompletionsItemDefaults(t *testing.T, actual *lsproto.CompletionItemDefaults, expected *CompletionsExpectedItemDefaults, prefix string) {
@@ -1440,20 +1547,18 @@ func (f *FourslashTest) verifyCompletionsItems(t *testing.T, prefix string, actu
 }
 
 func (f *FourslashTest) verifyCompletionsAreExactly(t *testing.T, prefix string, actual []*lsproto.CompletionItem, expected []CompletionsExpectedItem) {
-	// Verify labels first
-	assertDeepEqual(t, core.Map(actual, func(item *lsproto.CompletionItem) string {
-		return item.Label
-	}), core.Map(expected, func(item CompletionsExpectedItem) string {
-		return getExpectedLabel(t, item)
-	}), prefix+"Labels mismatch")
+	labelMismatchPrefix := prefix + "Label mismatch"
 	for i, actualItem := range actual {
 		switch expectedItem := expected[i].(type) {
 		case string:
-			continue // already checked labels
+			assertDeepEqual(t, actualItem.Label, expectedItem, labelMismatchPrefix)
 		case *lsproto.CompletionItem:
+			assertDeepEqual(t, actualItem.Label, expectedItem.Label, labelMismatchPrefix)
 			if err := f.verifyCompletionItem(t, prefix+"Completion item mismatch for label "+actualItem.Label, actualItem, expectedItem); err != "" {
 				t.Fatalf("%s:\n%s", prefix+"Completion item mismatch for label "+actualItem.Label, err)
 			}
+		default:
+			t.Fatalf("Expected completion item to be a string or *lsproto.CompletionItem, got %T", expectedItem)
 		}
 	}
 }
@@ -1499,6 +1604,10 @@ func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual
 			if !(actual.AdditionalTextEdits != nil && len(*actual.AdditionalTextEdits) > 0) {
 				return "Expected non-nil AdditionalTextEdits for auto-import completion item"
 			}
+		} else if expected.AdditionalTextEdits == NoTextEdits {
+			if actual.AdditionalTextEdits != nil && len(*actual.AdditionalTextEdits) > 0 {
+				return "Expected no AdditionalTextEdits for auto-import completion item"
+			}
 		}
 		if expected.LabelDetails != nil {
 			if err := cmp.Diff(actual.LabelDetails, expected.LabelDetails); err != "" {
@@ -1512,7 +1621,11 @@ func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual
 		if err := cmp.Diff(actual, expected, completionIgnoreOpts); err != "" {
 			return err
 		}
-		if expected.AdditionalTextEdits != AnyTextEdits {
+		if expected.AdditionalTextEdits == AnyTextEdits {
+			if actual.AdditionalTextEdits == nil || len(*actual.AdditionalTextEdits) == 0 {
+				return "Expected non-empty AdditionalTextEdits for completion item"
+			}
+		} else {
 			if err := cmp.Diff(actual.AdditionalTextEdits, expected.AdditionalTextEdits); err != "" {
 				return fmt.Sprintf("%s:\n%s", "AdditionalTextEdits mismatch", err)
 			}
@@ -1544,18 +1657,6 @@ func (f *FourslashTest) ResolveCompletionItem(t *testing.T, item *lsproto.Comple
 func (f *FourslashTest) resolveCompletionItem(t *testing.T, item *lsproto.CompletionItem) *lsproto.CompletionItem {
 	result := sendRequest(t, f, lsproto.CompletionItemResolveInfo, item)
 	return result
-}
-
-func getExpectedLabel(t *testing.T, item CompletionsExpectedItem) string {
-	switch item := item.(type) {
-	case string:
-		return item
-	case *lsproto.CompletionItem:
-		return item.Label
-	default:
-		t.Fatalf("Expected completion item to be a string or *lsproto.CompletionItem, got %T", item)
-		return ""
-	}
 }
 
 func assertDeepEqual(t *testing.T, actual any, expected any, prefix string, opts ...cmp.Option) {
@@ -2093,6 +2194,25 @@ type ApplyCodeActionFromCompletionOptions struct {
 	UserPreferences *lsutil.UserPreferences
 }
 
+func (f *FourslashTest) findCompletionForCodeAction(t *testing.T, items []*lsproto.CompletionItem, description string) *lsproto.CompletionItem {
+	t.Helper()
+	if item := core.Find(items, func(item *lsproto.CompletionItem) bool {
+		return item.AdditionalTextEdits != nil && len(*item.AdditionalTextEdits) != 0
+	}); item != nil {
+		return item
+	}
+	return core.FirstNonNil(items, func(item *lsproto.CompletionItem) *lsproto.CompletionItem {
+		resolvedItem := f.resolveCompletionItem(t, item)
+		if resolvedItem == nil || resolvedItem.AdditionalTextEdits == nil || len(*resolvedItem.AdditionalTextEdits) == 0 {
+			return nil
+		}
+		if description != "" && (resolvedItem.Detail == nil || !strings.Contains(*resolvedItem.Detail, description)) {
+			return nil
+		}
+		return resolvedItem
+	})
+}
+
 func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, markerName *string, options *ApplyCodeActionFromCompletionOptions) {
 	t.Helper()
 	f.GoToMarker(t, *markerName)
@@ -2106,7 +2226,7 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 
 	reset := f.ConfigureWithReset(t, *userPreferences)
 	defer reset()
-	completionsList := f.getCompletions(t, nil) // Already configured, so we do not need to pass it in again
+	completionsList := f.getCompletions(t, nil /*userPreferences*/) // Already configured, so we do not need to pass it in again
 	items := core.Filter(completionsList.Items, func(item *lsproto.CompletionItem) bool {
 		if item.Label != options.Name || item.Data == nil {
 			return false
@@ -2114,8 +2234,11 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 
 		data := item.Data
 		if options.AutoImportFix != nil {
-			return data.AutoImport != nil &&
-				(options.AutoImportFix.ModuleSpecifier == "" || data.AutoImport.ModuleSpecifier == options.AutoImportFix.ModuleSpecifier)
+			moduleSpecifier := options.AutoImportFix.ModuleSpecifier
+			if moduleSpecifier == "" {
+				moduleSpecifier = options.Source
+			}
+			return data.AutoImport != nil && data.AutoImport.ModuleSpecifier == moduleSpecifier
 		}
 		if data.AutoImport == nil && data.Source != "" && data.Source == options.Source {
 			return true
@@ -2126,37 +2249,13 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 		return false
 	})
 
-	if len(items) == 0 {
-		t.Fatalf("Code action '%s' from source '%s' not found in completions.", options.Name, options.Source)
-	}
-
-	var correctResolvedItem lsproto.CompletionItem
-	correctItem := core.Find(items, func(item *lsproto.CompletionItem) bool {
-		correctResolvedItem = *f.resolveCompletionItem(t, item)
-		var actualDetail string
-		if correctResolvedItem.Detail != nil {
-			actualDetail = *correctResolvedItem.Detail
-		}
-		if !strings.Contains(actualDetail, options.Description) || correctResolvedItem.AdditionalTextEdits == nil {
-			return false
-		}
-		return true
-	})
-
-	if correctItem == nil {
-		t.Fatalf("No matching code action found for '%s' from source '%s'.", options.Name, options.Source)
-		var actualDetail string
-		if correctResolvedItem.Detail != nil {
-			actualDetail = *correctResolvedItem.Detail
-		}
-		assert.Check(t, strings.Contains(actualDetail, options.Description), "Completion item detail does not contain expected description.")
-		if correctResolvedItem.AdditionalTextEdits == nil {
-			t.Fatalf("Expected non-nil AdditionalTextEdits for code action completion item.")
-		}
+	item := f.findCompletionForCodeAction(t, items, options.Description)
+	if item == nil {
+		t.Fatalf("Code action '%s' from source '%s' not found.", options.Name, options.Source)
 	}
 
 	// apply the item to the test files
-	f.applyTextEdits(t, *correctResolvedItem.AdditionalTextEdits)
+	f.applyTextEdits(t, *item.AdditionalTextEdits)
 	if options.NewFileContent != nil {
 		assert.Equal(t, f.getScriptInfo(f.activeFilename).content, *options.NewFileContent, "File content after applying code action did not match expected content.")
 	} else if options.NewRangeContent != nil {
@@ -2543,11 +2642,16 @@ func (f *FourslashTest) VerifyBaselineCodeLens(t *testing.T, preferences *lsutil
 				locations = locs
 			}
 
+			ranges := lsconv.FromLSPRange(f.converters.Converters, f.getScriptInfo(openFile), resolvedCodeLens.Range, spanmap.FeatureAll)
+			if len(ranges) != 1 {
+				continue
+			}
+			codeLensRange := ranges[0].Span
 			f.addResultToBaseline(t, codeLensesCmd, f.getBaselineForLocationsWithFileContents(locations, baselineFourslashLocationsOptions{
 				marker: &RangeMarker{
 					fileName: openFile,
 					LSRange:  resolvedCodeLens.Range,
-					Range:    f.converters.FromLSPRange(f.getScriptInfo(openFile), resolvedCodeLens.Range),
+					Range:    codeLensRange,
 				},
 				markerName: "/*CODELENS: " + resolvedCodeLens.Command.Title + "*/",
 			}))
@@ -3983,7 +4087,7 @@ func (f *FourslashTest) editScriptAndUpdateMarkersWorker(t *testing.T, fileName 
 				start := updatePosition(rangeMarker.Range.Pos(), editStart, editEnd, change.NewText)
 				end := updatePosition(rangeMarker.Range.End(), editStart, editEnd, change.NewText)
 				rangeMarker.Range = core.NewTextRange(start, end)
-				rangeMarker.LSRange = f.converters.ToLSPRange(script, rangeMarker.Range)
+				rangeMarker.LSRange, _ = f.converters.ToLSPRange(script, rangeMarker.Range)
 			}
 		}
 	}
@@ -4001,13 +4105,20 @@ func updatePosition(pos int, editStart int, editEnd int, newText string) int {
 	return pos + len(newText) - (editEnd - editStart)
 }
 
+func (f *FourslashTest) fromLSPRange(script *scriptInfo, r lsproto.Range) core.TextRange {
+	ranges := lsconv.FromLSPRange(f.converters.Converters, script, r, spanmap.FeatureAll)
+	if len(ranges) != 1 {
+		return core.TextRange{}
+	}
+	return ranges[0].Span
+}
+
 func (f *FourslashTest) editScript(t *testing.T, fileName string, change core.TextChange) *scriptInfo {
 	script := f.getOrLoadScriptInfo(fileName)
 	if script == nil {
 		panic(fmt.Sprintf("Script info for file %s not found", fileName))
 	}
-
-	changeRange := f.converters.ToLSPRange(script, core.NewTextRange(change.Pos(), change.End()))
+	changeRange, _ := f.converters.ToLSPRange(script, core.NewTextRange(change.Pos(), change.End()))
 	script.editContent(change)
 	if err := f.vfs.WriteFile(fileName, script.content); err != nil {
 		t.Fatalf("failed to write to VFS for %s: %v", fileName, err)
@@ -4047,6 +4158,9 @@ func (f *FourslashTest) getOrLoadScriptInfo(fileName string) *scriptInfo {
 func (f *FourslashTest) VerifyQuickInfoAt(t *testing.T, marker string, expectedText string, expectedDocumentation string) {
 	f.GoToMarker(t, marker)
 	hover := f.getQuickInfoAtCurrentPosition(t)
+	if hover == nil {
+		t.Fatalf("Expected hover result at marker '%s' but got nil", *f.lastKnownMarkerName)
+	}
 	f.verifyHoverContent(t, hover.Contents, expectedText, expectedDocumentation, f.getCurrentPositionPrefix())
 }
 
@@ -4058,9 +4172,6 @@ func (f *FourslashTest) getQuickInfoAtCurrentPosition(t *testing.T) *lsproto.Hov
 		Position: f.currentCaretPosition,
 	}
 	result := sendRequest(t, f, lsproto.TextDocumentHoverInfo, params)
-	if result.Hover == nil {
-		t.Fatalf("Expected hover result at marker '%s' but got nil", *f.lastKnownMarkerName)
-	}
 	return result.Hover
 }
 
@@ -4561,9 +4672,9 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 		))
 
 		currentFile := newScriptInfo(f.activeFilename, fileContent)
-		converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *lsconv.LSPLineMap {
+		converters := newTestConverters(lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *lsconv.LSPLineMap {
 			return currentFile.lineMap
-		})
+		}))
 		var list []*lsproto.CompletionItem
 		if result.Items == nil || len(*result.Items) == 0 {
 			if result.List == nil || result.List.Items == nil || len(result.List.Items) == 0 {
@@ -4793,7 +4904,7 @@ func (f *FourslashTest) RenameAtCaret(t *testing.T, newName string) lsproto.Rena
 			script := f.getOrLoadScriptInfo(fileName)
 			changes := core.Map(edits, func(edit *lsproto.TextEdit) core.TextChange {
 				return core.TextChange{
-					TextRange: f.converters.FromLSPRange(script, edit.Range),
+					TextRange: f.fromLSPRange(script, edit.Range),
 					NewText:   edit.NewText,
 				}
 			})
@@ -4810,7 +4921,7 @@ func (f *FourslashTest) RenameAtCaret(t *testing.T, newName string) lsproto.Rena
 				changes := core.Map(docChange.TextDocumentEdit.Edits, func(edit lsproto.TextEditOrAnnotatedTextEditOrSnippetTextEdit) core.TextChange {
 					textEdit := edit.TextEdit
 					return core.TextChange{
-						TextRange: f.converters.FromLSPRange(script, textEdit.Range),
+						TextRange: f.fromLSPRange(script, textEdit.Range),
 						NewText:   textEdit.NewText,
 					}
 				})
@@ -4872,7 +4983,7 @@ func (f *FourslashTest) willRenameFilesWorker(t *testing.T, files ...*lsproto.Fi
 			script := f.getOrLoadScriptInfo(fileName)
 			changes := core.Map(edits, func(edit *lsproto.TextEdit) core.TextChange {
 				return core.TextChange{
-					TextRange: f.converters.FromLSPRange(script, edit.Range),
+					TextRange: f.fromLSPRange(script, edit.Range),
 					NewText:   edit.NewText,
 				}
 			})
@@ -4889,7 +5000,7 @@ func (f *FourslashTest) willRenameFilesWorker(t *testing.T, files ...*lsproto.Fi
 				changes := core.Map(docChange.TextDocumentEdit.Edits, func(edit lsproto.TextEditOrAnnotatedTextEditOrSnippetTextEdit) core.TextChange {
 					textEdit := edit.TextEdit
 					return core.TextChange{
-						TextRange: f.converters.FromLSPRange(script, textEdit.Range),
+						TextRange: f.fromLSPRange(script, textEdit.Range),
 						NewText:   textEdit.NewText,
 					}
 				})
@@ -5145,7 +5256,7 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 	fileName := f.activeFilename
 	var lspRange lsproto.Range
 	if span == nil {
-		lspRange = f.converters.ToLSPRange(f.getScriptInfo(fileName), core.NewTextRange(0, len(f.scriptInfos[fileName].content)))
+		lspRange, _ = f.converters.ToLSPRange(f.getScriptInfo(fileName), core.NewTextRange(0, len(f.scriptInfos[fileName].content)))
 	} else {
 		lspRange = *span
 	}
@@ -5404,9 +5515,15 @@ func (f *fourslashDiagnosticFile) FileName() string {
 	return f.file.UnitName
 }
 
+func (f *fourslashDiagnosticFile) OriginalFileName() string { return f.file.UnitName }
+
 func (f *fourslashDiagnosticFile) Text() string {
 	return f.file.Content
 }
+
+func (f *fourslashDiagnosticFile) OriginalText() string { return f.file.Content }
+
+func (f *fourslashDiagnosticFile) SpanMap() *spanmap.SpanMap { return nil }
 
 func (f *fourslashDiagnosticFile) ECMALineMap() []core.TextPos {
 	if f.ecmaLineMap == nil {
@@ -5439,6 +5556,10 @@ func (d *fourslashDiagnostic) Code() int32 {
 
 func (d *fourslashDiagnostic) Category() diagnostics.Category {
 	return d.category
+}
+
+func (d *fourslashDiagnostic) Source() string {
+	return ""
 }
 
 func (d *fourslashDiagnostic) Localize(locale locale.Locale) string {
@@ -5482,7 +5603,7 @@ func (f *FourslashTest) toDiagnostic(scriptInfo *scriptInfo, lspDiagnostic *lspr
 			}
 			relatedDiagnostic := &fourslashDiagnostic{
 				file:     &fourslashDiagnosticFile{file: &harnessutil.TestFile{UnitName: relatedScriptInfo.fileName, Content: relatedScriptInfo.content}},
-				loc:      f.converters.FromLSPRange(relatedScriptInfo, info.Location.Range),
+				loc:      f.fromLSPRange(relatedScriptInfo, info.Location.Range),
 				code:     code,
 				category: category,
 				message:  info.Message,
@@ -5498,7 +5619,7 @@ func (f *FourslashTest) toDiagnostic(scriptInfo *scriptInfo, lspDiagnostic *lspr
 				Content:  scriptInfo.content,
 			},
 		},
-		loc:                f.converters.FromLSPRange(scriptInfo, lspDiagnostic.Range),
+		loc:                f.fromLSPRange(scriptInfo, lspDiagnostic.Range),
 		code:               code,
 		category:           category,
 		message:            lspDiagnostic.Message.AsString(),
@@ -5553,7 +5674,10 @@ func isLibFile(fileName string) bool {
 	return false
 }
 
-var AnyTextEdits *[]*lsproto.TextEdit
+var (
+	AnyTextEdits = new([]*lsproto.TextEdit)
+	NoTextEdits  = new([]*lsproto.TextEdit)
+)
 
 func (f *FourslashTest) VerifyBaselineGoToImplementation(t *testing.T, markerNames ...string) {
 	f.verifyBaselineDefinitions(
@@ -5591,7 +5715,12 @@ func (f *FourslashTest) VerifyWorkspaceSymbol(t *testing.T, cases []*VerifyWorks
 			preferences = new(lsutil.NewDefaultUserPreferences())
 		}
 		f.Configure(t, *preferences)
-		result := sendRequest(t, f, lsproto.WorkspaceSymbolInfo, &lsproto.WorkspaceSymbolParams{Query: testCase.Pattern})
+		result := sendRequest(t, f, lsproto.WorkspaceSymbolInfo, &lsproto.WorkspaceSymbolParams{
+			Query: testCase.Pattern,
+			TextDocument: &lsproto.TextDocumentIdentifier{
+				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+			},
+		})
 		if result.SymbolInformations == nil {
 			t.Fatalf("Expected non-nil symbol information array from workspace symbol request")
 		}

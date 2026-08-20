@@ -352,10 +352,15 @@ const enumDefs = [
     { name: "ModuleDetectionKind", goPrefix: "ModuleDetectionKind", goFile: "internal/core/compileroptions.go", outDir: "_packages/native-preview/src/enums" },
     { name: "NewLineKind", goPrefix: "NewLineKind", goFile: "internal/core/compileroptions.go", outDir: "_packages/native-preview/src/enums" },
     { name: "JsxEmit", goPrefix: "JsxEmit", goFile: "internal/core/compileroptions.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "ScriptKind", goPrefix: "ScriptKind", goFile: "internal/core/scriptkind.go", outDir: "_packages/native-preview/src/enums" },
     { name: "TokenFlags", goPrefix: "TokenFlags", goFile: "internal/ast/tokenflags.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "DiagnosticDirectivePolicy", goPrefix: "MappedDiagnosticDirectivePolicy", goFile: "internal/ast/ast.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "SpanMapKind", goPrefix: "Kind", goFile: "internal/spanmap/spanmap.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "SpanMapFidelity", goPrefix: "Fidelity", goFile: "internal/spanmap/spanmap.go", outDir: "_packages/native-preview/src/enums" },
+    { name: "SpanMapFeature", goPrefix: "Feature", goFile: "internal/spanmap/spanmap.go", outDir: "_packages/native-preview/src/enums" },
     { name: "NodeBuilderFlags", goPrefix: "Flags", goFile: "internal/nodebuilder/types.go", outDir: "_packages/native-preview/src/enums" },
     { name: "CompletionItemKind", goPrefix: "CompletionItemKind", goFile: "internal/lsp/lsproto/lsp_generated.go", outDir: "_packages/native-preview/src/enums" },
-    { name: "EmitOnly", goPrefix: "Emit", goFile: "internal/compiler/emitter.go", outDir: "_packages/native-preview/src/enums", excludeMembers: ["OnlyForcedDts"] },
+    { name: "EmitOnly", goPrefix: "Emit", goFile: "internal/compiler/emitter.go", outDir: "_packages/native-preview/src/enums", excludeMembers: ["OnlyBuilderSignature"] },
     // String enum: Go stores internal names with a "\xFE" sentinel prefix, but the escaped
     // form sent over the wire uses "__" (see EscapeSymbolName), so map the sentinel accordingly.
     { name: "InternalSymbolName", goPrefix: "InternalSymbolName", goFile: "internal/ast/symbol.go", outDir: "_packages/native-preview/src/enums", stringEnum: true, valueReplacements: { InternalSymbolNamePrefix: "__" } },
@@ -370,7 +375,7 @@ function parseGoConstBlock(block, def) {
     const prefix = def.goPrefix;
     const members = [];
     let iotaCounter = 0;
-    let hasIota = false;
+    let iotaExpression;
 
     for (const rawLine of block.split("\n")) {
         const line = rawLine.replace(/\/\/.*$/, "").trim();
@@ -379,7 +384,7 @@ function parseGoConstBlock(block, def) {
         // Match: PrefixName Type = value  or  PrefixName = value
         const fullMatch = line.match(new RegExp(`^(${prefix}\\w+)\\s+(?:\\S+\\s*)?=\\s*(.+)$`));
         // Match bare iota continuation: just PrefixName
-        const bareMatch = !fullMatch && hasIota
+        const bareMatch = !fullMatch && iotaExpression !== undefined
             ? line.match(new RegExp(`^(${prefix}\\w+)$`))
             : null;
 
@@ -393,12 +398,12 @@ function parseGoConstBlock(block, def) {
         if (def.stringEnum) {
             tsValue = parseGoStringValue(goValue, def.valueReplacements ?? {});
         }
-        else if (goValue === "iota") {
-            tsValue = String(iotaCounter);
-            hasIota = true;
+        else if (goValue.includes("iota")) {
+            iotaExpression = goValue;
+            tsValue = goValue.replace(/\biota\b/g, String(iotaCounter));
         }
-        else if (hasIota && goValue === "") {
-            tsValue = String(iotaCounter);
+        else if (iotaExpression !== undefined && goValue === "") {
+            tsValue = iotaExpression.replace(/\biota\b/g, String(iotaCounter));
         }
         else {
             // Replace Go bitwise NOT (^) with TypeScript (~)
@@ -570,6 +575,12 @@ export const generateAST = task({
     name: "generate:ast",
     description: "Generates AST and encoder files from ast.json.",
     run: () => $`node --experimental-strip-types --no-warnings ./_scripts/generate.ts`,
+});
+
+export const generateAPI = task({
+    name: "generate:api",
+    description: "Generates API files from internal/api/proto.go and internal/api/session.go.",
+    run: () => $`go -C ./_tools run ./gen-proto ../internal/api/proto.go ../_packages/native-preview/src/api/proto.generated.ts`,
 });
 
 // ── Vendored npm dependencies ───────────────────────────────────
@@ -773,10 +784,17 @@ async function runTests() {
     }
 }
 
+async function runTestExtension() {
+    await $`npm test -w _extension`;
+}
+
 export const test = task({
     name: "test",
     description: "Runs all tests. This is the most typical test task to need.",
-    run: runTests,
+    run: async () => {
+        await runTests();
+        await runTestExtension();
+    },
 });
 
 async function runTestBenchmarks() {
@@ -796,13 +814,20 @@ async function runTestTools() {
 }
 
 async function runTestAPI() {
-    await $`npm run -w @typescript/native-preview test:only`;
+    // await $`npm run -w @typescript/native-preview test:only`; // doesn't work on windows - some path escaping isn't done correctly, test runner runs no tests
+    await _$({ verbose: "short", stdio: "inherit", cwd: "./_packages/native-preview" })`node --experimental-strip-types --no-warnings --conditions @typescript/source --test ./test/**/*.test.ts`;
 }
 
 export const testTools = task({
     name: "test:tools",
     description: "Runs all tests in the _tools module.",
     run: runTestTools,
+});
+
+export const testExtension = task({
+    name: "test:extension",
+    description: "Runs the VS Code extension tests.",
+    run: runTestExtension,
 });
 
 export const buildAPI = task({
@@ -816,6 +841,7 @@ export const buildAPI = task({
 export const buildAPITests = task({
     name: "build:api:test",
     description: "Builds the @typescript/native-preview JS API tests.",
+    dependencies: [generateEnums, generateAPI],
     run: async () => {
         await $`npm run -w @typescript/native-preview build:test`;
     },
@@ -835,6 +861,7 @@ export const testAll = task({
     run: async () => {
         // Prevent interleaving by running these directly instead of in parallel.
         await runTests();
+        await runTestExtension();
         await runTestBenchmarks();
         await runTestTools();
         await runTestAPI();
@@ -1485,6 +1512,41 @@ const mainNativePreviewPackage = {
     npmTarball: path.join(builtNpm, publishAsTypescript ? "typescript.tgz" : "native-preview.tgz"),
 };
 
+const typescriptMacEntitlements = [
+    "com.apple.security.cs.allow-dyld-environment-variables",
+    "com.apple.security.cs.disable-library-validation",
+];
+
+function createTypeScriptMacEntitlementsPlist() {
+    const entries = typescriptMacEntitlements.map(entitlement => `    <key>${entitlement}</key>\n    <true/>`).join("\n");
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+${entries}
+</dict>
+</plist>
+`;
+}
+
+/**
+ * @param {string} filePath
+ */
+async function verifyTypeScriptMacEntitlements(filePath) {
+    const { stdout } = await $pipe`go tool quill describe --quiet --output json ${filePath}`;
+    const details = JSON.parse(stdout);
+    const entitlements = details[0]?.superBlob?.entitlements?.entitlements;
+    if (typeof entitlements !== "string") {
+        throw new Error(`Signed file has no macOS entitlements: ${filePath}`);
+    }
+    for (const entitlement of typescriptMacEntitlements) {
+        const escapedEntitlement = entitlement.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        if (!new RegExp(`<key>\\s*${escapedEntitlement}\\s*</key>\\s*<true\\s*/>`).test(entitlements)) {
+            throw new Error(`Signed file is missing macOS entitlement '${entitlement}': ${filePath}`);
+        }
+    }
+}
+
 /**
  * @typedef {"win32" | "linux" | "darwin" | "aix" | "android" | "freebsd" | "netbsd" | "openbsd" | "sunos"} OS
  * @typedef {"x64" | "arm" | "arm64" | "ia32" | "ppc64" | "loong64" | "mips64el" | "riscv64" | "s390x"} Arch
@@ -1522,6 +1584,7 @@ const platforms = [
     { os: "darwin", arch: "x64", vsix: true, cert: "MacDeveloperHarden" },
     { os: "darwin", arch: "arm64", vsix: true, cert: "MacDeveloperHarden" },
     { os: "aix", arch: "ppc64" },
+    { os: "android", arch: "arm64" },
     { os: "freebsd", arch: "arm64" },
     { os: "freebsd", arch: "x64" },
     { os: "linux", arch: "loong64" },
@@ -1541,7 +1604,6 @@ const ignoredGoTargets = new Map([
     ["android/386", "Android is not a Node runtime target TypeScript supports"],
     ["android/amd64", "Android is not a Node runtime target TypeScript supports"],
     ["android/arm", "Android is not a Node runtime target TypeScript supports"],
-    ["android/arm64", "Android is not a Node runtime target TypeScript supports"],
     ["freebsd/386", "FreeBSD is experimental in Node and limited here to mainstream 64-bit x64/arm64"],
     ["freebsd/arm", "FreeBSD is experimental in Node and limited here to mainstream 64-bit x64/arm64"],
     ["linux/386", "ia32 means 32-bit x86, which TypeScript does not support for native packages"],
@@ -2008,6 +2070,8 @@ async function runSignNativePreviewPackages() {
     }
 
     const tmp = await getSignTempDir();
+    const typescriptMacEntitlementsPath = path.join(tmp, "typescript-macos-entitlements.plist");
+    await fs.promises.writeFile(typescriptMacEntitlementsPath, createTypeScriptMacEntitlementsPlist());
 
     /** @type {DDSignFileList} */
     const filelist = {
@@ -2039,6 +2103,9 @@ async function runSignNativePreviewPackages() {
                 // Mac signing requires putting files into zips and then signing those,
                 // along with a notarization step.
                 for (const p of filelistPaths) {
+                    // ESRP preserves entitlements from an existing ad-hoc signature.
+                    await $pipe`go tool quill sign --quiet --ad-hoc --identity ${path.basename(p.path)} --entitlements ${typescriptMacEntitlementsPath} ${p.path}`;
+
                     const unsignedZipPath = path.join(tmp, `${p.tmpName}.unsigned.zip`);
                     const signedZipPath = path.join(tmp, `${p.tmpName}.signed.zip`);
                     const notarizedZipPath = path.join(tmp, `${p.tmpName}.notarized.zip`);
@@ -2098,6 +2165,7 @@ async function runSignNativePreviewPackages() {
 
         for (const p of macZips) {
             await fs.promises.chmod(p.path, 0o755);
+            await verifyTypeScriptMacEntitlements(p.path);
         }
     }
 }
